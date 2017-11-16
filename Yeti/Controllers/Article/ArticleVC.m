@@ -13,6 +13,7 @@
 #import "Heading.h"
 #import "Blockquote.h"
 #import "List.h"
+#import "Aside.h"
 
 #import "UIImageView+ImageLoading.h"
 #import "NSAttributedString+Trimming.h"
@@ -75,6 +76,11 @@
             [self addList:content];
         }
         else if ([content.type isEqualToString:@"aside"]) {
+            
+            if (content.content.length > 140)
+                [self addParagraph:content];
+            else
+                [self addAside:content];
             
         }
         
@@ -219,6 +225,25 @@
     _last = list;
     
     [self.stackView addArrangedSubview:list];
+}
+
+- (void)addAside:(Content *)content
+{
+    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    
+    Aside *para = [[Aside alloc] initWithFrame:frame];
+    
+    if ([_last isKindOfClass:Heading.class])
+        para.afterHeading = YES;
+    
+    [para setText:content.content ranges:content.ranges];
+    
+    frame.size.height = para.intrinsicContentSize.height;
+    para.frame = frame;
+    
+    _last = para;
+    
+    [self.stackView addArrangedSubview:para];
 }
 
 @end
