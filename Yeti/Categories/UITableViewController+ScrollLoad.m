@@ -22,7 +22,7 @@
     CGFloat diff = contentHeight - actualPosition;
     CGFloat const threshold = scrollView.bounds.size.height - 120.f;
     
-    DDLogDebug(@"%@ %@", @(diff), @(actualPosition));
+//    DDLogDebug(@"%@ %@", @(diff), @(actualPosition));
     if (diff <= threshold) {
         if ([scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
             id del = scrollView.delegate;
