@@ -2,6 +2,12 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 @implementation Content
+
+- (NSString *)compareID
+{
+    return [@(self.hash) stringValue];
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];

@@ -50,6 +50,11 @@ static char DOWNLOAD_TASK;
             if (found)
                 return;
         }
+        else if ([self.superview isKindOfClass:UIStackView.class]) {
+            // inside a stackview but no height constraint
+            [self.heightAnchor constraintEqualToConstant:height].active = YES;
+            return;
+        }
         
         self.frame = frame;
         

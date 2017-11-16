@@ -1,6 +1,12 @@
 #import "Range.h"
 
 @implementation Range
+
+- (NSString *)compareID
+{
+    return [@(self.hash) stringValue];
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];

@@ -1,7 +1,8 @@
 #import <DZKit/DZObject.h>
 #import "Enclosure.h"
+#import <DZKit/DZDatasourceModel.h>
 
-@interface FeedItem : DZObject <NSCoding> {
+@interface FeedItem : DZObject <NSCoding, DZDatasourceModel> {
 
 }
 

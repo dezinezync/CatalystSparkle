@@ -4,6 +4,12 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 @implementation FeedItem
+
+- (NSString *)compareID
+{
+    return self.guid;
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];

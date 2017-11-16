@@ -9,6 +9,12 @@
 #import "Enclosure.h"
 
 @implementation Enclosure
+
+- (NSString *)compareID
+{
+    return self.url.absoluteString;
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];
@@ -47,6 +53,16 @@
 
     [self setValuesForKeysWithDictionary:aDictionary];
 
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    if ([key isEqualToString:@"url"]) {
+        if ([value isKindOfClass:NSString.class])
+            value = [NSURL URLWithString:value];
+    }
+    
+    [super setValue:value forKey:key];
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key

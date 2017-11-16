@@ -17,10 +17,10 @@
         return;
     
     CGFloat actualPosition = scrollView.contentOffset.y + (scrollView.adjustedContentInset.top);
-    CGFloat contentHeight = scrollView.contentSize.height / 8.f;
+    CGFloat contentHeight = scrollView.contentSize.height;
     
     CGFloat diff = contentHeight - actualPosition;
-    CGFloat const threshold = scrollView.bounds.size.height > 554 ? 120.f : 80.f;
+    CGFloat const threshold = scrollView.bounds.size.height - 120.f;
     
     DDLogDebug(@"%@ %@", @(diff), @(actualPosition));
     if (diff <= threshold) {

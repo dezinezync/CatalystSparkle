@@ -74,6 +74,9 @@
         else if ([content.type containsString:@"list"]) {
             [self addList:content];
         }
+        else if ([content.type isEqualToString:@"aside"]) {
+            
+        }
         
     } }
     
@@ -178,12 +181,12 @@
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:frame];
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.f];
-    [imageView il_setImageWithURL:content.url];
     
     _last = imageView;
     
     [self.stackView addArrangedSubview:imageView];
     [imageView.heightAnchor constraintEqualToConstant:32.f].active = YES;
+    [imageView il_setImageWithURL:content.url];
     
     [self addLinebreak];
 }

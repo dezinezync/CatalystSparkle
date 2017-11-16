@@ -2,6 +2,12 @@
 #import "FeedItem.h"
 
 @implementation Feed
+
+- (NSString *)compareID
+{
+    return [self.feedID stringValue];
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];

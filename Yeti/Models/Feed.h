@@ -2,7 +2,9 @@
 
 #import "FeedItem.h"
 
-@interface Feed : DZCloudObject <NSCoding> {
+#import <DZKit/DZDatasourceModel.h>
+
+@interface Feed : DZCloudObject <NSCoding, DZDatasourceModel> {
 
 }
 
