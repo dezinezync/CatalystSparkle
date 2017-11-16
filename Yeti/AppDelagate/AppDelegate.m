@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import <DZKit/DZSplitViewController.h>
+#import "FeedsVC.h"
 
 @interface AppDelegate ()
 
@@ -17,9 +19,33 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    return YES;
+    [ADZLogger initialize];
+    
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
+#pragma mark - <DZAppDelegateProtocol>
+
+- (NSDictionary *)appDefaults {
+    return @{@"theme": @"light",
+             @"notifications": @NO
+             };
+}
+
+- (void)setupRootController {
+    
+    FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
+    UINavigationController *nav1 = [[UINavigationController alloc] initWithRootViewController:vc];
+    UINavigationController *nav2 = [[UINavigationController alloc] init];
+    
+    DZSplitViewController *splitVC = [[DZSplitViewController alloc] initWithViewControllers:@[nav1, nav2]];
+    self.window.rootViewController = splitVC;
+    
+}
+
+#pragma mark -
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

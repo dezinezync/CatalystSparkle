@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  AppDelegate.h
 //  Yeti
 //
 //  Created by Nikhil Nigade on 14/11/17.
@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <DZAppdelegate/DZAppdelegate.h>
 
-@interface ViewController : UIViewController
-
+@interface AppDelegate : DZAppDelegate
 
 @end
 

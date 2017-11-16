@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  UIImage+ImageLoading.h
 //  Yeti
 //
 //  Created by Nikhil Nigade on 14/11/17.
@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ImageLoader.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface UIImageView (ImageLoading)
 
-@property (strong, nonatomic) UIWindow *window;
-
+- (void)il_setImageWithURL:(id)url;
+- (void)il_cancelImageLoading;
 
 @end
-

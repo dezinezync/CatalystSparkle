@@ -1,0 +1,35 @@
+//
+//  UITableViewController+ScrollLoad.m
+//  Yeti
+//
+//  Created by Nikhil Nigade on 15/11/17.
+//  Copyright © 2017 Dezine Zync Studios. All rights reserved.
+//
+
+#import "UITableViewController+ScrollLoad.h"
+
+@implementation UITableViewController (ScrollLoad)
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    
+    if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")])
+        return;
+    
+    CGFloat actualPosition = scrollView.contentOffset.y + (scrollView.adjustedContentInset.top);
+    CGFloat contentHeight = scrollView.contentSize.height / 8.f;
+    
+    CGFloat diff = contentHeight - actualPosition;
+    CGFloat const threshold = scrollView.bounds.size.height > 554 ? 120.f : 80.f;
+    
+    DDLogDebug(@"%@ %@", @(diff), @(actualPosition));
+    if (diff <= threshold) {
+        if ([scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
+            id del = scrollView.delegate;
+            if (![del isLoadingNext] && ![del cantLoadNext])
+                [del loadNextPage];
+        }
+    }
+}
+
+@end
