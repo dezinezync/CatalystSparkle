@@ -16,6 +16,7 @@
 @property (nonatomic, copy) NSNumber *level;
 @property (nonatomic, strong) NSArray <Content *> *items;
 @property (nonatomic, strong) NSDictionary *attributes;
+@property (nonatomic, copy) NSString *videoID;
 
 + (Content *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

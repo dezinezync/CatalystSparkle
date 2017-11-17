@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
@@ -64,6 +65,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
+		F005265E1FBF148E00A103CD /* Youtube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Youtube.m; sourceTree = "<group>"; };
 		F01D714D1FBC11F100DF84B9 /* Blockquote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blockquote.h; sourceTree = "<group>"; };
 		F01D714E1FBC11F100DF84B9 /* Blockquote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Blockquote.m; sourceTree = "<group>"; };
 		F01D71501FBC1A2500DF84B9 /* NSAttributedString+Trimming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+Trimming.h"; sourceTree = "<group>"; };
@@ -353,6 +356,8 @@
 				F01D71541FBC232200DF84B9 /* List.m */,
 				F022F0481FBD4BFF006A0036 /* Aside.h */,
 				F022F0491FBD4BFF006A0036 /* Aside.m */,
+				F005265D1FBF148E00A103CD /* Youtube.h */,
+				F005265E1FBF148E00A103CD /* Youtube.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -540,6 +545,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */,
+				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,

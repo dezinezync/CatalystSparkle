@@ -14,6 +14,7 @@
 #import "Blockquote.h"
 #import "List.h"
 #import "Aside.h"
+#import "Youtube.h"
 
 #import "UIImageView+ImageLoading.h"
 #import "NSAttributedString+Trimming.h"
@@ -57,33 +58,7 @@
     
     // add Body
     for (Content *content in self.item.content) { @autoreleasepool {
-        if ([content.type isEqualToString:@"paragraph"] && content.content.length) {
-            [self addParagraph:content];
-        }
-        else if ([content.type isEqualToString:@"heading"] && content.content.length) {
-            [self addHeading:content];
-        }
-        else if ([content.type isEqualToString:@"linebreak"] && _last && ![_last isKindOfClass:Paragraph.class]) {
-            [self addLinebreak];
-        }
-        else if ([content.type isEqualToString:@"image"]) {
-            [self addImage:content];
-        }
-        else if ([content.type isEqualToString:@"blockquote"]) {
-            [self addQuote:content];
-        }
-        else if ([content.type containsString:@"list"]) {
-            [self addList:content];
-        }
-        else if ([content.type isEqualToString:@"aside"]) {
-            
-            if (content.content.length > 140)
-                [self addParagraph:content];
-            else
-                [self addAside:content];
-            
-        }
-        
+        [self processContent:content];
     } }
     
     _last = nil;
@@ -136,6 +111,48 @@
     
     [self.stackView addArrangedSubview:label];
     
+}
+
+- (void)processContent:(Content *)content {
+    if ([content.type isEqualToString:@"container"]) {
+        if ([(NSArray *)content.content count]) {
+            for (NSDictionary *dict in (NSArray *)[content content]) { @autoreleasepool {
+                
+                Content *subcontent = [Content instanceFromDictionary:dict];
+                [self processContent:subcontent];
+                
+            }}
+        }
+    }
+    else if ([content.type isEqualToString:@"paragraph"] && content.content.length) {
+        [self addParagraph:content];
+    }
+    else if ([content.type isEqualToString:@"heading"] && content.content.length) {
+        [self addHeading:content];
+    }
+    else if ([content.type isEqualToString:@"linebreak"] && _last && ![_last isKindOfClass:Paragraph.class]) {
+        [self addLinebreak];
+    }
+    else if ([content.type isEqualToString:@"image"]) {
+        [self addImage:content];
+    }
+    else if ([content.type isEqualToString:@"blockquote"]) {
+        [self addQuote:content];
+    }
+    else if ([content.type containsString:@"list"]) {
+        [self addList:content];
+    }
+    else if ([content.type isEqualToString:@"aside"]) {
+        
+        if (content.content.length > 140)
+            [self addParagraph:content];
+        else
+            [self addAside:content];
+        
+    }
+    else if ([content.type isEqualToString:@"youtube"]) {
+        [self addYoutube:content];
+    }
 }
 
 - (void)addParagraph:(Content *)content {
@@ -244,6 +261,17 @@
     _last = para;
     
     [self.stackView addArrangedSubview:para];
+}
+
+- (void)addYoutube:(Content *)content {
+    
+    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
+    youtube.URL = [NSURL URLWithString:content.url];
+    
+    _last = youtube;
+    
+    [self.stackView addArrangedSubview:youtube];
 }
 
 @end

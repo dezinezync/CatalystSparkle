@@ -20,6 +20,7 @@
     [encoder encodeObject:self.level forKey:@"level"];
     [encoder encodeObject:self.items forKey:@"items"];
     [encoder encodeObject:self.attributes forKey:@"attributes"];
+    [encoder encodeObject:self.videoID forKey:@"videoID"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -34,6 +35,7 @@
         self.items = [decoder decodeObjectForKey:@"items"];
         self.level = [decoder decodeObjectForKey:@"level"];
         self.attributes = [decoder decodeObjectForKey:@"attributes"];
+        self.videoID = [decoder decodeObjectForKey:@"videoID"];
     }
     return self;
 }
@@ -149,6 +151,10 @@
     
     if (self.attributes) {
         [dictionary setObject:self.attributes forKey:@"attributes"];
+    }
+    
+    if (self.videoID) {
+        [dictionary setObject:self.videoID forKey:@"videoID"];
     }
 
     return dictionary;

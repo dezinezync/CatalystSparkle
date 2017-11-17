@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/UIImageView+ImageLoading.m"
-            timestampString = "532499829.712284"
+            timestampString = "532618392.061736"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "62"
@@ -90,7 +90,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/UIImageView+ImageLoading.m"
-            timestampString = "532499829.712803"
+            timestampString = "532618392.062196"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "55"
@@ -106,7 +106,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/UIImageView+ImageLoading.m"
-            timestampString = "532499829.712998"
+            timestampString = "532618392.062389"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "59"
@@ -118,16 +118,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "532499829.713182"
+            timestampString = "532618392.062577"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "-viewDidLoad"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
+            landmarkName = "-addYoutube:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
