@@ -26,6 +26,23 @@
 - (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges
 {
     
+    weakify(self);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        
+        strongify(self);
+        
+        NSAttributedString *attrs = [self processText:text ranges:ranges];
+        
+        asyncMain(^{
+            self.attributedText = attrs;
+        });
+        
+    });
+}
+
+- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges {
+    
     NSDictionary *baseAttributes = @{NSFontAttributeName : self.font,
                                      NSForegroundColorAttributeName: self.textColor,
                                      NSParagraphStyleAttributeName: self.paragraphStyle
@@ -62,13 +79,13 @@
             @try {
                 [attrs addAttributes:dict range:range.range];
             } @catch (NSException *exception) {
-            
+                
             }
             
         } }
     }
     
-    self.attributedText = [attrs attributedStringByTrimmingWhitespace];
+    return [attrs attributedStringByTrimmingWhitespace];
 }
 
 #pragma mark - Overrides
@@ -100,19 +117,27 @@
 - (UIFont *)font
 {
     UIFont * bodyFont = [UIFont systemFontOfSize:22.f];
-    UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+    UIFont * baseFont;
+    
+    if (self.isCaption)
+        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
+    else
+        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
     
     return baseFont;
 }
 
 - (UIColor *)textColor
 {
-    return [UIColor blackColor];
+    return [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 1.f];
 }
 
 - (NSParagraphStyle *)paragraphStyle {
     NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
     style.lineHeightMultiple = 1.4f;
+    
+    if (self.isCaption)
+        style.alignment = NSTextAlignmentCenter;
     
     return style;
 }

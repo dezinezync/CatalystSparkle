@@ -17,68 +17,42 @@
 
 @implementation List
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    
-    if (self = [super initWithFrame:frame]) {
-        
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-     
-        UIStackView *stackView = [[UIStackView alloc] initWithFrame:self.bounds];
-        stackView.axis = UILayoutConstraintAxisVertical;
-        stackView.distribution = UIStackViewDistributionEqualSpacing;
-        stackView.spacing = 16.f;
-        stackView.alignment = UIStackViewAlignmentFill;
-        stackView.baselineRelativeArrangement = YES;
-        
-//        stackView.translatesAutoresizingMaskIntoConstraints = NO;
-        
-        [self addSubview:stackView];
-        _stackView = stackView;
-        
-    }
-    
-    return self;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    if (self.superview) {
-        [self invalidateIntrinsicContentSize];
-    }
-}
-
-- (CGSize)intrinsicContentSize
-{
-    CGSize size = [self.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-    return size;
-}
-
 #pragma mark -
 
 - (void)setContent:(Content *)content {
     
-    self.type = [content.type isEqualToString:@"orderedList"] ? 1 : 0;
+    self.type = [content.type isEqualToString:@"orderedList"] ? 0 : 1;
     
-    for (Content *item in content.items) { @autoreleasepool {
-        
-        CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f);
-        
-        Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
-        [para setText:item.content ranges:item.ranges];
-        
-        frame.size.height = para.contentSize.height;
-        para.frame = frame;
-        
-        [self.stackView addArrangedSubview:para];
-        
-    }}
+    weakify(self);
     
-    CGRect frame = self.stackView.frame;
-    frame.size.height = [self.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
-    
-    self.stackView.frame = frame;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+       
+        NSUInteger index = 0;
+        
+        NSMutableAttributedString *attrs = [NSMutableAttributedString new];
+        
+        strongify(self);
+        
+        for (Content *item in content.items) { @autoreleasepool {
+            
+            index++;
+            
+            NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
+            NSString *stepString = formattedString(@"%@ ", step);
+            
+            NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
+            
+            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:@{NSFontAttributeName: self.font}]];
+            [attrs appendAttributedString:sub];
+            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+            
+        }}
+        
+        asyncMain(^{
+            self.attributedText = attrs;
+        })
+        
+    });
     
 }
 

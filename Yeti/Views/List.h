@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "Content.h"
+#import "Paragraph.h"
 
 typedef NS_ENUM(NSInteger) {
     UnorderedList,
     OrderedList
 } ListType;
 
-@interface List : UIView
+@interface List : Paragraph
 
 @property (nonatomic) ListType type;
 

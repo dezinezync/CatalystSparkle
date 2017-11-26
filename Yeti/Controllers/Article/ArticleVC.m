@@ -19,6 +19,8 @@
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
+#import <DZKit/NSArray+Safe.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @interface ArticleVC ()
 
@@ -27,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollBottom;
 @property (weak, nonatomic) UIView *last; // reference to the last setup view.
+@property (weak, nonatomic) id nextItem; // next item which will be processed
 
 @end
 
@@ -58,8 +61,12 @@
     [self addTitle];
     
     // add Body
+    NSUInteger idx = 0;
     for (Content *content in self.item.content) { @autoreleasepool {
+        _nextItem = [self.item.content safeObjectAtIndex:idx+1];
         [self processContent:content];
+        
+        idx++;
     } }
     
     _last = nil;
@@ -120,11 +127,18 @@
 - (void)processContent:(Content *)content {
     if ([content.type isEqualToString:@"container"]) {
         if ([(NSArray *)content.content count]) {
+            
+            NSUInteger idx = 0;
+            
             for (NSDictionary *dict in (NSArray *)[content content]) { @autoreleasepool {
                 
                 Content *subcontent = [Content instanceFromDictionary:dict];
+                
+                _nextItem = [(NSArray *)(content.content) safeObjectAtIndex:idx+1];
+                
                 [self processContent:subcontent];
                 
+                idx++;
             }}
         }
     }
@@ -167,6 +181,15 @@
     if ([_last isKindOfClass:Heading.class])
         para.afterHeading = YES;
     
+    NSNumber *hasPara = [self.stackView.arrangedSubviews rz_reduce:^id(__kindof NSNumber *prev, __kindof UIView *current, NSUInteger idx, NSArray *array) {
+        BOOL retval = prev.boolValue || [current isKindOfClass:Paragraph.class];
+        return @(retval);
+    } initialValue:@NO];
+    
+    if ([_last isKindOfClass:Image.class]
+        && [self.stackView.arrangedSubviews.lastObject isKindOfClass:UIView.class] && hasPara.boolValue)
+        para.caption = YES;
+    
     [para setText:content.content ranges:content.ranges];
     
     frame.size.height = para.intrinsicContentSize.height;
@@ -193,10 +216,14 @@
 }
 
 - (void)addLinebreak {
+    // this rejects multiple \n in succession which may be undesired.
+    if ([_last isKindOfClass:UIView.class])
+        return;
+    
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 24.f);
     
     UIView *linebreak = [[UIView alloc] initWithFrame:frame];
-    
+    [linebreak.heightAnchor constraintEqualToConstant:24.f].active = YES;
     _last = linebreak;
     
     [self.stackView addArrangedSubview:linebreak];
