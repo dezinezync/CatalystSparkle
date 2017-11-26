@@ -31,6 +31,8 @@
     self.DS.delegate = self;
     self.DS.data = MyFeedsManager.feeds;
     
+    self.title = @"Feeds";
+    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
