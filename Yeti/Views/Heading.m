@@ -20,6 +20,15 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (self.superview) {
+        [self invalidateIntrinsicContentSize];
+    }
+}
+
 - (BOOL)translatesAutoresizingMaskIntoConstraints
 {
     return NO;
@@ -34,12 +43,14 @@
 {
     _level = level;
     
-    UIFont *base = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     NSString *scaleStr = formattedString(@"1.%@", @(8-(_level-1)));
     CGFloat scale = scaleStr.floatValue;
     
-    UIFont *font = [UIFont systemFontOfSize:ceil(base.pointSize * scale) weight:UIFontWeightBold];
-    self.font = font;
+    UIFont * bodyFont = [UIFont systemFontOfSize:22 * scale weight:UIFontWeightBold];
+    UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:bodyFont];
+    
+//    UIFont *font = [UIFont systemFontOfSize:ceil(base.pointSize * scale) weight:UIFontWeightBold];
+    self.font = baseFont;
 }
 
 @end

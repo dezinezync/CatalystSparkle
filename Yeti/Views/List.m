@@ -40,6 +40,15 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (self.superview) {
+        [self invalidateIntrinsicContentSize];
+    }
+}
+
 - (CGSize)intrinsicContentSize
 {
     CGSize size = [self.stackView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];

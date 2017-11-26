@@ -12,7 +12,11 @@
 #import "FeedVC.h"
 #import <DZKit/DZBasicDatasource.h>
 
-@interface FeedsVC () <DZDatasource>
+#import <DZKit/EFNavController.h>
+
+@interface FeedsVC () <DZDatasource> {
+    BOOL _refreshing;
+}
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
 
@@ -28,6 +32,12 @@
     self.DS.data = MyFeedsManager.feeds;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    
+    UIRefreshControl *control = [[UIRefreshControl alloc] init];
+    [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    
+    [self.tableView addSubview:control];
+    self.refreshControl = control;
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -64,7 +74,44 @@
     
     FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
     
-    [self.to_splitViewController to_showSecondaryViewController:vc sender:self];
+    [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+#pragma mark -
+
+- (void)beginRefreshing:(UIRefreshControl *)sender {
+    
+    if (_refreshing)
+        return;
+    
+    _refreshing = YES;
+    
+    weakify(self);
+    
+    [MyFeedsManager getFeeds:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        asyncMain(^{
+            strongify(self);
+            
+            self.DS.data = responseObject;
+            
+            [sender endRefreshing];
+        });
+        
+        _refreshing = NO;
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        DDLogError(@"%@", error);
+        
+        asyncMain(^{
+            [sender endRefreshing];
+        });
+        
+        _refreshing = NO;
+        
+    }];
     
 }
 

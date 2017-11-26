@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F00411051FC9960E00B513A9 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = F00411041FC9960E00B513A9 /* Image.m */; };
 		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
@@ -42,9 +43,6 @@
 		F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
-		F0EBC7E41FBB27E6004A5605 /* ImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E31FBB27E6004A5605 /* ImageLoader.m */; };
-		F0EBC7E71FBB281F004A5605 /* UIImageView+ImageLoading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E61FBB281F004A5605 /* UIImageView+ImageLoading.m */; };
-		F0EBC7EA1FBB288F004A5605 /* ImageResponseParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E91FBB288F004A5605 /* ImageResponseParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +63,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F00411031FC9960E00B513A9 /* Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		F00411041FC9960E00B513A9 /* Image.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
 		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
 		F005265E1FBF148E00A103CD /* Youtube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Youtube.m; sourceTree = "<group>"; };
 		F01D714D1FBC11F100DF84B9 /* Blockquote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blockquote.h; sourceTree = "<group>"; };
@@ -127,12 +127,6 @@
 		F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Paragraph.m; sourceTree = "<group>"; };
 		F0EBC7DF1FBB2181004A5605 /* Heading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Heading.h; sourceTree = "<group>"; };
 		F0EBC7E01FBB2181004A5605 /* Heading.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Heading.m; sourceTree = "<group>"; };
-		F0EBC7E21FBB27E6004A5605 /* ImageLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageLoader.h; sourceTree = "<group>"; };
-		F0EBC7E31FBB27E6004A5605 /* ImageLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageLoader.m; sourceTree = "<group>"; };
-		F0EBC7E51FBB281F004A5605 /* UIImageView+ImageLoading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImageView+ImageLoading.h"; sourceTree = "<group>"; };
-		F0EBC7E61FBB281F004A5605 /* UIImageView+ImageLoading.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+ImageLoading.m"; sourceTree = "<group>"; };
-		F0EBC7E81FBB288F004A5605 /* ImageResponseParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageResponseParser.h; sourceTree = "<group>"; };
-		F0EBC7E91FBB288F004A5605 /* ImageResponseParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageResponseParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -358,6 +352,8 @@
 				F022F0491FBD4BFF006A0036 /* Aside.m */,
 				F005265D1FBF148E00A103CD /* Youtube.h */,
 				F005265E1FBF148E00A103CD /* Youtube.m */,
+				F00411031FC9960E00B513A9 /* Image.h */,
+				F00411041FC9960E00B513A9 /* Image.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -367,12 +363,6 @@
 			children = (
 				F070C3371FBAC3CC00912CCF /* FeedsManager.h */,
 				F070C3381FBAC3CC00912CCF /* FeedsManager.m */,
-				F0EBC7E21FBB27E6004A5605 /* ImageLoader.h */,
-				F0EBC7E31FBB27E6004A5605 /* ImageLoader.m */,
-				F0EBC7E51FBB281F004A5605 /* UIImageView+ImageLoading.h */,
-				F0EBC7E61FBB281F004A5605 /* UIImageView+ImageLoading.m */,
-				F0EBC7E81FBB288F004A5605 /* ImageResponseParser.h */,
-				F0EBC7E91FBB288F004A5605 /* ImageResponseParser.m */,
 			);
 			path = FeedsManager;
 			sourceTree = "<group>";
@@ -550,20 +540,18 @@
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
-				F0EBC7E41FBB27E6004A5605 /* ImageLoader.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
-				F0EBC7E71FBB281F004A5605 /* UIImageView+ImageLoading.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,
+				F00411051FC9960E00B513A9 /* Image.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,
 				F070C3441FBACD2C00912CCF /* Content.m in Sources */,
-				F0EBC7EA1FBB288F004A5605 /* ImageResponseParser.m in Sources */,
 				F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */,
 				F070C3421FBACD2C00912CCF /* Range.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,

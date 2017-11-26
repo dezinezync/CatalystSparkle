@@ -13,6 +13,7 @@
 #import "FeedsManager.h"
 
 #import <DZKit/DZBasicDatasource.h>
+#import <DZKit/EFNavController.h>
 
 @interface FeedVC () <DZDatasource> {
     NSInteger _page;
@@ -72,7 +73,9 @@
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     
-    [self.to_splitViewController to_showDetailViewController:vc sender:self];
+    EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
+    
+    [self.splitViewController showDetailViewController:nav sender:self];
 }
 
 #pragma mark - <ScrollLoading>

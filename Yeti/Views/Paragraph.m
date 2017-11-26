@@ -73,6 +73,15 @@
 
 #pragma mark - Overrides
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (self.superview) {
+        [self invalidateIntrinsicContentSize];
+    }
+}
+
 - (CGSize)contentSize
 {
     CGSize size = [super contentSize];
@@ -90,7 +99,10 @@
 
 - (UIFont *)font
 {
-    return [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    UIFont * bodyFont = [UIFont systemFontOfSize:22.f];
+    UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+    
+    return baseFont;
 }
 
 - (UIColor *)textColor
@@ -101,9 +113,6 @@
 - (NSParagraphStyle *)paragraphStyle {
     NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
     style.lineHeightMultiple = 1.4f;
-    
-    if (self.afterHeading)
-        style.paragraphSpacingBefore = 24.f;
     
     return style;
 }

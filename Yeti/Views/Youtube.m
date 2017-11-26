@@ -50,6 +50,15 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (self.superview) {
+        [self invalidateIntrinsicContentSize];
+    }
+}
+
 #pragma mark -
 
 - (void)setVideoID:(NSString *)videoID

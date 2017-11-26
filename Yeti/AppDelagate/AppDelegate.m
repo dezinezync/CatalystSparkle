@@ -7,8 +7,8 @@
 //
 
 #import "AppDelegate.h"
-#import <DZKit/DZSplitViewController.h>
 #import "FeedsVC.h"
+#import <DZKit/EFNavController.h>
 
 @interface AppDelegate ()
 
@@ -37,10 +37,11 @@
 - (void)setupRootController {
     
     FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
-    UINavigationController *nav1 = [[UINavigationController alloc] initWithRootViewController:vc];
-    UINavigationController *nav2 = [[UINavigationController alloc] init];
+    EFNavController *nav1 = [[EFNavController alloc] initWithRootViewController:vc];
+    EFNavController *nav2 = [[EFNavController alloc] init];
     
-    DZSplitViewController *splitVC = [[DZSplitViewController alloc] initWithViewControllers:@[nav1, nav2]];
+    UISplitViewController *splitVC = [[UISplitViewController alloc] init];
+    splitVC.viewControllers = @[nav1, nav2];
     self.window.rootViewController = splitVC;
     
 }

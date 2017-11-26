@@ -15,8 +15,9 @@
 #import "List.h"
 #import "Aside.h"
 #import "Youtube.h"
+#import "Image.h"
 
-#import "UIImageView+ImageLoading.h"
+#import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
 
 @interface ArticleVC ()
@@ -91,12 +92,15 @@
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
     para.lineHeightMultiple = 1.2f;
     
-    NSDictionary *baseAttributes = @{NSFontAttributeName : [UIFont preferredFontForTextStyle:UIFontTextStyleTitle1],
+    UIFont * titleFont = [UIFont systemFontOfSize:36.f weight:UIFontWeightSemibold];
+    UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:titleFont];
+    
+    NSDictionary *baseAttributes = @{NSFontAttributeName : baseFont,
                                      NSForegroundColorAttributeName: UIColor.blackColor,
                                      NSParagraphStyleAttributeName: para
                                      };
     
-    NSDictionary *subtextAttributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline],
+    NSDictionary *subtextAttributes = @{NSFontAttributeName: [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont systemFontOfSize:20.f weight:UIFontWeightMedium]],
                                         NSForegroundColorAttributeName: [UIColor colorWithWhite:0.f alpha:0.54f],
                                         NSParagraphStyleAttributeName: para
                                         };
@@ -201,15 +205,15 @@
 - (void)addImage:(Content *)content {
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
     
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:frame];
-    imageView.contentMode = UIViewContentModeScaleAspectFit;
-    imageView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.f];
+    Image *imageView = [[Image alloc] initWithFrame:frame];
     
     _last = imageView;
     
     [self.stackView addArrangedSubview:imageView];
     [imageView.heightAnchor constraintEqualToConstant:32.f].active = YES;
-    [imageView il_setImageWithURL:content.url];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [imageView il_setImageWithURL:content.url];
+    });
     
     [self addLinebreak];
 }
