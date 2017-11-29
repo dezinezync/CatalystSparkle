@@ -35,19 +35,30 @@
         
         for (Content *item in content.items) { @autoreleasepool {
             
-            if (!item.content)
+            if (!item.content) {
+                
+                NSUInteger oldIndex = index;
+                
+                // process like normal item, but intended further by 1 tab
+                if ([item.type containsString:@"orderedList"]) {
+                    
+                    index = 0;
+                    
+                    for (Content *subitem in item.items) { @autoreleasepool {
+                        index++;
+                        [self append:subitem index:index attributedString:attrs indent:1];
+                        
+                    }}
+                    
+                }
+                
+                index = oldIndex;
+                
                 return;
+            }
             
             index++;
-            
-            NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
-            NSString *stepString = formattedString(@"%@ ", step);
-            
-            NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
-            
-            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:@{NSFontAttributeName: self.font, NSParagraphStyleAttributeName: self.paragraphStyle}]];
-            [attrs appendAttributedString:sub];
-            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: self.paragraphStyle}]];
+            [self append:item index:index attributedString:attrs indent:0];
             
         }}
         
@@ -57,6 +68,18 @@
         
     });
     
+}
+
+- (void)append:(Content *)item index:(NSUInteger)index attributedString:(NSMutableAttributedString *)attrs indent:(NSInteger)indent
+{
+    NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
+    NSString *stepString = formattedString(@"%@%@ ", indent == 1 ? @"\\t" : @"", step);
+    
+    NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
+    
+    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:@{NSFontAttributeName: self.font, NSParagraphStyleAttributeName: self.paragraphStyle}]];
+    [attrs appendAttributedString:sub];
+    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: self.paragraphStyle}]];
 }
 
 @end
