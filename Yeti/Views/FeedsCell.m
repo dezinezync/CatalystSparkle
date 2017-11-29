@@ -7,6 +7,8 @@
 //
 
 #import "FeedsCell.h"
+#import <DZKit/NSString+Extras.h>
+#import <DZNetworking/UIImageView+ImageLoading.h>
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
@@ -27,6 +29,8 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 {
     [super prepareForReuse];
     
+    [self.faviconView il_cancelImageLoading];
+    
     self.faviconView.image = nil;
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
@@ -36,6 +40,9 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 {
     self.titleLabel.text = feed.title;
     self.countLabel.text = 0;
+    
+    if (feed.favicon && ![feed.favicon isBlank])
+        [self.faviconView il_setImageWithURL:formattedURL(@"%@", feed.favicon)];
 }
 
 @end

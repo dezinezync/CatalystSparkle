@@ -6,7 +6,7 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedsVC.h"
+#import "FeedsVC+Actions.h"
 #import "FeedsManager.h"
 #import "FeedsCell.h"
 #import "FeedVC.h"
@@ -14,9 +14,7 @@
 
 #import <DZKit/EFNavController.h>
 
-@interface FeedsVC () <DZDatasource> {
-    BOOL _refreshing;
-}
+@interface FeedsVC () <DZDatasource>
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
 
@@ -29,7 +27,8 @@
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
-    self.DS.data = MyFeedsManager.feeds;
+    
+    [self setupData:MyFeedsManager.feeds];
     
     self.title = @"Feeds";
     
@@ -40,6 +39,10 @@
     
     [self.tableView addSubview:control];
     self.refreshControl = control;
+    
+    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    
+    self.navigationItem.rightBarButtonItems = @[add];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -82,39 +85,9 @@
 
 #pragma mark -
 
-- (void)beginRefreshing:(UIRefreshControl *)sender {
-    
-    if (_refreshing)
-        return;
-    
-    _refreshing = YES;
-    
-    weakify(self);
-    
-    [MyFeedsManager getFeeds:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        asyncMain(^{
-            strongify(self);
-            
-            self.DS.data = responseObject;
-            
-            [sender endRefreshing];
-        });
-        
-        _refreshing = NO;
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        DDLogError(@"%@", error);
-        
-        asyncMain(^{
-            [sender endRefreshing];
-        });
-        
-        _refreshing = NO;
-        
-    }];
-    
+- (void)setupData:(NSArray <Feed *> *)feeds
+{
+    self.DS.data = feeds;
 }
 
 @end

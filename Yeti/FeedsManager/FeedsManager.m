@@ -7,6 +7,7 @@
 //
 
 #import "FeedsManager.h"
+#import "FeedItem.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
@@ -102,6 +103,39 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if (successCB)
             successCB(items, response, task);
+        
+    } error:errorCB];
+}
+
+- (void)addFeed:(NSURL *)url success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    NSArray <Feed *> *existing = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+        return [obj.url isEqualToString:url.absoluteString];
+    }];
+    
+    if (existing.count) {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:@"FeedsManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"You already have this feed in your list."}], nil, nil);
+        }
+        
+        return;
+    }
+    
+    [self.session PUT:@"/feed" parameters:@{@"URL": url} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
+        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
+        
+        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        Feed *feed = [Feed instanceFromDictionary:feedObj];
+        feed.articles = articles;
+        
+        if (successCB)
+            successCB(feed, response, task);
         
     } error:errorCB];
 }

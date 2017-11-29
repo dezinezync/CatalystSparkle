@@ -13,6 +13,7 @@
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
 		F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */ = {isa = PBXBuildFile; fileRef = F022F0491FBD4BFF006A0036 /* Aside.m */; };
+		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -75,6 +76,8 @@
 		F01D71541FBC232200DF84B9 /* List.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = List.m; sourceTree = "<group>"; };
 		F022F0481FBD4BFF006A0036 /* Aside.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aside.h; sourceTree = "<group>"; };
 		F022F0491FBD4BFF006A0036 /* Aside.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Aside.m; sourceTree = "<group>"; };
+		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
+		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
 		F070C2D91FBABC3500912CCF /* Yeti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yeti.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F070C2DC1FBABC3500912CCF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F070C2DD1FBABC3600912CCF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -292,6 +295,8 @@
 			children = (
 				F070C3321FBAC37600912CCF /* FeedsVC.h */,
 				F070C3331FBAC37600912CCF /* FeedsVC.m */,
+				F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */,
+				F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -547,6 +552,7 @@
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,
 				F00411051FC9960E00B513A9 /* Image.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
+				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,

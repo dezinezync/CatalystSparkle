@@ -18,9 +18,14 @@
 - (CGSize)contentSize
 {
     CGSize size = [super contentSize];
-    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 32.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height + 12.f;
-    
+    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 32.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height + 36.f;
+
     return size;
+}
+
+- (CGSize)intrinsicContentSize
+{
+    return [self contentSize];
 }
 
 - (UIFont *)font
@@ -71,7 +76,7 @@
     [super layoutSubviews];
     
     CGRect frame = self.bounds;
-    self.textView.frame = CGRectMake(42.f, 0, frame.size.width - 42.f, frame.size.height - 16.f);
+    self.textView.frame = CGRectMake(42.f, 0, frame.size.width - 42.f, frame.size.height + 36.f);
     
     if (self.superview) {
         [self invalidateIntrinsicContentSize];

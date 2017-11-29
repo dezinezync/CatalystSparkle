@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FeedsVC : UITableViewController
+@class Feed;
+
+@interface FeedsVC : UITableViewController {
+    BOOL _refreshing;
+}
+
+- (void)setupData:(NSArray <Feed *> *)feeds;
 
 @end

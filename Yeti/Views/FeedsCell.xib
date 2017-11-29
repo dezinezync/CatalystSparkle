@@ -52,9 +52,9 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="vgv-JX-KbB" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="LcP-sf-kih"/>
-                    <constraint firstAttribute="bottom" secondItem="vgv-JX-KbB" secondAttribute="bottom" constant="12" id="dLb-gy-7qT"/>
+                    <constraint firstAttribute="bottom" secondItem="vgv-JX-KbB" secondAttribute="bottom" priority="999" constant="12" id="dLb-gy-7qT"/>
                     <constraint firstAttribute="trailing" secondItem="vgv-JX-KbB" secondAttribute="trailing" constant="8" id="ga2-OY-CkH"/>
-                    <constraint firstItem="vgv-JX-KbB" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="12" id="ihg-24-iBU"/>
+                    <constraint firstItem="vgv-JX-KbB" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" priority="999" constant="12" id="ihg-24-iBU"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
