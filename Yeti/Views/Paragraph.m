@@ -68,7 +68,10 @@
                 [dict setObject:@-1 forKey:@"NSSuperScript"];
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
-                [dict setObject:[NSURL URLWithString:range.url] forKey:NSLinkAttributeName];
+                NSURL *URL = [NSURL URLWithString:range.url];
+                if (URL) {
+                    [dict setObject:URL forKey:NSLinkAttributeName];
+                }
             }
             else if ([range.element isEqualToString:@"code"]) {
                 [dict setObject:[UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular] forKey:NSFontAttributeName];

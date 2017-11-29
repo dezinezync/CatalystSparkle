@@ -35,6 +35,9 @@
         
         for (Content *item in content.items) { @autoreleasepool {
             
+            if (!item.content)
+                return;
+            
             index++;
             
             NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
