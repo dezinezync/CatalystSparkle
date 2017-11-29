@@ -116,7 +116,7 @@
 
 - (UIFont *)font
 {
-    UIFont * bodyFont = [UIFont systemFontOfSize:22.f];
+    UIFont * bodyFont = [UIFont systemFontOfSize:20.f];
     UIFont * baseFont;
     
     if (self.isCaption)

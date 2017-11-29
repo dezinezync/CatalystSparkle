@@ -42,9 +42,9 @@
             
             NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
             
-            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:@{NSFontAttributeName: self.font}]];
+            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:@{NSFontAttributeName: self.font, NSParagraphStyleAttributeName: self.paragraphStyle}]];
             [attrs appendAttributedString:sub];
-            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+            [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: self.paragraphStyle}]];
             
         }}
         
