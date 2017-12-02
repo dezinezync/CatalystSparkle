@@ -63,7 +63,7 @@
         
         [self addSubview:decorator];
         
-        BlockPara *textview = [[BlockPara alloc] initWithFrame:CGRectMake(42.f, 0, frame.size.width - 42.f, frame.size.height - 16.f)];
+        BlockPara *textview = [[BlockPara alloc] initWithFrame:self.bounds];
         [self addSubview:textview];
         _textView = textview;
     }
@@ -96,9 +96,6 @@
 - (CGSize)intrinsicContentSize
 {
     CGSize size = [self.textView contentSize];
-    size.width += 42.f;
-    size.height = [self.textView sizeThatFits:CGSizeMake(self.bounds.size.width, CGFLOAT_MAX)].height;
-    
     return size;
 }
 

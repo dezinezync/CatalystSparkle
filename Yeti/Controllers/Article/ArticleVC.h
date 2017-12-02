@@ -13,4 +13,6 @@
 
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
 
+@property (nonatomic, weak) FeedItem * _Nullable item;
+
 @end

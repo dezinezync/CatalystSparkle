@@ -6,7 +6,7 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "ArticleVC.h"
+#import "ArticleVC+Toolbar.h"
 #import "Content.h"
 
 #import "Paragraph.h"
@@ -24,7 +24,6 @@
 
 @interface ArticleVC ()
 
-@property (nonatomic, weak) FeedItem *item;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollBottom;
@@ -60,6 +59,7 @@
     }];
     
     [self addTitle];
+    [self setupToolbar:self.traitCollection];
     
     // add Body
     NSUInteger idx = 0;
@@ -88,6 +88,22 @@
     }
     
     [super viewSafeAreaInsetsDidChange];
+}
+
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    
+    weakify(self);
+    
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+    
+        strongify(self);
+        
+        [self setupToolbar:newCollection];
+        
+    } completion:nil];
+    
 }
 
 #pragma mark -
