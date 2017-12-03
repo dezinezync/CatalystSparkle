@@ -6,6 +6,10 @@
 
 }
 
+@property (nonatomic, strong) NSArray <UIView *> *primedContent;
+
+#pragma mark - Properties from server or DB
+
 @property (nonatomic, copy) NSString *articleTitle;
 @property (nonatomic, copy) NSString *articleURL;
 @property (nonatomic, copy) NSString *author;

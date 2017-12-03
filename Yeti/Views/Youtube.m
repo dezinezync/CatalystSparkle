@@ -44,6 +44,7 @@
         _webview = webview;
         _webview.layer.cornerRadius = 8.f;
         _webview.clipsToBounds = YES;
+        _webview.scrollView.scrollEnabled = NO;
         
     }
     

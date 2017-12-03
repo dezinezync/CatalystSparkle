@@ -58,19 +58,38 @@
         
     }];
     
-    [self addTitle];
     [self setupToolbar:self.traitCollection];
     
+#ifdef DEBUG
+    NSDate *start = NSDate.date;
+#endif
+    
     // add Body
-    NSUInteger idx = 0;
-    for (Content *content in self.item.content) { @autoreleasepool {
-        _nextItem = [self.item.content safeObjectAtIndex:idx+1];
-        [self processContent:content];
+    if (!self.item.primedContent) {
         
-        idx++;
-    } }
+        [self addTitle];
+        
+        NSUInteger idx = 0;
+        for (Content *content in self.item.content) { @autoreleasepool {
+            _nextItem = [self.item.content safeObjectAtIndex:idx+1];
+            [self processContent:content];
+            
+            idx++;
+        } }
+        
+        self.item.primedContent = self.stackView.arrangedSubviews;
+    }
+    else {
+        for (UIView *view in self.item.primedContent) {
+            [self.stackView addArrangedSubview:view];
+        }
+    }
     
     _last = nil;
+    
+#ifdef DEBUG
+    DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
+#endif
 }
 
 - (void)didReceiveMemoryWarning {
@@ -204,7 +223,8 @@
     } initialValue:@NO];
     
     if ([_last isKindOfClass:Image.class]
-        && [self.stackView.arrangedSubviews.lastObject isKindOfClass:UIView.class] && hasPara.boolValue)
+        && [self.stackView.arrangedSubviews.lastObject isKindOfClass:UIView.class] && hasPara.boolValue
+        && content.content.length <= 100)
         para.caption = YES;
     
     [para setText:content.content ranges:content.ranges];
@@ -230,6 +250,8 @@
     _last = heading;
     
     [self.stackView addArrangedSubview:heading];
+    
+    [self addLinebreak];
 }
 
 - (void)addLinebreak {

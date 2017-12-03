@@ -13,7 +13,7 @@
 - (void)setupToolbar:(UITraitCollection *)newCollection
 {
     
-    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(didTapShare)];
+    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(didTapShare:)];
     UIBarButtonItem *const flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
@@ -30,7 +30,7 @@
 
 #pragma mark -
 
-- (void)didTapShare {
+- (void)didTapShare:(UIBarButtonItem *)sender {
     
     if (!self.item)
         return;
@@ -39,6 +39,13 @@
     NSURL *URL = formattedURL(@"%@", self.item.articleURL);
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
+    
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.barButtonItem = sender;
+        
+    }
     
     [self presentViewController:avc animated:YES completion:nil];
     

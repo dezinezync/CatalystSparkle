@@ -74,9 +74,21 @@
                 }
             }
             else if ([range.element isEqualToString:@"code"]) {
-                [dict setObject:[UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular] forKey:NSFontAttributeName];
-                [dict setObject:[UIColor colorWithWhite:0.9 alpha:1.f] forKey:NSBackgroundColorAttributeName];
-                [dict setObject:[UIColor redColor] forKey:NSForegroundColorAttributeName];
+                
+                __block UIFont *monoFont;
+                __block UIColor *textcolor;
+                __block UIColor *background;
+                
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    monoFont = [UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular];
+                    textcolor = [UIColor colorWithWhite:0.9 alpha:1.f];
+                    background = [UIColor redColor];
+                });
+                
+                
+                [dict setObject:monoFont forKey:NSFontAttributeName];
+                [dict setObject:textcolor forKey:NSBackgroundColorAttributeName];
+                [dict setObject:background forKey:NSForegroundColorAttributeName];
             }
             
             @try {
@@ -119,20 +131,29 @@
 
 - (UIFont *)font
 {
-    UIFont * bodyFont = [UIFont systemFontOfSize:20.f];
-    UIFont * baseFont;
+    __block UIFont * bodyFont;
+    __block UIFont * baseFont;
     
-    if (self.isCaption)
-        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
-    else
-        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        bodyFont = [UIFont systemFontOfSize:20.f];
+        if (self.isCaption)
+            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
+        else
+            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+    });
     
     return baseFont;
 }
 
 - (UIColor *)textColor
 {
-    return [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 1.f];
+    __block UIColor *color;
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        color = [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 1.f];
+    });
+    
+    return color;
 }
 
 - (NSParagraphStyle *)paragraphStyle {
