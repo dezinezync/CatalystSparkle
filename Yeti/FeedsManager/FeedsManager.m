@@ -6,11 +6,14 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedsManager.h"
+#import "FeedsManager+KVS.h"
 #import "FeedItem.h"
+#import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
+
+NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 
 @interface FeedsManager ()
 
@@ -77,6 +80,17 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         strongify(self);
         
+        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        
+        for (Feed *feed in feeds) {
+            
+            for (FeedItem *item in feed.articles) {
+                NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
+                item.read = [defaults boolForKey:key];
+            }
+            
+        }
+        
         self.feeds = feeds;
         
         if (successCB)
@@ -97,6 +111,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         NSArray <FeedItem *> *items = [articles rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
         }];
+        
+        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        
+        for (FeedItem *item in items) {
+            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
+            item.read = [defaults boolForKey:key];
+        }
         
         if (feed)
             feed.articles = [feed.articles arrayByAddingObjectsFromArray:items];

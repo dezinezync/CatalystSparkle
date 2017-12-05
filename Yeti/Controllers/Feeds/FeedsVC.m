@@ -13,6 +13,7 @@
 #import <DZKit/DZBasicDatasource.h>
 
 #import <DZKit/EFNavController.h>
+#import <DZKit/UIViewController+AnimatedDeselect.h>
 
 @interface FeedsVC () <DZDatasource>
 
@@ -44,16 +45,19 @@
     
     self.navigationItem.rightBarButtonItems = @[add];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(readNotification:) name:FeedDidUpReadCount object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self dz_smoothlyDeselectRows:self.tableView];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -88,6 +92,30 @@
 - (void)setupData:(NSArray <Feed *> *)feeds
 {
     self.DS.data = feeds;
+}
+
+- (void)readNotification:(NSNotification *)note {
+    
+    if (note.object && [note.object isKindOfClass:NSNumber.class]) {
+        
+        NSInteger feedID = [note.object integerValue];
+        __block NSUInteger row = NSNotFound;
+        
+        [self.DS.data enumerateObjectsUsingBlock:^(Feed *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            if (obj.feedID.integerValue == feedID) {
+                row = idx;
+                *stop = YES;
+            }
+            
+        }];
+        
+        if (row != NSNotFound) {
+            [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+        }
+        
+    }
+    
 }
 
 @end

@@ -20,6 +20,10 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
 - (void)configure:(FeedItem *)item
 {
     self.titleLabel.text = [item.articleTitle stringByAppendingString:[NSString stringWithFormat:@" - %@", item.author?:@"Unknown"]];
+    
+    if (item.isRead)
+        self.titleLabel.textColor = [self.titleLabel.textColor colorWithAlphaComponent:0.8f];
+    
 }
 
 @end

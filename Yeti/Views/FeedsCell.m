@@ -18,11 +18,13 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     [super awakeFromNib];
     // Initialization code
     
-    self.countLabel.layer.cornerRadius = ceil(self.countLabel.bounds.size.height);
-    
     self.faviconView.image = nil;
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
+    
+    self.countLabel.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+    self.countLabel.layer.cornerRadius = ceil(self.countLabel.bounds.size.height / 2.f);
+    self.countLabel.layer.masksToBounds = YES;
 }
 
 - (void)prepareForReuse
@@ -38,8 +40,15 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
 - (void)configure:(Feed *)feed
 {
+    
+    NSInteger unread = 0;
+    for (FeedItem *item in feed.articles) {
+        if (!item.isRead)
+            unread++;
+    }
+    
     self.titleLabel.text = feed.title;
-    self.countLabel.text = 0;
+    self.countLabel.text = @(unread).stringValue;
     
     if (feed.favicon && ![feed.favicon isBlank])
         [self.faviconView il_setImageWithURL:formattedURL(@"%@", feed.favicon)];

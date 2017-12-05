@@ -19,7 +19,7 @@
 @property (nonatomic, copy) NSString *coverImage;
 @property (nonatomic, copy) NSString *guid;
 @property (nonatomic, copy) NSString *modified;
-@property (nonatomic, assign) BOOL read;
+@property (nonatomic, assign, getter=isRead) BOOL read;
 @property (nonatomic, copy) NSString *timestamp;
 
 @property (nonatomic, copy) NSString *itunesImage;

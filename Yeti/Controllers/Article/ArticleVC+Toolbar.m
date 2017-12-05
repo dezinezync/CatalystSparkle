@@ -20,8 +20,10 @@
         self.navigationItem.rightBarButtonItems = nil;
         self.toolbarItems = @[flex, share];
         self.navigationController.toolbarHidden = NO;
+        self.title = nil;
     }
     else {
+        self.title = @"Article";
         self.toolbarItems = nil;
         self.navigationController.toolbarHidden = YES;
         self.navigationItem.rightBarButtonItems = @[share];

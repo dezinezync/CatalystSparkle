@@ -7,6 +7,7 @@
 //
 
 #import "ArticleVC+Toolbar.h"
+#import "FeedsManager+KVS.h"
 #import "Content.h"
 
 #import "Paragraph.h"
@@ -29,6 +30,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollBottom;
 @property (weak, nonatomic) UIView *last; // reference to the last setup view.
 @property (weak, nonatomic) id nextItem; // next item which will be processed
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loader;
 
 @end
 
@@ -46,7 +48,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.title = @"Article";
     
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.stackView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -60,6 +61,22 @@
     
     [self setupToolbar:self.traitCollection];
     
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    
+    [self.loader startAnimating];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    
 #ifdef DEBUG
     NSDate *start = NSDate.date;
 #endif
@@ -70,16 +87,28 @@
         [self addTitle];
         
         NSUInteger idx = 0;
+        
+        self.stackView.hidden = YES;
+        
         for (Content *content in self.item.content) { @autoreleasepool {
-            _nextItem = [self.item.content safeObjectAtIndex:idx+1];
+//            _nextItem = [self.item.content safeObjectAtIndex:idx+1];
             [self processContent:content];
             
             idx++;
         } }
         
         self.item.primedContent = self.stackView.arrangedSubviews;
+        
+        [self.loader stopAnimating];
+        [self.loader removeFromSuperview];
+        
+        self.stackView.hidden = NO;
     }
     else {
+        
+        [self.loader stopAnimating];
+        [self.loader removeFromSuperview];
+        
         for (UIView *view in self.item.primedContent) {
             [self.stackView addArrangedSubview:view];
         }
@@ -90,6 +119,10 @@
 #ifdef DEBUG
     DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
 #endif
+    
+    if (self.item && !self.item.isRead)
+        [MyFeedsManager article:self.item markAsRead:YES];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -170,7 +203,7 @@
                 
                 Content *subcontent = [Content instanceFromDictionary:dict];
                 
-                _nextItem = [(NSArray *)(content.content) safeObjectAtIndex:idx+1];
+//                _nextItem = [(NSArray *)(content.content) safeObjectAtIndex:idx+1];
                 
                 [self processContent:subcontent];
                 

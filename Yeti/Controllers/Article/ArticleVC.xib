@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ArticleVC">
             <connections>
+                <outlet property="loader" destination="Djs-WR-QkQ" id="IFY-4D-LvG"/>
                 <outlet property="scrollBottom" destination="E8F-io-28X" id="Fof-BT-qhS"/>
                 <outlet property="scrollView" destination="Mql-eP-lLa" id="w8A-Ba-m0K"/>
                 <outlet property="stackView" destination="OdL-VG-OX1" id="Inw-Gz-XUw"/>
@@ -26,6 +27,13 @@
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mql-eP-lLa">
                     <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                     <subviews>
+                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Djs-WR-QkQ">
+                            <rect key="frame" x="177" y="313" width="20" height="20"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="20" id="ECZ-Sx-8cI"/>
+                                <constraint firstAttribute="width" constant="20" id="wI8-fQ-438"/>
+                            </constraints>
+                        </activityIndicatorView>
                         <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" layoutMarginsFollowReadableWidth="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="OdL-VG-OX1">
                             <rect key="frame" x="12" y="0.0" width="351" height="41"/>
                             <subviews>
@@ -48,7 +56,9 @@
                     <constraints>
                         <constraint firstItem="OdL-VG-OX1" firstAttribute="height" secondItem="Mql-eP-lLa" secondAttribute="height" id="2Ib-Iq-JK7"/>
                         <constraint firstAttribute="bottom" secondItem="OdL-VG-OX1" secondAttribute="bottom" id="7tc-dk-Ze4"/>
+                        <constraint firstItem="Djs-WR-QkQ" firstAttribute="centerX" secondItem="Mql-eP-lLa" secondAttribute="centerX" id="JAh-dM-wED"/>
                         <constraint firstItem="OdL-VG-OX1" firstAttribute="centerX" secondItem="Mql-eP-lLa" secondAttribute="centerX" id="RJL-lh-rkv"/>
+                        <constraint firstItem="Djs-WR-QkQ" firstAttribute="centerY" secondItem="Mql-eP-lLa" secondAttribute="centerY" id="aMS-ak-4vp"/>
                         <constraint firstItem="OdL-VG-OX1" firstAttribute="top" secondItem="Mql-eP-lLa" secondAttribute="top" id="dUt-hh-pvc"/>
                         <constraint firstItem="OdL-VG-OX1" firstAttribute="leading" secondItem="Mql-eP-lLa" secondAttribute="leading" constant="12" id="igh-na-4GH"/>
                         <constraint firstAttribute="trailing" secondItem="OdL-VG-OX1" secondAttribute="trailing" constant="-12" id="ihr-hl-GmW"/>

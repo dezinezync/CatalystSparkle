@@ -14,6 +14,7 @@
 
 #import <DZKit/DZBasicDatasource.h>
 #import <DZKit/EFNavController.h>
+#import <DZKit/UIViewController+AnimatedDeselect.h>
 
 @interface FeedVC () <DZDatasource> {
     NSInteger _page;
@@ -48,11 +49,68 @@
     self.DS.data = self.feed.articles;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
+    
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(didTapAllRead:)];
+    self.navigationItem.rightBarButtonItem = allRead;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self dz_smoothlyDeselectRows:self.tableView];
+    
+    if (animated && self.transitionCoordinator) {
+        weakify(self);
+        [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            strongify(self);
+            [self _setToolbarHidden];
+            
+        } completion:nil];
+    }
+    else {
+        [self _setToolbarHidden];
+    }
+    
+}
+
+- (void)_setToolbarHidden {
+    self.navigationController.toolbarHidden = YES;
+}
+
+#pragma mark -
+
+- (void)didTapAllRead:(UIBarButtonItem *)sender {
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Mark All Read" message:@"Are you sure you want to mark all articles as read?" preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    weakify(self);
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        strongify(self);
+        
+        [MyFeedsManager articles:self.feed.articles markAsRead:YES];
+        
+    }]];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+    
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.barButtonItem = sender;
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
+    
 }
 
 #pragma mark - Table view data source
@@ -73,9 +131,14 @@
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     
-    EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
-    
-    [self.splitViewController showDetailViewController:nav sender:self];
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
+        
+        [self.splitViewController showDetailViewController:nav sender:self];
+    }
+    else {
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 #pragma mark - <ScrollLoading>

@@ -11,6 +11,8 @@
 
 #import "Feed.h"
 
+extern NSString * _Nonnull const FeedDidUpReadCount;
+
 @class FeedsManager;
 
 extern FeedsManager * _Nonnull MyFeedsManager;
@@ -30,3 +32,5 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 @end
+
+#import "FeedsManager+KVS.h"
