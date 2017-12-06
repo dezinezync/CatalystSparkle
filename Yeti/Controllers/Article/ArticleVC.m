@@ -23,7 +23,9 @@
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-@interface ArticleVC ()
+@interface ArticleVC () <UIScrollViewDelegate> {
+    BOOL _hasRendered;
+}
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
@@ -31,6 +33,7 @@
 @property (weak, nonatomic) UIView *last; // reference to the last setup view.
 @property (weak, nonatomic) id nextItem; // next item which will be processed
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loader;
+@property (nonatomic, strong) NSPointerArray *images;
 
 @end
 
@@ -49,11 +52,17 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    self.images = [NSPointerArray weakObjectsPointerArray];
+    
+    self.scrollView.delegate = self;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.stackView.translatesAutoresizingMaskIntoConstraints = NO;
     
+    weakify(self);
+    
     [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-       
+        
+        strongify(self);
         [self.stackView removeArrangedSubview:obj];
         [obj removeFromSuperview];
         
@@ -76,6 +85,10 @@
 {
     [super viewDidAppear:animated];
     
+    if (_hasRendered)
+        return;
+    
+    _hasRendered = YES;
     
 #ifdef DEBUG
     NSDate *start = NSDate.date;
@@ -89,7 +102,7 @@
     self.stackView.hidden = YES;
     
     for (Content *content in self.item.content) { @autoreleasepool {
-        //            _nextItem = [self.item.content safeObjectAtIndex:idx+1];
+//        _nextItem = [self.item.content safeObjectAtIndex:idx+1];
         [self processContent:content];
         
         idx++;
@@ -110,6 +123,13 @@
     
     if (self.item && !self.item.isRead)
         [MyFeedsManager article:self.item markAsRead:YES];
+    
+    weakify(self);
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self scrollViewDidScroll:self.scrollView];
+    });
     
 }
 
@@ -321,9 +341,10 @@
     
     [self.stackView addArrangedSubview:imageView];
     [imageView.heightAnchor constraintEqualToConstant:32.f].active = YES;
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        [imageView il_setImageWithURL:content.url];
-//    });
+    
+    [self.images addPointer:(__bridge void *)imageView];
+    imageView.idx = self.images.count - 1;
+    imageView.URL = [NSURL URLWithString:content.url];
     
     [self addLinebreak];
 }
@@ -386,6 +407,35 @@
     _last = youtube;
     
     [self.stackView addArrangedSubview:youtube];
+}
+
+#pragma mark - Scroll
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGPoint point = scrollView.contentOffset;
+    // adding the scrollView's height here triggers loading of the image as soon as it's about to appear on screen.
+    point.y += scrollView.bounds.size.height;
+    
+    for (Image *imageview in self.images) { @autoreleasepool {
+        
+        BOOL contains = CGRectContainsPoint(imageview.frame, point);
+        // the first image may be out of bounds of the scrollView when it's loaded.
+        // check if it's frame is contained within the frame of the scrollView.
+        if (imageview.idx == 0)
+            contains = contains || CGRectContainsRect(scrollView.frame, imageview.frame);
+        
+//        DDLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
+        
+        if (!imageview.image && contains && !imageview.isLoading) {
+            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                imageview.loading = YES;
+                [imageview il_setImageWithURL:imageview.URL];
+            });
+        }
+    } }
+    
 }
 
 @end

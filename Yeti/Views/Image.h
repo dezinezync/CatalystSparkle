@@ -10,4 +10,9 @@
 
 @interface Image : UIImageView
 
+@property (nonatomic, assign) NSInteger idx;
+@property (nonatomic, copy) NSURL *URL;
+
+@property (nonatomic, assign, getter=isLoading) BOOL loading;
+
 @end
