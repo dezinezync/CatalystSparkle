@@ -82,37 +82,25 @@
 #endif
     
     // add Body
-    if (!self.item.primedContent) {
+    [self addTitle];
+    
+    NSUInteger idx = 0;
+    
+    self.stackView.hidden = YES;
+    
+    for (Content *content in self.item.content) { @autoreleasepool {
+        //            _nextItem = [self.item.content safeObjectAtIndex:idx+1];
+        [self processContent:content];
         
-        [self addTitle];
-        
-        NSUInteger idx = 0;
-        
-        self.stackView.hidden = YES;
-        
-        for (Content *content in self.item.content) { @autoreleasepool {
-//            _nextItem = [self.item.content safeObjectAtIndex:idx+1];
-            [self processContent:content];
-            
-            idx++;
-        } }
-        
-        self.item.primedContent = self.stackView.arrangedSubviews;
-        
-        [self.loader stopAnimating];
-        [self.loader removeFromSuperview];
-        
-        self.stackView.hidden = NO;
-    }
-    else {
-        
-        [self.loader stopAnimating];
-        [self.loader removeFromSuperview];
-        
-        for (UIView *view in self.item.primedContent) {
-            [self.stackView addArrangedSubview:view];
-        }
-    }
+        idx++;
+    } }
+    
+    self.item.primedContent = self.stackView.arrangedSubviews;
+    
+    [self.loader stopAnimating];
+    [self.loader removeFromSuperview];
+    
+    self.stackView.hidden = NO;
     
     _last = nil;
     
@@ -148,13 +136,17 @@
     
     weakify(self);
     
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-    
-        strongify(self);
-        
+    if (coordinator) {
+        [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            
+            strongify(self);
+            
+            [self setupToolbar:newCollection];
+            
+        } completion:nil];
+    }
+    else
         [self setupToolbar:newCollection];
-        
-    } completion:nil];
     
 }
 
@@ -243,6 +235,7 @@
 }
 
 - (void)addParagraph:(Content *)content {
+    
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
@@ -259,6 +252,24 @@
         && [self.stackView.arrangedSubviews.lastObject isKindOfClass:UIView.class] && hasPara.boolValue
         && content.content.length <= 100)
         para.caption = YES;
+    
+    if ([_last isKindOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
+        
+        // since the last one is a paragraph as well, simlpy append to it.
+        Paragraph *last = (Paragraph *)_last;
+        
+        NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
+        
+        NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges];
+        
+        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+        [attrs appendAttributedString:newAttrs];
+        
+        last.attributedText = attrs.copy;
+        attrs = nil;
+        newAttrs = nil;
+        return;
+    }
     
     [para setText:content.content ranges:content.ranges];
     
@@ -310,9 +321,9 @@
     
     [self.stackView addArrangedSubview:imageView];
     [imageView.heightAnchor constraintEqualToConstant:32.f].active = YES;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [imageView il_setImageWithURL:content.url];
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        [imageView il_setImageWithURL:content.url];
+//    });
     
     [self addLinebreak];
 }

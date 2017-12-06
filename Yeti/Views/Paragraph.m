@@ -11,6 +11,8 @@
 
 @implementation Paragraph
 
+static NSParagraphStyle * _paragraphStyle = nil;
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
@@ -28,7 +30,7 @@
     
     weakify(self);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{ @autoreleasepool {
         
         strongify(self);
         
@@ -38,15 +40,16 @@
             self.attributedText = attrs;
         });
         
-    });
+    } });
 }
 
-- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges {
+- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges { @autoreleasepool {
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : self.font,
                                      NSForegroundColorAttributeName: self.textColor,
-                                     NSParagraphStyleAttributeName: self.paragraphStyle
+                                     NSParagraphStyleAttributeName: Paragraph.paragraphStyle
                                      };
+    
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
     
     if (ranges && ranges.count) {
@@ -94,14 +97,19 @@
             @try {
                 [attrs addAttributes:dict range:range.range];
             } @catch (NSException *exception) {
-                
+                DDLogWarn(@"%@", exception);
+            } @finally {
+                dict = nil;
             }
             
         } }
     }
     
-    return [attrs attributedStringByTrimmingWhitespace];
-}
+    NSAttributedString *retval = [[NSAttributedString alloc] initWithAttributedString:[attrs attributedStringByTrimmingWhitespace]];
+    attrs = nil;
+    
+    return retval;
+} }
 
 #pragma mark - Overrides
 
@@ -131,39 +139,58 @@
 
 - (UIFont *)font
 {
-    __block UIFont * bodyFont;
+    
+    if (!NSThread.isMainThread) {
+        __block UIFont *retval = nil;
+        weakify(self);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            strongify(self);
+            retval = [self font];
+        });
+        
+        return retval;
+    }
+    
+    __block UIFont * bodyFont = [UIFont systemFontOfSize:20.f];
     __block UIFont * baseFont;
     
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        bodyFont = [UIFont systemFontOfSize:20.f];
-        if (self.isCaption)
-            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
-        else
-            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
-    });
+    if (self.isCaption)
+        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
+    else
+        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+    
+    bodyFont = nil;
     
     return baseFont;
 }
 
 - (UIColor *)textColor
 {
-    __block UIColor *color;
+    if (!NSThread.isMainThread) {
+        __block UIColor *retval = nil;
+        weakify(self);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            strongify(self);
+            retval = [self textColor];
+        });
+        
+        return retval;
+    }
     
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        color = [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 1.f];
-    });
-    
-    return color;
+    return [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 1.f];
 }
 
-- (NSParagraphStyle *)paragraphStyle {
-    NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-    style.lineHeightMultiple = 1.4f;
++ (NSParagraphStyle *)paragraphStyle {
+   
+    if (!_paragraphStyle) {
+        NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
+        style.lineHeightMultiple = 1.4f;
+        
+        _paragraphStyle = style.copy;
+    }
     
-    if (self.isCaption)
-        style.alignment = NSTextAlignmentCenter;
+    return _paragraphStyle;
     
-    return style;
 }
 
 - (BOOL)translatesAutoresizingMaskIntoConstraints

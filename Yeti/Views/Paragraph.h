@@ -14,7 +14,7 @@
 @property (nonatomic, assign) BOOL afterHeading;
 @property (nonatomic, assign, getter=isCaption) BOOL caption;
 
-- (NSParagraphStyle *)paragraphStyle;
+@property (nonatomic, strong, class) NSParagraphStyle * paragraphStyle;
 
 - (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges;
 
