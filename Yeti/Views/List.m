@@ -7,7 +7,7 @@
 //
 
 #import "List.h"
-#import "Paragraph.h"
+#import "Blockquote.h"
 
 @interface List ()
 
@@ -19,17 +19,21 @@
 
 #pragma mark -
 
-- (void)setContent:(Content *)content {
-    
+- (BOOL)isCaption
+{
+    return self.isQuoted;
+}
+
+- (NSAttributedString *)processContent:(Content *)content {
     self.type = [content.type isEqualToString:@"orderedList"] ? 0 : 1;
     
     weakify(self);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-       
-        NSUInteger index = 0;
+    __block NSMutableAttributedString *attrs = [NSMutableAttributedString new];
+    
+    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        NSMutableAttributedString *attrs = [NSMutableAttributedString new];
+        NSUInteger index = 0;
         
         strongify(self);
         
@@ -47,7 +51,6 @@
                     for (Content *subitem in item.items) { @autoreleasepool {
                         index++;
                         [self append:subitem index:index attributedString:attrs indent:1];
-                        
                     }}
                     
                 }
@@ -62,10 +65,24 @@
             
         }}
         
-        asyncMain(^{
-            self.attributedText = attrs;
-        })
+    });
+    
+    return attrs;
+    
+}
+
+- (void)setContent:(Content *)content {
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
+        NSAttributedString *attrs = [self processContent:content];
+        
+        asyncMain(^{
+            strongify(self);
+            self.attributedText = attrs;
+        });
     });
     
 }
@@ -77,7 +94,12 @@
     
     NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
     
-    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:@{NSFontAttributeName: self.font, NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
+    NSDictionary *attributes = @{NSFontAttributeName: self.font,
+                                 NSParagraphStyleAttributeName: Paragraph.paragraphStyle,
+                                 NSForegroundColorAttributeName: [UIColor.blackColor colorWithAlphaComponent:(self.isQuoted ? 0.54f : 1.f)]
+                                 };
+    
+    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:attributes]];
     [attrs appendAttributedString:sub];
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
 }

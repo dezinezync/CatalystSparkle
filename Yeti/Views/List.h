@@ -17,7 +17,10 @@ typedef NS_ENUM(NSInteger) {
 
 @interface List : Paragraph
 
+@property (nonatomic, assign, getter=isQuoted) BOOL quoted;
 @property (nonatomic) ListType type;
+
+- (NSAttributedString *)processContent:(Content *)content;
 
 - (void)setContent:(Content *)content;
 

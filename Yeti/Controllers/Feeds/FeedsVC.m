@@ -15,9 +15,12 @@
 #import <DZKit/EFNavController.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
-@interface FeedsVC () <DZDatasource>
+@interface FeedsVC () <DZDatasource> {
+    BOOL _noPreSetup;
+}
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
+//@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 
 @end
 
@@ -29,11 +32,25 @@
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
     
-    [self setupData:MyFeedsManager.feeds];
-    
     self.title = @"Feeds";
     
+    if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
+        
+        weakify(self);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            NSArray *feeds = MyFeedsManager.feeds;
+            
+            asyncMain(^{
+                strongify(self);
+                [self setupData:feeds];
+            });
+        });
+        _noPreSetup = YES;
+    }
+    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+//    self.tableView.tableFooterView = [UIView new];
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
@@ -86,6 +103,17 @@
     [self.navigationController pushViewController:vc animated:YES];
     
 }
+
+//- (UIView *)viewForEmptyDataset
+//{
+//    if (!_activityView) {
+//        _activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//        _activityView.color = self.view.tintColor;
+//        [_activityView startAnimating];
+//    }
+//
+//    return _activityView;
+//}
 
 #pragma mark -
 

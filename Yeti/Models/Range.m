@@ -60,7 +60,11 @@
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
-    DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+    if ([key isEqualToString:@"href"]) {
+        self.url = value;
+    }
+    else
+        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
 }
 
 - (NSDictionary *)dictionaryRepresentation

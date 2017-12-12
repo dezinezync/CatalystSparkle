@@ -90,6 +90,13 @@
         [super setValue:items forKey:key];
         
     }
+    else if ([key isEqualToString:@"size"] && [value isKindOfClass:NSString.class]) {
+        NSArray *components = [value componentsSeparatedByString:@","];
+        if (components.count > 1) {
+            CGSize size = CGSizeMake([components[0] floatValue], [components[1] floatValue]);
+            self.size = size;
+        }
+    }
     else {
         [super setValue:value forKey:key];
     }
@@ -98,7 +105,21 @@
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
-    DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+    if ([key isEqualToString:@"construct"] && [value isKindOfClass:NSArray.class]) {
+        NSArray *arr = (NSArray *)value;
+        if (arr.count) {
+            NSArray <Content *> *items = [arr rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [Content instanceFromDictionary:obj];
+            }];
+            
+            if (self.items && self.items.count)
+                self.items = [self.items arrayByAddingObjectsFromArray:items];
+            else
+                self.items = items;
+        }
+    }
+    else
+        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
 }
 
 
@@ -155,6 +176,10 @@
     
     if (self.videoID) {
         [dictionary setObject:self.videoID forKey:@"videoID"];
+    }
+    
+    if (self.size.width && self.size.height) {
+        [dictionary setObject:NSStringFromCGSize(self.size) forKey:@"size"];
     }
 
     return dictionary;

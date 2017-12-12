@@ -50,8 +50,13 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     self.titleLabel.text = feed.title;
     self.countLabel.text = @(unread).stringValue;
     
-    if (feed.favicon && ![feed.favicon isBlank])
-        [self.faviconView il_setImageWithURL:formattedURL(@"%@", feed.favicon)];
+    if (feed.favicon && ![feed.favicon isBlank]) {
+        weakify(self);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+            strongify(self);
+            [self.faviconView il_setImageWithURL:formattedURL(@"%@", feed.favicon)];
+        });
+    }
 }
 
 @end

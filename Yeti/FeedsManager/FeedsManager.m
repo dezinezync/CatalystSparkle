@@ -143,7 +143,7 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
         return;
     }
     
-    [self.session PUT:@"/feed" parameters:@{@"URL": url} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session PUT:@"/feed" parameters:@{@"URL": url, @"userID": @1} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];

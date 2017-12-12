@@ -19,6 +19,7 @@
     [encoder encodeObject:self.summary forKey:@"summary"];
     [encoder encodeObject:self.title forKey:@"title"];
     [encoder encodeObject:self.url forKey:@"url"];
+    [encoder encodeObject:self.extra forKey:@"extra"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -32,6 +33,7 @@
         self.summary = [decoder decodeObjectForKey:@"summary"];
         self.title = [decoder decodeObjectForKey:@"title"];
         self.url = [decoder decodeObjectForKey:@"url"];
+        self.extra = [decoder decodeObjectForKey:@"extra"];
     }
     return self;
 }
@@ -131,6 +133,10 @@
 
     if (self.url) {
         [dictionary setObject:self.url forKey:@"url"];
+    }
+    
+    if (self.extra) {
+        [dictionary setObject:self.extra forKey:@"extra"];
     }
 
     return dictionary;

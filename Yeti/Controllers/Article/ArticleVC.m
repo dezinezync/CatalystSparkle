@@ -22,9 +22,12 @@
 #import "NSAttributedString+Trimming.h"
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSString+Extras.h>
 
 @interface ArticleVC () <UIScrollViewDelegate> {
     BOOL _hasRendered;
+    
+    BOOL _isQuoted;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -108,7 +111,7 @@
         idx++;
     } }
     
-    self.item.primedContent = self.stackView.arrangedSubviews;
+//    self.item.primedContent = self.stackView.arrangedSubviews;
     
     [self.loader stopAnimating];
     [self.loader removeFromSuperview];
@@ -224,12 +227,12 @@
         }
     }
     else if ([content.type isEqualToString:@"paragraph"] && content.content.length) {
-        [self addParagraph:content];
+        [self addParagraph:content caption:NO];
     }
     else if ([content.type isEqualToString:@"heading"] && content.content.length) {
         [self addHeading:content];
     }
-    else if ([content.type isEqualToString:@"linebreak"] && _last && ![_last isKindOfClass:Paragraph.class]) {
+    else if ([content.type isEqualToString:@"linebreak"]) {
         [self addLinebreak];
     }
     else if ([content.type isEqualToString:@"image"]) {
@@ -243,9 +246,9 @@
     }
     else if ([content.type isEqualToString:@"aside"]) {
         
-        if (content.content.length > 140)
-            [self addParagraph:content];
-        else
+//        if (content.content.length > 140)
+//            [self addParagraph:content caption:NO];
+//        else
             [self addAside:content];
         
     }
@@ -254,7 +257,7 @@
     }
 }
 
-- (void)addParagraph:(Content *)content {
+- (void)addParagraph:(Content *)content caption:(BOOL)caption {
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
@@ -268,10 +271,14 @@
         return @(retval);
     } initialValue:@NO];
     
-    if ([_last isKindOfClass:Image.class]
-        && [self.stackView.arrangedSubviews.lastObject isKindOfClass:UIView.class] && hasPara.boolValue
-        && content.content.length <= 100)
-        para.caption = YES;
+    if ([_last isKindOfClass:Paragraph.class]
+        && !caption) {
+        // check if we have a duplicate
+        Paragraph *lastPara = (Paragraph *)_last;
+        if(lastPara.isCaption && [lastPara.text isEqualToString:content.content])
+            return;
+    }
+    para.caption = caption;
     
     if ([_last isKindOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
         
@@ -347,6 +354,12 @@
     imageView.URL = [NSURL URLWithString:content.url];
     
     [self addLinebreak];
+    
+    if (content.alt && ![content.alt isBlank]) {
+        Content *caption = [Content new];
+        caption.content = content.alt;
+        [self addParagraph:caption caption:YES];
+    }
 }
 
 - (void)addQuote:(Content *)content {
@@ -362,21 +375,47 @@
     _last = para;
     
     [self.stackView addArrangedSubview:para];
+    
+    if (content.items && content.items.count) {
+        _isQuoted = YES;
+        
+        weakify(self);
+        
+        asyncMain(^{
+            strongify(self);
+            for (Content *subcontent in content.items) { @autoreleasepool {
+                [self processContent:subcontent];
+            }}
+        });
+        
+        _isQuoted = NO;
+    }
 }
 
 - (void)addList:(Content *)content {
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
     
     List *list = [[List alloc] initWithFrame:frame];
+    list.quoted = _isQuoted;
     
-    [list setContent:content];
-    
-    frame.size.height = list.intrinsicContentSize.height;
-    list.frame = frame;
-    
-    _last = list;
-    
-    [self.stackView addArrangedSubview:list];
+    if (_isQuoted && [_last isKindOfClass:Blockquote.class]) {
+        Blockquote *quote = (Blockquote *)_last;
+        [quote append:[list processContent:content]];
+        
+        frame.size.height = quote.intrinsicContentSize.height;
+        quote.frame = frame;
+        [quote setNeedsDisplayInRect:quote.bounds];
+    }
+    else {
+        [list setContent:content];
+        
+        frame.size.height = list.intrinsicContentSize.height;
+        list.frame = frame;
+        
+        _last = list;
+        
+        [self.stackView addArrangedSubview:list];
+    }
 }
 
 - (void)addAside:(Content *)content

@@ -30,24 +30,23 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     weakify(self);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{ @autoreleasepool {
-        
+    NSAttributedString *attrs = [self processText:text ranges:ranges];
+    
+    asyncMain(^{
         strongify(self);
-        
-        NSAttributedString *attrs = [self processText:text ranges:ranges];
-        
-        asyncMain(^{
-            self.attributedText = attrs;
-        });
-        
-    } });
+        self.attributedText = attrs;
+    });
 }
 
 - (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges { @autoreleasepool {
     
+    NSMutableParagraphStyle *para = Paragraph.paragraphStyle.mutableCopy;
+    if (self.isCaption)
+        para.alignment = NSTextAlignmentCenter;
+    
     NSDictionary *baseAttributes = @{NSFontAttributeName : self.font,
                                      NSForegroundColorAttributeName: self.textColor,
-                                     NSParagraphStyleAttributeName: Paragraph.paragraphStyle
+                                     NSParagraphStyleAttributeName: para
                                      };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
@@ -82,12 +81,17 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 __block UIColor *textcolor;
                 __block UIColor *background;
                 
-                dispatch_sync(dispatch_get_main_queue(), ^{
+                if (NSThread.isMainThread) {
                     monoFont = [UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular];
                     textcolor = [UIColor colorWithWhite:0.9 alpha:1.f];
                     background = [UIColor redColor];
-                });
-                
+                }
+                else
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        monoFont = [UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular];
+                        textcolor = [UIColor colorWithWhite:0.9 alpha:1.f];
+                        background = [UIColor redColor];
+                    });
                 
                 [dict setObject:monoFont forKey:NSFontAttributeName];
                 [dict setObject:textcolor forKey:NSBackgroundColorAttributeName];

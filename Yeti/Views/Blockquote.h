@@ -8,9 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "Range.h"
+#import "Paragraph.h"
+
+@interface BlockPara : Paragraph
+
+@end
 
 @interface Blockquote : UIView
 
 - (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges;
+
+- (void)append:(NSAttributedString *)attrs;
 
 @end
