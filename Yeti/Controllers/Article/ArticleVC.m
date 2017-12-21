@@ -372,6 +372,10 @@
     
     _last = imageView;
     
+    if (CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
+        imageView.hidden = YES;
+    }
+    
     [self.stackView addArrangedSubview:imageView];
     [imageView.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
     
