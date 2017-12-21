@@ -72,31 +72,82 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
 {
     weakify(self);
     
+    NSString *docsDir;
+    NSArray *dirPaths;
+    
+    dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    docsDir = [dirPaths objectAtIndex:0];
+    NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:@"feedscache.json"]];
+    
+    __block NSError *error = nil;
+    
+    if ([NSFileManager.defaultManager fileExistsAtPath:path]) {
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        
+        if (data) {
+            NSArray *responseObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            
+            if (error) {
+                DDLogError(@"%@", error);
+            }
+            else if (successCB) {
+                DDLogDebug(@"Responding to successCB from disk cache");
+                NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
+                
+                self.feeds = feeds;
+                
+                successCB(@1, nil, nil);
+            }
+        }
+    }
+    
     [self.session GET:@"/feeds" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
-        NSArray <Feed *> *feeds = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
-        }];
-        
         strongify(self);
         
-        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
-        for (Feed *feed in feeds) {
+        // cache
+        {
+            NSData *data = [NSJSONSerialization dataWithJSONObject:responseObject options:kNilOptions error:&error];
             
-            for (FeedItem *item in feed.articles) {
-                NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-                item.read = [defaults boolForKey:key];
+            if (error) {
+                DDLogError(@"%@", error);
             }
-            
+            else {
+                if (![data writeToFile:path atomically:YES]) {
+                    DDLogError(@"Writing feeds cache to %@ failed.", path);
+                }
+            }
         }
         
         self.feeds = feeds;
         
-        if (successCB)
-            successCB(self.feeds, response, task);
+        if (successCB) {
+            DDLogDebug(@"Responding to successCB from network");
+            successCB(@2, response, task);
+        }
         
     } error:errorCB];
+}
+
+- (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
+    NSArray <Feed *> *feeds = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+        return [Feed instanceFromDictionary:obj];
+    }];
+    
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    
+    for (Feed *feed in feeds) { @autoreleasepool {
+        
+        for (FeedItem *item in feed.articles) {
+            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
+            item.read = [defaults boolForKey:key];
+        }
+        
+    } }
+    
+    return feeds;
 }
 
 - (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB

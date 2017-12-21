@@ -131,7 +131,7 @@
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
         
         [self.splitViewController showDetailViewController:nav sender:self];
@@ -157,7 +157,9 @@
             _canLoadNext = NO;
         }
         
-        self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+        asyncMain(^{
+            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+        });
         
         _page++;
         self.loadingNext = NO;

@@ -15,7 +15,7 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing)
+    if (_refreshing || _preCommitLoading || !_noPreSetup)
         return;
     
     _refreshing = YES;
@@ -27,7 +27,7 @@
         asyncMain(^{
             strongify(self);
             
-            [self setupData:responseObject];
+            [self setupData:MyFeedsManager.feeds];
             
             [sender endRefreshing];
         });

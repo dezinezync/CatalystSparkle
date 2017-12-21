@@ -12,6 +12,8 @@
 
 @interface FeedsVC : UITableViewController {
     BOOL _refreshing;
+    BOOL _preCommitLoading;
+    BOOL _noPreSetup;
 }
 
 - (void)setupData:(NSArray <Feed *> *)feeds;

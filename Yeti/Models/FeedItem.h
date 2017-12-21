@@ -20,7 +20,7 @@
 @property (nonatomic, copy) NSString *guid;
 @property (nonatomic, copy) NSString *modified;
 @property (nonatomic, assign, getter=isRead) BOOL read;
-@property (nonatomic, copy) NSString *timestamp;
+@property (nonatomic, copy) NSDate *timestamp;
 
 @property (nonatomic, copy) NSString *itunesImage;
 @property (nonatomic, copy) NSString *mediaDescription;

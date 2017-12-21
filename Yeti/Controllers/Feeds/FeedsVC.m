@@ -14,9 +14,10 @@
 
 #import <DZKit/EFNavController.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
+#import <DZKit/AlertManager.h>
 
 @interface FeedsVC () <DZDatasource> {
-    BOOL _noPreSetup;
+    
 }
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
@@ -34,23 +35,8 @@
     
     self.title = @"Feeds";
     
-    if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
-        
-        weakify(self);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            NSArray *feeds = MyFeedsManager.feeds;
-            
-            asyncMain(^{
-                strongify(self);
-                [self setupData:feeds];
-            });
-        });
-        _noPreSetup = YES;
-    }
-    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
-//    self.tableView.tableFooterView = [UIView new];
+    self.tableView.tableFooterView = [UIView new];
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
@@ -75,6 +61,61 @@
     [super viewWillAppear:animated];
     
     [self dz_smoothlyDeselectRows:self.tableView];
+    
+    if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
+        
+        _preCommitLoading = YES;
+        
+        weakify(self);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            [MyFeedsManager getFeeds:^(NSNumber *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                strongify(self);
+                
+                // we have received one response. This is usually from the disk cache.
+                if (responseObject.integerValue == 1) {
+                    asyncMain(^{
+                        [self.refreshControl beginRefreshing];
+                    })
+                }
+                
+                // when counter reaches 2, we end refreshing since this is the network response.
+                if (responseObject.integerValue == 2) {
+                    asyncMain(^{
+                        [self.refreshControl endRefreshing];
+                    })
+                }
+                
+                [self setupData:MyFeedsManager.feeds];
+                
+                _preCommitLoading = NO;
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                DDLogError(@"%@", error);
+                
+                [AlertManager showGenericAlertWithTitle:@"Error loading" message:error.localizedDescription];
+                
+                // end refreshing if VC is in that state.
+                asyncMain(^{
+                    
+                    strongify(self);
+                    
+                    if (self.refreshControl.isRefreshing) {
+                        [self.refreshControl endRefreshing];
+                    }
+                });
+                
+                _preCommitLoading = NO;
+                
+            }];
+            
+        });
+        
+        _noPreSetup = YES;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated

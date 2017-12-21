@@ -2,6 +2,7 @@
 
 #import "Content.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSDate+ISO8601.h>
 
 @implementation FeedItem
 
@@ -136,6 +137,11 @@
         self.articleURL = value;
     }
     else if ([key isEqualToString:@"created"]) {
+        if ([value isKindOfClass:NSString.class]) {
+            value = [(NSString *)value stringByReplacingOccurrencesOfString:@".000Z" withString:@"Z"];
+            value = [NSDate ISO8601DateFromString:(NSString *)value];
+        }
+        
         self.timestamp = value;
     }
     else if ([key isEqualToString:@"title"]) {

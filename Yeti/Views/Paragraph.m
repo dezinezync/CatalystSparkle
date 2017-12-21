@@ -8,6 +8,7 @@
 
 #import "Paragraph.h"
 #import "NSAttributedString+Trimming.h"
+#import <DZKit/NSString+Extras.h>
 
 @implementation Paragraph
 
@@ -40,13 +41,17 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges { @autoreleasepool {
     
+    if (!text || [text isBlank])
+        return [NSAttributedString new];
+    
     NSMutableParagraphStyle *para = Paragraph.paragraphStyle.mutableCopy;
     if (self.isCaption)
         para.alignment = NSTextAlignmentCenter;
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : self.font,
                                      NSForegroundColorAttributeName: self.textColor,
-                                     NSParagraphStyleAttributeName: para
+                                     NSParagraphStyleAttributeName: para,
+                                     NSKernAttributeName: @(-0.43f)
                                      };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
@@ -188,7 +193,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
    
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.4f;
+        style.lineHeightMultiple = 1.611111111f;
         
         _paragraphStyle = style.copy;
     }

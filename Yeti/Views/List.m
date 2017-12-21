@@ -96,7 +96,8 @@
     
     NSDictionary *attributes = @{NSFontAttributeName: self.font,
                                  NSParagraphStyleAttributeName: Paragraph.paragraphStyle,
-                                 NSForegroundColorAttributeName: [UIColor.blackColor colorWithAlphaComponent:(self.isQuoted ? 0.54f : 1.f)]
+                                 NSForegroundColorAttributeName: [UIColor.blackColor colorWithAlphaComponent:(self.isQuoted ? 0.54f : 1.f)],
+                                 NSKernAttributeName: @(-0.43f)
                                  };
     
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:attributes]];

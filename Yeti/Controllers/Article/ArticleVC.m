@@ -23,6 +23,7 @@
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
+#import "NSDate+DateTools.h"
 
 @interface ArticleVC () <UIScrollViewDelegate> {
     BOOL _hasRendered;
@@ -177,23 +178,25 @@
 
 - (void)addTitle {
     
-    NSString *subline = formattedString(@"%@ | %@", self.item.author?:@"unknown", self.item.timestamp);
+    NSString *subline = formattedString(@"%@ • %@", self.item.author?:@"unknown", [self.item.timestamp timeAgoSinceNow]);
     NSString *formatted = formattedString(@"%@\n%@\n", self.item.articleTitle, subline);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
-    para.lineHeightMultiple = 1.2f;
+    para.lineHeightMultiple = 1.214285714f;
     
     UIFont * titleFont = [UIFont systemFontOfSize:36.f weight:UIFontWeightSemibold];
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:titleFont];
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : baseFont,
                                      NSForegroundColorAttributeName: UIColor.blackColor,
-                                     NSParagraphStyleAttributeName: para
+                                     NSParagraphStyleAttributeName: para,
+                                     NSKernAttributeName: @(-1.14f)
                                      };
     
     NSDictionary *subtextAttributes = @{NSFontAttributeName: [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont systemFontOfSize:20.f weight:UIFontWeightMedium]],
                                         NSForegroundColorAttributeName: [UIColor colorWithWhite:0.f alpha:0.54f],
-                                        NSParagraphStyleAttributeName: para
+                                        NSParagraphStyleAttributeName: para,
+                                        NSKernAttributeName: @(-0.43f)
                                         };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:baseAttributes];
@@ -244,6 +247,9 @@
     else if ([content.type containsString:@"list"]) {
         [self addList:content];
     }
+    else if ([content.type isEqualToString:@"anchor"]) {
+        [self addParagraph:content caption:NO];
+    }
     else if ([content.type isEqualToString:@"aside"]) {
         
 //        if (content.content.length > 140)
@@ -278,7 +284,22 @@
         if(lastPara.isCaption && [lastPara.text isEqualToString:content.content])
             return;
     }
+    
     para.caption = caption;
+    
+    // check if attributes has href
+    if (content.attributes && [content.attributes valueForKey:@"href"]) {
+        NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+        
+        Range *newRange = [Range new];
+        newRange.element = @"anchor";
+        newRange.range = NSMakeRange(0, content.content.length);
+        newRange.url = [content.attributes valueForKey:@"href"];
+        
+        [ranges addObject:newRange];
+        
+        content.ranges = ranges.copy;
+    }
     
     if ([_last isKindOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
         
@@ -340,18 +361,23 @@
 }
 
 - (void)addImage:(Content *)content {
+    
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
+    
+    if (!CGSizeEqualToSize(content.size, CGSizeZero)) {
+        frame.size.height = ceilf((content.size.height * frame.size.width) / content.size.width);
+    }
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
     
     _last = imageView;
     
     [self.stackView addArrangedSubview:imageView];
-    [imageView.heightAnchor constraintEqualToConstant:32.f].active = YES;
+    [imageView.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
     
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
-    imageView.URL = [NSURL URLWithString:content.url];
+    imageView.URL = [NSURL URLWithString:[content.url stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"]];
     
     [self addLinebreak];
     
@@ -446,6 +472,8 @@
     _last = youtube;
     
     [self.stackView addArrangedSubview:youtube];
+    
+    [self addLinebreak];
 }
 
 #pragma mark - Scroll

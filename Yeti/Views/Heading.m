@@ -7,6 +7,13 @@
 //
 
 #import "Heading.h"
+#import <DZKit/NSString+Extras.h>
+
+@interface Heading ()
+
+@property (nonatomic, strong) NSParagraphStyle *paragraphStyle;
+
+@end
 
 @implementation Heading
 
@@ -37,6 +44,32 @@
 - (UIColor *)textColor
 {
     return UIColor.blackColor;
+}
+
+- (void)setText:(NSString *)text
+{
+    if (!text || [text isBlank])
+        self.attributedText = nil;
+    else {
+        NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName: self.textColor,
+                                                                                                  NSParagraphStyleAttributeName: self.paragraphStyle,
+                                                                                                  NSKernAttributeName: @(-0.43f)
+                                                                                                  }];
+        
+        self.attributedText = attrs;
+    }
+}
+
+- (NSParagraphStyle *)paragraphStyle {
+    
+    if (!_paragraphStyle) {
+        NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
+        style.lineHeightMultiple = 1.2f;
+        _paragraphStyle = style;
+    }
+    
+    return _paragraphStyle;
+    
 }
 
 - (void)setLevel:(NSInteger)level
