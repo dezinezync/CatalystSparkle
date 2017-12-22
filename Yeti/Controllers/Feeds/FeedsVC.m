@@ -47,6 +47,7 @@
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
     
     self.navigationItem.rightBarButtonItems = @[add];
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(readNotification:) name:FeedDidUpReadCount object:nil];
 }

@@ -17,6 +17,7 @@
 #import "Aside.h"
 #import "Youtube.h"
 #import "Image.h"
+#import "Gallery.h"
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
@@ -429,7 +430,14 @@ static CGFloat const padding = 12.f;
 
 - (void)addGallery:(Content *)content {
     
+    Gallery *gallery = [[Gallery alloc] initWithNib];
+    gallery.frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 200.f);
+    gallery.images = content.images;
     
+    [self.stackView addArrangedSubview:gallery];
+    
+    [self.images addPointer:(__bridge void *)gallery];
+    gallery.idx = self.images.count - 1;
     
 }
 
@@ -556,7 +564,10 @@ static CGFloat const padding = 12.f;
         
 //        DDLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
         
-        if (!imageview.image && contains && !imageview.isLoading) {
+        if ([imageview isKindOfClass:Gallery.class]) {
+            [(Gallery *)imageview setLoading:YES];
+        }
+        else if (!imageview.image && contains && !imageview.isLoading) {
             DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 imageview.loading = YES;

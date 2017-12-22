@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */ = {isa = PBXBuildFile; fileRef = F0026F2D1FED2B4800F3AB85 /* Gallery.m */; };
+		F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */; };
 		F00411051FC9960E00B513A9 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = F00411041FC9960E00B513A9 /* Image.m */; };
 		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
@@ -76,6 +78,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F0026F2C1FED2B4800F3AB85 /* Gallery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gallery.h; sourceTree = "<group>"; };
+		F0026F2D1FED2B4800F3AB85 /* Gallery.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Gallery.m; sourceTree = "<group>"; };
+		F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Gallery.xib; sourceTree = "<group>"; };
 		F00411031FC9960E00B513A9 /* Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		F00411041FC9960E00B513A9 /* Image.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
 		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
@@ -403,6 +408,9 @@
 				F00411041FC9960E00B513A9 /* Image.m */,
 				F0E71E701FD6F72200408CFF /* PaddedLabel.h */,
 				F0E71E711FD6F72200408CFF /* PaddedLabel.m */,
+				F0026F2C1FED2B4800F3AB85 /* Gallery.h */,
+				F0026F2D1FED2B4800F3AB85 /* Gallery.m */,
+				F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -574,6 +582,7 @@
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
+				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 			);
@@ -642,6 +651,7 @@
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
+				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
 				F0D300411FE2633E0040D10D /* DTError.m in Sources */,

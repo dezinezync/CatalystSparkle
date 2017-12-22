@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="Gallery">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="224"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dcz-TO-rLa">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="171"/>
+                </scrollView>
+                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="sZn-nQ-a9p">
+                    <rect key="frame" x="168" y="187" width="39" height="37"/>
+                    <color key="pageIndicatorTintColor" red="0.74901960784313726" green="0.70196078431372544" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="currentPageIndicatorTintColor" red="0.44313725490196076" green="0.32941176470588235" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                </pageControl>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="sZn-nQ-a9p" secondAttribute="bottom" id="1RM-DY-nbP"/>
+                <constraint firstItem="dcz-TO-rLa" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="7dz-QQ-JY8"/>
+                <constraint firstItem="dcz-TO-rLa" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="8za-h5-fVw"/>
+                <constraint firstItem="dcz-TO-rLa" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="KH5-XP-eBg"/>
+                <constraint firstItem="sZn-nQ-a9p" firstAttribute="top" secondItem="dcz-TO-rLa" secondAttribute="bottom" constant="16" id="SPv-RT-wVA"/>
+                <constraint firstItem="sZn-nQ-a9p" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="a06-lL-xxq"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="pageControl" destination="sZn-nQ-a9p" id="jnb-sC-sSG"/>
+                <outlet property="scrollView" destination="dcz-TO-rLa" id="rLc-bK-OdK"/>
+            </connections>
+            <point key="canvasLocation" x="33.5" y="-171.5"/>
+        </view>
+    </objects>
+</document>
