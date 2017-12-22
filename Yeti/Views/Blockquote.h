@@ -16,6 +16,8 @@
 
 @interface Blockquote : UIView
 
+@property (nonatomic, weak) BlockPara *textView;
+
 - (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges;
 
 - (void)append:(NSAttributedString *)attrs;

@@ -79,7 +79,7 @@
     NSString *scaleStr = formattedString(@"1.%@", @(8-(_level-1)));
     CGFloat scale = scaleStr.floatValue;
     
-    UIFont * bodyFont = [UIFont systemFontOfSize:20 * scale weight:UIFontWeightSemibold];
+    UIFont * bodyFont = [UIFont systemFontOfSize:20 * scale weight:UIFontWeightMedium];
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:bodyFont];
     
 //    UIFont *font = [UIFont systemFontOfSize:ceil(base.pointSize * scale) weight:UIFontWeightBold];

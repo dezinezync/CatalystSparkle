@@ -8,6 +8,7 @@
 
 #import "List.h"
 #import "Blockquote.h"
+#import "NSAttributedString+Trimming.h"
 
 @interface List ()
 
@@ -90,7 +91,7 @@
 - (void)append:(Content *)item index:(NSUInteger)index attributedString:(NSMutableAttributedString *)attrs indent:(NSInteger)indent
 {
     NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
-    NSString *stepString = formattedString(@"%@%@ ", indent == 1 ? @"\\t" : @"", step);
+    NSString *stepString = formattedString(@"%@%@ ", indent == 1 ? @"\t" : @"", step);
     
     NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
     
@@ -103,6 +104,13 @@
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:attributes]];
     [attrs appendAttributedString:sub];
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
+    
+    // Post-processing
+    
+    // mutating the backing store is fine as the mutable attributedString keeps track of these changes
+    // and automatically updates itself.
+//    [attrs.mutableString replaceOccurrencesOfString:@"\t" withString:@"    " options:kNilOptions range:NSMakeRange(0, attrs.mutableString.length)];
+    
 }
 
 @end

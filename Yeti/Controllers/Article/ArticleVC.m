@@ -25,7 +25,11 @@
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
 
-@interface ArticleVC () <UIScrollViewDelegate> {
+#import <SafariServices/SafariServices.h>
+
+static CGFloat const padding = 12.f;
+
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -209,6 +213,9 @@
     
     [self.stackView addArrangedSubview:label];
     
+    [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
+    
 }
 
 - (void)processContent:(Content *)content {
@@ -261,6 +268,12 @@
     else if ([content.type isEqualToString:@"youtube"]) {
         [self addYoutube:content];
     }
+    else if ([content.type isEqualToString:@"gallery"]) {
+        [self addGallery:content];
+    }
+    else {
+        
+    }
 }
 
 - (void)addParagraph:(Content *)content caption:(BOOL)caption {
@@ -271,11 +284,6 @@
     
     if ([_last isKindOfClass:Heading.class])
         para.afterHeading = YES;
-    
-    NSNumber *hasPara = [self.stackView.arrangedSubviews rz_reduce:^id(__kindof NSNumber *prev, __kindof UIView *current, NSUInteger idx, NSArray *array) {
-        BOOL retval = prev.boolValue || [current isKindOfClass:Paragraph.class];
-        return @(retval);
-    } initialValue:@NO];
     
     if ([_last isKindOfClass:Paragraph.class]
         && !caption) {
@@ -327,6 +335,11 @@
     _last = para;
     
     [self.stackView addArrangedSubview:para];
+    
+    para.delegate = self;
+    
+    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    [para.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addHeading:(Content *)content {
@@ -343,21 +356,41 @@
     
     [self.stackView addArrangedSubview:heading];
     
+    [heading.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    [heading.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
+    
     [self addLinebreak];
 }
 
 - (void)addLinebreak {
     // this rejects multiple \n in succession which may be undesired.
-    if ([_last isKindOfClass:UIView.class])
+    if (_last && [_last isKindOfClass:UIView.class])
         return;
+    
+    // append to the para if one is available
+    if (_last && [_last isKindOfClass:Paragraph.class]) {
+        Paragraph *para = (Paragraph *)_last;
+        
+        NSMutableAttributedString *attrs = para.attributedText.mutableCopy;
+        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
+        
+        para.attributedText = attrs;
+        
+        return;
+    }
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 24.f);
     
     UIView *linebreak = [[UIView alloc] initWithFrame:frame];
+    
     [linebreak.heightAnchor constraintEqualToConstant:24.f].active = YES;
+    
     _last = linebreak;
     
     [self.stackView addArrangedSubview:linebreak];
+    
+    [linebreak.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor].active = YES;
+    [linebreak.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor].active = YES;
 }
 
 - (void)addImage:(Content *)content {
@@ -378,6 +411,8 @@
     
     [self.stackView addArrangedSubview:imageView];
     [imageView.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
+    [imageView.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:0.f].active = YES;
+    [imageView.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:0.f].active = YES;
     
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
@@ -390,6 +425,12 @@
         caption.content = content.alt;
         [self addParagraph:caption caption:YES];
     }
+}
+
+- (void)addGallery:(Content *)content {
+    
+    
+    
 }
 
 - (void)addQuote:(Content *)content {
@@ -420,6 +461,11 @@
         
         _isQuoted = NO;
     }
+    
+    para.textView.delegate = self;
+    
+    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    [para.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addList:(Content *)content {
@@ -444,7 +490,11 @@
         
         _last = list;
         
+        list.delegate = self;
+        
         [self.stackView addArrangedSubview:list];
+        [list.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+        [list.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
     }
 }
 
@@ -465,6 +515,11 @@
     _last = para;
     
     [self.stackView addArrangedSubview:para];
+    
+    para.delegate = self;
+    
+    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    [para.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addYoutube:(Content *)content {
@@ -477,10 +532,13 @@
     
     [self.stackView addArrangedSubview:youtube];
     
+    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    [youtube.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
+    
     [self addLinebreak];
 }
 
-#pragma mark - Scroll
+#pragma mark - <UIScrollViewDelegate>
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -507,6 +565,23 @@
         }
     } }
     
+}
+
+#pragma mark - <UITextViewDelegate>
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
+{
+    if (interaction != UITextItemInteractionInvokeDefaultAction)
+        return YES;
+    
+    SFSafariViewControllerConfiguration *config = [[SFSafariViewControllerConfiguration alloc] init];
+    config.entersReaderIfAvailable = YES;
+    
+    SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL configuration:config];
+    
+    [self presentViewController:sfvc animated:YES completion:nil];
+    
+    return NO;
 }
 
 @end

@@ -19,6 +19,8 @@
 @property (nonatomic, copy) NSString *videoID;
 @property (nonatomic, assign) CGSize size; // for images
 
+@property (nonatomic, strong) NSArray <Content *> *images;
+
 + (Content *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 

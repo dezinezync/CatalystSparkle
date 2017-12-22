@@ -90,6 +90,15 @@
         [super setValue:items forKey:key];
         
     }
+    else if ([key isEqualToString:@"images"] && [value isKindOfClass:NSArray.class]) {
+        
+        NSArray <Content *> *items = [value rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [Content instanceFromDictionary:obj];
+        }];
+        
+        [super setValue:items forKey:key];
+        
+    }
     else if ([key isEqualToString:@"size"] && [value isKindOfClass:NSString.class]) {
         NSArray *components = [value componentsSeparatedByString:@","];
         if (components.count > 1) {

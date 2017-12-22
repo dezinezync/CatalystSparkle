@@ -14,7 +14,7 @@
 {
     if (self = [super initWithFrame:frame]) {
         self.contentMode = UIViewContentModeScaleAspectFit;
-        self.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.f];
+        self.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.f];
     }
     
     return self;
@@ -23,6 +23,8 @@
 - (void)setImage:(UIImage *)image
 {
     [super setImage:image];
+    
+    self.backgroundColor = UIColor.whiteColor;
     
     [self invalidateIntrinsicContentSize];
 }

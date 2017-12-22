@@ -114,7 +114,15 @@ static NSParagraphStyle * _paragraphStyle = nil;
         } }
     }
     
-    NSAttributedString *retval = [[NSAttributedString alloc] initWithAttributedString:[attrs attributedStringByTrimmingWhitespace]];
+    attrs = [attrs attributedStringByTrimmingWhitespace].mutableCopy;
+    
+    // Post-processing
+    
+    // mutating the backing store is fine as the mutable attributedString keeps track of these changes
+    // and automatically updates itself.
+//    [attrs.mutableString replaceOccurrencesOfString:@"\t" withString:@"    " options:kNilOptions range:NSMakeRange(0, attrs.mutableString.length)];
+    
+    NSAttributedString *retval = [[NSAttributedString alloc] initWithAttributedString:attrs];
     attrs = nil;
     
     return retval;

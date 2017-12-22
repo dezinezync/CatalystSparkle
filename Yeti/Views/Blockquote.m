@@ -41,7 +41,6 @@
 
 @interface Blockquote ()
 
-@property (nonatomic, weak) BlockPara *textView;
 @property (nonatomic) NSLayoutConstraint *heightConstraint;
 
 @end

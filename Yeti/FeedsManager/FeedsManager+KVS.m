@@ -58,7 +58,7 @@
 + (void)load
 {
     [[NSNotificationCenter defaultCenter]
-        addObserver:self
+        addObserver:MyFeedsManager
         selector: @selector (storeDidChange:)
         name: NSUbiquitousKeyValueStoreDidChangeExternallyNotification
         object: [NSUbiquitousKeyValueStore defaultStore]];

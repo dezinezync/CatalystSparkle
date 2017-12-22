@@ -16,18 +16,18 @@
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(didTapShare:)];
     UIBarButtonItem *const flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
-    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-        self.navigationItem.rightBarButtonItems = nil;
-        self.toolbarItems = @[flex, share];
-        self.navigationController.toolbarHidden = NO;
-        self.title = nil;
-    }
-    else {
-        self.title = @"Article";
+//    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+//        self.navigationItem.rightBarButtonItems = nil;
+//        self.toolbarItems = @[flex, share];
+//        self.navigationController.toolbarHidden = NO;
+//        self.title = nil;
+//    }
+//    else {
+//        self.title = @"Article";
         self.toolbarItems = nil;
         self.navigationController.toolbarHidden = YES;
         self.navigationItem.rightBarButtonItems = @[share];
-    }
+//    }
 }
 
 #pragma mark -
