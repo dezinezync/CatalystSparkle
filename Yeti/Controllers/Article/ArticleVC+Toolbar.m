@@ -42,15 +42,27 @@
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
     
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        
+//    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         pvc.barButtonItem = sender;
+        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
         
-    }
+//    }
     
     [self presentViewController:avc animated:YES completion:nil];
     
+}
+
+#pragma mark - <UIAdaptivePresentationControllerDelegate>
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
+{
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        return UIModalPresentationPopover;
+    }
+    
+    return UIModalPresentationNone;
 }
 
 @end

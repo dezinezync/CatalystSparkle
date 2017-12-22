@@ -571,15 +571,24 @@ static CGFloat const padding = 12.f;
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
 {
-    if (interaction != UITextItemInteractionInvokeDefaultAction)
+    
+    if (interaction == UITextItemInteractionPreview)
         return YES;
     
-    SFSafariViewControllerConfiguration *config = [[SFSafariViewControllerConfiguration alloc] init];
-    config.entersReaderIfAvailable = YES;
-    
-    SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL configuration:config];
-    
-    [self presentViewController:sfvc animated:YES completion:nil];
+    if (interaction == UITextItemInteractionPresentActions) {
+        NSString *text = [textView.attributedText.string substringWithRange:characterRange];
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, URL] applicationActivities:nil];
+        
+        [self presentViewController:avc animated:YES completion:nil];
+    }
+    else {
+        SFSafariViewControllerConfiguration *config = [[SFSafariViewControllerConfiguration alloc] init];
+        config.entersReaderIfAvailable = YES;
+        
+        SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL configuration:config];
+        
+        [self presentViewController:sfvc animated:YES completion:nil];
+    }
     
     return NO;
 }
