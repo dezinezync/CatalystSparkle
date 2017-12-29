@@ -16,6 +16,7 @@
     [super encodeWithCoder:encoder];
     
     [encoder encodeObject:self.primedContent forKey:@"primedContent"];
+    [encoder encodeObject:self.identifier forKey:@"identifier"];
     
     [encoder encodeObject:self.articleTitle forKey:@"articleTitle"];
     [encoder encodeObject:self.articleURL forKey:@"articleURL"];
@@ -42,6 +43,7 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
+        self.identifier = [decoder decodeObjectForKey:@"identifier"];
         self.primedContent = [decoder decodeObjectForKey:@"primedContent"];
         self.articleTitle = [decoder decodeObjectForKey:@"articleTitle"];
         self.articleURL = [decoder decodeObjectForKey:@"articleURL"];
@@ -131,7 +133,9 @@
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
-    if ([key isEqualToString:@"id"]) {}
+    if ([key isEqualToString:@"id"]) {
+        self.identifier = value;
+    }
     else if ([key isEqualToString:@"mediaRating"] || [key isEqualToString:@"mediaDescription"] || [key isEqualToString:@"modified"]) {}
     else if ([key isEqualToString:@"url"]) {
         self.articleURL = value;
@@ -155,6 +159,10 @@
 {
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    
+    if (self.identifier) {
+        [dictionary setObject:self.identifier forKey:@"id"];
+    }
     
     if (self.primedContent) {
         [dictionary setObject:self.primedContent forKey:@"primedContent"];

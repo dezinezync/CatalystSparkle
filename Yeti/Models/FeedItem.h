@@ -10,6 +10,7 @@
 
 #pragma mark - Properties from server or DB
 
+@property (nonatomic, copy) NSNumber *identifier;
 @property (nonatomic, copy) NSString *articleTitle;
 @property (nonatomic, copy) NSString *articleURL;
 @property (nonatomic, copy) NSString *author;

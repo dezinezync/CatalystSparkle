@@ -10,6 +10,7 @@
 #import <DZNetworking/DZNetworking.h>
 
 #import "Feed.h"
+#import "YTUserID.h"
 
 extern NSString * _Nonnull const FeedDidUpReadCount;
 
@@ -19,7 +20,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject
 
-@property (nonatomic, copy) NSNumber * _Nullable userID;
+@property (nonatomic, strong, readonly) DZURLSession *session;
+
+@property (nonatomic, strong, readonly) YTUserID *userIDManager;
+
+@property (nonatomic) NSNumber * _Nullable userID;
 
 #pragma mark - Feeds
 
@@ -30,6 +35,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)getFeed:(Feed * _Nonnull)feed page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 
 @end
 

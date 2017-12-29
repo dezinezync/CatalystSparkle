@@ -15,9 +15,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 
-@interface FeedsManager ()
+@interface FeedsManager () <YTUserDelegate>
 
-@property (nonatomic, strong) DZURLSession *session;
+@property (nonatomic, strong, readwrite) DZURLSession *session;
+@property (nonatomic, strong, readwrite) YTUserID *userIDManager;
 
 @end
 
@@ -35,38 +36,18 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
 - (instancetype)init
 {
     if (self = [super init]) {
-        self.userID = @1;
+        self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
     }
     
     return self;
 }
 
-#pragma mark - Feeds
-
-- (NSArray <Feed *> *)feeds
+- (NSNumber *)userID
 {
-    if (!_feeds) {
-        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self getFeeds:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                dispatch_semaphore_signal(sema);
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                _feeds = @[];
-                dispatch_semaphore_signal(sema);
-            }];
-            
-        });
-        
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-        
-        dispatch_semaphore_signal(sema);
-    }
-    
-    return _feeds;
+    return self.userIDManager.userID;
 }
+
+#pragma mark - Feeds
 
 - (void)getFeeds:(successBlock)successCB error:(errorBlock)errorCB
 {
@@ -74,6 +55,16 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
     
     NSString *docsDir;
     NSArray *dirPaths;
+    
+    if (!self.userID) {
+        // if the following error is thrown, it casues an undesirable user experience.
+//        if (errorCB) {
+//            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user account present."}];
+//            errorCB(error, nil, nil);
+//        }
+        
+        return;
+    }
     
     dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     docsDir = [dirPaths objectAtIndex:0];
@@ -128,7 +119,15 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
             successCB(@2, response, task);
         }
         
-    } error:errorCB];
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
 }
 
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
@@ -136,13 +135,13 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
         return [Feed instanceFromDictionary:obj];
     }];
     
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+//    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
     
     for (Feed *feed in feeds) { @autoreleasepool {
         
         for (FeedItem *item in feed.articles) {
             NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-            item.read = [defaults boolForKey:key];
+//            item.read = [defaults boolForKey:key];
         }
         
     } }
@@ -163,11 +162,11 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
             return [FeedItem instanceFromDictionary:obj];
         }];
         
-        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+//        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         
         for (FeedItem *item in items) {
             NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-            item.read = [defaults boolForKey:key];
+//            item.read = [defaults boolForKey:key];
         }
         
         if (feed)
@@ -176,7 +175,15 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
         if (successCB)
             successCB(items, response, task);
         
-    } error:errorCB];
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
 }
 
 - (void)addFeed:(NSURL *)url success:(successBlock)successCB error:(errorBlock)errorCB
@@ -209,7 +216,15 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
         if (successCB)
             successCB(feed, response, task);
         
-    } error:errorCB];
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
 }
 
 #pragma mark - Getters
@@ -226,6 +241,83 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
     }
     
     return _session;
+}
+
+#pragma mark - <YTUserDelegate>
+
+- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+//    if (!self.userID) {
+//        if (errorCB) {
+//            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user ID currently present"}];
+//            errorCB(error, nil, nil);
+//        }
+//
+//        return;
+//    }
+    
+    [self.session GET:@"/user" parameters:@{@"userID": self.userID ?: @""} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
+- (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
+{
+    if (!self.userIDManager.UUID) {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user ID currently present"}];
+            errorCB(error, nil, nil);
+        }
+        
+        return;
+    }
+    
+    [self.session PUT:@"/user" parameters:@{@"uuid": self.userIDManager.UUIDString} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
+
+#pragma mark - Error Handler
+
+- (NSError *)errorFromResponse:(NSDictionary *)userInfo {
+    
+    NSDictionary *errorData = [userInfo valueForKey:DZErrorResponse];
+    NSString *errorString;
+    
+    if (errorData) {
+        errorString = [errorData valueForKey:@"error"] ?: [errorData valueForKey:@"err"];
+    }
+    
+    if (errorString) {
+        NSURLSessionDataTask *task = [userInfo valueForKey:DZErrorTask];
+        NSHTTPURLResponse *res = (NSHTTPURLResponse *)[task response];
+        
+        NSInteger status = res.statusCode;
+        
+//        if (status == 401 && [errorString isEqualToString:@"The token provided did not match with the one we generated."]) {
+//            // auth error.
+//            self.userIDManager = nil;
+//        }
+        
+        return [NSError errorWithDomain:@"TTKit" code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
+    }
+    
+    return nil;
+    
 }
 
 @end
