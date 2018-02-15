@@ -69,7 +69,7 @@
         
         weakify(self);
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
             [MyFeedsManager getFeeds:^(NSNumber *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
@@ -80,6 +80,8 @@
                     asyncMain(^{
                         [self.refreshControl beginRefreshing];
                     })
+                    
+                    return;
                 }
                 
                 // when counter reaches 2, we end refreshing since this is the network response.
@@ -94,10 +96,11 @@
                 _preCommitLoading = NO;
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-               
-                DDLogError(@"%@", error);
                 
-                [AlertManager showGenericAlertWithTitle:@"Error loading" message:error.localizedDescription];
+                if (error) {
+                    DDLogError(@"%@", error);
+                    [AlertManager showGenericAlertWithTitle:@"Error loading" message:error.localizedDescription];
+                }
                 
                 // end refreshing if VC is in that state.
                 asyncMain(^{
@@ -106,6 +109,11 @@
                     
                     if (self.refreshControl.isRefreshing) {
                         [self.refreshControl endRefreshing];
+                    }
+                    
+                    // locally loaded from disk-cache
+                    if (MyFeedsManager.feeds) {
+                        [self setupData:MyFeedsManager.feeds];
                     }
                 });
                 

@@ -14,7 +14,7 @@
 {
     
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(didTapShare:)];
-    UIBarButtonItem *const flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+//    UIBarButtonItem *const flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     
 //    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
 //        self.navigationItem.rightBarButtonItems = nil;

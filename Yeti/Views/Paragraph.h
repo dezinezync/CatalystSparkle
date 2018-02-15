@@ -11,12 +11,14 @@
 
 @interface Paragraph : UITextView
 
+@property (nonatomic, strong) UIFont * bodyFont;
+
 @property (nonatomic, assign) BOOL afterHeading;
 @property (nonatomic, assign, getter=isCaption) BOOL caption;
 
 @property (nonatomic, strong, class) NSParagraphStyle * paragraphStyle;
 
-- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges;
+- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 
 
 /**
@@ -26,6 +28,6 @@
  @param ranges The appliable ranges
  @return An attributed string
  */
-- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges;
+- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 
 @end

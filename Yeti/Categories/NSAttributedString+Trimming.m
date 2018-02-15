@@ -39,9 +39,9 @@
 }
 
 - (NSAttributedString *)attributedStringByTrimmingWhitespace {
-@autoreleasepool {
-    return [self attributedStringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-}
+    @autoreleasepool {
+        return [self attributedStringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    }
 }
 
 @end

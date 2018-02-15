@@ -13,7 +13,9 @@
 - (CGSize)contentSize
 {
     CGSize size = [super contentSize];
-    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 32.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
+    CGFloat originalHeight = size.height;
+    
+    size.height = MAX(originalHeight, [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 32.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height);
 
     return size;
 }
@@ -77,9 +79,9 @@
     }
 }
 
-- (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges
+- (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges attributes:(NSDictionary *)attributes
 {
-    [self.textView setText:text ranges:ranges];
+    [self.textView setText:text ranges:ranges attributes:attributes];
     [self updateFrame];
 }
 

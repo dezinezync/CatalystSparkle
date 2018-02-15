@@ -8,6 +8,7 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
+#import "NSString+Levenshtein.h"
 #import "Content.h"
 
 #import "Paragraph.h"
@@ -27,6 +28,8 @@
 #import "NSDate+DateTools.h"
 
 #import <SafariServices/SafariServices.h>
+
+static CGFloat const baseFontSize = 16.f;
 
 static CGFloat const padding = 12.f;
 
@@ -62,6 +65,17 @@ static CGFloat const padding = 12.f;
     // Do any additional setup after loading the view from its nib.
     
     self.images = [NSPointerArray weakObjectsPointerArray];
+    
+    UILayoutGuide *readable = self.scrollView.readableContentGuide;
+    
+    CGFloat multiplier = 1.f;
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        multiplier = 0.f;
+    }
+    
+    [self.stackView.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.leadingAnchor multiplier:multiplier].active = YES;
+    [self.stackView.trailingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.trailingAnchor multiplier:multiplier].active = YES;
     
     self.scrollView.delegate = self;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -122,13 +136,13 @@ static CGFloat const padding = 12.f;
     [self.loader stopAnimating];
     [self.loader removeFromSuperview];
     
-    self.stackView.hidden = NO;
-    
     _last = nil;
     
 #ifdef DEBUG
     DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
 #endif
+    
+    self.stackView.hidden = NO;
     
     if (self.item && !self.item.isRead)
         [MyFeedsManager article:self.item markAsRead:YES];
@@ -138,6 +152,12 @@ static CGFloat const padding = 12.f;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
         [self scrollViewDidScroll:self.scrollView];
+        
+        CGSize contentSize = self.scrollView.contentSize;
+        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
+        
+        contentSize.width = self.view.bounds.size.width;
+        self.scrollView.contentSize = contentSize;
     });
     
 }
@@ -159,6 +179,8 @@ static CGFloat const padding = 12.f;
     [super viewSafeAreaInsetsDidChange];
 }
 
+#pragma mark -
+
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
@@ -179,17 +201,47 @@ static CGFloat const padding = 12.f;
     
 }
 
+//- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+//{
+//    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+//
+//    if (CGSizeEqualToSize(self.view.bounds.size, size))
+//        return;
+//
+//    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+//
+//        for (Image *imageView in self.images) { @autoreleasepool {
+//            CGRect frame = imageView.frame;
+//            frame.size.width = size.width;
+//
+//            imageView.frame = frame;
+//            if (imageView.image) {
+//                for (NSLayoutConstraint *constraint in imageView.constraints) {
+//                    if (constraint.firstAttribute == NSLayoutAttributeHeight) {
+//                        constraint.constant = frame.size.height;
+//                    }
+//                }
+//
+//                imageView.image = imageView.image;
+//
+//                [imageView setNeedsDisplay];
+//            }
+//        } }
+//
+//    } completion:nil];
+//}
+
 #pragma mark -
 
 - (void)addTitle {
     
-    NSString *subline = formattedString(@"%@ • %@", self.item.author?:@"unknown", [self.item.timestamp timeAgoSinceNow]);
+    NSString *subline = formattedString(@"%@ • %@", self.item.author?:@"unknown", [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
     NSString *formatted = formattedString(@"%@\n%@\n", self.item.articleTitle, subline);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
-    para.lineHeightMultiple = 1.214285714f;
+    para.lineHeightMultiple = 1.125f;
     
-    UIFont * titleFont = [UIFont systemFontOfSize:36.f weight:UIFontWeightSemibold];
+    UIFont * titleFont = [UIFont boldSystemFontOfSize:baseFontSize * 2.2f];
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:titleFont];
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : baseFont,
@@ -198,7 +250,7 @@ static CGFloat const padding = 12.f;
                                      NSKernAttributeName: @(-1.14f)
                                      };
     
-    NSDictionary *subtextAttributes = @{NSFontAttributeName: [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont systemFontOfSize:20.f weight:UIFontWeightMedium]],
+    NSDictionary *subtextAttributes = @{NSFontAttributeName: [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont systemFontOfSize:(baseFontSize * 1.125f) weight:UIFontWeightMedium]],
                                         NSForegroundColorAttributeName: [UIColor colorWithWhite:0.f alpha:0.54f],
                                         NSParagraphStyleAttributeName: para,
                                         NSKernAttributeName: @(-0.43f)
@@ -211,6 +263,8 @@ static CGFloat const padding = 12.f;
     label.numberOfLines = 0;
     label.attributedText = attrs;
     [label sizeToFit];
+    label.backgroundColor = UIColor.whiteColor;
+    label.opaque = YES;
     
     [self.stackView addArrangedSubview:label];
     
@@ -221,15 +275,11 @@ static CGFloat const padding = 12.f;
 
 - (void)processContent:(Content *)content {
     if ([content.type isEqualToString:@"container"]) {
-        if ([(NSArray *)content.content count]) {
+        if ([content.items count]) {
             
             NSUInteger idx = 0;
             
-            for (NSDictionary *dict in (NSArray *)[content content]) { @autoreleasepool {
-                
-                Content *subcontent = [Content instanceFromDictionary:dict];
-                
-//                _nextItem = [(NSArray *)(content.content) safeObjectAtIndex:idx+1];
+            for (Content *subcontent in [content items]) { @autoreleasepool {
                 
                 [self processContent:subcontent];
                 
@@ -259,21 +309,17 @@ static CGFloat const padding = 12.f;
         [self addParagraph:content caption:NO];
     }
     else if ([content.type isEqualToString:@"aside"]) {
-        
-//        if (content.content.length > 140)
-//            [self addParagraph:content caption:NO];
-//        else
             [self addAside:content];
-        
     }
     else if ([content.type isEqualToString:@"youtube"]) {
         [self addYoutube:content];
+        [self addLinebreak];
     }
     else if ([content.type isEqualToString:@"gallery"]) {
         [self addGallery:content];
     }
     else {
-        
+        DDLogWarn(@"Unhandled node: %@", content);
     }
 }
 
@@ -282,6 +328,9 @@ static CGFloat const padding = 12.f;
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
+#ifdef DEBUG_LAYOUT
+    para.backgroundColor = UIColor.blueColor;
+#endif
     
     if ([_last isKindOfClass:Heading.class])
         para.afterHeading = YES;
@@ -317,9 +366,9 @@ static CGFloat const padding = 12.f;
         
         NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
         
-        NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges];
+        NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges attributes:content.attributes];
         
-        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
         [attrs appendAttributedString:newAttrs];
         
         last.attributedText = attrs.copy;
@@ -328,7 +377,7 @@ static CGFloat const padding = 12.f;
         return;
     }
     
-    [para setText:content.content ranges:content.ranges];
+    [para setText:content.content ranges:content.ranges attributes:content.attributes];
     
     frame.size.height = para.intrinsicContentSize.height;
     para.frame = frame;
@@ -347,6 +396,9 @@ static CGFloat const padding = 12.f;
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
     Heading *heading = [[Heading alloc] initWithFrame:frame];
+#ifdef DEBUG_LAYOUT
+    heading.backgroundColor = UIColor.redColor;
+#endif
     heading.level = content.level.integerValue;
     heading.text = content.content;
     
@@ -357,44 +409,51 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:heading];
     
-    [heading.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    [heading.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
-    
-    [self addLinebreak];
+    [heading.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:self.stackView.leadingAnchor multiplier:1.f].active = YES;
+    [heading.trailingAnchor constraintEqualToSystemSpacingAfterAnchor:self.stackView.trailingAnchor multiplier:1.f].active = YES;
 }
 
 - (void)addLinebreak {
     // this rejects multiple \n in succession which may be undesired.
-    if (_last && [_last isKindOfClass:UIView.class])
+    if (_last && [NSStringFromClass(_last.class) isEqualToString:@"UIView"])
         return;
     
     // append to the para if one is available
-    if (_last && [_last isKindOfClass:Paragraph.class]) {
+    if (_last && ([_last isKindOfClass:Paragraph.class] || [_last isKindOfClass:Heading.class])) {
         Paragraph *para = (Paragraph *)_last;
         
-        NSMutableAttributedString *attrs = para.attributedText.mutableCopy;
-        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
-        
-        para.attributedText = attrs;
-        
-        return;
+        NSString *string = [para attributedText].string;
+        NSRange range = [string rangeOfString:@"\n"];
+        if (range.location != NSNotFound && (range.location == (string.length - 1))) {
+            // the linebreak is the last char.
+            return;
+        }
     }
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 24.f);
+    CGFloat height = 24.f;
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone)
+        height = 12.f;
+    
+    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, height);
     
     UIView *linebreak = [[UIView alloc] initWithFrame:frame];
-    
-    [linebreak.heightAnchor constraintEqualToConstant:24.f].active = YES;
+#ifdef DEBUG_LAYOUT
+    linebreak.backgroundColor = UIColor.greenColor;
+#endif
+    [linebreak.heightAnchor constraintEqualToConstant:height].active = YES;
     
     _last = linebreak;
     
     [self.stackView addArrangedSubview:linebreak];
     
-    [linebreak.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor].active = YES;
-    [linebreak.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor].active = YES;
+    [linebreak.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:8.f].active = YES;
+    [linebreak.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-8.f].active = YES;
 }
 
 - (void)addImage:(Content *)content {
+    
+    if ([_last isKindOfClass:Heading.class])
+        [self addLinebreak];
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
     
@@ -411,19 +470,20 @@ static CGFloat const padding = 12.f;
     }
     
     [self.stackView addArrangedSubview:imageView];
+    
     [imageView.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
-    [imageView.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:0.f].active = YES;
-    [imageView.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:0.f].active = YES;
+    [imageView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:0.f].active = YES;
+    [imageView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:0.f].active = YES;
     
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
-    imageView.URL = [NSURL URLWithString:[content.url stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"]];
+    imageView.URL = [NSURL URLWithString:[(content.url ?: [content.attributes valueForKey:@"src"]) stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"]];
     
     [self addLinebreak];
     
-    if (content.alt && ![content.alt isBlank]) {
+    if ((content.alt && ![content.alt isBlank]) || (content.attributes && ![([content.attributes valueForKey:@"alt"] ?: @"") isBlank])) {
         Content *caption = [Content new];
-        caption.content = content.alt;
+        caption.content = content.alt ?: [content.attributes valueForKey:@"alt"];
         [self addParagraph:caption caption:YES];
     }
 }
@@ -446,7 +506,27 @@ static CGFloat const padding = 12.f;
     
     Blockquote *para = [[Blockquote alloc] initWithFrame:frame];
     
-    [para setText:content.content ranges:content.ranges];
+    if (content.content) {
+        [para setText:content.content ranges:content.ranges attributes:content.attributes];
+    }
+    else if (content.items) {
+        
+        NSMutableAttributedString *mattrs = [NSMutableAttributedString new];
+        
+        for (Content *item in content.items) { @autoreleasepool {
+            NSAttributedString *attrs = [para.textView processText:item.content ranges:item.ranges attributes:item.attributes];
+            
+            [mattrs appendAttributedString:attrs];
+            [mattrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+        } }
+        
+        para.textView.attributedText = mattrs.copy;
+        [para performSelectorOnMainThread:NSSelectorFromString(@"updateFrame") withObject:nil waitUntilDone:YES];
+        
+    }
+    else {
+        
+    }
     
     frame.size.height = para.intrinsicContentSize.height;
     para.frame = frame;
@@ -455,20 +535,20 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:para];
     
-    if (content.items && content.items.count) {
-        _isQuoted = YES;
-        
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            for (Content *subcontent in content.items) { @autoreleasepool {
-                [self processContent:subcontent];
-            }}
-        });
-        
-        _isQuoted = NO;
-    }
+//    if (content.items && content.items.count) {
+//        _isQuoted = YES;
+//
+//        weakify(self);
+//
+//        asyncMain(^{
+//            strongify(self);
+//            for (Content *subcontent in content.items) { @autoreleasepool {
+//                [self processContent:subcontent];
+//            }}
+//        });
+//
+//        _isQuoted = NO;
+//    }
     
     para.textView.delegate = self;
     
@@ -515,7 +595,7 @@ static CGFloat const padding = 12.f;
     if ([_last isKindOfClass:Heading.class])
         para.afterHeading = YES;
     
-    [para setText:content.content ranges:content.ranges];
+    [para setText:content.content ranges:content.ranges attributes:content.attributes];
     
     frame.size.height = para.intrinsicContentSize.height;
     para.frame = frame;
@@ -580,8 +660,95 @@ static CGFloat const padding = 12.f;
 
 #pragma mark - <UITextViewDelegate>
 
+- (void)scrollToIdentifer:(NSString *)identifier {
+    
+    if (!identifier || [identifier isBlank])
+        return;
+    
+    if (!NSThread.isMainThread) {
+        [self performSelectorOnMainThread:@selector(scrollToIdentifer:) withObject:identifier waitUntilDone:NO];
+        return;
+    }
+    
+    DDLogDebug(@"Looking up anchor %@", identifier);
+    
+    NSArray <Paragraph *> *paragraphs = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+        return [obj isKindOfClass:Paragraph.class];
+    }];
+    
+    __block Paragraph *required = nil;
+    
+    for (Paragraph *para in paragraphs) { @autoreleasepool {
+        NSAttributedString *attrs = para.attributedText;
+        
+        [attrs enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, attrs.length) options:kNilOptions usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+            if (value) {
+                NSString *compare = value;
+                if ([value isKindOfClass:NSURL.class]) {
+                    compare = [(NSURL *)value absoluteString];
+                }
+                
+                float ld = [identifier compareStringWithString:compare];
+                DDLogDebug(@"href:%@ distance:%@", value, @(ld));
+                
+                // the comparison is not done against 0
+                // to avoid comparing to self
+                if (ld >= 1 && ld <= 6) {
+                    required = para;
+                    *stop = YES;
+                }
+            }
+        }];
+        
+        if (required)
+            break;
+    } }
+    
+    paragraphs = nil;
+    
+    if (required) {
+        CGRect frame = required.frame;
+        
+        DDLogDebug(@"Found the paragraph: %@", required);
+        
+        self.scrollView.userInteractionEnabled = NO;
+        // compare against the maximum contentOffset which is contentsize.height - bounds.size.height
+        CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
+        
+        [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
+        
+        // animate background on paragraph
+        asyncMain(^{
+            required.layer.cornerRadius = 4.f;
+            [UIView animateWithDuration:0.1 delay:0.5 options:kNilOptions animations:^{
+                required.backgroundColor = [UIColor colorWithRed:255/255.f green:249/255.f blue:207/255.f alpha:1.f];
+                
+                self.scrollView.userInteractionEnabled = YES;
+                
+            } completion:^(BOOL finished) {
+                
+                [UIView animateWithDuration:0.3 delay:1 options:kNilOptions animations:^{
+                    required.backgroundColor = [UIColor whiteColor];
+                } completion:^(BOOL finished) {
+                    required.layer.cornerRadius = 0.f;
+                    required = nil;
+                }];
+                
+            }];
+        })
+    }
+    
+}
+
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
 {
+    
+    NSString *absolute = URL.absoluteString;
+    
+    if (absolute.length && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"]) {
+        [self scrollToIdentifer:absolute];
+        return NO;
+    }
     
     if (interaction == UITextItemInteractionPreview)
         return YES;

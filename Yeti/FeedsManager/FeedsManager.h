@@ -20,9 +20,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject
 
-@property (nonatomic, strong, readonly) DZURLSession *session;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session;
 
-@property (nonatomic, strong, readonly) YTUserID *userIDManager;
+@property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;
 
 @property (nonatomic) NSNumber * _Nullable userID;
 

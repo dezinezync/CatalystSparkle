@@ -9,10 +9,37 @@
 #import "Paragraph.h"
 #import "NSAttributedString+Trimming.h"
 #import <DZKit/NSString+Extras.h>
+#import <CoreText/SFNTLayoutTypes.h>
+
+@interface Paragraph ()
+
+@end
 
 @implementation Paragraph
 
 static NSParagraphStyle * _paragraphStyle = nil;
+
+#pragma mark - Class Methods
+
++ (void)setParagraphStyle:(NSParagraphStyle *)paragraphStyle
+{
+    _paragraphStyle = paragraphStyle;
+}
+
++ (NSParagraphStyle *)paragraphStyle {
+    
+    if (!_paragraphStyle) {
+        NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
+        style.lineHeightMultiple = 1.61f;
+        
+        _paragraphStyle = style.copy;
+    }
+    
+    return _paragraphStyle;
+    
+}
+
+#pragma mark - Instance methods
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -26,12 +53,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return self;
 }
 
-- (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges
+- (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges attributes:(NSDictionary *)attributes
 {
     
     weakify(self);
     
-    NSAttributedString *attrs = [self processText:text ranges:ranges];
+    text = [text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    
+    NSAttributedString *attrs = [self processText:text ranges:ranges attributes:attributes];
     
     asyncMain(^{
         strongify(self);
@@ -39,19 +68,29 @@ static NSParagraphStyle * _paragraphStyle = nil;
     });
 }
 
-- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges { @autoreleasepool {
+- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes { @autoreleasepool {
     
     if (!text || [text isBlank])
         return [NSAttributedString new];
     
     NSMutableParagraphStyle *para = Paragraph.paragraphStyle.mutableCopy;
-    if (self.isCaption)
+    if (self.isCaption) {
         para.alignment = NSTextAlignmentCenter;
+        
+        CGFloat offset = 48.f;
+        if (UIApplication.sharedApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+            offset = offset/3.f;
+        }
+        
+        para.firstLineHeadIndent = offset;
+        para.headIndent = offset;
+        para.tailIndent = offset * -1.f;
+    }
     
-    NSDictionary *baseAttributes = @{NSFontAttributeName : self.font,
+    NSDictionary *baseAttributes = @{NSFontAttributeName : [self bodyFont],
                                      NSForegroundColorAttributeName: self.textColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: @(-0.43f)
+                                     NSKernAttributeName: [NSNull null]
                                      };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
@@ -62,16 +101,16 @@ static NSParagraphStyle * _paragraphStyle = nil;
             NSMutableDictionary *dict = @{}.mutableCopy;
             
             if ([range.element isEqualToString:@"strong"]) {
-                [dict setObject:[UIFont systemFontOfSize:self.font.pointSize weight:UIFontWeightBold] forKey:NSFontAttributeName];
+                [dict setObject:[UIFont systemFontOfSize:[self bodyFont].pointSize weight:UIFontWeightBold] forKey:NSFontAttributeName];
             }
             else if ([range.element isEqualToString:@"italics"]) {
-                UIFontDescriptor *descriptor = [self.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
-                [dict setObject:[UIFont fontWithDescriptor:descriptor size:self.font.pointSize] forKey:NSFontAttributeName];
+                UIFontDescriptor *descriptor = [[self bodyFont].fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
+                [dict setObject:[UIFont fontWithDescriptor:descriptor size:[self bodyFont].pointSize] forKey:NSFontAttributeName];
             }
-            else if ([range.element isEqualToString:@"superscript"]) {
+            else if ([range.element isEqualToString:@"sup"]) {
                 [dict setObject:@1 forKey:@"NSSuperScript"];
             }
-            else if ([range.element isEqualToString:@"subscript"]) {
+            else if ([range.element isEqualToString:@"sub"]) {
                 [dict setObject:@-1 forKey:@"NSSuperScript"];
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
@@ -82,25 +121,34 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             else if ([range.element isEqualToString:@"code"]) {
                 
-                __block UIFont *monoFont;
+                __block UIFont *monoFont = [self bodyFont];
                 __block UIColor *textcolor;
-                __block UIColor *background;
+//                __block UIColor *background;
+                
+                NSDictionary *fontAttributes = @{UIFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
+                                                 UIFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector)
+                                                 };
                 
                 if (NSThread.isMainThread) {
-                    monoFont = [UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular];
-                    textcolor = [UIColor colorWithWhite:0.9 alpha:1.f];
-                    background = [UIColor redColor];
+                    UIFontDescriptor *descriptor = [[monoFont fontDescriptor] fontDescriptorByAddingAttributes:fontAttributes];
+                    
+                    monoFont = [UIFont fontWithDescriptor:descriptor size:monoFont.pointSize];
+//                    textcolor = [UIColor colorWithWhite:0.f alpha:1.f];
+                    textcolor = [UIColor redColor];
                 }
                 else
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        monoFont = [UIFont monospacedDigitSystemFontOfSize:self.font.pointSize weight:UIFontWeightRegular];
-                        textcolor = [UIColor colorWithWhite:0.9 alpha:1.f];
-                        background = [UIColor redColor];
+                        UIFontDescriptor *descriptor = [[monoFont fontDescriptor] fontDescriptorByAddingAttributes:fontAttributes];
+                        
+                        monoFont = [UIFont fontWithDescriptor:descriptor size:monoFont.pointSize];
+//                        textcolor = [UIColor colorWithWhite:0.f alpha:1.f];
+                        textcolor = [UIColor redColor];
                     });
                 
                 [dict setObject:monoFont forKey:NSFontAttributeName];
-                [dict setObject:textcolor forKey:NSBackgroundColorAttributeName];
-                [dict setObject:background forKey:NSForegroundColorAttributeName];
+                [dict setObject:textcolor forKey:NSForegroundColorAttributeName];
+//                [dict setObject:background forKey:NSBackgroundColorAttributeName];
+//                [dict setObject:[NSParagraphStyle new] forKey:NSParagraphStyleAttributeName];
             }
             
             @try {
@@ -112,6 +160,20 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             
         } }
+    }
+    
+    if ([attributes valueForKey:@"href"]) {
+        NSURL *href = [NSURL URLWithString:attributes[@"href"]];
+        
+        // applies to the entire current string
+        [attrs addAttribute:NSLinkAttributeName value:href range:NSMakeRange(0, attrs.length)];
+    }
+    
+    if ([attributes valueForKey:@"id"] && !self.tag) {
+        NSString *identifier = [attributes valueForKey:@"id"];
+        NSInteger hash = [self hashFromIdentifier:identifier];
+        if (hash > 0)
+            self.tag = hash;
     }
     
     attrs = [attrs attributedStringByTrimmingWhitespace].mutableCopy;
@@ -127,6 +189,18 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     return retval;
 } }
+
+- (NSInteger)hashFromIdentifier:(NSString *)identifier {
+    NSInteger hash = 0;
+    NSUInteger length = identifier.length;
+    
+    while (length > 0) {
+        hash += [NSNumber numberWithUnsignedChar:[identifier characterAtIndex:length-1]].integerValue;
+        length--;
+    }
+    
+    return hash;
+}
 
 #pragma mark - Overrides
 
@@ -154,31 +228,36 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return size;
 }
 
-- (UIFont *)font
+- (UIFont *)bodyFont
 {
-    
-    if (!NSThread.isMainThread) {
-        __block UIFont *retval = nil;
-        weakify(self);
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            strongify(self);
-            retval = [self font];
-        });
+    if (!_bodyFont) {
+        if (!NSThread.isMainThread) {
+            __block UIFont *retval = nil;
+            weakify(self);
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                strongify(self);
+                retval = [self bodyFont];
+            });
+            
+            _bodyFont = retval;
+            
+            return _bodyFont;
+        }
         
-        return retval;
+        __block UIFont * bodyFont = [UIFont systemFontOfSize:18.f];
+        __block UIFont * baseFont;
+        
+        if (self.isCaption)
+            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCallout] scaledFontForFont:bodyFont];
+        else
+            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+        
+        bodyFont = nil;
+        
+        _bodyFont = baseFont;
     }
     
-    __block UIFont * bodyFont = [UIFont systemFontOfSize:20.f];
-    __block UIFont * baseFont;
-    
-    if (self.isCaption)
-        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
-    else
-        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
-    
-    bodyFont = nil;
-    
-    return baseFont;
+    return _bodyFont;
 }
 
 - (UIColor *)textColor
@@ -194,20 +273,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         return retval;
     }
     
-    return [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 1.f];
-}
-
-+ (NSParagraphStyle *)paragraphStyle {
-   
-    if (!_paragraphStyle) {
-        NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.611111111f;
-        
-        _paragraphStyle = style.copy;
-    }
-    
-    return _paragraphStyle;
-    
+    return [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 0.9f];
 }
 
 - (BOOL)translatesAutoresizingMaskIntoConstraints

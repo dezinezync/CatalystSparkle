@@ -75,14 +75,12 @@
 - (void)setLevel:(NSInteger)level
 {
     _level = level;
+    NSArray <NSNumber *> * const scales = @[@(2.2f), @(1.8f), @(1.6f), @(1.4f), @(1.2f), @(1.f)];
+    CGFloat scale = [scales[level - 1] floatValue];
     
-    NSString *scaleStr = formattedString(@"1.%@", @(8-(_level-1)));
-    CGFloat scale = scaleStr.floatValue;
-    
-    UIFont * bodyFont = [UIFont systemFontOfSize:20 * scale weight:UIFontWeightMedium];
+    UIFont * bodyFont = [UIFont boldSystemFontOfSize:16 * scale];
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:bodyFont];
     
-//    UIFont *font = [UIFont systemFontOfSize:ceil(base.pointSize * scale) weight:UIFontWeightBold];
     self.font = baseFont;
 }
 

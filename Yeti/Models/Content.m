@@ -62,6 +62,9 @@
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
+    
+    if ([key isEqualToString:@"content"] && value && [value isKindOfClass:NSArray.class])
+        key = @"items";
 
     if ([key isEqualToString:@"ranges"]) {
 
@@ -107,6 +110,18 @@
         }
     }
     else {
+        
+        if ([key isEqualToString:@"type"]) {
+            if ([value isEqualToString:@"img"])
+                value = @"image";
+            else if ([value isEqualToString:@"p"])
+                value = @"paragraph";
+            else if ([value isEqualToString:@"ul"])
+                value = @"unorderedList";
+            else if ([value isEqualToString:@"ol"])
+                value = @"orderedList";
+        }
+        
         [super setValue:value forKey:key];
     }
 
@@ -126,6 +141,21 @@
             else
                 self.items = items;
         }
+    }
+    else if ([key isEqualToString:@"node"]) {
+        [self setValue:value forKey:@"type"];
+    }
+    else if ([key isEqualToString:@"text"]) {
+        [self setValue:value forKey:@"content"];
+    }
+    else if ([key isEqualToString:@"src"]) {
+        [self setValue:value forKey:@"url"];
+    }
+    else if ([key isEqualToString:@"attr"]) {
+        [self setValue:value forKey:@"attributes"];
+    }
+    else if ([key isEqualToString:@"id"]) {
+        [self setValue:value forKey:@"identifier"];
     }
     else
         DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);

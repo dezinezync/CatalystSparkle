@@ -18,7 +18,7 @@
 
 @property (nonatomic, weak) BlockPara *textView;
 
-- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges;
+- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 
 - (void)append:(NSAttributedString *)attrs;
 

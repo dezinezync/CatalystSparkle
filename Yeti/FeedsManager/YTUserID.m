@@ -9,6 +9,15 @@
 #import "YTUserID.h"
 #import <DZKit/AlertManager.h>
 
+@interface YTUserID () {
+    // how many attempts have we made since waiting.
+    // max is 2. Starts with 0.
+    // If we reach 2, create a new user.
+    NSInteger _tries;
+}
+
+@end
+
 @implementation YTUserID
 
 + (void)load
@@ -24,7 +33,7 @@
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate {
     if (self = [super init]) {
         self.delegate = delegate;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             DDLogDebug(@"Initialised with: %@ %@", self.UUID, self.userID);
         });
     }
@@ -38,10 +47,17 @@
 {
     if (!_UUID) {
         // check if the store already has one
-        NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
-        NSString *UUIDString = [store valueForKey:@"YTUserID"];
+        NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+        NSString *UUIDString = [store stringForKey:@"YTUserID"];
         
-        _userID = [store valueForKey:@"userID"];
+        _userID = @([store longLongForKey:@"userID"]);
+        
+        if (!UUIDString || !_userID) {
+            if (_tries < 2) {
+                _tries++;
+                return [self performSelector:@selector(UUID)];
+            }
+        }
         
         if (UUIDString) {
             // we have one.
@@ -61,14 +77,14 @@
                     _userID = @([[user valueForKey:@"id"] integerValue]);
                     _UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
                     
-                    [store setValue:_userID forKey:@"userID"];
-                    [store setValue:_UUID.UUIDString forKey:@"YTUserID"];
+                    [store setLongLong:_userID.longLongValue forKey:@"userID"];
+                    [store setString:_UUID.UUIDString forKey:@"YTUserID"];
                     [store synchronize];
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     _UUID = [NSUUID UUID];
-                    [store setValue:_UUID.UUIDString forKey:@"YTUserID"];
+                    [store setString:_UUID.UUIDString forKey:@"YTUserID"];
                     [store synchronize];
                     
                     strongify(self);

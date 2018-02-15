@@ -62,7 +62,8 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
 //            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user account present."}];
 //            errorCB(error, nil, nil);
 //        }
-        
+        if (errorCB)
+            errorCB(nil, nil, nil);
         return;
     }
     
@@ -80,6 +81,8 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
             
             if (error) {
                 DDLogError(@"%@", error);
+                if (errorCB)
+                    errorCB(error, nil, nil);
             }
             else if (successCB) {
                 DDLogDebug(@"Responding to successCB from disk cache");
@@ -137,14 +140,14 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
     
 //    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
     
-    for (Feed *feed in feeds) { @autoreleasepool {
-        
-        for (FeedItem *item in feed.articles) {
-            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-//            item.read = [defaults boolForKey:key];
-        }
-        
-    } }
+//    for (Feed *feed in feeds) { @autoreleasepool {
+//        
+//        for (FeedItem *item in feed.articles) {
+////            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
+////            item.read = [defaults boolForKey:key];
+//        }
+//        
+//    } }
     
     return feeds;
 }
@@ -164,10 +167,10 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
         
 //        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
         
-        for (FeedItem *item in items) {
-            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-//            item.read = [defaults boolForKey:key];
-        }
+//        for (FeedItem *item in items) {
+//            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
+////            item.read = [defaults boolForKey:key];
+//        }
         
         if (feed)
             feed.articles = [feed.articles arrayByAddingObjectsFromArray:items];
@@ -260,10 +263,12 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
     [self.session GET:@"/user" parameters:@{@"userID": self.userID ?: @""} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
+        if (error) {
+            if (errorCB)
+                errorCB(error, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
         }
     }];
     

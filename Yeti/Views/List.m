@@ -26,7 +26,7 @@
 }
 
 - (NSAttributedString *)processContent:(Content *)content {
-    self.type = [content.type isEqualToString:@"orderedList"] ? 0 : 1;
+    self.type = [content.type isEqualToString:@"orderedList"] ? 1 : 0;
     
     weakify(self);
     
@@ -39,31 +39,32 @@
         strongify(self);
         
         for (Content *item in content.items) { @autoreleasepool {
-            
-            if (!item.content) {
+            if ([item.type isEqualToString:@"li"] || [item.type isEqualToString:@"listitem"]) {
+                index++;
                 
-                NSUInteger oldIndex = index;
+                if (item.content) {
+                    [self append:item index:index attributedString:attrs indent:0];
+                }
+                else if (item.items && item.items.count) {
                 
-                // process like normal item, but intended further by 1 tab
-                if ([item.type containsString:@"orderedList"]) {
-                    
-                    index = 0;
-                    
                     for (Content *subitem in item.items) { @autoreleasepool {
-                        index++;
-                        [self append:subitem index:index attributedString:attrs indent:1];
-                    }}
+                        if ([subitem.type isEqualToString:@"linebreak"]) {
+                            continue;
+                        }
+//                        NSAttributedString *subatr = [self processText:subitem.content ranges:subitem.ranges attributes:subitem.attr];
+//                        [attrs appendAttributedString:subatr];
+                        
+                        [self append:subitem index:index attributedString:attrs indent:0];
+                    } }
                     
                 }
                 
-                index = oldIndex;
-                
-                return;
             }
-            
-            index++;
-            [self append:item index:index attributedString:attrs indent:0];
-            
+            else if ([item.type isEqualToString:@"linebreak"]) {}
+            else {
+                // nested list
+                DDLogDebug(@"%@", item.dictionaryRepresentation);
+            }
         }}
         
     });
@@ -93,9 +94,22 @@
     NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
     NSString *stepString = formattedString(@"%@%@ ", indent == 1 ? @"\t" : @"", step);
     
-    NSAttributedString *sub = [self processText:item.content ranges:item.ranges];
+    NSMutableAttributedString *sub = [NSMutableAttributedString new];
     
-    NSDictionary *attributes = @{NSFontAttributeName: self.font,
+    if (item.items) {
+        for (Content *it in item.items) {
+            NSAttributedString *at = [self processText:it.content ranges:it.ranges attributes:it.attributes];
+            
+            [sub appendAttributedString:at];
+        }
+    }
+    else if (item.content) {
+        NSAttributedString *at = [self processText:item.content ranges:item.ranges attributes:item.attributes];
+        
+        [sub appendAttributedString:at];
+    }
+    
+    NSDictionary *attributes = @{NSFontAttributeName: self.bodyFont,
                                  NSParagraphStyleAttributeName: Paragraph.paragraphStyle,
                                  NSForegroundColorAttributeName: [UIColor.blackColor colorWithAlphaComponent:(self.isQuoted ? 0.54f : 1.f)],
                                  NSKernAttributeName: @(-0.43f)
