@@ -108,10 +108,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 [dict setObject:[UIFont fontWithDescriptor:descriptor size:[self bodyFont].pointSize] forKey:NSFontAttributeName];
             }
             else if ([range.element isEqualToString:@"sup"]) {
-                [dict setObject:@1 forKey:@"NSSuperScript"];
+//                [dict setObject:@1 forKey:@"NSSuperScript"];
+                [dict setObject:[UIFont systemFontOfSize:self.bodyFont.pointSize-6.f] forKey:NSFontAttributeName];
+                [dict setObject:@(6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"sub"]) {
-                [dict setObject:@-1 forKey:@"NSSuperScript"];
+//                [dict setObject:@-1 forKey:@"NSSuperScript"];
+                [dict setObject:[UIFont systemFontOfSize:self.bodyFont.pointSize-6.f] forKey:NSFontAttributeName];
+                [dict setObject:@(-6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
                 NSURL *URL = [NSURL URLWithString:range.url];

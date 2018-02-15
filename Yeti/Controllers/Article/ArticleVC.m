@@ -101,7 +101,16 @@ static CGFloat const padding = 12.f;
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
-    [self.loader startAnimating];
+    if (!_hasRendered) {
+        [self.loader startAnimating];
+    }
+    
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    }
+    else {
+        self.navigationItem.leftBarButtonItem = nil;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -670,6 +679,10 @@ static CGFloat const padding = 12.f;
         return;
     }
     
+    identifier = [identifier stringByReplacingOccurrencesOfString:@"#" withString:@""];
+    
+    __block NSString *subidentifier = [identifier substringFromIndex:identifier.length > 3 ? 3 : 0];
+    
     DDLogDebug(@"Looking up anchor %@", identifier);
     
     NSArray <Paragraph *> *paragraphs = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
@@ -681,19 +694,29 @@ static CGFloat const padding = 12.f;
     for (Paragraph *para in paragraphs) { @autoreleasepool {
         NSAttributedString *attrs = para.attributedText;
         
-        [attrs enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, attrs.length) options:kNilOptions usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+        [attrs enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, attrs.length) options:NSAttributedStringEnumerationReverse usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
             if (value) {
                 NSString *compare = value;
                 if ([value isKindOfClass:NSURL.class]) {
                     compare = [(NSURL *)value absoluteString];
                 }
                 
+                compare = [compare stringByReplacingOccurrencesOfString:@"#" withString:@""];
+                
+                NSString *subcompare = [compare substringFromIndex:compare.length > 3 ? 3 : 0];
+                
                 float ld = [identifier compareStringWithString:compare];
-                DDLogDebug(@"href:%@ distance:%@", value, @(ld));
+                DDLogDebug(@"href:%@ distance:%@", compare, @(ld));
+                
+                BOOL contained = [subcompare containsString:subidentifier] || [subidentifier containsString:subcompare];
+                
+                DDLogDebug(@"sub matching:%@", contained ? @"Yes" : @"No");
+                
+                // also check last N chars
                 
                 // the comparison is not done against 0
                 // to avoid comparing to self
-                if (ld >= 1 && ld <= 6) {
+                if ((ld >= 1 && ld <= 6) && contained) {
                     required = para;
                     *stop = YES;
                 }
