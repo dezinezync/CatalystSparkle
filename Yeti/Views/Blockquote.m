@@ -10,21 +10,6 @@
 
 @implementation BlockPara
 
-- (CGSize)contentSize
-{
-    CGSize size = [super contentSize];
-    CGFloat originalHeight = size.height;
-    
-    size.height = MAX(originalHeight, [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 32.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height);
-
-    return size;
-}
-
-- (CGSize)intrinsicContentSize
-{
-    return [self contentSize];
-}
-
 - (UIFont *)font
 {
     UIFont *base = [super font];
@@ -39,11 +24,23 @@
     return [[UIColor blackColor] colorWithAlphaComponent:0.54f];
 }
 
+- (NSParagraphStyle *)paragraphStyle {
+    if (!_paragraphStyle) {
+        NSMutableParagraphStyle *style = [Paragraph paragraphStyle].mutableCopy;
+        style.lineBreakMode = NSLineBreakByWordWrapping;
+        
+        _paragraphStyle = style;
+    }
+    
+    return _paragraphStyle;
+}
+
 @end
 
 @interface Blockquote ()
 
 @property (nonatomic) NSLayoutConstraint *heightConstraint;
+@property (nonatomic, weak) UIView *decorator;
 
 @end
 
@@ -53,30 +50,34 @@
 {
     if (self = [super initWithFrame:frame]) {
         
-        UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(8.f, 12.f, 17.f, 12.61f)];
+        UIColor *white = UIColor.whiteColor;
+        self.backgroundColor = white;
+        self.opaque = YES;
+        
+        BlockPara *textview = [[BlockPara alloc] initWithFrame:self.bounds];
+        textview.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self addSubview:textview];
+        
+        [textview.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:24.f].active = YES;
+        [textview.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:-24.f].active = YES;
+        [self.bottomAnchor constraintEqualToAnchor:textview.bottomAnchor constant:-40.f].active = YES;
+        
+        _textView = textview;
+        
+        UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(8.f, 0.f, 17.f, 12.61f)];
         decorator.image = [UIImage imageNamed:@"quote-decorator"];
         decorator.autoresizingMask = UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
+        decorator.backgroundColor = white;
+        decorator.opaque = YES;
         
         [self addSubview:decorator];
         
-        BlockPara *textview = [[BlockPara alloc] initWithFrame:self.bounds];
-        [self addSubview:textview];
-        _textView = textview;
+        [self updateStyle:nil];
     }
     
     return self;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    CGRect frame = self.bounds;
-    self.textView.frame = CGRectMake(42.f, 0, frame.size.width - 42.f, frame.size.height);
-    
-    if (self.superview) {
-        [self invalidateIntrinsicContentSize];
-    }
 }
 
 - (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges attributes:(NSDictionary *)attributes
@@ -104,13 +105,29 @@
     CGRect frame = CGRectMake(42.f, 0, size.width, size.height);
     
     self.textView.frame = frame;
-
 }
 
 - (CGSize)intrinsicContentSize
 {
-    CGSize size = [self.textView contentSize];
+    CGSize size = [self.textView intrinsicContentSize];
+    // add image height and padding
+    size.width = MIN(self.bounds.size.width, size.width + 25.f);
+    size.height -= 24.f;
     return size;
+}
+
+- (void)updateStyle:(id)animated {
+    
+    NSTimeInterval duration = animated ? 0.3 : 0;
+    
+    weakify(self);
+    
+    [UIView animateWithDuration:duration animations:^{
+        strongify(self);
+        self.backgroundColor = UIColor.whiteColor;
+        self.decorator.backgroundColor = UIColor.whiteColor;
+    }];
+    
 }
 
 @end

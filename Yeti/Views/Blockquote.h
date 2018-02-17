@@ -12,6 +12,8 @@
 
 @interface BlockPara : Paragraph
 
+@property (nonatomic, strong) NSParagraphStyle *paragraphStyle;
+
 @end
 
 @interface Blockquote : UIView

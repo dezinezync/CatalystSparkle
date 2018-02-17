@@ -31,11 +31,13 @@
         
         [self.heightAnchor constraintEqualToAnchor:self.widthAnchor multiplier:multiplier].active = YES;
         self.backgroundColor = [UIColor blackColor];
+        self.opaque = YES;
         self.layer.cornerRadius = 8.f;
-        self.layer.shadowColor = UIColor.blackColor.CGColor;
-        self.layer.shadowOffset = CGSizeMake(0, 6.f);
-        self.layer.shadowRadius = 16.f;
-        self.layer.shadowOpacity = 0.12f;
+//        self.layer.shadowColor = UIColor.blackColor.CGColor;
+//        self.layer.shadowOffset = CGSizeMake(0, 6.f);
+//        self.layer.shadowRadius = 16.f;
+//        self.layer.shadowOpacity = 0.12f;
+        self.clipsToBounds = YES;
         
         UIWebView *webview = [[UIWebView alloc] initWithFrame:frame];
         webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -45,6 +47,7 @@
         _webview.layer.cornerRadius = 8.f;
         _webview.clipsToBounds = YES;
         _webview.scrollView.scrollEnabled = NO;
+        _webview.opaque = YES;
         
     }
     

@@ -22,6 +22,9 @@
     if (self = [super initWithFrame:frame]) {
         self.level = 1;
         self.numberOfLines = 0;
+        self.opaque = YES;
+        
+        [self updateStyle:nil];
     }
     
     return self;
@@ -40,6 +43,21 @@
 {
     return NO;
 }
+
+- (void)updateStyle:(id)animated {
+    
+    NSTimeInterval duration = animated ? 0.3 : 0;
+    
+    weakify(self);
+    
+    [UIView animateWithDuration:duration animations:^{
+        strongify(self);
+        self.backgroundColor = UIColor.whiteColor;
+    }];
+    
+}
+
+#pragma mark -
 
 - (UIColor *)textColor
 {

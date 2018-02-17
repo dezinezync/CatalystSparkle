@@ -61,6 +61,8 @@
 {
     [super viewWillAppear:animated];
     
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
     [self dz_smoothlyDeselectRows:self.tableView];
     
     if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {

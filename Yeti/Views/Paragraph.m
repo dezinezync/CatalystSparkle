@@ -48,6 +48,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.layoutMargins = UIEdgeInsetsZero;
         self.alwaysBounceVertical = NO;
         self.showsVerticalScrollIndicator = NO;
+        self.opaque = YES;
+        
+        [self updateStyle:nil];
     }
     
     return self;
@@ -73,7 +76,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!text || [text isBlank])
         return [NSAttributedString new];
     
-    NSMutableParagraphStyle *para = Paragraph.paragraphStyle.mutableCopy;
+    NSMutableParagraphStyle *para = [self respondsToSelector:@selector(paragraphStyle)] ? [self performSelector:@selector(paragraphStyle)] : Paragraph.paragraphStyle.mutableCopy;
+    
     if (self.isCaption) {
         para.alignment = NSTextAlignmentCenter;
         
@@ -89,9 +93,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : [self bodyFont],
                                      NSForegroundColorAttributeName: self.textColor,
-                                     NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: [NSNull null]
-                                     };
+                                     NSParagraphStyleAttributeName: para};
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
     
@@ -206,6 +208,19 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return hash;
 }
 
+- (void)updateStyle:(id)animated {
+    
+    NSTimeInterval duration = animated ? 0.3 : 0;
+    
+    weakify(self);
+    
+    [UIView animateWithDuration:duration animations:^{
+        strongify(self);
+        self.backgroundColor = UIColor.whiteColor;
+    }];
+    
+}
+
 #pragma mark - Overrides
 
 - (void)layoutSubviews
@@ -220,7 +235,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
 - (CGSize)contentSize
 {
     CGSize size = [super contentSize];
-    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 16.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height + 24.f;
+    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 24.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height + 24.f;
     
     return size;
 }
