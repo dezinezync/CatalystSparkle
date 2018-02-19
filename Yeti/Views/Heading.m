@@ -30,15 +30,6 @@
     return self;
 }
 
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    if (self.superview) {
-        [self invalidateIntrinsicContentSize];
-    }
-}
-
 - (BOOL)translatesAutoresizingMaskIntoConstraints
 {
     return NO;

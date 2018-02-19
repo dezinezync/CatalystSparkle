@@ -61,7 +61,7 @@
         
         [textview.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:24.f].active = YES;
         [textview.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
-        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:-24.f].active = YES;
+        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:0.f].active = YES;
         [self.bottomAnchor constraintEqualToAnchor:textview.bottomAnchor constant:-40.f].active = YES;
         
         _textView = textview;

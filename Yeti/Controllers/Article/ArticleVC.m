@@ -418,8 +418,8 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:heading];
     
-    [heading.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:self.stackView.leadingAnchor multiplier:1.f].active = YES;
-    [heading.trailingAnchor constraintEqualToSystemSpacingAfterAnchor:self.stackView.trailingAnchor multiplier:1.f].active = YES;
+    [heading.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:16.f].active = YES;
+    [heading.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addLinebreak {
