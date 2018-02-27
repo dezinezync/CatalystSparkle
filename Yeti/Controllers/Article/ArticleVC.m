@@ -70,9 +70,9 @@ static CGFloat const padding = 12.f;
     
     CGFloat multiplier = 1.f;
     
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        multiplier = 0.f;
-    }
+//    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+//        multiplier = 0.f;
+//    }
     
     [self.stackView.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.leadingAnchor multiplier:multiplier].active = YES;
     [self.stackView.trailingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.trailingAnchor multiplier:multiplier].active = YES;
@@ -210,35 +210,23 @@ static CGFloat const padding = 12.f;
     
 }
 
-//- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
-//{
-//    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-//
-//    if (CGSizeEqualToSize(self.view.bounds.size, size))
-//        return;
-//
-//    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-//
-//        for (Image *imageView in self.images) { @autoreleasepool {
-//            CGRect frame = imageView.frame;
-//            frame.size.width = size.width;
-//
-//            imageView.frame = frame;
-//            if (imageView.image) {
-//                for (NSLayoutConstraint *constraint in imageView.constraints) {
-//                    if (constraint.firstAttribute == NSLayoutAttributeHeight) {
-//                        constraint.constant = frame.size.height;
-//                    }
-//                }
-//
-//                imageView.image = imageView.image;
-//
-//                [imageView setNeedsDisplay];
-//            }
-//        } }
-//
-//    } completion:nil];
-//}
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    if (CGSizeEqualToSize(self.view.bounds.size, size))
+        return;
+
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+
+        for (Image *imageView in self.images) { @autoreleasepool {
+            if (imageView.image) {
+                [imageView updateAspectRatioWithImage:imageView.image];
+            }
+        } }
+
+    } completion:nil];
+}
 
 #pragma mark -
 
@@ -271,14 +259,25 @@ static CGFloat const padding = 12.f;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
     label.numberOfLines = 0;
     label.attributedText = attrs;
+    label.preferredMaxLayoutWidth = self.view.bounds.size.width;
+    
     [label sizeToFit];
+    
     label.backgroundColor = UIColor.whiteColor;
     label.opaque = YES;
+    label.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self.stackView addArrangedSubview:label];
     
     [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
     [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
+    
+    for (NSLayoutConstraint *constraint in label.constraints) {
+        if (constraint.firstAttribute == NSLayoutAttributeCenterX) {
+            constraint.active = NO;
+            break;
+        }
+    }
     
 }
 
@@ -465,24 +464,28 @@ static CGFloat const padding = 12.f;
         [self addLinebreak];
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
-    
-    if (!CGSizeEqualToSize(content.size, CGSizeZero)) {
-        frame.size.height = ceilf((content.size.height * frame.size.width) / content.size.width);
-    }
+    CGFloat scale = content.size.height / content.size.width;
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
     
     _last = imageView;
     
+    // hides tracking images
     if (CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
         imageView.hidden = YES;
     }
     
     [self.stackView addArrangedSubview:imageView];
     
-    [imageView.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
-    [imageView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:0.f].active = YES;
-    [imageView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:0.f].active = YES;
+    imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
+    imageView.aspectRatio.priority = UILayoutPriorityRequired;
+    imageView.aspectRatio.active = YES;
+    
+    NSLayoutConstraint *leading = [imageView.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-16.f];
+    leading.priority = UILayoutPriorityRequired;
+    leading.active = YES;
+    
+    [imageView.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:0.f].active = YES;
     
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
@@ -495,6 +498,7 @@ static CGFloat const padding = 12.f;
         caption.content = content.alt ?: [content.attributes valueForKey:@"alt"];
         [self addParagraph:caption caption:YES];
     }
+
 }
 
 - (void)addGallery:(Content *)content {

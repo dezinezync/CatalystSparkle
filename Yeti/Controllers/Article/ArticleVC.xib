@@ -66,10 +66,10 @@
                     </constraints>
                     <variation key="default">
                         <mask key="constraints">
-                            <exclude reference="aR0-kb-Oa4"/>
                             <exclude reference="2Ib-Iq-JK7"/>
                             <exclude reference="ICm-Ho-7m3"/>
                             <exclude reference="RJL-lh-rkv"/>
+                            <exclude reference="aR0-kb-Oa4"/>
                             <exclude reference="igh-na-4GH"/>
                             <exclude reference="ihr-hl-GmW"/>
                         </mask>
