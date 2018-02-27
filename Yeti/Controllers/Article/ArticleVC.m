@@ -31,7 +31,7 @@
 
 static CGFloat const baseFontSize = 16.f;
 
-static CGFloat const padding = 12.f;
+static CGFloat const padding = 6.f;
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
@@ -316,6 +316,9 @@ static CGFloat const padding = 12.f;
     }
     else if ([content.type isEqualToString:@"gallery"]) {
         [self addGallery:content];
+    }
+    else if ([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"]) {
+        [self addParagraph:content caption:NO];
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);
