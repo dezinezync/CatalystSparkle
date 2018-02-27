@@ -14,7 +14,7 @@
 @property (nonatomic, copy) NSURL *URL;
 
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
-@property (nonatomic, strong) NSLayoutConstraint *aspectRatio;
+@property (nonatomic, strong) NSLayoutConstraint *aspectRatio, *leading, *trailing;
 
 - (void)updateAspectRatioWithImage:(UIImage *)image;
 

@@ -273,7 +273,7 @@ static CGFloat const padding = 6.f;
 }
 
 - (void)processContent:(Content *)content {
-    if ([content.type isEqualToString:@"container"]) {
+    if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
         if ([content.items count]) {
             
             NSUInteger idx = 0;
@@ -388,6 +388,8 @@ static CGFloat const padding = 6.f;
     
     [self.stackView addArrangedSubview:para];
     
+    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+    
     para.delegate = self;
 }
 
@@ -466,19 +468,27 @@ static CGFloat const padding = 6.f;
     
     [self.stackView addArrangedSubview:imageView];
     
-    imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
-    imageView.aspectRatio.priority = UILayoutPriorityRequired;
-    imageView.aspectRatio.active = YES;
-    
-    NSLayoutConstraint *leading = [imageView.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-16.f];
-    leading.priority = UILayoutPriorityRequired;
-    leading.active = YES;
-    
-    [imageView.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:0.f].active = YES;
+    if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
+        imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
+        imageView.aspectRatio.priority = UILayoutPriorityRequired;
+        imageView.aspectRatio.active = YES;
+    }
+    else {
+        imageView.aspectRatio = [imageView.heightAnchor constraintEqualToConstant:32.f];
+        imageView.aspectRatio.priority = UILayoutPriorityRequired;
+        imageView.aspectRatio.active = YES;
+    }
     
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
-    imageView.URL = [NSURL URLWithString:[(content.url ?: [content.attributes valueForKey:@"src"]) stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"]];
+    
+    NSString *url = [(content.url ?: [content.attributes valueForKey:@"src"]) stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"];
+    
+    if ([content.attributes valueForKey:@"data-large-file"]) {
+        url = [content.attributes valueForKey:@"data-large-file"];
+    }
+    
+    imageView.URL = [NSURL URLWithString:url];
     
     [self addLinebreak];
     

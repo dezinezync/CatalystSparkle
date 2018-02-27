@@ -26,6 +26,22 @@
     return self;
 }
 
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+    
+    if (self.superview) {
+        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:-16.f];
+        self.leading.priority = UILayoutPriorityRequired;
+        self.leading.active = YES;
+        
+        self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:0.f];
+        self.trailing.priority = UILayoutPriorityRequired;
+        self.trailing.active = YES;
+
+    }
+}
+
 - (void)setImage:(UIImage *)image
 {
     [super setImage:image];
@@ -33,6 +49,17 @@
     self.backgroundColor = UIColor.whiteColor;
     
     weakify(self);
+    
+    // this no longer applies and we need to contraint the imageview to the maximum width of the image.
+    if (image.size.width < self.bounds.size.width) {
+        self.leading.active = NO;
+        self.trailing.active = NO;
+        
+        self.leading = nil;
+        self.trailing = nil;
+        
+        [self.widthAnchor constraintEqualToConstant:image.size.width];
+    }
     
     asyncMain(^{
         strongify(self);
@@ -53,7 +80,9 @@
     
     CGFloat aspectRatioValue = image.size.height / image.size.width;
     self.aspectRatio = [self.heightAnchor constraintEqualToConstant:aspectRatioValue * self.bounds.size.width];
+    
     [self addConstraint:self.aspectRatio];
+    
 }
 
 - (CGSize)intrinsicContentSize
@@ -61,7 +90,7 @@
     CGSize size = [super intrinsicContentSize];
 
     if (self.image) {
-        size.width = self.superview.frame.size.width + self.superview.frame.origin.x;
+        size.width = MIN(self.bounds.size.width, self.image.size.width);
         size.height = ceilf(self.image.size.height / (self.image.size.width / size.width));
     }
 
