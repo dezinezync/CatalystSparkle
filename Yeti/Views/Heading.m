@@ -35,6 +35,13 @@
     return NO;
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    
+    self.preferredMaxLayoutWidth = frame.size.width;
+}
+
 - (void)updateStyle:(id)animated {
     
     NSTimeInterval duration = animated ? 0.3 : 0;

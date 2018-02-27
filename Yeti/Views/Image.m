@@ -30,7 +30,7 @@
 {
     [super setImage:image];
     
-    self.backgroundColor = UIColor.blueColor;
+    self.backgroundColor = UIColor.whiteColor;
     
     weakify(self);
     

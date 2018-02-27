@@ -54,7 +54,6 @@
 - (instancetype)initWithNib
 {
     if (self = [super initWithNib]) {
-//        self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
         self.scrollView.backgroundColor = UIColor.whiteColor;
         self.scrollView.delegate = self;
         

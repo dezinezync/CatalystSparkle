@@ -134,13 +134,10 @@ static CGFloat const padding = 12.f;
     self.stackView.hidden = YES;
     
     for (Content *content in self.item.content) { @autoreleasepool {
-//        _nextItem = [self.item.content safeObjectAtIndex:idx+1];
         [self processContent:content];
         
         idx++;
     } }
-    
-//    self.item.primedContent = self.stackView.arrangedSubviews;
     
     [self.loader stopAnimating];
     [self.loader removeFromSuperview];
@@ -269,15 +266,9 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:label];
     
-    [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
-    
-    for (NSLayoutConstraint *constraint in label.constraints) {
-        if (constraint.firstAttribute == NSLayoutAttributeCenterX) {
-            constraint.active = NO;
-            break;
-        }
-    }
+    NSLayoutConstraint *leading = [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding];
+    leading.priority = UILayoutPriorityRequired;
+    leading.active = YES;
     
 }
 
@@ -395,9 +386,6 @@ static CGFloat const padding = 12.f;
     [self.stackView addArrangedSubview:para];
     
     para.delegate = self;
-    
-    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    [para.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addHeading:(Content *)content {
@@ -417,8 +405,7 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:heading];
     
-    [heading.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:16.f].active = YES;
-    [heading.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
+    [heading.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:4.f].active = YES;
 }
 
 - (void)addLinebreak {
@@ -454,8 +441,7 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:linebreak];
     
-    [linebreak.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:8.f].active = YES;
-    [linebreak.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-8.f].active = YES;
+    [linebreak.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
 }
 
 - (void)addImage:(Content *)content {
@@ -548,25 +534,9 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:para];
     
-//    if (content.items && content.items.count) {
-//        _isQuoted = YES;
-//
-//        weakify(self);
-//
-//        asyncMain(^{
-//            strongify(self);
-//            for (Content *subcontent in content.items) { @autoreleasepool {
-//                [self processContent:subcontent];
-//            }}
-//        });
-//
-//        _isQuoted = NO;
-//    }
-    
     para.textView.delegate = self;
     
     [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    [para.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addList:(Content *)content {
@@ -595,7 +565,6 @@ static CGFloat const padding = 12.f;
         
         [self.stackView addArrangedSubview:list];
         [list.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-        [list.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
     }
 }
 
@@ -620,7 +589,6 @@ static CGFloat const padding = 12.f;
     para.delegate = self;
     
     [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    [para.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
 }
 
 - (void)addYoutube:(Content *)content {
@@ -633,8 +601,7 @@ static CGFloat const padding = 12.f;
     
     [self.stackView addArrangedSubview:youtube];
     
-    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    [youtube.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-padding].active = YES;
+    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
     
     [self addLinebreak];
 }
@@ -647,13 +614,20 @@ static CGFloat const padding = 12.f;
     // adding the scrollView's height here triggers loading of the image as soon as it's about to appear on screen.
     point.y += scrollView.bounds.size.height;
     
+    CGRect visibleRect;
+    visibleRect.origin = scrollView.contentOffset;
+    visibleRect.size = scrollView.frame.size;
+    
     for (Image *imageview in self.images) { @autoreleasepool {
         
         BOOL contains = CGRectContainsPoint(imageview.frame, point);
         // the first image may be out of bounds of the scrollView when it's loaded.
         // check if it's frame is contained within the frame of the scrollView.
-        if (imageview.idx == 0)
-            contains = contains || CGRectContainsRect(scrollView.frame, imageview.frame);
+        if (imageview.idx == 0) {
+            CGRect imageFrame = imageview.frame;
+            imageFrame.origin.x = 0.f;
+            contains = contains || CGRectContainsRect(visibleRect, imageFrame);
+        }
         
 //        DDLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
         
