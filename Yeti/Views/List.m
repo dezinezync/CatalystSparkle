@@ -39,32 +39,8 @@
         strongify(self);
         
         for (Content *item in content.items) { @autoreleasepool {
-            if ([item.type isEqualToString:@"li"] || [item.type isEqualToString:@"listitem"]) {
-                index++;
-                
-                if (item.content) {
-                    [self append:item index:index attributedString:attrs indent:0];
-                }
-                else if (item.items && item.items.count) {
-                
-                    for (Content *subitem in item.items) { @autoreleasepool {
-                        if ([subitem.type isEqualToString:@"linebreak"]) {
-                            continue;
-                        }
-//                        NSAttributedString *subatr = [self processText:subitem.content ranges:subitem.ranges attributes:subitem.attr];
-//                        [attrs appendAttributedString:subatr];
-                        
-                        [self append:subitem index:index attributedString:attrs indent:0];
-                    } }
-                    
-                }
-                
-            }
-            else if ([item.type isEqualToString:@"linebreak"]) {}
-            else {
-                // nested list
-                DDLogDebug(@"%@", item.dictionaryRepresentation);
-            }
+            index++;
+            [self append:item index:index attributedString:attrs indent:0];
         }}
         
     });
@@ -99,6 +75,13 @@
     if (item.items) {
         for (Content *it in item.items) {
             NSAttributedString *at = [self processText:it.content ranges:it.ranges attributes:it.attributes];
+            
+            if ([it.type isEqualToString:@"a"] && it.url) {
+                NSMutableAttributedString *mutableAt = at.mutableCopy;
+                [mutableAt addAttribute:NSLinkAttributeName value:it.url range:NSMakeRange(0, mutableAt.length)];
+                
+                at = mutableAt.copy;
+            }
             
             [sub appendAttributedString:at];
         }
