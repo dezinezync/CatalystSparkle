@@ -20,6 +20,7 @@
 #import "Image.h"
 #import "Gallery.h"
 #import "Linebreak.h"
+#import "Code.h"
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
@@ -27,6 +28,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
+#import "CodeParser.h"
 
 #import <SafariServices/SafariServices.h>
 
@@ -47,6 +49,8 @@ static CGFloat const padding = 6.f;
 @property (weak, nonatomic) id nextItem; // next item which will be processed
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loader;
 @property (nonatomic, strong) NSPointerArray *images;
+
+@property (nonatomic, strong) CodeParser *codeParser;
 
 @end
 
@@ -324,6 +328,9 @@ static CGFloat const padding = 6.f;
     }
     else if ([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"]) {
         [self addParagraph:content caption:NO];
+    }
+    else if ([content.type isEqualToString:@"pre"]) {
+        [self addPre:content];
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);
@@ -638,6 +645,34 @@ static CGFloat const padding = 6.f;
     [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
     
     [self addLinebreak];
+}
+
+- (void)addPre:(Content *)content {
+    
+    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    Code *code = [[Code alloc] initWithFrame:frame];
+    
+    if (content.content) {
+        code.attributedText = [self.codeParser parse:content.content];
+    }
+    else {
+        
+    }
+    
+    [self.stackView addArrangedSubview:code];
+    
+}
+
+#pragma mark - Getters
+
+// This getter is always lazily loaded from addPre:
+- (CodeParser *)codeParser
+{
+    if (!_codeParser) {
+        _codeParser = [[CodeParser alloc] init];
+    }
+    
+    return _codeParser;
 }
 
 #pragma mark - <UIScrollViewDelegate>

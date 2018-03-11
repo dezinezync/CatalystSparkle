@@ -16,6 +16,9 @@
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
 		F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */ = {isa = PBXBuildFile; fileRef = F022F0491FBD4BFF006A0036 /* Aside.m */; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
+		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
+		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
+		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
 		F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */; };
 		F05D21861FF2222F003DE813 /* YTUserID.m in Sources */ = {isa = PBXBuildFile; fileRef = F05D21851FF2222F003DE813 /* YTUserID.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
@@ -45,8 +48,14 @@
 		F070C3551FBAE52300912CCF /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3541FBAE52300912CCF /* FeedVC.m */; };
 		F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3571FBAE7A200912CCF /* ArticleVC.m */; };
 		F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3581FBAE7A200912CCF /* ArticleVC.xib */; };
+		F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A66572055539D00BA2D9F /* UIColor+HEX.m */; };
+		F07A665B205554FF00BA2D9F /* Code.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A665A205554FF00BA2D9F /* Code.m */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
+		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
+		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
+		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
+		F09E96492055342000E61681 /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
@@ -98,6 +107,12 @@
 		F022F0491FBD4BFF006A0036 /* Aside.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Aside.m; sourceTree = "<group>"; };
 		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
 		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
+		F03AC02E205533D800FB111A /* CodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeParser.h; sourceTree = "<group>"; };
+		F03AC02F205533D800FB111A /* CodeTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeTheme.m; sourceTree = "<group>"; };
+		F03AC030205533D800FB111A /* CodeTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeTheme.h; sourceTree = "<group>"; };
+		F03AC031205533D900FB111A /* CodeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeParser.m; sourceTree = "<group>"; };
+		F03AC032205533D900FB111A /* HTMLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLUtils.h; sourceTree = "<group>"; };
+		F03AC033205533D900FB111A /* HTMLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLUtils.m; sourceTree = "<group>"; };
 		F055AC1B1FD2AEF4004B9C29 /* ArticleVC+Toolbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Toolbar.h"; sourceTree = "<group>"; };
 		F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Toolbar.m"; sourceTree = "<group>"; };
 		F05D21841FF2222F003DE813 /* YTUserID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTUserID.h; sourceTree = "<group>"; };
@@ -148,9 +163,17 @@
 		F070C3561FBAE7A200912CCF /* ArticleVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleVC.h; sourceTree = "<group>"; };
 		F070C3571FBAE7A200912CCF /* ArticleVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleVC.m; sourceTree = "<group>"; };
 		F070C3581FBAE7A200912CCF /* ArticleVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleVC.xib; sourceTree = "<group>"; };
+		F07A66562055539D00BA2D9F /* UIColor+HEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HEX.h"; sourceTree = "<group>"; };
+		F07A66572055539D00BA2D9F /* UIColor+HEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HEX.m"; sourceTree = "<group>"; };
+		F07A6659205554FF00BA2D9F /* Code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Code.h; sourceTree = "<group>"; };
+		F07A665A205554FF00BA2D9F /* Code.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Code.m; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F09B3B331FBCB348001D4B09 /* UITableViewController+ScrollLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITableViewController+ScrollLoad.h"; sourceTree = "<group>"; };
 		F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITableViewController+ScrollLoad.m"; sourceTree = "<group>"; };
+		F09E96422055342000E61681 /* highlight.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = highlight.pack.js; sourceTree = "<group>"; };
+		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
+		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
+		F09E96452055342000E61681 /* hljs.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = hljs.css; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
@@ -237,6 +260,19 @@
 			path = Article;
 			sourceTree = "<group>";
 		};
+		F03AC02D205533C200FB111A /* CodeParser */ = {
+			isa = PBXGroup;
+			children = (
+				F03AC02E205533D800FB111A /* CodeParser.h */,
+				F03AC031205533D900FB111A /* CodeParser.m */,
+				F03AC030205533D800FB111A /* CodeTheme.h */,
+				F03AC02F205533D800FB111A /* CodeTheme.m */,
+				F03AC032205533D900FB111A /* HTMLUtils.h */,
+				F03AC033205533D900FB111A /* HTMLUtils.m */,
+			);
+			path = CodeParser;
+			sourceTree = "<group>";
+		};
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
@@ -308,6 +344,7 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F03AC02D205533C200FB111A /* CodeParser */,
 				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
 			);
 			path = Utilities;
@@ -316,6 +353,8 @@
 		F070C3101FBABC8500912CCF /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				F07A66562055539D00BA2D9F /* UIColor+HEX.h */,
+				F07A66572055539D00BA2D9F /* UIColor+HEX.m */,
 				F01D71501FBC1A2500DF84B9 /* NSAttributedString+Trimming.h */,
 				F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */,
 				F09B3B331FBCB348001D4B09 /* UITableViewController+ScrollLoad.h */,
@@ -364,6 +403,7 @@
 		F070C31E1FBAC0B200912CCF /* SupportingFiles */ = {
 			isa = PBXGroup;
 			children = (
+				F09E96412055340C00E61681 /* HLJS */,
 				F070C3211FBAC0EE00912CCF /* Frameworks */,
 				F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */,
 				F070C2EA1FBABC3600912CCF /* Info.plist */,
@@ -426,6 +466,8 @@
 				F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */,
 				F0E219422054FB83004B5FF5 /* Linebreak.h */,
 				F0E219432054FB83004B5FF5 /* Linebreak.m */,
+				F07A6659205554FF00BA2D9F /* Code.h */,
+				F07A665A205554FF00BA2D9F /* Code.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -449,6 +491,17 @@
 				F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F09E96412055340C00E61681 /* HLJS */ = {
+			isa = PBXGroup;
+			children = (
+				F09E96422055342000E61681 /* highlight.pack.js */,
+				F09E96432055342000E61681 /* hljs.js */,
+				F09E96452055342000E61681 /* hljs.css */,
+				F09E96442055342000E61681 /* styleHTML.js */,
+			);
+			path = HLJS;
 			sourceTree = "<group>";
 		};
 		F0D3002D1FE263330040D10D /* Vendors */ = {
@@ -595,13 +648,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F09E96472055342000E61681 /* hljs.js in Resources */,
 				F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */,
+				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
+				F09E96482055342000E61681 /* styleHTML.js in Resources */,
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
+				F09E96492055342000E61681 /* hljs.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -664,11 +721,14 @@
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
+				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
+				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
+				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
@@ -683,6 +743,7 @@
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
 				F00411051FC9960E00B513A9 /* Image.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
+				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
@@ -692,6 +753,7 @@
 				F070C3441FBACD2C00912CCF /* Content.m in Sources */,
 				F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */,
 				F070C3421FBACD2C00912CCF /* Range.m in Sources */,
+				F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,

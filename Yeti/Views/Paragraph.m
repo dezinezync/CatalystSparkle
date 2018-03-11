@@ -136,25 +136,17 @@ static NSParagraphStyle * _paragraphStyle = nil;
                                                  };
                 
                 if (NSThread.isMainThread) {
-                    UIFontDescriptor *descriptor = [[monoFont fontDescriptor] fontDescriptorByAddingAttributes:fontAttributes];
-                    
-                    monoFont = [UIFont fontWithDescriptor:descriptor size:monoFont.pointSize];
-//                    textcolor = [UIColor colorWithWhite:0.f alpha:1.f];
+                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:_bodyFont.pointSize];
                     textcolor = [UIColor redColor];
                 }
                 else
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        UIFontDescriptor *descriptor = [[monoFont fontDescriptor] fontDescriptorByAddingAttributes:fontAttributes];
-                        
-                        monoFont = [UIFont fontWithDescriptor:descriptor size:monoFont.pointSize];
-//                        textcolor = [UIColor colorWithWhite:0.f alpha:1.f];
+                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:_bodyFont.pointSize];
                         textcolor = [UIColor redColor];
                     });
                 
                 [dict setObject:monoFont forKey:NSFontAttributeName];
                 [dict setObject:textcolor forKey:NSForegroundColorAttributeName];
-//                [dict setObject:background forKey:NSBackgroundColorAttributeName];
-//                [dict setObject:[NSParagraphStyle new] forKey:NSParagraphStyleAttributeName];
             }
             
             @try {
