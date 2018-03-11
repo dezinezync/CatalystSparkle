@@ -30,6 +30,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
 
+@property (nonatomic, strong) NSArray <id> * _Nullable folders;
+
 - (void)getFeeds:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getFeed:(Feed * _Nonnull)feed page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;

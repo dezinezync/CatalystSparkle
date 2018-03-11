@@ -134,9 +134,11 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
 }
 
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
-    NSArray <Feed *> *feeds = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+    NSArray <Feed *> *feeds = [[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
         return [Feed instanceFromDictionary:obj];
     }];
+    
+    _folders = [responseObject valueForKey:@"struct"];
     
 //    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
     

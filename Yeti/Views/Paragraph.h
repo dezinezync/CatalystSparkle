@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Range.h"
+#import "LayoutConstants.h"
 
 @interface Paragraph : UITextView
 
@@ -18,8 +19,9 @@
 
 @property (nonatomic, strong, class) NSParagraphStyle * paragraphStyle;
 
-- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
+@property (nonatomic, strong) NSLayoutConstraint *leading, *trailing;
 
+- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 
 /**
  Process the given text and ranges and returns an Attributed String. Processes on the thread it is called on. Returns on the same thread.

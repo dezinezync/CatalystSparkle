@@ -223,6 +223,27 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+    
+    if (self.superview) {
+        if (!self.leading) {
+            self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:-(LayoutPadding/3.f)];
+            self.leading.identifier = @"|-Para";
+            self.leading.priority = 1000;
+            self.leading.active = YES;
+        }
+        
+        if (!self.trailing) {
+            self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:-LayoutPadding];
+            self.trailing.identifier = @"Para-|";
+            self.trailing.priority = 1000;
+            self.trailing.active = YES;
+        }
+    }
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -235,17 +256,19 @@ static NSParagraphStyle * _paragraphStyle = nil;
 - (CGSize)contentSize
 {
     CGSize size = [super contentSize];
-    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 24.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height + 24.f;
+    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 24.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
     
     return size;
 }
 
-- (CGSize)intrinsicContentSize
-{
-    CGSize size = self.contentSize;
-    
-    return size;
-}
+//- (CGSize)intrinsicContentSize
+//{
+//    CGSize size = [self.attributedText boundingRectWithSize:CGSizeMake(self.bounds.size.width, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size;
+//
+//    size.height = ceilf(size.height);
+//
+//    return size;
+//}
 
 - (UIFont *)bodyFont
 {

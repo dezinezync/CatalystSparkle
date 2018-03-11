@@ -8,10 +8,13 @@
 
 #import "Heading.h"
 #import <DZKit/NSString+Extras.h>
+#import "LayoutConstants.h"
 
 @interface Heading ()
 
 @property (nonatomic, strong) NSParagraphStyle *paragraphStyle;
+
+@property (nonatomic, strong) NSLayoutConstraint *leading, *trailing;
 
 @end
 
@@ -56,6 +59,25 @@
 }
 
 #pragma mark -
+
+- (void)didMoveToSuperview
+{
+    if (self.superview) {
+        if (!self.leading) {
+            self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:-(LayoutPadding/3.f)];
+            self.leading.identifier = @"|-Heading";
+            self.leading.priority = 999;
+            self.leading.active = YES;
+        }
+        
+        if (!self.trailing) {
+            self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:-LayoutPadding];
+            self.trailing.identifier = @"Heading-|";
+            self.trailing.priority = 999;
+            self.trailing.active = YES;
+        }
+    }
+}
 
 - (UIColor *)textColor
 {

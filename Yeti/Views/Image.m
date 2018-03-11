@@ -7,6 +7,7 @@
 //
 
 #import "Image.h"
+#import "LayoutConstants.h"
 
 @interface Image ()
 
@@ -31,7 +32,8 @@
     [super didMoveToSuperview];
     
     if (self.superview) {
-        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:-16.f];
+        
+        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
         self.leading.priority = UILayoutPriorityRequired;
         self.leading.active = YES;
         
@@ -80,6 +82,7 @@
     
     CGFloat aspectRatioValue = image.size.height / image.size.width;
     self.aspectRatio = [self.heightAnchor constraintEqualToConstant:aspectRatioValue * self.bounds.size.width];
+    self.aspectRatio.priority = 999;
     
     [self addConstraint:self.aspectRatio];
     

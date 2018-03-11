@@ -19,6 +19,7 @@
 #import "Youtube.h"
 #import "Image.h"
 #import "Gallery.h"
+#import "Linebreak.h"
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
@@ -266,9 +267,13 @@ static CGFloat const padding = 6.f;
     
     [self.stackView addArrangedSubview:label];
     
-    NSLayoutConstraint *leading = [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding];
+    NSLayoutConstraint *leading = [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-(LayoutPadding/3.f)];
     leading.priority = UILayoutPriorityRequired;
     leading.active = YES;
+    
+    NSLayoutConstraint *trailing = [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-LayoutPadding];
+    trailing.priority = UILayoutPriorityRequired;
+    trailing.active = YES;
     
 }
 
@@ -331,7 +336,9 @@ static CGFloat const padding = 6.f;
     
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
 #ifdef DEBUG_LAYOUT
+#if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
+#endif
 #endif
     
     if ([_last isKindOfClass:Heading.class])
@@ -355,6 +362,18 @@ static CGFloat const padding = 6.f;
         newRange.element = @"anchor";
         newRange.range = NSMakeRange(0, content.content.length);
         newRange.url = [content.attributes valueForKey:@"href"];
+        
+        [ranges addObject:newRange];
+        
+        content.ranges = ranges.copy;
+    }
+    else if (content.url) {
+        NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+        
+        Range *newRange = [Range new];
+        newRange.element = @"anchor";
+        newRange.range = NSMakeRange(0, content.content.length);
+        newRange.url = content.url;
         
         [ranges addObject:newRange];
         
@@ -388,17 +407,22 @@ static CGFloat const padding = 6.f;
     
     [self.stackView addArrangedSubview:para];
     
-    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    
     para.delegate = self;
 }
 
 - (void)addHeading:(Content *)content {
+    
+    if (_last && [_last isKindOfClass:Paragraph.class]) {
+        [self addLinebreak];
+    }
+    
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
     Heading *heading = [[Heading alloc] initWithFrame:frame];
 #ifdef DEBUG_LAYOUT
+#if DEBUG_LAYOUT == 1
     heading.backgroundColor = UIColor.redColor;
+#endif
 #endif
     heading.level = content.level.integerValue;
     heading.text = content.content;
@@ -409,8 +433,6 @@ static CGFloat const padding = 6.f;
     _last = heading;
     
     [self.stackView addArrangedSubview:heading];
-    
-    [heading.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:4.f].active = YES;
 }
 
 - (void)addLinebreak {
@@ -436,22 +458,21 @@ static CGFloat const padding = 6.f;
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, height);
     
-    UIView *linebreak = [[UIView alloc] initWithFrame:frame];
+    Linebreak *linebreak = [[Linebreak alloc] initWithFrame:frame];
 #ifdef DEBUG_LAYOUT
+#if DEBUG_LAYOUT == 1
     linebreak.backgroundColor = UIColor.greenColor;
 #endif
-    [linebreak.heightAnchor constraintEqualToConstant:height].active = YES;
-    
+#endif
+
     _last = linebreak;
     
     [self.stackView addArrangedSubview:linebreak];
-    
-    [linebreak.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
 }
 
 - (void)addImage:(Content *)content {
     
-    if ([_last isKindOfClass:Heading.class])
+    if ([_last isKindOfClass:Heading.class] || !_last || [_last isKindOfClass:Paragraph.class])
         [self addLinebreak];
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
@@ -470,12 +491,12 @@ static CGFloat const padding = 6.f;
     
     if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
         imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
-        imageView.aspectRatio.priority = UILayoutPriorityRequired;
+        imageView.aspectRatio.priority = 999;
         imageView.aspectRatio.active = YES;
     }
     else {
         imageView.aspectRatio = [imageView.heightAnchor constraintEqualToConstant:32.f];
-        imageView.aspectRatio.priority = UILayoutPriorityRequired;
+        imageView.aspectRatio.priority = 999;
         imageView.aspectRatio.active = YES;
     }
     

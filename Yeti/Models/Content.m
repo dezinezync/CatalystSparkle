@@ -120,6 +120,9 @@
                 value = @"unorderedList";
             else if ([value isEqualToString:@"ol"])
                 value = @"orderedList";
+            else if ([value isEqualToString:@"header"]) {
+                value = @"heading";
+            }
         }
         
         [super setValue:value forKey:key];

@@ -56,6 +56,7 @@
 		F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
 		F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
+		F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E219432054FB83004B5FF5 /* Linebreak.m */; };
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
@@ -168,6 +169,9 @@
 		F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodGroup.m; sourceTree = "<group>"; };
 		F0D3003D1FE2633E0040D10D /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DateTools.m"; sourceTree = "<group>"; };
+		F0E219412054F846004B5FF5 /* LayoutConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutConstants.h; sourceTree = "<group>"; };
+		F0E219422054FB83004B5FF5 /* Linebreak.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Linebreak.h; sourceTree = "<group>"; };
+		F0E219432054FB83004B5FF5 /* Linebreak.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Linebreak.m; sourceTree = "<group>"; };
 		F0E71E6D1FD6F2D400408CFF /* FeedsManager+KVS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsManager+KVS.h"; sourceTree = "<group>"; };
 		F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsManager+KVS.m"; sourceTree = "<group>"; };
 		F0E71E701FD6F72200408CFF /* PaddedLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
@@ -304,6 +308,7 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -419,6 +424,8 @@
 				F0026F2C1FED2B4800F3AB85 /* Gallery.h */,
 				F0026F2D1FED2B4800F3AB85 /* Gallery.m */,
 				F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */,
+				F0E219422054FB83004B5FF5 /* Linebreak.h */,
+				F0E219432054FB83004B5FF5 /* Linebreak.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -656,6 +663,7 @@
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
+				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
@@ -857,6 +865,10 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG_LAYOUT=0",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/Yeti/SupportingFiles/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
