@@ -71,6 +71,11 @@
         
         weakify(self);
         
+        asyncMain(^{
+            strongify(self);
+            [self.refreshControl beginRefreshing];
+        })
+        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
             [MyFeedsManager getFeeds:^(NSNumber *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -79,10 +84,6 @@
                 
                 // we have received one response. This is usually from the disk cache.
                 if (responseObject.integerValue == 1) {
-                    asyncMain(^{
-                        [self.refreshControl beginRefreshing];
-                    })
-                    
                     return;
                 }
                 

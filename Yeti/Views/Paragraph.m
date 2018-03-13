@@ -150,7 +150,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             
             @try {
-                [attrs addAttributes:dict range:range.range];
+                if (range.range.location != NSNotFound && range.range.location < attrs.length) {
+                    [attrs addAttributes:dict range:range.range];
+                }
             } @catch (NSException *exception) {
                 DDLogWarn(@"%@", exception);
             } @finally {

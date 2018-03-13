@@ -31,7 +31,7 @@
 {
     [super didMoveToSuperview];
     
-    if (self.superview) {
+    if (self.superview && ![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
         
         self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
         self.leading.priority = UILayoutPriorityRequired;
@@ -46,9 +46,17 @@
 
 - (void)setImage:(UIImage *)image
 {
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
+        return;
+    }
+    
     [super setImage:image];
     
     self.backgroundColor = UIColor.whiteColor;
+    
+    if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])
+        return;
     
     weakify(self);
     

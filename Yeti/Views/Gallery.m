@@ -9,6 +9,7 @@
 #import "Gallery.h"
 #import "Image.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
+#import "LayoutConstants.h"
 
 @interface GalleryImage : Image
 
@@ -20,21 +21,20 @@
 
 - (UIViewContentMode)contentMode
 {
-    return UIViewContentModeScaleAspectFit;
+    return UIViewContentModeScaleAspectFit|UIViewContentModeCenter;
 }
 
 - (CGSize)intrinsicContentSize
 {
     CGSize size = [super intrinsicContentSize];
     
-    if (self.image) {
-        size.width = self.image.size.width / (self.image.size.height / self.height);
+//    if (self.image) {
+        size.width = floor(self.superview.bounds.size.width);//self.image.size.width / (self.image.size.height / self.height);
         size.height = self.height;
-    }
+//    }
     
     return size;
 }
-
 
 @end
 
@@ -56,6 +56,7 @@
     if (self = [super initWithNib]) {
         self.scrollView.backgroundColor = UIColor.whiteColor;
         self.scrollView.delegate = self;
+//        self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.backgroundColor = UIColor.whiteColor;
         self.imageRefs = [NSPointerArray weakObjectsPointerArray];
@@ -71,11 +72,34 @@
     [super didMoveToSuperview];
     
     if (self.superview) {
-        [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor].active = YES;
+        [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin].active = YES;
         [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor].active = YES;
-        
-        [self.heightAnchor constraintEqualToConstant:self.maxHeight + self.pageControl.bounds.size.height + 16.f].active = YES;
     }
+}
+
+- (void)updateConstraints
+{
+    [super updateConstraints];
+
+    [self.scrollView setNeedsUpdateConstraints];
+    [self.scrollView layoutIfNeeded];
+    
+    CGFloat width = ceil(self.scrollView.bounds.size.width);
+    
+    [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof GalleryImage * _Nonnull image, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        CGFloat leadingConstant = idx * width; // toward's leading edge
+        
+        if (image.leading) {
+            [image removeConstraint:image.leading];
+        }
+        
+        image.leading = [image.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor constant:leadingConstant];
+        image.leading.priority = UILayoutPriorityRequired;
+        image.leading.identifier = @"GalleryImage:Leading";
+        image.leading.active = YES;
+        
+    }];
 }
 
 #pragma mark -
@@ -91,7 +115,14 @@
     _loading = loading;
     
     if (_loading) {
+        
         weakify(self);
+        
+        asyncMain(^{
+            strongify(self);
+            [self setNeedsLayout];
+        })
+        
         // we use a smaller timeout here since this can be the first item or comes in later.
         // it get's it initial message from it's VC.
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -109,15 +140,23 @@
         return;
     
     CGFloat suggestedMaxHeight = 0.f;
-    CGFloat width = self.bounds.size.width;
+    CGFloat width = floor(self.bounds.size.width);
     
     // calculate the max height that fits the tallest image. The other images will use aspect-fit.
     for (Content *content in images) { @autoreleasepool {
-        CGFloat height = content.size.height / (content.size.width / width);
+        
+        CGSize size = content.size;
+        if ([content.attributes valueForKey:@"data-orig-size"]) {
+            NSArray <NSString *> *comps = [content.attributes[@"data-orig-size"] componentsSeparatedByString:@","];
+            size = CGSizeMake(comps[0].floatValue, comps[1].floatValue);
+        }
+        
+        CGFloat height = width * (size.width / size.height);
         suggestedMaxHeight = ceil(MAX(suggestedMaxHeight, height));
     } }
     
     self.maxHeight = suggestedMaxHeight;
+    [self.heightAnchor constraintEqualToConstant:self.maxHeight + self.pageControl.bounds.size.height + LayoutPadding].active = YES;
     
     weakify(self);
     
@@ -125,16 +164,39 @@
         
         strongify(self);
         
-        // find the height for this image
-        CGFloat imageHeight = ceil(obj.size.height * (self.scrollView.bounds.size.width / obj.size.width));
-        CGFloat y = (suggestedMaxHeight - imageHeight) / 2.f;
+        CGSize size = obj.size;
+        if ([obj.attributes valueForKey:@"data-orig-size"]) {
+            NSArray <NSString *> *comps = [obj.attributes[@"data-orig-size"] componentsSeparatedByString:@","];
+            size = CGSizeMake(comps[0].floatValue, comps[1].floatValue);
+        }
         
-        GalleryImage *image = [[GalleryImage alloc] initWithFrame:CGRectMake(idx * width, y, width, imageHeight)];
-        image.URL = [NSURL URLWithString:obj.url];
+        // find the height for this image
+        CGFloat imageHeight = ceil(size.height * (self.scrollView.bounds.size.width / size.width));
+        CGFloat y = floor((suggestedMaxHeight - imageHeight) / 2.f);
+        
+        GalleryImage *image = [[GalleryImage alloc] initWithFrame:CGRectIntegral(CGRectMake(idx * width, y, width, imageHeight))];
+        image.autoUpdateFrameOrConstraints = NO;
+//        image.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+
+        NSString *url = obj.url;
+        
+        if ([obj.attributes valueForKey:@"data-large-file"]) {
+            url = [obj.attributes valueForKey:@"data-large-file"];
+        }
+        
+        image.URL = [NSURL URLWithString:url];
         image.height = self.maxHeight;
         image.idx = idx;
         
         [self.scrollView addSubview:image];
+        
+        [image.centerYAnchor constraintEqualToAnchor:self.scrollView.centerYAnchor].active = YES;
+        
+        CGFloat leadingConstant = idx * width; // toward's leading edge
+        image.leading = [image.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor constant:leadingConstant];
+        image.leading.priority = UILayoutPriorityRequired;
+        image.leading.identifier = @"GalleryImage:Leading";
+        image.leading.active = YES;
         
         [self.imageRefs addPointer:(__bridge void * _Nullable)(image)];
         
@@ -143,6 +205,9 @@
     self.scrollView.contentSize = CGSizeMake(self.images.count * width, self.maxHeight);
     
     self.pageControl.numberOfPages = images.count;
+    
+    [self setNeedsUpdateConstraints];
+    [self layoutIfNeeded];
 }
 
 #pragma mark - Events
@@ -160,8 +225,12 @@
     // update page control
     self.pageControl.currentPage = ceil(point.x / scrollView.bounds.size.width);
     
-    // adding the scrollView's height here triggers loading of the image as soon as it's about to appear on screen.
+    // adding the scrollView's width here triggers loading of the image as soon as it's about to appear on screen.
     point.x += scrollView.bounds.size.width;
+    
+    CGRect visibleRect;
+    visibleRect.origin = scrollView.contentOffset;
+    visibleRect.size = scrollView.frame.size;
     
     for (GalleryImage *imageview in self.imageRefs) { @autoreleasepool {
         
@@ -169,11 +238,15 @@
         frame.size.height = scrollView.bounds.size.height;
         frame.origin.y = 0.f;
         
+        if (frame.size.width <= 0)
+            frame.size.width = self.scrollView.bounds.size.width;
+        
         BOOL contains = CGRectContainsPoint(frame, point);
         // the first image may be out of bounds of the scrollView when it's loaded.
         // check if it's frame is contained within the frame of the scrollView.
-        if (imageview.idx == 0)
-            contains = contains || CGRectContainsRect(scrollView.frame, imageview.frame);
+        if (imageview.idx == 0) {
+            contains = contains || CGRectContainsRect(visibleRect, frame);
+        }
         
 //        DDLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
         

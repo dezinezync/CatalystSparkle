@@ -98,6 +98,12 @@ static CGFloat const padding = 6.f;
     
     [self setupToolbar:self.traitCollection];
     
+    [self.scrollView setNeedsUpdateConstraints];
+    [self.scrollView layoutIfNeeded];
+    
+    [self.stackView setNeedsUpdateConstraints];
+    [self.stackView layoutIfNeeded];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -118,9 +124,9 @@ static CGFloat const padding = 6.f;
     }
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewDidLayoutSubviews
 {
-    [super viewDidAppear:animated];
+    [super viewDidLayoutSubviews];
     
     if (_hasRendered)
         return;
@@ -159,7 +165,7 @@ static CGFloat const padding = 6.f;
         [MyFeedsManager article:self.item markAsRead:YES];
     
     weakify(self);
-
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
         [self scrollViewDidScroll:self.scrollView];
@@ -170,7 +176,6 @@ static CGFloat const padding = 6.f;
         contentSize.width = self.view.bounds.size.width;
         self.scrollView.contentSize = contentSize;
     });
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -281,9 +286,35 @@ static CGFloat const padding = 6.f;
     
 }
 
+#pragma mark -
+
+- (BOOL)containsOnlyImages:(Content *)content {
+    
+    if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
+        
+        BOOL contained = YES;
+        
+        for (Content *item in content.items) { @autoreleasepool {
+            contained = contained && ([item.type isEqualToString:@"image"] || [item.type isEqualToString:@"img"]);
+            if (contained == NO)
+                break;
+        } }
+        
+        return contained;
+        
+    }
+    
+    return NO;
+}
+
 - (void)processContent:(Content *)content {
     if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
         if ([content.items count]) {
+            
+            if ([self containsOnlyImages:content]) {
+                [self addGallery:content];
+                return;
+            }
             
             NSUInteger idx = 0;
             
@@ -530,11 +561,16 @@ static CGFloat const padding = 6.f;
 
 - (void)addGallery:(Content *)content {
     
+    if ([_last isKindOfClass:Heading.class]) {
+        [self addLinebreak];
+    }
+    
     Gallery *gallery = [[Gallery alloc] initWithNib];
-    gallery.frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 200.f);
-    gallery.images = content.images;
+    gallery.frame = CGRectMake(0, 0, self.scrollView.bounds.size.width, 200.f);
     
     [self.stackView addArrangedSubview:gallery];
+    // set images after adding it to the superview since -[Gallery setImages:] triggers layout.
+    gallery.images = content.images;
     
     [self.images addPointer:(__bridge void *)gallery];
     gallery.idx = self.images.count - 1;

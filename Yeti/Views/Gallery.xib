@@ -16,12 +16,12 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dcz-TO-rLa">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="171"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="175"/>
                 </scrollView>
                 <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="sZn-nQ-a9p">
                     <rect key="frame" x="168" y="187" width="39" height="37"/>
-                    <color key="pageIndicatorTintColor" red="0.74901960784313726" green="0.70196078431372544" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <color key="currentPageIndicatorTintColor" red="0.44313725490196076" green="0.32941176470588235" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="pageIndicatorTintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="currentPageIndicatorTintColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
                 </pageControl>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -30,7 +30,7 @@
                 <constraint firstItem="dcz-TO-rLa" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="7dz-QQ-JY8"/>
                 <constraint firstItem="dcz-TO-rLa" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="8za-h5-fVw"/>
                 <constraint firstItem="dcz-TO-rLa" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="KH5-XP-eBg"/>
-                <constraint firstItem="sZn-nQ-a9p" firstAttribute="top" secondItem="dcz-TO-rLa" secondAttribute="bottom" constant="16" id="SPv-RT-wVA"/>
+                <constraint firstItem="sZn-nQ-a9p" firstAttribute="top" secondItem="dcz-TO-rLa" secondAttribute="bottom" constant="12" id="SPv-RT-wVA"/>
                 <constraint firstItem="sZn-nQ-a9p" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="a06-lL-xxq"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
