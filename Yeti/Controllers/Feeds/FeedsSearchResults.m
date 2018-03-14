@@ -40,15 +40,9 @@
     
     UIViewController *presenting = self.presentingViewController;
     
-    presenting.navigationItem.searchController.searchBar.text = nil;
-    
     UINavigationController *nav = [presenting navigationController];
     
-    [self dismissViewControllerAnimated:YES completion:^{
-        
-        [nav pushViewController:vc animated:YES];
-        
-    }];
+    [nav pushViewController:vc animated:YES];
 }
 
 @end

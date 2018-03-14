@@ -43,26 +43,16 @@
     
     UIViewController *presenting = self.presentingViewController;
     
-    presenting.navigationItem.searchController.searchBar.text = nil;
-    
     UINavigationController *nav = [presenting navigationController];
     
     if (presenting.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         EFNavController *navVC = [[EFNavController alloc] initWithRootViewController:vc];
         
-        [self dismissViewControllerAnimated:YES completion:^{
-            
-            [presenting.splitViewController showDetailViewController:navVC sender:self];
-            
-        }];
+        [presenting.splitViewController showDetailViewController:navVC sender:self];
 
     }
     else {
-        [self dismissViewControllerAnimated:YES completion:^{
-            
-            [nav pushViewController:vc animated:YES];
-            
-        }];
+        [nav pushViewController:vc animated:YES];
     }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
