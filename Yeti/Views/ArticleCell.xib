@@ -1,52 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="82" id="KGk-i7-Jjw" customClass="ArticleCell">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="82"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="171" id="KGk-i7-Jjw" customClass="ArticleCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="171"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="81.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="170.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P80-kj-PWE">
-                        <rect key="frame" x="16" y="12" width="238" height="57.5"/>
-                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                        <nil key="textColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vil-Ri-bNX">
-                        <rect key="frame" x="262" y="48.5" width="42" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38217979753521125" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="qJL-2H-oYr">
+                        <rect key="frame" x="16" y="12" width="288" height="146.5"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="CeH-VU-Swi">
+                                <rect key="frame" x="0.0" y="0.0" width="288" height="124"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="252" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P80-kj-PWE">
+                                        <rect key="frame" x="0.0" y="0.0" width="288" height="20.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CA1-F8-ogR">
+                                        <rect key="frame" x="0.0" y="24.5" width="288" height="99.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                        <color key="textColor" red="0.54117647058823526" green="0.54117647058823526" blue="0.54117647058823526" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-zZ-AR0">
+                                <rect key="frame" x="0.0" y="132" width="288" height="14.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vil-Ri-bNX">
+                                        <rect key="frame" x="0.0" y="0.0" width="142" height="14.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38217979753521125" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Cx-Jc-SMQ">
+                                        <rect key="frame" x="146" y="0.0" width="142" height="14.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38217979749999997" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                    </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="P80-kj-PWE" firstAttribute="trailing" secondItem="Vil-Ri-bNX" secondAttribute="leading" constant="-8" id="5QT-7b-glu"/>
-                    <constraint firstItem="P80-kj-PWE" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="A1y-Jc-rCy"/>
-                    <constraint firstAttribute="bottom" secondItem="P80-kj-PWE" secondAttribute="bottom" constant="12" id="ZEE-FX-b2a"/>
-                    <constraint firstAttribute="bottom" secondItem="Vil-Ri-bNX" secondAttribute="bottom" constant="12" id="e6a-W7-vLo"/>
-                    <constraint firstAttribute="trailing" secondItem="Vil-Ri-bNX" secondAttribute="trailing" constant="16" id="f6B-lD-sWc"/>
-                    <constraint firstItem="P80-kj-PWE" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="12" id="nlr-4N-vYF"/>
+                    <constraint firstItem="qJL-2H-oYr" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="12" id="961-nc-SOn"/>
+                    <constraint firstAttribute="bottom" secondItem="qJL-2H-oYr" secondAttribute="bottom" constant="12" id="b2Y-oL-jV7"/>
+                    <constraint firstAttribute="trailing" secondItem="qJL-2H-oYr" secondAttribute="trailing" constant="16" id="biB-lZ-D1T"/>
+                    <constraint firstItem="qJL-2H-oYr" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="iH6-3o-ibq"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
-                <outlet property="timeLabel" destination="Vil-Ri-bNX" id="eDZ-OQ-SJu"/>
+                <outlet property="authorLabel" destination="Vil-Ri-bNX" id="sdU-hC-fV6"/>
+                <outlet property="summaryLabel" destination="CA1-F8-ogR" id="Jw5-fQ-EDe"/>
+                <outlet property="timeLabel" destination="8Cx-Jc-SMQ" id="mEc-Og-Nsz"/>
                 <outlet property="titleLabel" destination="P80-kj-PWE" id="B1W-EY-yph"/>
             </connections>
-            <point key="canvasLocation" x="34" y="35"/>
+            <point key="canvasLocation" x="34" y="79.5"/>
         </tableViewCell>
     </objects>
 </document>

@@ -129,6 +129,10 @@
             else if ([value isEqualToString:@"header"]) {
                 value = @"heading";
             }
+            else if ([[value substringToIndex:1] isEqualToString:@"h"] && [(NSString *)value length] == 2 && ![value isEqualToString:@"hr"]) {
+                self.level = @([[value substringFromIndex:1] integerValue]);
+                value = @"heading";
+            }
         }
         
         [super setValue:value forKey:key];

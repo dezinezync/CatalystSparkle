@@ -14,6 +14,9 @@ extern NSString *const _Nonnull kArticleCell;
 @interface ArticleCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel * _Nullable summaryLabel;
+
+@property (weak, nonatomic) IBOutlet UILabel * _Nullable authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable timeLabel;
 
 - (void)configure:(FeedItem * _Nonnull)item;

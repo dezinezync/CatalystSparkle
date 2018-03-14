@@ -6,9 +6,9 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "Paragraph.h"
 
-@interface Heading : UILabel
+@interface Heading : Paragraph
 
 @property (nonatomic, assign) NSInteger level;
 

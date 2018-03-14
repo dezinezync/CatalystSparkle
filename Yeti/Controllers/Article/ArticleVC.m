@@ -360,7 +360,18 @@ static CGFloat const padding = 6.f;
         [self addGallery:content];
     }
     else if ([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"]) {
-        [self addParagraph:content caption:NO];
+        
+        if (content.content && content.content.length) {
+            [self addParagraph:content caption:NO];
+        }
+        else if (content.items) {
+            for (Content *sub in content.items) { @autoreleasepool {
+                
+                [self processContent:sub];
+                
+            } }
+        }
+        
     }
     else if ([content.type isEqualToString:@"pre"]) {
         [self addPre:content];
@@ -469,13 +480,14 @@ static CGFloat const padding = 6.f;
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
     Heading *heading = [[Heading alloc] initWithFrame:frame];
+    heading.delegate = self;
 #ifdef DEBUG_LAYOUT
 #if DEBUG_LAYOUT == 1
     heading.backgroundColor = UIColor.redColor;
 #endif
 #endif
     heading.level = content.level.integerValue;
-    heading.text = content.content;
+    [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
     frame.size.height = heading.intrinsicContentSize.height;
     heading.frame = frame;
