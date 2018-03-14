@@ -131,10 +131,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 __block UIColor *textcolor;
 //                __block UIColor *background;
                 
-                NSDictionary *fontAttributes = @{UIFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
-                                                 UIFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector)
-                                                 };
-                
                 if (NSThread.isMainThread) {
                     monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:_bodyFont.pointSize];
                     textcolor = [UIColor redColor];

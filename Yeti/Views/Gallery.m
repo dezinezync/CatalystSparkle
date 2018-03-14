@@ -151,7 +151,7 @@
             size = CGSizeMake(comps[0].floatValue, comps[1].floatValue);
         }
         
-        CGFloat height = width * (size.width / size.height);
+        CGFloat height = width * (size.height / size.width);
         suggestedMaxHeight = ceil(MAX(suggestedMaxHeight, height));
     } }
     

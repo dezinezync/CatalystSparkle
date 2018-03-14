@@ -326,11 +326,13 @@ static CGFloat const padding = 6.f;
             }}
         }
     }
-    else if ([content.type isEqualToString:@"paragraph"] && content.content.length) {
-        [self addParagraph:content caption:NO];
+    else if ([content.type isEqualToString:@"paragraph"]) {
+        if (content.content.length)
+            [self addParagraph:content caption:NO];
     }
-    else if ([content.type isEqualToString:@"heading"] && content.content.length) {
-        [self addHeading:content];
+    else if ([content.type isEqualToString:@"heading"]) {
+        if (content.content.length)
+            [self addHeading:content];
     }
     else if ([content.type isEqualToString:@"linebreak"]) {
         [self addLinebreak];
@@ -362,6 +364,16 @@ static CGFloat const padding = 6.f;
     }
     else if ([content.type isEqualToString:@"pre"]) {
         [self addPre:content];
+    }
+    else if ([content.type isEqualToString:@"li"]) {
+        Content *parent = [Content new];
+        parent.type = @"list";
+        parent.items = @[content];
+        
+        [self addList:content];
+    }
+    else if ([content.type isEqualToString:@"hr"]) {
+        
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);
@@ -620,30 +632,17 @@ static CGFloat const padding = 6.f;
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
     
     List *list = [[List alloc] initWithFrame:frame];
-    list.quoted = _isQuoted;
+    [list setContent:content];
     
-    if (_isQuoted && [_last isKindOfClass:Blockquote.class]) {
-        Blockquote *quote = (Blockquote *)_last;
-        [quote append:[list processContent:content]];
-        
-        frame.size.height = quote.intrinsicContentSize.height;
-        quote.frame = frame;
-        [quote setNeedsDisplayInRect:quote.bounds];
-    }
-    else {
-        [list setContent:content];
-        
-        frame.size.height = list.intrinsicContentSize.height;
-        list.frame = frame;
-        
-        _last = list;
-        
-        list.delegate = self;
-        
-        [self.stackView addArrangedSubview:list];
-        [list.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
-    }
-}
+    frame.size.height = list.intrinsicContentSize.height;
+    list.frame = frame;
+    
+    _last = list;
+    
+    list.delegate = self;
+    
+    [self.stackView addArrangedSubview:list];
+    [list.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;}
 
 - (void)addAside:(Content *)content
 {

@@ -89,6 +89,13 @@
     else if (item.content) {
         NSAttributedString *at = [self processText:item.content ranges:item.ranges attributes:item.attributes];
         
+        if ([item.type isEqualToString:@"a"] && item.url) {
+            NSMutableAttributedString *mutableAt = at.mutableCopy;
+            [mutableAt addAttribute:NSLinkAttributeName value:item.url range:NSMakeRange(0, mutableAt.length)];
+            
+            at = mutableAt.copy;
+        }
+        
         [sub appendAttributedString:at];
     }
     
@@ -101,12 +108,6 @@
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:attributes]];
     [attrs appendAttributedString:sub];
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
-    
-    // Post-processing
-    
-    // mutating the backing store is fine as the mutable attributedString keeps track of these changes
-    // and automatically updates itself.
-//    [attrs.mutableString replaceOccurrencesOfString:@"\t" withString:@"    " options:kNilOptions range:NSMakeRange(0, attrs.mutableString.length)];
     
 }
 
