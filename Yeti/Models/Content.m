@@ -21,6 +21,9 @@
     [encoder encodeObject:self.items forKey:@"items"];
     [encoder encodeObject:self.attributes forKey:@"attributes"];
     [encoder encodeObject:self.videoID forKey:@"videoID"];
+    [encoder encodeCGSize:self.size forKey:@"size"];
+    [encoder encodeObject:self.srcset forKey:@"srcset"];
+    [encoder encodeObject:self.images forKey:@"images"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -36,6 +39,9 @@
         self.level = [decoder decodeObjectForKey:@"level"];
         self.attributes = [decoder decodeObjectForKey:@"attributes"];
         self.videoID = [decoder decodeObjectForKey:@"videoID"];
+        self.size = [decoder decodeCGSizeForKey:@"size"];
+        self.srcset = [decoder decodeObjectForKey:@"srcset"];
+        self.images = [decoder decodeObjectForKey:@"images"];
     }
     return self;
 }
@@ -222,6 +228,20 @@
     
     if (self.size.width && self.size.height) {
         [dictionary setObject:NSStringFromCGSize(self.size) forKey:@"size"];
+    }
+    
+    if (self.srcset) {
+        [dictionary setObject:self.srcset forKey:@"srcset"];
+    }
+    
+    if (self.images) {
+        
+        NSArray <NSDictionary *> *mapped = [self.images rz_map:^id(Content *obj, NSUInteger idx, NSArray *array) {
+            return [obj dictionaryRepresentation];
+        }];
+        
+        [dictionary setObject:mapped forKey:@"images"];
+        
     }
 
     return dictionary;

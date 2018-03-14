@@ -15,6 +15,9 @@
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
 		F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */ = {isa = PBXBuildFile; fileRef = F022F0491FBD4BFF006A0036 /* Aside.m */; };
+		F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459C72058FFF1002906C3 /* FeedsVC+Search.m */; };
+		F02459CB20590E6D002906C3 /* SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CA20590E6D002906C3 /* SearchResults.m */; };
+		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
 		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
@@ -105,6 +108,12 @@
 		F01D71541FBC232200DF84B9 /* List.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = List.m; sourceTree = "<group>"; };
 		F022F0481FBD4BFF006A0036 /* Aside.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aside.h; sourceTree = "<group>"; };
 		F022F0491FBD4BFF006A0036 /* Aside.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Aside.m; sourceTree = "<group>"; };
+		F02459C62058FFF1002906C3 /* FeedsVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Search.h"; sourceTree = "<group>"; };
+		F02459C72058FFF1002906C3 /* FeedsVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Search.m"; sourceTree = "<group>"; };
+		F02459C920590E6D002906C3 /* SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResults.h; sourceTree = "<group>"; };
+		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
+		F02459CC20590F03002906C3 /* FeedsSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsSearchResults.h; sourceTree = "<group>"; };
+		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
 		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
 		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
 		F03AC02E205533D800FB111A /* CodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeParser.h; sourceTree = "<group>"; };
@@ -385,6 +394,8 @@
 		F070C3121FBABC9E00912CCF /* Root */ = {
 			isa = PBXGroup;
 			children = (
+				F02459C920590E6D002906C3 /* SearchResults.h */,
+				F02459CA20590E6D002906C3 /* SearchResults.m */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -396,6 +407,10 @@
 				F070C3331FBAC37600912CCF /* FeedsVC.m */,
 				F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */,
 				F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */,
+				F02459C62058FFF1002906C3 /* FeedsVC+Search.h */,
+				F02459C72058FFF1002906C3 /* FeedsVC+Search.m */,
+				F02459CC20590F03002906C3 /* FeedsSearchResults.h */,
+				F02459CD20590F03002906C3 /* FeedsSearchResults.m */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -717,6 +732,7 @@
 			files = (
 				F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
+				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
@@ -736,7 +752,9 @@
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
 				F0D300421FE2633E0040D10D /* DTTimePeriod.m in Sources */,
 				F0D300431FE2633E0040D10D /* DTTimePeriodChain.m in Sources */,
+				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
+				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,
 				F05D21861FF2222F003DE813 /* YTUserID.m in Sources */,

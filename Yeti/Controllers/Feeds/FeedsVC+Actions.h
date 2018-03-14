@@ -6,7 +6,7 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedsVC.h"
+#import "FeedsVC+Search.h"
 
 @interface FeedsVC (Actions)
 

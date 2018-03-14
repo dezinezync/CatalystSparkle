@@ -16,6 +16,8 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 #import <DZKit/AlertManager.h>
 
+#import "FeedsSearchResults.h"
+
 @interface FeedsVC () <DZDatasource> {
     
 }
@@ -50,6 +52,16 @@
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(readNotification:) name:FeedDidUpReadCount object:nil];
+    
+    // Search Controller setup
+    {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search feeds";
+        self.navigationItem.searchController = searchController;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -60,6 +72,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    // makes sure search bar is visible when it appears
+    self.navigationItem.hidesSearchBarWhenScrolling = YES;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -135,6 +150,11 @@
     [super viewDidAppear:animated];
 }
 
+- (BOOL)definesPresentationContext
+{
+    return YES;
+}
+
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -172,7 +192,25 @@
 
 - (void)setupData:(NSArray <Feed *> *)feeds
 {
+    
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(setupData:) withObject:feeds waitUntilDone:NO];
+        return;
+    }
+    
+    // ensures search bar does not dismiss on refresh or first load
+    weakify(self);
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    
     self.DS.data = feeds;
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        // ensures user can dismiss search bar on scroll
+        self.navigationItem.hidesSearchBarWhenScrolling = YES;
+    });
 }
 
 - (void)readNotification:(NSNotification *)note {

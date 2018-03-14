@@ -91,7 +91,7 @@
     else if ([key isEqualToString:@"id"]) {
         self.feedID = value;
     }
-    else if ([key isEqualToString:@"status"] || [key isEqualToString:@"created"] || [key isEqualToString:@"modified"]) {}
+    else if ([key isEqualToString:@"status"] || [key isEqualToString:@"created"] || [key isEqualToString:@"modified"] || [key isEqualToString:@"flags"]) {}
     else {
         DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
     }
