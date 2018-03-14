@@ -18,6 +18,8 @@
 		F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459C72058FFF1002906C3 /* FeedsVC+Search.m */; };
 		F02459CB20590E6D002906C3 /* SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CA20590E6D002906C3 /* SearchResults.m */; };
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
+		F02459D120591224002906C3 /* FeedSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459D020591224002906C3 /* FeedSearchResults.m */; };
+		F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459D32059135E002906C3 /* FeedVC+Search.m */; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
 		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
@@ -114,6 +116,10 @@
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
 		F02459CC20590F03002906C3 /* FeedsSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsSearchResults.h; sourceTree = "<group>"; };
 		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
+		F02459CF20591224002906C3 /* FeedSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedSearchResults.h; sourceTree = "<group>"; };
+		F02459D020591224002906C3 /* FeedSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedSearchResults.m; sourceTree = "<group>"; };
+		F02459D22059135E002906C3 /* FeedVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Search.h"; sourceTree = "<group>"; };
+		F02459D32059135E002906C3 /* FeedVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Search.m"; sourceTree = "<group>"; };
 		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
 		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
 		F03AC02E205533D800FB111A /* CodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeParser.h; sourceTree = "<group>"; };
@@ -253,6 +259,10 @@
 			children = (
 				F070C3531FBAE52300912CCF /* FeedVC.h */,
 				F070C3541FBAE52300912CCF /* FeedVC.m */,
+				F02459CF20591224002906C3 /* FeedSearchResults.h */,
+				F02459D020591224002906C3 /* FeedSearchResults.m */,
+				F02459D22059135E002906C3 /* FeedVC+Search.h */,
+				F02459D32059135E002906C3 /* FeedVC+Search.m */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -732,6 +742,7 @@
 			files = (
 				F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
+				F02459D120591224002906C3 /* FeedSearchResults.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
@@ -774,6 +785,7 @@
 				F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
+				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

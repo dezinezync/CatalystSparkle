@@ -6,7 +6,7 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC.h"
+#import "FeedVC+Search.h"
 #import "ArticleCell.h"
 #import "ArticleVC.h"
 
@@ -16,12 +16,13 @@
 #import <DZKit/EFNavController.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
+#import "FeedSearchResults.h"
+
 @interface FeedVC () <DZDatasource> {
     NSInteger _page;
     BOOL _canLoadNext;
 }
 
-@property (nonatomic, weak) Feed *feed;
 @property (nonatomic, strong) DZBasicDatasource *DS;
 
 @end
@@ -52,6 +53,16 @@
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(didTapAllRead:)];
     self.navigationItem.rightBarButtonItem = allRead;
+    
+    // Search Controller setup
+    {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search articles";
+        self.navigationItem.searchController = searchController;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -59,9 +70,17 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (BOOL)definesPresentationContext
+{
+    return YES;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    // makes sure search bar is visible when it appears
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -79,6 +98,19 @@
         [self _setToolbarHidden];
     }
     
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        // ensures user can dismiss search bar on scroll
+        self.navigationItem.hidesSearchBarWhenScrolling = YES;
+    });
 }
 
 - (void)_setToolbarHidden {

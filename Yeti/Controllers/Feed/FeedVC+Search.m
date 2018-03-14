@@ -1,13 +1,12 @@
 //
-//  FeedsVC+Search.m
+//  FeedVC+Search.m
 //  Yeti
 //
 //  Created by Nikhil Nigade on 14/03/18.
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedsVC+Search.h"
-#import "FeedsManager.h"
+#import "FeedVC+Search.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/DZBasicDatasource.h>
@@ -16,16 +15,16 @@
 #import "NSString+Levenshtein.h"
 #import "SearchResults.h"
 
-@implementation FeedsVC (Search)
+@implementation FeedVC (Search)
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {
-    if (!MyFeedsManager.feeds || !MyFeedsManager.feeds.count)
+    if (!self.feed.articles || !self.feed.articles.count)
         return;
     
     NSString *text = searchController.searchBar.text;
     
-    NSArray <Feed *> *data = [MyFeedsManager feeds];
+    NSArray <FeedItem *> *data = self.feed.articles;
     DZBasicDatasource *DS = [(SearchResults *)[searchController searchResultsController] DS];
     
     if ([text isBlank]) {
@@ -33,16 +32,12 @@
         return;
     }
     
-    data = [data rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-        BOOL title = [obj.title containsString:text] || ([obj.title compareStringWithString:text] <= 2);
+    data = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        BOOL title = [obj.articleTitle containsString:text] || ([obj.articleTitle compareStringWithString:text] <= 2);
         BOOL desc = (obj.summary && ![obj.summary isBlank]) && ([obj.summary containsString:text] || ([obj.summary compareStringWithString:text] <= 2));
+        BOOL author = [obj.author containsString:text] || ([obj.author compareStringWithString:text] <= 2);
         
-//        DDLogDebug(@"LV title against %@: %@", obj.title, [obj.title compareStringWithString:text] ? @YES : @NO);
-//        if (obj.summary && ![obj.summary isBlank]) {
-//            DDLogDebug(@"LV summary against %@: %@", obj.summary, [obj.summary compareStringWithString:text] ? @YES : @NO);
-//        }
-        
-        return title || desc;
+        return title || desc || author;
     }];
     
     DS.data = data;
