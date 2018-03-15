@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.4277"
+            timestampString = "542788271.582818"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "263"
-            endingLineNumber = "263"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
             landmarkName = "-addTitle"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,11 +106,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.428211"
+            timestampString = "542788271.583186"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "449"
-            endingLineNumber = "449"
+            startingLineNumber = "445"
+            endingLineNumber = "445"
+            landmarkName = "-addParagraph:caption:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Article/ArticleVC.m"
+            timestampString = "542788271.583418"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "452"
+            endingLineNumber = "452"
             landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
          </BreakpointContent>
@@ -122,27 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.428466"
+            timestampString = "542788271.5836411"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "456"
-            endingLineNumber = "456"
-            landmarkName = "-addParagraph:caption:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.428713"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "454"
-            endingLineNumber = "454"
+            startingLineNumber = "450"
+            endingLineNumber = "450"
             landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
          </BreakpointContent>
@@ -218,11 +218,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.428986"
+            timestampString = "542788271.5838881"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "350"
-            endingLineNumber = "350"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
             landmarkName = "-processContent:"
             landmarkType = "7">
          </BreakpointContent>
@@ -234,11 +234,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.42923"
+            timestampString = "542788271.584111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "429"
-            endingLineNumber = "429"
+            startingLineNumber = "425"
+            endingLineNumber = "425"
             landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
          </BreakpointContent>
@@ -250,7 +250,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Models/Content.m"
-            timestampString = "542738589.429472"
+            timestampString = "542738738.017089"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "108"
@@ -441,24 +441,8 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.429719"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "330"
-            endingLineNumber = "330"
-            landmarkName = "-processContent:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Yeti/Models/Content.m"
-            timestampString = "542738589.429968"
+            timestampString = "542738738.01761"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "95"
@@ -506,11 +490,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.4300179"
+            timestampString = "542788271.584438"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "323"
-            endingLineNumber = "323"
+            startingLineNumber = "319"
+            endingLineNumber = "319"
             landmarkName = "-processContent:"
             landmarkType = "7">
          </BreakpointContent>
@@ -522,7 +506,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.4302551"
+            timestampString = "542738738.017895"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "100"
@@ -538,7 +522,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.43041"
+            timestampString = "542738738.0180579"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "165"
@@ -570,11 +554,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.430469"
+            timestampString = "542788271.584697"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "202"
+            endingLineNumber = "202"
             landmarkName = "-willTransitionToTraitCollection:withTransitionCoordinator:"
             landmarkType = "7">
          </BreakpointContent>
@@ -586,7 +570,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430709"
+            timestampString = "542738738.018364"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "155"
@@ -634,7 +618,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430781"
+            timestampString = "542738738.018437"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "155"
@@ -650,7 +634,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430819"
+            timestampString = "542738738.018476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "137"
@@ -666,7 +650,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430853"
+            timestampString = "542738738.0185111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "142"
@@ -682,7 +666,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430887"
+            timestampString = "542738738.018545"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "144"
@@ -698,7 +682,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.43092"
+            timestampString = "542738738.01858"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "289"
@@ -714,7 +698,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430952"
+            timestampString = "542738738.018613"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "276"
@@ -730,7 +714,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.430985"
+            timestampString = "542738738.018646"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "292"
@@ -746,11 +730,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.4310189"
+            timestampString = "542788271.585017"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "502"
-            endingLineNumber = "502"
+            startingLineNumber = "498"
+            endingLineNumber = "498"
             landmarkName = "-addLinebreak"
             landmarkType = "7">
          </BreakpointContent>
@@ -762,11 +746,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.431259"
+            timestampString = "542788271.585243"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "538"
-            endingLineNumber = "538"
+            startingLineNumber = "534"
+            endingLineNumber = "534"
             landmarkName = "-addImage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -778,7 +762,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.4315"
+            timestampString = "542738738.019171"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "169"
@@ -794,7 +778,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Models/Content.m"
-            timestampString = "542738589.43154"
+            timestampString = "542738738.019214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "171"
@@ -810,7 +794,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.4315749"
+            timestampString = "542738738.019251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "105"
@@ -826,7 +810,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.431609"
+            timestampString = "542738738.019286"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "124"
@@ -842,11 +826,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.431643"
+            timestampString = "542788271.585506"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "824"
-            endingLineNumber = "824"
+            startingLineNumber = "820"
+            endingLineNumber = "820"
             landmarkName = "-scrollToIdentifer:"
             landmarkType = "7">
          </BreakpointContent>
@@ -858,7 +842,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Paragraph.m"
-            timestampString = "542738589.43188"
+            timestampString = "542738738.019563"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "251"
@@ -874,11 +858,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.4319201"
+            timestampString = "542788271.58575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "736"
-            endingLineNumber = "736"
+            startingLineNumber = "732"
+            endingLineNumber = "732"
             landmarkName = "-scrollViewDidScroll:"
             landmarkType = "7">
             <Locations>
@@ -922,11 +906,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.432158"
+            timestampString = "542788271.585977"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "745"
-            endingLineNumber = "745"
+            startingLineNumber = "741"
+            endingLineNumber = "741"
             landmarkName = "-scrollViewDidScroll:"
             landmarkType = "7">
          </BreakpointContent>
@@ -938,11 +922,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.4324"
+            timestampString = "542788271.586203"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "748"
-            endingLineNumber = "748"
+            startingLineNumber = "744"
+            endingLineNumber = "744"
             landmarkName = "-scrollViewDidScroll:"
             landmarkType = "7">
          </BreakpointContent>
@@ -954,11 +938,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.432637"
+            timestampString = "542788271.586426"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "493"
-            endingLineNumber = "493"
+            startingLineNumber = "489"
+            endingLineNumber = "489"
             landmarkName = "-addHeading:"
             landmarkType = "7">
          </BreakpointContent>
@@ -970,11 +954,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.432878"
+            timestampString = "542788271.586643"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "444"
-            endingLineNumber = "444"
+            startingLineNumber = "440"
+            endingLineNumber = "440"
             landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
          </BreakpointContent>
@@ -986,11 +970,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.433115"
+            timestampString = "542788271.586858"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "462"
-            endingLineNumber = "462"
+            startingLineNumber = "458"
+            endingLineNumber = "458"
             landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1018,11 +1002,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.43337"
+            timestampString = "542788271.587091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "561"
-            endingLineNumber = "561"
+            startingLineNumber = "557"
+            endingLineNumber = "557"
             landmarkName = "-addImage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1034,11 +1018,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.433611"
+            timestampString = "542788271.587314"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "556"
-            endingLineNumber = "556"
+            startingLineNumber = "552"
+            endingLineNumber = "552"
             landmarkName = "-addImage:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1050,11 +1034,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.433852"
+            timestampString = "542788271.587531"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "477"
-            endingLineNumber = "477"
+            startingLineNumber = "473"
+            endingLineNumber = "473"
             landmarkName = "-addHeading:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1078,27 +1062,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.434106"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "316"
-            endingLineNumber = "316"
-            landmarkName = "-processContent:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.124118"
+            timestampString = "542788271.587767"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "130"
@@ -1114,7 +1082,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.124615"
+            timestampString = "542788271.588007"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "223"
@@ -1130,7 +1098,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.124824"
+            timestampString = "542788271.5882"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
@@ -1178,7 +1146,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.12506"
+            timestampString = "542788271.5884171"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "36"
@@ -1194,7 +1162,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.1252789"
+            timestampString = "542788271.588612"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "231"
@@ -1210,7 +1178,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.125478"
+            timestampString = "542788271.588799"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "247"
@@ -1226,7 +1194,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.125675"
+            timestampString = "542788271.588989"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
@@ -1270,11 +1238,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.1258889"
+            timestampString = "542788271.589179"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "158"
@@ -1290,7 +1258,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.126092"
+            timestampString = "542788271.589371"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "207"
@@ -1306,7 +1274,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.126295"
+            timestampString = "542788271.589559"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "181"
@@ -1322,7 +1290,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.12652"
+            timestampString = "542788271.589749"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "201"
@@ -1338,7 +1306,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.12673"
+            timestampString = "542788271.589939"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "155"
@@ -1386,7 +1354,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542736082.126924"
+            timestampString = "542788271.590133"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "178"
@@ -1402,11 +1370,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.43449"
+            timestampString = "542788271.590324"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "706"
-            endingLineNumber = "706"
+            startingLineNumber = "702"
+            endingLineNumber = "702"
             landmarkName = "-addPre:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1418,11 +1386,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.434727"
+            timestampString = "542788271.590549"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "661"
-            endingLineNumber = "661"
+            startingLineNumber = "657"
+            endingLineNumber = "657"
             landmarkName = "-addAside:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1434,11 +1402,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.434965"
+            timestampString = "542788271.59077"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
+            startingLineNumber = "380"
+            endingLineNumber = "380"
             landmarkName = "-processContent:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1450,11 +1418,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Article/ArticleVC.m"
-            timestampString = "542738589.435204"
+            timestampString = "542788271.5909849"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "334"
-            endingLineNumber = "334"
+            startingLineNumber = "330"
+            endingLineNumber = "330"
             landmarkName = "-processContent:"
             landmarkType = "7">
          </BreakpointContent>
@@ -1466,11 +1434,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Heading.m"
-            timestampString = "542738589.43543"
+            timestampString = "542788271.591203"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "125"
-            endingLineNumber = "125"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
             landmarkName = "-bodyFont"
             landmarkType = "7">
          </BreakpointContent>
@@ -1482,12 +1450,76 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Heading.m"
-            timestampString = "542738589.435793"
+            timestampString = "542788271.591242"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
             landmarkName = "-setLevel:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Article/ArticleVC.m"
+            timestampString = "542788271.591277"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "388"
+            endingLineNumber = "388"
+            landmarkName = "-processContent:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Article/ArticleVC.m"
+            timestampString = "542788271.591495"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "-viewDidLayoutSubviews"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Article/ArticleVC.m"
+            timestampString = "542788271.591705"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
+            landmarkName = "-viewDidLayoutSubviews"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Article/ArticleVC.m"
+            timestampString = "542788271.591915"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "461"
+            endingLineNumber = "461"
+            landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

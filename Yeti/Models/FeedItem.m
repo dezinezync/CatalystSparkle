@@ -4,6 +4,9 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSDate+ISO8601.h>
 
+#import "NSString+HTML.h"
+#import <DZKit/NSString+Extras.h>
+
 @implementation FeedItem
 
 - (NSString *)compareID
@@ -125,8 +128,13 @@
         }
         
     }
+    else if ([key isEqualToString:@"summary"]) {
+        if (value && ![value isBlank]) {
+            self.summary = [value htmlToPlainText];
+        }
+    }
     else {
-        [super setValue:value forKey:key];
+       [super setValue:value forKey:key];
     }
 
 }

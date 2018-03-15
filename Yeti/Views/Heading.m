@@ -14,8 +14,6 @@
 
 @property (nonatomic, strong) NSParagraphStyle *paragraphStyle;
 
-@property (nonatomic, strong) NSLayoutConstraint *leading, *trailing;
-
 @end
 
 @implementation Heading

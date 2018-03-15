@@ -70,6 +70,8 @@
 		F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
 		F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
+		F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */; };
+		F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E0609B205A4423003FFD18 /* NSString+HTML.m */; };
 		F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E219432054FB83004B5FF5 /* Linebreak.m */; };
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
@@ -207,6 +209,10 @@
 		F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodGroup.m; sourceTree = "<group>"; };
 		F0D3003D1FE2633E0040D10D /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DateTools.m"; sourceTree = "<group>"; };
+		F0E06097205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+GTMNSStringHTMLAdditions.h"; sourceTree = "<group>"; };
+		F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+GTMNSStringHTMLAdditions.m"; sourceTree = "<group>"; };
+		F0E0609A205A4423003FFD18 /* NSString+HTML.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
+		F0E0609B205A4423003FFD18 /* NSString+HTML.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTML.m"; sourceTree = "<group>"; };
 		F0E219412054F846004B5FF5 /* LayoutConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutConstants.h; sourceTree = "<group>"; };
 		F0E219422054FB83004B5FF5 /* Linebreak.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Linebreak.h; sourceTree = "<group>"; };
 		F0E219432054FB83004B5FF5 /* Linebreak.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Linebreak.m; sourceTree = "<group>"; };
@@ -372,6 +378,8 @@
 		F070C3101FBABC8500912CCF /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				F0E06097205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.h */,
+				F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */,
 				F07A66562055539D00BA2D9F /* UIColor+HEX.h */,
 				F07A66572055539D00BA2D9F /* UIColor+HEX.m */,
 				F01D71501FBC1A2500DF84B9 /* NSAttributedString+Trimming.h */,
@@ -380,6 +388,8 @@
 				F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */,
 				F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */,
 				F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */,
+				F0E0609A205A4423003FFD18 /* NSString+HTML.h */,
+				F0E0609B205A4423003FFD18 /* NSString+HTML.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -753,9 +763,11 @@
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
+				F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
 				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
+				F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */,
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,

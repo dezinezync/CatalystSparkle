@@ -140,14 +140,10 @@ static CGFloat const padding = 6.f;
     // add Body
     [self addTitle];
     
-    NSUInteger idx = 0;
-    
     self.stackView.hidden = YES;
     
     for (Content *content in self.item.content) { @autoreleasepool {
         [self processContent:content];
-        
-        idx++;
     } }
     
     [self.loader stopAnimating];
@@ -393,7 +389,7 @@ static CGFloat const padding = 6.f;
 
 - (void)addParagraph:(Content *)content caption:(BOOL)caption {
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, LayoutPadding * 2);
     
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
 #ifdef DEBUG_LAYOUT
@@ -402,10 +398,10 @@ static CGFloat const padding = 6.f;
 #endif
 #endif
     
-    if ([_last isKindOfClass:Heading.class])
+    if ([_last isMemberOfClass:Heading.class])
         para.afterHeading = YES;
     
-    if ([_last isKindOfClass:Paragraph.class]
+    if ([_last isMemberOfClass:Paragraph.class]
         && !caption) {
         // check if we have a duplicate
         Paragraph *lastPara = (Paragraph *)_last;
@@ -441,7 +437,7 @@ static CGFloat const padding = 6.f;
         content.ranges = ranges.copy;
     }
     
-    if ([_last isKindOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
+    if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
         
         // since the last one is a paragraph as well, simlpy append to it.
         Paragraph *last = (Paragraph *)_last;
@@ -473,7 +469,7 @@ static CGFloat const padding = 6.f;
 
 - (void)addHeading:(Content *)content {
     
-    if (_last && [_last isKindOfClass:Paragraph.class]) {
+    if (_last && [_last isMemberOfClass:Paragraph.class]) {
         [self addLinebreak];
     }
     
@@ -503,7 +499,7 @@ static CGFloat const padding = 6.f;
         return;
     
     // append to the para if one is available
-    if (_last && ([_last isKindOfClass:Paragraph.class] || [_last isKindOfClass:Heading.class])) {
+    if (_last && ([_last isMemberOfClass:Paragraph.class] || [_last isMemberOfClass:Heading.class])) {
         Paragraph *para = (Paragraph *)_last;
         
         NSString *string = [para attributedText].string;
@@ -534,7 +530,7 @@ static CGFloat const padding = 6.f;
 
 - (void)addImage:(Content *)content {
     
-    if ([_last isKindOfClass:Heading.class] || !_last || [_last isKindOfClass:Paragraph.class])
+    if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
@@ -585,7 +581,7 @@ static CGFloat const padding = 6.f;
 
 - (void)addGallery:(Content *)content {
     
-    if ([_last isKindOfClass:Heading.class]) {
+    if ([_last isMemberOfClass:Heading.class]) {
         [self addLinebreak];
     }
     
@@ -662,7 +658,7 @@ static CGFloat const padding = 6.f;
     
     Aside *para = [[Aside alloc] initWithFrame:frame];
     
-    if ([_last isKindOfClass:Heading.class])
+    if ([_last isMemberOfClass:Heading.class])
         para.afterHeading = YES;
     
     [para setText:content.content ranges:content.ranges attributes:content.attributes];
@@ -747,7 +743,7 @@ static CGFloat const padding = 6.f;
         
 //        DDLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
         
-        if ([imageview isKindOfClass:Gallery.class]) {
+        if ([imageview isMemberOfClass:Gallery.class]) {
             [(Gallery *)imageview setLoading:YES];
         }
         else if (!imageview.image && contains && !imageview.isLoading) {
@@ -780,7 +776,7 @@ static CGFloat const padding = 6.f;
     DDLogDebug(@"Looking up anchor %@", identifier);
     
     NSArray <Paragraph *> *paragraphs = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
-        return [obj isKindOfClass:Paragraph.class];
+        return [obj isMemberOfClass:Paragraph.class];
     }];
     
     __block Paragraph *required = nil;
