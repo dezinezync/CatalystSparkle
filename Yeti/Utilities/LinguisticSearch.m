@@ -10,6 +10,8 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/DZLogger.h>
 
+#import "DTTimePeriod.h"
+
 LinguisticPairType const LinguisticPairTypeDates = @"linguisticPair.dates";
 LinguisticPairType const LinguisticPairTypeOthers = @"linguisticPair.others";
 LinguisticPairType const LinguisticPairTypeContext = @"linguisticPair.context";
@@ -59,6 +61,103 @@ static NSArray<NSString *> *_knownDateTags;
     return retval;
 }
 
++ (NSDate *)dateFromText:(NSString *)text
+{
+    NSDictionary <LinguisticPairType, NSArray <LinguisticTagPair> *> *results = [[self class] processText:text];
+    
+    return [[self class] processDataForDate:results];
+}
+
++ (NSDate *)processDataForDate:(NSDictionary <LinguisticPairType, NSArray <LinguisticTagPair> *> *)results {
+    
+    NSArray <LinguisticTagPair> *dates = [results valueForKey:LinguisticPairTypeDates];
+    NSArray <LinguisticTagPair> *context = [results valueForKey:LinguisticPairTypeContext];
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents *components = [calendar components:NSCalendarUnitDay|NSCalendarUnitMonth|NSCalendarUnitYear fromDate:NSDate.date];
+    
+    if (dates.count > 0 && context.count > 0) {
+        // only match the first item
+        NSString *countString = [[context.firstObject allValues].firstObject lowercaseString];
+        NSTimeInterval count;
+        
+        if ([countString isEqualToString:@"a"] || [countString isEqualToString:@"last"] || [countString isEqualToString:@"previous"]) {
+            count = 1;
+        }
+        else {
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            formatter.numberStyle = NSNumberFormatterDecimalStyle;
+            count = [[formatter numberFromString:countString] floatValue];
+        }
+        
+        NSString *type = [[dates.firstObject valueForKey:@"Noun"] lowercaseString];
+        
+        NSTimeInterval intervalInDays = [[self class] multiplexedCountFor:type count:count];
+        
+        components.day -= intervalInDays;
+        
+        NSDate *requiredDate = [calendar dateFromComponents:components];
+        
+        return requiredDate;
+    }
+    else if (dates.count > 0) {
+        NSString *type = [[dates.firstObject valueForKey:@"Noun"] lowercaseString];
+        
+        NSTimeInterval intervalInDays = [[self class] multiplexedCountFor:type count:0];
+        
+        components.day -= intervalInDays;
+        
+        NSDate *requiredDate = [calendar dateFromComponents:components];
+        
+        return requiredDate;
+    }
+    
+    return nil;
+}
+
++ (NSArray <NSDate *> *)timePeriodFromText:(NSString *)text {
+    
+    NSDictionary <LinguisticPairType, NSArray <LinguisticTagPair> *> *results = [[self class] processText:text];
+    
+    NSDate * date = [[self class] processDataForDate:results];
+    
+    if (!date)
+        return nil;
+    
+    
+    
+    DTTimePeriod *timeperiod = [DTTimePeriod timePeriodWithStartDate:date endDate:NSDate.date];
+    
+    if (timeperiod.hasStartDate && timeperiod.hasEndDate) {
+        return @[timeperiod.StartDate, timeperiod.EndDate];
+    }
+    
+    return nil;
+    
+}
+
++ (NSTimeInterval)multiplexedCountFor:(NSString *)type count:(NSTimeInterval)count {
+    if ([type isEqualToString:@"day"] || [type isEqualToString:@"days"]) {
+        return count;
+    }
+    else if ([type isEqualToString:@"week"] || [type isEqualToString:@"weeks"]) {
+        return count * 7;
+    }
+    else if ([type isEqualToString:@"month"] || [type isEqualToString:@"months"]) {
+        return count * 29; // using 30 as an average.
+    }
+    else if ([type isEqualToString:@"year"]) {
+        return count * 365; // dont base off leap years.
+    }
+    else if ([type isEqualToString:@"yesterday"]) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
 #pragma mark - Setter
 
 + (void)setKnownDateTags:(NSArray<NSString *> *)knownDateTags
@@ -69,7 +168,7 @@ static NSArray<NSString *> *_knownDateTags;
 + (NSArray <NSString *> *)knownDateTags
 {
     if (!_knownDateTags) {
-        _knownDateTags = @[@"yesterday",@"today",@"now",@"days ago",@"day ago",@"week",@"year"];
+        _knownDateTags = @[@"yesterday",@"today",@"now",@"days",@"day",@"week",@"weeks",@"month",@"months",@"year",@"years"];
     }
     
     return _knownDateTags;

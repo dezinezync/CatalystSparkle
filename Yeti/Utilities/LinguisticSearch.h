@@ -11,14 +11,18 @@
 typedef NSDictionary <NSLinguisticTag, NSString *> *LinguisticTagPair;
 typedef NSString *LinguisticPairType;
 
-FOUNDATION_EXPORT LinguisticPairType const LinguisticPairTypeDates;
-FOUNDATION_EXPORT LinguisticPairType const LinguisticPairTypeContext;
-FOUNDATION_EXPORT LinguisticPairType const LinguisticPairTypeOthers;
+FOUNDATION_EXPORT LinguisticPairType const _Nonnull LinguisticPairTypeDates;
+FOUNDATION_EXPORT LinguisticPairType const _Nonnull LinguisticPairTypeContext;
+FOUNDATION_EXPORT LinguisticPairType const _Nonnull LinguisticPairTypeOthers;
 
 @interface LinguisticSearch : NSObject
 
-@property (nonatomic, copy, class) NSArray <NSString *> *knownDateTags;
+@property (nonatomic, copy, class) NSArray <NSString *> * _Nonnull knownDateTags;
 
-+ (NSDictionary <LinguisticPairType, NSArray <LinguisticTagPair> *> *)processText:(NSString *)text;
++ (NSDictionary <LinguisticPairType, NSArray <LinguisticTagPair> *> * _Nonnull)processText:(NSString * _Nonnull)text;
+
++ (NSDate * _Nullable)dateFromText:(NSString * _Nonnull)text;
+
++ (NSArray <NSDate *> * _Nullable)timePeriodFromText:(NSString * _Nonnull)text;
 
 @end

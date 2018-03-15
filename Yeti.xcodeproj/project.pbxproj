@@ -65,6 +65,13 @@
 		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
+		F0BCE1F5205A733500DD27D8 /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
+		F0BCE1F6205A733500DD27D8 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
+		F0BCE1F7205A733500DD27D8 /* DTTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300361FE2633E0040D10D /* DTTimePeriod.m */; };
+		F0BCE1F8205A733500DD27D8 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300381FE2633E0040D10D /* DTTimePeriodChain.m */; };
+		F0BCE1F9205A733500DD27D8 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
+		F0BCE1FA205A733500DD27D8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
+		F0BCE1FB205A733500DD27D8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
@@ -836,8 +843,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0BCE1F6205A733500DD27D8 /* DTError.m in Sources */,
+				F0BCE1FA205A733500DD27D8 /* DTTimePeriodGroup.m in Sources */,
+				F0BCE1F9205A733500DD27D8 /* DTTimePeriodCollection.m in Sources */,
 				F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */,
+				F0BCE1F5205A733500DD27D8 /* DTConstants.m in Sources */,
+				F0BCE1F7205A733500DD27D8 /* DTTimePeriod.m in Sources */,
+				F0BCE1F8205A733500DD27D8 /* DTTimePeriodChain.m in Sources */,
 				F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */,
+				F0BCE1FB205A733500DD27D8 /* NSDate+DateTools.m in Sources */,
 				F070C2F61FBABC3600912CCF /* YetiTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -61,6 +61,8 @@
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search articles";
+        searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        
         self.navigationItem.searchController = searchController;
     }
 }

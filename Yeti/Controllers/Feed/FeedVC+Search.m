@@ -14,6 +14,7 @@
 
 #import "NSString+Levenshtein.h"
 #import "SearchResults.h"
+#import "LinguisticSearch.h"
 
 @implementation FeedVC (Search)
 
@@ -23,6 +24,13 @@
         return;
     
     NSString *text = searchController.searchBar.text;
+    
+    // check for date match
+    NSArray *dates = [LinguisticSearch timePeriodFromText:text];
+    
+    if (dates) {
+        DDLogDebug(@"Date: %@", dates);
+    }
     
     NSArray <FeedItem *> *data = self.feed.articles;
     DZBasicDatasource *DS = [(SearchResults *)[searchController searchResultsController] DS];
