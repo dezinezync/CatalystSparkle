@@ -1066,7 +1066,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.587767"
+            timestampString = "542793148.339077"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "130"
@@ -1082,7 +1082,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.588007"
+            timestampString = "542793148.339362"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "223"
@@ -1098,7 +1098,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.5882"
+            timestampString = "542793148.339568"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
@@ -1146,7 +1146,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.5884171"
+            timestampString = "542793148.3397861"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "36"
@@ -1162,7 +1162,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.588612"
+            timestampString = "542793148.339976"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "231"
@@ -1178,7 +1178,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.588799"
+            timestampString = "542793148.340166"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "247"
@@ -1194,7 +1194,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.588989"
+            timestampString = "542793148.3403569"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
@@ -1242,7 +1242,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.589179"
+            timestampString = "542793148.340552"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "158"
@@ -1258,7 +1258,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.589371"
+            timestampString = "542793148.3407429"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "207"
@@ -1274,7 +1274,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.589559"
+            timestampString = "542793148.340942"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "181"
@@ -1290,7 +1290,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.589749"
+            timestampString = "542793148.341135"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "201"
@@ -1306,7 +1306,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.589939"
+            timestampString = "542793148.341321"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "155"
@@ -1354,7 +1354,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Views/Gallery.m"
-            timestampString = "542788271.590133"
+            timestampString = "542793148.341511"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "178"
@@ -1521,6 +1521,256 @@
             endingLineNumber = "461"
             landmarkName = "-addParagraph:caption:"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YetiTests/LinguisticSearch.m"
+            timestampString = "542793148.34181"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "-testDateTodayLowercase"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testDateTodayLowercase]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542792714.23463"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testDateTodayLowercase]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542792714.236679"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "571">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testDateTodayLowercase]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542792714.23878"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "673">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testDateTodayLowercase]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542792714.241731"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "73"
+                  endingLineNumber = "73"
+                  offsetFromSymbolStart = "782">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YetiTests/LinguisticSearch.m"
+            timestampString = "542793148.341855"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "-testDateTodayLowercase"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YetiTests/LinguisticSearch.m"
+            timestampString = "542793148.34189"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "-testLastWeek"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testLastWeek]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793052.333782"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "161">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testLastWeek]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793052.33568"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "684">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testLastWeek]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793052.337517"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "802">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testLastWeek]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793052.33936"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "911">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "YetiTests/LinguisticSearch.m"
+            timestampString = "542793148.34197"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "-testAWeekAgo"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testAWeekAgo]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793114.28078"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "161">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testAWeekAgo]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793114.282609"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "684">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testAWeekAgo]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793114.284436"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "802">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LinguisticSearchTests testAWeekAgo]"
+                  moduleName = "YetiTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/YetiTests/LinguisticSearch.m"
+                  timestampString = "542793114.2863539"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "911">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -61,6 +61,10 @@
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
 		F09E96492055342000E61681 /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
+		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
+		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
+		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
+		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
@@ -191,6 +195,9 @@
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
 		F09E96452055342000E61681 /* hljs.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = hljs.css; sourceTree = "<group>"; };
+		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
+		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
+		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
@@ -247,6 +254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A589F1205A566700488015 /* DZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +350,7 @@
 			children = (
 				F070C2F51FBABC3600912CCF /* YetiTests.m */,
 				F070C2F71FBABC3600912CCF /* Info.plist */,
+				F0A589EF205A4E7E00488015 /* LinguisticSearch.m */,
 			);
 			path = YetiTests;
 			sourceTree = "<group>";
@@ -371,6 +380,8 @@
 			children = (
 				F03AC02D205533C200FB111A /* CodeParser */,
 				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
+				F0A589F3205A580300488015 /* LinguisticSearch.h */,
+				F0A589F4205A580300488015 /* LinguisticSearch.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -599,6 +610,7 @@
 				F070C2ED1FBABC3600912CCF /* Sources */,
 				F070C2EE1FBABC3600912CCF /* Frameworks */,
 				F070C2EF1FBABC3600912CCF /* Resources */,
+				F0A589F2205A569C00488015 /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -649,7 +661,6 @@
 					F070C2F01FBABC3600912CCF = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
-						TestTargetID = F070C2D81FBABC3500912CCF;
 					};
 					F070C2FB1FBABC3600912CCF = {
 						CreatedOnToolsVersion = 9.1;
@@ -743,6 +754,24 @@
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
+		F0A589F2205A569C00488015 /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/DZKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
+			);
+			name = Carthage;
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -776,6 +805,7 @@
 				F0D300421FE2633E0040D10D /* DTTimePeriod.m in Sources */,
 				F0D300431FE2633E0040D10D /* DTTimePeriodChain.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
+				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
@@ -806,6 +836,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */,
+				F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */,
 				F070C2F61FBABC3600912CCF /* YetiTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1010,16 +1042,18 @@
 		F070C3091FBABC3600912CCF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = 3TLN858B23;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = YetiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.YetiTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Yeti.app/Yeti";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1027,16 +1061,18 @@
 		F070C30A1FBABC3600912CCF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = 3TLN858B23;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = YetiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.YetiTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Yeti.app/Yeti";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
