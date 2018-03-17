@@ -43,7 +43,6 @@ static CGFloat const padding = 6.f;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UIStackView *stackView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollBottom;
 @property (weak, nonatomic) UIView *last; // reference to the last setup view.
 @property (weak, nonatomic) id nextItem; // next item which will be processed

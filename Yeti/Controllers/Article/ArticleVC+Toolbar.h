@@ -8,8 +8,10 @@
 
 #import "ArticleVC.h"
 
-@interface ArticleVC (Toolbar)
+@interface ArticleVC (Toolbar) <UISearchBarDelegate>
 
 - (void)setupToolbar:(UITraitCollection *)newCollection;
+
+- (void)didTapSearch;
 
 @end

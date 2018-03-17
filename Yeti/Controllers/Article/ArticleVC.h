@@ -9,10 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "FeedItem.h"
 
-@interface ArticleVC : UIViewController
+@interface ArticleVC : UIViewController {
+    UISearchBar *_searchBar;
+    UIInputView *_searchView;
+    BOOL _showSearchBar;
+    UIButton *_searchPrevButton, *_searchNextButton;
+}
 
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
 
 @property (nonatomic, weak) FeedItem * _Nullable item;
+
+@property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
+
+@property (nonatomic, strong) UIInputView * _Nonnull searchView;
 
 @end
