@@ -42,6 +42,12 @@
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)didChangeBackgroundRefreshPreference:(UISwitch *)sw {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sw.isOn forKey:@"backgroundRefresh"];
+    [defaults synchronize];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -78,9 +84,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
     
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kSettingsCell];
-    }
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // Configure the cell...
     switch (indexPath.section) {
@@ -103,11 +107,19 @@
             switch (indexPath.row) {
                 case 0: {
                     cell.textLabel.text = @"Theme";
-                    cell.detailTextLabel.text = @"Light";
+                    cell.detailTextLabel.text = [[defaults valueForKey:@"theme"] capitalizedString];
                 }
                     break;
                 case 1:
+                {
                     cell.textLabel.text = @"Background Fetch";
+                    
+                    UISwitch *sw = [[UISwitch alloc] init];
+                    [sw setOn:[defaults boolForKey:@"backgroundRefresh"]];
+                    [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
+                    
+                    cell.accessoryView = sw;
+                }
                     break;
                 case 2: {
                     cell.textLabel.text = @"Image Loading";

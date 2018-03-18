@@ -30,6 +30,7 @@
 
 - (NSDictionary *)appDefaults {
     return @{@"theme": @"light",
+             @"backgroundRefresh": @YES,
              @"notifications": @NO
              };
 }
