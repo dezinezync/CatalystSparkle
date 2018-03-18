@@ -160,15 +160,22 @@
         default:
             switch (indexPath.row) {
                 case 0:
+                {
+                    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+                    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+                    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+                    
                     cell.textLabel.text = @"Yeti";
+                    cell.detailTextLabel.text = formattedString(@"%@ (%@)", appVersion, buildNumber);
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                }
                     break;
                     
                 default:
                     cell.textLabel.text = @"Attributions";
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
             }
-            
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
     }
     
