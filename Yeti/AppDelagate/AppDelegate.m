@@ -10,6 +10,8 @@
 #import "FeedsVC.h"
 #import <DZKit/EFNavController.h>
 
+#import "YetiConstants.h"
+
 @interface AppDelegate ()
 
 @end
@@ -29,9 +31,10 @@
 #pragma mark - <DZAppDelegateProtocol>
 
 - (NSDictionary *)appDefaults {
-    return @{@"theme": @"light",
-             @"backgroundRefresh": @YES,
-             @"notifications": @NO
+    return @{kDefaultsTheme: @"light",
+             kDefaultsBackgroundRefresh: @YES,
+             kDefaultsNotifications: @NO,
+             kDefaultsImageLoading: ImageLoadingMediumRes
              };
 }
 

@@ -78,6 +78,9 @@
 		F0D071EF205E75D700A042CD /* AccountVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071ED205E75D700A042CD /* AccountVC.m */; };
 		F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071EE205E75D700A042CD /* AccountVC.xib */; };
 		F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F3205E76A500A042CD /* SettingsCell.m */; };
+		F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F6205E877A00A042CD /* YetiConstants.m */; };
+		F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */; };
+		F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0D300411FE2633E0040D10D /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -220,6 +223,12 @@
 		F0D071EE205E75D700A042CD /* AccountVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountVC.xib; sourceTree = "<group>"; };
 		F0D071F2205E76A500A042CD /* SettingsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsCell.h; sourceTree = "<group>"; };
 		F0D071F3205E76A500A042CD /* SettingsCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsCell.m; sourceTree = "<group>"; };
+		F0D071F5205E860800A042CD /* YetiConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YetiConstants.h; sourceTree = "<group>"; };
+		F0D071F6205E877A00A042CD /* YetiConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiConstants.m; sourceTree = "<group>"; };
+		F0D071F8205E88AC00A042CD /* ImageLoadingVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageLoadingVC.h; sourceTree = "<group>"; };
+		F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageLoadingVC.m; sourceTree = "<group>"; };
+		F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageLoadingVC.xib; sourceTree = "<group>"; };
+		F0D071FD205E8BF800A042CD /* SettingsChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsChanges.h; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0D300301FE2633E0040D10D /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
 		F0D300311FE2633E0040D10D /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
@@ -294,7 +303,10 @@
 				F018A2CC205D0F0B001E682B /* SettingsVC.h */,
 				F018A2CD205D0F0B001E682B /* SettingsVC.m */,
 				F018A2CE205D0F0B001E682B /* SettingsVC.xib */,
-				F0D071F1205E75DB00A042CD /* Account */,
+				F0D071FD205E8BF800A042CD /* SettingsChanges.h */,
+				F0D071F8205E88AC00A042CD /* ImageLoadingVC.h */,
+				F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */,
+				F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -402,6 +414,7 @@
 				F01D714B1FBBF51300DF84B9 /* Feed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
 				F018A2CB205D0EF9001E682B /* Settings */,
+				F0D071F1205E75DB00A042CD /* Account */,
 				F070C3121FBABC9E00912CCF /* Root */,
 			);
 			path = Controllers;
@@ -414,6 +427,8 @@
 				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
 				F0A589F3205A580300488015 /* LinguisticSearch.h */,
 				F0A589F4205A580300488015 /* LinguisticSearch.m */,
+				F0D071F5205E860800A042CD /* YetiConstants.h */,
+				F0D071F6205E877A00A042CD /* YetiConstants.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -747,6 +762,7 @@
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
+				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
@@ -827,8 +843,10 @@
 			files = (
 				F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
+				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F02459D120591224002906C3 /* FeedSearchResults.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
+				F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,

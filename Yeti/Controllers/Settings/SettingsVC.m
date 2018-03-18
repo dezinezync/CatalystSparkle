@@ -8,10 +8,14 @@
 
 #import "SettingsVC.h"
 #import "SettingsCell.h"
+#import "YetiConstants.h"
 
 #import "AccountVC.h"
+#import "ImageLoadingVC.h"
 
-@interface SettingsVC ()
+@interface SettingsVC () <SettingsChanges> {
+    BOOL _settingsUpdated;
+}
 
 @end
 
@@ -34,6 +38,17 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (_settingsUpdated) {
+        _settingsUpdated = NO;
+        
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark - Actions
@@ -107,7 +122,7 @@
             switch (indexPath.row) {
                 case 0: {
                     cell.textLabel.text = @"Theme";
-                    cell.detailTextLabel.text = [[defaults valueForKey:@"theme"] capitalizedString];
+                    cell.detailTextLabel.text = [[defaults valueForKey:kDefaultsTheme] capitalizedString];
                 }
                     break;
                 case 1:
@@ -115,7 +130,7 @@
                     cell.textLabel.text = @"Background Fetch";
                     
                     UISwitch *sw = [[UISwitch alloc] init];
-                    [sw setOn:[defaults boolForKey:@"backgroundRefresh"]];
+                    [sw setOn:[defaults boolForKey:kDefaultsBackgroundRefresh]];
                     [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
                     
                     cell.accessoryView = sw;
@@ -123,7 +138,7 @@
                     break;
                 case 2: {
                     cell.textLabel.text = @"Image Loading";
-                    cell.detailTextLabel.text = @"High Res";
+                    cell.detailTextLabel.text = [defaults valueForKey:kDefaultsImageLoading];
                 }
                     break;
                 case 3:
@@ -181,9 +196,24 @@
                     break;
             }
             break;
-            
+        case 1:
+            switch (indexPath.row) {
+                case 2:
+                {
+                    vc = [[ImageLoadingVC alloc] initWithNibName:NSStringFromClass(ImageLoadingVC.class) bundle:nil];
+                }
+                    break;
+                    
+                default:
+                    break;
+            }
+            break;
         default:
             break;
+    }
+    
+    if ([vc conformsToProtocol:@protocol(SettingsNotifier)]) {
+        [(id<SettingsNotifier>)vc setSettingsDelegate:self];
     }
     
     // Push the view controller.
@@ -192,14 +222,12 @@
     }
 }
 
-/*
-#pragma mark - Navigation
+#pragma mark - <SettingsChanges>
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)didChangeSettings
+{
+    if (!_settingsUpdated)
+        _settingsUpdated = YES;
 }
-*/
 
 @end
