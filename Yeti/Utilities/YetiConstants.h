@@ -24,4 +24,10 @@ YETI_EXPORT ImageLoadingOption const ImageLoadingLowRes;
 YETI_EXPORT ImageLoadingOption const ImageLoadingMediumRes;
 YETI_EXPORT ImageLoadingOption const ImageLoadingHighRes;
 
+typedef NSString * ExternalAppsScheme;
+
+YETI_EXPORT ExternalAppsScheme const ExternalTwitterAppScheme;
+YETI_EXPORT ExternalAppsScheme const ExternalRedditAppScheme;
+YETI_EXPORT ExternalAppsScheme const ExternalBrowserAppScheme;
+
 #endif /* YetiConstants_h */

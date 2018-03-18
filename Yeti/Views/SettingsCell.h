@@ -20,3 +20,9 @@ extern NSString *const kAccountsCell;
 
 @end
 
+extern NSString *const kExternalAppsCell;
+
+@interface ExternalAppsCell : UITableViewCell
+
+@end
+

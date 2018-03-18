@@ -12,6 +12,7 @@
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
+#import "ExternalAppsVC.h"
 
 #import <DZKit/DZView.h>
 
@@ -225,7 +226,8 @@
                     vc = [[ImageLoadingVC alloc] initWithNibName:NSStringFromClass(ImageLoadingVC.class) bundle:nil];
                 }
                     break;
-                    
+                case 3:
+                    vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
                 default:
                     break;
             }

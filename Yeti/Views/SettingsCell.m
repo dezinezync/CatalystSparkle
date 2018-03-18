@@ -10,6 +10,7 @@
 
 NSString *const kSettingsCell = @"com.yeti.cell.settings";
 NSString *const kAccountsCell = @"com.yeti.cell.accounts";
+NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
 
 @implementation SettingsCell
 
@@ -30,6 +31,20 @@ NSString *const kAccountsCell = @"com.yeti.cell.accounts";
 {
     if (self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier]) {
         self.detailTextLabel.textColor = [UIColor colorWithWhite:0.38f alpha:1.f];
+    }
+    
+    return self;
+}
+
+@end
+
+@implementation ExternalAppsCell
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    if (self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier]) {
+        self.imageView.layer.cornerRadius = 6.5f;
+        self.imageView.layer.masksToBounds = YES;
     }
     
     return self;

@@ -81,6 +81,8 @@
 		F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F6205E877A00A042CD /* YetiConstants.m */; };
 		F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */; };
 		F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */; };
+		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
+		F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D07200205E960900A042CD /* ExternalAppsVC.xib */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0D300411FE2633E0040D10D /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -229,6 +231,9 @@
 		F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageLoadingVC.m; sourceTree = "<group>"; };
 		F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageLoadingVC.xib; sourceTree = "<group>"; };
 		F0D071FD205E8BF800A042CD /* SettingsChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsChanges.h; sourceTree = "<group>"; };
+		F0D071FE205E960900A042CD /* ExternalAppsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAppsVC.h; sourceTree = "<group>"; };
+		F0D071FF205E960900A042CD /* ExternalAppsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExternalAppsVC.m; sourceTree = "<group>"; };
+		F0D07200205E960900A042CD /* ExternalAppsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExternalAppsVC.xib; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0D300301FE2633E0040D10D /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
 		F0D300311FE2633E0040D10D /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
@@ -307,6 +312,12 @@
 				F0D071F8205E88AC00A042CD /* ImageLoadingVC.h */,
 				F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */,
 				F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */,
+				F0D071EC205E75D700A042CD /* AccountVC.h */,
+				F0D071ED205E75D700A042CD /* AccountVC.m */,
+				F0D071EE205E75D700A042CD /* AccountVC.xib */,
+				F0D071FE205E960900A042CD /* ExternalAppsVC.h */,
+				F0D071FF205E960900A042CD /* ExternalAppsVC.m */,
+				F0D07200205E960900A042CD /* ExternalAppsVC.xib */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -414,7 +425,6 @@
 				F01D714B1FBBF51300DF84B9 /* Feed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
 				F018A2CB205D0EF9001E682B /* Settings */,
-				F0D071F1205E75DB00A042CD /* Account */,
 				F070C3121FBABC9E00912CCF /* Root */,
 			);
 			path = Controllers;
@@ -599,16 +609,6 @@
 			path = HLJS;
 			sourceTree = "<group>";
 		};
-		F0D071F1205E75DB00A042CD /* Account */ = {
-			isa = PBXGroup;
-			children = (
-				F0D071EC205E75D700A042CD /* AccountVC.h */,
-				F0D071ED205E75D700A042CD /* AccountVC.m */,
-				F0D071EE205E75D700A042CD /* AccountVC.xib */,
-			);
-			path = Account;
-			sourceTree = "<group>";
-		};
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
@@ -765,6 +765,7 @@
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
+				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 				F09E96492055342000E61681 /* hljs.css in Resources */,
 			);
@@ -884,6 +885,7 @@
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
+				F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */,
 				F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */,
 				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,

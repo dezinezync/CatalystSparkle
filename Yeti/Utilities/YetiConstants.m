@@ -20,3 +20,9 @@ NSString * const kDefaultsImageLoading = @"imageLoading";
 ImageLoadingOption const ImageLoadingLowRes = @"Low Res";
 ImageLoadingOption const ImageLoadingMediumRes = @"Medium Res";
 ImageLoadingOption const ImageLoadingHighRes = @"High Res";
+
+#pragma mark - External Apps
+
+ExternalAppsScheme const ExternalTwitterAppScheme = @"externalapp.twitter";
+ExternalAppsScheme const ExternalRedditAppScheme = @"externalapp.reddit";
+ExternalAppsScheme const ExternalBrowserAppScheme = @"externalapp.browser";
