@@ -83,6 +83,8 @@
 		F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */; };
 		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
 		F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D07200205E960900A042CD /* ExternalAppsVC.xib */; };
+		F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D07204205E9EC400A042CD /* DZWebViewController.m */; };
+		F0D07208205E9F6700A042CD /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0D300411FE2633E0040D10D /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -234,6 +236,9 @@
 		F0D071FE205E960900A042CD /* ExternalAppsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAppsVC.h; sourceTree = "<group>"; };
 		F0D071FF205E960900A042CD /* ExternalAppsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExternalAppsVC.m; sourceTree = "<group>"; };
 		F0D07200205E960900A042CD /* ExternalAppsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExternalAppsVC.xib; sourceTree = "<group>"; };
+		F0D07204205E9EC400A042CD /* DZWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZWebViewController.m; sourceTree = "<group>"; };
+		F0D07205205E9EC400A042CD /* DZWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZWebViewController.h; sourceTree = "<group>"; };
+		F0D07207205E9F6700A042CD /* attributions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributions.html; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0D300301FE2633E0040D10D /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
 		F0D300311FE2633E0040D10D /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
@@ -482,6 +487,8 @@
 		F070C3121FBABC9E00912CCF /* Root */ = {
 			isa = PBXGroup;
 			children = (
+				F0D07205205E9EC400A042CD /* DZWebViewController.h */,
+				F0D07204205E9EC400A042CD /* DZWebViewController.m */,
 				F02459C920590E6D002906C3 /* SearchResults.h */,
 				F02459CA20590E6D002906C3 /* SearchResults.m */,
 			);
@@ -512,6 +519,7 @@
 				F070C2EA1FBABC3600912CCF /* Info.plist */,
 				F070C2EB1FBABC3600912CCF /* main.m */,
 				F070C3201FBAC0E100912CCF /* Prefix.pch */,
+				F0D07207205E9F6700A042CD /* attributions.html */,
 			);
 			path = SupportingFiles;
 			sourceTree = "<group>";
@@ -765,6 +773,7 @@
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
+				F0D07208205E9F6700A042CD /* attributions.html in Resources */,
 				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 				F09E96492055342000E61681 /* hljs.css in Resources */,
@@ -859,6 +868,7 @@
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
 				F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
+				F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
 				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
