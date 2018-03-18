@@ -12,7 +12,7 @@
     BOOL _setupConstraints;
 }
 
-@property (nonatomic, strong, readwritet) WKWebView *webview;
+@property (nonatomic, strong, readwrite) WKWebView *webview;
 
 @end
 
