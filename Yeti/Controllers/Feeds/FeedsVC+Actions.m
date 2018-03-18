@@ -10,6 +10,7 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/DZBasicDatasource.h>
 #import "FeedsManager.h"
+#import "SettingsVC.h"
 
 @implementation FeedsVC (Actions)
 
@@ -105,6 +106,16 @@
         
     });
     
+}
+
+- (void)didTapSettings
+{
+    SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
+    
+    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+    navVC.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    [self.splitViewController presentViewController:navVC animated:YES completion:nil];
 }
 
 @end

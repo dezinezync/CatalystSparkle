@@ -12,6 +12,8 @@
 
 - (void)didTapAdd:(UIBarButtonItem *)add;
 
+- (void)didTapSettings;
+
 - (void)beginRefreshing:(UIRefreshControl *)sender;
 
 @end

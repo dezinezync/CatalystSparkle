@@ -14,6 +14,11 @@
     UIInputView *_searchView;
     BOOL _showSearchBar;
     UIButton *_searchPrevButton, *_searchNextButton;
+    
+    UILabel *_searchHighlightingRect;
+    NSArray <NSValue *> *_searchingRects;
+    NSInteger _searchCurrentIndex;
+    CGRect _keyboardRect;
 }
 
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;

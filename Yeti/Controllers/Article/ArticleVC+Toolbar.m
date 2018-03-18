@@ -22,7 +22,8 @@
     
     self.toolbarItems = nil;
     self.navigationController.toolbarHidden = YES;
-    self.navigationItem.rightBarButtonItems = @[search, share];
+    // these are assigned in reverse order
+    self.navigationItem.rightBarButtonItems = @[share, search];
 }
 
 - (BOOL)canBecomeFirstResponder
@@ -77,12 +78,76 @@
 
 - (void)didTapSearchPrevious
 {
+    if (_searchCurrentIndex == 0) {
+        // we are on the first possible result. This shouldn't be possible.
+        _searchPrevButton.enabled = NO;
+        return;
+    }
     
+    NSValue *prevValue = _searchingRects[_searchCurrentIndex-1];
+    
+    if (prevValue) {
+        _searchCurrentIndex--;
+        _searchHighlightingRect.frame = prevValue.CGRectValue;
+        [self scrollToRangeRect:prevValue];
+    }
+    
+    if (_searchCurrentIndex == 0)
+        _searchPrevButton.enabled = NO;
+    
+    // if previous was tappable, next should be tappable now
+    if (!_searchNextButton.isEnabled)
+        _searchNextButton.enabled = YES;
 }
 
 - (void)didTapSearchNext
 {
+    if (_searchCurrentIndex == (_searchingRects.count-1)) {
+        // we are on the last result. This shouldn't be possible.
+        _searchNextButton.enabled = NO;
+        return;
+    }
     
+    NSValue *nextValue = _searchingRects[_searchCurrentIndex+1];
+    if (nextValue) {
+        _searchCurrentIndex++;
+        _searchHighlightingRect.frame = nextValue.CGRectValue;
+        [self scrollToRangeRect:nextValue];
+    }
+    
+    if (_searchCurrentIndex == (_searchingRects.count - 1))
+        _searchNextButton.enabled = NO;
+    
+    // if next was tappable, previous should be tappable now
+    if (!_searchPrevButton.isEnabled)
+        _searchPrevButton.enabled = YES;
+}
+
+- (void)keyboardFrameChanged:(NSNotification *)note
+{
+    _keyboardRect = [[note.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    if (_keyboardRect.origin.y >= [UIScreen mainScreen].bounds.size.height)
+        _keyboardRect.size.height = 0.f;
+    
+    UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
+    UIEdgeInsets insets = [scrollView contentInset];
+    
+    insets.bottom = _keyboardRect.size.height;
+    
+    scrollView.contentInset = insets;
+    scrollView.scrollIndicatorInsets = insets;
+}
+
+- (void)scrollToRangeRect:(NSValue *)value {
+    
+    if (!value)
+        return;
+    
+    CGRect rect = value.CGRectValue;
+//    rect.origin.y += _keyboardRect.size.height;
+    
+    [(UIScrollView *)(self.stackView.superview) scrollRectToVisible:rect animated:YES];
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>
@@ -184,10 +249,19 @@
     return _searchView;
 }
 
+- (void)removeSearchResultViewFromSuperview {
+    if (_searchHighlightingRect) {
+        [_searchHighlightingRect removeFromSuperview];
+    }
+    _searchHighlightingRect = nil;
+}
+
 #pragma mark - <UISearchBarDelegate>
 
 - (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
 {
+    _searchingRects = nil;
+    [self removeSearchResultViewFromSuperview];
     return YES;
 }
 
@@ -196,12 +270,15 @@
     if (!searchText || [searchText isBlank]) {
         _searchPrevButton.enabled = NO;
         _searchNextButton.enabled = NO;
+        [self removeSearchResultViewFromSuperview];
         return;
     }
     
+    searchText = [searchText stringByStrippingWhitespace];
+    
     DDLogDebug(@"Article search text: %@", searchText);
     
-    NSArray <UIView *> *foundInViews = [[self.stackView arrangedSubviews] rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+    NSArray <Paragraph *> *foundInViews = [[self.stackView arrangedSubviews] rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
        
         if ([obj isKindOfClass:Paragraph.class]) {
             
@@ -218,6 +295,8 @@
     if (![foundInViews count]) {
         _searchPrevButton.enabled = NO;
         _searchNextButton.enabled = NO;
+        
+        [self removeSearchResultViewFromSuperview];
         return;
     }
     
@@ -233,17 +312,91 @@
             _searchNextButton.enabled = YES;
         
         _searchPrevButton.enabled = YES;
-        
     }
+    
+    /* actual search ops */
+    
+    // first find all the ranges of the search text and their corresponding rects
+    NSMutableArray <NSValue *> * rects = [NSMutableArray new];
+    
+    UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
+    
+    [foundInViews enumerateObjectsUsingBlock:^(Paragraph * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSString *str = obj.attributedText.string;
+        NSUInteger length = [str length];
+        
+        NSString *checkIn = str.lowercaseString;
+        NSString *toCheck = searchText.lowercaseString;
+        
+        NSRange range = NSMakeRange(0, length);
+//        NSMutableArray <NSValue *> *subranges = @[].mutableCopy;
+        
+        NSTextStorage *textStorage = obj.textStorage;
+        NSLayoutManager *layoutManager = [[textStorage layoutManagers] firstObject];
+        NSTextContainer *textContainer = [[layoutManager textContainers] firstObject];
+        
+        while(range.location != NSNotFound)
+        {
+            range = [checkIn rangeOfString:toCheck options:0 range:range];
+            if(range.location != NSNotFound)
+            {
+                CGRect rect = [layoutManager boundingRectForGlyphRange:range inTextContainer:textContainer];
+                rect = [obj convertRect:rect toView:obj.superview];
+                
+                UIEdgeInsets adjustedInsets = scrollView.adjustedContentInset;
+                UIEdgeInsets contentInsets = scrollView.contentInset;
+                
+                rect.origin.y += (((adjustedInsets.bottom - contentInsets.bottom) + (adjustedInsets.top - contentInsets.top))/2.f) - 2.5f;
+                rect.origin.x += 16.f;
+                
+                NSValue *rectValue = [NSValue valueWithCGRect:rect];
+                
+                [rects addObject:rectValue];
+                
+                // advance the range for the next while loop
+                range = NSMakeRange(range.location + range.length, length - (range.location + range.length));
+            }
+        }
+        
+    }];
+    
+    // now we can highlight across these rects
+    _searchingRects = rects;
+    
+    if (!_searchHighlightingRect) {
+        // use the first rect's value
+        _searchHighlightingRect = [[UILabel alloc] initWithFrame:CGRectIntegral(_searchingRects.firstObject.CGRectValue)];
+        _searchHighlightingRect.backgroundColor = [UIColor.yellowColor colorWithAlphaComponent:0.5f];
+        _searchHighlightingRect.autoresizingMask = UIViewAutoresizingNone;
+        _searchHighlightingRect.numberOfLines = 0;
+        _searchHighlightingRect.font = [[[Paragraph alloc] init] bodyFont];
+        _searchHighlightingRect.layer.cornerRadius = 2.f;
+        _searchHighlightingRect.layer.masksToBounds = YES;
+        
+        // add it to the scrollview
+        [scrollView addSubview:_searchHighlightingRect];
+//        [scrollView sendSubviewToBack:_searchHighlightingRect];
+    }
+    else {
+        // it's already there. update it's frame
+        _searchHighlightingRect.frame = CGRectIntegral(_searchingRects.firstObject.CGRectValue);
+    }
+    
+//    _searchHighlightingRect.text = searchText;
+    _searchCurrentIndex = 0;
+    [self scrollToRangeRect:_searchingRects.firstObject];
 }
 
 - (NSInteger)occurancesOfSubstring:(NSString *)substring inString:(NSString *)str {
     NSUInteger count = 0, length = [str length];
     NSRange range = NSMakeRange(0, length);
     
+    NSString *checkIn = str.lowercaseString;
+    NSString *toCheck = substring.lowercaseString;
+    
     while(range.location != NSNotFound)
     {
-        range = [str rangeOfString:substring options:0 range:range];
+        range = [checkIn rangeOfString:toCheck options:0 range:range];
         if(range.location != NSNotFound)
         {
             range = NSMakeRange(range.location + range.length, length - (range.location + range.length));

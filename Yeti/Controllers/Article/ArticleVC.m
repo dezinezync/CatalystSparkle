@@ -103,6 +103,10 @@ static CGFloat const padding = 6.f;
     [self.stackView setNeedsUpdateConstraints];
     [self.stackView layoutIfNeeded];
     
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
+    [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated

@@ -11,6 +11,8 @@
 		F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */; };
 		F00411051FC9960E00B513A9 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = F00411041FC9960E00B513A9 /* Image.m */; };
 		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
+		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
+		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
@@ -73,6 +75,9 @@
 		F0BCE1FA205A733500DD27D8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0BCE1FB205A733500DD27D8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
+		F0D071EF205E75D700A042CD /* AccountVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071ED205E75D700A042CD /* AccountVC.m */; };
+		F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071EE205E75D700A042CD /* AccountVC.xib */; };
+		F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F3205E76A500A042CD /* SettingsCell.m */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0D300411FE2633E0040D10D /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -115,6 +120,9 @@
 		F00411041FC9960E00B513A9 /* Image.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
 		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
 		F005265E1FBF148E00A103CD /* Youtube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Youtube.m; sourceTree = "<group>"; };
+		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
+		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
+		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
 		F01D714D1FBC11F100DF84B9 /* Blockquote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blockquote.h; sourceTree = "<group>"; };
 		F01D714E1FBC11F100DF84B9 /* Blockquote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Blockquote.m; sourceTree = "<group>"; };
 		F01D71501FBC1A2500DF84B9 /* NSAttributedString+Trimming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+Trimming.h"; sourceTree = "<group>"; };
@@ -207,6 +215,11 @@
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
+		F0D071EC205E75D700A042CD /* AccountVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountVC.h; sourceTree = "<group>"; };
+		F0D071ED205E75D700A042CD /* AccountVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountVC.m; sourceTree = "<group>"; };
+		F0D071EE205E75D700A042CD /* AccountVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountVC.xib; sourceTree = "<group>"; };
+		F0D071F2205E76A500A042CD /* SettingsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsCell.h; sourceTree = "<group>"; };
+		F0D071F3205E76A500A042CD /* SettingsCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsCell.m; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0D300301FE2633E0040D10D /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
 		F0D300311FE2633E0040D10D /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
@@ -275,6 +288,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F018A2CB205D0EF9001E682B /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F018A2CC205D0F0B001E682B /* SettingsVC.h */,
+				F018A2CD205D0F0B001E682B /* SettingsVC.m */,
+				F018A2CE205D0F0B001E682B /* SettingsVC.xib */,
+				F0D071F1205E75DB00A042CD /* Account */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		F01D714B1FBBF51300DF84B9 /* Feed */ = {
 			isa = PBXGroup;
 			children = (
@@ -374,9 +398,10 @@
 		F070C30E1FBABC7500912CCF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				F01D714C1FBBF51B00DF84B9 /* Article */,
-				F01D714B1FBBF51300DF84B9 /* Feed */,
 				F070C3131FBABCA300912CCF /* Feeds */,
+				F01D714B1FBBF51300DF84B9 /* Feed */,
+				F01D714C1FBBF51B00DF84B9 /* Article */,
+				F018A2CB205D0EF9001E682B /* Settings */,
 				F070C3121FBABC9E00912CCF /* Root */,
 			);
 			path = Controllers;
@@ -521,6 +546,8 @@
 				F0E219432054FB83004B5FF5 /* Linebreak.m */,
 				F07A6659205554FF00BA2D9F /* Code.h */,
 				F07A665A205554FF00BA2D9F /* Code.m */,
+				F0D071F2205E76A500A042CD /* SettingsCell.h */,
+				F0D071F3205E76A500A042CD /* SettingsCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -555,6 +582,16 @@
 				F09E96442055342000E61681 /* styleHTML.js */,
 			);
 			path = HLJS;
+			sourceTree = "<group>";
+		};
+		F0D071F1205E75DB00A042CD /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				F0D071EC205E75D700A042CD /* AccountVC.h */,
+				F0D071ED205E75D700A042CD /* AccountVC.m */,
+				F0D071EE205E75D700A042CD /* AccountVC.xib */,
+			);
+			path = Account;
 			sourceTree = "<group>";
 		};
 		F0D3002D1FE263330040D10D /* Vendors */ = {
@@ -710,6 +747,8 @@
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
+				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
+				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 				F09E96492055342000E61681 /* hljs.css in Resources */,
 			);
@@ -791,6 +830,7 @@
 				F02459D120591224002906C3 /* FeedSearchResults.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
+				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
@@ -825,7 +865,9 @@
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
+				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
 				F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */,
+				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,
 				F070C3441FBACD2C00912CCF /* Content.m in Sources */,
