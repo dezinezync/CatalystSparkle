@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ArticleProvider.h"
 #import "FeedItem.h"
 
 @interface ArticleVC : UIViewController {
@@ -28,5 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
 
 @property (nonatomic, strong) UIInputView * _Nonnull searchView;
+
+@property (nonatomic, weak) id <ArticleProvider> _Nullable providerDelegate;
 
 @end

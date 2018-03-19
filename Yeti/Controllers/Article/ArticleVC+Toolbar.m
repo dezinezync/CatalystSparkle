@@ -11,19 +11,32 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 #import "Paragraph.h"
+#import "FeedsManager.h"
 
 @implementation ArticleVC (Toolbar)
 
 - (void)setupToolbar:(UITraitCollection *)newCollection
 {
     
+    UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"read"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
+    read.accessibilityHint = @"Mark article unread";
+    
+    UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed: self.item.isBookmarked ? @"bookmark" : @"unbookmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
+    
+    bookmark.accessibilityHint = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
+    
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(didTapShare:)];
+    
+    share.accessibilityHint = @"Share article";
+    
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(didTapSearch)];
+    
+    search.accessibilityHint = @"Search in article";
     
     self.toolbarItems = nil;
     self.navigationController.toolbarHidden = YES;
     // these are assigned in reverse order
-    self.navigationItem.rightBarButtonItems = @[share, search];
+    self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read];
 }
 
 - (BOOL)canBecomeFirstResponder
@@ -59,6 +72,33 @@
 //    }
     
     [self presentViewController:avc animated:YES completion:nil];
+    
+}
+
+- (void)didTapBookmark:(UIBarButtonItem *)button {
+    button.enabled = NO;
+    
+    self.item.bookmarked = !self.item.isBookmarked;
+    button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+    
+    button.enabled = YES;
+}
+
+- (void)didTapRead:(UIBarButtonItem *)button {
+    
+    button.enabled = NO;
+    
+    [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
+    self.item.read = !self.item.isRead;
+    button.image = self.item.isRead ? [UIImage imageNamed:@"read"] : [UIImage imageNamed:@"unread"];
+    
+    if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
+        
+        [self.providerDelegate userMarkedArticle:self.item read:self.item.read];
+        
+    }
+    
+    button.enabled = YES;
     
 }
 

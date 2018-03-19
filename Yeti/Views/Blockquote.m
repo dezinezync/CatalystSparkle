@@ -50,8 +50,6 @@
 {
     if (self = [super initWithFrame:frame]) {
         
-        UIColor *white = UIColor.whiteColor;
-        self.backgroundColor = white;
         self.opaque = YES;
         
         BlockPara *textview = [[BlockPara alloc] initWithFrame:self.bounds];
@@ -69,7 +67,6 @@
         UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(8.f, 0.f, 17.f, 12.61f)];
         decorator.image = [UIImage imageNamed:@"quote-decorator"];
         decorator.autoresizingMask = UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
-        decorator.backgroundColor = white;
         decorator.opaque = YES;
         
         [self addSubview:decorator];

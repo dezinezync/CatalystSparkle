@@ -17,8 +17,9 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "FeedSearchResults.h"
+#import "ArticleProvider.h"
 
-@interface FeedVC () <DZDatasource> {
+@interface FeedVC () <DZDatasource, ArticleProvider> {
     NSInteger _page;
     BOOL _canLoadNext;
 }
@@ -166,6 +167,7 @@
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+    vc.providerDelegate = self;
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
@@ -220,6 +222,38 @@
 - (BOOL)cantLoadNext
 {
     return !_canLoadNext;
+}
+
+#pragma mark - <ArticleProvider>
+
+- (BOOL)hasNextArticleForArticle:(FeedItem *)item
+{
+    return NO;
+}
+
+- (BOOL)hasPreviousArticleForArticle:(FeedItem *)item
+{
+    return NO;
+}
+
+- (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read
+{
+    NSUInteger index = [self.feed.articles indexOfObject:article];
+    
+    if (index == NSNotFound)
+        return;
+    
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        self.feed.articles[index].read = read;
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    });
 }
 
 @end

@@ -657,6 +657,11 @@ static CGFloat const padding = 6.f;
 
 - (void)addAside:(Content *)content
 {
+    if (content.items && content.items.count) {
+        [self processContent:content];
+        return;
+    }
+    
     CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
     
     Aside *para = [[Aside alloc] initWithFrame:frame];

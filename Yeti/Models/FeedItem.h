@@ -15,7 +15,7 @@
 @property (nonatomic, copy) NSString *articleURL;
 @property (nonatomic, copy) NSString *author;
 @property (nonatomic, copy) NSString *blogTitle;
-@property (nonatomic, assign) BOOL bookmarked;
+@property (nonatomic, assign, getter=isBookmarked) BOOL bookmarked;
 @property (nonatomic, copy) NSArray *content;
 @property (nonatomic, copy) NSString *coverImage;
 @property (nonatomic, copy) NSString *guid;
