@@ -221,6 +221,7 @@
         _searchBar.scopeBarBackgroundImage = nil;
         _searchBar.searchBarStyle = UISearchBarStyleMinimal;
         _searchBar.translucent = NO;
+        _searchBar.accessibilityHint = @"Search keywords in article";
         
         _searchView = [[UIInputView alloc] initWithFrame:frame];
         [_searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
@@ -234,6 +235,7 @@
         prev.bounds = CGRectMake(0, 0, 24.f, 24.f);
         prev.translatesAutoresizingMaskIntoConstraints = NO;
         [prev addTarget:self action:@selector(didTapSearchPrevious) forControlEvents:UIControlEventTouchUpInside];
+        prev.accessibilityHint = @"Previous search result";
         
         frame = prev.bounds;
         
@@ -249,6 +251,7 @@
         next.bounds = CGRectMake(0, 0, 24.f, 24.f);
         next.translatesAutoresizingMaskIntoConstraints = NO;
         [next addTarget:self action:@selector(didTapSearchNext) forControlEvents:UIControlEventTouchUpInside];
+        next.accessibilityHint = @"Next search result";
         
         frame = next.bounds;
         
@@ -268,6 +271,8 @@
         [done setTitle:@"Done" forState:UIControlStateNormal];
         [done setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
         [done sizeToFit];
+        
+        done.accessibilityHint = @"Dismiss search";
         
         [done addTarget:self action:@selector(didTapSearchDone) forControlEvents:UIControlEventTouchUpInside];
         
