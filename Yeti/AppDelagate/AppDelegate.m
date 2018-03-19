@@ -34,7 +34,8 @@
     return @{kDefaultsTheme: @"light",
              kDefaultsBackgroundRefresh: @YES,
              kDefaultsNotifications: @NO,
-             kDefaultsImageLoading: ImageLoadingMediumRes
+             kDefaultsImageLoading: ImageLoadingMediumRes,
+             kDefaultsImageBandwidth: ImageLoadingAlways
              };
 }
 

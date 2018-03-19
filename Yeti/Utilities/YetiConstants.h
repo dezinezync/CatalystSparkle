@@ -17,12 +17,17 @@ YETI_EXPORT NSString * const kDefaultsTheme;
 YETI_EXPORT NSString * const kDefaultsBackgroundRefresh;
 YETI_EXPORT NSString * const kDefaultsNotifications;
 YETI_EXPORT NSString * const kDefaultsImageLoading;
+YETI_EXPORT NSString * const kDefaultsImageBandwidth;
 
 typedef NSString * ImageLoadingOption NS_STRING_ENUM;
 
 YETI_EXPORT ImageLoadingOption const ImageLoadingLowRes;
 YETI_EXPORT ImageLoadingOption const ImageLoadingMediumRes;
 YETI_EXPORT ImageLoadingOption const ImageLoadingHighRes;
+
+YETI_EXPORT ImageLoadingOption const ImageLoadingNever;
+YETI_EXPORT ImageLoadingOption const ImageLoadingOnlyWireless;
+YETI_EXPORT ImageLoadingOption const ImageLoadingAlways;
 
 typedef NSString * ExternalAppsScheme;
 
