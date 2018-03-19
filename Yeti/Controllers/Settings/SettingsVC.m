@@ -16,6 +16,7 @@
 
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
+#import <DZKit/UIViewController+AnimatedDeselect.h>
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -52,6 +53,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [self dz_smoothlyDeselectRows:self.tableView];
     
     if (_settingsUpdated) {
         _settingsUpdated = NO;
