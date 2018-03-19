@@ -15,11 +15,6 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
 
 @implementation ArticleCell
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // Initialization code
-}
-
 - (void)configure:(FeedItem *)item
 {
     self.titleLabel.text = item.articleTitle;
@@ -33,6 +28,19 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     if (item.isRead)
         self.titleLabel.textColor = [UIColor colorWithWhite:0.38f alpha:1.f];
     
+}
+
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    
+    self.titleLabel.text = nil;
+    self.summaryLabel.text = nil;
+    self.authorLabel.text = nil;
+    self.timeLabel.text = nil;
+    
+    self.titleLabel.textColor = UIColor.blackColor;
 }
 
 @end
