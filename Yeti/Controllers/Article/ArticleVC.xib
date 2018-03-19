@@ -12,7 +12,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ArticleVC">
             <connections>
                 <outlet property="loader" destination="Djs-WR-QkQ" id="IFY-4D-LvG"/>
-                <outlet property="scrollBottom" destination="E8F-io-28X" id="Fof-BT-qhS"/>
                 <outlet property="scrollView" destination="Mql-eP-lLa" id="w8A-Ba-m0K"/>
                 <outlet property="stackView" destination="OdL-VG-OX1" id="Inw-Gz-XUw"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -24,10 +23,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" layoutMarginsFollowReadableWidth="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mql-eP-lLa">
-                    <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                     <subviews>
                         <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Djs-WR-QkQ">
-                            <rect key="frame" x="178" y="313" width="20" height="20"/>
+                            <rect key="frame" x="178" y="323.5" width="20" height="20"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="20" id="ECZ-Sx-8cI"/>
                                 <constraint firstAttribute="width" constant="20" id="wI8-fQ-438"/>
@@ -80,8 +79,8 @@
             <constraints>
                 <constraint firstItem="Mql-eP-lLa" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="CpQ-qd-WCA"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="Mql-eP-lLa" secondAttribute="trailing" id="E8E-Wc-sbC"/>
-                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="Mql-eP-lLa" secondAttribute="bottom" id="E8F-io-28X"/>
-                <constraint firstItem="Mql-eP-lLa" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" id="iKO-Zd-1Bc"/>
+                <constraint firstItem="Mql-eP-lLa" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="IqP-Mz-OhP"/>
+                <constraint firstAttribute="bottom" secondItem="Mql-eP-lLa" secondAttribute="bottom" id="aJd-dm-8tf"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
             <point key="canvasLocation" x="22.5" y="53.5"/>

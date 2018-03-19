@@ -86,7 +86,7 @@
         [dictionary setObject:self.url forKey:@"url"];
     }
     
-    if (self.level) {
+    if (self.level != nil) {
         [dictionary setObject:self.level forKey:@"level"];
     }
 

@@ -32,6 +32,8 @@
 
 #import <SafariServices/SafariServices.h>
 
+#import "ArticleHelperView.h"
+
 static CGFloat const baseFontSize = 16.f;
 
 static CGFloat const padding = 6.f;
@@ -50,6 +52,7 @@ static CGFloat const padding = 6.f;
 @property (nonatomic, strong) NSPointerArray *images;
 
 @property (nonatomic, strong) CodeParser *codeParser;
+@property (nonatomic, weak) ArticleHelperView *helperView;
 
 @end
 
@@ -69,14 +72,13 @@ static CGFloat const padding = 6.f;
     // Do any additional setup after loading the view from its nib.
     
     self.images = [NSPointerArray weakObjectsPointerArray];
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
     CGFloat multiplier = 1.f;
     
-//    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-//        multiplier = 0.f;
-//    }
+    [self setupHelperView];
     
     [self.stackView.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.leadingAnchor multiplier:multiplier].active = YES;
     [self.stackView.trailingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.trailingAnchor multiplier:multiplier].active = YES;
@@ -192,6 +194,37 @@ static CGFloat const padding = 6.f;
     }
     
     [super viewSafeAreaInsetsDidChange];
+}
+
+- (void)setupHelperView {
+    
+    if (self.providerDelegate == nil)
+        return;
+    
+    ArticleHelperView *helperView = [[ArticleHelperView alloc] initWithNib];
+    helperView.frame = CGRectMake((self.view.bounds.size.width - 190.f) / 2.f, self.view.bounds.size.height - 44.f - 32.f, 190.f, 44.f);
+    
+    [self.view addSubview:helperView];
+    
+    [helperView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
+    [helperView.widthAnchor constraintEqualToConstant:190.f].active = YES;
+    [helperView.heightAnchor constraintEqualToConstant:44.f].active = YES;
+    helperView.bottomConstraint = [helperView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-32.f];
+    helperView.bottomConstraint.active = YES;
+    
+    [self setupHelperViewActions];
+    
+    _helperView = helperView;
+}
+
+- (void)setupHelperViewActions {
+    if (self.providerDelegate == nil)
+        return;
+    
+    self.helperView.previousArticleButton.enabled = [self.providerDelegate hasPreviousArticleForArticle:self.item];
+    self.helperView.nextArticleButton.enabled = [self.providerDelegate hasNextArticleForArticle:self.item];
+    self.helperView.startOfArticle.enabled = NO;
+    self.helperView.endOfArticle.enabled = YES;
 }
 
 #pragma mark -

@@ -52,7 +52,7 @@
         
         _userID = @([store longLongForKey:@"userID"]);
         
-        if (!UUIDString || !_userID) {
+        if (!UUIDString || _userID == nil) {
             if (_tries < 2) {
                 _tries++;
                 return [self performSelector:@selector(UUID)];
@@ -117,7 +117,7 @@
 {
     _userID = userID;
     
-    if (_userID) {
+    if (_userID != nil) {
         NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
         [store setObject:_userID forKey:@"userID"];
         [store synchronize];

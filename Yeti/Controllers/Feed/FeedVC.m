@@ -230,12 +230,23 @@
 
 - (BOOL)hasNextArticleForArticle:(FeedItem *)item
 {
-    return NO;
+    
+    NSUInteger index = [self.feed.articles indexOfObject:item];
+    
+    if (index == NSNotFound)
+        return NO;
+    
+    return (index < (self.feed.articles.count - 1));
 }
 
 - (BOOL)hasPreviousArticleForArticle:(FeedItem *)item
 {
-    return NO;
+    NSUInteger index = [self.feed.articles indexOfObject:item];
+    
+    if (index == NSNotFound)
+        return NO;
+    
+    return index > 0;
 }
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read

@@ -56,7 +56,7 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
     NSString *docsDir;
     NSArray *dirPaths;
     
-    if (!self.userID) {
+    if (self.userID == nil) {
         // if the following error is thrown, it casues an undesirable user experience.
 //        if (errorCB) {
 //            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user account present."}];
@@ -323,7 +323,7 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
         return [NSError errorWithDomain:@"TTKit" code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
     }
     
-    return nil;
+    return [NSError errorWithDomain:@"TTKit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
     
 }
 

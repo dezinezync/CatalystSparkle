@@ -77,7 +77,7 @@
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
-    if (self.length) {
+    if (self.length != nil) {
         [dictionary setObject:self.length forKey:@"length"];
     }
 

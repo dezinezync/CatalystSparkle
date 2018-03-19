@@ -111,7 +111,7 @@
         [dictionary setObject:self.favicon forKey:@"favicon"];
     }
 
-    if (self.feedID) {
+    if (self.feedID != nil) {
         [dictionary setObject:self.feedID forKey:@"feedID"];
     }
 

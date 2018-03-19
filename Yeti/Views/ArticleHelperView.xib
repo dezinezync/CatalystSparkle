@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ArticleHelperView">
+            <rect key="frame" x="0.0" y="0.0" width="190" height="44"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="18a-3E-AOS">
+                    <rect key="frame" x="0.0" y="0.0" width="190" height="44"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kfe-aF-BgH">
+                            <rect key="frame" x="0.0" y="0.0" width="47.5" height="44"/>
+                            <state key="normal" image="arrow_downward"/>
+                            <connections>
+                                <action selector="didTapNextArticle:" destination="iN0-l3-epB" eventType="touchUpInside" id="GWf-Pr-55n"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wtp-Ot-O2I">
+                            <rect key="frame" x="47.5" y="0.0" width="47.5" height="44"/>
+                            <state key="normal" image="arrow_upward"/>
+                            <connections>
+                                <action selector="didTapPreviousArticle:" destination="iN0-l3-epB" eventType="touchUpInside" id="zwd-tz-NCe"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZIO-zc-vIi">
+                            <rect key="frame" x="95" y="0.0" width="47.5" height="44"/>
+                            <state key="normal" image="arrow_drop_up_circ"/>
+                            <connections>
+                                <action selector="didTapArticleTop:" destination="iN0-l3-epB" eventType="touchUpInside" id="VQK-Vn-3oq"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="U16-9T-q3c">
+                            <rect key="frame" x="142.5" y="0.0" width="47.5" height="44"/>
+                            <state key="normal" image="arrow_drop_down_circ"/>
+                            <connections>
+                                <action selector="didTapArticleEnd:" destination="iN0-l3-epB" eventType="touchUpInside" id="AWx-wu-Gnq"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="18a-3E-AOS" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="2Pq-Yz-tt2"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="18a-3E-AOS" secondAttribute="trailing" id="H9q-eB-hRP"/>
+                <constraint firstItem="18a-3E-AOS" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="WBf-hB-pTi"/>
+                <constraint firstAttribute="bottom" secondItem="18a-3E-AOS" secondAttribute="bottom" id="pEf-fg-VZP"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="endOfArticle" destination="U16-9T-q3c" id="UFR-Wv-970"/>
+                <outlet property="nextArticleButton" destination="Kfe-aF-BgH" id="dNn-oA-Ups"/>
+                <outlet property="previousArticleButton" destination="wtp-Ot-O2I" id="x1u-wC-RRf"/>
+                <outlet property="startOfArticle" destination="ZIO-zc-vIi" id="yTz-NK-7BP"/>
+            </connections>
+            <point key="canvasLocation" x="-59" y="-258"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="arrow_downward" width="16" height="16"/>
+        <image name="arrow_drop_down_circ" width="20" height="20"/>
+        <image name="arrow_drop_up_circ" width="20" height="20"/>
+        <image name="arrow_upward" width="16" height="16"/>
+    </resources>
+</document>

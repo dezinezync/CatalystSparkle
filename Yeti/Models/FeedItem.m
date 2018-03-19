@@ -168,7 +168,7 @@
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
-    if (self.identifier) {
+    if (self.identifier != nil) {
         [dictionary setObject:self.identifier forKey:@"id"];
     }
     
@@ -242,7 +242,7 @@
         [dictionary setObject:enclosures forKey:@"enclosures"];
     }
     
-    if (self.feedID) {
+    if (self.feedID != nil) {
         [dictionary setObject:self.feedID forKey:@"feedID"];
     }
     
