@@ -25,7 +25,7 @@
     
     bookmark.accessibilityHint = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
     
-    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(didTapShare:)];
+    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
     share.accessibilityHint = @"Share article";
     

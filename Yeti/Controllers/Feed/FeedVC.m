@@ -53,6 +53,7 @@
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    allRead.accessibilityHint = @"Mark all articles are read";
     self.navigationItem.rightBarButtonItem = allRead;
     
     // Search Controller setup
@@ -62,6 +63,7 @@
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search articles";
+        searchController.searchBar.accessibilityHint = @"Search loaded articles";
         searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         
         self.navigationItem.searchController = searchController;

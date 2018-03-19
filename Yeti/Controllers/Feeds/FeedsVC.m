@@ -62,6 +62,7 @@
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search feeds";
+        searchController.searchBar.accessibilityHint = @"Search your feeds";
         self.navigationItem.searchController = searchController;
     }
 }
