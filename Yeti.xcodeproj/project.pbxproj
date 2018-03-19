@@ -75,6 +75,7 @@
 		F0BCE1FA205A733500DD27D8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0BCE1FB205A733500DD27D8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
+		F0D030A3205FBEF400D46B34 /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F0D071EF205E75D700A042CD /* AccountVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071ED205E75D700A042CD /* AccountVC.m */; };
 		F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071EE205E75D700A042CD /* AccountVC.xib */; };
 		F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F3205E76A500A042CD /* SettingsCell.m */; };
@@ -84,7 +85,6 @@
 		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
 		F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D07200205E960900A042CD /* ExternalAppsVC.xib */; };
 		F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D07204205E9EC400A042CD /* DZWebViewController.m */; };
-		F0D07208205E9F6700A042CD /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0D300411FE2633E0040D10D /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -773,7 +773,7 @@
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
-				F0D07208205E9F6700A042CD /* attributions.html in Resources */,
+				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 				F09E96492055342000E61681 /* hljs.css in Resources */,

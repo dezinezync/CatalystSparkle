@@ -33,14 +33,19 @@
     [super viewWillAppear:animated];
     
     if (self.URL) {
-        NSError *error = nil;
-        NSString *html = [NSString stringWithContentsOfFile:self.URL.absoluteString encoding:NSUTF8StringEncoding error:&error];
-        
-        if (error) {
-            DDLogError(@"error loading file: %@\n%@", self.URL, error.localizedDescription);
+        if ([NSFileManager.defaultManager fileExistsAtPath:self.URL.absoluteString]) {
+            NSError *error = nil;
+            NSString *html = [NSString stringWithContentsOfFile:self.URL.absoluteString encoding:NSUTF8StringEncoding error:&error];
+            
+            if (error) {
+                DDLogError(@"error loading file: %@\n%@", self.URL, error.localizedDescription);
+            }
+            else {
+                [self.webview loadHTMLString:html baseURL:nil];
+            }
         }
         else {
-            [self.webview loadHTMLString:html baseURL:nil];
+            DDLogError(@"The path %@ does not exist.", self.URL.absoluteString);
         }
     }
 }
