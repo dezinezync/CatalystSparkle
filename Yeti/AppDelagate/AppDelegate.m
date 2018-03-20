@@ -6,9 +6,10 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "AppDelegate.h"
+#import "AppDelegate+Routing.h"
 #import "FeedsVC.h"
 #import <DZKit/EFNavController.h>
+#import <JLRoutes/JLRoutes.h>
 
 #import "YetiConstants.h"
 
@@ -52,6 +53,11 @@
 }
 
 #pragma mark -
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+    return [JLRoutes routeURL:url];
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

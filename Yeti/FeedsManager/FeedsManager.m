@@ -13,7 +13,8 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
-NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
+FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
+FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 @interface FeedsManager () <YTUserDelegate>
 
@@ -230,6 +231,15 @@ NSString * _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateRead
             DDLogError(@"Unhandled network error: %@", error);
         }
     }];
+}
+
+#pragma mark - Setters
+
+- (void)setFeeds:(NSArray<Feed *> *)feeds
+{
+    _feeds = feeds ?: @[];
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : feeds ?: @[]}];
 }
 
 #pragma mark - Getters

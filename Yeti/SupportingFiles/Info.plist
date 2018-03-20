@@ -58,5 +58,24 @@
 		<string>apollo</string>
 		<string>reddit</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.dezinezync.yeti.feedscheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>feed</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.dezinezync.yeti.appscheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>yeti</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

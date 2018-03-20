@@ -12,7 +12,10 @@
 #import "Feed.h"
 #import "YTUserID.h"
 
-extern NSString * _Nonnull const FeedDidUpReadCount;
+typedef NSString * FMNotification;
+
+extern FMNotification _Nonnull const FeedDidUpReadCount;
+extern FMNotification _Nonnull const FeedsDidUpdate;
 
 @class FeedsManager;
 

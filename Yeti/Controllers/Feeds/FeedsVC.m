@@ -54,6 +54,7 @@
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(readNotification:) name:FeedDidUpReadCount object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     
     // Search Controller setup
     {
@@ -216,6 +217,8 @@
     });
 }
 
+#pragma mark - Notifications
+
 - (void)readNotification:(NSNotification *)note {
     
     if (note.object && [note.object isKindOfClass:NSNumber.class]) {
@@ -237,6 +240,13 @@
         }
         
     }
+    
+}
+
+- (void)updateNotification:(NSNotification *)note {
+    
+    DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
+    DS.data = [note.userInfo valueForKey:@"feeds"];
     
 }
 

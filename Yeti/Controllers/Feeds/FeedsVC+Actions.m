@@ -79,11 +79,6 @@
             
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
             
-            strongify(self);
-            
-            DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
-            DS.data = MyFeedsManager.feeds;
-            
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
             [AlertManager showGenericAlertWithTitle:@"An error occurred" message:error.localizedDescription];
