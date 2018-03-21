@@ -1,6 +1,11 @@
 #import "Content.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#ifdef SHARE_EXTENSION
+#import <DZKit/DZLogger.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#endif
+
 @implementation Content
 
 - (NSString *)compareID

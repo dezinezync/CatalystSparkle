@@ -11,6 +11,11 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#ifndef DDLogError
+#import <DZKit/DZLogger.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#endif
+
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
@@ -19,8 +24,9 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 @interface FeedsManager () <YTUserDelegate>
 
 @property (nonatomic, strong, readwrite) DZURLSession *session;
+#ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readwrite) YTUserID *userIDManager;
-
+#endif
 @end
 
 @implementation FeedsManager
@@ -37,7 +43,9 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 - (instancetype)init
 {
     if (self = [super init]) {
+#ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
+#endif
     }
     
     return self;
@@ -45,7 +53,11 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 - (NSNumber *)userID
 {
+#ifndef SHARE_EXTENSION
     return self.userIDManager.userID;
+#else
+    return nil;
+#endif
 }
 
 #pragma mark - Feeds
@@ -160,20 +172,19 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     if (!page)
         page = 1;
     
-    [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:@{@"page": @(page), @"userID": self.userID} success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSMutableDictionary *params = @{@"page": @(page)}.mutableCopy;
+    
+    if ([self userID]) {
+        params[@"userID"] = self.userID;
+    }
+    
+    [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> * articles = [responseObject valueForKey:@"articles"];
         
         NSArray <FeedItem *> *items = [articles rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
         }];
-        
-//        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-        
-//        for (FeedItem *item in items) {
-//            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-////            item.read = [defaults boolForKey:key];
-//        }
         
         if (feed)
             feed.articles = [feed.articles arrayByAddingObjectsFromArray:items];
@@ -207,7 +218,40 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         return;
     }
     
-    [self.session PUT:@"/feed" parameters:@{@"URL": url, @"userID": @1} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSDictionary *params = @{@"URL" : url};
+    if ([self userID]) {
+        params = @{@"URL": url, @"userID": @1};
+    }
+    
+    [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([response statusCode] == 300) {
+            
+            if (successCB) {
+                successCB(responseObject, response, task);
+            }
+            
+            return;
+            
+        }
+        else if ([response statusCode] == 302) {
+            // feed already exists.
+            
+            NSURL *reroute = [[response allHeaderFields] valueForKey:@"Location"];
+            
+            if ([reroute isMemberOfClass:NSString.class]) {
+                reroute = [NSURL URLWithString:(NSString *)reroute];
+            }
+            
+            NSNumber *feedID = @([[reroute lastPathComponent] integerValue]);
+            
+            if (successCB) {
+                successCB(feedID, response, task);
+            }
+            
+            return;
+            
+        }
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
@@ -233,6 +277,53 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     }];
 }
 
+- (void)addFeedByID:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSArray <Feed *> *existing = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+        return obj.feedID.integerValue == feedID.integerValue;
+    }];
+    
+    if (existing.count) {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:@"FeedsManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"You already have this feed in your list."}], nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSDictionary *params = @{@"feedID" : feedID};
+    if ([self userID]) {
+        params = @{@"feedID": feedID, @"userID": @1};
+    }
+    
+    [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    
+        NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
+        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
+        
+        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        Feed *feed = [Feed instanceFromDictionary:feedObj];
+        feed.articles = articles;
+        
+        if (successCB)
+            successCB(feed, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
@@ -248,6 +339,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 {
     if (!_session) {
         DZURLSession *session = [[DZURLSession alloc] init];
+        session.baseURL = [NSURL URLWithString:@"http://localhost:3000"];
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
@@ -286,6 +378,8 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
 }
 
+#ifndef SHARE_EXTENSION
+
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
 {
     if (!self.userIDManager.UUID) {
@@ -307,6 +401,8 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         }
     }];
 }
+
+#endif
 
 #pragma mark - Error Handler
 

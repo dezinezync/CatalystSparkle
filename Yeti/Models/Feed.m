@@ -1,6 +1,11 @@
 #import "Feed.h"
 #import "FeedItem.h"
 
+#ifndef DDLogError
+#import <DZKit/DZLogger.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#endif
+
 @implementation Feed
 
 - (NSString *)compareID

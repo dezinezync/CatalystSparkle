@@ -22,6 +22,18 @@
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
 		F02459D120591224002906C3 /* FeedSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459D020591224002906C3 /* FeedSearchResults.m */; };
 		F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459D32059135E002906C3 /* FeedVC+Search.m */; };
+		F035A21920617EC3005A88EE /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F035A21820617EC3005A88EE /* ActionViewController.m */; };
+		F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F035A21A20617EC3005A88EE /* MainInterface.storyboard */; };
+		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F035A2252061812F005A88EE /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
+		F035A22620618149005A88EE /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3271FBAC10600912CCF /* DZNetworking.framework */; };
+		F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
+		F035A2282061815B005A88EE /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
+		F035A229206181C8005A88EE /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3471FBAD4B200912CCF /* Enclosure.m */; };
+		F035A22A206181C8005A88EE /* Content.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33F1FBACD2C00912CCF /* Content.m */; };
+		F035A22B206181C8005A88EE /* Feed.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3411FBACD2C00912CCF /* Feed.m */; };
+		F035A22C206181C8005A88EE /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33D1FBACD2C00912CCF /* FeedItem.m */; };
+		F035A22D206181C8005A88EE /* Range.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33B1FBACD2C00912CCF /* Range.m */; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
 		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
@@ -106,6 +118,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F035A21E20617EC3005A88EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F035A21420617EC3005A88EE;
+			remoteInfo = YetiShare;
+		};
 		F070C2F21FBABC3600912CCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
@@ -121,6 +140,20 @@
 			remoteInfo = Yeti;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F035A22420617EC3005A88EE /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F0026F2C1FED2B4800F3AB85 /* Gallery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gallery.h; sourceTree = "<group>"; };
@@ -151,6 +184,11 @@
 		F02459D020591224002906C3 /* FeedSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedSearchResults.m; sourceTree = "<group>"; };
 		F02459D22059135E002906C3 /* FeedVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Search.h"; sourceTree = "<group>"; };
 		F02459D32059135E002906C3 /* FeedVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Search.m"; sourceTree = "<group>"; };
+		F035A21520617EC3005A88EE /* YetiShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YetiShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F035A21720617EC3005A88EE /* ActionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActionViewController.h; sourceTree = "<group>"; };
+		F035A21820617EC3005A88EE /* ActionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionViewController.m; sourceTree = "<group>"; };
+		F035A21B20617EC3005A88EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		F035A21D20617EC3005A88EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
 		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
 		F03AC02E205533D800FB111A /* CodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeParser.h; sourceTree = "<group>"; };
@@ -283,6 +321,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F035A21220617EC3005A88EE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */,
+				F035A2282061815B005A88EE /* DZKit.framework in Frameworks */,
+				F035A22620618149005A88EE /* DZNetworking.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F070C2D61FBABC3500912CCF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -362,6 +410,17 @@
 			path = Article;
 			sourceTree = "<group>";
 		};
+		F035A21620617EC3005A88EE /* YetiShare */ = {
+			isa = PBXGroup;
+			children = (
+				F035A21720617EC3005A88EE /* ActionViewController.h */,
+				F035A21820617EC3005A88EE /* ActionViewController.m */,
+				F035A21A20617EC3005A88EE /* MainInterface.storyboard */,
+				F035A21D20617EC3005A88EE /* Info.plist */,
+			);
+			path = YetiShare;
+			sourceTree = "<group>";
+		};
 		F03AC02D205533C200FB111A /* CodeParser */ = {
 			isa = PBXGroup;
 			children = (
@@ -381,6 +440,7 @@
 				F070C2DB1FBABC3500912CCF /* Yeti */,
 				F070C2F41FBABC3600912CCF /* YetiTests */,
 				F070C2FF1FBABC3600912CCF /* YetiUITests */,
+				F035A21620617EC3005A88EE /* YetiShare */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
 			);
@@ -392,6 +452,7 @@
 				F070C2D91FBABC3500912CCF /* Yeti.app */,
 				F070C2F11FBABC3600912CCF /* YetiTests.xctest */,
 				F070C2FC1FBABC3600912CCF /* YetiUITests.xctest */,
+				F035A21520617EC3005A88EE /* YetiShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -667,6 +728,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F035A21420617EC3005A88EE /* YetiShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F035A22320617EC3005A88EE /* Build configuration list for PBXNativeTarget "YetiShare" */;
+			buildPhases = (
+				F035A21120617EC3005A88EE /* Sources */,
+				F035A21220617EC3005A88EE /* Frameworks */,
+				F035A21320617EC3005A88EE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YetiShare;
+			productName = YetiShare;
+			productReference = F035A21520617EC3005A88EE /* YetiShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F070C2D81FBABC3500912CCF /* Yeti */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F070C3051FBABC3600912CCF /* Build configuration list for PBXNativeTarget "Yeti" */;
@@ -675,10 +753,12 @@
 				F070C2D61FBABC3500912CCF /* Frameworks */,
 				F070C2D71FBABC3500912CCF /* Resources */,
 				F070C31D1FBAC00000912CCF /* Carthage */,
+				F035A22420617EC3005A88EE /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 			);
 			name = Yeti;
 			productName = Yeti;
@@ -731,6 +811,10 @@
 				LastUpgradeCheck = 0910;
 				ORGANIZATIONNAME = "Dezine Zync Studios";
 				TargetAttributes = {
+					F035A21420617EC3005A88EE = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
 					F070C2D81FBABC3500912CCF = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
@@ -767,11 +851,20 @@
 				F070C2D81FBABC3500912CCF /* Yeti */,
 				F070C2F01FBABC3600912CCF /* YetiTests */,
 				F070C2FB1FBABC3600912CCF /* YetiUITests */,
+				F035A21420617EC3005A88EE /* YetiShare */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F035A21320617EC3005A88EE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F070C2D71FBABC3500912CCF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -863,6 +956,20 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F035A21120617EC3005A88EE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F035A22B206181C8005A88EE /* Feed.m in Sources */,
+				F035A21920617EC3005A88EE /* ActionViewController.m in Sources */,
+				F035A2252061812F005A88EE /* FeedsManager.m in Sources */,
+				F035A22D206181C8005A88EE /* Range.m in Sources */,
+				F035A229206181C8005A88EE /* Enclosure.m in Sources */,
+				F035A22C206181C8005A88EE /* FeedItem.m in Sources */,
+				F035A22A206181C8005A88EE /* Content.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F070C2D51FBABC3500912CCF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -957,6 +1064,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F035A21420617EC3005A88EE /* YetiShare */;
+			targetProxy = F035A21E20617EC3005A88EE /* PBXContainerItemProxy */;
+		};
 		F070C2F31FBABC3600912CCF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F070C2D81FBABC3500912CCF /* Yeti */;
@@ -970,6 +1082,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		F035A21A20617EC3005A88EE /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F035A21B20617EC3005A88EE /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -981,6 +1101,49 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F035A22120617EC3005A88EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					SHARE_EXTENSION,
+				);
+				INFOPLIST_FILE = YetiShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti.YetiShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F035A22220617EC3005A88EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = SHARE_EXTENSION;
+				INFOPLIST_FILE = YetiShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti.YetiShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		F070C3031FBABC3600912CCF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1216,6 +1379,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F035A22320617EC3005A88EE /* Build configuration list for PBXNativeTarget "YetiShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F035A22120617EC3005A88EE /* Debug */,
+				F035A22220617EC3005A88EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F070C2D41FBABC3500912CCF /* Build configuration list for PBXProject "Yeti" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

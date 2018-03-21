@@ -7,6 +7,11 @@
 #import "NSString+HTML.h"
 #import <DZKit/NSString+Extras.h>
 
+#ifndef DDLogError
+#import <DZKit/DZLogger.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#endif
+
 @implementation FeedItem
 
 - (NSString *)compareID

@@ -1,5 +1,10 @@
 #import "Range.h"
 
+#ifndef DDLogError
+#import <DZKit/DZLogger.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#endif
+
 @implementation Range
 
 - (NSString *)compareID

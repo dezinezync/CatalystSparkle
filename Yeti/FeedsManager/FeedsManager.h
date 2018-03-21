@@ -25,9 +25,12 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session;
 
+#ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;
 
 @property (nonatomic) NSNumber * _Nullable userID;
+
+#endif
 
 #pragma mark - Feeds
 
@@ -40,6 +43,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)getFeed:(Feed * _Nonnull)feed page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 

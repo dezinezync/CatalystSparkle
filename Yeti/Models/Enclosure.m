@@ -6,6 +6,11 @@
 //  Copyright © 2016 Dezine Zync Studios. All rights reserved.
 //
 
+#ifndef DDLogError
+#import <DZKit/DZLogger.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#endif
+
 #import "Enclosure.h"
 
 @implementation Enclosure
