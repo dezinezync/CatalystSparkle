@@ -67,6 +67,8 @@
 		F070C3551FBAE52300912CCF /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3541FBAE52300912CCF /* FeedVC.m */; };
 		F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3571FBAE7A200912CCF /* ArticleVC.m */; };
 		F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3581FBAE7A200912CCF /* ArticleVC.xib */; };
+		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
+		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
 		F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A66572055539D00BA2D9F /* UIColor+HEX.m */; };
 		F07A665B205554FF00BA2D9F /* Code.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A665A205554FF00BA2D9F /* Code.m */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
@@ -87,6 +89,8 @@
 		F0BCE1F9205A733500DD27D8 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
 		F0BCE1FA205A733500DD27D8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0BCE1FB205A733500DD27D8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
+		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
+		F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D030A3205FBEF400D46B34 /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F0D071EF205E75D700A042CD /* AccountVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071ED205E75D700A042CD /* AccountVC.m */; };
@@ -247,6 +251,10 @@
 		F070C3561FBAE7A200912CCF /* ArticleVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleVC.h; sourceTree = "<group>"; };
 		F070C3571FBAE7A200912CCF /* ArticleVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleVC.m; sourceTree = "<group>"; };
 		F070C3581FBAE7A200912CCF /* ArticleVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleVC.xib; sourceTree = "<group>"; };
+		F0710D272062D3090097CCD5 /* NewVCAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewVCAnimator.h; sourceTree = "<group>"; };
+		F0710D282062D3090097CCD5 /* NewVCAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewVCAnimator.m; sourceTree = "<group>"; };
+		F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedTextField.h; sourceTree = "<group>"; };
+		F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedTextField.m; sourceTree = "<group>"; };
 		F07A66562055539D00BA2D9F /* UIColor+HEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HEX.h"; sourceTree = "<group>"; };
 		F07A66572055539D00BA2D9F /* UIColor+HEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HEX.m"; sourceTree = "<group>"; };
 		F07A6659205554FF00BA2D9F /* Code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Code.h; sourceTree = "<group>"; };
@@ -263,6 +271,9 @@
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
+		F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedVC.h; sourceTree = "<group>"; };
+		F0C7E3D020627809001E4BE4 /* NewFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedVC.m; sourceTree = "<group>"; };
+		F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFeedVC.xib; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D030A4205FC4DD00D46B34 /* ArticleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleProvider.h; sourceTree = "<group>"; };
@@ -515,6 +526,8 @@
 				F0A589F4205A580300488015 /* LinguisticSearch.m */,
 				F0D071F5205E860800A042CD /* YetiConstants.h */,
 				F0D071F6205E877A00A042CD /* YetiConstants.m */,
+				F0710D272062D3090097CCD5 /* NewVCAnimator.h */,
+				F0710D282062D3090097CCD5 /* NewVCAnimator.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -577,6 +590,9 @@
 				F02459C72058FFF1002906C3 /* FeedsVC+Search.m */,
 				F02459CC20590F03002906C3 /* FeedsSearchResults.h */,
 				F02459CD20590F03002906C3 /* FeedsSearchResults.m */,
+				F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */,
+				F0C7E3D020627809001E4BE4 /* NewFeedVC.m */,
+				F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -657,6 +673,8 @@
 				F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */,
 				F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */,
 				F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */,
+				F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */,
+				F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -870,6 +888,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F09E96472055342000E61681 /* hljs.js in Resources */,
+				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
 				F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */,
 				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
@@ -983,6 +1002,7 @@
 				F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
+				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
@@ -1007,6 +1027,8 @@
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
+				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
+				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,

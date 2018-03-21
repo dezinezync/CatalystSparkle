@@ -12,6 +12,8 @@
 #import "FeedsManager.h"
 #import "SettingsVC.h"
 
+#import "NewFeedVC.h"
+
 @implementation FeedsVC (Actions)
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
@@ -51,6 +53,12 @@
 
 - (void)didTapAdd:(UIBarButtonItem *)add
 {
+    
+    UINavigationController *nav = [NewFeedVC instanceInNavController];
+    
+    [self presentViewController:nav animated:YES completion:nil];
+    
+    return;
     
     __block __strong UITextField *_tf = nil;
     
