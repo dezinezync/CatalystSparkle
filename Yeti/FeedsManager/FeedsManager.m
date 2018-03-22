@@ -358,7 +358,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     if (!_session) {
         DZURLSession *session = [[DZURLSession alloc] init];
         session.baseURL = [NSURL URLWithString:@"http://localhost:3000"];
-//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];

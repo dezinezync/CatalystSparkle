@@ -17,6 +17,6 @@
 
 - (instancetype _Nonnull)initWithFeed:(Feed * _Nonnull)feed;
 
-@property (nonatomic, weak) Feed * _Nullable feed;
+@property (nonatomic, strong) Feed * _Nullable feed;
 
 @end

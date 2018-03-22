@@ -228,25 +228,45 @@
 
 #pragma mark - <ArticleProvider>
 
+// the logic for the following two methods is inversed
+// since the articles are displayed in reverse chronological order
 - (BOOL)hasNextArticleForArticle:(FeedItem *)item
 {
     
-    NSUInteger index = [self.feed.articles indexOfObject:item];
+    __block NSUInteger index = NSNotFound;
     
-    if (index == NSNotFound)
-        return NO;
-    
-    return (index < (self.feed.articles.count - 1));
-}
-
-- (BOOL)hasPreviousArticleForArticle:(FeedItem *)item
-{
-    NSUInteger index = [self.feed.articles indexOfObject:item];
+    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        if ([obj.guid isEqualToString:item.guid]) {
+            index = idx;
+            *stop = YES;
+        }
+        
+    }];
     
     if (index == NSNotFound)
         return NO;
     
     return index > 0;
+}
+
+- (BOOL)hasPreviousArticleForArticle:(FeedItem *)item
+{
+    __block NSUInteger index = NSNotFound;
+    
+    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if ([obj.guid isEqualToString:item.guid]) {
+            index = idx;
+            *stop = YES;
+        }
+        
+    }];
+    
+    if (index == NSNotFound)
+        return NO;
+    
+    return (index < (self.feed.articles.count - 1));
 }
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read

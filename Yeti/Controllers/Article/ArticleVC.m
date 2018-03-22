@@ -212,17 +212,28 @@ static CGFloat const padding = 6.f;
     helperView.bottomConstraint = [helperView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-32.f];
     helperView.bottomConstraint.active = YES;
     
-    [self setupHelperViewActions];
-    
     _helperView = helperView;
+    
+    [self setupHelperViewActions];
 }
 
 - (void)setupHelperViewActions {
     if (self.providerDelegate == nil)
         return;
     
-    self.helperView.previousArticleButton.enabled = [self.providerDelegate hasPreviousArticleForArticle:self.item];
-    self.helperView.nextArticleButton.enabled = [self.providerDelegate hasNextArticleForArticle:self.item];
+    BOOL next = [self.providerDelegate hasPreviousArticleForArticle:self.item];
+    BOOL previous = [self.providerDelegate hasNextArticleForArticle:self.item];
+    
+    [self.helperView.previousArticleButton setEnabled:previous];
+    
+//    self.helperView.previousArticleButton.imageView.tintColor = self.helperView.previousArticleButton.isEnabled ? self.view.tintColor : [UIColor colorWithWhite:0.5 alpha:1.f];
+//    [self.helperView.previousArticleButton setNeedsDisplay];
+    
+    [self.helperView.nextArticleButton setEnabled:next];
+    
+//    self.helperView.nextArticleButton.tintColor = self.helperView.nextArticleButton.isEnabled ? self.view.tintColor : [UIColor colorWithWhite:0.5 alpha:1.f];
+//    [self.helperView.nextArticleButton setNeedsDisplay];
+    
     self.helperView.startOfArticle.enabled = NO;
     self.helperView.endOfArticle.enabled = YES;
 }
