@@ -316,7 +316,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
     
-        NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
+        NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         
         NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
