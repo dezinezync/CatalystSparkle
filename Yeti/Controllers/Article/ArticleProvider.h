@@ -18,6 +18,10 @@
 - (BOOL)hasPreviousArticleForArticle:(FeedItem * _Nonnull)item;
 - (BOOL)hasNextArticleForArticle:(FeedItem * _Nonnull)item;
 
+- (FeedItem * _Nullable)previousArticleFor:(FeedItem * _Nonnull)item;
+- (FeedItem * _Nullable)nextArticleFor:(FeedItem * _Nonnull)item;
+
+
 - (void)userMarkedArticle:(FeedItem * _Nonnull)article read:(BOOL)read;
 
 @end

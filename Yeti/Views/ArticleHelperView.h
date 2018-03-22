@@ -7,14 +7,19 @@
 //
 
 #import <DZKit/NibView.h>
+#import "ArticleHandler.h"
+#import "ArticleProvider.h"
 
 @interface ArticleHelperView : NibView
 
-@property (weak, nonatomic) IBOutlet UIButton *nextArticleButton;
-@property (weak, nonatomic) IBOutlet UIButton *previousArticleButton;
-@property (weak, nonatomic) IBOutlet UIButton *startOfArticle;
-@property (weak, nonatomic) IBOutlet UIButton *endOfArticle;
+@property (weak, nonatomic) IBOutlet UIButton * _Nullable nextArticleButton;
+@property (weak, nonatomic) IBOutlet UIButton * _Nullable previousArticleButton;
+@property (weak, nonatomic) IBOutlet UIButton * _Nullable startOfArticle;
+@property (weak, nonatomic) IBOutlet UIButton * _Nullable endOfArticle;
 
-@property (nonatomic, strong) NSLayoutConstraint *bottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint * _Nonnull bottomConstraint;
+
+@property (nonatomic, weak) id <ArticleProvider> _Nullable providerDelegate;
+@property (nonatomic, weak) id <ArticleHandler> _Nullable handlerDelegate;
 
 @end

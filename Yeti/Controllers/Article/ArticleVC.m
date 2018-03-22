@@ -71,7 +71,6 @@ static CGFloat const padding = 6.f;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.images = [NSPointerArray weakObjectsPointerArray];
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
@@ -96,8 +95,6 @@ static CGFloat const padding = 6.f;
         [obj removeFromSuperview];
         
     }];
-    
-    [self setupToolbar:self.traitCollection];
     
     [self.scrollView setNeedsUpdateConstraints];
     [self.scrollView layoutIfNeeded];
@@ -138,45 +135,7 @@ static CGFloat const padding = 6.f;
     
     _hasRendered = YES;
     
-#ifdef DEBUG
-    NSDate *start = NSDate.date;
-#endif
-    
-    // add Body
-    [self addTitle];
-    
-    self.stackView.hidden = YES;
-    
-    for (Content *content in self.item.content) { @autoreleasepool {
-        [self processContent:content];
-    } }
-    
-    [self.loader stopAnimating];
-    [self.loader removeFromSuperview];
-    
-    _last = nil;
-    
-#ifdef DEBUG
-    DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
-#endif
-    
-    self.stackView.hidden = NO;
-    
-    if (self.item && !self.item.isRead)
-        [MyFeedsManager article:self.item markAsRead:YES];
-    
-    weakify(self);
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        strongify(self);
-        [self scrollViewDidScroll:self.scrollView];
-        
-        CGSize contentSize = self.scrollView.contentSize;
-        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
-        
-        contentSize.width = self.view.bounds.size.width;
-        self.scrollView.contentSize = contentSize;
-    });
+    [self setupArticle:self.item];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -213,6 +172,8 @@ static CGFloat const padding = 6.f;
     helperView.bottomConstraint.active = YES;
     
     _helperView = helperView;
+    _helperView.handlerDelegate = self;
+    _helperView.providerDelegate = self.providerDelegate;
     
     [self setupHelperViewActions];
 }
@@ -278,7 +239,78 @@ static CGFloat const padding = 6.f;
     } completion:nil];
 }
 
-#pragma mark -
+#pragma mark - <ArticleHandler>
+
+- (FeedItem *)currentArticle
+{
+    return self.item;
+}
+
+- (void)setupArticle:(FeedItem *)article
+{
+    if (!article)
+        return;
+    
+    if (self.stackView.arrangedSubviews.count > 0) {
+        weakify(self);
+        
+        [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            strongify(self);
+            [self.stackView removeArrangedSubview:obj];
+            [obj removeFromSuperview];
+            
+        }];
+    }
+    
+    self.item = article;
+    
+    self.images = [NSPointerArray weakObjectsPointerArray];
+    [self setupToolbar:self.traitCollection];
+    
+#ifdef DEBUG
+    NSDate *start = NSDate.date;
+#endif
+    
+    // add Body
+    [self addTitle];
+    
+    self.stackView.hidden = YES;
+    
+    for (Content *content in self.item.content) { @autoreleasepool {
+        [self processContent:content];
+    } }
+    
+    [self.loader stopAnimating];
+    [self.loader removeFromSuperview];
+    
+    _last = nil;
+    
+#ifdef DEBUG
+    DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
+#endif
+    
+    self.stackView.hidden = NO;
+    [self setupHelperViewActions];
+    
+    if (self.item && !self.item.isRead)
+        [MyFeedsManager article:self.item markAsRead:YES];
+    
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self scrollViewDidScroll:self.scrollView];
+        
+        CGSize contentSize = self.scrollView.contentSize;
+        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
+        
+        contentSize.width = self.view.bounds.size.width;
+        self.scrollView.contentSize = contentSize;
+    });
+}
+
+#pragma mark - Drawing
 
 - (void)addTitle {
     
@@ -807,6 +839,15 @@ static CGFloat const padding = 6.f;
         }
     } }
     
+    CGFloat y = point.y - scrollView.bounds.size.height;
+    
+    BOOL enableTop = y > scrollView.bounds.size.height;
+    if (enableTop != _helperView.startOfArticle.isEnabled)
+        _helperView.startOfArticle.enabled = enableTop;
+    
+    BOOL enableBottom = y < (scrollView.contentSize.height - scrollView.bounds.size.height);
+    if (enableBottom != _helperView.endOfArticle.isEnabled)
+        _helperView.endOfArticle.enabled = enableBottom;
 }
 
 #pragma mark - <UITextViewDelegate>

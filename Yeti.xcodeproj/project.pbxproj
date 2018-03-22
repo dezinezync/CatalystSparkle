@@ -269,6 +269,7 @@
 		F09E96452055342000E61681 /* hljs.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = hljs.css; sourceTree = "<group>"; };
 		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
 		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
+		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
@@ -420,6 +421,7 @@
 				F055AC1B1FD2AEF4004B9C29 /* ArticleVC+Toolbar.h */,
 				F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */,
 				F0D030A4205FC4DD00D46B34 /* ArticleProvider.h */,
+				F0A4798020639EB000A20195 /* ArticleHandler.h */,
 			);
 			path = Article;
 			sourceTree = "<group>";

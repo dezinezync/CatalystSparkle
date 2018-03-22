@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "ArticleProvider.h"
+#import "ArticleHandler.h"
 #import "FeedItem.h"
 
-@interface ArticleVC : UIViewController {
+@interface ArticleVC : UIViewController <ArticleHandler> {
     UISearchBar *_searchBar;
     UIInputView *_searchView;
     BOOL _showSearchBar;

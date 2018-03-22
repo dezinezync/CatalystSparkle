@@ -269,6 +269,48 @@
     return (index < (self.feed.articles.count - 1));
 }
 
+- (FeedItem *)previousArticleFor:(FeedItem *)item
+{
+    __block NSUInteger index = NSNotFound;
+    
+    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if ([obj.guid isEqualToString:item.guid]) {
+            index = idx;
+            *stop = YES;
+        }
+        
+    }];
+    
+    if (index > 0) {
+        index--;
+        return self.feed.articles[index];
+    }
+    
+    return nil;
+}
+
+- (FeedItem *)nextArticleFor:(FeedItem *)item
+{
+    __block NSUInteger index = NSNotFound;
+    
+    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if ([obj.guid isEqualToString:item.guid]) {
+            index = idx;
+            *stop = YES;
+        }
+        
+    }];
+    
+    if (index < (self.feed.articles.count - 1)) {
+        index++;
+        return self.feed.articles[index];
+    }
+    
+    return nil;
+}
+
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read
 {
     NSUInteger index = [self.feed.articles indexOfObject:article];

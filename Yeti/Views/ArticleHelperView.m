@@ -58,15 +58,59 @@
 #pragma mark - Actions
 
 - (IBAction)didTapPreviousArticle:(UIButton *)sender {
+    
+    if (!self.providerDelegate) {
+        sender.enabled = NO;
+        return;
+    }
+    
+    FeedItem *article = [self.providerDelegate previousArticleFor:[self.handlerDelegate currentArticle]];
+    
+    if (article)
+        [self.handlerDelegate setupArticle:article];
+    else
+        sender.enabled = NO;
+    
 }
 
 - (IBAction)didTapNextArticle:(UIButton *)sender {
+    
+    if (!self.providerDelegate) {
+        sender.enabled = NO;
+        return;
+    }
+    
+    FeedItem *article = [self.providerDelegate nextArticleFor:[self.handlerDelegate currentArticle]];
+    
+    if (article)
+        [self.handlerDelegate setupArticle:article];
+    else
+        sender.enabled = NO;
+    
 }
 
 - (IBAction)didTapArticleTop:(UIButton *)sender {
+    
+    UIScrollView *scrollView = (UIScrollView *)[[self.superview subviews] firstObject];
+//    CGSize contentSize = [scrollView contentSize];
+    
+//    sender.enabled = NO;
+//    self.endOfArticle.enabled = YES;
+    
+    [scrollView scrollRectToVisible:CGRectMake(0, 0.f, scrollView.bounds.size.width, scrollView.bounds.size.height) animated:YES];
+    
 }
 
 - (IBAction)didTapArticleEnd:(UIButton *)sender {
+    
+    UIScrollView *scrollView = (UIScrollView *)[[self.superview subviews] firstObject];
+    CGSize contentSize = [scrollView contentSize];
+    
+//    sender.enabled = NO;
+//    self.startOfArticle.enabled = YES;
+    
+    [scrollView scrollRectToVisible:CGRectMake(0, contentSize.height - scrollView.bounds.size.height, scrollView.bounds.size.width, scrollView.bounds.size.height) animated:YES];
+    
 }
 
 @end
