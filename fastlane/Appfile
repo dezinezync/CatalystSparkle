@@ -1,0 +1,8 @@
+app_identifier("com.dezinezync.Yeti") # The bundle identifier of your app
+apple_id("info@dezinezync.com") # Your Apple email address
+
+itc_team_id("1517864") # iTunes Connect Team ID
+team_id("3TLN858B23") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
