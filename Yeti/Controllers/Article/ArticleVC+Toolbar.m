@@ -185,9 +185,11 @@
         return;
     
     CGRect rect = value.CGRectValue;
-//    rect.origin.y += _keyboardRect.size.height;
+    UIScrollView *scrollView = (UIScrollView *)(self.stackView.superview);
+    // since we reference the scrollRect from 0,0 (top, left) in iOS.
+    rect.origin.y += scrollView.adjustedContentInset.top;
     
-    [(UIScrollView *)(self.stackView.superview) scrollRectToVisible:rect animated:YES];
+    [scrollView scrollRectToVisible:rect animated:YES];
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>
@@ -388,10 +390,10 @@
                 CGRect rect = [layoutManager boundingRectForGlyphRange:range inTextContainer:textContainer];
                 rect = [obj convertRect:rect toView:obj.superview];
                 
-                UIEdgeInsets adjustedInsets = scrollView.adjustedContentInset;
-                UIEdgeInsets contentInsets = scrollView.contentInset;
+//                UIEdgeInsets adjustedInsets = scrollView.adjustedContentInset;
+//                UIEdgeInsets contentInsets = scrollView.contentInset;
                 
-                rect.origin.y += (((adjustedInsets.bottom - contentInsets.bottom) + (adjustedInsets.top - contentInsets.top))/2.f) - 2.5f;
+                rect.origin.y += 16.f;//(((adjustedInsets.bottom - contentInsets.bottom) + (adjustedInsets.top - contentInsets.top))/2.f) - 2.5f;
                 rect.origin.x += 16.f;
                 
                 NSValue *rectValue = [NSValue valueWithCGRect:rect];
