@@ -21,7 +21,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
-#ifndef SHARE_EXTENSION
+#ifdef SHARE_EXTENSION
 @interface FeedsManager ()
 #else
 @interface FeedsManager () <YTUserDelegate>
