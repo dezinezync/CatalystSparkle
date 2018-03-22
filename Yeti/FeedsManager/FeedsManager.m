@@ -249,7 +249,12 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
             
             NSNumber *feedID = @([[reroute lastPathComponent] integerValue]);
             
+#ifdef SHARE_EXTENSION
+            if (successCB)
+                successCB(feedID, response, task);
+#else
             [self addFeedByID:feedID success:successCB error:errorCB];
+#endif
             
             return;
             
