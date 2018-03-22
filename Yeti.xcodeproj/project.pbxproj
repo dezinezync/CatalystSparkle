@@ -114,6 +114,7 @@
 		F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */; };
 		F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E0609B205A4423003FFD18 /* NSString+HTML.m */; };
 		F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E219432054FB83004B5FF5 /* Linebreak.m */; };
+		F0E656872063EF0D00450959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
@@ -886,6 +887,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0E656872063EF0D00450959 /* Assets.xcassets in Resources */,
 				F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1134,6 +1136,7 @@
 		F035A22120617EC3005A88EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = ShareIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3TLN858B23;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1157,6 +1160,7 @@
 		F035A22220617EC3005A88EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = ShareIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3TLN858B23;
 				FRAMEWORK_SEARCH_PATHS = (
