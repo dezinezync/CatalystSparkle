@@ -11,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NewFeedVC">
             <connections>
+                <outlet property="cancelButton" destination="6cU-uu-5VW" id="l30-99-EDz"/>
                 <outlet property="input" destination="d6v-2A-s3o" id="v6H-JZ-dcZ"/>
                 <outlet property="tableView" destination="Vfe-xT-WmG" id="dOE-Qt-KIn"/>
                 <outlet property="toolbar" destination="wFx-si-DLw" id="hw1-Wn-1OC"/>
@@ -33,7 +34,7 @@
                     </constraints>
                     <items>
                         <barButtonItem style="plain" id="N0W-Pj-eup">
-                            <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Feed or Website URL" textAlignment="natural" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" id="d6v-2A-s3o" customClass="PaddedTextField">
+                            <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Feed or Website URL" textAlignment="natural" minimumFontSize="17" id="d6v-2A-s3o" customClass="PaddedTextField">
                                 <rect key="frame" x="16" y="9" width="272" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.86274509803921573" green="0.86274509803921573" blue="0.8666666666666667" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -68,7 +69,7 @@
                 <constraint firstItem="wFx-si-DLw" firstAttribute="trailing" secondItem="Q5M-cg-NOt" secondAttribute="trailing" id="Fu4-ay-iEG"/>
                 <constraint firstItem="Vfe-xT-WmG" firstAttribute="trailing" secondItem="Q5M-cg-NOt" secondAttribute="trailing" id="SYL-LD-CZS"/>
                 <constraint firstItem="Vfe-xT-WmG" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="gXf-vK-5L2"/>
-                <constraint firstItem="Vfe-xT-WmG" firstAttribute="bottom" secondItem="Q5M-cg-NOt" secondAttribute="bottom" id="hFz-b7-ACt"/>
+                <constraint firstItem="Vfe-xT-WmG" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="hFz-b7-ACt"/>
                 <constraint firstItem="wFx-si-DLw" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="rBt-ud-qyv"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="top" secondItem="wFx-si-DLw" secondAttribute="top" id="wys-7g-JmN"/>
             </constraints>

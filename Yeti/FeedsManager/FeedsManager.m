@@ -21,7 +21,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
+#ifndef SHARE_EXTENSION
+@interface FeedsManager ()
+#else
 @interface FeedsManager () <YTUserDelegate>
+#endif
 
 @property (nonatomic, strong, readwrite) DZURLSession *session;
 #ifndef SHARE_EXTENSION
@@ -245,12 +249,21 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
             
             NSNumber *feedID = @([[reroute lastPathComponent] integerValue]);
             
-            if (successCB) {
-                successCB(feedID, response, task);
-            }
+            [self addFeedByID:feedID success:successCB error:errorCB];
             
             return;
             
+        }
+        else if ([response statusCode] == 304) {
+            // feed already exists in the user's list
+            
+            if (errorCB) {
+                NSError *error = [NSError errorWithDomain:@"FeedsManager" code:304 userInfo:@{NSLocalizedDescriptionKey: @"The feed already exists in your list."}];
+                
+                errorCB(error, response, task);
+            }
+            
+            return;
         }
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];

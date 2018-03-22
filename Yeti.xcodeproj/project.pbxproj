@@ -77,6 +77,7 @@
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
 		F09E96492055342000E61681 /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
+		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
 		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
@@ -266,6 +267,8 @@
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
 		F09E96452055342000E61681 /* hljs.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = hljs.css; sourceTree = "<group>"; };
+		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
+		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
@@ -675,6 +678,8 @@
 				F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */,
 				F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */,
 				F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */,
+				F0A4797C20637D2100A20195 /* AddFeedCell.h */,
+				F0A4797D20637D2100A20195 /* AddFeedCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1020,6 +1025,7 @@
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
+				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
 				F0D300411FE2633E0040D10D /* DTError.m in Sources */,
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
 				F0D300421FE2633E0040D10D /* DTTimePeriod.m in Sources */,

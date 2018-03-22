@@ -330,11 +330,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.5096951"
+            timestampString = "543395599.868825"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "371"
-            endingLineNumber = "371"
+            startingLineNumber = "386"
+            endingLineNumber = "386"
             landmarkName = "-getUserInformation:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -586,7 +586,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Feeds/FeedsVC.m"
-            timestampString = "543350331.510173"
+            timestampString = "543350418.165943"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "116"
@@ -602,7 +602,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Controllers/Feeds/FeedsVC.m"
-            timestampString = "543350331.5102201"
+            timestampString = "543350418.165989"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "138"
@@ -2153,15 +2153,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.51094"
+            timestampString = "543395599.869904"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
+            startingLineNumber = "287"
+            endingLineNumber = "287"
             landmarkName = "-addFeed:success:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2173,11 +2173,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.511191"
+            timestampString = "543395599.870253"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "411"
-            endingLineNumber = "411"
+            startingLineNumber = "426"
+            endingLineNumber = "426"
             landmarkName = "-errorFromResponse:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2189,11 +2189,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.511428"
+            timestampString = "543395599.870522"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
             landmarkName = "-addFeed:success:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2205,11 +2205,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.5116529"
+            timestampString = "543395599.870779"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
+            startingLineNumber = "252"
+            endingLineNumber = "252"
             landmarkName = "-addFeed:success:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2237,11 +2237,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.511897"
+            timestampString = "543395599.8710541"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "237"
-            endingLineNumber = "237"
+            startingLineNumber = "241"
+            endingLineNumber = "241"
             landmarkName = "-addFeed:success:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2445,11 +2445,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/FeedsManager/FeedsManager.m"
-            timestampString = "543350331.512221"
+            timestampString = "543395599.8714041"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "281"
+            endingLineNumber = "281"
             landmarkName = "-addFeed:success:error:"
             landmarkType = "7">
          </BreakpointContent>
@@ -2509,7 +2509,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Utilities/NewVCAnimator.m"
-            timestampString = "543350331.512485"
+            timestampString = "543350418.169278"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "15"
@@ -2525,12 +2525,121 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Yeti/Utilities/NewVCAnimator.m"
-            timestampString = "543350331.512532"
+            timestampString = "543350418.169324"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "23"
             endingLineNumber = "23"
             landmarkName = "-animationControllerForDismissedController:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Feeds/NewFeedVC.m"
+            timestampString = "543395599.8718131"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
+            landmarkName = "-textFieldShouldReturn:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[NewFeedVC textFieldShouldReturn:]"
+                  moduleName = "Yeti"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/Yeti/Controllers/Feeds/NewFeedVC.m"
+                  timestampString = "543396010.115581"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "290"
+                  endingLineNumber = "290"
+                  offsetFromSymbolStart = "549">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__35-[NewFeedVC textFieldShouldReturn:]_block_invoke"
+                  moduleName = "Yeti"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/Yeti/Controllers/Feeds/NewFeedVC.m"
+                  timestampString = "543396010.1172709"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "290"
+                  endingLineNumber = "290"
+                  offsetFromSymbolStart = "674">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__copy_helper_block_.233"
+                  moduleName = "Yeti"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/Yeti/Controllers/Feeds/NewFeedVC.m"
+                  timestampString = "543396010.1190571"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "290"
+                  endingLineNumber = "290"
+                  offsetFromSymbolStart = "111">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__destroy_helper_block_.234"
+                  moduleName = "Yeti"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/Yeti/Controllers/Feeds/NewFeedVC.m"
+                  timestampString = "543396010.120869"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "290"
+                  endingLineNumber = "290"
+                  offsetFromSymbolStart = "55">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__35-[NewFeedVC textFieldShouldReturn:]_block_invoke.236"
+                  moduleName = "Yeti"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Store/Sites/Yeti/Yeti/Yeti/Controllers/Feeds/NewFeedVC.m"
+                  timestampString = "543396010.122552"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "292"
+                  endingLineNumber = "292"
+                  offsetFromSymbolStart = "127">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Yeti/Controllers/Feeds/NewFeedVC.m"
+            timestampString = "543395599.8723429"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "286"
+            endingLineNumber = "286"
+            landmarkName = "-textFieldShouldReturn:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
