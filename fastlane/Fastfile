@@ -22,7 +22,7 @@ platform :ios do
         # )
     end
 
-    desc "Push a new beta build to TestFlight"https://docs.fastlane.tools/actions/sigh/
+    desc "Push a new beta build to TestFlight"
     lane :beta do
         
         ensure_git_branch(
