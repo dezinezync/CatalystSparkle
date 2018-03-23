@@ -97,7 +97,9 @@
 //    sender.enabled = NO;
 //    self.endOfArticle.enabled = YES;
     
-    [scrollView scrollRectToVisible:CGRectMake(0, 0.f, scrollView.bounds.size.width, scrollView.bounds.size.height) animated:YES];
+    asyncMain(^{
+        [scrollView setContentOffset:CGPointMake(0, -scrollView.adjustedContentInset.top) animated:YES];
+    });
     
 }
 
@@ -109,7 +111,11 @@
 //    sender.enabled = NO;
 //    self.startOfArticle.enabled = YES;
     
-    [scrollView scrollRectToVisible:CGRectMake(0, contentSize.height - scrollView.bounds.size.height, scrollView.bounds.size.width, scrollView.bounds.size.height) animated:YES];
+    CGRect rect = CGRectMake(0, contentSize.height - scrollView.bounds.size.height, scrollView.bounds.size.width, scrollView.bounds.size.height);
+    
+    asyncMain(^{
+        [scrollView setContentOffset:CGPointMake(0, rect.origin.y + scrollView.adjustedContentInset.bottom) animated:YES];
+    });
     
 }
 

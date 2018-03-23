@@ -845,7 +845,7 @@ static CGFloat const padding = 6.f;
     
     CGFloat y = point.y - scrollView.bounds.size.height;
     
-    BOOL enableTop = y > scrollView.bounds.size.height;
+    BOOL enableTop = y > (scrollView.bounds.size.height / 2.f);
     if (enableTop != _helperView.startOfArticle.isEnabled)
         _helperView.startOfArticle.enabled = enableTop;
     
