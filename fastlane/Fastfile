@@ -15,7 +15,7 @@ opt_out_usage
 platform :ios do
     before_all do
         # Make sure we start off with a clean slate
-        # ensure_git_status_clean
+        ensure_git_status_clean
         # sigh
         # sigh(
         #     app_identifier: 'com.dezinezync.Yeti.YetiShare'
@@ -45,18 +45,18 @@ platform :ios do
 
     after_all do |lane|
         say "done"
-        # commit_version_bump(
-        #     message: 'Version Bump via Fastlane',
-        #     xcodeproj: 'Yeti.xcodeproj', # optional, if you have multiple Xcode project files, you must specify your main project here
-        # )
+        commit_version_bump(
+            message: 'Version Bump via Fastlane',
+            xcodeproj: 'Yeti.xcodeproj', # optional, if you have multiple Xcode project files, you must specify your main project here
+        )
 
-        # add_git_tag
+        add_git_tag
 
-        # push_to_git_remote(
-        #     remote: 'origin',         # optional, default: 'origin'
-        #     local_branch: 'dev',  # optional, aliased by 'branch', default: 'master'
-        #     remote_branch: 'dev'  # optional, default is set to local_branch
-        # )
+        push_to_git_remote(
+            remote: 'origin',         # optional, default: 'origin'
+            local_branch: 'dev',  # optional, aliased by 'branch', default: 'master'
+            remote_branch: 'dev'  # optional, default is set to local_branch
+        )
     end
 
     error do |lane, exception|
