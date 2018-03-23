@@ -58,3 +58,4 @@ tests.html
 *.mobileprovision
 AppStore_com.dezinezync.Esfresco.mobileprovision
 /Carthage
+/Yeti.app.dSYM.zip

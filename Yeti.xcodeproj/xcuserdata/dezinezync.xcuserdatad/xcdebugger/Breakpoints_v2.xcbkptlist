@@ -1956,7 +1956,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "62"
             endingLineNumber = "62"
-            landmarkName = "-addFeed:"
+            landmarkName = "-setupRouting"
             landmarkType = "7">
             <Locations>
                <Location
@@ -2274,7 +2274,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "74"
             endingLineNumber = "74"
-            landmarkName = "-addFeed:"
+            landmarkName = "-setupRouting"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2622,7 +2622,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "115"
             endingLineNumber = "115"
-            landmarkName = "-addFeedByID:"
+            landmarkName = "-addFeed:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2638,7 +2638,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "118"
             endingLineNumber = "118"
-            landmarkName = "-addFeedByID:"
+            landmarkName = "-addFeed:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
