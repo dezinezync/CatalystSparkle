@@ -14,9 +14,30 @@
 
 @implementation AppDelegate (Routing)
 
+- (void)popToRoot
+{
+    UISplitViewController *splitVC = (UISplitViewController *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] firstObject];
+    
+    if ([[nav viewControllers] count] > 1) {
+        asyncMain(^{
+            [nav popViewControllerAnimated:NO];
+        });
+    }
+}
+
+#pragma mark - Routing
+
 - (void)setupRouting
 {
+    
+    weakify(self);
+    
     [[JLRoutes routesForScheme:@"feed"] addRoute:@"*" handler:^BOOL(NSDictionary *parameters) {
+        
+        strongify(self);
+        
+        [self popToRoot];
         
         NSURL *url = [NSURL URLWithString:[[[parameters valueForKey:kJLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"feed:" withString:@""]];
         
@@ -26,6 +47,10 @@
     
     [[JLRoutes globalRoutes] addRoute:@"/addFeed" handler:^BOOL(NSDictionary *parameters) {
        
+        strongify(self);
+        
+        [self popToRoot];
+        
         NSString *path = [parameters valueForKey:@"URL"];
         
         if (path) {
