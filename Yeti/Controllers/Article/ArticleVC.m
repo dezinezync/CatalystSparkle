@@ -263,6 +263,10 @@ static CGFloat const padding = 6.f;
         }];
     }
     
+    if (self.scrollView.contentOffset.y > self.scrollView.adjustedContentInset.top) {
+        [self.scrollView setContentOffset:CGPointMake(0, -self.scrollView.adjustedContentInset.top) animated:NO];
+    }
+    
     self.item = article;
     
     self.images = [NSPointerArray weakObjectsPointerArray];
