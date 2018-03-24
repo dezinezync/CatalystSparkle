@@ -7,6 +7,7 @@
 //
 
 #import "YTUserID.h"
+#import "FeedsManager.h"
 #import <DZKit/AlertManager.h>
 
 @interface YTUserID () {
@@ -51,7 +52,7 @@
         NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
         NSString *UUIDString = [store stringForKey:@"YTUserID"];
         
-        _userID = @([store longLongForKey:@"userID"]);
+        self.userID = @([store longLongForKey:@"userID"]);
         
         if (!UUIDString || (_userID == nil || ![_userID integerValue])) {
             if (_tries < 2) {
@@ -140,6 +141,8 @@
         [store setObject:_userID forKey:@"userID"];
         [store synchronize];
     }
+    
+    MyFeedsManager.userID = _userID;
 }
 
 @end

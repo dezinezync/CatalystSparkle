@@ -483,7 +483,7 @@
 			isa = PBXGroup;
 			children = (
 				F0E71E731FD6FF7100408CFF /* Yeti.entitlements */,
-				F070C31F1FBAC0C800912CCF /* AppDelagate */,
+				F070C31F1FBAC0C800912CCF /* AppDelegate */,
 				F070C3101FBABC8500912CCF /* Categories */,
 				F070C30E1FBABC7500912CCF /* Controllers */,
 				F070C3361FBAC3C100912CCF /* FeedsManager */,
@@ -625,7 +625,7 @@
 			path = SupportingFiles;
 			sourceTree = "<group>";
 		};
-		F070C31F1FBAC0C800912CCF /* AppDelagate */ = {
+		F070C31F1FBAC0C800912CCF /* AppDelegate */ = {
 			isa = PBXGroup;
 			children = (
 				F070C2DC1FBABC3500912CCF /* AppDelegate.h */,
@@ -633,7 +633,7 @@
 				F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */,
 				F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */,
 			);
-			path = AppDelagate;
+			path = AppDelegate;
 			sourceTree = "<group>";
 		};
 		F070C3211FBAC0EE00912CCF /* Frameworks */ = {
