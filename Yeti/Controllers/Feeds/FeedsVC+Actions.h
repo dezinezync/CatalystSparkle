@@ -16,4 +16,6 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender;
 
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath;
+
 @end

@@ -46,6 +46,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 
 @end

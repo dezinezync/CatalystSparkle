@@ -344,6 +344,39 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
 }
 
+- (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    NSDictionary *params = @{};
+    if ([self userID]) {
+        params = @{@"userID": [self userID]};
+    }
+    
+    [self.session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode != 304) {
+            if (successCB) {
+                successCB(responseObject, response, task);
+            }
+            
+            return;
+        }
+        
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedsManager" code:response.statusCode userInfo:@{NSLocalizedDescriptionKey : @"The feed does not exist or has already been removed from your list."}];
+            errorCB(error, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
+
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
@@ -360,7 +393,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     if (!_session) {
         DZURLSession *session = [[DZURLSession alloc] init];
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];

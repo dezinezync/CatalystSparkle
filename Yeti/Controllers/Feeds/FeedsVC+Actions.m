@@ -12,6 +12,8 @@
 #import "FeedsManager.h"
 #import "SettingsVC.h"
 
+#import <DZKit/NSArray+RZArrayCandy.h>
+
 #import "NewFeedVC.h"
 
 @implementation FeedsVC (Actions)
@@ -121,6 +123,68 @@
     navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];
+}
+
+#pragma mark - <UITableViewDelegate>
+
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip
+{
+    
+    __strong NSIndexPath *indexPath = [ip copy];
+    
+    weakify(self);
+    
+    UIContextualAction *delete = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"Delete" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        
+        strongify(self);
+        
+        DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
+        
+        Feed *feed = [DS objectAtIndexPath:indexPath];
+        
+        void(^removeFromDS)(NSNumber *feedID) = ^(NSNumber *feedID) {
+            DS.data = [DS.data rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return obj.feedID.integerValue != feedID.integerValue;
+            }];
+            
+//            asyncMain(^{
+//                [tableView endEditing:YES];
+//            });
+            
+            asyncMain(^{
+                completionHandler(YES);
+            });
+        };
+       
+        [MyFeedsManager removeFeed:feed.feedID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            removeFromDS(feed.feedID);
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            if (response.statusCode == 304) {
+                removeFromDS(feed.feedID);
+            }
+            else {
+                asyncMain(^{
+                    [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+                });
+            }
+            
+            asyncMain(^{
+                completionHandler(YES);
+            });
+            
+        }];
+        
+    }];
+
+    UISwipeActionsConfiguration *configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete]];
+    
+    configuration.performsFirstActionWithFullSwipe = YES;
+    
+    return configuration;
+
 }
 
 @end
