@@ -47,7 +47,12 @@
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
     
     EFNavController *nav1 = [[EFNavController alloc] initWithRootViewController:vc];
-    EFNavController *nav2 = [[EFNavController alloc] initWithRootViewController:vc2];
+    EFNavController *nav2;
+    
+    if (self.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)
+        nav2 = [[EFNavController alloc] initWithRootViewController:vc2];
+    else
+        nav2 = [[EFNavController alloc] init];
     
     UISplitViewController *splitVC = [[UISplitViewController alloc] init];
     splitVC.viewControllers = @[nav1, nav2];

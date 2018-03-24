@@ -112,7 +112,9 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         }
     }
     
-    [self.session GET:@"/feeds" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSDictionary *params = @{@"userID": self.userID};
+    
+    [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         strongify(self);
         
