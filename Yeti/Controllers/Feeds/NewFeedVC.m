@@ -311,9 +311,9 @@
             self.cancelButton.enabled = YES;
         });
        
-        [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
-        
-        [textField becomeFirstResponder];
+        asyncMain(^{
+            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+        });
         
     }];
     

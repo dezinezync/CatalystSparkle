@@ -79,7 +79,7 @@ static CGFloat const padding = 6.f;
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
     CGFloat multiplier = 1.f;
-    
+        
     [self setupHelperView];
     
     [self.stackView.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.leadingAnchor multiplier:multiplier].active = YES;

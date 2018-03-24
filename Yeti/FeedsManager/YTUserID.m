@@ -60,9 +60,25 @@
             }
         }
         
-        if (UUIDString && [_userID integerValue]) {
+        if (UUIDString) {
             // we have one.
             _UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
+            
+            if (!_userID || _userID.integerValue == 0) {
+                // build 21 (alpha) broke this. This is a patch for that.
+                if (self.delegate) {
+
+                    [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        NSDictionary *user = [responseObject valueForKey:@"user"];
+                        self.userID = @([[user valueForKey:@"id"] integerValue]);
+                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        [AlertManager showGenericAlertWithTitle:@"Error loading user" message:error.localizedDescription];
+                    }];
+                    
+                }
+                
+            }
+            
         }
         else {
             

@@ -386,7 +386,28 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 {
     weakify(self);
     
-    [self.session GET:@"/user" parameters:@{@"userID": self.userID ?: @""} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSDictionary *params;
+    
+    if (self.userID) {
+        params = @{@"userID": self.userID};
+    }
+#ifndef SHARE_EXTENSION
+    else if ([self userIDManager].UUID) {
+        params = @{@"userID" : [self.userIDManager UUIDString]};
+    }
+#else
+    if (errorCB) {
+        errorCB(nil, nil, nil);
+    }
+    return;
+#endif
+    [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+     
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         strongify(self);
         error = [self errorFromResponse:error.userInfo];
         
