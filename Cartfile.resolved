@@ -1,6 +1,6 @@
-github "CocoaLumberjack/CocoaLumberjack" "3.3.0"
+github "CocoaLumberjack/CocoaLumberjack" "3.4.1"
 github "MatthewYork/DateTools" "2.0.3"
-github "dezinezync/DZKit" "2.1.5"
+github "dezinezync/DZKit" "2.1.6"
 github "dzns/DZAppDelegate" "1.0.2"
 github "dzns/DZNetworking" "1.2.5"
 github "dzns/DZThemeKit" "0.1.0"

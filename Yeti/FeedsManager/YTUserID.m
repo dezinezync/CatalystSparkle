@@ -34,8 +34,9 @@
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate {
     if (self = [super init]) {
         self.delegate = delegate;
+        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            DDLogDebug(@"Initialised with: %@ %@", self.UUID, self.userID);
+            DDLogInfo(@"Initialised with: %@ %@", self.UUID, self.userID);
         });
     }
     
