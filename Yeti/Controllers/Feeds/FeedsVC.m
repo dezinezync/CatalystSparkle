@@ -18,9 +18,7 @@
 
 #import "FeedsSearchResults.h"
 
-@interface FeedsVC () <DZDatasource> {
-    
-}
+@interface FeedsVC () <DZDatasource>
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
 //@property (nonatomic, strong) UIActivityIndicatorView *activityView;
@@ -147,11 +145,6 @@
         
         _noPreSetup = YES;
     }
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
 }
 
 - (BOOL)definesPresentationContext

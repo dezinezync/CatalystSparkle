@@ -224,7 +224,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     NSDictionary *params = @{@"URL" : url};
     if ([self userID]) {
-        params = @{@"URL": url, @"userID": @1};
+        params = @{@"URL": url, @"userID": [self userID]};
     }
     
     [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -311,7 +311,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     NSDictionary *params = @{@"feedID" : feedID};
     if ([self userID]) {
-        params = @{@"feedID": feedID, @"userID": @1};
+        params = @{@"feedID": feedID, @"userID": [self userID]};
     }
     
     [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -357,11 +357,21 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 {
     if (!_session) {
         DZURLSession *session = [[DZURLSession alloc] init];
-        session.baseURL = [NSURL URLWithString:@"http://localhost:3000"];
-        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
+//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
+        
+        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
+          
+            NSMutableURLRequest *mutableReq = request.mutableCopy;
+            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            
+            return mutableReq;
+            
+        };
+        
         _session = session;
     }
     
@@ -372,17 +382,10 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 - (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB
 {
-    
-//    if (!self.userID) {
-//        if (errorCB) {
-//            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user ID currently present"}];
-//            errorCB(error, nil, nil);
-//        }
-//
-//        return;
-//    }
+    weakify(self);
     
     [self.session GET:@"/user" parameters:@{@"userID": self.userID ?: @""} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        strongify(self);
         error = [self errorFromResponse:error.userInfo];
         
         if (error) {

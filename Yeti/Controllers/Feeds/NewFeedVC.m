@@ -79,7 +79,9 @@
 {
     [super viewWillAppear:animated];
     
-    [self.input.widthAnchor constraintEqualToConstant:MIN(self.view.bounds.size.width * 0.9f, 280.f)].active = YES;
+    CGFloat maxWidth = UIApplication.sharedApplication.keyWindow.rootViewController.view.bounds.size.width - 104.f;
+    
+    [self.input.widthAnchor constraintEqualToConstant:maxWidth].active = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated

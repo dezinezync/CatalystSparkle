@@ -175,6 +175,9 @@
         EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
         
         [self.splitViewController showDetailViewController:nav sender:self];
+        // hide the primary controller
+        UIBarButtonItem *item = [self.splitViewController displayModeButtonItem];
+        [UIApplication.sharedApplication sendAction:item.action to:item.target from:nil forEvent:nil];
     }
     else {
         [self.navigationController pushViewController:vc animated:YES];

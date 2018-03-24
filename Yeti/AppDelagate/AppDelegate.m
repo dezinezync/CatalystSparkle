@@ -12,6 +12,7 @@
 #import <JLRoutes/JLRoutes.h>
 
 #import "YetiConstants.h"
+#import "EmptyVC.h"
 
 @interface AppDelegate ()
 
@@ -43,8 +44,10 @@
 - (void)setupRootController {
     
     FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
+    EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
+    
     EFNavController *nav1 = [[EFNavController alloc] initWithRootViewController:vc];
-    EFNavController *nav2 = [[EFNavController alloc] init];
+    EFNavController *nav2 = [[EFNavController alloc] initWithRootViewController:vc2];
     
     UISplitViewController *splitVC = [[UISplitViewController alloc] init];
     splitVC.viewControllers = @[nav1, nav2];

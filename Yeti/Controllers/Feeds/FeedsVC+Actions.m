@@ -32,7 +32,9 @@
             
             [self setupData:MyFeedsManager.feeds];
             
-            [sender endRefreshing];
+            if ([responseObject integerValue] == 2) {
+                [sender endRefreshing];
+            }
         });
         
         _refreshing = NO;

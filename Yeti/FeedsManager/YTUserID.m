@@ -45,6 +45,7 @@
 
 - (NSUUID *)UUID
 {
+    
     if (!_UUID) {
         // check if the store already has one
         NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
@@ -52,14 +53,14 @@
         
         _userID = @([store longLongForKey:@"userID"]);
         
-        if (!UUIDString || _userID == nil) {
+        if (!UUIDString || (_userID == nil || ![_userID integerValue])) {
             if (_tries < 2) {
                 _tries++;
                 return [self performSelector:@selector(UUID)];
             }
         }
         
-        if (UUIDString) {
+        if (UUIDString && [_userID integerValue]) {
             // we have one.
             _UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
         }
@@ -67,6 +68,7 @@
             
             // check server
             if (self.delegate) {
+                
                 weakify(self);
                 
                 [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
