@@ -26,29 +26,73 @@
     NSString *text = searchController.searchBar.text;
     
     // check for date match
-    NSArray *dates = [LinguisticSearch timePeriodFromText:text];
+//    NSArray *dates = [LinguisticSearch timePeriodFromText:text];
+//
+//    if (dates) {
+//        DDLogDebug(@"Date: %@", dates);
+//    }
     
-    if (dates) {
-        DDLogDebug(@"Date: %@", dates);
-    }
+    __block NSArray <FeedItem *> *data = self.feed.articles;
     
-    NSArray <FeedItem *> *data = self.feed.articles;
-    DZBasicDatasource *DS = [(SearchResults *)[searchController searchResultsController] DS];
+    weakify(self);
     
-    if ([text isBlank]) {
-        DS.data = data;
-        return;
-    }
-    
-    data = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        BOOL title = [obj.articleTitle containsString:text] || ([obj.articleTitle compareStringWithString:text] <= 2);
-        BOOL desc = (obj.summary && ![obj.summary isBlank]) && ([obj.summary containsString:text] || ([obj.summary compareStringWithString:text] <= 2));
-        BOOL author = [obj.author containsString:text] || ([obj.author compareStringWithString:text] <= 2);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         
-        return title || desc || author;
-    }];
+        if (_searchOperation) {
+            [_searchOperation cancel];
+            _searchOperation = nil;
+        }
+        
+        strongify(self);
+        
+        NSOperation *op = [self searchOperationForText:text searchController:searchController data:data];
+        [op start];
+        
+    });
+}
+
+#pragma mark - SearchOperation
+
+- (NSOperation *)searchOperationForText:(NSString * _Nonnull)text searchController:(UISearchController *)searchController data:(NSArray *)datum
+{
     
-    DS.data = data;
+    if (!_searchOperation) {
+        _searchOperation = [NSBlockOperation blockOperationWithBlock:^{
+            
+            NSArray *data = datum.copy;
+            
+            DZBasicDatasource *DS = [(SearchResults *)[searchController searchResultsController] DS];
+            
+            if ([text isBlank]) {
+                DS.data = data;
+                return;
+            }
+            
+            if (_searchOperation.isCancelled)
+                return;
+            
+            data = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                BOOL title = [obj.articleTitle containsString:text] || ([obj.articleTitle compareStringWithString:text] <= 2);
+                BOOL desc = (obj.summary && ![obj.summary isBlank]) && ([obj.summary containsString:text] || ([obj.summary compareStringWithString:text] <= 2));
+                BOOL author = [obj.author containsString:text] || ([obj.author compareStringWithString:text] <= 2);
+                
+                return title || desc || author;
+            }];
+            
+            if (_searchOperation.isCancelled)
+                return;
+            
+            asyncMain(^{
+                if (_searchOperation.isCancelled)
+                    return;
+                
+                DS.data = data;
+            });
+            
+        }];
+    }
+    
+    return _searchOperation;
 }
 
 @end

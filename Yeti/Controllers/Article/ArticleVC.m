@@ -72,7 +72,8 @@ static CGFloat const padding = 6.f;
     // Do any additional setup after loading the view from its nib.
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        || self.splitViewController.view.bounds.size.height < 814.f) {
         self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
     }
     

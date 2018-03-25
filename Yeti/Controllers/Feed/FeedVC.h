@@ -11,12 +11,16 @@
 
 #import "UITableViewController+ScrollLoad.h"
 
-@interface FeedVC : UITableViewController <ScrollLoading>
+@interface FeedVC : UITableViewController <ScrollLoading> {
+    NSOperation *_searchOperation;
+}
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 
 - (instancetype _Nonnull)initWithFeed:(Feed * _Nonnull)feed;
 
 @property (nonatomic, strong) Feed * _Nullable feed;
+
+@property (nonatomic, strong) NSOperation * _Nullable searchOperation;
 
 @end
