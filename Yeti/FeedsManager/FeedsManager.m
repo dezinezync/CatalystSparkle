@@ -431,8 +431,12 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
         defaultConfig.HTTPMaximumConnectionsPerHost = 5;
         defaultConfig.URLCache = sharedCache;
+        [defaultConfig setHTTPAdditionalHeaders:@{
+                                                  @"Accept": @"application/json",
+                                                  @"Content-Type": @"application/json"
+                                                  }];
         
-        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:session delegateQueue:[NSOperationQueue currentQueue]];
+        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
         
         [session setValue:sessionSession forKeyPath:@"session"];
         
@@ -442,14 +446,14 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
         
-        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
-          
-            NSMutableURLRequest *mutableReq = request.mutableCopy;
-            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-            
-            return mutableReq;
-            
-        };
+//        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
+//          
+//            NSMutableURLRequest *mutableReq = request.mutableCopy;
+//            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+//            
+//            return mutableReq;
+//            
+//        };
         
         _session = session;
     }
