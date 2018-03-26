@@ -22,10 +22,12 @@ FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdate
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 #ifdef SHARE_EXTENSION
-@interface FeedsManager ()
+@interface FeedsManager () {
 #else
-@interface FeedsManager () <YTUserDelegate>
+@interface FeedsManager () <YTUserDelegate> {
 #endif
+    NSString *_feedsCachePath;
+}
 
 @property (nonatomic, strong, readwrite) DZURLSession *session;
 #ifndef SHARE_EXTENSION
@@ -67,7 +69,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 #pragma mark - Feeds
 
-- (void)getFeeds:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getFeedsSince:(NSDate *)since success:(successBlock)successCB error:(errorBlock)errorCB
 {
     weakify(self);
     
@@ -85,17 +87,33 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         return;
     }
     
-    dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    docsDir = [dirPaths objectAtIndex:0];
-    NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:@"feedscache.json"]];
+    if (!_feedsCachePath) {
+        dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        docsDir = [dirPaths objectAtIndex:0];
+        NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:@"feedscache.json"]];
+        
+        _feedsCachePath = path;
+    }
     
     __block NSError *error = nil;
     
-    if ([NSFileManager.defaultManager fileExistsAtPath:path]) {
-        NSData *data = [NSData dataWithContentsOfFile:path];
+    if ([NSFileManager.defaultManager fileExistsAtPath:_feedsCachePath]) {
+        NSData *data = [NSData dataWithContentsOfFile:_feedsCachePath];
         
         if (data) {
-            NSArray *responseObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            NSArray *responseObject;
+            
+            @try {
+                responseObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            }
+            @catch (NSException *exc) {
+                responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+            }
+            // non-json error.
+            if (error && error.code == 3840) {
+                responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                error = nil;
+            }
             
             if (error) {
                 DDLogError(@"%@", error);
@@ -104,16 +122,31 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
             }
             else if (successCB) {
                 DDLogDebug(@"Responding to successCB from disk cache");
-                NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
+                NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
                 
-                self.feeds = feeds;
+                _feeds = feeds;
                 
-                successCB(@1, nil, nil);
+                asyncMain(^{
+                    successCB(@1, nil, nil);
+                });
             }
         }
     }
     
     NSDictionary *params = @{@"userID": self.userID};
+    
+    if (since) {
+        
+//        since = [since dateByAddingTimeInterval:-(86400 * 3)];
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"YYYY/MM/dd HH:mm:ss";
+        
+        params = @{
+                   @"userID": self.userID,
+                   @"since": [formatter stringFromDate:since]
+                };
+    }
     
     [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
@@ -121,25 +154,45 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
-        // cache
-        {
-            NSData *data = [NSJSONSerialization dataWithJSONObject:responseObject options:kNilOptions error:&error];
-            
-            if (error) {
-                DDLogError(@"%@", error);
-            }
-            else {
-                if (![data writeToFile:path atomically:YES]) {
-                    DDLogError(@"Writing feeds cache to %@ failed.", path);
+        if (!since) {
+            self.feeds = feeds;
+        }
+        else {
+
+            if (feeds.count) {
+
+                NSArray <Feed *> *copy = [self.feeds copy];
+
+                for (Feed *feed in feeds) {
+                    // get the corresponding feed from the memory
+                    Feed *main = [self.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+                        if (current.feedID.integerValue == feed.feedID.integerValue)
+                            return current;
+                        return prev;
+                    }];
+
+                    if (!main) {
+                        // this is a new feed
+                        copy = [copy arrayByAddingObject:feed];
+                    }
+                    else {
+                        // add the new articles. We add main's article to feed so the order remains in reverse-chrono
+                        main.articles = [feed.articles arrayByAddingObjectsFromArray:main.articles];
+                    }
+                }
+
+                @synchronized(self) {
+                    self.feeds = feeds;
                 }
             }
+
         }
-        
-        self.feeds = feeds;
         
         if (successCB) {
             DDLogDebug(@"Responding to successCB from network");
-            successCB(@2, response, task);
+            asyncMain(^{
+                successCB(@2, response, task);
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -411,6 +464,32 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     _feeds = feeds ?: @[];
     
     [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : feeds ?: @[]}];
+    
+    // cache it
+    {
+//        NSArray *mapped = [_feeds rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
+//            NSMutableDictionary *dict = obj.dictionaryRepresentation.mutableCopy;
+//            NSArray *articles = [[dict valueForKey:@"articles"] rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+//                return obj.dictionaryRepresentation;
+//            }];
+//
+//            [dict setObject:articles forKey:@"articles"];
+//
+//            return dict;
+//        }];
+        
+        NSError *error = nil;
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_feeds];
+        
+        if (error) {
+            DDLogError(@"Error caching feeds: %@", error);
+        }
+        else {
+            if (![data writeToFile:_feedsCachePath atomically:YES]) {
+                DDLogError(@"Writing feeds cache to %@ failed.", _feedsCachePath);
+            }
+        }
+    }
 }
 
 #pragma mark - Getters
@@ -441,7 +520,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];

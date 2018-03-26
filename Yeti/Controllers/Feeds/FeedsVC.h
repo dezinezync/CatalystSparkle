@@ -14,7 +14,11 @@
     BOOL _refreshing;
     BOOL _preCommitLoading;
     BOOL _noPreSetup;
+    
+    NSDate *_sinceDate;
 }
+
+@property (nonatomic, copy) NSDate *sinceDate;
 
 - (void)setupData:(NSArray <Feed *> *)feeds;
 

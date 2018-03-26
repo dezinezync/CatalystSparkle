@@ -20,17 +20,27 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing || _preCommitLoading || !_noPreSetup)
+    if (_refreshing || !_noPreSetup) {
+        
+        if ([sender isRefreshing])
+            [sender endRefreshing];
+        
         return;
+    }
     
     _refreshing = YES;
     
     weakify(self);
     
-    [MyFeedsManager getFeeds:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        @synchronized(self) {
+            self.sinceDate = NSDate.date;
+        }
         
         asyncMain(^{
-            strongify(self);
             
             [self setupData:MyFeedsManager.feeds];
             

@@ -84,72 +84,124 @@
     
     if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
         
-        _preCommitLoading = YES;
-        
         weakify(self);
         
         asyncMain(^{
             strongify(self);
             [self.refreshControl beginRefreshing];
+            _noPreSetup = YES;
+            
+            weakify(self);
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                asyncMain(^{
+                    strongify(self);
+                    [self beginRefreshing:self.refreshControl];
+                });
+            });
         })
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
-            [MyFeedsManager getFeeds:^(NSNumber *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                strongify(self);
-                
-                // we have received one response. This is usually from the disk cache.
-                if (responseObject.integerValue == 1) {
-                    return;
-                }
-                
-                // when counter reaches 2, we end refreshing since this is the network response.
-                if (responseObject.integerValue == 2) {
-                    asyncMain(^{
-                        [self.refreshControl endRefreshing];
-                    })
-                }
-                
-                [self setupData:MyFeedsManager.feeds];
-                
-                _preCommitLoading = NO;
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                if (error) {
-                    DDLogError(@"%@", error);
-                    [AlertManager showGenericAlertWithTitle:@"Error loading" message:error.localizedDescription];
-                }
-                
-                // end refreshing if VC is in that state.
-                asyncMain(^{
-                    
-                    strongify(self);
-                    
-                    if (self.refreshControl.isRefreshing) {
-                        [self.refreshControl endRefreshing];
-                    }
-                    
-                    // locally loaded from disk-cache
-                    if (MyFeedsManager.feeds) {
-                        [self setupData:MyFeedsManager.feeds];
-                    }
-                });
-                
-                _preCommitLoading = NO;
-                
-            }];
-            
-        });
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            
+//            [MyFeedsManager getFeedsSince:self.sinceDate success:^(NSNumber *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                
+//                strongify(self);
+//                
+//                // we have received one response. This is usually from the disk cache.
+//                if (responseObject.integerValue == 1) {
+//                    return;
+//                }
+//                
+//                // when counter reaches 2, we end refreshing since this is the network response.
+//                if (responseObject.integerValue == 2) {
+//                    asyncMain(^{
+//                        [self.refreshControl endRefreshing];
+//                    })
+//                }
+//                
+//                [self setupData:MyFeedsManager.feeds];
+//                
+//                _preCommitLoading = NO;
+//                
+//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                
+//                if (error) {
+//                    DDLogError(@"%@", error);
+//                    [AlertManager showGenericAlertWithTitle:@"Error loading" message:error.localizedDescription];
+//                }
+//                
+//                // end refreshing if VC is in that state.
+//                asyncMain(^{
+//                    
+//                    strongify(self);
+//                    
+//                    if (self.refreshControl.isRefreshing) {
+//                        [self.refreshControl endRefreshing];
+//                    }
+//                    
+//                    // locally loaded from disk-cache
+//                    if (MyFeedsManager.feeds) {
+//                        [self setupData:MyFeedsManager.feeds];
+//                    }
+//                });
+//                
+//                _preCommitLoading = NO;
+//                
+//            }];
+//            
+//        });
         
-        _noPreSetup = YES;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            _preCommitLoading = YES;
+        });
     }
 }
 
 - (BOOL)definesPresentationContext
 {
     return YES;
+}
+
+#pragma mark - Setters
+
+- (void)setSinceDate:(NSDate *)sinceDate
+{
+    _sinceDate = sinceDate;
+    
+    if (_sinceDate) {
+        NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
+        NSNumber *timestamp = @([_sinceDate timeIntervalSince1970]);
+        
+        NSString *data = formattedString(@"%@", timestamp);
+        NSError *error = nil;
+        if (![data writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+            DDLogError(@"Failed to save since date for feeds. %@", error.localizedDescription);
+        }
+    }
+    
+}
+
+#pragma mark - Getters
+
+- (NSDate *)sinceDate
+{
+    if (!_sinceDate) {
+        NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            NSError *error = nil;
+            NSString *data = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
+            
+            if (!data) {
+                DDLogError(@"Failed to load since date for feeds. %@", error.localizedDescription);
+            }
+            else {
+                NSTimeInterval timestamp = [data doubleValue];
+                _sinceDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+            }
+        }
+    }
+    
+    return _sinceDate;
 }
 
 #pragma mark - Table view data source
