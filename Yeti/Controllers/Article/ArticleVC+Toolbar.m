@@ -61,7 +61,7 @@
     NSString *title = self.item.articleTitle;
     NSURL *URL = formattedURL(@"%@", self.item.articleURL);
     
-    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, @" ", URL] applicationActivities:nil];
     
 //    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
     

@@ -49,6 +49,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     if (self = [super init]) {
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
+        DDLogWarn(@"%@", self.bookmarks);
 #endif
     }
     
@@ -377,6 +378,32 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     }];
 }
 
+#ifndef SHARE_EXTENSION
+
+- (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    NSString *existing = @"";
+    
+    if (self.bookmarks.count) {
+        existing = [[self.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            return obj.identifier.stringValue;
+        }] componentsJoinedByString:@","];
+    }
+    
+    [self.session POST:formattedString(@"/bookmarked?userID=%@", self.userID) parameters:@{@"existing": existing} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
+
+#endif
+
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
@@ -391,7 +418,24 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 - (DZURLSession *)session
 {
     if (!_session) {
+        
+        // Set app-wide shared cache (first number is megabyte value)
+        NSUInteger cacheSizeMemory = 500*1024*1024; // 500 MB
+        NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
+        [NSURLCache setSharedURLCache:sharedCache];
+        sleep(1);
+        
         DZURLSession *session = [[DZURLSession alloc] init];
+        
+        NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        defaultConfig.HTTPMaximumConnectionsPerHost = 5;
+        defaultConfig.URLCache = sharedCache;
+        
+        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:session delegateQueue:[NSOperationQueue currentQueue]];
+        
+        [session setValue:sessionSession forKeyPath:@"session"];
+        
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
 //        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
         session.useOMGUserAgent = YES;
@@ -412,6 +456,35 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     return _session;
 }
+
+//#ifndef SHARE_EXTENSION
+- (NSArray <FeedItem *> *)bookmarks {
+    
+    if (!_bookmarks) {
+        NSFileManager *manager = [NSFileManager defaultManager];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+        NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
+        BOOL isDir;
+        
+        if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
+            NSError *error = nil;
+            if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
+                DDLogError(@"Error creating bookmarks directory: %@", error);
+            }
+        }
+        
+        NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
+        for (NSString *path in enumerator) {
+            DDLogDebug(@"bookmarked: %@", path);
+        }
+    }
+    
+    return _bookmarks;
+    
+}
+
+//#endif
 
 #pragma mark - <YTUserDelegate>
 

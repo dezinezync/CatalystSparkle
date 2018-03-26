@@ -32,6 +32,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #endif
 
+@property (nonatomic, copy) NSArray <FeedItem *> * _Nonnull bookmarks;
+
 #pragma mark - Feeds
 
 @property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
@@ -46,7 +48,13 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#ifndef SHARE_EXTENSION
+
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#endif
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 
