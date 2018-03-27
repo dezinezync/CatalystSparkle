@@ -23,11 +23,13 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 #ifdef SHARE_EXTENSION
 @interface FeedsManager () {
-#else
-@interface FeedsManager () <YTUserDelegate> {
-#endif
     NSString *_feedsCachePath;
 }
+#else
+@interface FeedsManager () <YTUserDelegate> {
+    NSString *_feedsCachePath;
+}
+#endif
 
 @property (nonatomic, strong, readwrite) DZURLSession *session;
 #ifndef SHARE_EXTENSION
@@ -124,10 +126,12 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
                 DDLogDebug(@"Responding to successCB from disk cache");
                 NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
                 
-                _feeds = feeds;
-                
-                asyncMain(^{
-                    successCB(@1, nil, nil);
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5  * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    _feeds = feeds;
+                    
+                    asyncMain(^{
+                        successCB(@1, nil, nil);
+                    });
                 });
             }
         }
@@ -135,9 +139,8 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     NSDictionary *params = @{@"userID": self.userID};
     
-    if (since) {
-        
-//        since = [since dateByAddingTimeInterval:-(86400 * 3)];
+    // only consider this param when we have feeds
+    if (since && self.feeds.count) {
         
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"YYYY/MM/dd HH:mm:ss";
@@ -154,7 +157,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
-        if (!since) {
+        if (!since || !self.feeds.count) {
             self.feeds = feeds;
         }
         else {
@@ -176,8 +179,20 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
                         copy = [copy arrayByAddingObject:feed];
                     }
                     else {
+                        NSArray <FeedItem *> *newItems = [feed.articles rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                           
+                            NSUInteger identifier = obj.identifier.integerValue;
+                            
+                            FeedItem *existing = [main.articles rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idx, NSArray *array) {
+                                return current.identifier.integerValue == identifier ? current : prev;
+                            }];
+                            
+                            return existing == nil;
+                            
+                        }];
+                        
                         // add the new articles. We add main's article to feed so the order remains in reverse-chrono
-                        main.articles = [feed.articles arrayByAddingObjectsFromArray:main.articles];
+                        main.articles = [newItems arrayByAddingObjectsFromArray:main.articles];
                     }
                 }
 
@@ -467,17 +482,6 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     // cache it
     {
-//        NSArray *mapped = [_feeds rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
-//            NSMutableDictionary *dict = obj.dictionaryRepresentation.mutableCopy;
-//            NSArray *articles = [[dict valueForKey:@"articles"] rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-//                return obj.dictionaryRepresentation;
-//            }];
-//
-//            [dict setObject:articles forKey:@"articles"];
-//
-//            return dict;
-//        }];
-        
         NSError *error = nil;
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_feeds];
         
@@ -504,9 +508,9 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
         [NSURLCache setSharedURLCache:sharedCache];
         sleep(1);
-        
+//
         DZURLSession *session = [[DZURLSession alloc] init];
-        
+
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
         defaultConfig.HTTPMaximumConnectionsPerHost = 5;
         defaultConfig.URLCache = sharedCache;
@@ -514,25 +518,27 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
                                                   @"Accept": @"application/json",
                                                   @"Content-Type": @"application/json"
                                                   }];
-        
+
         NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
-        
+
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
+//#ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+//#endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
         
-//        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
-//          
-//            NSMutableURLRequest *mutableReq = request.mutableCopy;
-//            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-//            
-//            return mutableReq;
-//            
-//        };
+        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
+          
+            NSMutableURLRequest *mutableReq = request.mutableCopy;
+            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            
+            return mutableReq;
+            
+        };
         
         _session = session;
     }

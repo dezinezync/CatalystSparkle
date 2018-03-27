@@ -30,7 +30,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.61f;
+        style.lineHeightMultiple = 1.44444f;
         
         _paragraphStyle = style.copy;
     }

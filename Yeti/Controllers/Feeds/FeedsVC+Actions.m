@@ -153,7 +153,7 @@
         Feed *feed = [DS objectAtIndexPath:indexPath];
         
         void(^removeFromDS)(NSNumber *feedID) = ^(NSNumber *feedID) {
-            DS.data = [DS.data rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            MyFeedsManager.feeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return obj.feedID.integerValue != feedID.integerValue;
             }];
             

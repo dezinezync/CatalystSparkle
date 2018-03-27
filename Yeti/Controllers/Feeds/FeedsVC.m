@@ -169,7 +169,11 @@
     _sinceDate = sinceDate;
     
     if (_sinceDate) {
+#ifdef DEBUG
+        NSString *path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
+#elif
         NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
+#endif
         NSNumber *timestamp = @([_sinceDate timeIntervalSince1970]);
         
         NSString *data = formattedString(@"%@", timestamp);
@@ -186,11 +190,15 @@
 - (NSDate *)sinceDate
 {
     if (!_sinceDate) {
+#ifdef DEBUG
+        NSString *path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
+#elif
         NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
+#endif
         if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
             NSError *error = nil;
             NSString *data = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-            
+
             if (!data) {
                 DDLogError(@"Failed to load since date for feeds. %@", error.localizedDescription);
             }
@@ -200,7 +208,7 @@
             }
         }
     }
-    
+
     return _sinceDate;
 }
 
