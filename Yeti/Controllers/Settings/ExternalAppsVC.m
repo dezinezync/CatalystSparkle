@@ -64,7 +64,7 @@
     NSMutableArray *browsers = [NSMutableArray arrayWithCapacity:3];
     [browsers addObject:@"Safari"];
     
-    if ([app canOpenURL:[NSURL URLWithString:@"chrome://"]])
+    if ([app canOpenURL:[NSURL URLWithString:@"googlechrome://"]])
         [browsers addObject:@"Chrome"];
     if ([app canOpenURL:[NSURL URLWithString:@"firefox://"]])
         [browsers addObject:@"Firefox"];
