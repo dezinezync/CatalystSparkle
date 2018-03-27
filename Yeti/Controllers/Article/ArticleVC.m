@@ -328,7 +328,11 @@ static CGFloat const padding = 6.f;
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
     para.lineHeightMultiple = 1.125f;
     
-    UIFont * titleFont = [UIFont boldSystemFontOfSize:baseFontSize * 2.2f];
+    CGFloat fontSize = baseFontSize * 2.2f;
+    if (self.item.articleTitle.length > 28)
+        fontSize = baseFontSize * 1.8f;
+    
+    UIFont * titleFont = [UIFont boldSystemFontOfSize:fontSize];
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:titleFont];
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : baseFont,
@@ -366,6 +370,12 @@ static CGFloat const padding = 6.f;
     NSLayoutConstraint *trailing = [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-LayoutPadding];
     trailing.priority = UILayoutPriorityRequired;
     trailing.active = YES;
+    
+    NSInteger feedID = self.item.feedID.integerValue;
+    if (feedID == 9
+        || feedID == 18) {
+        [self addLinebreak];
+    }
     
 }
 
