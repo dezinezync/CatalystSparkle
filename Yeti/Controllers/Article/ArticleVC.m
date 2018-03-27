@@ -328,9 +328,9 @@ static CGFloat const padding = 6.f;
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
     para.lineHeightMultiple = 1.125f;
     
-    CGFloat fontSize = baseFontSize * 2.2f;
+    CGFloat fontSize = baseFontSize * 2.0f;
     if (self.item.articleTitle.length > 28)
-        fontSize = baseFontSize * 1.8f;
+        fontSize = baseFontSize * 1.7f;
     
     UIFont * titleFont = [UIFont boldSystemFontOfSize:fontSize];
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:titleFont];
