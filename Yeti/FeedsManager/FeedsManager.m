@@ -481,7 +481,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : feeds ?: @[]}];
     
     // cache it
-    {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         NSError *error = nil;
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_feeds];
         
@@ -493,7 +493,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
                 DDLogError(@"Writing feeds cache to %@ failed.", _feedsCachePath);
             }
         }
-    }
+    });
 }
 
 #pragma mark - Getters

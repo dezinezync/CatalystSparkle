@@ -175,6 +175,9 @@
     else if ([key isEqualToString:@"id"]) {
         [self setValue:value forKey:@"identifier"];
     }
+    else if ([key isEqualToString:@"media"]) {
+        [self setValue:value forKey:@"images"];
+    }
     else
         DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
 }
