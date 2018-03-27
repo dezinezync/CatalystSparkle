@@ -887,7 +887,7 @@ static CGFloat const padding = 6.f;
     DDLogDebug(@"Looking up anchor %@", identifier);
     
     NSArray <Paragraph *> *paragraphs = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
-        return [obj isMemberOfClass:Paragraph.class];
+        return [obj isKindOfClass:Paragraph.class];
     }];
     
     __block Paragraph *required = nil;
