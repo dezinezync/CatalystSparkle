@@ -6,6 +6,8 @@
 #import <CocoaLumberjack/CocoaLumberjack.h>
 #endif
 
+#import <DZKit/NSArray+RZArrayCandy.h>
+
 @implementation Feed
 
 - (NSString *)compareID
@@ -65,11 +67,15 @@
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
+    
+    if ([value isKindOfClass:NSDate.class]) {
+        
+    }
 
     if ([key isEqualToString:@"articles"]) {
 
         if ([value isKindOfClass:[NSArray class]])
-{
+        {
 
             NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
             for (id valueMember in value) {
@@ -125,7 +131,12 @@
     }
 
     if (self.articles) {
-        [dictionary setObject:self.articles forKey:@"articles"];
+        
+        NSArray *articles = [self.articles rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            return obj.dictionaryRepresentation;
+        }];
+        
+        [dictionary setObject:articles forKey:@"articles"];
     }
 
     if (self.summary) {

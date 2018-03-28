@@ -38,6 +38,9 @@
 @property (nonatomic, copy) NSNumber *feedID;
 @property (nonatomic, copy) NSString *summary;
 
+// used for encoding and decoding
+@property (class, nonatomic, strong) NSDateFormatter *formatter;
+
 + (FeedItem *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 

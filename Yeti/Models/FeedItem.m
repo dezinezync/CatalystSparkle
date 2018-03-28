@@ -14,6 +14,8 @@
 
 @implementation FeedItem
 
+static NSDateFormatter *_formatter = nil;
+
 - (NSString *)compareID
 {
     return self.guid;
@@ -99,6 +101,10 @@
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
+    
+    if ([value isKindOfClass:NSDate.class]) {
+        
+    }
 
     if ([key isEqualToString:@"content"]) {
 
@@ -115,6 +121,14 @@
 
         }
 
+    }
+    
+    else if ([key isEqualToString:@"timestamp"]) {
+        if ([value isKindOfClass:NSString.class]) {
+            value = [[self.class formatter] dateFromString:value];
+        }
+        
+        self.timestamp = value;
     }
     
     else if ([key isEqualToString:@"enclosures"]) {
@@ -221,7 +235,13 @@
     [dictionary setObject:[NSNumber numberWithBool:self.read] forKey:@"read"];
 
     if (self.timestamp) {
-        [dictionary setObject:self.timestamp forKey:@"timestamp"];
+        
+        NSString *strDate = (NSString *)[self timestamp];
+        if ([self.timestamp isMemberOfClass:NSDate.class]) {
+            strDate = [[self.class formatter] stringFromDate:(NSDate *)strDate];
+        }
+        
+        [dictionary setObject:strDate forKey:@"timestamp"];
     }
     
     if (self.itunesImage) {
@@ -257,6 +277,22 @@
 
     return dictionary;
 
+}
+
+#pragma mark - Getters
+
++ (NSDateFormatter *)formatter
+{
+    if (!_formatter) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        NSLocale *enUSPOSIXLocale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+        [formatter setLocale:enUSPOSIXLocale];
+        [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
+        
+        _formatter = formatter;
+    }
+    
+    return _formatter;
 }
 
 @end

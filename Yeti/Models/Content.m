@@ -74,6 +74,10 @@
 - (void)setValue:(id)value forKey:(NSString *)key
 {
     
+    if ([value isKindOfClass:NSDate.class]) {
+        
+    }
+    
     if ([key isEqualToString:@"content"] && value && [value isKindOfClass:NSArray.class])
         key = @"items";
 

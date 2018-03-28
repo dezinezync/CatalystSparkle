@@ -56,6 +56,11 @@
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
+    
+    if ([value isKindOfClass:NSDate.class]) {
+        
+    }
+    
     if ([key isEqualToString:@"range"] && [value isKindOfClass:NSString.class]) {
         value = [NSValue valueWithRange:NSRangeFromString(value)];
     }

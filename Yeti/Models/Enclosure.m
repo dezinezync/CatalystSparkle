@@ -62,6 +62,11 @@
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
+    
+    if ([value isKindOfClass:NSDate.class]) {
+        
+    }
+    
     if ([key isEqualToString:@"url"]) {
         if ([value isKindOfClass:NSString.class])
             value = [NSURL URLWithString:value];
