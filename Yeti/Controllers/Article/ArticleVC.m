@@ -21,6 +21,7 @@
 #import "Gallery.h"
 #import "Linebreak.h"
 #import "Code.h"
+#import "Tweet.h"
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
@@ -812,7 +813,19 @@ static CGFloat const padding = 6.f;
 }
 
 - (void)addTweet:(Content *)content {
+    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    Tweet *tweet = [[Tweet alloc] initWithNib];
+    tweet.frame = frame;
     
+    [tweet configureContent:content];
+    
+    _last = tweet;
+    
+    [self.stackView addArrangedSubview:tweet];
+    
+//    [tweet.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
+    
+    [self addLinebreak];
 }
 
 #pragma mark - Getters

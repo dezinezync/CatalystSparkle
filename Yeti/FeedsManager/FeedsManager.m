@@ -100,41 +100,45 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     __block NSError *error = nil;
     
     if ([NSFileManager.defaultManager fileExistsAtPath:_feedsCachePath]) {
-        NSData *data = [NSData dataWithContentsOfFile:_feedsCachePath];
-        
-        if (data) {
-            NSArray *responseObject;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+           
+            NSData *data = [NSData dataWithContentsOfFile:_feedsCachePath];
             
-            @try {
-                responseObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-            }
-            @catch (NSException *exc) {
-                responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-            }
-            // non-json error.
-            if (error && error.code == 3840) {
-                responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-                error = nil;
-            }
-            
-            if (error) {
-                DDLogError(@"%@", error);
-                if (errorCB)
-                    errorCB(error, nil, nil);
-            }
-            else if (successCB) {
-                DDLogDebug(@"Responding to successCB from disk cache");
-                NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
+            if (data) {
+                NSArray *responseObject;
                 
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5  * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    _feeds = feeds;
+                @try {
+                    responseObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+                }
+                @catch (NSException *exc) {
+                    responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                }
+                // non-json error.
+                if (error && error.code == 3840) {
+                    responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+                    error = nil;
+                }
+                
+                if (error) {
+                    DDLogError(@"%@", error);
+                    if (errorCB)
+                        errorCB(error, nil, nil);
+                }
+                else if (successCB) {
+                    DDLogDebug(@"Responding to successCB from disk cache");
+                    NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
                     
-                    asyncMain(^{
-                        successCB(@1, nil, nil);
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5  * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        _feeds = feeds;
+                        
+                        asyncMain(^{
+                            successCB(@1, nil, nil);
+                        });
                     });
-                });
+                }
             }
-        }
+            
+        });
     }
     
     NSDictionary *params = @{@"userID": self.userID};

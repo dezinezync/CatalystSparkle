@@ -10,6 +10,7 @@
 #import "NSAttributedString+Trimming.h"
 #import <DZKit/NSString+Extras.h>
 #import <CoreText/SFNTLayoutTypes.h>
+#import "NSString+HTML.h"
 
 @interface Paragraph ()
 
@@ -63,7 +64,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     text = [text stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
     
-    NSAttributedString *attrs = [self processText:text ranges:ranges attributes:attributes];
+    NSMutableAttributedString *attrs = [self processText:text ranges:ranges attributes:attributes].mutableCopy;
     
     asyncMain(^{
         strongify(self);

@@ -57,7 +57,8 @@
 {
     
     if (!_searchOperation) {
-        _searchOperation = [NSBlockOperation blockOperationWithBlock:^{
+        __block NSBlockOperation *op = [[NSBlockOperation alloc] init];
+        [op addExecutionBlock:^{
             
             NSArray *data = datum.copy;
             
@@ -68,7 +69,7 @@
                 return;
             }
             
-            if (_searchOperation.isCancelled)
+            if (!op || op.isCancelled)
                 return;
             
             data = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
@@ -79,7 +80,7 @@
                 return title || desc || author;
             }];
             
-            if (_searchOperation.isCancelled)
+            if (!op || op.isCancelled)
                 return;
             
             asyncMain(^{
@@ -90,6 +91,8 @@
             });
             
         }];
+        
+        _searchOperation = op;
     }
     
     return _searchOperation;
