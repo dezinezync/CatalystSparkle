@@ -13,6 +13,7 @@
 
 @interface TweetPara : Paragraph {
     NSParagraphStyle *_paragraphStyle;
+    UIFont *_bodyFont;
 }
 
 - (NSParagraphStyle * _Nonnull)paragraphStyle;

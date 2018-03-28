@@ -18,6 +18,35 @@
 
 @implementation TweetPara
 
+- (UIFont *)bodyFont
+{
+    if (!_bodyFont) {
+        if (!NSThread.isMainThread) {
+            __block UIFont *retval = nil;
+            weakify(self);
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                strongify(self);
+                retval = [self bodyFont];
+            });
+            
+            _bodyFont = retval;
+            
+            return _bodyFont;
+        }
+        
+        __block UIFont * bodyFont = [UIFont systemFontOfSize:16.f];
+        __block UIFont * baseFont;
+        
+        baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+        
+        bodyFont = nil;
+        
+        _bodyFont = baseFont;
+    }
+    
+    return _bodyFont;
+}
+
 - (NSParagraphStyle *)paragraphStyle {
     
     if (!_paragraphStyle) {
@@ -65,6 +94,8 @@
         self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         self.collectionView.delegate = self;
         self.collectionView.dataSource = self;
+        
+        self.avatar.image = nil;
     }
     
     return self;
@@ -81,7 +112,15 @@
     
     self.usernameLabel.text = formattedString(@"@%@", [content.attributes valueForKey:@"username"]);
     
-    [self.avatar il_setImageWithURL:[content.attributes valueForKey:@"avatar"]];
+    weakify(self);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        strongify(self);
+        [self.avatar il_setImageWithURL:formattedURL(@"%@", [content.attributes valueForKey:@"avatar"]) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+            
+        } error:^(NSError * _Nonnull error) {
+            
+        }];
+    });
     
     self.timeLabel.text = [[(NSString *)[content.attributes valueForKey:@"created"] dateFromTimestamp] timeAgoSinceNow];
     
@@ -155,11 +194,16 @@
     
     Content *image = [self.content.images objectAtIndex:indexPath.item];
     
-    [cell.imageView il_setImageWithURL:image.url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-        
-    } error:^(NSError * _Nonnull error) {
-        
-    }];
+    weakify(cell);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        strongify(cell);
+        [cell.imageView il_setImageWithURL:formattedURL(@"%@", image.url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+            
+        } error:^(NSError * _Nonnull error) {
+            
+        }];
+    });
     
     return cell;
     
