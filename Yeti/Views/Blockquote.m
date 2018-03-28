@@ -7,6 +7,7 @@
 //
 
 #import "Blockquote.h"
+#import "LayoutConstants.h"
 
 @implementation BlockPara
 
@@ -21,13 +22,16 @@
 
 - (UIColor *)textColor
 {
-    return [[UIColor blackColor] colorWithAlphaComponent:0.54f];
+    return [[UIColor blackColor] colorWithAlphaComponent:0.75f];
 }
 
 - (NSParagraphStyle *)paragraphStyle {
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [Paragraph paragraphStyle].mutableCopy;
         style.lineBreakMode = NSLineBreakByWordWrapping;
+        style.headIndent = LayoutPadding;
+        style.firstLineHeadIndent = LayoutPadding;
+        style.tailIndent = -LayoutPadding;
         
         _paragraphStyle = style;
     }
@@ -57,14 +61,14 @@
         
         [self addSubview:textview];
         
-        [textview.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:24.f].active = YES;
+        [textview.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:LayoutPadding*2].active = YES;
         [textview.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
-        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:0.f].active = YES;
-        [self.bottomAnchor constraintEqualToAnchor:textview.bottomAnchor constant:-40.f].active = YES;
+        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:LayoutPadding].active = YES;
+        [self.bottomAnchor constraintEqualToAnchor:textview.bottomAnchor constant:0.f].active = YES;
         
         _textView = textview;
         
-        UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(8.f, 0.f, 17.f, 12.61f)];
+        UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(-4.f, 4.f, 17.f, 12.61f)];
         decorator.image = [UIImage imageNamed:@"quote-decorator"];
         decorator.autoresizingMask = UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
         decorator.opaque = YES;
@@ -98,18 +102,19 @@
 
 - (void)updateFrame
 {
-    CGSize size = self.textView.contentSize;
-    CGRect frame = CGRectMake(42.f, 0, size.width, size.height);
+    CGSize size = self.intrinsicContentSize;
+    CGRect frame = CGRectMake(42.f, 0, size.width, size.height - 12.f);
     
     self.textView.frame = frame;
 }
 
 - (CGSize)intrinsicContentSize
 {
-    CGSize size = [self.textView intrinsicContentSize];
+    CGSize size = [self.textView sizeThatFits:CGSizeMake(self.bounds.size.width - 24.f, CGFLOAT_MAX)];
     // add image height and padding
-    size.width = MIN(self.bounds.size.width, size.width + 25.f);
-    size.height -= 24.f;
+//    size.width = MIN(self.bounds.size.width, size.width + 25.f);
+    size.width += 24.f;
+    size.height += 12.f;
     return size;
 }
 

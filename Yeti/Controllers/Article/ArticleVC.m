@@ -323,7 +323,7 @@ static CGFloat const padding = 6.f;
 - (void)addTitle {
     
     NSString *subline = formattedString(@"%@ • %@", self.item.author?:@"unknown", [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
-    NSString *formatted = formattedString(@"%@\n\n%@\n", self.item.articleTitle, subline);
+    NSString *formatted = formattedString(@"%@\n%@\n", self.item.articleTitle, subline);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
     para.lineHeightMultiple = 1.125f;
