@@ -169,10 +169,11 @@
     _sinceDate = sinceDate;
     
     if (_sinceDate) {
+        NSString *path;
 #ifdef DEBUG
-        NSString *path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
-#elif
-        NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
+        path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
+#else
+        path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
 #endif
         NSNumber *timestamp = @([_sinceDate timeIntervalSince1970]);
         
@@ -192,7 +193,7 @@
     if (!_sinceDate) {
 #ifdef DEBUG
         NSString *path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
-#elif
+#else
         NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
 #endif
         if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
