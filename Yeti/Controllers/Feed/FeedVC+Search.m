@@ -46,7 +46,8 @@
         strongify(self);
         
         NSOperation *op = [self searchOperationForText:text searchController:searchController data:data];
-        [op start];
+        if (op)
+            [op start];
         
     });
 }

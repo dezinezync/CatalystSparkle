@@ -817,6 +817,8 @@ static CGFloat const padding = 6.f;
     Tweet *tweet = [[Tweet alloc] initWithNib];
     tweet.frame = frame;
     
+    tweet.textview.delegate = self;
+    
     [tweet configureContent:content];
     
     _last = tweet;

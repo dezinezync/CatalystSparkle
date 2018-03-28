@@ -24,4 +24,6 @@
 
 - (void)configureContent:(Content * _Nonnull)content;
 
+@property (weak, nonatomic) IBOutlet TweetPara *textview;
+
 @end

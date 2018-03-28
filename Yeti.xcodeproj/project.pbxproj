@@ -26,7 +26,6 @@
 		F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F035A21A20617EC3005A88EE /* MainInterface.storyboard */; };
 		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F035A2252061812F005A88EE /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
-		F035A22620618149005A88EE /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3271FBAC10600912CCF /* DZNetworking.framework */; };
 		F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
 		F035A2282061815B005A88EE /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F035A229206181C8005A88EE /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3471FBAD4B200912CCF /* Enclosure.m */; };
@@ -51,7 +50,6 @@
 		F070C32B1FBAC10600912CCF /* OMGHTTPURLRQ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */; };
 		F070C32C1FBAC10600912CCF /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3251FBAC10600912CCF /* YapDatabase.framework */; };
 		F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3261FBAC10600912CCF /* DZAppdelegate.framework */; };
-		F070C32E1FBAC10600912CCF /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3271FBAC10600912CCF /* DZNetworking.framework */; };
 		F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
 		F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3331FBAC37600912CCF /* FeedsVC.m */; };
 		F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
@@ -96,6 +94,9 @@
 		F0BCE1F9205A733500DD27D8 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
 		F0BCE1FA205A733500DD27D8 /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0BCE1FB205A733500DD27D8 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
+		F0C34EF4206BB0070065BCE1 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EF5206BB0070065BCE1 /* DZNetworking.framework */; };
+		F0C34EF7206BB00A0065BCE1 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EF6206BB00A0065BCE1 /* DZNetworking.framework */; };
+		F0C34EF8206BB00A0065BCE1 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EF6206BB00A0065BCE1 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
 		F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
@@ -165,6 +166,17 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F0C34EF9206BB00A0065BCE1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F0C34EF8206BB00A0065BCE1 /* DZNetworking.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -232,7 +244,6 @@
 		F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Carthage/Build/iOS/OMGHTTPURLRQ.framework; sourceTree = SOURCE_ROOT; };
 		F070C3251FBAC10600912CCF /* YapDatabase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YapDatabase.framework; path = Carthage/Build/iOS/YapDatabase.framework; sourceTree = SOURCE_ROOT; };
 		F070C3261FBAC10600912CCF /* DZAppdelegate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZAppdelegate.framework; path = Carthage/Build/iOS/DZAppdelegate.framework; sourceTree = SOURCE_ROOT; };
-		F070C3271FBAC10600912CCF /* DZNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZNetworking.framework; path = Carthage/Build/iOS/DZNetworking.framework; sourceTree = SOURCE_ROOT; };
 		F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
 		F070C3321FBAC37600912CCF /* FeedsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsVC.h; sourceTree = "<group>"; };
 		F070C3331FBAC37600912CCF /* FeedsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsVC.m; sourceTree = "<group>"; };
@@ -291,6 +302,8 @@
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
+		F0C34EF5206BB0070065BCE1 /* DZNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DZNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0C34EF6206BB00A0065BCE1 /* DZNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DZNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedVC.h; sourceTree = "<group>"; };
 		F0C7E3D020627809001E4BE4 /* NewFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedVC.m; sourceTree = "<group>"; };
 		F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFeedVC.xib; sourceTree = "<group>"; };
@@ -358,7 +371,6 @@
 			files = (
 				F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */,
 				F035A2282061815B005A88EE /* DZKit.framework in Frameworks */,
-				F035A22620618149005A88EE /* DZNetworking.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,8 +378,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0C34EF7206BB00A0065BCE1 /* DZNetworking.framework in Frameworks */,
+				F0C34EF4206BB0070065BCE1 /* DZNetworking.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
-				F070C32E1FBAC10600912CCF /* DZNetworking.framework in Frameworks */,
 				F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */,
 				F070C32C1FBAC10600912CCF /* YapDatabase.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
@@ -469,6 +482,7 @@
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
+				F0C34EF6206BB00A0065BCE1 /* DZNetworking.framework */,
 				F070C2DB1FBABC3500912CCF /* Yeti */,
 				F070C2F41FBABC3600912CCF /* YetiTests */,
 				F070C2FF1FBABC3600912CCF /* YetiUITests */,
@@ -652,7 +666,6 @@
 				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
 				F070C3261FBAC10600912CCF /* DZAppdelegate.framework */,
 				F070C3221FBAC10600912CCF /* DZKit.framework */,
-				F070C3271FBAC10600912CCF /* DZNetworking.framework */,
 				F070C3231FBAC10600912CCF /* JLRoutes.framework */,
 				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
 				F070C3251FBAC10600912CCF /* YapDatabase.framework */,
@@ -727,6 +740,7 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0C34EF5206BB0070065BCE1 /* DZNetworking.framework */,
 				F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */,
 			);
 			name = Frameworks;
@@ -804,6 +818,7 @@
 				F070C2D71FBABC3500912CCF /* Resources */,
 				F070C31D1FBAC00000912CCF /* Carthage */,
 				F035A22420617EC3005A88EE /* Embed App Extensions */,
+				F0C34EF9206BB00A0065BCE1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -72,7 +72,6 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *collectionViewHeight;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *collectionPadding;
 
-@property (weak, nonatomic) IBOutlet Paragraph *textview;
 @property (weak, nonatomic) IBOutlet UIImageView *avatar;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
@@ -115,11 +114,10 @@
     weakify(self);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         strongify(self);
-        [self.avatar il_setImageWithURL:formattedURL(@"%@", [content.attributes valueForKey:@"avatar"]) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-            
-        } error:^(NSError * _Nonnull error) {
-            
-        }];
+        
+        NSString *avatarURI = [content.attributes valueForKey:@"avatar"];
+        
+        [self.avatar il_setImageWithURL:formattedURL(@"%@", avatarURI)];
     });
     
     self.timeLabel.text = [[(NSString *)[content.attributes valueForKey:@"created"] dateFromTimestamp] timeAgoSinceNow];
@@ -131,31 +129,47 @@
     }
     else {
         
-        if (content.images.count > 2) {
-            // double height
-            self.collectionViewHeight.constant = 128.f * 2;
-        }
-        
-        if (content.images.count >= 2) {
-            self.layout.itemSize = CGSizeMake((self.bounds.size.width - (LayoutPadding * 2))/2.f, 128.f);
-        }
-        
-        if (content.images.count == 1) {
-            self.layout.itemSize = CGSizeMake(self.bounds.size.width - (LayoutPadding * 2), 128.f);
-        }
-        else if (fmod(content.images.count, 2.f) == 0) {
-            // even numbers
-        }
-        else {
-            // odd numbers
-        }
-        
-        [self.collectionView reloadData];
+        [self setupCollectionView];
         
     }
 }
 
+- (void)setupCollectionView {
+    
+    if (!self.content)
+        return;
+    
+    if (self.content.images.count > 2) {
+        // double height
+        self.collectionViewHeight.constant = 128.f * 2;
+    }
+    
+    if (self.content.images.count >= 2) {
+        self.layout.itemSize = CGSizeMake((self.bounds.size.width - 16.f)/2.f, 128.f);
+    }
+    
+    if (self.content.images.count == 1) {
+        self.layout.itemSize = CGSizeMake(self.bounds.size.width - 16.f, 128.f);
+    }
+    else if (fmod(self.content.images.count, 2.f) == 0) {
+        // even numbers
+    }
+    else {
+        // odd numbers
+    }
+    
+    [self.collectionView reloadData];
+    
+}
+
 #pragma mark - Overrides
+
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    
+    [self setupCollectionView];
+}
 
 - (CGSize)intrinsicContentSize
 {
@@ -198,11 +212,7 @@
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         strongify(cell);
-        [cell.imageView il_setImageWithURL:formattedURL(@"%@", image.url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-            
-        } error:^(NSError * _Nonnull error) {
-            
-        }];
+        [cell.imageView il_setImageWithURL:formattedURL(@"%@", image.url)];
     });
     
     return cell;
