@@ -9,6 +9,7 @@
 #import "AppDelegate+Routing.h"
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
+#import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
 
@@ -73,6 +74,22 @@
         }
         
         return YES;
+    }];
+    
+    [JLRoutes addRoute:@"/twitter/:type/:identifer" handler:^BOOL(NSDictionary *parameters) {
+       
+        NSString *type = [parameters valueForKey:@"type"];
+        NSString *identifer = [parameters valueForKey:@"identifer"];
+        
+        if ([type isEqualToString:@"user"] || [type isEqualToString:@"user_mention"]) {
+            [self twitterOpenUser:identifer];
+        }
+        else if ([type isEqualToString:@"status"]) {
+            [self twitterOpenStatus:identifer];
+        }
+        
+        return YES;
+        
     }];
 }
 
@@ -151,6 +168,41 @@
     
     return YES;
     
+}
+
+- (void)twitterOpenUser:(NSString *)username {
+    
+    NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
+    NSURL *URL;
+    
+    if ([twitterScheme isEqualToString:@"tweetbot"]) {
+         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
+    }
+    else if ([twitterScheme isEqualToString:@"twitter"]) {
+         URL = formattedURL(@"%@://user?screen_name=%@", twitterScheme, username);
+    }
+    else if ([twitterScheme isEqualToString:@"twitterrific"]) {
+         URL = formattedURL(@"%@://current/profile?screen_name=%@", twitterScheme, username);
+    }
+    
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+}
+
+- (void)twitterOpenStatus:(NSString *)status {
+    NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
+    NSURL *URL;
+    
+    if ([twitterScheme isEqualToString:@"tweetbot"]) {
+        URL = formattedURL(@"%@://dummyname/status/%@", twitterScheme, status);
+    }
+    else if ([twitterScheme isEqualToString:@"twitter"]) {
+        URL = formattedURL(@"%@://status?id=%@", twitterScheme, status);
+    }
+    else if ([twitterScheme isEqualToString:@"twitterrific"]) {
+        URL = formattedURL(@"%@://current/tweet?id=%@", twitterScheme, status);
+    }
+    
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
 }
 
 @end

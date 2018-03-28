@@ -35,11 +35,11 @@
     [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
-        
+#ifndef DEBUG
         @synchronized(self) {
             self.sinceDate = NSDate.date;
         }
-        
+#endif
         asyncMain(^{
             
             [self setupData:MyFeedsManager.feeds];

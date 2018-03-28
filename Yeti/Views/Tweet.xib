@@ -53,17 +53,25 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                         </imageView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@dezinezync" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ArM-S0-NOW">
+                        <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@dezinezync" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ArM-S0-NOW">
                             <rect key="frame" x="38" y="7.5" width="89.5" height="17"/>
+                            <gestureRecognizers/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                             <color key="textColor" red="0.30196078431372547" green="0.40784313725490196" blue="0.50196078431372548" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
+                            <connections>
+                                <outletCollection property="gestureRecognizers" destination="bbE-oj-ldn" appends="YES" id="GaH-oR-DBd"/>
+                            </connections>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="6 Hours ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSC-CW-RNp">
+                        <label opaque="NO" contentMode="left" verticalHuggingPriority="251" text="6 Hours ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSC-CW-RNp">
                             <rect key="frame" x="133.5" y="7.5" width="217.5" height="17"/>
+                            <gestureRecognizers/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                             <color key="textColor" red="0.45098039215686275" green="0.47843137254901957" blue="0.50196078431372548" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
+                            <connections>
+                                <outletCollection property="gestureRecognizers" destination="2xB-gz-kvV" appends="YES" id="HhH-2f-vo8"/>
+                            </connections>
                         </label>
                     </subviews>
                 </stackView>
@@ -100,6 +108,16 @@
             </connections>
             <point key="canvasLocation" x="57.5" y="-161.5"/>
         </view>
+        <tapGestureRecognizer id="bbE-oj-ldn">
+            <connections>
+                <action selector="didTapUsername:" destination="iN0-l3-epB" id="Xm9-Jw-qLN"/>
+            </connections>
+        </tapGestureRecognizer>
+        <tapGestureRecognizer id="2xB-gz-kvV">
+            <connections>
+                <action selector="didTapTimestamp:" destination="iN0-l3-epB" id="zyz-FY-C4L"/>
+            </connections>
+        </tapGestureRecognizer>
     </objects>
     <resources>
         <image name="apollo" width="29" height="29"/>

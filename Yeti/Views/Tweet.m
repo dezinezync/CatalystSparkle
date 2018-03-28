@@ -139,6 +139,8 @@
     if (!self.content)
         return;
     
+    self.content.images = [self.content.images arrayByAddingObject:self.content.images.firstObject];
+    
     if (self.content.images.count > 2) {
         // double height
         self.collectionViewHeight.constant = 128.f * 2;
@@ -150,12 +152,6 @@
     
     if (self.content.images.count == 1) {
         self.layout.itemSize = CGSizeMake(self.bounds.size.width - 16.f, 128.f);
-    }
-    else if (fmod(self.content.images.count, 2.f) == 0) {
-        // even numbers
-    }
-    else {
-        // odd numbers
     }
     
     [self.collectionView reloadData];
@@ -216,6 +212,28 @@
     });
     
     return cell;
+    
+}
+
+#pragma mark - Interactions
+
+- (IBAction)didTapUsername:(UITapGestureRecognizer *)sender {
+
+    NSString *username = [self.content.attributes valueForKey:@"username"];
+    
+    NSURL *URL = formattedURL(@"yeti://twitter/user/%@", username);
+    
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+    
+}
+
+- (IBAction)didTapTimestamp:(UITapGestureRecognizer *)sender {
+    
+    NSString *identifer = [self.content.attributes valueForKey:@"id"];
+    
+    NSURL *URL = formattedURL(@"yeti://twitter/status/%@", identifer);
+    
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
     
 }
 
