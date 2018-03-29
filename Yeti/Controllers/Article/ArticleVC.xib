@@ -6,6 +6,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -32,8 +33,8 @@
                                 <constraint firstAttribute="width" constant="20" id="wI8-fQ-438"/>
                             </constraints>
                         </activityIndicatorView>
-                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" ambiguous="YES" layoutMarginsFollowReadableWidth="YES" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="OdL-VG-OX1">
-                            <rect key="frame" x="0.0" y="0.0" width="359.5" height="41"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" ambiguous="YES" layoutMarginsFollowReadableWidth="YES" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="OdL-VG-OX1">
+                            <rect key="frame" x="0.0" y="0.0" width="359.5" height="49"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="This is some long text so the content overflows" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kCS-x2-IxB">
                                     <rect key="frame" x="0.0" y="0.0" width="359.5" height="20.5"/>
@@ -42,7 +43,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="This is some long text so the content overflows" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4VY-8h-9Px">
-                                    <rect key="frame" x="0.0" y="20.5" width="359.5" height="20.5"/>
+                                    <rect key="frame" x="0.0" y="28.5" width="359.5" height="20.5"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>

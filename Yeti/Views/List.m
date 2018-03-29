@@ -10,6 +10,8 @@
 #import "Blockquote.h"
 #import "NSAttributedString+Trimming.h"
 
+#import <DZKit/NSString+Extras.h>
+
 @interface List ()
 
 @property (nonatomic, weak) UIStackView *stackView;
@@ -39,8 +41,10 @@
         strongify(self);
         
         for (Content *item in content.items) { @autoreleasepool {
-            index++;
-            [self append:item index:index attributedString:attrs indent:0];
+            if (item.content && ![item.content isBlank]) {
+                index++;
+                [self append:item index:index attributedString:attrs indent:0];
+            }
         }}
         
     });

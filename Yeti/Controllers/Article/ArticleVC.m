@@ -80,12 +80,10 @@ static CGFloat const padding = 6.f;
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
-    CGFloat multiplier = 1.f;
-        
-    [self setupHelperView];
+   [self setupHelperView];
     
-    [self.stackView.leadingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.leadingAnchor multiplier:multiplier].active = YES;
-    [self.stackView.trailingAnchor constraintEqualToSystemSpacingAfterAnchor:readable.trailingAnchor multiplier:multiplier].active = YES;
+    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding].active = YES;
+    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:-LayoutPadding].active = YES;
     
     self.scrollView.delegate = self;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -364,19 +362,19 @@ static CGFloat const padding = 6.f;
     
     [self.stackView addArrangedSubview:label];
     
-    NSLayoutConstraint *leading = [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-(LayoutPadding/3.f)];
-    leading.priority = UILayoutPriorityRequired;
-    leading.active = YES;
+//    NSLayoutConstraint *leading = [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-(LayoutPadding/3.f)];
+//    leading.priority = UILayoutPriorityRequired;
+//    leading.active = YES;
+//
+//    NSLayoutConstraint *trailing = [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-LayoutPadding];
+//    trailing.priority = UILayoutPriorityRequired;
+//    trailing.active = YES;
     
-    NSLayoutConstraint *trailing = [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-LayoutPadding];
-    trailing.priority = UILayoutPriorityRequired;
-    trailing.active = YES;
-    
-    NSInteger feedID = self.item.feedID.integerValue;
-    if (feedID == 9
-        || feedID == 18) {
-        [self addLinebreak];
-    }
+//    NSInteger feedID = self.item.feedID.integerValue;
+//    if (feedID == 9
+//        || feedID == 18) {
+//        [self addLinebreak];
+//    }
     
 }
 
@@ -490,7 +488,7 @@ static CGFloat const padding = 6.f;
 
 - (void)addParagraph:(Content *)content caption:(BOOL)caption {
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, LayoutPadding * 2);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
     
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
 #ifdef DEBUG_LAYOUT
@@ -574,7 +572,7 @@ static CGFloat const padding = 6.f;
         [self addLinebreak];
     }
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
     Heading *heading = [[Heading alloc] initWithFrame:frame];
     heading.delegate = self;
@@ -615,7 +613,7 @@ static CGFloat const padding = 6.f;
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone)
         height = 12.f;
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, height);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
     
     Linebreak *linebreak = [[Linebreak alloc] initWithFrame:frame];
 #ifdef DEBUG_LAYOUT
@@ -634,7 +632,7 @@ static CGFloat const padding = 6.f;
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     CGFloat scale = content.size.height / content.size.width;
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
@@ -687,7 +685,7 @@ static CGFloat const padding = 6.f;
     }
     
     Gallery *gallery = [[Gallery alloc] initWithNib];
-    gallery.frame = CGRectMake(0, 0, self.scrollView.bounds.size.width, 200.f);
+    gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
     
     [self.stackView addArrangedSubview:gallery];
     // set images after adding it to the superview since -[Gallery setImages:] triggers layout.
@@ -699,7 +697,7 @@ static CGFloat const padding = 6.f;
 }
 
 - (void)addQuote:(Content *)content {
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     
     Blockquote *para = [[Blockquote alloc] initWithFrame:frame];
     
@@ -734,11 +732,11 @@ static CGFloat const padding = 6.f;
     
     para.textView.delegate = self;
     
-    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+//    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
 }
 
 - (void)addList:(Content *)content {
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 32.f);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     
     List *list = [[List alloc] initWithFrame:frame];
     [list setContent:content];
@@ -751,7 +749,9 @@ static CGFloat const padding = 6.f;
     list.delegate = self;
     
     [self.stackView addArrangedSubview:list];
-    [list.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;}
+//    [list.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:padding].active = YES;
+    
+}
 
 - (void)addAside:(Content *)content
 {
@@ -760,7 +760,7 @@ static CGFloat const padding = 6.f;
         return;
     }
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
     Aside *para = [[Aside alloc] initWithFrame:frame];
     
@@ -778,12 +778,12 @@ static CGFloat const padding = 6.f;
     
     para.delegate = self;
     
-    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
+//    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
 }
 
 - (void)addYoutube:(Content *)content {
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
     youtube.URL = [NSURL URLWithString:content.url];
     
@@ -791,14 +791,14 @@ static CGFloat const padding = 6.f;
     
     [self.stackView addArrangedSubview:youtube];
     
-    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
+//    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
     
     [self addLinebreak];
 }
 
 - (void)addPre:(Content *)content {
     
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Code *code = [[Code alloc] initWithFrame:frame];
     
     if (content.content) {
@@ -813,7 +813,7 @@ static CGFloat const padding = 6.f;
 }
 
 - (void)addTweet:(Content *)content {
-    CGRect frame = CGRectMake(0, 0, self.stackView.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, MAX(self.view.bounds.size.width, 480.f), 0);
     Tweet *tweet = [[Tweet alloc] initWithNib];
     tweet.frame = frame;
     

@@ -102,19 +102,26 @@
 
 - (void)updateFrame
 {
-    CGSize size = self.intrinsicContentSize;
-    CGRect frame = CGRectMake(42.f, 0, size.width, size.height - 12.f);
-    
-    self.textView.frame = frame;
+//    CGSize size = self.intrinsicContentSize;
+//    CGRect frame = CGRectMake(24.f, 0, size.width, size.height - 12.f);
+//
+//    self.textView.frame = frame;
 }
 
 - (CGSize)intrinsicContentSize
 {
-    CGSize size = [self.textView sizeThatFits:CGSizeMake(self.bounds.size.width - 24.f, CGFLOAT_MAX)];
+    CGFloat width = self.bounds.size.width;
+    if (self.superview) {
+        width = self.superview.bounds.size.width - (LayoutPadding * 2);
+    }
+    
+    width -= 24.f;
+    
+    CGSize size = [self.textView sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)];
     // add image height and padding
 //    size.width = MIN(self.bounds.size.width, size.width + 25.f);
-    size.width += 24.f;
-    size.height += 12.f;
+//    size.width += 24.f;
+//    size.height += 12.f;
     return size;
 }
 

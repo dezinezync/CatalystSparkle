@@ -67,15 +67,15 @@
     return self;
 }
 
-- (void)didMoveToSuperview
-{
-    [super didMoveToSuperview];
-    
-    if (self.superview) {
-        [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin].active = YES;
-        [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor].active = YES;
-    }
-}
+//- (void)didMoveToSuperview
+//{
+//    [super didMoveToSuperview];
+//
+//    if (self.superview) {
+//        [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin].active = YES;
+//        [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor].active = YES;
+//    }
+//}
 
 - (void)updateConstraints
 {

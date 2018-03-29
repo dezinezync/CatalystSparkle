@@ -27,22 +27,22 @@
     return self;
 }
 
-- (void)didMoveToSuperview
-{
-    [super didMoveToSuperview];
-    
-    if (self.superview && ![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
-        
-        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
-        self.leading.priority = UILayoutPriorityRequired;
-        self.leading.active = YES;
-        
-        self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:0.f];
-        self.trailing.priority = UILayoutPriorityRequired;
-        self.trailing.active = YES;
-
-    }
-}
+//- (void)didMoveToSuperview
+//{
+//    [super didMoveToSuperview];
+//
+//    if (self.superview && ![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
+//
+//        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
+//        self.leading.priority = UILayoutPriorityRequired;
+//        self.leading.active = YES;
+//
+//        self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:0.f];
+//        self.trailing.priority = UILayoutPriorityRequired;
+//        self.trailing.active = YES;
+//
+//    }
+//}
 
 - (void)setImage:(UIImage *)image
 {
@@ -61,15 +61,15 @@
     weakify(self);
     
     // this no longer applies and we need to contraint the imageview to the maximum width of the image.
-    if (image.size.width < self.bounds.size.width) {
-        self.leading.active = NO;
-        self.trailing.active = NO;
-        
-        self.leading = nil;
-        self.trailing = nil;
-        
-        [self.widthAnchor constraintEqualToConstant:image.size.width];
-    }
+//    if (image.size.width < self.bounds.size.width) {
+//        self.leading.active = NO;
+//        self.trailing.active = NO;
+//
+//        self.leading = nil;
+//        self.trailing = nil;
+//
+//        [self.widthAnchor constraintEqualToConstant:image.size.width];
+//    }
     
     asyncMain(^{
         strongify(self);

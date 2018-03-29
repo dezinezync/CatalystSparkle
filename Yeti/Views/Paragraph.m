@@ -77,7 +77,18 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!text || [text isBlank])
         return [NSAttributedString new];
     
-    NSMutableParagraphStyle *para = [self respondsToSelector:@selector(paragraphStyle)] ? [self performSelector:@selector(paragraphStyle)] : Paragraph.paragraphStyle.mutableCopy;
+    __block NSMutableParagraphStyle *para;
+    
+    if (NSThread.isMainThread) {
+        para = [self respondsToSelector:@selector(paragraphStyle)] ? [self performSelector:@selector(paragraphStyle)] : Paragraph.paragraphStyle.mutableCopy;
+    }
+    else {
+        weakify(self);
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            strongify(self);
+            para = [self respondsToSelector:@selector(paragraphStyle)] ? [self performSelector:@selector(paragraphStyle)] : Paragraph.paragraphStyle.mutableCopy;
+        });
+    }
     
     if (self.isCaption) {
         para.alignment = NSTextAlignmentCenter;
@@ -214,27 +225,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
-- (void)didMoveToSuperview
-{
-    [super didMoveToSuperview];
-    
-    if (self.superview) {
-        if (!self.leading) {
-            self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:-(LayoutPadding/3.f)];
-            self.leading.identifier = @"|-Para";
-            self.leading.priority = 1000;
-            self.leading.active = YES;
-        }
-        
-        if (!self.trailing) {
-            self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:-LayoutPadding];
-            self.trailing.identifier = @"Para-|";
-            self.trailing.priority = 1000;
-            self.trailing.active = YES;
-        }
-    }
-}
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -246,6 +236,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (CGSize)contentSize
 {
+    [self setNeedsUpdateConstraints];
+    [self layoutIfNeeded];
+    
     CGSize size = [super contentSize];
     size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 24.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
     
