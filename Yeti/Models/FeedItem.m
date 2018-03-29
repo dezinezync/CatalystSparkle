@@ -152,6 +152,9 @@ static NSDateFormatter *_formatter = nil;
             self.summary = [value htmlToPlainText];
         }
     }
+    else if ([key isEqualToString:@"bookmarked"]) {
+        [super setValue:value forKey:key];
+    }
     else {
        [super setValue:value forKey:key];
     }

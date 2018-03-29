@@ -25,9 +25,12 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     
-    if (item.isRead)
-        self.titleLabel.textColor = [UIColor colorWithWhite:0.38f alpha:1.f];
-    
+    if (!item.isRead)
+        self.markerView.image = [UIImage imageNamed:@"munread"];
+    else if (item.isBookmarked)
+        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+    else
+        self.markerView.image = nil;
 }
 
 
@@ -39,6 +42,8 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     self.summaryLabel.text = nil;
     self.authorLabel.text = nil;
     self.timeLabel.text = nil;
+    
+    self.markerView.image = nil;
     
     self.titleLabel.textColor = UIColor.blackColor;
 }

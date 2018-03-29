@@ -13,6 +13,8 @@ extern NSString *const _Nonnull kArticleCell;
 
 @interface ArticleCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UIImageView *markerView;
+
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable summaryLabel;
 

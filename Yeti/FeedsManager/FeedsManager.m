@@ -531,10 +531,10 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
         [session setValue:sessionSession forKeyPath:@"session"];
         
-        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-#ifndef DEBUG
+//        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
+//#ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
-#endif
+//#endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
