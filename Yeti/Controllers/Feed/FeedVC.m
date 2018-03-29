@@ -390,4 +390,33 @@
     });
 }
 
+- (void)didChangeToArticle:(FeedItem *)item
+{
+    NSUInteger index = [self.feed.articles indexOfObject:item];
+    
+    if (index == NSNotFound)
+        return;
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    
+    if (!item.isRead) {
+        weakify(self);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            item.read = YES;
+            [MyFeedsManager article:item markAsRead:YES];
+            
+            asyncMain(^{
+                strongify(self);
+                
+                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+            });
+        });
+    }
+    else {
+        [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+    }
+}
+
 @end

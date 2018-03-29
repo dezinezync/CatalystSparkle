@@ -254,6 +254,8 @@ static CGFloat const padding = 6.f;
     if (!article)
         return;
     
+    BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
+    
     if (self.stackView.arrangedSubviews.count > 0) {
         weakify(self);
         
@@ -315,6 +317,10 @@ static CGFloat const padding = 6.f;
         contentSize.width = self.view.bounds.size.width;
         self.scrollView.contentSize = contentSize;
     });
+    
+    if (isChangingArticle && self.providerDelegate) {
+        [(NSObject *)(self.providerDelegate) performSelectorOnMainThread:@selector(didChangeToArticle:) withObject:article waitUntilDone:NO];
+    }
 }
 
 #pragma mark - Drawing
