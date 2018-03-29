@@ -18,8 +18,28 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.contentMode = UIViewContentModeScaleAspectFit;
         self.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.f];
+        
+        SizedImage *imageView = [[SizedImage alloc] initWithFrame:self.bounds];
+        imageView.contentMode = UIViewContentModeScaleAspectFit;
+        imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self addSubview:imageView];
+        
+        [imageView.topAnchor constraintEqualToAnchor:self.topAnchor constant:0].active = YES;
+        [imageView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:0].active = YES;
+        [imageView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+        
+        if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
+            [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:16.f].active = YES;
+            [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:LayoutImageMargin].active = YES;
+        }
+        else {
+            [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
+        }
+        
+        _imageView = imageView;
+        
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.layoutMargins = UIEdgeInsetsZero;
     }
@@ -33,27 +53,42 @@
 //
 //    if (self.superview && ![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
 //
-//        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
-//        self.leading.priority = UILayoutPriorityRequired;
+//        self.leading = [self.imageView.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
+//        self.leading.priority = 1000;
 //        self.leading.active = YES;
 //
-//        self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:0.f];
-//        self.trailing.priority = UILayoutPriorityRequired;
+//        self.trailing = [self.imageView.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:0.f];//-(LayoutImageMargin * 2)];
+//        self.trailing.priority = 1000;
 //        self.trailing.active = YES;
 //
 //    }
 //}
 
+#pragma mark -
+
+- (void)il_setImageWithURL:(id)url
+{
+    [self.imageView performSelector:@selector(il_setImageWithURL:) withObject:url];
+}
+
+- (CGSize)intrinsicContentSize
+{
+    return self.imageView.intrinsicContentSize;
+}
+
+@end
+
+@implementation SizedImage
+
 - (void)setImage:(UIImage *)image
 {
+    
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:NO];
         return;
     }
     
     [super setImage:image];
-    
-    self.backgroundColor = UIColor.whiteColor;
     
     if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])
         return;
@@ -62,13 +97,7 @@
     
     // this no longer applies and we need to contraint the imageview to the maximum width of the image.
 //    if (image.size.width < self.bounds.size.width) {
-//        self.leading.active = NO;
-//        self.trailing.active = NO;
-//
-//        self.leading = nil;
-//        self.trailing = nil;
-//
-//        [self.widthAnchor constraintEqualToConstant:image.size.width];
+////        self.contentMode = UIViewContentModeCenter;
 //    }
     
     asyncMain(^{
@@ -79,33 +108,38 @@
             [self updateAspectRatioWithImage:self.image];
         }
     });
-
+    
 }
 
 - (void)updateAspectRatioWithImage:(UIImage *)image
 {
-    if (self.aspectRatio) {
-        [self removeConstraint:self.aspectRatio];
+    NSLayoutConstraint *aspectRatio = [(Image *)[self superview] aspectRatio];
+    
+    if (aspectRatio) {
+        [self removeConstraint:aspectRatio];
     }
     
     CGFloat aspectRatioValue = image.size.height / image.size.width;
-    self.aspectRatio = [self.heightAnchor constraintEqualToConstant:aspectRatioValue * self.bounds.size.width];
-    self.aspectRatio.priority = 999;
+    aspectRatio = [self.heightAnchor constraintEqualToConstant:aspectRatioValue * self.bounds.size.width];
+    aspectRatio.priority = 999;
     
-    [self addConstraint:self.aspectRatio];
+    [(Image *)[self superview] setAspectRatio:aspectRatio];
+    
+    [self.superview addConstraint:aspectRatio];
     
 }
 
 - (CGSize)intrinsicContentSize
 {
     CGSize size = [super intrinsicContentSize];
-
+    
     if (self.image) {
         size.width = MIN(self.bounds.size.width, self.image.size.width);
         size.height = ceilf(self.image.size.height / (self.image.size.width / size.width));
     }
-
+    
     return size;
 }
 
 @end
+

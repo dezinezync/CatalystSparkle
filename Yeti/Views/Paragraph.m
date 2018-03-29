@@ -225,6 +225,19 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
+//- (void)didMoveToSuperview
+//{
+//    [super didMoveToSuperview];
+//    
+//    if (self.superview) {
+//        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor];
+//        self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor];
+//        
+//        self.leading.active = YES;
+//        self.trailing.active = YES;
+//    }
+//}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -240,7 +253,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [self layoutIfNeeded];
     
     CGSize size = [super contentSize];
-    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width - 24.f, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
+    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
     
     return size;
 }

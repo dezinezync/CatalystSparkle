@@ -56,19 +56,21 @@
         
         self.opaque = YES;
         
+        self.layoutMargins = UIEdgeInsetsZero;
+        
         BlockPara *textview = [[BlockPara alloc] initWithFrame:self.bounds];
         textview.translatesAutoresizingMaskIntoConstraints = NO;
         
         [self addSubview:textview];
         
-        [textview.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:LayoutPadding*2].active = YES;
+        [textview.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:0].active = YES;
         [textview.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
-        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:LayoutPadding].active = YES;
+        [textview.topAnchor constraintEqualToAnchor:self.topAnchor constant:LayoutPadding/2.f].active = YES;
         [self.bottomAnchor constraintEqualToAnchor:textview.bottomAnchor constant:0.f].active = YES;
         
         _textView = textview;
         
-        UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(-4.f, 4.f, 17.f, 12.61f)];
+        UIImageView *decorator = [[UIImageView alloc] initWithFrame:CGRectMake(LayoutPadding/2.f, 0.f, 17.f, 12.61f)];
         decorator.image = [UIImage imageNamed:@"quote-decorator"];
         decorator.autoresizingMask = UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin;
         decorator.opaque = YES;

@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Image : UIImageView
+@interface SizedImage : UIImageView
+
+@end
+
+@interface Image : UIView
 
 @property (nonatomic, assign) NSInteger idx;
 @property (nonatomic, copy) NSURL *URL;
@@ -16,6 +20,10 @@
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
 @property (nonatomic, strong) NSLayoutConstraint *aspectRatio, *leading, *trailing;
 
+@property (nonatomic, weak, readonly) UIImageView *imageView;
+
 - (void)updateAspectRatioWithImage:(UIImage *)image;
+
+- (void)il_setImageWithURL:(id)url;
 
 @end

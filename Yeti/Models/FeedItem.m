@@ -298,4 +298,9 @@ static NSDateFormatter *_formatter = nil;
     return _formatter;
 }
 
++ (void)setFormatter:(NSDateFormatter *)formatter
+{
+    _formatter = formatter;
+}
+
 @end

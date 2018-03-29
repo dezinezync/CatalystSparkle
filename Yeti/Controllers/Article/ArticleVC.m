@@ -8,7 +8,6 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
-#import "NSString+Levenshtein.h"
 #import "Content.h"
 
 #import "Paragraph.h"
@@ -29,6 +28,8 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
+#import "NSString+HTML.h"
+#import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
 #import <SafariServices/SafariServices.h>
@@ -36,8 +37,6 @@
 #import "ArticleHelperView.h"
 
 static CGFloat const baseFontSize = 16.f;
-
-static CGFloat const padding = 6.f;
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
@@ -76,14 +75,16 @@ static CGFloat const padding = 6.f;
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         || self.splitViewController.view.bounds.size.height < 814.f) {
         self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
+        
+        self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
     }
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
    [self setupHelperView];
     
-    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding].active = YES;
-    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:-LayoutPadding].active = YES;
+    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:0].active = YES;
+    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:0].active = YES;
     
     self.scrollView.delegate = self;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -234,8 +235,8 @@ static CGFloat const padding = 6.f;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
 
         for (Image *imageView in self.images) { @autoreleasepool {
-            if (imageView.image) {
-                [imageView updateAspectRatioWithImage:imageView.image];
+            if (imageView.imageView.image) {
+                [imageView updateAspectRatioWithImage:imageView.imageView.image];
             }
         } }
 
@@ -327,8 +328,7 @@ static CGFloat const padding = 6.f;
 
 - (void)addTitle {
     
-    NSString *subline = formattedString(@"%@ • %@", self.item.author?:@"unknown", [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
-    NSString *formatted = formattedString(@"%@\n%@\n", self.item.articleTitle, subline);
+    NSString *subline = formattedString(@"%@ • %@", self.item.author ? [self.item.author htmlToPlainText] : @"unknown", [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
     para.lineHeightMultiple = 1.125f;
@@ -352,8 +352,7 @@ static CGFloat const padding = 6.f;
                                         NSKernAttributeName: @(-0.43f)
                                         };
     
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:baseAttributes];
-    [attrs setAttributes:subtextAttributes range:[formatted rangeOfString:subline]];
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
     label.numberOfLines = 0;
@@ -366,21 +365,25 @@ static CGFloat const padding = 6.f;
     label.opaque = YES;
     label.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [self.stackView addArrangedSubview:label];
+    UILabel *sublabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
+    sublabel.numberOfLines = 0;
+    sublabel.attributedText = [[NSAttributedString alloc] initWithString:subline attributes:subtextAttributes];
+    sublabel.preferredMaxLayoutWidth = self.view.bounds.size.width;
     
-//    NSLayoutConstraint *leading = [label.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-(LayoutPadding/3.f)];
-//    leading.priority = UILayoutPriorityRequired;
-//    leading.active = YES;
-//
-//    NSLayoutConstraint *trailing = [label.trailingAnchor constraintEqualToAnchor:self.stackView.trailingAnchor constant:-LayoutPadding];
-//    trailing.priority = UILayoutPriorityRequired;
-//    trailing.active = YES;
+    [sublabel sizeToFit];
     
-//    NSInteger feedID = self.item.feedID.integerValue;
-//    if (feedID == 9
-//        || feedID == 18) {
-//        [self addLinebreak];
-//    }
+    sublabel.backgroundColor = UIColor.whiteColor;
+    sublabel.opaque = YES;
+    sublabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    UIStackView *stackView = [[UIStackView alloc] initWithArrangedSubviews:@[label, sublabel]];
+    stackView.axis = UILayoutConstraintAxisVertical;
+    stackView.alignment = UIStackViewAlignmentLastBaseline;
+    stackView.spacing = UIStackViewSpacingUseSystem;
+    
+    [stackView sizeToFit];
+    
+    [self.stackView addArrangedSubview:stackView];
     
 }
 
@@ -497,10 +500,8 @@ static CGFloat const padding = 6.f;
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
     
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
-#ifdef DEBUG_LAYOUT
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
-#endif
 #endif
     
     if ([_last isMemberOfClass:Heading.class])
@@ -565,9 +566,25 @@ static CGFloat const padding = 6.f;
     frame.size.height = para.intrinsicContentSize.height;
     para.frame = frame;
     
-    _last = para;
-    
     [self.stackView addArrangedSubview:para];
+    
+    if (caption) {
+        
+        if ([_last isKindOfClass:Linebreak.class]) {
+            NSUInteger index = [[self.stackView arrangedSubviews] indexOfObject:_last];
+            index--;
+            
+            [self.stackView removeArrangedSubview:_last];
+            [_last removeFromSuperview];
+            
+            _last = [[self.stackView arrangedSubviews] objectAtIndex:index];
+        }
+        
+        // reduce the spacing to the previous element
+        [self.stackView setCustomSpacing:0 afterView:_last];
+    }
+    
+    _last = para;
     
     para.delegate = self;
 }
@@ -734,6 +751,10 @@ static CGFloat const padding = 6.f;
     
     _last = para;
     
+#if DEBUG_LAYOUT == 1
+    para.backgroundColor = UIColor.orangeColor;
+#endif
+    
     [self.stackView addArrangedSubview:para];
     
     para.textView.delegate = self;
@@ -876,7 +897,7 @@ static CGFloat const padding = 6.f;
         if ([imageview isMemberOfClass:Gallery.class]) {
             [(Gallery *)imageview setLoading:YES];
         }
-        else if (!imageview.image && contains && !imageview.isLoading) {
+        else if (!imageview.imageView.image && contains && !imageview.isLoading) {
             DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 imageview.loading = YES;
