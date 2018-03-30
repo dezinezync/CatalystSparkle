@@ -22,6 +22,9 @@
 #import "Code.h"
 #import "Tweet.h"
 
+#import "YetiConstants.h"
+#import "CheckWifi.h"
+
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import "NSAttributedString+Trimming.h"
 #import <DZKit/NSArray+Safe.h>
@@ -389,6 +392,17 @@ static CGFloat const baseFontSize = 16.f;
 
 #pragma mark -
 
+- (BOOL)showImage {
+    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+        return NO;
+    
+    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+        return CheckWiFi();
+    }
+    
+    return YES;
+}
+
 - (BOOL)containsOnlyImages:(Content *)content {
     
     if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
@@ -652,6 +666,9 @@ static CGFloat const baseFontSize = 16.f;
 
 - (void)addImage:(Content *)content {
     
+    if (![self showImage])
+        return;
+    
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     
@@ -702,6 +719,9 @@ static CGFloat const baseFontSize = 16.f;
 }
 
 - (void)addGallery:(Content *)content {
+    
+    if (![self showImage])
+        return;
     
     if ([_last isMemberOfClass:Heading.class]) {
         [self addLinebreak];
@@ -809,6 +829,9 @@ static CGFloat const baseFontSize = 16.f;
 }
 
 - (void)addYoutube:(Content *)content {
+    
+    if (![self showImage])
+        return;
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];

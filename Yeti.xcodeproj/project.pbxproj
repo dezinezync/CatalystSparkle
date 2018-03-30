@@ -139,6 +139,7 @@
 		F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F069AC0F206E018F00021ABF /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
 		F069AC12206E018F00021ABF /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -336,6 +337,8 @@
 		F069ABA6206DFCB200021ABF /* GalleryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalleryCell.xib; sourceTree = "<group>"; };
 		F069AC16206E018F00021ABF /* Yeti Debug Layout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yeti Debug Layout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F069AC17206E019000021ABF /* Yeti copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Yeti copy-Info.plist"; path = "/Volumes/Store/Sites/Yeti/Yeti/Yeti copy-Info.plist"; sourceTree = "<absolute>"; };
+		F069AC18206E05FC00021ABF /* CheckWifi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckWifi.h; sourceTree = "<group>"; };
+		F069AC19206E060C00021ABF /* CheckWifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckWifi.m; sourceTree = "<group>"; };
 		F070C2D91FBABC3500912CCF /* Yeti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yeti.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F070C2DC1FBABC3500912CCF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F070C2DD1FBABC3600912CCF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -690,6 +693,8 @@
 				F0D071F6205E877A00A042CD /* YetiConstants.m */,
 				F0710D272062D3090097CCD5 /* NewVCAnimator.h */,
 				F0710D282062D3090097CCD5 /* NewVCAnimator.m */,
+				F069AC18206E05FC00021ABF /* CheckWifi.h */,
+				F069AC19206E060C00021ABF /* CheckWifi.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1338,6 +1343,7 @@
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F02459D120591224002906C3 /* FeedSearchResults.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
+				F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */,
 				F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,

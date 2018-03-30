@@ -11,6 +11,9 @@
 #import "NSDate+DateTools.h"
 #import "LayoutConstants.h"
 #import "TweetImage.h"
+#import "YetiConstants.h"
+
+#import "CheckWifi.h"
 
 #import <DZKit/NSString+Date.h>
 
@@ -82,6 +85,17 @@
 
 @implementation Tweet
 
+- (BOOL)showImage {
+    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+        return NO;
+    
+    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+        return CheckWiFi();
+    }
+    
+    return YES;
+}
+
 - (instancetype)initWithNib
 {
     if (self = [super initWithNib]) {
@@ -122,7 +136,7 @@
     
     self.timeLabel.text = [[(NSString *)[content.attributes valueForKey:@"created"] dateFromTimestamp] timeAgoSinceNow];
     
-    if (!content.images || !content.images.count) {
+    if (!content.images || !content.images.count || ![self showImage]) {
         self.collectionView.hidden = YES;
         self.collectionViewHeight.constant = 0.f;
         self.collectionPadding.constant = 0.f;
