@@ -702,8 +702,53 @@ static CGFloat const baseFontSize = 16.f;
     
     NSString *url = [(content.url ?: [content.attributes valueForKey:@"src"]) stringByReplacingOccurrencesOfString:@"http://" withString:@"https://"];
     
-    if ([content.attributes valueForKey:@"data-large-file"]) {
-        url = [content.attributes valueForKey:@"data-large-file"];
+    if (content.srcset && [content.srcset allKeys].count > 1) {
+        NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
+        NSArray <NSString *> * sizes = [content.srcset allKeys];
+        CGFloat width = self.scrollView.bounds.size.width;
+        
+        if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
+            // match keys a little below the width
+            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                CGFloat compare = obj.floatValue;
+                return (compare < width && (compare - 100.f) <= width);
+            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            
+            if (available.count) {
+                url = [content.srcset valueForKey:available.lastObject];
+            }
+        }
+        else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
+            // match keys a little above the width
+            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                CGFloat compare = obj.floatValue;
+                return (compare > width && (compare - 100.f) <= width);
+            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            
+            if (available.count) {
+                url = [content.srcset valueForKey:available.lastObject];
+            }
+        }
+        else {
+            // match keys much higher than our width
+            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                CGFloat compare = obj.floatValue;
+                return (compare > width && (compare + 200.f) >= width);
+            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            
+            if (available.count) {
+                url = [content.srcset valueForKey:available.lastObject];
+            }
+            else if ([content.attributes valueForKey:@"data-large-file"]) {
+                url = [content.attributes valueForKey:@"data-large-file"];
+            }
+        }
     }
     
     imageView.URL = [NSURL URLWithString:url];
