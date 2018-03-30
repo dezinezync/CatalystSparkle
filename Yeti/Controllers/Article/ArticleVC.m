@@ -382,14 +382,27 @@ static CGFloat const baseFontSize = 16.f;
     sublabel.opaque = YES;
     sublabel.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UIStackView *stackView = [[UIStackView alloc] initWithArrangedSubviews:@[label, sublabel]];
-    stackView.axis = UILayoutConstraintAxisVertical;
-    stackView.alignment = UIStackViewAlignmentLastBaseline;
-    stackView.spacing = UIStackViewSpacingUseSystem;
+    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 48.f)];
+    mainView.translatesAutoresizingMaskIntoConstraints = NO;
+    [mainView addSubview:label];
     
-    [stackView sizeToFit];
+    [label.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor].active = YES;
+    [label.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor].active = YES;
+    [label.topAnchor constraintEqualToAnchor:mainView.topAnchor].active = YES;
+    [label setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
     
-    [self.stackView addArrangedSubview:stackView];
+    [mainView addSubview:sublabel];
+    
+    [sublabel.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor].active = YES;
+    [sublabel.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor].active = YES;
+    [sublabel.firstBaselineAnchor constraintEqualToSystemSpacingBelowAnchor:label.lastBaselineAnchor multiplier:1.2f].active = YES;
+    [sublabel setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+    
+    [sublabel.bottomAnchor constraintEqualToAnchor:mainView.bottomAnchor].active = YES;
+    
+    [mainView sizeToFit];
+    
+    [self.stackView addArrangedSubview:mainView];
     
 }
 
