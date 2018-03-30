@@ -140,6 +140,7 @@
 		F069AC0F206E018F00021ABF /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
 		F069AC12206E018F00021ABF /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
+		F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -1269,6 +1270,7 @@
 				F069ABB1206E018F00021ABF /* ImageLoadingVC.m in Sources */,
 				F069ABB2206E018F00021ABF /* FeedSearchResults.m in Sources */,
 				F069ABB3206E018F00021ABF /* SearchResults.m in Sources */,
+				F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */,
 				F069ABB4206E018F00021ABF /* YetiConstants.m in Sources */,
 				F069ABB5206E018F00021ABF /* DTConstants.m in Sources */,
 				F069ABB6206E018F00021ABF /* SettingsVC.m in Sources */,

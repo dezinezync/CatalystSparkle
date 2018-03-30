@@ -76,17 +76,15 @@
     return self;
 }
 
-- (void)updateConstraints
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
-    [super updateConstraints];
+    [super traitCollectionDidChange:previousTraitCollection];
     
-    [self.collectionView setNeedsUpdateConstraints];
-    [self.collectionView layoutIfNeeded];
+    weakify(self);
     
-    UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self.collectionView collectionViewLayout];
-    layout.itemSize = CGSizeMake(self.collectionView.bounds.size.width, self.maxHeight);
-    
-    [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self setImages:self.images];
+    });
 }
 
 #pragma mark -
@@ -146,67 +144,28 @@
     } }
     
     self.maxHeight = suggestedMaxHeight;
-    [self.heightAnchor constraintEqualToConstant:self.maxHeight + self.pageControl.bounds.size.height + LayoutPadding].active = YES;
+    
+    if (self.heightC) {
+        [self removeConstraint:self.heightC];
+    }
+    
+    self.heightC = [self.heightAnchor constraintEqualToConstant:self.maxHeight + self.pageControl.bounds.size.height + LayoutPadding];
+    self.heightC.priority = 1000;
+    self.heightC.identifier = @"GalleryHeight";
+    self.heightC.active = YES;
     
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self.collectionView collectionViewLayout];
     layout.itemSize = CGSizeMake(width, self.maxHeight);
-    
-//    weakify(self);
-//
-//    [images enumerateObjectsUsingBlock:^(Content * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//        strongify(self);
-//
-//        CGSize size = obj.size;
-//        if ([obj.attributes valueForKey:@"data-orig-size"]) {
-//            NSArray <NSString *> *comps = [obj.attributes[@"data-orig-size"] componentsSeparatedByString:@","];
-//            size = CGSizeMake(comps[0].floatValue, comps[1].floatValue);
-//        }
-//
-//        // find the height for this image
-//        CGFloat imageHeight = ceil(size.height * (self.collectionView.bounds.size.width / size.width));
-//        CGFloat y = floor((suggestedMaxHeight - imageHeight) / 2.f);
-//
-//        GalleryImage *image = [[GalleryImage alloc] initWithFrame:CGRectIntegral(CGRectMake(idx * width, y, width, imageHeight))];
-//        [image.heightAnchor constraintEqualToConstant:imageHeight].active = YES;
-//        image.imageView.autoUpdateFrameOrConstraints = NO;
-////        image.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//
-//        NSString *url = obj.url;
-//
-//        if ([obj.attributes valueForKey:@"data-large-file"]) {
-//            url = [obj.attributes valueForKey:@"data-large-file"];
-//        }
-//
-//        image.URL = [NSURL URLWithString:url];
-//        image.height = self.maxHeight;
-//        image.idx = idx;
-//
-////        [self.scrollView addSubview:image];
-//
-////        [image.centerYAnchor constraintEqualToAnchor:self.scrollView.centerYAnchor].active = YES;
-//
-////        CGFloat leadingConstant = idx * width; // toward's leading edge
-////        image.leading = [image.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor constant:leadingConstant];
-////        image.leading.priority = UILayoutPriorityRequired;
-////        image.leading.identifier = @"GalleryImage:Leading";
-////        image.leading.active = YES;
-//
-//        [self.imageRefs addPointer:(__bridge void * _Nullable)(image)];
-//
-//    }];
-    
-//    self.scrollView.contentSize = CGSizeMake(self.images.count * width, self.maxHeight);
     
     self.pageControl.numberOfPages = images.count;
     
     weakify(self);
     
-    asyncMain(^{
-        strongify(self);
-        [self setNeedsUpdateConstraints];
-        [self layoutIfNeeded];
-    });
+//    asyncMain(^{
+//        strongify(self);
+//        [self setNeedsUpdateConstraints];
+//        [self layoutIfNeeded];
+//    });
     
     asyncMain(^{
         strongify(self);
@@ -238,7 +197,9 @@
     
     Content *content = [self.images objectAtIndex:indexPath.row];
     
-    [cell.imageView il_setImageWithURL:[NSURL URLWithString:content.url]];
+    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
+    
+    [cell.imageView il_setImageWithURL:[NSURL URLWithString:url]];
     
     return cell;
     

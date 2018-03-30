@@ -14,6 +14,8 @@
 
 @property (nonatomic, weak) NSArray <Content *> *images;
 
+@property (nonatomic, strong) NSLayoutConstraint *heightC;
+
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
 @property (nonatomic, assign) NSInteger idx;
 

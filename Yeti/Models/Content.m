@@ -4,6 +4,11 @@
 #ifdef SHARE_EXTENSION
 #import <DZKit/DZLogger.h>
 #import <CocoaLumberjack/CocoaLumberjack.h>
+
+#else
+
+#import "YetiConstants.h"
+
 #endif
 
 @implementation Content
@@ -264,5 +269,65 @@
 
 }
 
+#pragma mark -
+
+#ifndef SHARE_EXTENSION
+
+- (NSString *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width
+{
+    NSString *url = (self.url ?: [self.attributes valueForKey:@"src"]);
+    
+    if (self.srcset && [self.srcset allKeys].count > 1) {
+        NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
+        NSArray <NSString *> * sizes = [self.srcset allKeys];
+        
+        if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
+            // match keys a little below the width
+            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                CGFloat compare = obj.floatValue;
+                return (compare < width && (compare - 100.f) <= width);
+            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            
+            if (available.count) {
+                url = [self.srcset valueForKey:available.lastObject];
+            }
+        }
+        else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
+            // match keys a little above the width
+            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                CGFloat compare = obj.floatValue;
+                return (compare > width && (compare - 100.f) <= width);
+            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            
+            if (available.count) {
+                url = [self.srcset valueForKey:available.lastObject];
+            }
+        }
+        else {
+            // match keys much higher than our width
+            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                CGFloat compare = obj.floatValue;
+                return (compare > width && (compare + 200.f) >= width);
+            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                return [obj1 compare:obj2 options:NSNumericSearch];
+            }];
+            
+            if (available.count) {
+                url = [self.srcset valueForKey:available.lastObject];
+            }
+            else if ([self.attributes valueForKey:@"data-large-file"]) {
+                url = [self.attributes valueForKey:@"data-large-file"];
+            }
+        }
+    }
+    
+    return url;
+}
+
+#endif
 
 @end
