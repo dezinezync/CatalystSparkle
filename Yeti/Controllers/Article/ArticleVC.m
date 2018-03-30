@@ -236,7 +236,7 @@ static CGFloat const baseFontSize = 16.f;
 
         for (Image *imageView in self.images) { @autoreleasepool {
             if (imageView.imageView.image) {
-                [imageView updateAspectRatioWithImage:imageView.imageView.image];
+                [imageView.imageView updateAspectRatioWithImage:imageView.imageView.image];
             }
         } }
 

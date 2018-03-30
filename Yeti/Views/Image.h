@@ -10,6 +10,8 @@
 
 @interface SizedImage : UIImageView
 
+- (void)updateAspectRatioWithImage:(UIImage *)image;
+
 @end
 
 @interface Image : UIView
@@ -20,9 +22,7 @@
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
 @property (nonatomic, strong) NSLayoutConstraint *aspectRatio, *leading, *trailing;
 
-@property (nonatomic, weak, readonly) UIImageView *imageView;
-
-- (void)updateAspectRatioWithImage:(UIImage *)image;
+@property (nonatomic, weak, readonly) SizedImage *imageView;
 
 - (void)il_setImageWithURL:(id)url;
 
