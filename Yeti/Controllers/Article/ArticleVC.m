@@ -86,8 +86,8 @@ static CGFloat const baseFontSize = 16.f;
     
    [self setupHelperView];
     
-    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:0].active = YES;
-    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:0].active = YES;
+    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding/-3.f].active = YES;
+    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:LayoutPadding/-3.f].active = YES;
     
     self.scrollView.delegate = self;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;

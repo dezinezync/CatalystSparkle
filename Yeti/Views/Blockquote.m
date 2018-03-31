@@ -114,16 +114,14 @@
 {
     CGFloat width = self.bounds.size.width;
     if (self.superview) {
-        width = self.superview.bounds.size.width - (LayoutPadding * 2);
+        width = self.superview.bounds.size.width;
     }
     
     width -= 24.f;
     
     CGSize size = [self.textView sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)];
-    // add image height and padding
-//    size.width = MIN(self.bounds.size.width, size.width + 25.f);
-//    size.width += 24.f;
-//    size.height += 12.f;
+    // remove 4 lines worth of height
+    size.height -= ([self.textView bodyFont].pointSize * 1.444f) * 4;
     return size;
 }
 

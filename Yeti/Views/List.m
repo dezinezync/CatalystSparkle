@@ -45,6 +45,10 @@
                 index++;
                 [self append:item index:index attributedString:attrs indent:0];
             }
+            else if (item.items && item.items.count) {
+                index++;
+                [self append:item index:index attributedString:attrs indent:0];
+            }
         }}
         
     });
