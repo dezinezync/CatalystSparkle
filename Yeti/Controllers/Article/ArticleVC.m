@@ -86,8 +86,8 @@ static CGFloat const baseFontSize = 16.f;
     
    [self setupHelperView];
     
-    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding/-3.f].active = YES;
-    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:LayoutPadding/-3.f].active = YES;
+    [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding/2.f].active = YES;
+    [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:LayoutPadding/2.f].active = YES;
     
     self.scrollView.delegate = self;
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -112,6 +112,7 @@ static CGFloat const baseFontSize = 16.f;
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
+    [center addObserver:self selector:@selector(didChangePreferredContentSize:) name:UIContentSizeCategoryDidChangeNotification object:nil];
     
 }
 
@@ -194,19 +195,19 @@ static CGFloat const baseFontSize = 16.f;
     
     [self.helperView.previousArticleButton setEnabled:previous];
     
-//    self.helperView.previousArticleButton.imageView.tintColor = self.helperView.previousArticleButton.isEnabled ? self.view.tintColor : [UIColor colorWithWhite:0.5 alpha:1.f];
-//    [self.helperView.previousArticleButton setNeedsDisplay];
-    
     [self.helperView.nextArticleButton setEnabled:next];
-    
-//    self.helperView.nextArticleButton.tintColor = self.helperView.nextArticleButton.isEnabled ? self.view.tintColor : [UIColor colorWithWhite:0.5 alpha:1.f];
-//    [self.helperView.nextArticleButton setNeedsDisplay];
     
     self.helperView.startOfArticle.enabled = NO;
     self.helperView.endOfArticle.enabled = YES;
 }
 
 #pragma mark -
+
+- (void)didChangePreferredContentSize:(NSNotification *)note {
+    
+    [self setupArticle:self.currentArticle];
+    
+}
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {

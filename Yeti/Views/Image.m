@@ -32,7 +32,7 @@
         
         if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
             [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin].active = YES;
-            [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding/3.].active = YES;
+            [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-2.f].active = YES;
         }
         else {
             [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
