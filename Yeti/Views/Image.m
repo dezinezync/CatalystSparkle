@@ -31,7 +31,7 @@
         [imageView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
         
         if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
-            [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin].active = YES;
+            [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin*2].active = YES;
             [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-2.f].active = YES;
         }
         else {

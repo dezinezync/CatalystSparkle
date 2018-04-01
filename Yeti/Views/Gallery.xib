@@ -21,7 +21,7 @@
                     <color key="currentPageIndicatorTintColor" name="selectedMenuItemColor" catalog="System" colorSpace="catalog"/>
                 </pageControl>
                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="XWo-5n-hew">
-                    <rect key="frame" x="-14" y="0.0" width="391" height="175"/>
+                    <rect key="frame" x="-14" y="0.0" width="407" height="175"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="CqX-ZH-tgH">
                         <size key="itemSize" width="50" height="50"/>
@@ -38,7 +38,7 @@
                 <constraint firstItem="sZn-nQ-a9p" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="a06-lL-xxq"/>
                 <constraint firstItem="XWo-5n-hew" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="fJm-lo-rBT"/>
                 <constraint firstItem="XWo-5n-hew" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="-14" id="oBU-nB-blR"/>
-                <constraint firstItem="XWo-5n-hew" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" constant="16" id="oxE-I5-74w"/>
+                <constraint firstItem="XWo-5n-hew" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" constant="32" id="oxE-I5-74w"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
