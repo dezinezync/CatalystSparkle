@@ -261,14 +261,14 @@
         strongify(self);
         
         if (!responseObject.count) {
-            _canLoadNext = NO;
+            self->_canLoadNext = NO;
         }
         
         asyncMain(^{
             self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
         });
         
-        _page++;
+        self->_page++;
         self.loadingNext = NO;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

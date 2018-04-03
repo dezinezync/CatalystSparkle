@@ -82,7 +82,7 @@
         asyncMain(^{
             strongify(self);
             
-            [self.webview loadRequest:[NSURLRequest requestWithURL:_URL]];
+            [self.webview loadRequest:[NSURLRequest requestWithURL:self->_URL]];
         });
     }
 }

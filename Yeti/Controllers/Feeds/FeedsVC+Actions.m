@@ -49,7 +49,7 @@
             }
         });
         
-        _refreshing = NO;
+        self->_refreshing = NO;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -59,7 +59,9 @@
             [sender endRefreshing];
         });
         
-        _refreshing = NO;
+        strongify(self);
+        
+        self->_refreshing = NO;
         
     }];
     

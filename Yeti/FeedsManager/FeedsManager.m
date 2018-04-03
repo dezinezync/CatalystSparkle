@@ -104,9 +104,14 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     __block NSError *error = nil;
     
     if ([NSFileManager.defaultManager fileExistsAtPath:_feedsCachePath]) {
+        
+        weakify(self);
+        
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
            
-            NSData *data = [NSData dataWithContentsOfFile:_feedsCachePath];
+            strongify(self);
+            
+            NSData *data = [NSData dataWithContentsOfFile:self->_feedsCachePath];
             
             if (data) {
                 NSArray *responseObject;
@@ -133,7 +138,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
                     NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
                     
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5  * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        _feeds = feeds;
+                        self->_feeds = feeds;
                         
                         asyncMain(^{
                             successCB(@1, nil, nil);
@@ -257,7 +262,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     NSMutableDictionary *params = @{@"page": @(page)}.mutableCopy;
     
-    if ([self userID]) {
+    if ([self userID] != nil) {
         params[@"userID"] = self.userID;
     }
     
@@ -302,7 +307,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     }
     
     NSDictionary *params = @{@"URL" : url};
-    if ([self userID]) {
+    if ([self userID] != nil) {
         params = @{@"URL": url, @"userID": [self userID]};
     }
     
@@ -389,7 +394,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     }
     
     NSDictionary *params = @{@"feedID" : feedID};
-    if ([self userID]) {
+    if ([self userID] != nil) {
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
     
@@ -424,7 +429,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 - (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
 {
     NSDictionary *params = @{};
-    if ([self userID]) {
+    if ([self userID] != nil) {
         params = @{@"userID": [self userID]};
     }
     
@@ -489,16 +494,18 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : feeds ?: @[]}];
     
     // cache it
+    weakify(self);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        strongify(self);
         NSError *error = nil;
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:_feeds];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self->_feeds];
         
         if (error) {
             DDLogError(@"Error caching feeds: %@", error);
         }
         else {
-            if (![data writeToFile:_feedsCachePath atomically:YES]) {
-                DDLogError(@"Writing feeds cache to %@ failed.", _feedsCachePath);
+            if (![data writeToFile:self->_feedsCachePath atomically:YES]) {
+                DDLogError(@"Writing feeds cache to %@ failed.", self->_feedsCachePath);
             }
         }
     });
@@ -591,7 +598,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
     NSDictionary *params;
     
-    if (self.userID) {
+    if (self.userID != nil) {
         params = @{@"userID": self.userID};
     }
 #ifndef SHARE_EXTENSION

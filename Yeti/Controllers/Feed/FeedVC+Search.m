@@ -38,12 +38,12 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         
-        if (_searchOperation) {
-            [_searchOperation cancel];
-            _searchOperation = nil;
-        }
-        
         strongify(self);
+        
+        if (self->_searchOperation) {
+            [self->_searchOperation cancel];
+            self->_searchOperation = nil;
+        }
         
         NSOperation *op = [self searchOperationForText:text searchController:searchController data:data];
         if (op)
@@ -58,6 +58,7 @@
 {
     
     if (!_searchOperation) {
+        weakify(self);
         __block NSBlockOperation *op = [[NSBlockOperation alloc] init];
         [op addExecutionBlock:^{
             
@@ -85,7 +86,8 @@
                 return;
             
             asyncMain(^{
-                if (_searchOperation.isCancelled)
+                strongify(self);
+                if (self->_searchOperation.isCancelled)
                     return;
                 
                 DS.data = data;

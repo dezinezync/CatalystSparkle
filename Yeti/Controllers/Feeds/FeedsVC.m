@@ -89,7 +89,7 @@
         asyncMain(^{
             strongify(self);
             [self.refreshControl beginRefreshing];
-            _noPreSetup = YES;
+            self->_noPreSetup = YES;
             
             weakify(self);
             
@@ -101,58 +101,9 @@
             });
         })
         
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            
-//            [MyFeedsManager getFeedsSince:self.sinceDate success:^(NSNumber *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//                
-//                strongify(self);
-//                
-//                // we have received one response. This is usually from the disk cache.
-//                if (responseObject.integerValue == 1) {
-//                    return;
-//                }
-//                
-//                // when counter reaches 2, we end refreshing since this is the network response.
-//                if (responseObject.integerValue == 2) {
-//                    asyncMain(^{
-//                        [self.refreshControl endRefreshing];
-//                    })
-//                }
-//                
-//                [self setupData:MyFeedsManager.feeds];
-//                
-//                _preCommitLoading = NO;
-//                
-//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//                
-//                if (error) {
-//                    DDLogError(@"%@", error);
-//                    [AlertManager showGenericAlertWithTitle:@"Error loading" message:error.localizedDescription];
-//                }
-//                
-//                // end refreshing if VC is in that state.
-//                asyncMain(^{
-//                    
-//                    strongify(self);
-//                    
-//                    if (self.refreshControl.isRefreshing) {
-//                        [self.refreshControl endRefreshing];
-//                    }
-//                    
-//                    // locally loaded from disk-cache
-//                    if (MyFeedsManager.feeds) {
-//                        [self setupData:MyFeedsManager.feeds];
-//                    }
-//                });
-//                
-//                _preCommitLoading = NO;
-//                
-//            }];
-//            
-//        });
-        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            _preCommitLoading = YES;
+            strongify(self);
+            self->_preCommitLoading = YES;
         });
     }
 }
