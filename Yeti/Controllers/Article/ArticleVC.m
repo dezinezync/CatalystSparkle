@@ -401,6 +401,12 @@ static CGFloat const baseFontSize = 16.f;
     
     [sublabel.bottomAnchor constraintEqualToAnchor:mainView.bottomAnchor].active = YES;
     
+    if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
+        mainView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        label.textAlignment = NSTextAlignmentRight;
+        sublabel.textAlignment = NSTextAlignmentRight;
+    }
+    
     [mainView sizeToFit];
     
     [self.stackView addArrangedSubview:mainView];

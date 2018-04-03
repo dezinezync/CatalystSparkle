@@ -40,6 +40,15 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
 }
 
++ (NSLocaleLanguageDirection)languageDirectionForText:(NSString *)text
+{
+    NSString *language = CFBridgingRelease(CFStringTokenizerCopyBestStringLanguage((CFStringRef)text,CFRangeMake(0,[text length])));
+    
+    NSLocaleLanguageDirection direction = [NSLocale characterDirectionForLanguage:language];
+    
+    return direction;
+}
+
 #pragma mark - Instance methods
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -103,9 +112,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
         para.tailIndent = offset * -1.f;
     }
     
-    NSString *language = CFBridgingRelease(CFStringTokenizerCopyBestStringLanguage((CFStringRef)text,CFRangeMake(0,[text length])));
+    NSLocaleLanguageDirection direction = [self.class languageDirectionForText:text];
     
-    NSLocaleLanguageDirection direction = [NSLocale characterDirectionForLanguage:language];
     if (direction == NSLocaleLanguageDirectionRightToLeft && !self.isCaption)
         para.alignment = NSTextAlignmentRight;
     

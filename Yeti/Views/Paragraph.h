@@ -23,6 +23,8 @@
 
 - (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 
++ (NSLocaleLanguageDirection)languageDirectionForText:(NSString *)text;
+
 /**
  Process the given text and ranges and returns an Attributed String. Processes on the thread it is called on. Returns on the same thread.
 

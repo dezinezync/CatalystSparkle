@@ -9,6 +9,7 @@
 #import "ArticleCell.h"
 #import "NSDate+DateTools.h"
 #import "NSString+HTML.h"
+#import "Paragraph.h"
 
 #import <DZKit/NSString+Extras.h>
 
@@ -52,6 +53,16 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         self.markerView.image = [UIImage imageNamed:@"mbookmark"];
     else
         self.markerView.image = nil;
+    
+    if (([Paragraph languageDirectionForText:item.articleTitle] == NSLocaleLanguageDirectionRightToLeft)
+        || (item.summary && [Paragraph languageDirectionForText:item.summary] == NSLocaleLanguageDirectionRightToLeft)) {
+        
+        self.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        self.titleLabel.textAlignment = NSTextAlignmentRight;
+        self.summaryLabel.textAlignment = NSTextAlignmentRight;
+        
+        self.authorLabel.textAlignment = NSTextAlignmentRight;
+    }
 }
 
 
