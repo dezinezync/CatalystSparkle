@@ -510,10 +510,10 @@ static CGFloat const baseFontSize = 16.f;
     }
     else if ([content.type isEqualToString:@"li"]) {
         Content *parent = [Content new];
-        parent.type = @"list";
+        parent.type = @"orderedlist";
         parent.items = @[content];
         
-        [self addList:content];
+        [self addList:parent];
     }
     else if ([content.type isEqualToString:@"tweet"]) {
         [self addTweet:content];
@@ -1002,7 +1002,7 @@ static CGFloat const baseFontSize = 16.f;
                 
                 // the comparison is not done against 0
                 // to avoid comparing to self
-                if ((ld >= 1 && ld <= 6) && contained) {
+                if ((ld >= 1 && ld <= 6) && !contained) {
                     required = para;
                     *stop = YES;
                 }
@@ -1024,14 +1024,23 @@ static CGFloat const baseFontSize = 16.f;
         // compare against the maximum contentOffset which is contentsize.height - bounds.size.height
         CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
         
+        // if we're scrolling down, add the bottom offset so the bottom bar does not interfere
+        if (yOffset > self.scrollView.contentOffset.y)
+            yOffset += self.scrollView.adjustedContentInset.bottom;
+        else
+            yOffset -= self.scrollView.adjustedContentInset.top;
+        
         [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
         
         // animate background on paragraph
+        
+        weakify(self);
+        
         asyncMain(^{
             required.layer.cornerRadius = 4.f;
             [UIView animateWithDuration:0.1 delay:0.5 options:kNilOptions animations:^{
                 required.backgroundColor = [UIColor colorWithRed:255/255.f green:249/255.f blue:207/255.f alpha:1.f];
-                
+                strongify(self);
                 self.scrollView.userInteractionEnabled = YES;
                 
             } completion:^(BOOL finished) {

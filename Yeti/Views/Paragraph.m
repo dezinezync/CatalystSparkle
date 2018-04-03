@@ -147,11 +147,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
                     monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:_bodyFont.pointSize];
                     textcolor = [UIColor redColor];
                 }
-                else
+                else {
+                    weakify(self);
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:_bodyFont.pointSize];
+                        strongify(self);
+                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:self->_bodyFont.pointSize];
                         textcolor = [UIColor redColor];
                     });
+                }
                 
                 [dict setObject:monoFont forKey:NSFontAttributeName];
                 [dict setObject:textcolor forKey:NSForegroundColorAttributeName];
