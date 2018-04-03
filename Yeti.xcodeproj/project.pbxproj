@@ -618,7 +618,6 @@
 				F035A21620617EC3005A88EE /* YetiShare */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
-				F069AC17206E019000021ABF /* Yeti copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -775,6 +774,7 @@
 				F070C3211FBAC0EE00912CCF /* Frameworks */,
 				F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */,
 				F070C2EA1FBABC3600912CCF /* Info.plist */,
+				F069AC17206E019000021ABF /* Yeti copy-Info.plist */,
 				F070C2EB1FBABC3600912CCF /* main.m */,
 				F070C3201FBAC0E100912CCF /* Prefix.pch */,
 				F0D07207205E9F6700A042CD /* attributions.html */,
