@@ -91,23 +91,25 @@
                 
                 [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
+                    strongify(self);
+                    
                     NSDictionary *user = [responseObject valueForKey:@"user"];
                     DDLogDebug(@"Got existing user: %@", user);
                     
-                    _userID = @([[user valueForKey:@"id"] integerValue]);
-                    _UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
+                    self->_userID = @([[user valueForKey:@"id"] integerValue]);
+                    self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
                     
-                    [store setLongLong:_userID.longLongValue forKey:@"userID"];
-                    [store setString:_UUID.UUIDString forKey:@"YTUserID"];
+                    [store setLongLong:self->_userID.longLongValue forKey:@"userID"];
+                    [store setString:self->_UUID.UUIDString forKey:@"YTUserID"];
                     [store synchronize];
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
-                    _UUID = [NSUUID UUID];
-                    [store setString:_UUID.UUIDString forKey:@"YTUserID"];
-                    [store synchronize];
-                    
                     strongify(self);
+                    
+                    self->_UUID = [NSUUID UUID];
+                    [store setString:self->_UUID.UUIDString forKey:@"YTUserID"];
+                    [store synchronize];
                     
                     // let our server know about these changes
                     [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {

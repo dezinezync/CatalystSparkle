@@ -40,7 +40,7 @@
 
 - (NSAttributedString *)attributedStringByTrimmingWhitespace {
     @autoreleasepool {
-        return [self attributedStringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        return [self attributedStringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
     }
 }
 
