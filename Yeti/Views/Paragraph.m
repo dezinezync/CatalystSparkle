@@ -103,6 +103,12 @@ static NSParagraphStyle * _paragraphStyle = nil;
         para.tailIndent = offset * -1.f;
     }
     
+    NSString *language = CFBridgingRelease(CFStringTokenizerCopyBestStringLanguage((CFStringRef)text,CFRangeMake(0,[text length])));
+    
+    NSLocaleLanguageDirection direction = [NSLocale characterDirectionForLanguage:language];
+    if (direction == NSLocaleLanguageDirectionRightToLeft && !self.isCaption)
+        para.alignment = NSTextAlignmentRight;
+    
     NSDictionary *baseAttributes = @{NSFontAttributeName : [self bodyFont],
                                      NSForegroundColorAttributeName: self.textColor,
                                      NSParagraphStyleAttributeName: para};
@@ -289,8 +295,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
         __block UIFont * bodyFont = [UIFont systemFontOfSize:18.f];
         __block UIFont * baseFont;
         
-        if (self.isCaption)
-            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCallout] scaledFontForFont:bodyFont];
+        if (self.isCaption) {
+            bodyFont = [UIFont italicSystemFontOfSize:15.f];
+            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
+        }
         else
             baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
         
