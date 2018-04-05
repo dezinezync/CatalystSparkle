@@ -36,6 +36,15 @@
     self.title = @"Feeds";
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    
+    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
+    headerView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 88.f);
+    [headerView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+    
+    self.tableView.tableHeaderView = headerView;
+    _headerView = headerView;
+    _headerView.tableView.delegate = self;
+    
     self.tableView.tableFooterView = [UIView new];
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
@@ -80,7 +89,12 @@
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
-    [self dz_smoothlyDeselectRows:self.tableView];
+    if (self.tableView.indexPathForSelectedRow) {
+        [self dz_smoothlyDeselectRows:self.tableView];
+    }
+    else if (self.headerView.tableView.indexPathForSelectedRow) {
+        [self dz_smoothlyDeselectRows:self.tableView];
+    }
     
     if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
         
@@ -178,6 +192,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    if (tableView == self.headerView.tableView) {
+        
+        return;
+    }
+    
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];

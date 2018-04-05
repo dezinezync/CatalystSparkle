@@ -38,6 +38,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
 
+@property (nonatomic, assign) NSInteger totalUnread;
+@property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
+
 @property (nonatomic, strong) NSArray <id> * _Nullable folders;
 
 - (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
@@ -51,6 +54,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 #ifndef SHARE_EXTENSION
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#pragma mark - Custom Feeds
+
+- (void)getUnreadForPage:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

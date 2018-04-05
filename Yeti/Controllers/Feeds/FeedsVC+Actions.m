@@ -32,6 +32,14 @@
     
     weakify(self);
     
+    [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [self.headerView.tableView reloadData];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        DDLogError(@"Failed to fetch unread: %@", error);
+    }];
+    
     [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
@@ -40,6 +48,7 @@
             self.sinceDate = NSDate.date;
         }
 #endif
+        
         asyncMain(^{
             
             [self setupData:MyFeedsManager.feeds];

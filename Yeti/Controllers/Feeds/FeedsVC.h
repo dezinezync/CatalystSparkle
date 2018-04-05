@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FeedsHeaderView.h"
 
 @class Feed;
 
@@ -17,6 +18,8 @@
     
     NSDate *_sinceDate;
 }
+
+@property (nonatomic, weak) FeedsHeaderView *headerView;
 
 @property (nonatomic, copy) NSDate *sinceDate;
 

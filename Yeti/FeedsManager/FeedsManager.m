@@ -155,13 +155,17 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     // only consider this param when we have feeds
     if (since && self.feeds.count) {
         
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"YYYY/MM/dd HH:mm:ss";
-        
-        params = @{
-                   @"userID": self.userID,
-                   @"since": [formatter stringFromDate:since]
-                };
+        if ([NSDate.date timeIntervalSinceDate:since] < 3600) {
+            
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateFormat = @"YYYY/MM/dd HH:mm:ss";
+            
+            params = @{
+                       @"userID": self.userID,
+                       @"since": [formatter stringFromDate:since]
+                       };
+            
+        }
     }
     
     [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -426,6 +430,8 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     
 }
 
+#ifndef SHARE_EXTENSION
+
 - (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
 {
     NSDictionary *params = @{};
@@ -459,7 +465,51 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
     }];
 }
 
-#ifndef SHARE_EXTENSION
+#pragma mark - Custom Feeds
+
+- (void)getUnreadForPage:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    if (![self userID]) {
+        if (errorCB)
+            errorCB(nil, nil, nil);
+        
+        return;
+    }
+    
+    [self.session GET:@"/unread" parameters:@{@"userID": self.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+      
+        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        if (page == 1) {
+            self.unread = items;
+        }
+        else {
+            if (!self.unread) {
+                self.unread = items;
+            }
+            else {
+                self.unread = [self.unread arrayByAddingObjectsFromArray:items];
+            }
+        }
+        
+        self.totalUnread = [[responseObject valueForKey:@"total"] integerValue];
+        
+        if (successCB)
+            successCB(responseObject, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
 
 - (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
 {
