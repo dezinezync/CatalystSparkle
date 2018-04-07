@@ -345,7 +345,6 @@
 		F069ABA5206DFCB200021ABF /* GalleryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GalleryCell.m; sourceTree = "<group>"; };
 		F069ABA6206DFCB200021ABF /* GalleryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalleryCell.xib; sourceTree = "<group>"; };
 		F069AC16206E018F00021ABF /* Yeti Debug Layout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yeti Debug Layout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F069AC17206E019000021ABF /* Yeti copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Yeti copy-Info.plist"; path = "/Volumes/Store/Sites/Yeti/Yeti/Yeti copy-Info.plist"; sourceTree = "<absolute>"; };
 		F069AC18206E05FC00021ABF /* CheckWifi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckWifi.h; sourceTree = "<group>"; };
 		F069AC19206E060C00021ABF /* CheckWifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckWifi.m; sourceTree = "<group>"; };
 		F070C2D91FBABC3500912CCF /* Yeti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yeti.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -784,7 +783,6 @@
 				F070C3211FBAC0EE00912CCF /* Frameworks */,
 				F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */,
 				F070C2EA1FBABC3600912CCF /* Info.plist */,
-				F069AC17206E019000021ABF /* Yeti copy-Info.plist */,
 				F070C2EB1FBABC3600912CCF /* main.m */,
 				F070C3201FBAC0E100912CCF /* Prefix.pch */,
 				F0D07207205E9F6700A042CD /* attributions.html */,
@@ -1565,7 +1563,7 @@
 					"$(inherited)",
 					"DEBUG_LAYOUT=1",
 				);
-				INFOPLIST_FILE = "Yeti copy-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti;
@@ -1594,7 +1592,7 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_LAYOUT=0";
-				INFOPLIST_FILE = "Yeti copy-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti;
