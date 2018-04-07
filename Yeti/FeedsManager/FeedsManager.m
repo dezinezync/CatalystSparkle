@@ -20,6 +20,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
+FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
 
 #ifdef SHARE_EXTENSION
 @interface FeedsManager () {
@@ -631,10 +632,11 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
         [session setValue:sessionSession forKeyPath:@"session"];
         
-//        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//#ifndef DEBUG
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
+//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+#ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
-//#endif
+#endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
@@ -695,7 +697,7 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
         params = @{@"userID": self.userID};
     }
 #ifndef SHARE_EXTENSION
-    else if ([self userIDManager].UUID) {
+    else if ([self userIDManager]->_UUID) {
         params = @{@"userID" : [self.userIDManager UUIDString]};
     }
 #else

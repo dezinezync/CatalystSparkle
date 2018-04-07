@@ -16,7 +16,10 @@
 
 @end
 
-@interface YTUserID : NSObject
+@interface YTUserID : NSObject {
+@public
+    NSUUID * _UUID;
+}
 
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate;
 

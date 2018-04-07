@@ -64,6 +64,8 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(readNotification:) name:FeedDidUpReadCount object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+    
     // Search Controller setup
     {
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
@@ -302,6 +304,20 @@
     DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
     DS.data = [note.userInfo valueForKey:@"feeds"];
     
+}
+
+- (void)userDidUpdate {
+    // we only need this once.
+    [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
+    
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        asyncMain(^{
+            strongify(self);
+            [self beginRefreshing:self.refreshControl];
+        });
+    });
 }
 
 @end

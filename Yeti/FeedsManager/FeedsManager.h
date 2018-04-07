@@ -16,6 +16,7 @@ typedef NSString * FMNotification;
 
 extern FMNotification _Nonnull const FeedDidUpReadCount;
 extern FMNotification _Nonnull const FeedsDidUpdate;
+extern FMNotification _Nonnull const UserDidUpdate;
 
 @class FeedsManager;
 

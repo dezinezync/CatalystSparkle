@@ -62,6 +62,12 @@
             }
         }
         
+        if (_userID && _userID.integerValue == 0) {
+            _userID = nil;
+            _UUID = nil;
+            UUIDString = nil;
+        }
+        
         if (UUIDString) {
             // we have one.
             _UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
@@ -117,6 +123,8 @@
                         NSDictionary *user = [responseObject valueForKey:@"user"];
                         self.userID = @([[user valueForKey:@"id"] integerValue]);
                         
+                        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                        
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         [AlertManager showGenericAlertWithTitle:@"Error loading user" message:error.localizedDescription];
                     }];
@@ -129,6 +137,11 @@
     }
     
     return _UUID;
+}
+
+- (void)setUUID:(NSUUID *)UUID
+{
+    _UUID = UUID;
 }
 
 - (NSString *)UUIDString {
