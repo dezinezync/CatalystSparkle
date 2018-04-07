@@ -13,19 +13,13 @@
 
 #import "FeedsManager.h"
 
-#import <DZKit/DZBasicDatasource.h>
 #import <DZKit/EFNavController.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "FeedSearchResults.h"
 #import "ArticleProvider.h"
 
-@interface FeedVC () <DZDatasource, ArticleProvider> {
-    NSInteger _page;
-    BOOL _canLoadNext;
-}
-
-@property (nonatomic, strong) DZBasicDatasource *DS;
+@interface FeedVC () <DZDatasource, ArticleProvider>
 
 @end
 
@@ -123,7 +117,7 @@
     self.navigationController.toolbarHidden = YES;
 }
 
-#pragma mark -
+#pragma mark - Actions
 
 - (void)didTapAllRead:(UIBarButtonItem *)sender {
     
@@ -135,10 +129,10 @@
         
         strongify(self);
         
-        [MyFeedsManager articles:self.feed.articles markAsRead:YES];
+        [MyFeedsManager articles:(NSArray <FeedItem *> *)self.DS.data markAsRead:YES];
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
         });
         
     }]];
@@ -294,7 +288,7 @@
     
     __block NSUInteger index = NSNotFound;
     
-    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <FeedItem *> *)self.DS.data enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
         if ([obj.guid isEqualToString:item.guid]) {
             index = idx;
@@ -313,7 +307,7 @@
 {
     __block NSUInteger index = NSNotFound;
     
-    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <FeedItem *> *)self.DS.data enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj.guid isEqualToString:item.guid]) {
             index = idx;
@@ -325,14 +319,14 @@
     if (index == NSNotFound)
         return NO;
     
-    return (index < (self.feed.articles.count - 1));
+    return (index < (((NSArray <FeedItem *> *)self.DS.data).count - 1));
 }
 
 - (FeedItem *)previousArticleFor:(FeedItem *)item
 {
     __block NSUInteger index = NSNotFound;
     
-    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <FeedItem *> *)self.DS.data enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj.guid isEqualToString:item.guid]) {
             index = idx;
@@ -343,7 +337,7 @@
     
     if (index > 0) {
         index--;
-        return self.feed.articles[index];
+        return ((NSArray <FeedItem *> *)self.DS.data)[index];
     }
     
     return nil;
@@ -353,7 +347,7 @@
 {
     __block NSUInteger index = NSNotFound;
     
-    [self.feed.articles enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <FeedItem *> *)self.DS.data enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj.guid isEqualToString:item.guid]) {
             index = idx;
@@ -362,9 +356,9 @@
         
     }];
     
-    if (index < (self.feed.articles.count - 1)) {
+    if (index < (((NSArray <FeedItem *> *)self.DS.data).count - 1)) {
         index++;
-        return self.feed.articles[index];
+        return ((NSArray <FeedItem *> *)self.DS.data)[index];
     }
     
     return nil;
@@ -372,7 +366,7 @@
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read
 {
-    NSUInteger index = [self.feed.articles indexOfObject:article];
+    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
     
     if (index == NSNotFound)
         return;
@@ -382,6 +376,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
         self.feed.articles[index].read = read;
+        [(NSArray <FeedItem *> *)self.DS.data objectAtIndex:index].read = read;
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
         
@@ -392,7 +387,7 @@
 
 - (void)didChangeToArticle:(FeedItem *)item
 {
-    NSUInteger index = [self.feed.articles indexOfObject:item];
+    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
     
     if (index == NSNotFound)
         return;
@@ -400,19 +395,7 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
     
     if (!item.isRead) {
-        weakify(self);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            item.read = YES;
-            [MyFeedsManager article:item markAsRead:YES];
-            
-            asyncMain(^{
-                strongify(self);
-                
-                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-            });
-        });
+        [self userMarkedArticle:item read:YES];
     }
     else {
         [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];

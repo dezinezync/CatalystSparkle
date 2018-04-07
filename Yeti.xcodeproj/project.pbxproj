@@ -19,6 +19,7 @@
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
 		F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */ = {isa = PBXBuildFile; fileRef = F022F0491FBD4BFF006A0036 /* Aside.m */; };
+		F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F023E55A2076900E00FF513C /* CustomFeedVC.m */; };
 		F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459C72058FFF1002906C3 /* FeedsVC+Search.m */; };
 		F02459CB20590E6D002906C3 /* SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CA20590E6D002906C3 /* SearchResults.m */; };
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
@@ -311,6 +312,8 @@
 		F01D71541FBC232200DF84B9 /* List.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = List.m; sourceTree = "<group>"; };
 		F022F0481FBD4BFF006A0036 /* Aside.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aside.h; sourceTree = "<group>"; };
 		F022F0491FBD4BFF006A0036 /* Aside.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Aside.m; sourceTree = "<group>"; };
+		F023E5592076900E00FF513C /* CustomFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeedVC.h; sourceTree = "<group>"; };
+		F023E55A2076900E00FF513C /* CustomFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeedVC.m; sourceTree = "<group>"; };
 		F02459C62058FFF1002906C3 /* FeedsVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Search.h"; sourceTree = "<group>"; };
 		F02459C72058FFF1002906C3 /* FeedsVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Search.m"; sourceTree = "<group>"; };
 		F02459C920590E6D002906C3 /* SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResults.h; sourceTree = "<group>"; };
@@ -572,6 +575,8 @@
 				F02459D020591224002906C3 /* FeedSearchResults.m */,
 				F02459D22059135E002906C3 /* FeedVC+Search.h */,
 				F02459D32059135E002906C3 /* FeedVC+Search.m */,
+				F023E5592076900E00FF513C /* CustomFeedVC.h */,
+				F023E55A2076900E00FF513C /* CustomFeedVC.m */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -1364,6 +1369,7 @@
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
+				F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,

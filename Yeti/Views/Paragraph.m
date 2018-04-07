@@ -31,7 +31,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.44444f;
+        style.lineHeightMultiple = 1.3f;
+        style.headIndent = -8.f;
         
         _paragraphStyle = style.copy;
     }

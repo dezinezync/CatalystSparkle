@@ -92,7 +92,7 @@
     
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.2f;
+        style.lineHeightMultiple = 1.f;
         _paragraphStyle = style;
     }
     

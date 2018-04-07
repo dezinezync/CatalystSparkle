@@ -17,6 +17,7 @@
 #import <DZKit/AlertManager.h>
 
 #import "FeedsSearchResults.h"
+#import "CustomFeedVC.h"
 
 @interface FeedsVC () <DZDatasource>
 
@@ -92,8 +93,32 @@
     if (self.tableView.indexPathForSelectedRow) {
         [self dz_smoothlyDeselectRows:self.tableView];
     }
-    else if (self.headerView.tableView.indexPathForSelectedRow) {
-        [self dz_smoothlyDeselectRows:self.tableView];
+    
+    if (self.headerView.tableView.indexPathForSelectedRow) {
+        
+        NSIndexPath *indexpath = self.headerView.tableView.indexPathForSelectedRow;
+        if (indexpath.row == 0) {
+            
+            // also update unread array
+            [MyFeedsManager updateUnreadArray];
+            
+            // update unread count
+            if (self.transitionCoordinator) {
+                weakify(self);
+                
+                [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+                    
+                    strongify(self);
+                    [self.headerView.tableView reloadRowsAtIndexPaths:@[indexpath] withRowAnimation:UITableViewRowAnimationNone];
+                    
+                } completion:nil];
+            }
+            else {
+                [self.headerView.tableView reloadRowsAtIndexPaths:@[indexpath] withRowAnimation:UITableViewRowAnimationNone];
+            }
+        }
+        
+        [self dz_smoothlyDeselectRows:self.headerView.tableView];
     }
     
     if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
@@ -194,6 +219,10 @@
 {
     
     if (tableView == self.headerView.tableView) {
+        CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
+        vc.unread = indexPath.row == 0;
+        
+        [self.navigationController pushViewController:vc animated:YES];
         
         return;
     }

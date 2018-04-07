@@ -10,10 +10,15 @@
 #import "Feed.h"
 
 #import "UITableViewController+ScrollLoad.h"
+#import <DZKit/DZBasicDatasource.h>
 
 @interface FeedVC : UITableViewController <ScrollLoading> {
     NSOperation *_searchOperation;
+    NSInteger _page;
+    BOOL _canLoadNext;
 }
+
+@property (nonatomic, strong) DZBasicDatasource *DS;
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 

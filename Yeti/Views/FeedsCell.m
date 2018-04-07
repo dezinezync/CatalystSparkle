@@ -50,11 +50,31 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     self.titleLabel.text = feed.title;
     self.countLabel.text = @(unread).stringValue;
     
+    NSString *url = nil;
+    
     if (feed.favicon && ![feed.favicon isBlank]) {
+        url = feed.favicon;
+    }
+    else if (feed.extra) {
+        
+        if ([feed.extra valueForKey:@"appleTouch"] && [feed.extra[@"appleTouch"] count]) {
+            // get the base image
+            url = [feed.extra[@"appleTouch"] valueForKey:@"base"];
+        }
+        else if ([feed.extra valueForKey:@"opengraph"] && [feed.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
+            url = [feed.extra[@"opengraph"] valueForKey:@"image:secure_url"];
+        }
+        else if ([feed.extra valueForKey:@"opengraph"] && [feed.extra[@"opengraph"] valueForKey:@"image"]) {
+            url = [feed.extra[@"opengraph"] valueForKey:@"image"];
+        }
+        
+    }
+    
+    if (url) {
         weakify(self);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
             strongify(self);
-            [self.faviconView il_setImageWithURL:formattedURL(@"%@", feed.favicon)];
+            [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
         });
     }
 }

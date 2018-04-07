@@ -30,6 +30,8 @@
 
     NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
     
+    weakify(self);
+    
     [self.session POST:path parameters:@{@"articles": articles, @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         for (FeedItem *item in items) {
@@ -40,6 +42,10 @@
             for (NSNumber *feedID in feeds.allObjects) { @autoreleasepool {
                 [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:feedID];
             } }
+            
+            strongify(self);
+            
+            self.totalUnread = MAX(0, self.totalUnread - items.count);
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

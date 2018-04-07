@@ -467,6 +467,46 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 
 #pragma mark - Custom Feeds
 
+- (void)updateUnreadArray
+{
+    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
+    
+    self.unread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        BOOL isRead = obj.isRead;
+        if (isRead)
+            [markedRead addObject:obj.identifier];
+        return isRead;
+    }];
+    
+    if (!markedRead.count)
+        return;
+    
+    // propagate changes to the feeds object as well
+    for (Feed *obj in self.feeds) { @autoreleasepool {
+        
+        BOOL marked = NO;
+        
+        for (FeedItem *item in obj.articles) {
+            
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %d", item.identifier.integerValue];
+            NSArray *filteredArray = [markedRead filteredArrayUsingPredicate:predicate];
+            DDLogDebug(@"Index: %@", filteredArray);
+            
+            if (filteredArray.count > 0 && !item.read) {
+                item.read = YES;
+                
+                if (!marked)
+                    marked = YES;
+            }
+        }
+        
+        if (marked) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:obj.feedID];
+        }
+        
+    }}
+}
+
 - (void)getUnreadForPage:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
@@ -491,11 +531,14 @@ FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
                 self.unread = items;
             }
             else {
-                self.unread = [self.unread arrayByAddingObjectsFromArray:items];
+                NSArray *prefiltered = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                    return !obj.isRead;
+                }];
+                self.unread = [prefiltered arrayByAddingObjectsFromArray:items];
             }
         }
-        
-        self.totalUnread = [[responseObject valueForKey:@"total"] integerValue];
+        // the conditional takes care of filtered article items.
+        self.totalUnread = self.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         
         if (successCB)
             successCB(responseObject, response, task);

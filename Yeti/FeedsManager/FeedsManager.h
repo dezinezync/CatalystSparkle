@@ -57,6 +57,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Custom Feeds
 
+- (void)updateUnreadArray;
+
 - (void)getUnreadForPage:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
