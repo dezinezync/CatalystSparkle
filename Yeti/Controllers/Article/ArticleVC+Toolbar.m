@@ -19,19 +19,23 @@
 {
     
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"read"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
-    read.accessibilityHint = @"Mark article unread";
+    read.accessibilityValue = @"Mark article unread";
+    read.accessibilityLabel = @"Read state";
     
     UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed: self.item.isBookmarked ? @"bookmark" : @"unbookmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
     
-    bookmark.accessibilityHint = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
+    bookmark.accessibilityValue = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
+    bookmark.accessibilityLabel = @"Bookmarked";
     
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
-    share.accessibilityHint = @"Share article";
+    share.accessibilityValue = @"Share article";
+    share.accessibilityLabel = @"Share";
     
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(didTapSearch)];
     
-    search.accessibilityHint = @"Search in article";
+    search.accessibilityValue = @"Search in article";
+    search.accessibilityLabel = @"Search";
     
     self.toolbarItems = nil;
     self.navigationController.toolbarHidden = YES;

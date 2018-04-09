@@ -730,8 +730,13 @@ static CGFloat const baseFontSize = 16.f;
     [self addLinebreak];
     
     if ((content.alt && ![content.alt isBlank]) || (content.attributes && ![([content.attributes valueForKey:@"alt"] ?: @"") isBlank])) {
+        
+        imageView.accessibilityValue = content.alt ?: [content.attributes valueForKey:@"alt"];
+        imageView.isAccessibilityElement = YES;
+        
         Content *caption = [Content new];
-        caption.content = content.alt ?: [content.attributes valueForKey:@"alt"];
+        caption.content = imageView.accessibilityValue;
+        caption.isAccessibilityElement = NO; // the image itself presents the caption.
         [self addParagraph:caption caption:YES];
     }
 

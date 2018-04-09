@@ -17,10 +17,18 @@
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
+        self.accessibilityTraits = UIAccessibilityTraitTabBar;
+        self.isAccessibilityElement = NO;
+        
         for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
             button.imageView.image = [button.imageView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
             button.translatesAutoresizingMaskIntoConstraints = NO;
         }
+        
+        self.previousArticleButton.accessibilityLabel = @"Previous article";
+        self.nextArticleButton.accessibilityLabel = @"Next article";
+        self.startOfArticle.accessibilityLabel = @"Start of article";
+        self.endOfArticle.accessibilityLabel = @"End of article";
         
         self.layer.cornerRadius = 22.f;
     }

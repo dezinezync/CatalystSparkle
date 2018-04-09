@@ -79,4 +79,9 @@
     return cell;
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return (tableView != self.tableView);
+}
+
 @end

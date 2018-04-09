@@ -151,6 +151,9 @@
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip
 {
     
+    if (tableView != self.tableView)
+        return nil;
+    
     __strong NSIndexPath *indexPath = [ip copy];
     
     weakify(self);
