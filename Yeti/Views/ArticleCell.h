@@ -23,4 +23,6 @@ extern NSString *const _Nonnull kArticleCell;
 
 - (void)configure:(FeedItem * _Nonnull)item;
 
+- (void)configure:(FeedItem * _Nonnull)item customFeed:(BOOL)isCustomFeed;
+
 @end

@@ -158,7 +158,7 @@
     
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
     // Configure the cell...
-    [cell configure:item];
+    [cell configure:item customFeed:[self isMemberOfClass:NSClassFromString(@"CustomFeedVC")]];
     
     return cell;
 }

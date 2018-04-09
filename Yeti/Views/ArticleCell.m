@@ -11,7 +11,10 @@
 #import "NSString+HTML.h"
 #import "Paragraph.h"
 
+#import "FeedsManager.h"
+
 #import <DZKit/NSString+Extras.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 NSString *const kArticleCell = @"com.yeti.cells.article";
 
@@ -39,6 +42,10 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
 
 - (void)configure:(FeedItem *)item
 {
+    [self configure:item customFeed:NO];
+}
+
+- (void)configure:(FeedItem * _Nonnull)item customFeed:(BOOL)isCustomFeed {
     self.titleLabel.text = item.articleTitle;
     
     self.summaryLabel.text = item.summary;
@@ -47,12 +54,41 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     
-    if (!item.isRead)
-        self.markerView.image = [UIImage imageNamed:@"munread"];
-    else if (item.isBookmarked)
-        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
-    else
-        self.markerView.image = nil;
+    if (!isCustomFeed) {
+        if (!item.isRead)
+            self.markerView.image = [UIImage imageNamed:@"munread"];
+        else if (item.isBookmarked)
+            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+        else
+            self.markerView.image = nil;
+    }
+    else {
+        self.markerView.autoUpdateFrameOrConstraints = NO;
+        self.markerView.layer.cornerRadius = self.markerView.bounds.size.width/2.f;
+        
+        // show the publisher's favicon
+        Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+            if (current.feedID.integerValue == item.feedID.integerValue)
+                return current;
+            return prev;
+        }];
+        
+        if (feed) {
+            NSString *url = [feed faviconURI];
+            
+            if (url) {
+                weakify(self);
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                    strongify(self);
+                    [self.markerView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                        
+                    } error:^(NSError * _Nonnull error) {
+                        DDLogError(@"Error loading favicon:%@", error.localizedDescription);
+                    }];
+                });
+            }
+        }
+    }
     
     if (([Paragraph languageDirectionForText:item.articleTitle] == NSLocaleLanguageDirectionRightToLeft)
         || (item.summary && [Paragraph languageDirectionForText:item.summary] == NSLocaleLanguageDirectionRightToLeft)) {
@@ -64,7 +100,6 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         self.authorLabel.textAlignment = NSTextAlignmentRight;
     }
 }
-
 
 - (void)prepareForReuse
 {

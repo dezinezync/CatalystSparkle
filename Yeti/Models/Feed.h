@@ -23,4 +23,6 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
+- (NSString *)faviconURI;
+
 @end

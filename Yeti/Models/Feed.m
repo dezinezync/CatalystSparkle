@@ -7,8 +7,36 @@
 #endif
 
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSString+Extras.h>
 
 @implementation Feed
+
+- (NSString *)faviconURI
+{
+    NSString *url = nil;
+    
+    if (self.favicon && ![self.favicon isBlank]) {
+        url = self.favicon;
+    }
+    else if (self.extra) {
+        
+        if ([self.extra valueForKey:@"appleTouch"] && [self.extra[@"appleTouch"] count]) {
+            // get the base image
+            url = [self.extra[@"appleTouch"] valueForKey:@"base"];
+        }
+        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
+            url = [self.extra[@"opengraph"] valueForKey:@"image:secure_url"];
+        }
+        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image"]) {
+            url = [self.extra[@"opengraph"] valueForKey:@"image"];
+        }
+        
+    }
+    
+    return url;
+}
+
+#pragma mark -
 
 - (NSString *)compareID
 {
