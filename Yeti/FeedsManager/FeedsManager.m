@@ -260,6 +260,18 @@ FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
     return feeds;
 }
 
+- (Feed *)feedForID:(NSNumber *)feedID
+{
+    
+    NSInteger fid = feedID.integerValue;
+    
+    return [self.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+        if (current.feedID.integerValue == fid)
+            return current;
+        return prev;
+    }];
+}
+
 - (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
     if (!page)
@@ -633,7 +645,7 @@ FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #endif

@@ -45,6 +45,10 @@
     self.DS.delegate = self;
     self.DS.data = self.feed.articles;
     
+    self.DS.addAnimation = UITableViewRowAnimationFade;
+    self.DS.deleteAnimation = UITableViewRowAnimationFade;
+    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
@@ -373,7 +377,7 @@
     
     weakify(self);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
         self.feed.articles[index].read = read;
         [(NSArray <FeedItem *> *)self.DS.data objectAtIndex:index].read = read;

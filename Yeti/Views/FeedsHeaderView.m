@@ -69,7 +69,8 @@
 {
     FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
     
-    cell.imageView.image = [UIImage imageNamed:indexPath.row == 0 ? @"lunread" : @"lbookmark"];
+    cell.faviconView.image = [UIImage imageNamed:indexPath.row == 0 ? @"lunread" : @"lbookmark"];
+    
     cell.titleLabel.text = indexPath.row == 0 ? @"Unread" : @"Bookmarked";
     
     if (indexPath.row == 0) {

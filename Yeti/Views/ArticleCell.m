@@ -46,7 +46,26 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
 }
 
 - (void)configure:(FeedItem * _Nonnull)item customFeed:(BOOL)isCustomFeed {
-    self.titleLabel.text = item.articleTitle;
+    
+    if (isCustomFeed) {
+        Feed * feed = [MyFeedsManager feedForID:item.feedID];
+        
+        if (feed) {
+            NSString *formatted = formattedString(@"%@ | %@", item.articleTitle, feed.title);
+            UIFont *titleFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+            
+            NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : titleFont}];
+            [attrs setAttributes:@{NSForegroundColorAttributeName : [UIColor colorWithWhite:0.3f alpha:1.f]} range:[formatted rangeOfString:formattedString(@" | %@", feed.title)]];
+            
+            self.titleLabel.attributedText = attrs;
+        }
+        else {
+            self.titleLabel.text = item.articleTitle;
+        }
+    }
+    else {
+        self.titleLabel.text = item.articleTitle;
+    }
     
     self.summaryLabel.text = item.summary;
     

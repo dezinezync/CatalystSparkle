@@ -46,6 +46,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
+
 - (void)getFeed:(Feed * _Nonnull)feed page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;

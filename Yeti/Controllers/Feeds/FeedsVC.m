@@ -34,6 +34,10 @@
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
     
+    self.DS.addAnimation = UITableViewRowAnimationFade;
+    self.DS.deleteAnimation = UITableViewRowAnimationFade;
+    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    
     self.title = @"Feeds";
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
