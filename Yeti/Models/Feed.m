@@ -55,6 +55,7 @@
     [encoder encodeObject:self.title forKey:@"title"];
     [encoder encodeObject:self.url forKey:@"url"];
     [encoder encodeObject:self.extra forKey:@"extra"];
+    [encoder encodeObject:self.unread forKey:@"unread"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -69,6 +70,7 @@
         self.title = [decoder decodeObjectForKey:@"title"];
         self.url = [decoder decodeObjectForKey:@"url"];
         self.extra = [decoder decodeObjectForKey:@"extra"];
+        self.unread = [decoder decodeObjectForKey:@"unread"];
     }
     return self;
 }
@@ -99,8 +101,14 @@
     if ([value isKindOfClass:NSDate.class]) {
         
     }
-
-    if ([key isEqualToString:@"articles"]) {
+    
+    if ([key isEqualToString:@"unread"]) {
+        if ([value isKindOfClass:NSString.class])
+            value = @([value integerValue]);
+        
+        self.unread = value;
+    }
+    else if ([key isEqualToString:@"articles"]) {
 
         if ([value isKindOfClass:[NSArray class]])
         {

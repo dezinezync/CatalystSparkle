@@ -30,7 +30,7 @@
     if (self = [super initWithStyle:UITableViewStylePlain]) {
         self.feed = feed;
         _canLoadNext = YES;
-        _page = 1;
+        _page = 0;
     }
     
     return self;

@@ -292,7 +292,12 @@
         }];
         
         if (row != NSNotFound) {
-            [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+            // grab the feed
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+            Feed *item = [self.DS objectAtIndexPath:indexPath];
+            item.unread = @(MAX(0, item.unread.integerValue - 1));
+            
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
         
     }

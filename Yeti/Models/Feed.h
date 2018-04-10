@@ -17,6 +17,7 @@
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, copy) NSString *favicon;
 @property (nonatomic, strong) NSDictionary *extra;
+@property (nonatomic, copy) NSNumber *unread;
 
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

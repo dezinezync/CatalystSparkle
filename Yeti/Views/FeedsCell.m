@@ -41,14 +41,8 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 - (void)configure:(Feed *)feed
 {
     
-    NSInteger unread = 0;
-    for (FeedItem *item in feed.articles) {
-        if (!item.isRead)
-            unread++;
-    }
-    
     self.titleLabel.text = feed.title;
-    self.countLabel.text = @(unread).stringValue;
+    self.countLabel.text = feed.unread.stringValue;
     
     NSString *url = [feed faviconURI];
     
