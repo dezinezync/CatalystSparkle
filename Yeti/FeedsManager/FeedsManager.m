@@ -21,6 +21,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
+FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidUpdate";
 
 #ifdef SHARE_EXTENSION
 @interface FeedsManager () {
@@ -55,6 +56,8 @@ FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         DDLogWarn(@"%@", self.bookmarks);
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
 #endif
     }
     
@@ -672,6 +675,7 @@ FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
 - (NSArray <FeedItem *> *)bookmarks {
     
     if (!_bookmarks) {
+        
         NSFileManager *manager = [NSFileManager defaultManager];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
@@ -686,16 +690,74 @@ FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
         }
         
         NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
-        for (NSString *path in enumerator) {
-            DDLogDebug(@"bookmarked: %@", path);
+        NSArray *objects = enumerator.allObjects;
+        DDLogDebug(@"Have %@ bookmarks", @(objects.count));
+        
+        NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
+        
+        for (NSString *path in objects) {
+            NSString *filePath = [directory stringByAppendingPathComponent:path];
+            FeedItem *item = nil;
+            
+            @try {
+                item = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+            }
+            @catch (NSException *exception) {
+                DDLogWarn(@"Bookmark load exception: %@", exception);
+            }
+            
+            if (item) {
+                [bookmarkedItems addObject:item];
+            }
         }
+        
+        [self setBookmarks:bookmarkedItems];
     }
     
     return _bookmarks;
     
 }
 
+- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
+{
+    if (bookmarks) {
+        NSArray <FeedItem *> *sorted = [bookmarks sortedArrayUsingSelector:@selector(compare:)];
+        
+        _bookmarks = sorted;
+    }
+    else {
+        _bookmarks = bookmarks;
+    }
+}
+
 //#endif
+
+#pragma mark - Notifications
+
+- (void)didUpdateBookmarks:(NSNotification *)note {
+    
+    FeedItem *item = [note object];
+    
+    if (!item) {
+        DDLogWarn(@"A bookmark notification was posted but did not include a FeedItem object.");
+        return;
+    }
+    
+    BOOL isBookmarked = [[[note userInfo] valueForKey:@"bookmarked"] boolValue];
+    
+    if (isBookmarked) {
+        // it was added
+        self.bookmarks = [self.bookmarks arrayByAddingObject:item];
+    }
+    else {
+        NSInteger itemID = item.identifier.integerValue;
+        
+        self.bookmarks = [self.bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            return obj.identifier.integerValue != itemID;
+        }];
+    }
+    
+}
 
 #pragma mark - <YTUserDelegate>
 

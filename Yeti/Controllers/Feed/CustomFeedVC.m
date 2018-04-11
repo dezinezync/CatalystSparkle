@@ -12,7 +12,9 @@
 #import <DZKit/DZBasicDatasource.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-@interface CustomFeedVC ()
+@interface CustomFeedVC () {
+    BOOL _reloadDataset; // used for bookmarks
+}
 
 @end
 
@@ -37,6 +39,23 @@
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     self.DS.data = [MyFeedsManager unread];
+    
+    self.tableView.tableFooterView = [UIView new];
+    
+    if (!self.isUnread) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (_reloadDataset && !self.isUnread) {
+        _reloadDataset = NO;
+        
+        self.DS.data = MyFeedsManager.bookmarks;
+    }
 }
 
 - (void)loadNextPage
@@ -81,28 +100,16 @@
         }];
     }
     else {
-//        [MyFeedsManager getUnreadForPage:(_page++) success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//            strongify(self);
-//            
-//            if (!responseObject.count) {
-//                self->_canLoadNext = NO;
-//            }
-//            
-//            asyncMain(^{
-//                self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
-//            });
-//            
-//            self->_page++;
-//            self.loadingNext = NO;
-//            
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//            DDLogError(@"%@", error);
-//            
-//            strongify(self);
-//            
-//            self.loadingNext = NO;
-//        }];
+        self.DS.data = MyFeedsManager.bookmarks;
     }
+}
+
+#pragma mark - Notifications
+
+- (void)didUpdateBookmarks
+{
+    if (!_reloadDataset)
+        _reloadDataset = YES;
 }
 
 @end

@@ -30,6 +30,8 @@
     
     [self setNeedsUpdateConstraints];
     [self layoutIfNeeded];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
 }
 
 - (void)updateConstraints
@@ -76,6 +78,9 @@
     if (indexPath.row == 0) {
         cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
     }
+    else {
+        cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.bookmarks.count));
+    }
     
     return cell;
 }
@@ -83,6 +88,13 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return (tableView != self.tableView);
+}
+
+#pragma mark - Notifications
+
+- (void)didUpdateBookmarks
+{
+    [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 @end

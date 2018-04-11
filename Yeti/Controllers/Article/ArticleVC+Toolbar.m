@@ -9,6 +9,7 @@
 #import "ArticleVC+Toolbar.h"
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/AlertManager.h>
 
 #import "Paragraph.h"
 #import "FeedsManager.h"
@@ -83,7 +84,42 @@
     button.enabled = NO;
     
     self.item.bookmarked = !self.item.isBookmarked;
-    button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+    
+    FeedItem *item = [self.item copy];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
+    
+    NSString *path = [directory stringByAppendingPathComponent:formattedString(@"%@.dat", item.identifier)];
+    
+    BOOL errored = NO;
+    
+    if (self.item.isBookmarked) {
+        // write to the path
+        if (![NSKeyedArchiver archiveRootObject:item toFile:path]) {
+            errored = YES;
+            
+            [AlertManager showGenericAlertWithTitle:@"Bookmark failed" message:@"Bookmarking the article failed as Yeti was unable to write the data to your device's storage. Please try again."];
+        }
+    }
+    else {
+        NSError *error = nil;
+        if (![[NSFileManager defaultManager] removeItemAtPath:path error:&error]) {
+            errored = YES;
+            
+            [AlertManager showGenericAlertWithTitle:@"Unbookmark failed" message:error.localizedDescription];
+        }
+    }
+    
+    if (!errored) {
+        button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:self.item userInfo:@{@"bookmarked": @(self.item.isBookmarked)}];
+    }
+    else {
+        self.item.bookmarked = !self.item.bookmarked;
+    }
     
     button.enabled = YES;
 }

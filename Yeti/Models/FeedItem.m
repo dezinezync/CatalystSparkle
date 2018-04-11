@@ -18,7 +18,12 @@ static NSDateFormatter *_formatter = nil;
 
 - (NSString *)compareID
 {
-    return self.guid;
+    return self.identifier.stringValue;
+}
+
+- (NSComparisonResult)compare:(FeedItem *)item
+{
+    return [self.identifier.stringValue compare:item.identifier.stringValue options:NSNumericSearch];
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
@@ -86,6 +91,14 @@ static NSDateFormatter *_formatter = nil;
     [instance setAttributesFromDictionary:aDictionary];
     return instance;
 
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    FeedItem *copy = [[FeedItem alloc] init];
+    [copy setAttributesFromDictionary:self.dictionaryRepresentation];
+    
+    return copy;
 }
 
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary

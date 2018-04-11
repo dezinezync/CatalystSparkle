@@ -6,7 +6,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
-@interface FeedItem : DZObject <NSCoding, DZDatasourceModel> {
+@interface FeedItem : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
 
 }
 
@@ -45,5 +45,7 @@
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 
 - (NSDictionary *)dictionaryRepresentation;
+
+- (NSComparisonResult)compare:(FeedItem *)item;
 
 @end

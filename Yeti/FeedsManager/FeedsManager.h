@@ -17,12 +17,15 @@ typedef NSString * FMNotification;
 extern FMNotification _Nonnull const FeedDidUpReadCount;
 extern FMNotification _Nonnull const FeedsDidUpdate;
 extern FMNotification _Nonnull const UserDidUpdate;
+extern FMNotification _Nonnull const BookmarksDidUpdate;
 
 @class FeedsManager;
 
 extern FeedsManager * _Nonnull MyFeedsManager;
 
-@interface FeedsManager : NSObject
+@interface FeedsManager : NSObject {
+    NSArray <FeedItem *> * _bookmarks;
+}
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session;
 
