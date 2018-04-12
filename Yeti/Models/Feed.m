@@ -24,6 +24,10 @@
             // get the base image
             url = [self.extra[@"appleTouch"] valueForKey:@"base"];
         }
+        else if ([self.extra valueForKey:@"apple-touch-icon"] && [self.extra[@"apple-touch-icon"] count]) {
+            // get the base image
+            url = [self.extra[@"apple-touch-icon"] valueForKey:@"152"] ?: [self.extra[@"apple-touch-icon"] valueForKey:@"base"];
+        }
         else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
             url = [self.extra[@"opengraph"] valueForKey:@"image:secure_url"];
         }
