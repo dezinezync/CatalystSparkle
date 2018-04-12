@@ -83,45 +83,26 @@
 - (void)didTapBookmark:(UIBarButtonItem *)button {
     button.enabled = NO;
     
-    self.item.bookmarked = !self.item.isBookmarked;
-    
-    FeedItem *item = [self.item copy];
-    
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-    NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-    
-    NSString *path = [directory stringByAppendingPathComponent:formattedString(@"%@.dat", item.identifier)];
-    
-    BOOL errored = NO;
-    
-    if (self.item.isBookmarked) {
-        // write to the path
-        if (![NSKeyedArchiver archiveRootObject:item toFile:path]) {
-            errored = YES;
-            
-            [AlertManager showGenericAlertWithTitle:@"Bookmark failed" message:@"Bookmarking the article failed as Yeti was unable to write the data to your device's storage. Please try again."];
-        }
-    }
-    else {
-        NSError *error = nil;
-        if (![[NSFileManager defaultManager] removeItemAtPath:path error:&error]) {
-            errored = YES;
-            
-            [AlertManager showGenericAlertWithTitle:@"Unbookmark failed" message:error.localizedDescription];
-        }
-    }
-    
-    if (!errored) {
-        button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+    [MyFeedsManager article:self.item markAsBookmarked:(!self.item.isBookmarked) success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:self.item userInfo:@{@"bookmarked": @(self.item.isBookmarked)}];
-    }
-    else {
-        self.item.bookmarked = !self.item.bookmarked;
-    }
-    
-    button.enabled = YES;
+        BOOL errored = self.item.isBookmarked ? [MyFeedsManager addLocalBookmark:self.item] : [MyFeedsManager removeLocalBookmark:self.item];
+        
+        if (!errored) {
+            button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:self.item userInfo:@{@"bookmarked": @(self.item.isBookmarked)}];
+        }
+        else {
+            self.item.bookmarked = !self.item.bookmarked;
+        }
+        
+        button.enabled = YES;
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Service Error" message:error.localizedDescription];
+        
+    }];
 }
 
 - (void)didTapRead:(UIBarButtonItem *)button {

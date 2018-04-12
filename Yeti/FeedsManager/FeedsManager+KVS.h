@@ -14,4 +14,11 @@
 
 - (void)articles:(NSArray <FeedItem *> * _Nonnull)items markAsRead:(BOOL)read;
 
+- (void)article:(FeedItem * _Nonnull)item markAsBookmarked:(BOOL)bookmarked success:(successBlock)successCB error:(errorBlock)errorCB;
+
+- (BOOL)addLocalBookmark:(FeedItem *)item;
+
+- (BOOL)removeLocalBookmark:(FeedItem *)item;
+
+
 @end

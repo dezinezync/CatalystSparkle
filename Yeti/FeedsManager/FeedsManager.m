@@ -33,7 +33,7 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
 }
 #endif
 
-@property (nonatomic, strong, readwrite) DZURLSession *session;
+@property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession;
 #ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readwrite) YTUserID *userIDManager;
 #endif
@@ -58,6 +58,7 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
         DDLogWarn(@"%@", self.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
 #endif
     }
     
@@ -446,6 +447,34 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
     
 }
 
+- (void)getArticle:(NSNumber *)articleID success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSString *path = formattedString(@"/article/%@", articleID);
+    
+    [self.backgroundSession GET:path parameters:@{@"userID" : self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (successCB) {
+            
+            FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
+            
+            successCB(item, response, task);
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #ifndef SHARE_EXTENSION
 
 - (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
@@ -642,13 +671,16 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
                                                   @"Accept": @"application/json",
                                                   @"Content-Type": @"application/json"
                                                   }];
+        
+        defaultConfig.allowsCellularAccess = YES;
+        defaultConfig.HTTPShouldUsePipelining = YES;
 
         NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
 
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #endif
@@ -669,6 +701,53 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
     }
     
     return _session;
+}
+
+- (DZURLSession *)backgroundSession
+{
+    if (!_backgroundSession) {
+        
+        DZURLSession *session = [[DZURLSession alloc] init];
+        
+        NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        // one for unread and the other for bookmarks
+        defaultConfig.HTTPMaximumConnectionsPerHost = 2;
+        // tell the OS not to manage these, but let them continue in the background
+        defaultConfig.discretionary = NO;
+        // we always want fresh data from the background service
+        defaultConfig.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+        
+        defaultConfig.allowsCellularAccess = YES;
+        defaultConfig.waitsForConnectivity = YES;
+        defaultConfig.HTTPShouldUsePipelining = YES;
+        
+        [defaultConfig setHTTPAdditionalHeaders:@{
+                                                  @"Accept": @"application/json",
+                                                  @"Content-Type": @"application/json"
+                                                  }];
+        
+        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
+        
+        [session setValue:sessionSession forKeyPath:@"session"];
+        
+        session.baseURL = self.session.baseURL;
+        session.useOMGUserAgent = YES;
+        session.useActivityManager = YES;
+        session.responseParser = [DZJSONResponseParser new];
+        
+        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
+            
+            NSMutableURLRequest *mutableReq = request.mutableCopy;
+            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            
+            return mutableReq;
+            
+        };
+        
+        _backgroundSession = session;
+    }
+    
+    return _backgroundSession;
 }
 
 //#ifndef SHARE_EXTENSION
@@ -756,6 +835,23 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
             return obj.identifier.integerValue != itemID;
         }];
     }
+    
+}
+
+- (void)userDidUpdate {
+    
+    if (![self userID]) {
+        return;
+    }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UserDidUpdate object:nil];
+    
+    weakify(self);
+    // user ID can be nil at this point
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        strongify(self);
+        [self updateBookmarksFromServer];
+    });
     
 }
 
@@ -854,6 +950,132 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
     
     return [NSError errorWithDomain:@"TTKit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
     
+}
+
+#pragma mark -
+
+- (void)updateBookmarksFromServer
+{
+    
+    if (!self.userID)
+        return;
+    
+    NSArray <NSString *> *existingArr = [self.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        return obj.identifier.stringValue;
+    }];
+    
+    NSString *existing = [existingArr componentsJoinedByString:@","];
+    
+    weakify(self);
+    
+    [self.backgroundSession POST:@"/bookmarked" queryParams:@{@"userID": self.userID} parameters:@{@"existing": existing} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode >= 300) {
+            // no changes.
+            return;
+        }
+        
+        NSArray <NSNumber *> * bookmarked = [responseObject valueForKey:@"bookmarks"];
+        NSArray <NSNumber *> * deleted = [responseObject valueForKey:@"deleted"];
+        
+        DDLogDebug(@"Bookmarked: %@\nDeleted:%@", bookmarked, deleted);
+        
+        strongify(self);
+        
+        if ((bookmarked && bookmarked.count) || (deleted && deleted.count)) {
+            
+            NSMutableArray <FeedItem *> *bookmarks = self.bookmarks.mutableCopy;
+         
+            if (deleted && deleted.count) {
+                
+                bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                   
+                    NSUInteger deletedIndex = [deleted indexOfObject:obj.identifier];
+                    
+                    if (deletedIndex != NSNotFound) {
+                        // remove the path as well
+                        if (![self removeLocalBookmark:obj]) {
+                            [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:obj userInfo:@{@"bookmarked": @(NO)}];
+                        }
+                    }
+                    
+                    return deletedIndex == NSNotFound;
+                    
+                }].mutableCopy;
+                
+            }
+            
+            if (bookmarked && bookmarked.count) {
+                
+                __block NSUInteger count = bookmarked.count;
+                
+                [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    
+                    __block NSUInteger index = NSNotFound;
+                    
+                    __unused FeedItem *item = [bookmarks rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idxx, NSArray *array) {
+                        
+                        if ([current.identifier isEqualToNumber:obj]) {
+                            index = idxx;
+                            return current;
+                        }
+                        
+                        return prev;
+                        
+                    }];
+                    
+                    DDLogDebug(@"Index of bookmark: %@", @(index));
+                    
+                    if (index != NSNotFound) {
+                        count--;
+                        return;
+                    }
+                    
+                    // this article needs to be downloaded and cached
+                    
+                    weakify(self);
+                    
+                    [self getArticle:obj success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        [bookmarks addObject:responseObject];
+                        
+                        strongify(self);
+                        
+                        [self addLocalBookmark:responseObject];
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:responseObject userInfo:@{@"bookmarked": @(YES)}];
+                        
+                        count--;
+                        
+                        if (count == 0) {
+                            self.bookmarks = bookmarks;
+                        }
+                        
+                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                       
+                        count--;
+                        
+                        if (count == 0) {
+                            self.bookmarks = bookmarks;
+                        }
+                        
+                    }];
+                    
+                }];
+                
+            }
+            else {
+                self.bookmarks = bookmarks;
+            }
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        DDLogError(@"Failed to fetch bookmarks from the server.");
+        DDLogError(@"%@", error.localizedDescription);
+        
+    }];
 }
 
 @end

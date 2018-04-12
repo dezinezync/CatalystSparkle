@@ -27,7 +27,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     NSArray <FeedItem *> * _bookmarks;
 }
 
-@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 
 #ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;

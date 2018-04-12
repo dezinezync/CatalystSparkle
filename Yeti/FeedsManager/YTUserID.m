@@ -79,12 +79,18 @@
                     [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         NSDictionary *user = [responseObject valueForKey:@"user"];
                         self.userID = @([[user valueForKey:@"id"] integerValue]);
+                        
+                        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                        
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         [AlertManager showGenericAlertWithTitle:@"Error loading user" message:error.localizedDescription];
                     }];
                     
                 }
                 
+            }
+            else {
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
             }
             
         }

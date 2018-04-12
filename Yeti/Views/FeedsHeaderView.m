@@ -94,6 +94,12 @@
 
 - (void)didUpdateBookmarks
 {
+    
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(didUpdateBookmarks) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
     [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 
