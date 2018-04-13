@@ -8,6 +8,11 @@
 
 #import "Paragraph.h"
 
-@interface Code : Paragraph
+@interface Code : UIView
+
+@property (nonatomic, weak) UIScrollView *scrollView;
+@property (nonatomic, weak) UILabel *label;
+
+- (void)setAttributedText:(NSAttributedString *)attrs;
 
 @end

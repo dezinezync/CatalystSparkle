@@ -69,7 +69,17 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     self.summaryLabel.text = item.summary;
     
-    self.authorLabel.text = item.author ? [item.author htmlToPlainText] : @"Unknown";
+    if (item.author) {
+        if ([item.author isKindOfClass:NSString.class]) {
+            self.authorLabel.text = item.author;
+        }
+        else {
+            self.authorLabel.text = [item.author valueForKey:@"name"];
+        }
+    }
+    else {
+        self.authorLabel.text = @"Unknown";
+    }
     
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     

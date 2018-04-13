@@ -335,7 +335,21 @@ static CGFloat const baseFontSize = 16.f;
 
 - (void)addTitle {
     
-    NSString *subline = formattedString(@"%@ • %@", self.item.author ? [self.item.author htmlToPlainText] : @"unknown", [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
+    NSString *author = nil;
+    
+    if (self.item.author) {
+        if ([self.item.author isKindOfClass:NSString.class]) {
+            author = self.item.author;
+        }
+        else {
+            author = [self.item.author valueForKey:@"name"];
+        }
+    }
+    else {
+        author = @"Unknown";
+    }
+    
+    NSString *subline = formattedString(@"%@ • %@", author, [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
     para.lineHeightMultiple = 1.125f;
@@ -872,11 +886,15 @@ static CGFloat const baseFontSize = 16.f;
 
 - (void)addPre:(Content *)content {
     
-    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     Code *code = [[Code alloc] initWithFrame:frame];
     
     if (content.content) {
         code.attributedText = [self.codeParser parse:content.content];
+//        CGSize contentSize = code.para.contentSize;
+        
+//        frame.size.height = contentSize.height;
+//        code.frame = frame;
     }
     else {
         

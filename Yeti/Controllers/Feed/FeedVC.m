@@ -258,6 +258,9 @@
         
         strongify(self);
         
+        if (!self)
+            return;
+        
         if (!responseObject.count) {
             self->_canLoadNext = NO;
         }
@@ -273,6 +276,9 @@
         DDLogError(@"%@", error);
         
         strongify(self);
+        
+        if (!self)
+            return;
         
         self.loadingNext = NO;
     }];
