@@ -845,7 +845,9 @@ static CGFloat const baseFontSize = 16.f;
 - (void)addAside:(Content *)content
 {
     if (content.items && content.items.count) {
-        [self processContent:content];
+        for (Content *item in content.items) { @autoreleasepool {
+            [self processContent:item];
+        } }
         return;
     }
     
