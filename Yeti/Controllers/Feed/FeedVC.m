@@ -86,6 +86,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Appearance
+
 - (BOOL)definesPresentationContext
 {
     return YES;
@@ -116,9 +118,14 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
             UIImageView *image = [self performSelector:imagesSelector withObject:searchBarSuperview];
 #pragma clang diagnostic pop
-            self->_barImageView = image;
+            
+            if ([NSStringFromClass(image.class) containsString:@"SearchBar"]) {
+                image = nil;
+            }
             
             if (image) {
+                self->_barImageView = image;
+                
                 if (self->_headerView) {
                     self->_headerView.shadowImage = image;
                 }
@@ -149,6 +156,8 @@
 - (void)_setToolbarHidden {
     self.navigationController.toolbarHidden = YES;
 }
+
+#pragma mark -
 
 - (void)setupHeaderView
 {
