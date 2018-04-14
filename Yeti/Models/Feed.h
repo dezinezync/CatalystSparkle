@@ -1,6 +1,7 @@
 #import <DZKit/DZCloudObject.h>
 
 #import "FeedItem.h"
+#import "Author.h"
 
 #import <DZKit/DZDatasourceModel.h>
 
@@ -18,6 +19,8 @@
 @property (nonatomic, copy) NSString *favicon;
 @property (nonatomic, strong) NSDictionary *extra;
 @property (nonatomic, copy) NSNumber *unread;
+
+@property (nonatomic, strong) NSArray <Author *> *authors;
 
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

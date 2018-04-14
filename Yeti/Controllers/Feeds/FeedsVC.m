@@ -28,6 +28,10 @@
 
 @implementation FeedsVC
 
+- (BOOL)ef_hidesNavBorder {
+    return NO;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     

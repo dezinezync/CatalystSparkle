@@ -50,6 +50,7 @@
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];
+    [encoder encodeObject:self.authors forKey:@"authors"];
     [encoder encodeObject:self.etag forKey:@"etag"];
     [encoder encodeObject:self.favicon forKey:@"favicon"];
     [encoder encodeObject:self.feedID forKey:@"feedID"];
@@ -65,6 +66,7 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
+        self.authors = [decoder decodeObjectForKey:@"authors"];
         self.etag = [decoder decodeObjectForKey:@"etag"];
         self.favicon = [decoder decodeObjectForKey:@"favicon"];
         self.feedID = [decoder decodeObjectForKey:@"feedID"];
@@ -127,7 +129,25 @@
 
         }
 
-    } else {
+    }
+    else if ([key isEqualToString:@"authors"]) {
+        
+        if ([value isKindOfClass:NSArray.class]) {
+            
+            NSMutableArray *members = [NSMutableArray arrayWithCapacity:[value count]];
+            
+            for (id valueMember in value) {
+                Author *instance = [Author instanceFromDictionary:valueMember];
+                
+                [members addObject:instance];
+            }
+            
+            self.authors = members.copy;
+            
+        }
+        
+    }
+    else {
         [super setValue:value forKey:key];
     }
 
@@ -153,6 +173,17 @@
 {
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    
+    if (self.authors) {
+        
+        NSMutableArray *members = [NSMutableArray arrayWithCapacity:self.authors.count];
+        
+        for (Author *author in self.authors) {
+            [members addObject:author.dictionaryRepresentation];
+        }
+        
+        [dictionary setObject:members.copy forKey:@"authors"];
+    }
 
     if (self.etag) {
         [dictionary setObject:self.etag forKey:@"etag"];

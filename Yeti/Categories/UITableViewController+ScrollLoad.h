@@ -22,4 +22,6 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 
+- (void)yt_scrollViewDidScroll:(UIScrollView *)scrollView;
+
 @end

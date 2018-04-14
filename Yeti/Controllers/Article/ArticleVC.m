@@ -61,6 +61,10 @@ static CGFloat const baseFontSize = 16.f;
 
 @implementation ArticleVC
 
+- (BOOL)ef_hidesNavBorder {
+    return NO;
+}
+
 - (instancetype)initWithItem:(FeedItem *)item
 {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {

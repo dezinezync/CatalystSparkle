@@ -19,11 +19,21 @@
 #import "FeedSearchResults.h"
 #import "ArticleProvider.h"
 
-@interface FeedVC () <DZDatasource, ArticleProvider>
+#import "FeedHeaderView.h"
+
+@interface FeedVC () <DZDatasource, ArticleProvider> {
+    UIImageView *_barImageView;
+}
+
+@property (nonatomic, weak) FeedHeaderView *headerView;
 
 @end
 
 @implementation FeedVC
+
+- (BOOL)ef_hidesNavBorder {
+    return NO;
+}
 
 - (instancetype)initWithFeed:(Feed *)feed
 {
@@ -51,6 +61,8 @@
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
     
+    self.tableView.tableFooterView = [UIView new];
+    
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityHint = @"Mark all articles are read";
     self.navigationItem.rightBarButtonItem = allRead;
@@ -66,6 +78,10 @@
         searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         
         self.navigationItem.searchController = searchController;
+    }
+    
+    if (self.feed.authors && self.feed.authors.count > 1) {
+        [self setupHeaderView];
     }
 }
 
@@ -90,17 +106,32 @@
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-    if (animated && self.transitionCoordinator) {
-        weakify(self);
-        [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-            strongify(self);
-            [self _setToolbarHidden];
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        strongify(self);
+        
+        UIView *searchBarSuperview = self.navigationItem.searchController.searchBar.superview;
+        
+        SEL imagesSelector = NSSelectorFromString(@"findHairlineImageViewUnder:");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        UIImageView *image = [self performSelector:imagesSelector withObject:searchBarSuperview];
+#pragma clang diagnostic pop
+        self->_barImageView = image;
+        
+        if (image) {
+            if (self->_headerView) {
+                self->_headerView.shadowImage = image;
+            }
             
-        } completion:nil];
-    }
-    else {
-        [self _setToolbarHidden];
-    }
+            [UIView transitionWithView:image duration:0.2 options:kNilOptions animations:^{
+                image.hidden = YES;
+            } completion:nil];
+        }
+        
+    });
     
 }
 
@@ -119,6 +150,22 @@
 
 - (void)_setToolbarHidden {
     self.navigationController.toolbarHidden = YES;
+}
+
+- (void)setupHeaderView
+{
+    
+    if (_headerView)
+        return;
+    
+    FeedHeaderView *headerView = [[FeedHeaderView alloc] initWithNib];
+    headerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
+    
+    [headerView configure:self.feed];
+    
+    self.tableView.tableHeaderView = headerView;
+    
+    _headerView = headerView;
 }
 
 #pragma mark - Actions
@@ -247,6 +294,21 @@
 }
 
 #pragma mark - <ScrollLoading>
+
+- (void)yt_scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (self.headerView) {
+        CGFloat yPoint = floor(scrollView.contentOffset.y);
+        
+//        DDLogDebug(@"%@", @(yPoint));
+        if (yPoint >= 0.f && _barImageView.isHidden) {
+            _barImageView.hidden = NO;
+        }
+        else if (yPoint < 0.f && !_barImageView.isHidden) {
+            _barImageView.hidden = YES;
+        }
+    }
+}
 
 - (void)loadNextPage
 {

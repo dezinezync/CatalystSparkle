@@ -12,6 +12,9 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if ([self respondsToSelector:@selector(yt_scrollViewDidScroll:)]) {
+        [self yt_scrollViewDidScroll:scrollView];
+    }
     
     if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")])
         return;
