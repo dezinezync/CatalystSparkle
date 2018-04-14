@@ -46,16 +46,19 @@
     FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
     
-    EFNavController *nav1 = [[EFNavController alloc] initWithRootViewController:vc];
-    EFNavController *nav2;
-    
-    if (self.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)
-        nav2 = [[EFNavController alloc] initWithRootViewController:vc2];
-    else
-        nav2 = [[EFNavController alloc] init];
+    UINavigationController *nav1 = [[UINavigationController alloc] initWithRootViewController:vc];
     
     UISplitViewController *splitVC = [[UISplitViewController alloc] init];
-    splitVC.viewControllers = @[nav1, nav2];
+    
+    if (self.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:vc2];
+        
+        splitVC.viewControllers = @[nav1, nav2];
+    }
+    else {
+        splitVC.viewControllers = @[nav1];
+    }
+    
     self.window.rootViewController = splitVC;
     
 }

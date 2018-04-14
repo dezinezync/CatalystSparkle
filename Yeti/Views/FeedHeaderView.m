@@ -117,6 +117,7 @@
 {
     if (_shadowImage) {
         [_shadowImage removeFromSuperview];
+        _shadowImage = nil;
     }
     
     if (shadowImage) {

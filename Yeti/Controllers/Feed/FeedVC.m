@@ -31,10 +31,6 @@
 
 @implementation FeedVC
 
-- (BOOL)ef_hidesNavBorder {
-    return NO;
-}
-
 - (instancetype)initWithFeed:(Feed *)feed
 {
     if (self = [super initWithStyle:UITableViewStylePlain]) {
@@ -106,32 +102,34 @@
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-    weakify(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-       
-        strongify(self);
+    if (self.headerView) {
+        weakify(self);
         
-        UIView *searchBarSuperview = self.navigationItem.searchController.searchBar.superview;
-        
-        SEL imagesSelector = NSSelectorFromString(@"findHairlineImageViewUnder:");
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            strongify(self);
+            
+            UIView *searchBarSuperview = self.navigationItem.searchController.searchBar.superview;
+            
+            SEL imagesSelector = NSSelectorFromString(@"findHairlineImageViewUnder:");
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        UIImageView *image = [self performSelector:imagesSelector withObject:searchBarSuperview];
+            UIImageView *image = [self performSelector:imagesSelector withObject:searchBarSuperview];
 #pragma clang diagnostic pop
-        self->_barImageView = image;
-        
-        if (image) {
-            if (self->_headerView) {
-                self->_headerView.shadowImage = image;
+            self->_barImageView = image;
+            
+            if (image) {
+                if (self->_headerView) {
+                    self->_headerView.shadowImage = image;
+                }
+                
+                [UIView transitionWithView:image duration:0.2 options:kNilOptions animations:^{
+                    image.hidden = YES;
+                } completion:nil];
             }
             
-            [UIView transitionWithView:image duration:0.2 options:kNilOptions animations:^{
-                image.hidden = YES;
-            } completion:nil];
-        }
-        
-    });
+        });
+    }
     
 }
 
@@ -154,6 +152,8 @@
 
 - (void)setupHeaderView
 {
+    
+    [self ef_hideNavBorder:self.navigationController.transitionCoordinator];
     
     if (_headerView)
         return;
