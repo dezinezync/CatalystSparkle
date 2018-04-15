@@ -56,6 +56,15 @@
     return self;
 }
 
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    Content *instance = [Content new];
+    
+    [instance setValuesForKeysWithDictionary:self.dictionaryRepresentation];
+    
+    return instance;
+}
+
 + (Content *)instanceFromDictionary:(NSDictionary *)aDictionary
 {
 

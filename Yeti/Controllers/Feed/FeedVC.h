@@ -28,4 +28,6 @@
 
 @property (nonatomic, strong) NSOperation * _Nullable searchOperation;
 
+- (void)setupHeaderView;
+
 @end

@@ -42,6 +42,15 @@
 		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
 		F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */; };
 		F05D21861FF2222F003DE813 /* YTUserID.m in Sources */ = {isa = PBXBuildFile; fileRef = F05D21851FF2222F003DE813 /* YTUserID.m */; };
+		F05DC07020831FD3009029E1 /* AuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC06F20831FD3009029E1 /* AuthorVC.m */; };
+		F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC072208328EC009029E1 /* AuthorHeaderView.m */; };
+		F05DC074208328EC009029E1 /* AuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC072208328EC009029E1 /* AuthorHeaderView.m */; };
+		F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC075208328FB009029E1 /* AuthorHeaderView.xib */; };
+		F05DC077208328FB009029E1 /* AuthorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC075208328FB009029E1 /* AuthorHeaderView.xib */; };
+		F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC07920832DB5009029E1 /* AuthorBioVC.m */; };
+		F05DC07C20832DB5009029E1 /* AuthorBioVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC07920832DB5009029E1 /* AuthorBioVC.m */; };
+		F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */; };
+		F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */; };
 		F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F069ABA5206DFCB200021ABF /* GalleryCell.m */; };
 		F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F069ABA6206DFCB200021ABF /* GalleryCell.xib */; };
 		F069ABAD206E018F00021ABF /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
@@ -346,6 +355,14 @@
 		F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Toolbar.m"; sourceTree = "<group>"; };
 		F05D21841FF2222F003DE813 /* YTUserID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTUserID.h; sourceTree = "<group>"; };
 		F05D21851FF2222F003DE813 /* YTUserID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTUserID.m; sourceTree = "<group>"; };
+		F05DC06E20831FD3009029E1 /* AuthorVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorVC.h; sourceTree = "<group>"; };
+		F05DC06F20831FD3009029E1 /* AuthorVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorVC.m; sourceTree = "<group>"; };
+		F05DC071208328EC009029E1 /* AuthorHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorHeaderView.h; sourceTree = "<group>"; };
+		F05DC072208328EC009029E1 /* AuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorHeaderView.m; sourceTree = "<group>"; };
+		F05DC075208328FB009029E1 /* AuthorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorHeaderView.xib; sourceTree = "<group>"; };
+		F05DC07820832DB5009029E1 /* AuthorBioVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorBioVC.h; sourceTree = "<group>"; };
+		F05DC07920832DB5009029E1 /* AuthorBioVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorBioVC.m; sourceTree = "<group>"; };
+		F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorBioVC.xib; sourceTree = "<group>"; };
 		F069ABA4206DFCB200021ABF /* GalleryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GalleryCell.h; sourceTree = "<group>"; };
 		F069ABA5206DFCB200021ABF /* GalleryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GalleryCell.m; sourceTree = "<group>"; };
 		F069ABA6206DFCB200021ABF /* GalleryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalleryCell.xib; sourceTree = "<group>"; };
@@ -580,12 +597,17 @@
 			children = (
 				F070C3531FBAE52300912CCF /* FeedVC.h */,
 				F070C3541FBAE52300912CCF /* FeedVC.m */,
+				F05DC06E20831FD3009029E1 /* AuthorVC.h */,
+				F05DC06F20831FD3009029E1 /* AuthorVC.m */,
 				F02459CF20591224002906C3 /* FeedSearchResults.h */,
 				F02459D020591224002906C3 /* FeedSearchResults.m */,
 				F02459D22059135E002906C3 /* FeedVC+Search.h */,
 				F02459D32059135E002906C3 /* FeedVC+Search.m */,
 				F023E5592076900E00FF513C /* CustomFeedVC.h */,
 				F023E55A2076900E00FF513C /* CustomFeedVC.m */,
+				F05DC07820832DB5009029E1 /* AuthorBioVC.h */,
+				F05DC07920832DB5009029E1 /* AuthorBioVC.m */,
+				F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -883,6 +905,9 @@
 				F0D008552081C32400EAFE3B /* FeedHeaderView.h */,
 				F0D008562081C32400EAFE3B /* FeedHeaderView.m */,
 				F0D008582081C33400EAFE3B /* FeedHeaderView.xib */,
+				F05DC071208328EC009029E1 /* AuthorHeaderView.h */,
+				F05DC072208328EC009029E1 /* AuthorHeaderView.m */,
+				F05DC075208328FB009029E1 /* AuthorHeaderView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1127,6 +1152,7 @@
 				F069ABFD206E018F00021ABF /* highlight.pack.js in Resources */,
 				F069ABFE206E018F00021ABF /* LaunchScreen.storyboard in Resources */,
 				F069ABFF206E018F00021ABF /* ArticleVC.xib in Resources */,
+				F05DC077208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
 				F069AC00206E018F00021ABF /* GalleryCell.xib in Resources */,
 				F069AC01206E018F00021ABF /* styleHTML.js in Resources */,
 				F069AC02206E018F00021ABF /* Tweet.xib in Resources */,
@@ -1142,6 +1168,7 @@
 				F069AC0C206E018F00021ABF /* attributions.html in Resources */,
 				F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */,
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
+				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F069AC0F206E018F00021ABF /* hljs.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1156,6 +1183,7 @@
 				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
+				F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
 				F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */,
 				F09E96482055342000E61681 /* styleHTML.js in Resources */,
 				F088089F206B8B9C00ECE1E6 /* Tweet.xib in Resources */,
@@ -1165,6 +1193,7 @@
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
+				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */,
 				F078B639206637B40048DBEA /* EmptyVC.xib in Resources */,
@@ -1339,7 +1368,9 @@
 				F069ABD7206E018F00021ABF /* ArticleCell.m in Sources */,
 				F069ABD8206E018F00021ABF /* Blockquote.m in Sources */,
 				F069ABD9206E018F00021ABF /* YTUserID.m in Sources */,
+				F05DC07C20832DB5009029E1 /* AuthorBioVC.m in Sources */,
 				F069ABDA206E018F00021ABF /* NSString+Levenshtein.m in Sources */,
+				F05DC074208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F069ABDB206E018F00021ABF /* Image.m in Sources */,
 				F069ABDC206E018F00021ABF /* AppDelegate.m in Sources */,
 				F069ABDD206E018F00021ABF /* ArticleHelperView.m in Sources */,
@@ -1385,6 +1416,7 @@
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
+				F05DC07020831FD3009029E1 /* AuthorVC.m in Sources */,
 				F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
@@ -1413,6 +1445,7 @@
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
+				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
 				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,
@@ -1429,6 +1462,7 @@
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
 				F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */,
 				F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */,
+				F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,

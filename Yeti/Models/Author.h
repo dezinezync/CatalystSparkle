@@ -8,11 +8,13 @@
 
 #import <DZKit/DZKit.h>
 
-@interface Author : DZCloudObject
+#import "Content.h"
+
+@interface Author : DZCloudObject <NSCoding, NSCopying>
 
 @property (nonatomic, copy) NSNumber *authorID;
 @property (nonatomic, copy) NSString *name;
-@property (nonatomic, copy) NSString *bio;
+@property (nonatomic, copy) Content *bio;
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs;
 

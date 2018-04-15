@@ -9,6 +9,8 @@
 #import "FeedVC+Search.h"
 #import "ArticleCell.h"
 #import "ArticleVC.h"
+#import "AuthorVC.h"
+
 #import "YetiConstants.h"
 
 #import "FeedsManager.h"
@@ -21,7 +23,7 @@
 
 #import "FeedHeaderView.h"
 
-@interface FeedVC () <DZDatasource, ArticleProvider> {
+@interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
 }
 
@@ -76,7 +78,7 @@
         self.navigationItem.searchController = searchController;
     }
     
-    if (self.feed.authors && self.feed.authors.count > 1) {
+    if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
         [self setupHeaderView];
     }
 }
@@ -126,8 +128,8 @@
             if (image) {
                 self->_barImageView = image;
                 
-                if (self->_headerView) {
-                    self->_headerView.shadowImage = image;
+                if ([self headerView]) {
+                    [self headerView].shadowImage = image;
                 }
                 
                 [UIView transitionWithView:image duration:0.2 options:kNilOptions animations:^{
@@ -171,6 +173,7 @@
     headerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
     
     [headerView configure:self.feed];
+    headerView.delegate = self;
     
     self.tableView.tableHeaderView = headerView;
     
@@ -481,6 +484,16 @@
     else {
         [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
     }
+}
+
+#pragma mark - <FeedHeaderViewDelegate>
+
+- (void)didTapAuthor:(Author *)author
+{
+    AuthorVC *vc = [[AuthorVC alloc] initWithFeed:self.feed];
+    vc.author = author;
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

@@ -475,6 +475,53 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
     
 }
 
+- (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    if (![self userID]) {
+        if (errorCB) {
+            errorCB(nil, nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSString *path = formattedString(@"/feeds/%@/author/%@", feedID, authorID);
+    
+    if (!page)
+        page = 1;
+    
+    NSDictionary *params = @{
+                             @"userID": [self userID],
+                             @"page": @(page)
+                             };
+    
+    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (!successCB)
+            return;
+        // we don't need this object
+//        NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
+        NSArray <NSDictionary *> *articlesArr = [responseObject valueForKey:@"articles"];
+        
+        NSArray <FeedItem *> *articles = [articlesArr rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        successCB(articles, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+}
+
 #ifndef SHARE_EXTENSION
 
 - (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB

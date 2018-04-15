@@ -9,11 +9,20 @@
 #import <DZKit/NibView.h>
 
 @class Feed;
+@class Author;
+
+@protocol FeedHeaderViewDelegate <NSObject>
+
+- (void)didTapAuthor:(Author * _Nonnull)author;
+
+@end
 
 @interface FeedHeaderView : NibView
 
-- (void)configure:(Feed *)feed;
+- (void)configure:(Feed * _Nonnull)feed;
 
-@property (nonatomic, weak) UIImageView *shadowImage;
+@property (nonatomic, weak) UIImageView * _Nullable shadowImage;
+
+@property (nonatomic, weak, nullable) id <FeedHeaderViewDelegate> delegate;
 
 @end

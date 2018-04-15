@@ -144,6 +144,23 @@
 
 - (void)didTapAuthorButton:(UIButton *)button {
     
+    NSString *name = [[button titleLabel] text];
+    
+    Author *author = [self.feed.authors rz_reduce:^id(Author *prev, Author *current, NSUInteger idx, NSArray *array) {
+        if ([current.name isEqualToString:name])
+            return current;
+        return prev;
+    }];
+    
+    if (!author)
+        return;
+    
+//    DDLogDebug(@"Author: %@", author);
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didTapAuthor:)]) {
+        [self.delegate didTapAuthor:author];
+    }
+    
 }
 
 #pragma mark - A11Y

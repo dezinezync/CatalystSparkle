@@ -61,6 +61,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.showsVerticalScrollIndicator = NO;
         self.opaque = YES;
         
+        self.scrollEnabled = NO;
+        
         [self updateStyle:nil];
     }
     
@@ -341,11 +343,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
 }
 
 - (BOOL)isEditable
-{
-    return NO;
-}
-
-- (BOOL)isScrollEnabled
 {
     return NO;
 }

@@ -22,6 +22,85 @@
     
 }
 
+#pragma mark - <NSCoding>
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder]) {
+        self.authorID = [aDecoder decodeObjectForKey:@"authorID"];
+        self.name = [aDecoder decodeObjectForKey:@"name"];
+        self.bio = [aDecoder decodeObjectForKey:@"bio"];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [super encodeWithCoder:encoder];
+    [encoder encodeObject:self.authorID forKey:@"authorID"];
+    [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeObject:self.bio forKey:@"bio"];
+}
+
+#pragma mark - <NSCopying>
+
+- (instancetype)copy {
+    Author *instance = [Author new];
+    
+    [instance setValuesForKeysWithDictionary:self.dictionaryRepresentation];
+    
+    return instance;
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    return [self copy];
+}
+
+#pragma mark -
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    if ([key isEqualToString:@"bio"]) {
+        
+        if ([value isKindOfClass:NSString.class]) {
+            NSData *data = [(NSString *)value dataUsingEncoding:NSUTF8StringEncoding];
+            value = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        }
+        
+        if ([value isKindOfClass:NSArray.class]) {
+            Content *content = [Content new];
+            [content setType:@"container"];
+            
+            NSMutableArray *members = [NSMutableArray arrayWithCapacity:[(NSArray *)value count]];
+            
+            for (NSDictionary *item in (NSArray *)value) {
+                Content *sub = [Content instanceFromDictionary:item];
+                
+                [members addObject:sub];
+            }
+            
+            content.items = members;
+            
+            if (members.count == 1) {
+                content = [content.items firstObject];
+            }
+            
+            value = content;
+        }
+        
+        if ([value isKindOfClass:NSDictionary.class]) {
+            Content *sub = [Content instanceFromDictionary:value];
+            
+            value = sub;
+        }
+        
+    }
+    
+    [super setValue:value forKey:key];
+}
+
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
     
@@ -51,7 +130,12 @@
     }
     
     if (self.bio) {
-        [dict setObject:self.bio forKey:@"bio"];
+        if ([self.bio isKindOfClass:Content.class]) {
+            [dict setObject:self.bio.dictionaryRepresentation forKey:@"bio"];
+        }
+        else {
+            [dict setObject:self.bio forKey:@"bio"];
+        }
     }
     
     return dict.copy;
