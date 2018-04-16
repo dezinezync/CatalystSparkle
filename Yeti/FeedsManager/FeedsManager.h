@@ -73,6 +73,16 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #endif
 
+#pragma mark - Filters
+
+- (void)getFiltersWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)addFilter:(NSString *)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)removeFilter:(NSString *)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#pragma mark - Error formatting
+
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 
 @end

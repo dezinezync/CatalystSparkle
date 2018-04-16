@@ -13,6 +13,7 @@
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
 #import "ExternalAppsVC.h"
+#import "FiltersVC.h"
 
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
@@ -221,6 +222,7 @@
                     break;
                     
                 default:
+                    vc = [[FiltersVC alloc] initWithStyle:UITableViewStyleGrouped];
                     break;
             }
             break;

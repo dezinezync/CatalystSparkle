@@ -670,6 +670,73 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
 
 #endif
 
+#pragma mark - Filters
+
+- (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
+{
+    [self.session GET:@"/user/filters" parameters:@{@"userID": [self userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSArray <NSString *> *filters = [responseObject valueForKey:@"filters"];
+        
+        if (successCB) {
+            successCB(filters, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
+
+- (void)addFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    [self.session PUT:@"/user/filters" queryParams:@{@"userID": [self userID]} parameters:@{@"word" : word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        id retval = [responseObject valueForKey:@"status"];
+        
+        if (successCB)
+            successCB(retval, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
+- (void)removeFilter:(NSString *)word success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    [self.session DELETE:@"/user/filters" parameters:@{@"userID": [self userID], @"word": word} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        id retval = [responseObject valueForKey:@"status"];
+        
+        if (successCB)
+            successCB(retval, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
@@ -727,7 +794,7 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #endif
