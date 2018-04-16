@@ -249,7 +249,7 @@
                 webVC.hidesBottomBarWhenPushed = YES;
                 
                 webVC.webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-                webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions.html" withExtension:nil];
+                webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
                 
                 vc = webVC;
             }

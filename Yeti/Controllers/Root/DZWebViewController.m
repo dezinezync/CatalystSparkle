@@ -22,7 +22,6 @@
 {
     [super viewDidLoad];
     
-    self.view.translatesAutoresizingMaskIntoConstraints = YES;
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     
     [self.view addSubview:self.webview];
@@ -33,19 +32,14 @@
     [super viewWillAppear:animated];
     
     if (self.URL) {
-        if ([NSFileManager.defaultManager fileExistsAtPath:self.URL.absoluteString]) {
-            NSError *error = nil;
-            NSString *html = [NSString stringWithContentsOfFile:self.URL.absoluteString encoding:NSUTF8StringEncoding error:&error];
-            
-            if (error) {
-                DDLogError(@"error loading file: %@\n%@", self.URL, error.localizedDescription);
-            }
-            else {
-                [self.webview loadHTMLString:html baseURL:nil];
-            }
+        NSError *error = nil;
+        NSString *html = [NSString stringWithContentsOfURL:self.URL encoding:NSUTF8StringEncoding error:&error];
+        
+        if (error) {
+            DDLogError(@"error loading file: %@\n%@", self.URL, error.localizedDescription);
         }
         else {
-            DDLogError(@"The path %@ does not exist.", self.URL.absoluteString);
+            __unused WKNavigation *navigation = [self.webview loadHTMLString:html baseURL:NSBundle.mainBundle.bundleURL];
         }
     }
 }
@@ -70,6 +64,9 @@
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
     if ([navigationAction.request.URL.absoluteString isEqualToString:@"about:blank"]) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+    }
+    else if ([navigationAction.request.URL.absoluteString isEqualToString:[NSBundle mainBundle].bundleURL.absoluteString]) {
         decisionHandler(WKNavigationActionPolicyAllow);
     }
     else {
