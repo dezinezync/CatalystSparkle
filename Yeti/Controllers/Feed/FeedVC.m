@@ -168,6 +168,17 @@
     });
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    @try {
+        [NSNotificationCenter.defaultCenter removeObserver:self name:SubscribedToFeed object:nil];
+    } @catch (NSException *exc) {
+        DDLogWarn(@"Exception when unregistering: %@", exc);
+    }
+}
+
 - (void)_setToolbarHidden {
     self.navigationController.toolbarHidden = YES;
 }
@@ -270,6 +281,8 @@
     
     weakify(self);
     
+    sender.enabled = NO;
+    
     if (self.feed.isSubscribed) {
         // unsubsribe
         
@@ -279,11 +292,16 @@
             self.feed.subscribed = NO;
             
             asyncMain(^{
+                sender.enabled = YES;
                 sender.image = [UIImage imageNamed:@"notifications_off"];
                 sender.accessibilityLabel = @"Subscribe to notifications";
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            asyncMain(^{
+                sender.enabled = YES;
+            });
            
             [AlertManager showGenericAlertWithTitle:@"Unsubscribe failed" message:error.localizedDescription];
             
@@ -300,6 +318,10 @@
             MyFeedsManager.subsribeAfterPushEnabled = self.feed;
             
             weakify(self);
+            
+            asyncMain(^{
+                sender.enabled = YES;
+            });
             
             [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
                 
@@ -322,23 +344,34 @@
             
             return;
         }
-        
-        // add subscription
-        [MyFeedsManager subsribe:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            self.feed.subscribed = YES;
-            
+        else {
             asyncMain(^{
-                sender.image = [UIImage imageNamed:@"notifications_on"];
-                sender.accessibilityLabel = @"Unsubscribe from notifications";
+                [UIApplication.sharedApplication registerForRemoteNotifications];
             });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
-        }];
+        }
     }
+    
+    // add subscription
+    [MyFeedsManager subsribe:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        self.feed.subscribed = YES;
+        
+        asyncMain(^{
+            sender.enabled = YES;
+            sender.image = [UIImage imageNamed:@"notifications_on"];
+            sender.accessibilityLabel = @"Unsubscribe from notifications";
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        asyncMain(^{
+            sender.enabled = YES;
+        });
+        
+        [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
+    }];
     
 }
 
