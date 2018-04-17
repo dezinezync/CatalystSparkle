@@ -43,12 +43,14 @@
     
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
-    self.DS.data = [MyFeedsManager unread];
-    
     self.tableView.tableFooterView = [UIView new];
     
     if (!self.isUnread) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
+        self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+    }
+    else {
+        self.DS.data = [MyFeedsManager unread];
     }
 }
 
@@ -103,9 +105,6 @@
             
             self.loadingNext = NO;
         }];
-    }
-    else {
-        self.DS.data = MyFeedsManager.bookmarks;
     }
 }
 

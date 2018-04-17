@@ -61,6 +61,9 @@
     [encoder encodeObject:self.url forKey:@"url"];
     [encoder encodeObject:self.extra forKey:@"extra"];
     [encoder encodeObject:self.unread forKey:@"unread"];
+    [encoder encodeObject:self.hub forKey:@"hub"];
+    [encoder encodeBool:self.hubSubscribed forKey:@"hubSubscribed"];
+    [encoder encodeBool:self.subscribed forKey:@"subscribed"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -77,6 +80,9 @@
         self.url = [decoder decodeObjectForKey:@"url"];
         self.extra = [decoder decodeObjectForKey:@"extra"];
         self.unread = [decoder decodeObjectForKey:@"unread"];
+        self.hub = [decoder decodeObjectForKey:@"hub"];
+        self.hubSubscribed = [decoder decodeBoolForKey:@"hubSubscribed"];
+        self.subscribed = [decoder decodeBoolForKey:@"subscribed"];
     }
     return self;
 }
@@ -106,6 +112,11 @@
     
     if ([value isKindOfClass:NSDate.class]) {
         
+    }
+    
+    if ([key isEqualToString:@"hubSubscribed"]) {
+        if (!value)
+            value = @(NO);
     }
     
     if ([key isEqualToString:@"unread"]) {
@@ -225,6 +236,13 @@
     if (self.extra) {
         [dictionary setObject:self.extra forKey:@"extra"];
     }
+    
+    if (self.hub) {
+        [dictionary setObject:self.hub forKey:@"hub"];
+    }
+    
+    [dictionary setObject:@(self.hubSubscribed) forKey:@"hubSubscribed"];
+    [dictionary setObject:@(self.subscribed) forKey:@"subscribed"];
 
     return dictionary;
 

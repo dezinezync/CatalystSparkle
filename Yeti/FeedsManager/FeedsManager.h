@@ -18,6 +18,7 @@ extern FMNotification _Nonnull const FeedDidUpReadCount;
 extern FMNotification _Nonnull const FeedsDidUpdate;
 extern FMNotification _Nonnull const UserDidUpdate;
 extern FMNotification _Nonnull const BookmarksDidUpdate;
+extern FMNotification _Nonnull const SubscribedToFeed;
 
 @class FeedsManager;
 
@@ -25,6 +26,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject {
     NSArray <FeedItem *> * _bookmarks;
+    NSString *_pushToken;
+    
+    NSString * kPushTokenFilePath;
 }
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
@@ -33,6 +37,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;
 
 @property (nonatomic) NSNumber * _Nullable userID;
+
+@property (nonatomic, strong) NSString *pushToken;
+
+@property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
 
 #endif
 
@@ -80,6 +88,14 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)addFilter:(NSString *)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)removeFilter:(NSString *)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#pragma mark - Subscriptions
+
+- (void)addPushToken:(NSString *)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)subsribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)unsubscribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Error formatting
 

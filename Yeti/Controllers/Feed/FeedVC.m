@@ -22,6 +22,7 @@
 #import "ArticleProvider.h"
 
 #import "FeedHeaderView.h"
+#import <UserNotifications/UserNotifications.h>
 
 @interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
@@ -62,8 +63,20 @@
     self.tableView.tableFooterView = [UIView new];
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
-    allRead.accessibilityHint = @"Mark all articles are read";
-    self.navigationItem.rightBarButtonItem = allRead;
+    allRead.accessibilityLabel = @"Mark all articles are read";
+    
+    if (!(self.feed.hubSubscribed && self.feed.hub)) {
+        self.navigationItem.rightBarButtonItem = allRead;
+    }
+    else {
+        // push notifications are possible
+        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        notifications.accessibilityLabel = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+        
+        self.navigationItem.rightBarButtonItems = @[allRead, notifications];
+    }
     
     // Search Controller setup
     {
@@ -182,6 +195,45 @@
 
 #pragma mark - Actions
 
+- (void)loadArticle {
+    
+    if (!self.loadOnReady)
+        return;
+    
+    if (!self.DS.data.count)
+        return;
+    
+    __block NSUInteger index = NSNotFound;
+    
+    [(NSArray <FeedItem *> *)[self.DS data] enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if ([obj.identifier isEqualToNumber:self.loadOnReady]) {
+            index = idx;
+            *stop = YES;
+        }
+        
+    }];
+    
+    self.loadOnReady = nil;
+    
+    if (index == NSNotFound)
+        return;
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    });
+    
+}
+
 - (void)didTapAllRead:(UIBarButtonItem *)sender {
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Mark All Read" message:@"Are you sure you want to mark all articles as read?" preferredStyle:UIAlertControllerStyleActionSheet];
@@ -212,6 +264,111 @@
     [self presentViewController:avc animated:YES completion:nil];
     
     
+}
+
+- (void)didTapNotifications:(UIBarButtonItem *)sender {
+    
+    weakify(self);
+    
+    if (self.feed.isSubscribed) {
+        // unsubsribe
+        
+        [MyFeedsManager unsubscribe:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            self.feed.subscribed = NO;
+            
+            asyncMain(^{
+                sender.image = [UIImage imageNamed:@"notifications_off"];
+                sender.accessibilityLabel = @"Subscribe to notifications";
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Unsubscribe failed" message:error.localizedDescription];
+            
+        }];
+        
+        return;
+    }
+    
+    if (!MyFeedsManager.pushToken) {
+        // register for push notifications first.
+        
+        if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+            
+            MyFeedsManager.subsribeAfterPushEnabled = self.feed;
+            
+            weakify(self);
+            
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                
+                if (error) {
+                    DDLogError(@"Error authorizing for push notifications: %@",error);
+                    return;
+                }
+                
+                if (granted) {
+                    strongify(self);
+                    
+                    asyncMain(^{
+                        [UIApplication.sharedApplication registerForRemoteNotifications];
+                    });
+                    
+                    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(subscribedToFeed:) name:SubscribedToFeed object:nil];
+                }
+                
+            }];
+            
+            return;
+        }
+        
+        // add subscription
+        [MyFeedsManager subsribe:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            self.feed.subscribed = YES;
+            
+            asyncMain(^{
+                sender.image = [UIImage imageNamed:@"notifications_on"];
+                sender.accessibilityLabel = @"Unsubscribe from notifications";
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
+        }];
+    }
+    
+}
+
+- (void)subscribedToFeed:(NSNotification *)note {
+    
+    Feed *obj = note.object;
+    
+    if (!obj)
+        return;
+    
+    if (![obj.feedID isEqualToNumber:self.feed.feedID]) {
+        return;
+    }
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self name:SubscribedToFeed object:nil];
+    
+    weakify(self);
+    
+    asyncMain(^{
+       
+        strongify(self);
+        
+        self.feed.subscribed = YES;
+        
+        UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems lastObject];
+        
+        sender.image = [UIImage imageNamed:@"notifications_on"];
+        sender.accessibilityLabel = @"Unsubscribe from notifications";
+        
+    });
 }
 
 #pragma mark - Table view data source
@@ -345,6 +502,15 @@
         
         self->_page++;
         self.loadingNext = NO;
+        
+        if ([self loadOnReady]) {
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                [self loadArticle];
+            });
+        }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);

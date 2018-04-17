@@ -22,6 +22,10 @@
 
 @property (nonatomic, strong) NSArray <Author *> *authors;
 
+@property (nonatomic, copy) NSString *hub;
+@property (nonatomic, assign, getter=isHubSubscribed) BOOL hubSubscribed; // if the hub is subscribed, the push notifications are possible.
+@property (nonatomic, assign, getter=isSubscribed) BOOL subscribed; // this indicates if the user is subscribed for push notifications.
+
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 

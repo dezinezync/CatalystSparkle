@@ -18,6 +18,8 @@
     BOOL _canLoadNext;
 }
 
+@property (nonatomic, assign) NSNumber *loadOnReady;
+
 @property (nonatomic, strong) DZBasicDatasource *DS;
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;

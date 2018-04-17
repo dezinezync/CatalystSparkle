@@ -22,6 +22,7 @@ FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdate
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
 FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidUpdate";
+FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFeed";
 
 #ifdef SHARE_EXTENSION
 @interface FeedsManager () {
@@ -53,12 +54,22 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
 - (instancetype)init
 {
     if (self = [super init]) {
+        
+        self->kPushTokenFilePath = [@"~/Documents/push.dat" stringByExpandingTildeInPath];
+        
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         DDLogWarn(@"%@", self.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+        
+        NSError *error = nil;
+        _pushToken = [[NSString alloc] initWithContentsOfFile:self->kPushTokenFilePath encoding:NSUTF8StringEncoding error:&error];
+        
+        if (error) {
+            DDLogError(@"Error loading push token from disk: %@", error.localizedDescription);
+        }
 #endif
     }
     
@@ -737,7 +748,108 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
     
 }
 
+#pragma mark - Subscriptions
+
+- (void)addPushToken:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    [self.session PUT:@"/user/token" queryParams:@{@"userID": [self userID]} parameters:@{@"token": token} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+}
+
+- (void)subsribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    [self.session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+}
+
+- (void)unsubscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    [self.session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+}
+
 #pragma mark - Setters
+
+- (void)setPushToken:(NSString *)pushToken
+{
+    _pushToken = pushToken;
+    
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSError *error = nil;
+    
+    if (_pushToken) {
+        if (![_pushToken writeToFile:kPushTokenFilePath atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+            DDLogError(@"Error saving push token file: %@", error.localizedDescription);
+        }
+#ifndef SHARE_EXTENSION
+        if (self.subsribeAfterPushEnabled) {
+            
+            weakify(self);
+            
+            [self subsribe:self.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:SubscribedToFeed object:self.subsribeAfterPushEnabled];
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    self.subsribeAfterPushEnabled = nil;
+                });
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                strongify(self);
+                
+                self.subsribeAfterPushEnabled = nil;
+                
+                [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
+                
+            }];
+            
+        }
+        
+        [self addPushToken:_pushToken success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            DDLogDebug(@"added push token: %@", responseObject);
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            DDLogError(@"Add push token error: %@", error);
+        }];
+#endif
+    }
+    else {
+        if (![manager removeItemAtPath:kPushTokenFilePath error:&error]) {
+            DDLogError(@"Error removing push token file: %@", error.localizedDescription);
+        }
+    }
+}
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
 {

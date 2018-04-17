@@ -7,12 +7,15 @@
 //
 
 #import "AppDelegate+Routing.h"
+#import "AppDelegate+Push.h"
 #import "FeedsVC.h"
 #import <DZKit/EFNavController.h>
 #import <JLRoutes/JLRoutes.h>
 
 #import "YetiConstants.h"
 #import "EmptyVC.h"
+
+#import <UserNotifications/UNUserNotificationCenter.h>
 
 @interface AppDelegate ()
 
@@ -26,6 +29,12 @@
     [ADZLogger initialize];
     
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [application registerForRemoteNotifications];
+    });
     
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }

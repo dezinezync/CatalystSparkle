@@ -11,6 +11,9 @@
 #import "FeedsManager.h"
 #import "YetiConstants.h"
 
+#import "FeedsVC.h"
+#import "FeedVC.h"
+
 #import <DZKit/AlertManager.h>
 
 @implementation AppDelegate (Routing)
@@ -87,6 +90,17 @@
         else if ([type isEqualToString:@"status"]) {
             [self twitterOpenStatus:identifer];
         }
+        
+        return YES;
+        
+    }];
+    
+    [JLRoutes addRoute:@"/feed/:feedID/article/:articleID" handler:^BOOL(NSDictionary *parameters) {
+       
+        NSNumber *feedID = @([[parameters valueForKey:@"feedID"] integerValue]);
+        NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
+        
+        [self openFeed:feedID article:articleID];
         
         return YES;
         
@@ -203,6 +217,61 @@
     }
     
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+}
+
+- (void)openFeed:(NSNumber *)feedID article:(NSNumber *)articleID
+{
+    [self popToRoot];
+    
+    weakify(self);
+    
+    // get the primary navigation controller
+    asyncMain(^{
+        UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+        
+        FeedsVC *feedsVC = [[nav viewControllers] firstObject];
+        
+        DZBasicDatasource *DS = [feedsVC valueForKeyPath:@"DS"];
+        
+        __block NSUInteger index = NSNotFound;
+        
+        [(NSArray <Feed *> *)[DS data] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            if ([obj.feedID isEqualToNumber:feedID]) {
+                index = idx;
+                *stop = YES;
+            }
+            
+        }];
+        
+        if (index == NSNotFound)
+            return;
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        
+        [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+        [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+        
+        if (articleID) {
+            asyncMain(^{
+                strongify(self);
+                
+                [self showArticle:articleID];
+            });
+        }
+    });
+}
+
+- (void)showArticle:(NSNumber *)articleID {
+    
+    if (!articleID)
+        return;
+    
+     UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    
+    FeedVC *feedVC = (FeedVC *)[nav topViewController];
+    
+    feedVC.loadOnReady = articleID;
 }
 
 @end
