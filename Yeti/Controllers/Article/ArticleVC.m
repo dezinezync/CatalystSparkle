@@ -660,7 +660,24 @@ static CGFloat const baseFontSize = 16.f;
 #endif
 #endif
     heading.level = content.level.integerValue;
+    
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
+    
+    if (content.identifier && ![content.identifier isBlank]) {
+        NSAttributedString *attrs = heading.attributedText;
+        
+        NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, content.identifier);
+        
+        NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)],
+                                     NSLinkAttributeName: url
+                                     };
+        
+        NSMutableAttributedString *prefix = [[NSAttributedString alloc] initWithString:@"🔗 " attributes:attributes].mutableCopy;
+        
+        [prefix appendAttributedString:attrs];
+        heading.attributedText = prefix;
+        heading.delegate = self;
+    }
     
     frame.size.height = heading.intrinsicContentSize.height;
     heading.frame = frame;
