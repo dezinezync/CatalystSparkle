@@ -18,6 +18,13 @@
 
 @implementation Heading
 
+- (BOOL)avoidsLazyLoading
+{
+    return YES;
+}
+
+#pragma mark -
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {

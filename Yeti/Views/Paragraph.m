@@ -14,6 +14,8 @@
 
 @interface Paragraph ()
 
+@property (nonatomic, copy) NSAttributedString *cachedAttributedText;
+
 @end
 
 @implementation Paragraph
@@ -50,6 +52,39 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return direction;
 }
 
+#pragma mark - Appearance
+
+- (void)viewWillAppear
+{
+    self.appearing = YES;
+    
+    if (self.avoidsLazyLoading)
+        return;
+    
+    if (self.cachedAttributedText) {
+        self.attributedText = self.cachedAttributedText.copy;
+    }
+    
+    DDLogDebug(@"%p will appear. Has cached text: %@", &self, self.cachedAttributedText != nil ? @"Yes" : @"No");
+    
+    self.cachedAttributedText = nil;
+}
+
+- (void)viewDidDisappear
+{
+
+    self.appearing = NO;
+    
+    if (self.avoidsLazyLoading)
+        return;
+    
+    DDLogDebug(@"%p did disappear", &self);
+    
+    self.cachedAttributedText = self.attributedText;
+    self.attributedText = nil;
+    
+}
+
 #pragma mark - Instance methods
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -69,6 +104,16 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return self;
 }
 
+- (void)setAttributedText:(NSAttributedString *)attributedText
+{
+    if (self.isAppearing || self.avoidsLazyLoading) {
+        [super setAttributedText:attributedText];
+    }
+    else {
+        self.cachedAttributedText = attributedText;
+    }
+}
+
 - (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges attributes:(NSDictionary *)attributes
 {
     
@@ -78,10 +123,15 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     NSMutableAttributedString *attrs = [self processText:text ranges:ranges attributes:attributes].mutableCopy;
     
-    asyncMain(^{
-        strongify(self);
-        self.attributedText = attrs;
-    });
+    if (self.isAppearing || self.avoidsLazyLoading) {
+        asyncMain(^{
+            strongify(self);
+            self.attributedText = attrs;
+        });
+    }
+    else {
+        self.cachedAttributedText = attrs;
+    }
 }
 
 - (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes { @autoreleasepool {

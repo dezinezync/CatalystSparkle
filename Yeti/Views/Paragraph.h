@@ -12,6 +12,10 @@
 
 @interface Paragraph : UITextView
 
+@property (nonatomic, assign, getter=isAppearing) BOOL appearing;
+
+@property (nonatomic, assign) BOOL avoidsLazyLoading;
+
 @property (nonatomic, strong) UIFont * bodyFont;
 
 @property (nonatomic, assign) BOOL afterHeading;
@@ -20,6 +24,9 @@
 @property (nonatomic, strong, class) NSParagraphStyle * paragraphStyle;
 
 @property (nonatomic, strong) NSLayoutConstraint *leading, *trailing;
+
+- (void)viewWillAppear;
+- (void)viewDidDisappear;
 
 - (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 

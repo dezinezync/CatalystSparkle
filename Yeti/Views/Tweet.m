@@ -21,6 +21,10 @@
 
 @implementation TweetPara
 
+- (BOOL)avoidsLazyLoading {
+    return YES;
+}
+
 - (UIFont *)bodyFont
 {
     if (!_bodyFont) {

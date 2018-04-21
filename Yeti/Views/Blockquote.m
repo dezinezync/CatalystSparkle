@@ -11,6 +11,11 @@
 
 @implementation BlockPara
 
+- (BOOL)avoidsLazyLoading
+{
+    return YES;
+}
+
 - (UIFont *)font
 {
     UIFont *base = [super font];

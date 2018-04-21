@@ -964,13 +964,35 @@ static CGFloat const baseFontSize = 16.f;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    CGRect visibleRect;
+    visibleRect.origin = scrollView.contentOffset;
+    visibleRect.size = scrollView.bounds.size;
+    
+    NSArray <UIView *>  * visibleViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+        return CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
+    }];
+    
+    // make these views visible
+    for (UIView *subview in visibleViews) { @autoreleasepool {
+        if ([subview isKindOfClass:Paragraph.class] && ![(Paragraph *)subview isAppearing]) {
+            [(Paragraph *)subview viewWillAppear];
+        }
+    } }
+    
+    // tell these views to hide their content
+    NSArray <UIView *> *scrolledOutViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+        return [obj respondsToSelector:@selector(isAppearing)] && !CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
+    }];
+    
+    for (UIView *subview in scrolledOutViews) {
+        if ([subview isKindOfClass:Paragraph.class] && [(Paragraph *)subview isAppearing]) {
+            [(Paragraph *)subview viewDidDisappear];
+        }
+    }
+    
     CGPoint point = scrollView.contentOffset;
     // adding the scrollView's height here triggers loading of the image as soon as it's about to appear on screen.
     point.y += scrollView.bounds.size.height;
-    
-    CGRect visibleRect;
-    visibleRect.origin = scrollView.contentOffset;
-    visibleRect.size = scrollView.frame.size;
     
     for (Image *imageview in self.images) { @autoreleasepool {
         
