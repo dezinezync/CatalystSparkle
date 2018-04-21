@@ -368,7 +368,7 @@ static CGFloat const baseFontSize = 16.f;
     NSDictionary *baseAttributes = @{NSFontAttributeName : baseFont,
                                      NSForegroundColorAttributeName: UIColor.blackColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: @(-1.14f)
+                                     NSKernAttributeName: @(-1.14f),
                                      };
     
     NSDictionary *subtextAttributes = @{NSFontAttributeName: [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont systemFontOfSize:(baseFontSize * 1.125f) weight:UIFontWeightMedium]],
@@ -382,7 +382,9 @@ static CGFloat const baseFontSize = 16.f;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
     label.numberOfLines = 0;
     label.attributedText = attrs;
-    label.preferredMaxLayoutWidth = self.view.bounds.size.width;
+    label.translatesAutoresizingMaskIntoConstraints = NO;
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+//    label.preferredMaxLayoutWidth = self.view.bounds.size.width;
     
     [label sizeToFit];
     
@@ -393,13 +395,14 @@ static CGFloat const baseFontSize = 16.f;
     UILabel *sublabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
     sublabel.numberOfLines = 0;
     sublabel.attributedText = [[NSAttributedString alloc] initWithString:subline attributes:subtextAttributes];
-    sublabel.preferredMaxLayoutWidth = self.view.bounds.size.width;
+    sublabel.translatesAutoresizingMaskIntoConstraints = NO;
+    sublabel.lineBreakMode = NSLineBreakByWordWrapping;
+//    sublabel.preferredMaxLayoutWidth = self.view.bounds.size.width;
     
     [sublabel sizeToFit];
     
     sublabel.backgroundColor = UIColor.whiteColor;
     sublabel.opaque = YES;
-    sublabel.translatesAutoresizingMaskIntoConstraints = NO;
     
     UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 48.f)];
     mainView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -1054,7 +1057,7 @@ static CGFloat const baseFontSize = 16.f;
                 
                 // the comparison is not done against 0
                 // to avoid comparing to self
-                if ((ld >= 1 && ld <= 6) && !contained) {
+                if (((ld >= 1 && ld <= 6) && !contained) || ((ld >= 2 && ld <= 5) && contained)) {
                     required = para;
                     *stop = YES;
                 }

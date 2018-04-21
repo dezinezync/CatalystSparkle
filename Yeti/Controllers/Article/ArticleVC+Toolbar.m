@@ -147,9 +147,16 @@
     
     NSValue *prevValue = _searchingRects[_searchCurrentIndex-1];
     
+    weakify(self)
+    
     if (prevValue) {
         _searchCurrentIndex--;
-        _searchHighlightingRect.frame = prevValue.CGRectValue;
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            strongify(self);
+            self->_searchHighlightingRect.frame = prevValue.CGRectValue;
+        }];
+        
         [self scrollToRangeRect:prevValue];
     }
     
@@ -208,9 +215,9 @@
     CGRect rect = value.CGRectValue;
     UIScrollView *scrollView = (UIScrollView *)(self.stackView.superview);
     // since we reference the scrollRect from 0,0 (top, left) in iOS.
-    rect.origin.y += scrollView.adjustedContentInset.top;
+    rect.origin.y -= scrollView.adjustedContentInset.top;
     
-    [scrollView scrollRectToVisible:rect animated:YES];
+    [scrollView setContentOffset:rect.origin];
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>
@@ -431,13 +438,18 @@
     // now we can highlight across these rects
     _searchingRects = rects;
     
+    if (_searchingRects.count > 1) {
+        _searchNextButton.enabled = YES;
+        _searchPrevButton.enabled = YES;
+    }
+    
     if (!_searchHighlightingRect) {
         // use the first rect's value
-        _searchHighlightingRect = [[UILabel alloc] initWithFrame:CGRectIntegral(_searchingRects.firstObject.CGRectValue)];
+        _searchHighlightingRect = [[UIView alloc] initWithFrame:CGRectIntegral(_searchingRects.firstObject.CGRectValue)];
         _searchHighlightingRect.backgroundColor = [UIColor.yellowColor colorWithAlphaComponent:0.5f];
         _searchHighlightingRect.autoresizingMask = UIViewAutoresizingNone;
-        _searchHighlightingRect.numberOfLines = 0;
-        _searchHighlightingRect.font = [[[Paragraph alloc] init] bodyFont];
+//        _searchHighlightingRect.numberOfLines = 0;
+//        _searchHighlightingRect.font = [[[Paragraph alloc] init] bodyFont];
         _searchHighlightingRect.layer.cornerRadius = 2.f;
         _searchHighlightingRect.layer.masksToBounds = YES;
         

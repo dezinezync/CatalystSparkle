@@ -122,6 +122,7 @@
     _content = content;
     
     [self.textview setText:content.content ranges:content.ranges attributes:content.attributes];
+    self.textview.contentSize = [[self.textview attributedText] boundingRectWithSize:self.textview.bounds.size options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size;
     
     self.usernameLabel.text = formattedString(@"@%@", [content.attributes valueForKey:@"username"]);
     
@@ -189,7 +190,7 @@
         size.height += self.collectionView.bounds.size.height;
     }
     
-    size.height += [self.textview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
+    size.height += [self.textview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height + ((self.textview.bodyFont.pointSize * MAX(1.333f, self.textview.paragraphStyle.lineHeightMultiple)) * 4);
     size.height += [self.avatar.superview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
     // add the inter-elements padding
     size.height += LayoutPadding * (self.collectionView.isHidden ? 2 : 3);

@@ -17,7 +17,7 @@
     BOOL _showSearchBar;
     UIButton *_searchPrevButton, *_searchNextButton;
     
-    UILabel *_searchHighlightingRect;
+    UIView *_searchHighlightingRect;
     NSArray <NSValue *> *_searchingRects;
     NSInteger _searchCurrentIndex;
     CGRect _keyboardRect;
