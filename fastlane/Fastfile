@@ -31,7 +31,7 @@ platform :ios do
         
         gym(
             include_bitcode: false,
-            include_symbols: true
+            include_symbols: false
         )
 
         pilot(
