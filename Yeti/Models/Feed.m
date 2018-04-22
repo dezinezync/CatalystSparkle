@@ -87,6 +87,19 @@
     return self;
 }
 
+- (instancetype)copy {
+    
+    Feed *instance = [Feed instanceFromDictionary:self.dictionaryRepresentation];
+    
+    return instance;
+    
+}
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    return [self copy];
+}
+
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary
 {
 

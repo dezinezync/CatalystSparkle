@@ -204,6 +204,13 @@
 		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
+		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
+		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
+		F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
+		F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
+		F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BC0208C82C6007E5A3B /* Folder.m */; };
+		F0B21BC2208C82C7007E5A3B /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BC0208C82C6007E5A3B /* Folder.m */; };
+		F0B21BC3208C82C7007E5A3B /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BC0208C82C6007E5A3B /* Folder.m */; };
 		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
 		F0BCE1F5205A733500DD27D8 /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0BCE1F6205A733500DD27D8 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -455,6 +462,11 @@
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
+		F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderVC.h; sourceTree = "<group>"; };
+		F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderVC.m; sourceTree = "<group>"; };
+		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
+		F0B21BBF208C82C6007E5A3B /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
+		F0B21BC0208C82C6007E5A3B /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
 		F0C34EF5206BB0070065BCE1 /* DZNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DZNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -775,6 +787,8 @@
 		F070C3111FBABC8A00912CCF /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F0B21BBF208C82C6007E5A3B /* Folder.h */,
+				F0B21BC0208C82C6007E5A3B /* Folder.m */,
 				F070C3461FBAD4B200912CCF /* Enclosure.h */,
 				F070C3471FBAD4B200912CCF /* Enclosure.m */,
 				F070C33E1FBACD2C00912CCF /* Content.h */,
@@ -819,6 +833,9 @@
 				F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */,
 				F0C7E3D020627809001E4BE4 /* NewFeedVC.m */,
 				F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */,
+				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
+				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
+				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -1179,6 +1196,7 @@
 				F069AC02206E018F00021ABF /* Tweet.xib in Resources */,
 				F069AC03206E018F00021ABF /* ArticleHelperView.xib in Resources */,
 				F069AC04206E018F00021ABF /* FeedsCell.xib in Resources */,
+				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
 				F069AC05206E018F00021ABF /* Gallery.xib in Resources */,
 				F069AC06206E018F00021ABF /* Assets.xcassets in Resources */,
 				F069AC07206E018F00021ABF /* ImageLoadingVC.xib in Resources */,
@@ -1217,6 +1235,7 @@
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
+				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
 				F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */,
 				F078B639206637B40048DBEA /* EmptyVC.xib in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
@@ -1335,6 +1354,7 @@
 				F035A229206181C8005A88EE /* Enclosure.m in Sources */,
 				F035A22C206181C8005A88EE /* FeedItem.m in Sources */,
 				F0D0085E2081C90100EAFE3B /* Author.m in Sources */,
+				F0B21BC3208C82C7007E5A3B /* Folder.m in Sources */,
 				F035A22A206181C8005A88EE /* Content.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1365,6 +1385,7 @@
 				F069ABBF206E018F00021ABF /* DTTimePeriodGroup.m in Sources */,
 				F069ABC0206E018F00021ABF /* FeedVC.m in Sources */,
 				F069ABC1206E018F00021ABF /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
+				F0B21BC2208C82C7007E5A3B /* Folder.m in Sources */,
 				F069ABC2206E018F00021ABF /* DZWebViewController.m in Sources */,
 				F069ABC3206E018F00021ABF /* main.m in Sources */,
 				F069ABC4206E018F00021ABF /* NSAttributedString+Trimming.m in Sources */,
@@ -1374,6 +1395,7 @@
 				F069ABC8206E018F00021ABF /* FeedsManager+KVS.m in Sources */,
 				F069ABC9206E018F00021ABF /* Tweet.m in Sources */,
 				F069ABCA206E018F00021ABF /* Aside.m in Sources */,
+				F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */,
 				F069ABCB206E018F00021ABF /* AddFeedCell.m in Sources */,
 				F069ABCC206E018F00021ABF /* DTError.m in Sources */,
 				F069ABCD206E018F00021ABF /* FeedsVC.m in Sources */,
@@ -1444,6 +1466,7 @@
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,
+				F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */,
 				F070C3551FBAE52300912CCF /* FeedVC.m in Sources */,
 				F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
 				F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */,
@@ -1499,6 +1522,7 @@
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,
+				F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

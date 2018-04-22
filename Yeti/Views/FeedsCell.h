@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import "Feed.h"
+#import "Folder.h"
 
 extern NSString *const _Nonnull kFeedsCell;
 
@@ -18,5 +20,7 @@ extern NSString *const _Nonnull kFeedsCell;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable countLabel;
 
 - (void)configure:(Feed * _Nonnull)feed;
+
+- (void)configureFolder:(Folder *_Nonnull)folder;
 
 @end

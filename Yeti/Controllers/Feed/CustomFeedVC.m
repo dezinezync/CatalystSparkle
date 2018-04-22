@@ -61,7 +61,7 @@
     if (_reloadDataset && !self.isUnread) {
         _reloadDataset = NO;
         
-        self.DS.data = MyFeedsManager.bookmarks;
+        self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
     }
 }
 

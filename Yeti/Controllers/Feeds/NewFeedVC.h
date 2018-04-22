@@ -7,8 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PaddedTextField.h"
 
 @interface NewFeedVC : UIViewController <UIToolbarDelegate>
+
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
+
+@property (weak, nonatomic) IBOutlet PaddedTextField *input;
 
 + (UINavigationController *)instanceInNavController;
 

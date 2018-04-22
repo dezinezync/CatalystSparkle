@@ -10,6 +10,7 @@
 #import <DZNetworking/DZNetworking.h>
 
 #import "Feed.h"
+#import "Folder.h"
 #import "YTUserID.h"
 
 typedef NSString * FMNotification;
@@ -53,7 +54,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, assign) NSInteger totalUnread;
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
-@property (nonatomic, strong) NSArray <id> * _Nullable folders;
+@property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
 
 - (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

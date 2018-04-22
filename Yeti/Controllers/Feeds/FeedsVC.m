@@ -220,7 +220,13 @@
     
     // Configure the cell...
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
-    [cell configure:feed];
+    if ([feed isKindOfClass:Feed.class]) {
+        [cell configure:feed];
+    }
+    else {
+        // folder
+        [cell configureFolder:(Folder *)feed];
+    }
     
     return cell;
 }
@@ -239,9 +245,58 @@
     
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
-    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-    
-    [self.navigationController pushViewController:vc animated:YES];
+    if ([feed isKindOfClass:Feed.class]) {
+        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else {
+        // it's a folder
+        Folder *folder = (Folder *)feed;
+        NSUInteger index = [self.DS.data indexOfObject:folder];
+        
+        if (folder.isExpanded) {
+            
+            DDLogDebug(@"Closing index: %@", @(index));
+            folder.expanded = NO;
+            
+            // remove these feeds from the datasource
+            self.DS.data = [self.DS.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+                
+                if ([obj isKindOfClass:Folder.class])
+                    return YES;
+                
+                if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:folder.folderID]) {
+                    return NO;
+                }
+                
+                return YES;
+                
+            }];
+            
+        }
+        else {
+            folder.expanded = YES;
+            DDLogDebug(@"Opening index: %@", @(index));
+            
+            // add these feeds to the datasource after the above index
+            NSMutableArray * data = [self.DS.data mutableCopy];
+            
+            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.count)];
+            
+            [data insertObjects:folder.feeds atIndexes:set];
+            
+            self.DS.data = data;
+            
+        }
+        
+        weakify(self);
+        
+        asyncMain(^{
+            strongify(self);
+            
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        });
+    }
     
 }
 
@@ -271,7 +326,7 @@
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
-    self.DS.data = feeds;
+    self.DS.data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:feeds];
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

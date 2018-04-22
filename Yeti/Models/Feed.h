@@ -5,7 +5,7 @@
 
 #import <DZKit/DZDatasourceModel.h>
 
-@interface Feed : DZCloudObject <NSCoding, DZDatasourceModel> {
+@interface Feed : DZCloudObject <NSCoding, DZDatasourceModel, NSCopying> {
 
 }
 
@@ -25,6 +25,8 @@
 @property (nonatomic, copy) NSString *hub;
 @property (nonatomic, assign, getter=isHubSubscribed) BOOL hubSubscribed; // if the hub is subscribed, the push notifications are possible.
 @property (nonatomic, assign, getter=isSubscribed) BOOL subscribed; // this indicates if the user is subscribed for push notifications.
+
+@property (nonatomic, copy) NSNumber *folderID; // this is never copied or exposed. 
 
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

@@ -35,4 +35,6 @@
     }
 }
 
+- (void)yt_scrollViewDidScroll:(UIScrollView *)scrollView {}
+
 @end

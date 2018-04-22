@@ -8,7 +8,6 @@
 
 #import "NewFeedVC.h"
 #import "NewVCAnimator.h"
-#import "PaddedTextField.h"
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
 
@@ -21,9 +20,7 @@
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (nonatomic, strong) NewVCTransitionDelegate *newVCTD;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
 
-@property (weak, nonatomic) IBOutlet PaddedTextField *input;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (nonatomic, copy) NSArray <NSString *> *data;

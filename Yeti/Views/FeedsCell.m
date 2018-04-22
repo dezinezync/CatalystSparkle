@@ -12,6 +12,12 @@
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
+@interface FeedsCell ()
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackLeading;
+
+@end
+
 @implementation FeedsCell
 
 - (void)awakeFromNib {
@@ -25,6 +31,8 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     self.countLabel.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
     self.countLabel.layer.cornerRadius = ceil(self.countLabel.bounds.size.height / 2.f);
     self.countLabel.layer.masksToBounds = YES;
+    
+    self.indentationWidth = 28.f;
 }
 
 - (void)prepareForReuse
@@ -36,13 +44,25 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     self.faviconView.image = nil;
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
+    
+    self.selectionStyle = UITableViewCellSelectionStyleDefault;
+    self.indentationLevel = 0;
+    self.stackLeading.constant = 8.f;
 }
 
 - (void)configure:(Feed *)feed
 {
     
+    if (feed.folderID) {
+        self.indentationLevel = 1;
+        self.stackLeading.constant = 8.f + (self.indentationWidth * self.indentationLevel);
+        
+        [self setNeedsUpdateConstraints];
+        [self layoutIfNeeded];
+    }
+    
     self.titleLabel.text = feed.title;
-    self.countLabel.text = feed.unread.stringValue;
+    self.countLabel.text = (feed.unread ?: @0).stringValue;
     
     NSString *url = [feed faviconURI];
     
@@ -53,6 +73,20 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
             [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
         });
     }
+}
+
+- (void)configureFolder:(Folder *)folder {
+    
+    self.titleLabel.text = folder.title;
+    self.countLabel.text = [[folder.feeds rz_reduce:^id(NSNumber *prev, Feed *current, NSUInteger idx, NSArray *array) {
+        
+        return @([prev integerValue] + current.unread.integerValue);
+        
+    } initialValue:@(0)] stringValue];
+    
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    self.faviconView.image = [UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")];
 }
 
 @end

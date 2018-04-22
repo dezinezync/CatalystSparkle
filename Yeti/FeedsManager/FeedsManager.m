@@ -192,6 +192,23 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         if (!since || !self.feeds.count) {
             self.feeds = feeds;
+            
+            // cache it
+            weakify(self);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                strongify(self);
+                NSError *error = nil;
+                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:responseObject];
+                
+                if (error) {
+                    DDLogError(@"Error caching feeds: %@", error);
+                }
+                else {
+                    if (![data writeToFile:self->_feedsCachePath atomically:YES]) {
+                        DDLogError(@"Writing feeds cache to %@ failed.", self->_feedsCachePath);
+                    }
+                }
+            });
         }
         else {
 
@@ -255,22 +272,51 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 }
 
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
-    NSArray <Feed *> *feeds = [[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+    NSMutableArray <Feed *> *feeds = [[[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
         return [Feed instanceFromDictionary:obj];
+    }] mutableCopy];
+    
+    NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
+    
+    // these feeds are inside folders
+    NSArray <NSNumber *> *feedIDsInFolders = [foldersStruct valueForKey:@"feeds"];
+    
+    NSMutableArray <Feed *> *feedsInFolders = [NSMutableArray arrayWithCapacity:feedIDsInFolders.count];
+    
+    feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+       
+        if ([feedIDsInFolders indexOfObject:obj.feedID] != NSNotFound) {
+            [feedsInFolders addObject:obj.copy];
+            
+            return NO;
+        }
+        
+        return YES;
+        
+    }].mutableCopy;
+    
+    // create the folders map
+    NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+       
+        Folder *folder = [Folder instanceFromDictionary:obj];
+        
+        NSArray *feedIDs = [folder feeds];
+        
+        folder.feeds = [feedsInFolders rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            BOOL inside = [feedIDs indexOfObject:obj.feedID] != NSNotFound;
+            
+            if (inside) {
+                obj.folderID = folder.folderID;
+            }
+            
+            return inside;
+        }];
+        
+        return folder;
+        
     }];
     
-    _folders = [responseObject valueForKey:@"struct"];
-    
-//    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    
-//    for (Feed *feed in feeds) { @autoreleasepool {
-//        
-//        for (FeedItem *item in feed.articles) {
-////            NSString *key = item.guid.length > 32 ? item.guid.md5 : item.guid;
-////            item.read = [defaults boolForKey:key];
-//        }
-//        
-//    } }
+    _folders = folders;
     
     return feeds;
 }
@@ -856,23 +902,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     _feeds = feeds ?: @[];
     
     [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : feeds ?: @[]}];
-    
-    // cache it
-    weakify(self);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        strongify(self);
-        NSError *error = nil;
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self->_feeds];
-        
-        if (error) {
-            DDLogError(@"Error caching feeds: %@", error);
-        }
-        else {
-            if (![data writeToFile:self->_feedsCachePath atomically:YES]) {
-                DDLogError(@"Writing feeds cache to %@ failed.", self->_feedsCachePath);
-            }
-        }
-    });
 }
 
 #pragma mark - Getters
