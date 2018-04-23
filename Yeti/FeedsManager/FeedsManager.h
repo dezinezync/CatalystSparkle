@@ -80,6 +80,14 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#pragma mark - Folders
+
+- (void)addFolder:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)renameFolder:(NSNumber *)folderID to:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)removeFolder:(NSNumber *)folderID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #endif
 
 #pragma mark - Filters

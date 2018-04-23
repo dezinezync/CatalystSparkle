@@ -8,22 +8,87 @@
 
 #import "NewFolderVC.h"
 
+#import <DZKit/NSString+Extras.h>
+#import <DZKit/AlertManager.h>
+
+#import "FeedsManager.h"
+
 @interface NewFolderVC ()
 
 @end
 
 @implementation NewFolderVC
 
++ (UINavigationController *)instanceInNavController
+{
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.transitioningDelegate = vc.newVCTD;
+    nav.modalPresentationStyle = UIModalPresentationCustom;
+    nav.navigationBar.shadowImage = [UIImage new];
+    
+    return nav;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.input.placeholder = @"Folder Name";
+    self.title = @"New Folder";
+    
+    self.input.placeholder = @"Folder Name (3-32 chars)";
+    self.input.keyboardType = UIKeyboardTypeDefault;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark -
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    NSString *title = [textField text];
+    
+    if ([title isBlank]) {
+        [AlertManager showGenericAlertWithTitle:@"Incomplete title" message:@"Please provide a title for your new folder"];
+        return NO;
+    }
+    
+    if (title.length < 3 || title.length > 32) {
+        [AlertManager showGenericAlertWithTitle:@"Title length" message:@"Folder titles should be more than 3 letters and no longer than 32 characters."];
+        return NO;
+    }
+    
+    textField.enabled = NO;
+    self.cancelButton.enabled = NO;
+    
+    weakify(self);
+    
+    [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        self.cancelButton.enabled = YES;
+        
+        [self didTapCancel];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : MyFeedsManager.feeds, @"folders": MyFeedsManager.folders}];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+        
+        strongify(self);
+        
+        textField.enabled = YES;
+        self.cancelButton.enabled = YES;
+        
+    }];
+    
+    return YES;
 }
 
 @end

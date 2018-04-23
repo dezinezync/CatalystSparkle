@@ -7,7 +7,6 @@
 //
 
 #import "NewFeedVC.h"
-#import "NewVCAnimator.h"
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
 
@@ -19,7 +18,6 @@
 @interface NewFeedVC () <UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, strong) NewVCTransitionDelegate *newVCTD;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 

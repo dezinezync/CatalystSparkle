@@ -9,12 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "PaddedTextField.h"
 
+#import "NewVCAnimator.h"
+
 @interface NewFeedVC : UIViewController <UIToolbarDelegate>
+
+@property (nonatomic, strong) NewVCTransitionDelegate *newVCTD;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelButton;
 
 @property (weak, nonatomic) IBOutlet PaddedTextField *input;
 
 + (UINavigationController *)instanceInNavController;
+
+- (IBAction)didTapCancel;
 
 @end

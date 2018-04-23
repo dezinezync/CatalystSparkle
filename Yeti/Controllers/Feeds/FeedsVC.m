@@ -63,9 +63,10 @@
     self.refreshControl = control;
     
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
     UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     
-    self.navigationItem.rightBarButtonItems = @[settings, add];
+    self.navigationItem.rightBarButtonItems = @[settings, add, folder];
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -347,9 +348,25 @@
         
         [self.DS.data enumerateObjectsUsingBlock:^(Feed *obj, NSUInteger idx, BOOL * _Nonnull stop) {
            
-            if (obj.feedID.integerValue == feedID) {
-                row = idx;
-                *stop = YES;
+            if ([obj isKindOfClass:Folder.class]) {
+                // check inside the folder
+                
+                [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                   
+                    if (objx.feedID.integerValue == feedID) {
+                        row = idx + (idxx + 1);
+                        *stopx = YES;
+                        *stop = YES;
+                    }
+                    
+                }];
+                
+            }
+            else {
+                if (obj.feedID.integerValue == feedID) {
+                    row = idx;
+                    *stop = YES;
+                }
             }
             
         }];
@@ -369,8 +386,7 @@
 
 - (void)updateNotification:(NSNotification *)note {
     
-    DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
-    DS.data = [note.userInfo valueForKey:@"feeds"];
+    [self setupData:[note.userInfo valueForKey:@"feeds"]];
     
 }
 

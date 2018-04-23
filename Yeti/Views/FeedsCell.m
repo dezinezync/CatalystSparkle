@@ -66,7 +66,7 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     
     NSString *url = [feed faviconURI];
     
-    if (url) {
+    if (url && [url isKindOfClass:NSString.class] && ![url isBlank]) {
         weakify(self);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
             strongify(self);

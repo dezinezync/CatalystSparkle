@@ -725,6 +725,53 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }];
 }
 
+#pragma mark - Folders
+
+- (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    weakify(self);
+    
+    [self.session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        id retval = [responseObject valueForKey:@"folder"];
+        
+        Folder *instance = [Folder instanceFromDictionary:retval];
+        
+        strongify(self);
+        
+        self.folders = [self.folders arrayByAddingObject:instance];
+        
+        if (successCB)
+            successCB(instance, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
+
+- (void)removeFolder:(NSNumber *)folderID success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSString *path = formattedString(@"/folder?userID=%@&folderID=%@", [self userID], folderID);
+    
+    [self.session DELETE:path parameters:nil success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
 #endif
 
 #pragma mark - Filters
@@ -901,7 +948,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     _feeds = feeds ?: @[];
     
-    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : feeds ?: @[]}];
+    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
+}
+
+- (void)setFolders:(NSArray<Folder *> *)folders
+{
+    _folders = folders ?: @[];
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
 }
 
 #pragma mark - Getters
@@ -935,7 +989,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #endif
