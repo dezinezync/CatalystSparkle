@@ -989,7 +989,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
+        session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://yeti.dezinezync.com"];
 #endif
