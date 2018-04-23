@@ -90,6 +90,11 @@
                 
                 at = mutableAt.copy;
             }
+            else if ([it.type isEqualToString:@"strong"] || [it.type isEqualToString:@"b"]) {
+                NSMutableAttributedString *mutableAt = at.mutableCopy;
+                [mutableAt addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:self.bodyFont.pointSize] range:NSMakeRange(0, at.length)];
+                at = mutableAt.copy;
+            }
             
             [sub appendAttributedString:at];
         }
@@ -115,7 +120,7 @@
     
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:attributes]];
     [attrs appendAttributedString:sub];
-    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
+    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
     
 }
 

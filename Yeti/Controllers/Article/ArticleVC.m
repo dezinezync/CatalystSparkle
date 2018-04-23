@@ -1200,7 +1200,10 @@ static CGFloat const baseFontSize = 16.f;
         
         NSString *identifier = [absolute substringFromIndex:range.location];
         
-        return [self scrollToHeading:identifier];
+        BOOL retval = [self scrollToHeading:identifier];
+        
+        if (!retval)
+            return retval;
     }
     
     if (interaction == UITextItemInteractionPreview)
