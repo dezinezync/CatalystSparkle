@@ -112,7 +112,17 @@ static NSParagraphStyle * _paragraphStyle = nil;
     else {
         self.cachedAttributedText = attributedText;
     }
-}   
+}
+
+- (NSAttributedString *)attributedText {
+    
+    if ((self.isAppearing || self.avoidsLazyLoading)) {
+        return [super attributedText];
+    }
+    
+    return self.cachedAttributedText;
+    
+}
 
 - (void)setText:(NSString *)text ranges:(NSArray<Range *> *)ranges attributes:(NSDictionary *)attributes
 {
