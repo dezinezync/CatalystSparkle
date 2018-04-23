@@ -12,4 +12,6 @@
 
 @property (nonatomic, assign) NSInteger level;
 
+@property (nonatomic, copy) NSString *identifier;
+
 @end

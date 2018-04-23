@@ -55,44 +55,11 @@
     
 }
 
-#pragma mark -
-
-//- (void)didMoveToSuperview
-//{
-//    if (self.superview) {
-//        if (!self.leading) {
-//            self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:-(LayoutPadding/3.f)];
-//            self.leading.identifier = @"|-Heading";
-//            self.leading.priority = 999;
-//            self.leading.active = YES;
-//        }
-//
-//        if (!self.trailing) {
-//            self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:-LayoutPadding];
-//            self.trailing.identifier = @"Heading-|";
-//            self.trailing.priority = 999;
-//            self.trailing.active = YES;
-//        }
-//    }
-//}
+#pragma mark - Getters
 
 - (UIColor *)textColor
 {
     return UIColor.blackColor;
-}
-
-- (void)setText:(NSString *)text
-{
-    if (!text || [text isBlank])
-        self.attributedText = nil;
-    else {
-        NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName: self.textColor,
-                                                                                                  NSParagraphStyleAttributeName: self.paragraphStyle,
-                                                                                                  NSKernAttributeName: @(-0.43f)
-                                                                                                  }];
-        
-        self.attributedText = attrs;
-    }
 }
 
 - (NSParagraphStyle *)paragraphStyle {
@@ -105,6 +72,26 @@
     
     return _paragraphStyle;
     
+}
+
+- (UIFont *)bodyFont {
+    return self.font;
+}
+
+#pragma mark - Setters
+
+- (void)setText:(NSString *)text
+{
+    if (!text || [text isBlank])
+        self.attributedText = nil;
+    else {
+        NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:text attributes:@{NSForegroundColorAttributeName: self.textColor,
+                                                                                                 NSParagraphStyleAttributeName: self.paragraphStyle,
+                                                                                                 NSKernAttributeName: @(-0.43f)
+                                                                                                 }];
+        
+        self.attributedText = attrs;
+    }
 }
 
 - (void)setLevel:(NSInteger)level
@@ -124,10 +111,6 @@
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:bodyFont];
     
     self.font = baseFont;
-}
-
-- (UIFont *)bodyFont {
-    return self.font;
 }
 
 @end

@@ -61,6 +61,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (self.avoidsLazyLoading)
         return;
     
+    self.alpha = 1.f;
+    
     if (self.cachedAttributedText) {
         self.attributedText = self.cachedAttributedText.copy;
     }
@@ -78,9 +80,11 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (self.avoidsLazyLoading)
         return;
     
+    self.alpha = 0.f;
+    
     DDLogDebug(@"%p did disappear", &self);
     
-    self.cachedAttributedText = self.attributedText;
+    self.cachedAttributedText = self.attributedText.copy;
     self.attributedText = nil;
     
 }
@@ -110,7 +114,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
         [super setAttributedText:attributedText];
     }
     else {
-        self.cachedAttributedText = attributedText;
+        if (attributedText) {
+            self.cachedAttributedText = attributedText;
+        }
     }
 }
 

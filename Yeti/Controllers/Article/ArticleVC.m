@@ -153,6 +153,8 @@ static CGFloat const baseFontSize = 16.f;
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
+    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (void)viewSafeAreaInsetsDidChange
@@ -667,6 +669,8 @@ static CGFloat const baseFontSize = 16.f;
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
     if (content.identifier && ![content.identifier isBlank]) {
+        heading.identifier = content.identifier;
+        
         NSAttributedString *attrs = heading.attributedText;
         
         NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, content.identifier);
@@ -1135,14 +1139,68 @@ static CGFloat const baseFontSize = 16.f;
     
 }
 
+- (BOOL)scrollToHeading:(NSString *)identifier {
+    
+    identifier = [identifier stringByReplacingOccurrencesOfString:@"#" withString:@""];
+    
+    NSArray <Heading *> *headings = [[self.stackView arrangedSubviews] rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+        return ([obj isKindOfClass:Heading.class]);
+    }];
+    
+    Heading *theChosenOne = [headings rz_reduce:^id(Heading *prev, Heading *current, NSUInteger idx, NSArray *array) {
+        if (current.identifier && [current.identifier isEqualToString:identifier])
+            return current;
+        return prev;
+    }];
+    
+    if (!theChosenOne)
+        return YES;
+    
+    CGRect frame = theChosenOne.frame;
+    
+    self.scrollView.userInteractionEnabled = NO;
+    // compare against the maximum contentOffset which is contentsize.height - bounds.size.height
+    CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
+    
+    // if we're scrolling down, add the bottom offset so the bottom bar does not interfere
+    if (yOffset > self.scrollView.contentOffset.y)
+        yOffset += self.scrollView.adjustedContentInset.bottom;
+    else
+        yOffset -= self.scrollView.adjustedContentInset.top;
+    
+    yOffset += (self.scrollView.bounds.size.height / 2.f);
+    
+    [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
+    
+    weakify(self);
+    
+    asyncMain(^{
+        strongify(self);
+        self.scrollView.userInteractionEnabled = YES;
+    });
+    
+    return NO;
+}
+
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
 {
     
     NSString *absolute = URL.absoluteString;
     
+    // footlinks and the like
     if (absolute.length && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"]) {
         [self scrollToIdentifer:absolute];
         return NO;
+    }
+    
+    // links to sections within the article
+    if ([absolute containsString:self.item.articleURL]) {
+        // get the section ID
+        NSRange range = [absolute rangeOfString:@"#"];
+        
+        NSString *identifier = [absolute substringFromIndex:range.location];
+        
+        return [self scrollToHeading:identifier];
     }
     
     if (interaction == UITextItemInteractionPreview)
