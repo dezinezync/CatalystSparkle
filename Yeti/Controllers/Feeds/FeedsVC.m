@@ -378,9 +378,24 @@
             // grab the feed
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
             Feed *item = [self.DS objectAtIndexPath:indexPath];
-            item.unread = @(MAX(0, item.unread.integerValue - 1));
             
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            if (item) {
+                if ([item isKindOfClass:Feed.class]) {
+                    item.unread = @(MAX(0, item.unread.integerValue - 1));
+                }
+                else {
+                    [[(Folder *)item feeds] enumerateObjectsUsingBlock:^(Feed *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        
+                        if ([[obj feedID] isEqualToNumber:note.object]) {
+                            obj.unread = @(MAX(0, item.unread.integerValue - 1));
+                            *stop = YES;
+                        }
+                        
+                    }];
+                }
+                
+                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            }
         }
         
     }
