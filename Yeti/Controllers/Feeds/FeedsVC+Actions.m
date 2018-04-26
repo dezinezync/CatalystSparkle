@@ -158,6 +158,12 @@
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Rename folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
+            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder];
+            
+            strongify(self);
+            
+            [self presentViewController:nav animated:YES completion:nil];
+            
         }]];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Delete folder" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {

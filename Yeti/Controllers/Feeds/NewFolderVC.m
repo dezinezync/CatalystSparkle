@@ -15,6 +15,8 @@
 
 @interface NewFolderVC ()
 
+@property (nonatomic, weak, readwrite) Folder *folder;
+
 @end
 
 @implementation NewFolderVC
@@ -26,7 +28,18 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.transitioningDelegate = vc.newVCTD;
     nav.modalPresentationStyle = UIModalPresentationCustom;
-    nav.navigationBar.shadowImage = [UIImage new];
+    
+    return nav;
+}
+
++ (UINavigationController *)instanceWithFolder:(Folder *)folder
+{
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    vc.folder = folder;
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.transitioningDelegate = vc.newVCTD;
+    nav.modalPresentationStyle = UIModalPresentationCustom;
     
     return nav;
 }
@@ -39,6 +52,12 @@
     
     self.input.placeholder = @"Folder Name (3-32 chars)";
     self.input.keyboardType = UIKeyboardTypeDefault;
+    
+    if (self.folder) {
+        // editing
+        self.title = @"Edit Folder";
+        self.input.text = self.folder.title;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -67,26 +86,49 @@
     
     weakify(self);
     
-    [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        self.cancelButton.enabled = YES;
-        
-        [self didTapCancel];
-        
-        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : MyFeedsManager.feeds, @"folders": MyFeedsManager.folders}];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
-        
-        strongify(self);
-        
-        textField.enabled = YES;
-        self.cancelButton.enabled = YES;
-        
-    }];
+    if (self.folder) {
+        // editing the title
+        [MyFeedsManager renameFolder:self.folder.folderID to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            self.cancelButton.enabled = YES;
+            
+            [self didTapCancel];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            
+            strongify(self);
+            
+            textField.enabled = YES;
+            self.cancelButton.enabled = YES;
+            
+        }];
+    }
+    else {
+        [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            self.cancelButton.enabled = YES;
+            
+            [self didTapCancel];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : MyFeedsManager.feeds, @"folders": MyFeedsManager.folders}];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            
+            strongify(self);
+            
+            textField.enabled = YES;
+            self.cancelButton.enabled = YES;
+            
+        }];
+    }
     
     return YES;
 }

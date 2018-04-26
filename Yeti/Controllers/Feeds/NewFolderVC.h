@@ -8,6 +8,12 @@
 
 #import "NewFeedVC.h"
 
+#import "Folder.h"
+
 @interface NewFolderVC : NewFeedVC
+
++ (UINavigationController *)instanceWithFolder:(Folder *)folder;
+
+@property (nonatomic, weak, readonly) Folder *folder;
 
 @end

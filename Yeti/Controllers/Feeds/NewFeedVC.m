@@ -50,6 +50,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    UINavigationBar *navBar = self.navigationController.navigationBar;
+    navBar.shadowImage = [UIImage new];
+    navBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    
     self.selected = NSNotFound;
     self.data = @[];
     
