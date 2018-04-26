@@ -250,6 +250,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                     self.feeds = feeds;
                 }
             }
+            else {
+                self.feeds = feeds;
+            }
 
         }
         
