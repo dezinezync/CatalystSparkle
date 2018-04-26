@@ -254,6 +254,10 @@
         [dictionary setObject:self.hub forKey:@"hub"];
     }
     
+    if (self.unread) {
+        [dictionary setObject:self.unread forKey:@"unread"];
+    }
+    
     [dictionary setObject:@(self.hubSubscribed) forKey:@"hubSubscribed"];
     [dictionary setObject:@(self.subscribed) forKey:@"subscribed"];
 

@@ -112,24 +112,8 @@
         
         NSIndexPath *indexpath = self.headerView.tableView.indexPathForSelectedRow;
         if (indexpath.row == 0) {
-            
             // also update unread array
             [MyFeedsManager updateUnreadArray];
-            
-            // update unread count
-            if (self.transitionCoordinator) {
-                weakify(self);
-                
-                [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-                    
-                    strongify(self);
-                    [self.headerView.tableView reloadRowsAtIndexPaths:@[indexpath] withRowAnimation:UITableViewRowAnimationNone];
-                    
-                } completion:nil];
-            }
-            else {
-                [self.headerView.tableView reloadRowsAtIndexPaths:@[indexpath] withRowAnimation:UITableViewRowAnimationNone];
-            }
         }
         
         [self dz_smoothlyDeselectRows:self.headerView.tableView];
@@ -380,24 +364,53 @@
             Feed *item = [self.DS objectAtIndexPath:indexPath];
             
             if (item) {
+                
+                // check userInfo for read notification type
+                BOOL read = note.userInfo ? [[note.userInfo valueForKey:@"read"] boolValue] : YES;
+                
                 if ([item isKindOfClass:Feed.class]) {
-                    item.unread = @(MAX(0, item.unread.integerValue - 1));
+                    item.unread = @(MAX(0, item.unread.integerValue + (read ? -1 : 1)));
                 }
                 else {
                     [[(Folder *)item feeds] enumerateObjectsUsingBlock:^(Feed *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         
                         if ([[obj feedID] isEqualToNumber:note.object]) {
-                            obj.unread = @(MAX(0, item.unread.integerValue - 1));
+                            obj.unread = @(MAX(0, item.unread.integerValue + (read ? -1 : 1)));
                             *stop = YES;
                         }
                         
                     }];
                 }
                 
-                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                weakify(self);
+                
+                asyncMain(^{
+                    strongify(self);
+                    
+                    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                });
             }
         }
         
+    }
+    else {
+        // the unread count was bumped by the user manually marking
+        // an article as unread. So reload the row
+        weakify(self);
+        
+        asyncMain(^{
+            strongify(self);
+            
+            NSIndexPath *selected = [self.headerView.tableView indexPathForSelectedRow];
+            
+            [self.headerView.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            
+            if (selected) {
+                asyncMain(^{
+                    [self.headerView.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
+                })
+            }
+        });
     }
     
 }

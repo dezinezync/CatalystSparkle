@@ -39,9 +39,13 @@
             item.read = read;
         }
         
+        if (!read) {
+            self.unread = [self.unread arrayByAddingObjectsFromArray:items];
+        }
+        
         asyncMain(^{
             for (NSNumber *feedID in feeds.allObjects) { @autoreleasepool {
-                [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:feedID];
+                [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:feedID userInfo:@{@"read": @(read)}];
             } }
             
             strongify(self);

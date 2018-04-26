@@ -80,7 +80,7 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     self.titleLabel.text = folder.title;
     self.countLabel.text = [[folder.feeds rz_reduce:^id(NSNumber *prev, Feed *current, NSUInteger idx, NSArray *array) {
         
-        return @([prev integerValue] + current.unread.integerValue);
+        return @([prev integerValue] + (current.unread ?: @0).integerValue);
         
     } initialValue:@(0)] stringValue];
     

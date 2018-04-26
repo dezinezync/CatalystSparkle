@@ -623,18 +623,35 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
     
-    self.unread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <FeedItem *> *newUnread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
         BOOL isRead = obj.isRead;
-        if (isRead)
+        if (isRead) {
             [markedRead addObject:obj.identifier];
-        return isRead;
+        }
+        return !isRead;
     }];
     
     if (!markedRead.count)
         return;
     
+    _unread = newUnread;
+    
     // propagate changes to the feeds object as well
-    for (Feed *obj in self.feeds) { @autoreleasepool {
+    [self updateFeedsReadCount:self.feeds markedRead:markedRead];
+    
+    for (Folder *folder in self.folders) { @autoreleasepool {
+       
+        [self updateFeedsReadCount:folder.feeds markedRead:markedRead];
+        
+    } }
+    
+}
+
+- (void)updateFeedsReadCount:(NSArray <Feed *> *)feeds markedRead:(NSArray <NSNumber *> *)markedRead {
+    if (!feeds || feeds.count == 0)
+        return;
+    
+    for (Feed *obj in feeds) { @autoreleasepool {
         
         BOOL marked = NO;
         
@@ -1105,6 +1122,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     _folders = folders ?: @[];
     
     [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
+}
+
+- (void)setUnread:(NSArray<FeedItem *> *)unread {
+    
+    _unread = unread;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:nil];
+    
 }
 
 #pragma mark - Getters
