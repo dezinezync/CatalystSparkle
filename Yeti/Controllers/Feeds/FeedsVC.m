@@ -85,6 +85,9 @@
         searchController.searchBar.accessibilityHint = @"Search your feeds";
         self.navigationItem.searchController = searchController;
     }
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
+    [self.tableView addGestureRecognizer:longPress];
 }
 
 - (void)didReceiveMemoryWarning {

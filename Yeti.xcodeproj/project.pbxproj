@@ -45,6 +45,8 @@
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
 		F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */; };
+		F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
+		F05B93332091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
 		F05D21861FF2222F003DE813 /* YTUserID.m in Sources */ = {isa = PBXBuildFile; fileRef = F05D21851FF2222F003DE813 /* YTUserID.m */; };
 		F05DC07020831FD3009029E1 /* AuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC06F20831FD3009029E1 /* AuthorVC.m */; };
 		F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC072208328EC009029E1 /* AuthorHeaderView.m */; };
@@ -373,6 +375,8 @@
 		F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterInputCell.xib; sourceTree = "<group>"; };
 		F055AC1B1FD2AEF4004B9C29 /* ArticleVC+Toolbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Toolbar.h"; sourceTree = "<group>"; };
 		F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Toolbar.m"; sourceTree = "<group>"; };
+		F05B93302091BA50009BBDDB /* MoveFoldersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveFoldersVC.h; sourceTree = "<group>"; };
+		F05B93312091BA50009BBDDB /* MoveFoldersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoveFoldersVC.m; sourceTree = "<group>"; };
 		F05D21841FF2222F003DE813 /* YTUserID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTUserID.h; sourceTree = "<group>"; };
 		F05D21851FF2222F003DE813 /* YTUserID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTUserID.m; sourceTree = "<group>"; };
 		F05DC06E20831FD3009029E1 /* AuthorVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorVC.h; sourceTree = "<group>"; };
@@ -842,6 +846,8 @@
 				F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */,
 				F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */,
 				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
+				F05B93302091BA50009BBDDB /* MoveFoldersVC.h */,
+				F05B93312091BA50009BBDDB /* MoveFoldersVC.m */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -1425,6 +1431,7 @@
 				F069ABDB206E018F00021ABF /* Image.m in Sources */,
 				F069ABDC206E018F00021ABF /* AppDelegate.m in Sources */,
 				F069ABDD206E018F00021ABF /* ArticleHelperView.m in Sources */,
+				F05B93332091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F069ABDE206E018F00021ABF /* CodeParser.m in Sources */,
 				F069ABDF206E018F00021ABF /* FeedsVC+Actions.m in Sources */,
 				F069ABE0206E018F00021ABF /* FeedsManager.m in Sources */,
@@ -1469,6 +1476,7 @@
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
 				F05DC07020831FD3009029E1 /* AuthorVC.m in Sources */,
+				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,

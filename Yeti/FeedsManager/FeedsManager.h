@@ -86,6 +86,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)renameFolder:(NSNumber *)folderID to:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)updateFolder:(NSNumber *)folderID add:(NSArray <NSNumber *> * _Nullable)add remove:(NSArray <NSNumber *> * _Nullable)del  success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)removeFolder:(NSNumber *)folderID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #endif

@@ -18,6 +18,8 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender;
 
+- (void)didLongTapOnCell:(UITapGestureRecognizer *)sender;
+
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

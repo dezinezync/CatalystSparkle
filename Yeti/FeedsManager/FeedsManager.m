@@ -756,11 +756,157 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }];
 }
 
+- (void)renameFolder:(NSNumber *)folderID to:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    weakify(self);
+    
+    [self updateFolder:folderID properties:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        BOOL status = [[responseObject valueForKey:@"status"] boolValue];
+        
+        if (!status) {
+            if (errorCB) {
+                NSError *error = [NSError errorWithDomain:@"TTKit" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder title. Please try again."}];
+                errorCB(error, response, task);
+            }
+            return;
+        }
+      
+        strongify(self);
+        
+        // update our caches
+        [self.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            if ([obj.folderID isEqualToNumber:folderID]) {
+                obj.title = title;
+                *stop = YES;
+            }
+            
+        }];
+        
+        // this will fire the notification
+        self.folders = [self folders];
+        
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:errorCB];
+}
+
+- (void)updateFolder:(NSNumber *)folderID add:(NSArray<NSNumber *> *)add remove:(NSArray<NSNumber *> *)del success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    
+    NSMutableDictionary *dict = @{}.mutableCopy;
+    
+    if (add && add.count) {
+        
+        NSArray <NSString *> * toAdd = [add rz_map:^id(NSNumber *obj, NSUInteger idx, NSArray *array) {
+            return formattedString(@"s:%@", obj);
+        }];
+        
+        [dict setObject:toAdd forKey:@"add"];
+    }
+    
+    if (del && del.count) {
+        
+        NSArray <NSString *> * toDel = [del rz_map:^id(NSNumber *obj, NSUInteger idx, NSArray *array) {
+            return formattedString(@"s:%@", obj);
+        }];
+        
+        [dict setObject:toDel forKey:@"del"];
+    }
+    
+    weakify(self);
+    
+    [self updateFolder:folderID properties:dict.copy success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        BOOL status = [[responseObject valueForKey:@"status"] boolValue];
+        
+        if (!status) {
+            if (errorCB) {
+                NSError *error = [NSError errorWithDomain:@"TTKit" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder preferences. Please try again."}];
+                errorCB(error, response, task);
+            }
+            return;
+        }
+        
+        strongify(self);
+        
+        Folder *folder = [self.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+            if ([current.folderID isEqualToNumber:folderID])
+                return current;
+            return prev;
+        }];
+        
+        // check delete ops first
+        if (del && del.count) {
+            NSArray <Feed *> * removedFeeds = [folder.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [del indexOfObject:obj.feedID] != NSNotFound;
+            }];
+            
+            [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.folderID = nil;
+            }];
+            
+            folder.feeds = [folder.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [del indexOfObject:obj.feedID] == NSNotFound;
+            }];
+            
+            self.feeds = [self.feeds arrayByAddingObjectsFromArray:removedFeeds];
+        }
+        
+        // now run add ops
+        if (add && add.count) {
+            NSArray <Feed *> * addedFeeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [add indexOfObject:obj.feedID] != NSNotFound;
+            }];
+            
+            [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.folderID = folderID;
+            }];
+            
+            self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [add indexOfObject:obj.feedID] == NSNotFound;
+            }];
+            
+            folder.feeds = [folder.feeds arrayByAddingObjectsFromArray:addedFeeds];
+        }
+        
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:errorCB];
+}
+
 - (void)removeFolder:(NSNumber *)folderID success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSString *path = formattedString(@"/folder?userID=%@&folderID=%@", [self userID], folderID);
     
     [self.session DELETE:path parameters:nil success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
+- (void)updateFolder:(NSNumber *)folderID properties:(NSDictionary *)props success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (![props valueForKey:@"folderID"]) {
+        NSMutableDictionary *temp = props.mutableCopy;
+        
+        [temp setValue:folderID forKey:@"folderID"];
+        
+        props = temp.copy;
+    }
+    
+    [self.session POST:@"/folder" queryParams:@{@"userID": [self userID]} parameters:props success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
