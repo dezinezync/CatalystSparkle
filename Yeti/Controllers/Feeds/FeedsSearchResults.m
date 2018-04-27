@@ -27,7 +27,12 @@
     
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
-    [cell configure:feed];
+    if ([feed isKindOfClass:Folder.class]) {
+        [cell configureFolder:(Folder *)feed];
+    }
+    else {
+        [cell configure:feed];
+    }
     
     return cell;
 }
