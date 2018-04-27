@@ -200,9 +200,11 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         
         // it has been removed from the old one
         // and added to a new folder
+        NSNumber *newFolderID = self.feed.folderID;
+        
         [MyFeedsManager updateFolder:self.originalFolderID add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [MyFeedsManager updateFolder:self.feed.folderID add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [MyFeedsManager updateFolder:newFolderID add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 strongify(self);
                 
@@ -259,7 +261,12 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 - (void)enableButtons:(BOOL)enabled {
     
     if (![NSThread isMainThread]) {
-        [self performSelector:@selector(enableButtons:) onThread:[NSThread mainThread] withObject:@(enabled) waitUntilDone:NO modes:nil];
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            
+            [self enableButtons:enabled];
+        })
         return;
     }
     

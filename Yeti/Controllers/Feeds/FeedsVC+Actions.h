@@ -8,7 +8,7 @@
 
 #import "FeedsVC+Search.h"
 
-@interface FeedsVC (Actions)
+@interface FeedsVC (Actions) <UITableViewDragDelegate>
 
 - (void)didTapAdd:(UIBarButtonItem *)add;
 

@@ -351,7 +351,26 @@
         
     }];
 
-    UISwipeActionsConfiguration *configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete]];
+    UISwipeActionsConfiguration *configuration = nil;
+    
+    if (folder) {
+         configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete]];
+    }
+    else {
+        
+        UIContextualAction *move = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Move" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+           
+            UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+            
+            strongify(self);
+            
+            [self.splitViewController presentViewController:nav animated:YES completion:nil];
+            
+        }];
+        
+        configuration = [UISwipeActionsConfiguration configurationWithActions:@[move, delete]];
+        
+    }
     
     configuration.performsFirstActionWithFullSwipe = YES;
     
