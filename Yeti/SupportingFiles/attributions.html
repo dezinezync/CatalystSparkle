@@ -5,29 +5,36 @@
                 * {
                     box-sizing: inherit;
                 }
-            html {
-                -webkit-box-sizing: border-box;
-                box-sizing: border-box
-            }
+                html {
+                    -webkit-box-sizing: border-box;
+                    box-sizing: border-box
+                }
             
-            body, html {
-                font-family: system, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
-                font-size: 15px;
-                line-height: 21px;
-                color: rgba(0, 0, 0, 0.87);
-                background-color: #F8F9F9;
-                -webkit-transform: none !important;
-                -ms-transform: none !important;
-                transform: none !important
-            }
-            body > h1, body > p {
-                padding: 1em;
-            }
+                body, html {
+                    font-size: 1rem;
+                    line-height: 1.333rem;
+                    font-family: system, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
+                    color: #000;
+                    background-color: #red;
+                    -webkit-transform: none !important;
+                    -ms-transform: none !important;
+                    transform: none !important
+                }
+            
+                body {
+                    padding-bottom: max(12px, env(safe-area-inset-bottom));
+                    padding-left: max(12px, env(safe-area-inset-left));
+                    padding-right: max(12px, env(safe-area-inset-right));
+                }
+            
+                p {
+                    margin-bottom: 24px;
+                }
             </style>
             
-            <meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1">
+            <meta name="viewport" id="viewport" content="initial-scale=1, viewport-fit=cover">
                 
-                </head>
+        </head>
         
         <body>
             

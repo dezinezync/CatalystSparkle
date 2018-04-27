@@ -243,12 +243,7 @@
             if (indexPath.row == 1) {
                 DZWebViewController *webVC = [[DZWebViewController alloc] init];
                 webVC.title = @"Attributions";
-                webVC.webview.scrollView.showsVerticalScrollIndicator = NO;
-                webVC.webview.backgroundColor = [UIColor whiteColor];
-                webVC.webview.scrollView.backgroundColor = [UIColor whiteColor];
-                webVC.hidesBottomBarWhenPushed = YES;
                 
-                webVC.webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
                 webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
                 
                 vc = webVC;
