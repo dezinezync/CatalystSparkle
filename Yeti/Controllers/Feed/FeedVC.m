@@ -204,6 +204,18 @@
     _headerView = headerView;
 }
 
+#pragma mark - Setters
+
+- (void)setLoadOnReady:(NSNumber *)loadOnReady
+{
+    _loadOnReady = loadOnReady;
+    
+    if (loadOnReady && [[self navigationController] visibleViewController] == self) {
+        // we are visible
+        [self loadArticle];
+    }
+}
+
 #pragma mark - Actions
 
 - (void)loadArticle {
@@ -225,10 +237,10 @@
         
     }];
     
-    self.loadOnReady = nil;
-    
     if (index == NSNotFound)
         return;
+    
+    self.loadOnReady = nil;
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
     
@@ -539,7 +551,7 @@
         if ([self loadOnReady]) {
             weakify(self);
             
-            asyncMain(^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 strongify(self);
                 [self loadArticle];
             });

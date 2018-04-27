@@ -221,45 +221,112 @@
 
 - (void)openFeed:(NSNumber *)feedID article:(NSNumber *)articleID
 {
-    [self popToRoot];
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        
+        asyncMain(^{
+            strongify(self);
+            [self openFeed:feedID article:articleID];
+        });
+        
+        return;
+    }
     
     weakify(self);
     
+    __block BOOL isFolder = NO;
+    __block BOOL isFolderExpanded = NO;
+    __block NSUInteger folderIndex = NSNotFound;
+    
     // get the primary navigation controller
-    asyncMain(^{
-        UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    
+    if ([[nav topViewController] isKindOfClass:FeedVC.class]) {
+        // check if the current topVC is the same feed
+        if ([[[(FeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
+            
+            if (articleID) {
+                asyncMain(^{
+                    strongify(self);
+                    
+                    [self showArticle:articleID];
+                });
+            }
+            
+            return;
+        }
+    }
+    
+    [self popToRoot];
+    
+    FeedsVC *feedsVC = [[nav viewControllers] firstObject];
+    
+    DZBasicDatasource *DS = [feedsVC valueForKeyPath:@"DS"];
+    
+    __block NSUInteger index = NSNotFound;
+    
+    [(NSArray <Feed *> *)[DS data] enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        FeedsVC *feedsVC = [[nav viewControllers] firstObject];
-        
-        DZBasicDatasource *DS = [feedsVC valueForKeyPath:@"DS"];
-        
-        __block NSUInteger index = NSNotFound;
-        
-        [(NSArray <Feed *> *)[DS data] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-           
-            if ([obj.feedID isEqualToNumber:feedID]) {
+        if ([obj isKindOfClass:Feed.class]) {
+            Feed *feed = obj;
+            
+            if ([feed.feedID isEqualToNumber:feedID]) {
                 index = idx;
                 *stop = YES;
             }
+        }
+        else {
+            // folder
+            Folder *folder = obj;
             
-        }];
+            [folder.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                
+                if ([obj.feedID isEqualToNumber:feedID]) {
+                    index = idx;
+                    folderIndex = idxx;
+                    
+                    isFolder = YES;
+                    isFolderExpanded = folder.isExpanded;
+                    
+                    *stop = YES;
+                    *stopx = YES;
+                }
+                
+            }];
+        }
         
-        if (index == NSNotFound)
-            return;
-        
+    }];
+    
+    if (index == NSNotFound)
+        return;
+    
+    // it is either not a folder
+    // or it's a folder and we need to expand it
+    if (!isFolder || (isFolder && !isFolderExpanded)) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
         
         [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
         [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+    }
+    
+    // if it is a folder, it's expanded at this point
+    if (isFolder) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(index + folderIndex + 1) inSection:0];
         
-        if (articleID) {
-            asyncMain(^{
-                strongify(self);
-                
-                [self showArticle:articleID];
-            });
-        }
-    });
+        asyncMain(^{
+            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+            [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+        });
+    }
+    
+    if (articleID) {
+        asyncMain(^{
+            strongify(self);
+            
+            [self showArticle:articleID];
+        });
+    }
 }
 
 - (void)showArticle:(NSNumber *)articleID {
@@ -267,7 +334,7 @@
     if (!articleID)
         return;
     
-     UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
     
     FeedVC *feedVC = (FeedVC *)[nav topViewController];
     

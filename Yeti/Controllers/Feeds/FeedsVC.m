@@ -398,19 +398,24 @@
         // an article as unread. So reload the row
         weakify(self);
         
-        asyncMain(^{
-            strongify(self);
-            
-            NSIndexPath *selected = [self.headerView.tableView indexPathForSelectedRow];
-            
-            [self.headerView.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-            
-            if (selected) {
-                asyncMain(^{
-                    [self.headerView.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
-                })
-            }
-        });
+        @try {
+            asyncMain(^{
+                strongify(self);
+                
+                NSIndexPath *selected = [self.headerView.tableView indexPathForSelectedRow];
+                
+                [self.headerView.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+                
+                if (selected) {
+                    asyncMain(^{
+                        [self.headerView.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
+                    })
+                }
+            });
+        }
+        @catch (NSException *exc) {
+            DDLogWarn(@"Exception updating read count after manual unread mark: %@", exc);
+        }
     }
     
 }
