@@ -364,7 +364,9 @@
             
             strongify(self);
             
-            [self.splitViewController presentViewController:nav animated:YES completion:nil];
+            [self.splitViewController presentViewController:nav animated:YES completion:^{
+                completionHandler(YES);
+            }];
             
         }];
         
