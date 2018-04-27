@@ -40,7 +40,7 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
     if (self = [super init]) {
         self.themePath = path;
         
-        self.codeFont = [UIFont fontWithName:@"Courier" size:18.f];
+        self.codeFont = [UIFont fontWithName:@"Menlo" size:16.f];
         self.codeFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:self.codeFont];
         
         self.strippedTheme = [self stripTheme];

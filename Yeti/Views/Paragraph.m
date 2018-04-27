@@ -230,15 +230,15 @@ static NSParagraphStyle * _paragraphStyle = nil;
 //                __block UIColor *background;
                 
                 if (NSThread.isMainThread) {
-                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:_bodyFont.pointSize];
-                    textcolor = [UIColor redColor];
+                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Menlo" size:16.f] maximumPointSize:_bodyFont.pointSize];
+                    textcolor = [UIColor colorWithDisplayP3Red:0/255.f green:134.f/255.f blue:179.f/255.f alpha:1.f];
                 }
                 else {
                     weakify(self);
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         strongify(self);
-                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Courier" size:18.f] maximumPointSize:self->_bodyFont.pointSize];
-                        textcolor = [UIColor redColor];
+                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Menlo" size:16.f] maximumPointSize:self->_bodyFont.pointSize];
+                        textcolor = [UIColor colorWithDisplayP3Red:0/255.f green:134.f/255.f blue:179.f/255.f alpha:1.f];
                     });
                 }
                 

@@ -25,7 +25,7 @@
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.clipsToBounds = NO;
         
-        UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectInset(self.bounds, 0, LayoutPadding)];
         scrollView.showsHorizontalScrollIndicator = YES;
         scrollView.alwaysBounceHorizontal = YES;
         scrollView.scrollEnabled = YES;
@@ -38,8 +38,8 @@
         
         [scrollView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-14.f].active = YES;
         [scrollView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:28.f].active = YES;
-        [scrollView.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
-        [scrollView.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:0.f].active = YES;
+        [scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:LayoutPadding].active = YES;
+        [scrollView.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:-LayoutPadding].active = YES;
         
         PaddedLabel *label = [[PaddedLabel alloc] initWithFrame:scrollView.bounds];
         label.numberOfLines = 0;
@@ -78,7 +78,7 @@
 {
     CGSize size = CGSizeZero;
     size.width = self.bounds.size.width;
-    size.height = self.scrollView.contentSize.height;
+    size.height = self.scrollView.contentSize.height + (LayoutPadding * 2);
 
     return size;
 }
@@ -95,7 +95,7 @@
     // accomodate label padding
     contentSize.width += 16.f;
     // add height of 1 line.
-    contentSize.height += [[self.label font] pointSize];
+//    contentSize.height += [[self.label font] pointSize];
     
     self.scrollView.contentSize = contentSize;
     
