@@ -487,9 +487,14 @@ static CGFloat const baseFontSize = 16.f;
             }}
         }
     }
-    else if ([content.type isEqualToString:@"paragraph"]) {
+    else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"]) {
         if (content.content.length)
             [self addParagraph:content caption:NO];
+        else if (content.items) {
+            for (Content *subcontent in content.items) {
+                [self processContent:subcontent];
+            }
+        }
     }
     else if ([content.type isEqualToString:@"heading"]) {
         if (content.content.length)
