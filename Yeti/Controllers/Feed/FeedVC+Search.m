@@ -77,7 +77,14 @@
             data = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                 BOOL title = [obj.articleTitle containsString:text] || ([obj.articleTitle compareStringWithString:text] <= 2);
                 BOOL desc = (obj.summary && ![obj.summary isBlank]) && ([obj.summary containsString:text] || ([obj.summary compareStringWithString:text] <= 2));
-                BOOL author = [obj.author containsString:text] || ([obj.author compareStringWithString:text] <= 2);
+                BOOL author = NO;
+                
+                if ([obj.author isKindOfClass:NSDictionary.class]) {
+                    author = [[obj.author valueForKey:@"name"] containsString:text] || ([[obj.author valueForKey:@"name"] compareStringWithString:text] <= 2);
+                }
+                else {
+                    author = [obj.author containsString:text] || ([obj.author compareStringWithString:text] <= 2);
+                }
                 
                 return title || desc || author;
             }];

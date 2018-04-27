@@ -541,8 +541,13 @@
             self->_canLoadNext = NO;
         }
         
+        weakify(self);
+        
         asyncMain(^{
-            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+            strongify(self);
+            
+            self.feed.articles = [(self.feed.articles ?: @[]) arrayByAddingObjectsFromArray:responseObject];
+            self.DS.data = self.feed.articles;
         });
         
         self->_page++;
