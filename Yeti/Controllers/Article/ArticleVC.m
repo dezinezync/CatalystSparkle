@@ -321,15 +321,16 @@ static CGFloat const baseFontSize = 16.f;
     
     weakify(self);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
         [self scrollViewDidScroll:self.scrollView];
         
         CGSize contentSize = self.scrollView.contentSize;
-        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
-        
         contentSize.width = self.view.bounds.size.width;
+        
         self.scrollView.contentSize = contentSize;
+        
+        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
     });
     
     if (isChangingArticle && self.providerDelegate) {
