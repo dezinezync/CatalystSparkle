@@ -10,18 +10,22 @@
 #import "Range.h"
 #import "Paragraph.h"
 
-@interface BlockPara : Paragraph
+//@interface BlockPara : Paragraph
+//
+//@property (nonatomic, strong) NSParagraphStyle *paragraphStyle;
+//
+//@end
+//
+//@interface Blockquote : UIView
+//
+//@property (nonatomic, weak) BlockPara *textView;
+//
+//- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
+//
+//- (void)append:(NSAttributedString *)attrs;
+//
+//@end
 
-@property (nonatomic, strong) NSParagraphStyle *paragraphStyle;
-
-@end
-
-@interface Blockquote : UIView
-
-@property (nonatomic, weak) BlockPara *textView;
-
-- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
-
-- (void)append:(NSAttributedString *)attrs;
+@interface Blockquote : Paragraph
 
 @end

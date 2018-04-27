@@ -339,6 +339,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [self layoutIfNeeded];
     
     CGSize size = [super contentSize];
+    size.width -= self.contentInset.left + self.contentInset.right;
+    
     size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
     
     return size;

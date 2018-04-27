@@ -808,6 +808,9 @@ static CGFloat const baseFontSize = 16.f;
 - (void)addQuote:(Content *)content {
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     
+    if (!content.content && (!content.items || content.items.count == 0))
+        return;
+    
     Blockquote *para = [[Blockquote alloc] initWithFrame:frame];
     
     if (content.content) {
@@ -818,14 +821,14 @@ static CGFloat const baseFontSize = 16.f;
         NSMutableAttributedString *mattrs = [NSMutableAttributedString new];
         
         for (Content *item in content.items) { @autoreleasepool {
-            NSAttributedString *attrs = [para.textView processText:item.content ranges:item.ranges attributes:item.attributes];
+            NSAttributedString *attrs = [para processText:item.content ranges:item.ranges attributes:item.attributes];
             
             [mattrs appendAttributedString:attrs];
             [mattrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
         } }
         
-        para.textView.attributedText = mattrs.copy;
-        [para performSelectorOnMainThread:NSSelectorFromString(@"updateFrame") withObject:nil waitUntilDone:YES];
+        para.attributedText = mattrs.copy;
+//        [para performSelectorOnMainThread:NSSelectorFromString(@"updateFrame") withObject:nil waitUntilDone:YES];
         
     }
     else {
@@ -843,7 +846,7 @@ static CGFloat const baseFontSize = 16.f;
     
     [self.stackView addArrangedSubview:para];
     
-    para.textView.delegate = self;
+    para.delegate = self;
     
 //    [para.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:padding].active = YES;
 }

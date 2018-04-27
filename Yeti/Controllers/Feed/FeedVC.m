@@ -101,6 +101,10 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)dealloc {
+    self.feed.articles = nil;
+}
+
 #pragma mark - Appearance
 
 - (BOOL)definesPresentationContext
