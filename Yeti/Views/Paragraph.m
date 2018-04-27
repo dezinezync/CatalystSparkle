@@ -220,6 +220,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
                     [dict setObject:URL forKey:NSLinkAttributeName];
                 }
             }
+            else if ([range.element isEqualToString:@"mark"]) {
+                [dict setObject:[[UIColor yellowColor] colorWithAlphaComponent:0.35f] forKey:NSBackgroundColorAttributeName];
+            }
             else if ([range.element isEqualToString:@"code"]) {
                 
                 __block UIFont *monoFont = [self bodyFont];
