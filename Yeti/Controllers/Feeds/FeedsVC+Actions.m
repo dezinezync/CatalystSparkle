@@ -368,7 +368,9 @@
             
         }];
         
-        configuration = [UISwipeActionsConfiguration configurationWithActions:@[move, delete]];
+        move.backgroundColor = [UIColor purpleColor];
+        
+        configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, move]];
         
     }
     
