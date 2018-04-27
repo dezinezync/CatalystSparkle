@@ -327,13 +327,32 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (Feed *)feedForID:(NSNumber *)feedID
 {
     
-    NSInteger fid = feedID.integerValue;
-    
-    return [self.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
-        if (current.feedID.integerValue == fid)
+    __block Feed *feed = [self.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+        if ([current.feedID isEqualToNumber:feedID])
             return current;
         return prev;
     }];
+    
+    if (!feed) {
+        // check in folders
+        
+        [self.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            [obj.feeds enumerateObjectsUsingBlock:^(Feed *  _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
+               
+                if ([objx.feedID isEqualToNumber:feedID]) {
+                    feed = objx;
+                    *stopx = YES;
+                    *stop = YES;
+                }
+                
+            }];
+            
+        }];
+        
+    }
+    
+    return feed;
 }
 
 - (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
