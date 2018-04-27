@@ -28,6 +28,9 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
+    self.faviconView.layer.cornerRadius = ceilf(self.faviconView.bounds.size.height/2.f);
+    self.faviconView.clipsToBounds = YES;
+    
     self.countLabel.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
     self.countLabel.layer.cornerRadius = ceil(self.countLabel.bounds.size.height / 2.f);
     self.countLabel.layer.masksToBounds = YES;
@@ -41,6 +44,7 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
     
     [self.faviconView il_cancelImageLoading];
     
+    self.faviconView.layer.cornerRadius = ceilf(self.faviconView.bounds.size.height/2.f);
     self.faviconView.image = nil;
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
@@ -78,6 +82,7 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 - (void)configureFolder:(Folder *)folder {
     
     self.titleLabel.text = folder.title;
+    self.faviconView.layer.cornerRadius = 0.f;
     self.countLabel.text = [[folder.feeds rz_reduce:^id(NSNumber *prev, Feed *current, NSUInteger idx, NSArray *array) {
         
         return @([prev integerValue] + (current.unread ?: @0).integerValue);

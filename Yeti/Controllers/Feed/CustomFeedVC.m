@@ -43,6 +43,10 @@
     
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    self.tableView.refreshControl = refresh;
+    
     self.tableView.tableFooterView = [UIView new];
     
     if (!self.isUnread) {
@@ -97,6 +101,12 @@
             
             self.loadingNext = NO;
             
+            asyncMain(^{
+                if ([self.tableView.refreshControl isRefreshing]) {
+                    [self.tableView.refreshControl endRefreshing];
+                }
+            })
+            
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             DDLogError(@"%@", error);
             
@@ -104,11 +114,44 @@
             self->_page--;
             
             self.loadingNext = NO;
+            
+            asyncMain(^{
+                if ([self.tableView.refreshControl isRefreshing]) {
+                    [self.tableView.refreshControl endRefreshing];
+                }
+            })
         }];
+    }
+    else {
+        self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        
+        asyncMain(^{
+            if ([self.tableView.refreshControl isRefreshing]) {
+                [self.tableView.refreshControl endRefreshing];
+            }
+        })
     }
 }
 
 #pragma mark - Notifications
+
+- (void)didBeginRefreshing:(UIRefreshControl *)sender {
+    
+    if ([sender isRefreshing]) {
+        _page = 1;
+        _canLoadNext = YES;
+        
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            
+            self.DS.data = @[];
+        });
+        
+        [self loadNextPage];
+    }
+    
+}
 
 - (void)didUpdateBookmarks
 {

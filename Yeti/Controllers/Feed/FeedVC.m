@@ -99,6 +99,16 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    
+    self.DS.data = @[];
+    _page = 0;
+    _canLoadNext = YES;
+    
+    if (self.feed) {
+        self.feed.articles = nil;
+    }
+    
+    [AlertManager showGenericAlertWithTitle:@"Memory Warning" message:@"The app received a memory warning and to prevent unexpected crashes, it had to clear articles from the current feed. Please reload the feed to continue viewing."];
 }
 
 - (void)dealloc {
