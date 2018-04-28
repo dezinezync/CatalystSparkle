@@ -14,6 +14,9 @@
 
 @end
 
+static void *KVO_Bookmarks = &KVO_Bookmarks;
+static void *KVO_Unread = &KVO_Unread;
+
 @implementation FeedsHeaderView
 
 - (void)awakeFromNib
@@ -31,7 +34,10 @@
     [self setNeedsUpdateConstraints];
     [self layoutIfNeeded];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
+    NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
+    
+    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
 }
 
 - (void)updateConstraints
@@ -53,6 +59,16 @@
     self.frame = frame;
     
     [super updateConstraints];
+}
+
+- (void)dealloc
+{
+    if (self.observationInfo) {
+        @try {
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(unread)];
+        } @catch (NSException *exc) {}
+    }
 }
 
 #pragma mark - <UITableViewDataSource>
@@ -101,6 +117,36 @@
     }
     
     [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    weakify(self);
+    
+    if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
+        asyncMain(^{
+            strongify(self);
+            
+            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            cell.countLabel.text = [@([[(FeedsManager *)object unread] count]) stringValue];
+        });
+    }
+    else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
+        
+        asyncMain(^{
+            strongify(self);
+            
+            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+            cell.countLabel.text = [@([[(FeedsManager *)object bookmarks] count]) stringValue];
+        });
+        
+    }
+    else {
+        DDLogWarn(@"Unknown KVO selector %@ for observor %@", keyPath, self.class);
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 @end

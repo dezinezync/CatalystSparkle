@@ -92,18 +92,6 @@
                 self->_canLoadNext = NO;
             }
             
-            NSArray <FeedItem *> *items = [responseObject objectForKey:@"articles"];
-            items = [items rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
-                return [FeedItem instanceFromDictionary:obj];
-            }];
-            
-            if (self->_page == 1) {
-                MyFeedsManager.unread = items;
-            }
-            else {
-                MyFeedsManager.unread = [MyFeedsManager.unread arrayByAddingObjectsFromArray:items];
-            }
-            
             self.DS.data = MyFeedsManager.unread;
             
             self.loadingNext = NO;

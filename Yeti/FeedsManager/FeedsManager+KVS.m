@@ -39,19 +39,27 @@
             item.read = read;
         }
         
+        strongify(self);
+        
         if (!read) {
             self.unread = [self.unread arrayByAddingObjectsFromArray:items];
         }
+        else {
+            
+            self.unread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                return ![articles containsObject:obj.identifier];
+            }];
+        }
         
-        asyncMain(^{
-            for (NSNumber *feedID in feeds.allObjects) { @autoreleasepool {
-                [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:feedID userInfo:@{@"read": @(read)}];
-            } }
-            
-            strongify(self);
-            
-            self.totalUnread = MAX(0, self.totalUnread - items.count);
-        });
+//        asyncMain(^{
+//            for (NSNumber *feedID in feeds.allObjects) { @autoreleasepool {
+//                [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:feedID userInfo:@{@"read": @(read)}];
+//            } }
+//
+//            strongify(self);
+//
+//            self.totalUnread = MAX(0, self.totalUnread - items.count);
+//        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

@@ -35,61 +35,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
-    
-    self.DS.addAnimation = UITableViewRowAnimationFade;
-    self.DS.deleteAnimation = UITableViewRowAnimationFade;
-    self.DS.reloadAnimation = UITableViewRowAnimationFade;
-    
-    self.tableView.dragDelegate = self;
-    
     self.title = @"Feeds";
     
-    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    [self setupTableView];
+    [self setupNavigationBar];
     
-    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
-    headerView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 88.f);
-    [headerView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
-    
-    self.tableView.tableHeaderView = headerView;
-    _headerView = headerView;
-    _headerView.tableView.delegate = self;
-    
-    self.tableView.tableFooterView = [UIView new];
-    
-    UIRefreshControl *control = [[UIRefreshControl alloc] init];
-    [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
-    
-    [self.tableView addSubview:control];
-    self.refreshControl = control;
-    
-    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
-    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
-    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
-    
-    self.navigationItem.rightBarButtonItems = @[settings, add, folder];
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(readNotification:) name:FeedDidUpReadCount object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
-    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
-    
-    // Search Controller setup
-    {
-        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-        
-        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
-        searchController.searchResultsUpdater = self;
-        searchController.searchBar.placeholder = @"Search feeds";
-        searchController.searchBar.accessibilityHint = @"Search your feeds";
-        self.navigationItem.searchController = searchController;
-    }
-    
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
-    [self.tableView addGestureRecognizer:longPress];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -150,6 +102,59 @@
 - (BOOL)definesPresentationContext
 {
     return YES;
+}
+
+- (void)setupTableView {
+    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
+    self.DS.delegate = self;
+    
+    self.DS.addAnimation = UITableViewRowAnimationFade;
+    self.DS.deleteAnimation = UITableViewRowAnimationFade;
+    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    
+    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
+    headerView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 88.f);
+    [headerView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+    
+    self.tableView.tableHeaderView = headerView;
+    _headerView = headerView;
+    _headerView.tableView.delegate = self;
+    
+    self.tableView.tableFooterView = [UIView new];
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
+    [self.tableView addGestureRecognizer:longPress];
+}
+
+- (void)setupNavigationBar {
+    
+    UIRefreshControl *control = [[UIRefreshControl alloc] init];
+    [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    
+    [self.tableView addSubview:control];
+    self.refreshControl = control;
+    
+    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
+    
+    self.navigationItem.rightBarButtonItems = @[settings, add, folder];
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    // Search Controller setup
+    {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search feeds";
+        searchController.searchBar.accessibilityHint = @"Search your feeds";
+        self.navigationItem.searchController = searchController;
+    }
+    
 }
 
 #pragma mark - Setters
@@ -337,104 +342,6 @@
 }
 
 #pragma mark - Notifications
-
-- (void)readNotification:(NSNotification *)note {
-    
-    if (note.object && [note.object isKindOfClass:NSNumber.class]) {
-        
-        NSInteger feedID = [note.object integerValue];
-        __block NSUInteger row = NSNotFound;
-        
-        [self.DS.data enumerateObjectsUsingBlock:^(Feed *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-           
-            if ([obj isKindOfClass:Folder.class]) {
-                // check inside the folder
-                
-                [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
-                   
-                    if (objx.feedID.integerValue == feedID) {
-                        row = idx + (idxx + 1);
-                        *stopx = YES;
-                        *stop = YES;
-                    }
-                    
-                }];
-                
-            }
-            else {
-                if (obj.feedID.integerValue == feedID) {
-                    row = idx;
-                    *stop = YES;
-                }
-            }
-            
-        }];
-        
-        if (row != NSNotFound) {
-            // grab the feed
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-            Feed *item = [self.DS objectAtIndexPath:indexPath];
-            
-            if (item) {
-                
-                // check userInfo for read notification type
-                BOOL read = note.userInfo ? [[note.userInfo valueForKey:@"read"] boolValue] : YES;
-                
-                if ([item isKindOfClass:Feed.class]) {
-                    item.unread = @(MAX(0, item.unread.integerValue + (read ? -1 : 1)));
-                }
-                else {
-                    [[(Folder *)item feeds] enumerateObjectsUsingBlock:^(Feed *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        
-                        if ([[obj feedID] isEqualToNumber:note.object]) {
-                            obj.unread = @(MAX(0, item.unread.integerValue + (read ? -1 : 1)));
-                            *stop = YES;
-                        }
-                        
-                    }];
-                }
-                
-                weakify(self);
-                
-                @try {
-                    asyncMain(^{
-                        strongify(self);
-                        
-                        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-                    });
-                } @catch (NSException * exc) {
-                    DDLogWarn(@"Exception: %@", exc);
-                }
-            }
-        }
-        
-    }
-    else {
-        // the unread count was bumped by the user manually marking
-        // an article as unread. So reload the row
-        weakify(self);
-        
-        @try {
-            asyncMain(^{
-                strongify(self);
-                
-                NSIndexPath *selected = [self.headerView.tableView indexPathForSelectedRow];
-                
-                [self.headerView.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                
-                if (selected) {
-                    asyncMain(^{
-                        [self.headerView.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
-                    })
-                }
-            });
-        }
-        @catch (NSException *exc) {
-            DDLogWarn(@"Exception updating read count after manual unread mark: %@", exc);
-        }
-    }
-    
-}
 
 - (void)updateNotification:(NSNotification *)note {
     

@@ -1129,27 +1129,31 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }
 }
 
-- (void)setFeeds:(NSArray<Feed *> *)feeds
-{
-    _feeds = feeds ?: @[];
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
-}
-
-- (void)setFolders:(NSArray<Folder *> *)folders
-{
-    _folders = folders ?: @[];
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
-}
-
-- (void)setUnread:(NSArray<FeedItem *> *)unread {
-    
-    _unread = unread;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:nil];
-    
-}
+//- (void)setFeeds:(NSArray<Feed *> *)feeds
+//{
+//    _feeds = feeds ?: @[];
+//    
+//    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
+//}
+//
+//- (void)setFolders:(NSArray<Folder *> *)folders
+//{
+//    _folders = folders ?: @[];
+//    
+//    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
+//}
+//
+//- (void)setUnread:(NSArray<FeedItem *> *)unread {
+//    
+//    [self willChangeValueForKey:propSel(unread)];
+//    
+//    _unread = unread;
+//    
+//    [self didChangeValueForKey:propSel(unread)];
+//    
+//    [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:nil];
+//    
+//}
 
 #pragma mark - Getters
 
