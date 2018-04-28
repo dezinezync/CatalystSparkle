@@ -396,11 +396,15 @@
                 
                 weakify(self);
                 
-                asyncMain(^{
-                    strongify(self);
-                    
-                    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-                });
+                @try {
+                    asyncMain(^{
+                        strongify(self);
+                        
+                        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                    });
+                } @catch (NSException * exc) {
+                    DDLogWarn(@"Exception: %@", exc);
+                }
             }
         }
         

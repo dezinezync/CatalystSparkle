@@ -97,7 +97,14 @@
                 return [FeedItem instanceFromDictionary:obj];
             }];
             
-            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:items];
+            if (self->_page == 1) {
+                MyFeedsManager.unread = items;
+            }
+            else {
+                MyFeedsManager.unread = [MyFeedsManager.unread arrayByAddingObjectsFromArray:items];
+            }
+            
+            self.DS.data = MyFeedsManager.unread;
             
             self.loadingNext = NO;
             
@@ -138,15 +145,8 @@
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
     if ([sender isRefreshing]) {
-        _page = 1;
+        _page = 0;
         _canLoadNext = YES;
-        
-        weakify(self);
-        asyncMain(^{
-            strongify(self);
-            
-            self.DS.data = @[];
-        });
         
         [self loadNextPage];
     }
