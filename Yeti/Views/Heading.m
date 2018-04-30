@@ -9,6 +9,7 @@
 #import "Heading.h"
 #import <DZKit/NSString+Extras.h>
 #import "LayoutConstants.h"
+#import "YetiConstants.h"
 
 @interface Heading ()
 
@@ -107,7 +108,18 @@
     NSArray <NSNumber *> * const scales = @[@(2.2f), @(1.8f), @(1.6f), @(1.4f), @(1.2f), @(1.f)];
     CGFloat scale = [scales[level - 1] floatValue];
     
-    UIFont * bodyFont = [UIFont boldSystemFontOfSize:16 * scale];
+    ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    CGFloat fontSize = 16 * scale;
+    
+    UIFont * bodyFont = [UIFont boldSystemFontOfSize:fontSize];
+    
+    if ([fontPref isEqualToString:ALPSerif]) {
+        bodyFont = [UIFont fontWithName:@"Georgia" size:fontSize];
+        UIFontDescriptor *boldDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute: bodyFont.familyName,
+                                                                                                UIFontDescriptorFaceAttribute : @"Bold"}];
+        
+        bodyFont = [UIFont fontWithDescriptor:boldDescriptor size:fontSize];
+    }
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:bodyFont];
     
     self.font = baseFont;

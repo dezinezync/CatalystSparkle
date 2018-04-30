@@ -18,8 +18,6 @@
 
 @property (nonatomic, copy) NSAttributedString *cachedAttributedText;
 
-@property (nonatomic, strong) UIFont *italicsFont, *boldFont;
-
 @end
 
 @implementation Paragraph

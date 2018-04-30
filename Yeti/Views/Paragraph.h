@@ -18,6 +18,9 @@
 
 @property (nonatomic, strong) UIFont * bodyFont;
 
+// these are automatically updated when the bodyFont changes
+@property (nonatomic, strong) UIFont *italicsFont, *boldFont;
+
 @property (nonatomic, assign) BOOL afterHeading;
 @property (nonatomic, assign, getter=isCaption) BOOL caption;
 

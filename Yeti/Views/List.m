@@ -90,9 +90,14 @@
                 
                 at = mutableAt.copy;
             }
-            else if ([it.type isEqualToString:@"strong"] || [it.type isEqualToString:@"b"]) {
+            else if ([it.type isEqualToString:@"strong"] || [it.type isEqualToString:@"b"] || [it.type isEqualToString:@"bold"]) {
                 NSMutableAttributedString *mutableAt = at.mutableCopy;
-                [mutableAt addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:self.bodyFont.pointSize] range:NSMakeRange(0, at.length)];
+                [mutableAt addAttribute:NSFontAttributeName value:self.boldFont range:NSMakeRange(0, at.length)];
+                at = mutableAt.copy;
+            }
+            else if ([it.type isEqualToString:@"italics"] || [it.type isEqualToString:@"i"] || [it.type isEqualToString:@"em"]) {
+                NSMutableAttributedString *mutableAt = at.mutableCopy;
+                [mutableAt addAttribute:NSFontAttributeName value:self.boldFont range:NSMakeRange(0, at.length)];
                 at = mutableAt.copy;
             }
             
