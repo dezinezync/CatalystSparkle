@@ -44,6 +44,8 @@
     // in the images. So we keep it unbounded and reconfig ourseleves based on the
     // first successful image load.
     BOOL _unbounded;
+    
+    NSInteger _compundedPaging;
 }
 
 @property (nonatomic, assign) CGFloat maxHeight;
@@ -170,7 +172,13 @@
         _unbounded = YES;
     }
     
-    self.pageControl.numberOfPages = images.count;
+    if (([self.pageControl sizeForNumberOfPages:images.count].width - LayoutPadding) > width) {
+        _compundedPaging = 5;
+        self.pageControl.numberOfPages = floor(images.count / _compundedPaging);
+    }
+    else {
+        self.pageControl.numberOfPages = images.count;
+    }
     
     weakify(self);
     
@@ -268,7 +276,12 @@
     CGPoint point = scrollView.contentOffset;
     
     // update page control
-    self.pageControl.currentPage = ceil(point.x / scrollView.bounds.size.width);
+    if (_compundedPaging) {
+        self.pageControl.currentPage = floor(ceil(point.x / scrollView.bounds.size.width) / _compundedPaging);
+    }
+    else {
+        self.pageControl.currentPage = ceil(point.x / scrollView.bounds.size.width);
+    }
     
 }
 
