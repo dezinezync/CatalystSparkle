@@ -12,6 +12,8 @@
 #import <DZKit/DZBasicDatasource.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
+
 @interface CustomFeedVC () {
     BOOL _reloadDataset; // used for bookmarks
 }
@@ -50,7 +52,8 @@
     self.tableView.tableFooterView = [UIView new];
     
     if (!self.isUnread) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
+        [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_BOOKMARKS];
         self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
     }
     else {
@@ -68,6 +71,18 @@
         self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
     }
 }
+
+- (void)dealloc {
+    
+    if (self.observationInfo) {
+        @try {
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
+        } @catch (NSException *exc) {}
+    }
+    
+}
+
+#pragma mark
 
 - (void)loadNextPage
 {
@@ -145,6 +160,18 @@
 {
     if (!_reloadDataset)
         _reloadDataset = YES;
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:propSel(bookmarks)] && context == KVO_BOOKMARKS) {
+        [self didUpdateBookmarks];
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 @end

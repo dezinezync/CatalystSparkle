@@ -39,7 +39,12 @@
 
 @end
 
-@interface Gallery () <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface Gallery () <UICollectionViewDelegate, UICollectionViewDataSource> {
+    // if the gallery is unbounded, this means there was no height information present
+    // in the images. So we keep it unbounded and reconfig ourseleves based on the
+    // first successful image load.
+    BOOL _unbounded;
+}
 
 @property (nonatomic, assign) CGFloat maxHeight;
 
@@ -146,17 +151,24 @@
     
     self.maxHeight = suggestedMaxHeight;
     
-    if (self.heightC) {
-        [self removeConstraint:self.heightC];
+    if (self.maxHeight > 0.f) {
+        [self setupHeight];
     }
-    
-    self.heightC = [self.heightAnchor constraintEqualToConstant:self.maxHeight + self.pageControl.bounds.size.height + LayoutPadding];
-    self.heightC.priority = 1000;
-    self.heightC.identifier = @"GalleryHeight";
-    self.heightC.active = YES;
-    
-    UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self.collectionView collectionViewLayout];
-    layout.itemSize = CGSizeMake(width, self.maxHeight);
+    else {
+        if (self.heightC) {
+            [self removeConstraint:self.heightC];
+        }
+        
+        self.heightC = [self.heightAnchor constraintEqualToConstant:self.bounds.size.height + self.pageControl.bounds.size.height + LayoutPadding];
+        self.heightC.priority = 999;
+        self.heightC.identifier = @"GalleryHeightTemp";
+        self.heightC.active = YES;
+        
+        UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self.collectionView collectionViewLayout];
+        layout.itemSize = CGSizeMake(width, self.heightC.constant);
+        
+        _unbounded = YES;
+    }
     
     self.pageControl.numberOfPages = images.count;
     
@@ -172,6 +184,27 @@
         strongify(self);
         [self.collectionView reloadData];
     });
+}
+
+- (void)setupHeight {
+    
+    if (_unbounded) {
+        _unbounded = NO;
+    }
+    
+    CGFloat width = floor(self.collectionView.bounds.size.width);
+    
+    if (self.heightC) {
+        [self removeConstraint:self.heightC];
+    }
+    
+    self.heightC = [self.heightAnchor constraintEqualToConstant:self.maxHeight + self.pageControl.bounds.size.height + LayoutPadding];
+    self.heightC.priority = 1000;
+    self.heightC.identifier = @"GalleryHeight";
+    self.heightC.active = YES;
+    
+    UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self.collectionView collectionViewLayout];
+    layout.itemSize = CGSizeMake(width, self.maxHeight);
 }
 
 #pragma mark - Events
@@ -200,7 +233,31 @@
     
     NSString *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
     
-    [cell.imageView il_setImageWithURL:[NSURL URLWithString:url]];
+    weakify(self);
+    
+    [cell.imageView il_setImageWithURL:[NSURL URLWithString:url] success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+        
+        strongify(self);
+        
+        if (!self->_unbounded)
+            return;
+        
+        if (image) {
+            asyncMain(^{
+                CGFloat width = floor(self.collectionView.bounds.size.width);
+                
+                CGSize size = image.size;
+                
+                CGFloat height = width * (size.height / size.width);
+                CGFloat suggestedMaxHeight = ceil(height);
+                
+                self.maxHeight = suggestedMaxHeight;
+                
+                [self setupHeight];
+            });
+        }
+        
+    } error:nil];
     
     return cell;
     

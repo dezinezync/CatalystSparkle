@@ -476,6 +476,14 @@ static CGFloat const baseFontSize = 16.f;
         if ([content.items count]) {
             
             if ([self containsOnlyImages:content]) {
+                
+                if ((!content.images || content.images.count == 0) && (content.items && content.items.count > 0)) {
+                    content.images = content.items.copy;
+                    content.items = nil;
+                }
+                
+                content.type = @"gallery";
+                
                 [self addGallery:content];
                 return;
             }
