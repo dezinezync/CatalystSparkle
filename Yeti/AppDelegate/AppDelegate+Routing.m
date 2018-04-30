@@ -15,6 +15,7 @@
 #import "FeedVC.h"
 
 #import <DZKit/AlertManager.h>
+#import <SafariServices/SafariServices.h>
 
 @implementation AppDelegate (Routing)
 
@@ -105,7 +106,19 @@
         return YES;
         
     }];
+    
+    [JLRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
+        
+        NSString *link = [[(NSURL *)[parameters valueForKey:kJLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
+        
+        [self openURL:link];
+        
+        return YES;
+        
+    }];
 }
+
+#pragma mark - Internal
 
 - (BOOL)addFeed:(NSURL *)url {
     // check if we already have this feed
@@ -182,41 +195,6 @@
     
     return YES;
     
-}
-
-- (void)twitterOpenUser:(NSString *)username {
-    
-    NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
-    NSURL *URL;
-    
-    if ([twitterScheme isEqualToString:@"tweetbot"]) {
-         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
-    }
-    else if ([twitterScheme isEqualToString:@"twitter"]) {
-         URL = formattedURL(@"%@://user?screen_name=%@", twitterScheme, username);
-    }
-    else if ([twitterScheme isEqualToString:@"twitterrific"]) {
-         URL = formattedURL(@"%@://current/profile?screen_name=%@", twitterScheme, username);
-    }
-    
-    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
-}
-
-- (void)twitterOpenStatus:(NSString *)status {
-    NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
-    NSURL *URL;
-    
-    if ([twitterScheme isEqualToString:@"tweetbot"]) {
-        URL = formattedURL(@"%@://dummyname/status/%@", twitterScheme, status);
-    }
-    else if ([twitterScheme isEqualToString:@"twitter"]) {
-        URL = formattedURL(@"%@://status?id=%@", twitterScheme, status);
-    }
-    else if ([twitterScheme isEqualToString:@"twitterrific"]) {
-        URL = formattedURL(@"%@://current/tweet?id=%@", twitterScheme, status);
-    }
-    
-    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
 }
 
 - (void)openFeed:(NSNumber *)feedID article:(NSNumber *)articleID
@@ -339,6 +317,90 @@
     FeedVC *feedVC = (FeedVC *)[nav topViewController];
     
     feedVC.loadOnReady = articleID;
+}
+
+#pragma mark - External
+
+- (void)twitterOpenUser:(NSString *)username {
+    
+    NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
+    NSURL *URL;
+    
+    if ([twitterScheme isEqualToString:@"tweetbot"]) {
+         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
+    }
+    else if ([twitterScheme isEqualToString:@"twitter"]) {
+         URL = formattedURL(@"%@://user?screen_name=%@", twitterScheme, username);
+    }
+    else if ([twitterScheme isEqualToString:@"twitterrific"]) {
+         URL = formattedURL(@"%@://current/profile?screen_name=%@", twitterScheme, username);
+    }
+    
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+}
+
+- (void)twitterOpenStatus:(NSString *)status {
+    NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
+    NSURL *URL;
+    
+    if ([twitterScheme isEqualToString:@"tweetbot"]) {
+        URL = formattedURL(@"%@://dummyname/status/%@", twitterScheme, status);
+    }
+    else if ([twitterScheme isEqualToString:@"twitter"]) {
+        URL = formattedURL(@"%@://status?id=%@", twitterScheme, status);
+    }
+    else if ([twitterScheme isEqualToString:@"twitterrific"]) {
+        URL = formattedURL(@"%@://current/tweet?id=%@", twitterScheme, status);
+    }
+    
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+}
+
+- (void)openURL:(NSString *)uri {
+    
+    if (!uri || [uri isBlank])
+        return;
+    
+    NSString *browserScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalBrowserAppScheme] lowercaseString];
+    NSURL *URL;
+    
+    if ([browserScheme isEqualToString:@"safari"]) {
+        URL = [NSURL URLWithString:uri];
+        
+        SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
+        
+        // get the top VC
+        UISplitViewController *splitVC = (UISplitViewController *)[[self window] rootViewController];
+        
+        UINavigationController *navVC = nil;
+        
+        if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && splitVC.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            navVC = [splitVC.viewControllers lastObject];
+        }
+        else {
+            navVC = [splitVC.viewControllers firstObject];
+        }
+        
+        [navVC presentViewController:sfvc animated:YES completion:nil];
+        
+        return;
+    }
+    
+    if ([browserScheme isEqualToString:@"chrome"]) {
+        // googlechromes for https, googlechrome for http
+        if ([uri containsString:@"https:"]) {
+            URL = formattedURL(@"googlechromes://%@", [uri stringByReplacingOccurrencesOfString:@"https://" withString:@""]);
+        }
+        else {
+            URL = formattedURL(@"googlechrome://%@", [uri stringByReplacingOccurrencesOfString:@"http://" withString:@""]);
+        }
+    }
+    else if ([browserScheme isEqualToString:@"firefox"]) {
+        URL = formattedURL(@"firefox://open-url?url=%@", uri);
+    }
+
+    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+    
 }
 
 @end

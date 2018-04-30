@@ -356,6 +356,8 @@ static CGFloat const baseFontSize = 16.f;
         author = @"Unknown";
     }
     
+    author = [author stringByStrippingHTML];
+    
     NSString *subline = formattedString(@"%@ • %@", author, [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
@@ -773,6 +775,13 @@ static CGFloat const baseFontSize = 16.f;
     
     NSString *url = [content urlCompliantWithUsersPreferenceForWidth:self.scrollView.bounds.size.width];
     
+    if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
+        imageView.userInteractionEnabled = YES;
+        
+        [imageView addGestureRecognizer:tap];
+    }
+    
     imageView.URL = [NSURL URLWithString:url];
     
     [self addLinebreak];
@@ -971,6 +980,19 @@ static CGFloat const baseFontSize = 16.f;
     }
     
     return _codeParser;
+}
+
+#pragma mark - Actions
+
+- (void)didTapOnImageWithURL:(UITapGestureRecognizer *)sender {
+    
+    Image *view = (Image *)[sender view];
+    NSString *url = [[view URL] absoluteString];
+    
+    NSURL *formatted = formattedURL(@"yeti://external?link=%@", url);
+    
+    [UIApplication.sharedApplication openURL:formatted options:@{} completionHandler:nil];
+    
 }
 
 #pragma mark - <UIScrollViewDelegate>
@@ -1225,12 +1247,9 @@ static CGFloat const baseFontSize = 16.f;
         [self presentViewController:avc animated:YES completion:nil];
     }
     else {
-        SFSafariViewControllerConfiguration *config = [[SFSafariViewControllerConfiguration alloc] init];
-        config.entersReaderIfAvailable = YES;
+        NSURL *formatted = formattedURL(@"yeti://external?link=%@", absolute);
         
-        SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL configuration:config];
-        
-        [self presentViewController:sfvc animated:YES completion:nil];
+        [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
     }
     
     return NO;

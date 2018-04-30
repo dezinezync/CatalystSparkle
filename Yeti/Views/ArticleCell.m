@@ -71,10 +71,10 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     if (item.author) {
         if ([item.author isKindOfClass:NSString.class]) {
-            self.authorLabel.text = item.author;
+            self.authorLabel.text = [(item.author ?: @"") stringByStrippingHTML];
         }
         else {
-            self.authorLabel.text = [item.author valueForKey:@"name"];
+            self.authorLabel.text = [([item.author valueForKey:@"name"] ?: @"") stringByStrippingHTML];
         }
     }
     else {
