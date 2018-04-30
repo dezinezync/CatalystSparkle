@@ -38,6 +38,8 @@
 		F035A22C206181C8005A88EE /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33D1FBACD2C00912CCF /* FeedItem.m */; };
 		F035A22D206181C8005A88EE /* Range.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33B1FBACD2C00912CCF /* Range.m */; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
+		F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F03A5F6020971BAE00CE7D5E /* ThemeVC.m */; };
+		F03A5F6220971BB300CE7D5E /* ThemeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F03A5F6020971BAE00CE7D5E /* ThemeVC.m */; };
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
 		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
 		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
@@ -362,6 +364,8 @@
 		F035A21D20617EC3005A88EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
 		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
+		F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThemeVC.h; sourceTree = "<group>"; };
+		F03A5F6020971BAE00CE7D5E /* ThemeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThemeVC.m; sourceTree = "<group>"; };
 		F03AC02E205533D800FB111A /* CodeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeParser.h; sourceTree = "<group>"; };
 		F03AC02F205533D800FB111A /* CodeTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeTheme.m; sourceTree = "<group>"; };
 		F03AC030205533D800FB111A /* CodeTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeTheme.h; sourceTree = "<group>"; };
@@ -623,6 +627,8 @@
 				F0D07200205E960900A042CD /* ExternalAppsVC.xib */,
 				F0519D4920848D4D00EB3FE0 /* FiltersVC.h */,
 				F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */,
+				F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */,
+				F03A5F6020971BAE00CE7D5E /* ThemeVC.m */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1421,6 +1427,7 @@
 				F069ABD3206E018F00021ABF /* ArticleVC.m in Sources */,
 				F069ABD4206E018F00021ABF /* NewFeedVC.m in Sources */,
 				F069ABD5206E018F00021ABF /* NewVCAnimator.m in Sources */,
+				F03A5F6220971BB300CE7D5E /* ThemeVC.m in Sources */,
 				F069ABD6206E018F00021ABF /* FeedsSearchResults.m in Sources */,
 				F069ABD7206E018F00021ABF /* ArticleCell.m in Sources */,
 				F069ABD8206E018F00021ABF /* Blockquote.m in Sources */,
@@ -1511,6 +1518,7 @@
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
 				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
+				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,
 				F05D21861FF2222F003DE813 /* YTUserID.m in Sources */,
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,

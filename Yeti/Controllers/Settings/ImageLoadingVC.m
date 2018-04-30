@@ -115,31 +115,6 @@
     return cell;
 }
 
-//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-//{
-//    CGRect frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 24.f);
-//
-//    UITextView *label = [[UITextView alloc] initWithFrame:frame];
-//    label.layoutMargins = self.tableView.layoutMargins;
-//    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-//    label.contentInset = UIEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
-//    label.editable = NO;
-//    label.backgroundColor = UIColor.groupTableViewBackgroundColor;
-//    label.opaque = YES;
-//
-//    if (section == 0)
-//        label.text = @"The above setting only works when the Article source provides these options. If no such option is provided in the article source, the original image is always loaded.";
-//    else
-//        label.text = @"The above setting is also used for galleries and Youtube video previews.";
-//
-//    frame.size = [label sizeThatFits:CGSizeMake(frame.size.width - (LayoutPadding * 2), CGFLOAT_MAX)];
-//    label.frame = frame;
-//
-//    [label.heightAnchor constraintGreaterThanOrEqualToConstant:frame.size.height].active = YES;
-//
-//    return label;
-//}
-
 #pragma mark - <UITableViewDelegate>
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

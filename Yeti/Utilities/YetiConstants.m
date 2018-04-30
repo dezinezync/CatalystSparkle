@@ -10,7 +10,6 @@
 
 #pragma mark - NSUserDefaults Keys
 
-NSString * const kDefaultsTheme = @"theme";
 NSString * const kDefaultsBackgroundRefresh = @"backgroundRefresh";
 NSString * const kDefaultsNotifications = @"notifications";
 NSString * const kDefaultsImageLoading = @"imageLoading";
@@ -31,3 +30,16 @@ ImageLoadingOption const ImageLoadingAlways = @"Always load images";
 ExternalAppsScheme const ExternalTwitterAppScheme = @"externalapp.twitter";
 ExternalAppsScheme const ExternalRedditAppScheme = @"externalapp.reddit";
 ExternalAppsScheme const ExternalBrowserAppScheme = @"externalapp.browser";
+
+#pragma mark - Theme
+NSString * const kDefaultsTheme = @"theme";
+
+YetiTheme const LightTheme = @"light";
+YetiTheme const DarkTheme = @"dark";
+
+#pragma mark - Article Layout
+
+NSString * const kDefaultsArticleFont = @"articleFont";
+
+ArticleLayoutPreference const ALPSerif = @"articlelayout.serifs";
+ArticleLayoutPreference const ALPSystem = @"articlelayout.system";

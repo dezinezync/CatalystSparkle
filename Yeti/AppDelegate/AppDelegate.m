@@ -46,7 +46,8 @@
              kDefaultsBackgroundRefresh: @YES,
              kDefaultsNotifications: @NO,
              kDefaultsImageLoading: ImageLoadingMediumRes,
-             kDefaultsImageBandwidth: ImageLoadingAlways
+             kDefaultsImageBandwidth: ImageLoadingAlways,
+             kDefaultsArticleFont: ALPSystem
              };
 }
 

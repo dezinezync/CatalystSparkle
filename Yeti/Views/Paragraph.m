@@ -12,9 +12,13 @@
 #import <CoreText/SFNTLayoutTypes.h>
 #import "NSString+HTML.h"
 
+#import "YetiConstants.h"
+
 @interface Paragraph ()
 
 @property (nonatomic, copy) NSAttributedString *cachedAttributedText;
+
+@property (nonatomic, strong) UIFont *italicsFont, *boldFont;
 
 @end
 
@@ -34,7 +38,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
         style.lineHeightMultiple = 1.3f;
-        style.headIndent = -8.f;
         
         _paragraphStyle = style.copy;
     }
@@ -65,11 +68,11 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (self.cachedAttributedText) {
         self.attributedText = self.cachedAttributedText.copy;
+        
+        DDLogDebug(@"%p will appear. Has cached text: %@", &self, self.cachedAttributedText != nil ? @"Yes" : @"No");
+        
+        self.cachedAttributedText = nil;
     }
-    
-    DDLogDebug(@"%p will appear. Has cached text: %@", &self, self.cachedAttributedText != nil ? @"Yes" : @"No");
-    
-    self.cachedAttributedText = nil;
 }
 
 - (void)viewDidDisappear
@@ -84,8 +87,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     DDLogDebug(@"%p did disappear", &self);
     
-    self.cachedAttributedText = self.attributedText.copy;
-    self.attributedText = nil;
+    if ([super attributedText]) {
+        self.cachedAttributedText = [super attributedText].copy;
+        self.attributedText = nil;
+    }
     
 }
 
@@ -197,12 +202,11 @@ static NSParagraphStyle * _paragraphStyle = nil;
             
             NSMutableDictionary *dict = @{}.mutableCopy;
             
-            if ([range.element isEqualToString:@"strong"]) {
-                [dict setObject:[UIFont systemFontOfSize:[self bodyFont].pointSize weight:UIFontWeightBold] forKey:NSFontAttributeName];
+            if ([range.element isEqualToString:@"strong"] || [range.element isEqualToString:@"b"] || [range.element isEqualToString:@"bold"]) {
+                [dict setObject:self.boldFont forKey:NSFontAttributeName];
             }
-            else if ([range.element isEqualToString:@"italics"]) {
-                UIFontDescriptor *descriptor = [[self bodyFont].fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
-                [dict setObject:[UIFont fontWithDescriptor:descriptor size:[self bodyFont].pointSize] forKey:NSFontAttributeName];
+            else if ([range.element isEqualToString:@"italics"] || [range.element isEqualToString:@"em"]) {
+                [dict setObject:self.italicsFont forKey:NSFontAttributeName];
             }
             else if ([range.element isEqualToString:@"sup"]) {
 //                [dict setObject:@1 forKey:@"NSSuperScript"];
@@ -314,19 +318,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
-//- (void)didMoveToSuperview
-//{
-//    [super didMoveToSuperview];
-//    
-//    if (self.superview) {
-//        self.leading = [self.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor];
-//        self.trailing = [self.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor];
-//        
-//        self.leading.active = YES;
-//        self.trailing.active = YES;
-//    }
-//}
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -349,15 +340,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return size;
 }
 
-//- (CGSize)intrinsicContentSize
-//{
-//    CGSize size = [self.attributedText boundingRectWithSize:CGSizeMake(self.bounds.size.width, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size;
-//
-//    size.height = ceilf(size.height);
-//
-//    return size;
-//}
-
 - (UIFont *)bodyFont
 {
     if (!_bodyFont) {
@@ -370,15 +352,21 @@ static NSParagraphStyle * _paragraphStyle = nil;
             });
             
             _bodyFont = retval;
+            _italicsFont = nil;
+            _boldFont = nil;
             
             return _bodyFont;
         }
         
-        __block UIFont * bodyFont = [UIFont systemFontOfSize:18.f];
+        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        
+        __block UIFont * bodyFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:18.f] : [UIFont fontWithName:@"Georgia" size:18.f];
         __block UIFont * baseFont;
         
         if (self.isCaption) {
-            bodyFont = [UIFont italicSystemFontOfSize:15.f];
+            UIFontDescriptor *italicDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute : bodyFont.familyName,
+                                                                                                      UIFontDescriptorFaceAttribute : @"Italic"}];
+            bodyFont = [UIFont fontWithDescriptor:italicDescriptor size:14.f];
             baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
         }
         else
@@ -387,9 +375,37 @@ static NSParagraphStyle * _paragraphStyle = nil;
         bodyFont = nil;
         
         _bodyFont = baseFont;
+        _italicsFont = nil;
+        _boldFont = nil;
     }
     
     return _bodyFont;
+}
+
+- (UIFont *)boldFont {
+    
+    if (!_boldFont) {
+        UIFontDescriptor *boldDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute : self.bodyFont.familyName,
+                                                                                                UIFontDescriptorFaceAttribute : @"Bold"}];
+        
+        _boldFont = [UIFont fontWithDescriptor:boldDescriptor size:self.bodyFont.pointSize];
+    }
+    
+    return _boldFont;
+    
+}
+
+- (UIFont *)italicsFont {
+    
+    if (!_italicsFont) {
+        UIFontDescriptor *italicDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute : self.bodyFont.familyName,
+                                                                                                  UIFontDescriptorFaceAttribute : @"Italic"}];
+        
+        _italicsFont = [UIFont fontWithDescriptor:italicDescriptor size:self.bodyFont.pointSize];
+    }
+    
+    return _italicsFont;
+    
 }
 
 - (UIColor *)textColor

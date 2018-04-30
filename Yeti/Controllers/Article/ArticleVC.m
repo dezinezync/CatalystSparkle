@@ -39,8 +39,6 @@
 
 #import "ArticleHelperView.h"
 
-static CGFloat const baseFontSize = 16.f;
-
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
     
@@ -361,22 +359,28 @@ static CGFloat const baseFontSize = 16.f;
     NSString *subline = formattedString(@"%@ • %@", author, [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
     
     NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
-    para.lineHeightMultiple = 1.125f;
+    para.lineHeightMultiple = 1.025f;
     
-    CGFloat fontSize = baseFontSize * 2.0f;
-    if (self.item.articleTitle.length > 28)
-        fontSize = baseFontSize * 1.7f;
+    ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    CGFloat baseFontSize = 32.f;
     
-    UIFont * titleFont = [UIFont boldSystemFontOfSize:fontSize];
-    UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:titleFont];
+    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:@"Georgia" size:baseFontSize];
     
-    NSDictionary *baseAttributes = @{NSFontAttributeName : baseFont,
+    UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
+    
+    NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: UIColor.blackColor,
                                      NSParagraphStyleAttributeName: para,
                                      NSKernAttributeName: @(-1.14f),
                                      };
     
-    NSDictionary *subtextAttributes = @{NSFontAttributeName: [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont systemFontOfSize:(baseFontSize * 1.125f) weight:UIFontWeightMedium]],
+    // Subline
+    baseFontSize = 16.f;
+    baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:baseFontSize weight:UIFontWeightMedium] : [UIFont fontWithName:@"Georgia" size:baseFontSize];
+    
+    UIFont *subtextFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:baseFont];
+    
+    NSDictionary *subtextAttributes = @{NSFontAttributeName: subtextFont,
                                         NSForegroundColorAttributeName: [UIColor colorWithWhite:0.f alpha:0.54f],
                                         NSParagraphStyleAttributeName: para,
                                         NSKernAttributeName: @(-0.43f)
@@ -1114,7 +1118,7 @@ static CGFloat const baseFontSize = 16.f;
                 float ld = [identifier compareStringWithString:compare];
                 DDLogDebug(@"href:%@ distance:%@", compare, @(ld));
                 
-                BOOL contained = [subcompare containsString:subidentifier] || [subidentifier containsString:subcompare];
+                BOOL contained = [compare containsString:identifier] || [identifier containsString:compare];
                 
                 DDLogDebug(@"sub matching:%@", contained ? @"Yes" : @"No");
                 
@@ -1122,7 +1126,7 @@ static CGFloat const baseFontSize = 16.f;
                 
                 // the comparison is not done against 0
                 // to avoid comparing to self
-                if (((ld >= 1 && ld <= 6) && !contained) || ((ld >= 2 && ld <= 5) && contained)) {
+                if (((ld > 1 && ld <= 3) && !contained) || ((ld >= 2 && ld <= 5) && contained)) {
                     required = para;
                     *stop = YES;
                 }

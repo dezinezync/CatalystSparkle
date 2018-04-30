@@ -14,6 +14,7 @@
 #import "ImageLoadingVC.h"
 #import "ExternalAppsVC.h"
 #import "FiltersVC.h"
+#import "ThemeVC.h"
 
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
@@ -143,7 +144,7 @@
         case 1 :
             switch (indexPath.row) {
                 case 0: {
-                    cell.textLabel.text = @"Theme";
+                    cell.textLabel.text = @"Appearance";
                     cell.detailTextLabel.text = [[defaults valueForKey:kDefaultsTheme] capitalizedString];
                 }
                     break;
@@ -228,6 +229,11 @@
             break;
         case 1:
             switch (indexPath.row) {
+                case 0:
+                {
+                    vc = [[ThemeVC alloc] initWithStyle:UITableViewStyleGrouped];
+                }
+                    break;
                 case 2:
                 {
                     vc = [[ImageLoadingVC alloc] initWithNibName:NSStringFromClass(ImageLoadingVC.class) bundle:nil];

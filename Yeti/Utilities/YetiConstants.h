@@ -13,7 +13,6 @@
 
 #define YETI_EXPORT FOUNDATION_EXPORT
 
-YETI_EXPORT NSString * const kDefaultsTheme;
 YETI_EXPORT NSString * const kDefaultsBackgroundRefresh;
 YETI_EXPORT NSString * const kDefaultsNotifications;
 YETI_EXPORT NSString * const kDefaultsImageLoading;
@@ -34,5 +33,17 @@ typedef NSString * ExternalAppsScheme;
 YETI_EXPORT ExternalAppsScheme const ExternalTwitterAppScheme;
 YETI_EXPORT ExternalAppsScheme const ExternalRedditAppScheme;
 YETI_EXPORT ExternalAppsScheme const ExternalBrowserAppScheme;
+
+typedef  NSString * YetiTheme NS_STRING_ENUM;
+YETI_EXPORT NSString * const kDefaultsTheme;
+
+YETI_EXPORT YetiTheme const LightTheme;
+YETI_EXPORT YetiTheme const DarkTheme;
+
+typedef NSString * ArticleLayoutPreference NS_STRING_ENUM;
+
+YETI_EXPORT NSString * const kDefaultsArticleFont;
+YETI_EXPORT ArticleLayoutPreference const ALPSerif;
+YETI_EXPORT ArticleLayoutPreference const ALPSystem;
 
 #endif /* YetiConstants_h */
