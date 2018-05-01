@@ -9,7 +9,15 @@
 #import <UIKit/UIKit.h>
 #import <DZAppdelegate/DZAppdelegate.h>
 
+@class AppDelegate;
+
+extern AppDelegate * MyAppDelegate;
+
 @interface AppDelegate : DZAppDelegate
+
+- (void)setupLightTheme;
+
+- (void)setupDarkTheme;
 
 @end
 

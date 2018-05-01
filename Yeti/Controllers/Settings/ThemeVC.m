@@ -8,6 +8,7 @@
 
 #import "ThemeVC.h"
 #import "YetiConstants.h"
+#import "AppDelegate.h"
 
 NSString *const kSwitchCell = @"cell.switch";
 NSString *const kCheckmarkCell = @"cell.checkmark";
@@ -109,7 +110,16 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     if (indexPath.section == 0) {
         
-        [defaults setValue:(indexPath.row == 0 ? LightTheme : DarkTheme) forKey:kDefaultsTheme];
+        NSString *val = indexPath.row == 0 ? LightTheme : DarkTheme;
+        
+        [defaults setValue:val forKey:kDefaultsTheme];
+        
+        if ([val isEqualToString:LightTheme]) {
+            [MyAppDelegate setupLightTheme];
+        }
+        else {
+            [MyAppDelegate setupDarkTheme];
+        }
         
     }
     else if (indexPath.section == 1) {

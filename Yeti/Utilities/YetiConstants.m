@@ -37,6 +37,9 @@ NSString * const kDefaultsTheme = @"theme";
 YetiTheme const LightTheme = @"light";
 YetiTheme const DarkTheme = @"dark";
 
+NSNotificationName kWillUpdateTheme = @"com.yeti.note.willUpdateTheme";
+NSNotificationName kDidUpdateTheme = @"com.yeti.note.didUpdateTheme";
+
 #pragma mark - Article Layout
 
 NSString * const kDefaultsArticleFont = @"articleFont";

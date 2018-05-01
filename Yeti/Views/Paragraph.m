@@ -312,7 +312,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     [UIView animateWithDuration:duration animations:^{
         strongify(self);
-        self.backgroundColor = UIColor.whiteColor;
+        YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+        
+        self.backgroundColor = [theme isEqualToString:LightTheme] ? [UIColor whiteColor] : [UIColor colorWithWhite:0.12f alpha:1.f];
     }];
     
 }
@@ -422,7 +424,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
         return retval;
     }
     
-    return [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 0.9f];
+    YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+    return [theme isEqualToString:LightTheme] ? [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 0.9f] : [[UIColor whiteColor] colorWithAlphaComponent:self.isCaption ? 0.7 : 0.92f];
 }
 
 - (BOOL)translatesAutoresizingMaskIntoConstraints

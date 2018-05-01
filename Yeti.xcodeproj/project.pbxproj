@@ -229,6 +229,8 @@
 		F0C34EFC206BD1BE0065BCE1 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */; };
 		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
 		F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */; };
+		F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
+		F0CCD21A2098923D00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D008562081C32400EAFE3B /* FeedHeaderView.m */; };
 		F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D008582081C33400EAFE3B /* FeedHeaderView.xib */; };
@@ -486,6 +488,8 @@
 		F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedVC.h; sourceTree = "<group>"; };
 		F0C7E3D020627809001E4BE4 /* NewFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedVC.m; sourceTree = "<group>"; };
 		F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFeedVC.xib; sourceTree = "<group>"; };
+		F0CCD2172098923A00920AE4 /* SplitVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitVC.h; sourceTree = "<group>"; };
+		F0CCD2182098923A00920AE4 /* SplitVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitVC.m; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D008552081C32400EAFE3B /* FeedHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedHeaderView.h; sourceTree = "<group>"; };
@@ -831,6 +835,8 @@
 				F078B635206637B40048DBEA /* EmptyVC.h */,
 				F078B636206637B40048DBEA /* EmptyVC.m */,
 				F078B637206637B40048DBEA /* EmptyVC.xib */,
+				F0CCD2172098923A00920AE4 /* SplitVC.h */,
+				F0CCD2182098923A00920AE4 /* SplitVC.m */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1415,6 +1421,7 @@
 				F069ABC9206E018F00021ABF /* Tweet.m in Sources */,
 				F069ABCA206E018F00021ABF /* Aside.m in Sources */,
 				F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */,
+				F0CCD21A2098923D00920AE4 /* SplitVC.m in Sources */,
 				F069ABCB206E018F00021ABF /* AddFeedCell.m in Sources */,
 				F069ABCC206E018F00021ABF /* DTError.m in Sources */,
 				F069ABCD206E018F00021ABF /* FeedsVC.m in Sources */,
@@ -1541,6 +1548,7 @@
 				F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */,
 				F070C3421FBACD2C00912CCF /* Range.m in Sources */,
 				F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */,
+				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,

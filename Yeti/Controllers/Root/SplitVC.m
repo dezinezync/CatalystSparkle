@@ -1,0 +1,26 @@
+//
+//  SplitVC.m
+//  Yeti
+//
+//  Created by Nikhil Nigade on 01/05/18.
+//  Copyright © 2018 Dezine Zync Studios. All rights reserved.
+//
+
+#import "SplitVC.h"
+#import "YetiConstants.h"
+
+@interface SplitVC ()
+
+@end
+
+@implementation SplitVC
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    
+    NSString *theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+    
+    return [theme isEqualToString:LightTheme] ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
+    
+}
+
+@end

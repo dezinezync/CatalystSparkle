@@ -40,6 +40,9 @@ YETI_EXPORT NSString * const kDefaultsTheme;
 YETI_EXPORT YetiTheme const LightTheme;
 YETI_EXPORT YetiTheme const DarkTheme;
 
+YETI_EXPORT NSNotificationName kWillUpdateTheme;
+YETI_EXPORT NSNotificationName kDidUpdateTheme;
+
 typedef NSString * ArticleLayoutPreference NS_STRING_ENUM;
 
 YETI_EXPORT NSString * const kDefaultsArticleFont;

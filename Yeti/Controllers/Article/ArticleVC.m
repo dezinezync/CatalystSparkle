@@ -86,6 +86,10 @@
         self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
     }
     
+    YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+    
+    self.scrollView.backgroundColor = [theme isEqualToString:LightTheme] ? [UIColor whiteColor] : [UIColor colorWithWhite:0.12f alpha:1.f];
+    
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
    [self setupHelperView];
