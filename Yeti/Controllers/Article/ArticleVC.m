@@ -43,6 +43,8 @@
     BOOL _hasRendered;
     
     BOOL _isQuoted;
+    
+    BOOL _deferredProcessing;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -293,10 +295,14 @@
     NSDate *start = NSDate.date;
 #endif
     
+    self.stackView.hidden = YES;
+    
     // add Body
     [self addTitle];
     
-    self.stackView.hidden = YES;
+    if (self.item.content.count > 15) {
+        _deferredProcessing = YES;
+    }
     
     for (Content *content in self.item.content) { @autoreleasepool {
         [self processContent:content];
@@ -364,14 +370,18 @@
     ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
     CGFloat baseFontSize = 32.f;
     
-    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:@"Georgia" size:baseFontSize];
+    if (self.item.articleTitle.length > 24) {
+        baseFontSize = 26.f;
+    }
+    
+    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:@"Georgia-Bold" size:baseFontSize];
     
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: UIColor.blackColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: @(-1.14f),
+                                     NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-1.14f) : [NSNull null],
                                      };
     
     // Subline
@@ -383,7 +393,7 @@
     NSDictionary *subtextAttributes = @{NSFontAttributeName: subtextFont,
                                         NSForegroundColorAttributeName: [UIColor colorWithWhite:0.f alpha:0.54f],
                                         NSParagraphStyleAttributeName: para,
-                                        NSKernAttributeName: @(-0.43f)
+                                        NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-0.43f) : [NSNull null]
                                         };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
@@ -583,6 +593,8 @@
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
 #endif
+    
+    para.avoidsLazyLoading = !_deferredProcessing;
     
     if ([_last isMemberOfClass:Heading.class])
         para.afterHeading = YES;
@@ -1091,8 +1103,6 @@
     
     identifier = [identifier stringByReplacingOccurrencesOfString:@"#" withString:@""];
     
-    __block NSString *subidentifier = [identifier substringFromIndex:identifier.length > 3 ? 3 : 0];
-    
     DDLogDebug(@"Looking up anchor %@", identifier);
     
     NSArray <Paragraph *> *paragraphs = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
@@ -1112,8 +1122,6 @@
                 }
                 
                 compare = [compare stringByReplacingOccurrencesOfString:@"#" withString:@""];
-                
-                NSString *subcompare = [compare substringFromIndex:compare.length > 3 ? 3 : 0];
                 
                 float ld = [identifier compareStringWithString:compare];
                 DDLogDebug(@"href:%@ distance:%@", compare, @(ld));

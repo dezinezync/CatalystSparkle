@@ -34,8 +34,11 @@ static NSParagraphStyle * _paragraphStyle = nil;
 + (NSParagraphStyle *)paragraphStyle {
     
     if (!_paragraphStyle) {
+        
+        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.3f;
+        style.lineHeightMultiple = [fontPref isEqualToString:ALPSystem] ? 1.3f : 1.44f;
         
         _paragraphStyle = style.copy;
     }
