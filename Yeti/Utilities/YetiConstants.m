@@ -34,8 +34,9 @@ ExternalAppsScheme const ExternalBrowserAppScheme = @"externalapp.browser";
 #pragma mark - Theme
 NSString * const kDefaultsTheme = @"theme";
 
-YetiTheme const LightTheme = @"light";
-YetiTheme const DarkTheme = @"dark";
+YetiThemeType const LightTheme = @"light";
+YetiThemeType const DarkTheme = @"dark";
+YetiThemeType const BlackTheme = @"black";
 
 NSNotificationName kWillUpdateTheme = @"com.yeti.note.willUpdateTheme";
 NSNotificationName kDidUpdateTheme = @"com.yeti.note.didUpdateTheme";

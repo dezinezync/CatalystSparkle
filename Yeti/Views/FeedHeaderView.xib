@@ -76,6 +76,7 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
+                <outlet property="authorLabel" destination="fv1-hS-Zd3" id="CQY-97-bIR"/>
                 <outlet property="authorsFade" destination="Ft5-xF-0pa" id="6B9-gJ-K87"/>
                 <outlet property="descriptionLabel" destination="OI2-Rt-hIw" id="bAj-SX-CC5"/>
                 <outlet property="scrollView" destination="uJz-Sh-cST" id="LtJ-SY-BV7"/>

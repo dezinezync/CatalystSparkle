@@ -34,11 +34,12 @@ YETI_EXPORT ExternalAppsScheme const ExternalTwitterAppScheme;
 YETI_EXPORT ExternalAppsScheme const ExternalRedditAppScheme;
 YETI_EXPORT ExternalAppsScheme const ExternalBrowserAppScheme;
 
-typedef  NSString * YetiTheme NS_STRING_ENUM;
+typedef  NSString * YetiThemeType NS_STRING_ENUM;
 YETI_EXPORT NSString * const kDefaultsTheme;
 
-YETI_EXPORT YetiTheme const LightTheme;
-YETI_EXPORT YetiTheme const DarkTheme;
+YETI_EXPORT YetiThemeType const LightTheme;
+YETI_EXPORT YetiThemeType const DarkTheme;
+YETI_EXPORT YetiThemeType const BlackTheme;
 
 YETI_EXPORT NSNotificationName kWillUpdateTheme;
 YETI_EXPORT NSNotificationName kDidUpdateTheme;

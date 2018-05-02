@@ -7,6 +7,7 @@
 //
 
 #import "AuthorBioVC.h"
+#import "YetiThemeKit.h"
 
 @interface AuthorBioVC () 
 
@@ -17,6 +18,10 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.view.backgroundColor = theme.backgroundColor;
+    self.para.backgroundColor = theme.backgroundColor;
     
     [self.para setContentOffset:CGPointZero];
     

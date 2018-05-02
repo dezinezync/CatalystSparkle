@@ -8,6 +8,7 @@
 
 #import "AuthorHeaderView.h"
 #import "AuthorBioVC.h"
+#import "YetiThemeKit.h"
 
 @interface AuthorHeaderView () <UITextViewDelegate>
 
@@ -28,6 +29,11 @@
 - (void)awakeFromNib
 {
     [super awakeFromNib];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.backgroundColor = theme.subbarColor;
+    self.textview.backgroundColor = theme.subbarColor;
     
     self.textview.delegate = self;
     
@@ -94,10 +100,12 @@
     
     if (_author) {
         // Compose the string
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         UIFont *baseFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
         
         NSString *formatted = formattedString(@"All articles by %@ ⦿", _author.name);
-        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : baseFont}];
+        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : baseFont, NSForegroundColorAttributeName: theme.subtitleColor}];
         
         NSRange range = NSMakeRange(formatted.length-1, 1);
         
@@ -151,12 +159,17 @@
             CGRect rect = [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
             
             ppc.sourceRect = rect;
+            
+            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+            
+            ppc.backgroundColor = theme.backgroundColor;
         }
         
         if (![vc isViewLoaded]) {
             [vc loadViewIfNeeded];
         }
         
+        vc.para.avoidsLazyLoading = YES;
         vc.para.attributedText = [self processedText:vc.para content:self.author.bio];
         vc.para.scrollEnabled = YES;
         

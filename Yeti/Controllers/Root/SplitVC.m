@@ -9,11 +9,19 @@
 #import "SplitVC.h"
 #import "YetiConstants.h"
 
+#import "YetiThemeKit.h"
+
 @interface SplitVC ()
 
 @end
 
 @implementation SplitVC
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [YetiThemeKit loadThemeKit];
+}
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     

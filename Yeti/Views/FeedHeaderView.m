@@ -10,6 +10,7 @@
 #import "Feed.h"
 
 #import "NSString+HTML.h"
+#import "YetiThemeKit.h"
 
 @interface FeedHeaderView () <UIScrollViewDelegate>
 
@@ -19,6 +20,7 @@
 @property (weak, nonatomic) Feed *feed;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIImageView *authorsFade;
+@property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 
 @end
 
@@ -50,6 +52,15 @@
     self.scrollView.delegate = self;
     
     [self setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.backgroundColor = theme.subbarColor;
+    
+    self.descriptionLabel.backgroundColor = theme.subbarColor;
+    self.descriptionLabel.textColor = theme.subtitleColor;
+    self.scrollView.backgroundColor = theme.subbarColor;
+    self.authorLabel.textColor = theme.titleColor;
+    self.authorLabel.backgroundColor = theme.subbarColor;
 }
 
 - (void)didMoveToSuperview

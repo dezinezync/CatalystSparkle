@@ -9,6 +9,8 @@
 #import "Image.h"
 #import "LayoutConstants.h"
 
+#import "YetiThemeKit.h"
+
 @interface Image ()
 
 @end
@@ -18,11 +20,14 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.f];
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        self.backgroundColor = theme.backgroundColor;
         
         SizedImage *imageView = [[SizedImage alloc] initWithFrame:self.bounds];
         imageView.contentMode = UIViewContentModeScaleAspectFit;
         imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        imageView.backgroundColor = theme.cellColor;
         
         [self addSubview:imageView];
         
@@ -46,23 +51,6 @@
     
     return self;
 }
-
-//- (void)didMoveToSuperview
-//{
-//    [super didMoveToSuperview];
-//
-//    if (self.superview && ![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
-//
-//        self.leading = [self.imageView.leadingAnchor constraintEqualToAnchor:self.superview.leadingAnchor constant:LayoutImageMargin];
-//        self.leading.priority = 1000;
-//        self.leading.active = YES;
-//
-//        self.trailing = [self.imageView.trailingAnchor constraintEqualToAnchor:self.superview.trailingAnchor constant:0.f];//-(LayoutImageMargin * 2)];
-//        self.trailing.priority = 1000;
-//        self.trailing.active = YES;
-//
-//    }
-//}
 
 #pragma mark -
 

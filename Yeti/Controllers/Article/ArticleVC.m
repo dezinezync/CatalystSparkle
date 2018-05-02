@@ -38,6 +38,7 @@
 #import <SafariServices/SafariServices.h>
 
 #import "ArticleHelperView.h"
+#import "YetiThemeKit.h"
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
@@ -86,9 +87,9 @@
         self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
     }
     
-    YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    self.scrollView.backgroundColor = [theme isEqualToString:LightTheme] ? [UIColor whiteColor] : [UIColor colorWithWhite:0.12f alpha:1.f];
+    self.scrollView.backgroundColor = theme.backgroundColor;
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
@@ -350,6 +351,8 @@
 
 - (void)addTitle {
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     NSString *author = nil;
     
     if (self.item.author) {
@@ -383,7 +386,7 @@
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
-                                     NSForegroundColorAttributeName: UIColor.blackColor,
+                                     NSForegroundColorAttributeName: theme.titleColor,
                                      NSParagraphStyleAttributeName: para,
                                      NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-1.14f) : [NSNull null],
                                      };
@@ -395,7 +398,7 @@
     UIFont *subtextFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:baseFont];
     
     NSDictionary *subtextAttributes = @{NSFontAttributeName: subtextFont,
-                                        NSForegroundColorAttributeName: [UIColor colorWithWhite:0.f alpha:0.54f],
+                                        NSForegroundColorAttributeName: theme.captionColor,
                                         NSParagraphStyleAttributeName: para,
                                         NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-0.43f) : [NSNull null]
                                         };
@@ -411,7 +414,7 @@
     
     [label sizeToFit];
     
-    label.backgroundColor = UIColor.whiteColor;
+    label.backgroundColor = theme.backgroundColor;
     label.opaque = YES;
     label.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -424,7 +427,7 @@
     
     [sublabel sizeToFit];
     
-    sublabel.backgroundColor = UIColor.whiteColor;
+    sublabel.backgroundColor = theme.backgroundColor;
     sublabel.opaque = YES;
     
     UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 48.f)];

@@ -13,6 +13,7 @@
 #import "NSString+HTML.h"
 
 #import "YetiConstants.h"
+#import "YetiThemeKit.h"
 
 @interface Paragraph ()
 
@@ -312,9 +313,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     [UIView animateWithDuration:duration animations:^{
         strongify(self);
-        YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        self.backgroundColor = [theme isEqualToString:LightTheme] ? [UIColor whiteColor] : [UIColor colorWithWhite:0.12f alpha:1.f];
+        self.backgroundColor = theme.backgroundColor;
     }];
     
 }
@@ -424,8 +425,13 @@ static NSParagraphStyle * _paragraphStyle = nil;
         return retval;
     }
     
-    YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
-    return [theme isEqualToString:LightTheme] ? [[UIColor blackColor] colorWithAlphaComponent:self.isCaption ? 0.5 : 0.9f] : [[UIColor whiteColor] colorWithAlphaComponent:self.isCaption ? 0.7 : 0.92f];
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    if (self.isCaption) {
+        return theme.captionColor;
+    }
+    
+    return theme.subtitleColor;
 }
 
 - (BOOL)translatesAutoresizingMaskIntoConstraints

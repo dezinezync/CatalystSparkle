@@ -11,6 +11,7 @@
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
+#import "YetiThemeKit.h"
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
@@ -43,6 +44,15 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.countLabel.layer.masksToBounds = YES;
     
     self.indentationWidth = 28.f;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.faviconView.backgroundColor = theme.cellColor;
+    self.titleLabel.backgroundColor = theme.cellColor;
+    self.titleLabel.textColor = theme.titleColor;
+    
+    self.countLabel.backgroundColor = theme.unreadBadgeColor;
+    self.countLabel.textColor = theme.unreadTextColor;
 }
 
 - (void)prepareForReuse

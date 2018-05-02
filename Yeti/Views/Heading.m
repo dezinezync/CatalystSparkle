@@ -10,6 +10,7 @@
 #import <DZKit/NSString+Extras.h>
 #import "LayoutConstants.h"
 #import "YetiConstants.h"
+#import "YetiThemeKit.h"
 
 @interface Heading ()
 
@@ -51,7 +52,8 @@
     
     [UIView animateWithDuration:duration animations:^{
         strongify(self);
-        self.backgroundColor = UIColor.whiteColor;
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        self.backgroundColor = theme.backgroundColor;
     }];
     
 }
@@ -60,7 +62,8 @@
 
 - (UIColor *)textColor
 {
-    return UIColor.blackColor;
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    return theme.titleColor;
 }
 
 - (NSParagraphStyle *)paragraphStyle {

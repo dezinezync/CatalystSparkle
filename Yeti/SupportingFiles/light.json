@@ -1,0 +1,17 @@
+{
+    "backgroundColor": "#F8F9F9",
+    "subtitleColor": "#00000087",
+    "captionColor": "#00000054",
+    "titleColor": "#000000",
+    "borderColor": "#00000012",
+    "tableColor": "#EFEFF4",
+    "tintColor": {
+        "rgb": "#2979FF",
+        "p3": true
+    },
+    "unreadBadgeColor": "#E6E6E6",
+    "unreadTextColor": "#808080",
+    "articlesBarColor": "#FFFFFF",
+    "cellColor": "#FFFFFF",
+    "subbarColor": "#F9F9F9"
+}

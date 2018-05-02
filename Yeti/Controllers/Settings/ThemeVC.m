@@ -10,6 +10,8 @@
 #import "YetiConstants.h"
 #import "AppDelegate.h"
 
+#import "YetiThemeKit.h"
+
 NSString *const kSwitchCell = @"cell.switch";
 NSString *const kCheckmarkCell = @"cell.checkmark";
 
@@ -63,7 +65,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         // THEME
         cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
         
-        YetiTheme theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+        YetiThemeType theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
         
         cell.textLabel.text = indexPath.row == 0 ? @"Light" : @"Dark";
         
@@ -115,10 +117,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         [defaults setValue:val forKey:kDefaultsTheme];
         
         if ([val isEqualToString:LightTheme]) {
-            [MyAppDelegate setupLightTheme];
+            YTThemeKit.theme = [YTThemeKit themeNamed:@"light"];
         }
         else {
-            [MyAppDelegate setupDarkTheme];
+            YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
         }
         
     }

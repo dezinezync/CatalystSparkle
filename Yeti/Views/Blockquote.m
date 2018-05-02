@@ -8,6 +8,7 @@
 
 #import "Blockquote.h"
 #import "LayoutConstants.h"
+#import "YetiThemeKit.h"
 
 @interface Blockquote () {
     UIFont *_bodyFont;
@@ -25,8 +26,10 @@
         
         self.clipsToBounds = NO;
         
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         UIView * leftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 2.f, self.bounds.size.height)];
-        leftBorder.backgroundColor = [UIColor colorWithWhite:0.85f alpha:1.f];
+        leftBorder.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.25f];
         leftBorder.opaque = YES;
         leftBorder.translatesAutoresizingMaskIntoConstraints = NO;
         leftBorder.clipsToBounds = YES;
@@ -60,7 +63,8 @@
 }
 
 - (UIColor *)textColor {
-    return [UIColor colorWithWhite:0.18f alpha:1.f];
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    return [theme.subtitleColor colorWithAlphaComponent:0.9f];
 }
 
 @end

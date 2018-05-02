@@ -16,6 +16,8 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "YetiThemeKit.h"
+
 NSString *const kArticleCell = @"com.yeti.cells.article";
 
 @implementation ArticleCell
@@ -33,9 +35,20 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     UIFont *font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:[UIFont systemFontOfSize:14.f weight:fontWeight] maximumPointSize:maxCaptionSize];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.titleLabel.textColor = theme.titleColor;
+    self.summaryLabel.textColor = theme.subtitleColor;
+    
+    self.titleLabel.backgroundColor = theme.cellColor;
+    self.summaryLabel.backgroundColor = theme.cellColor;
+    self.markerView.backgroundColor = theme.cellColor;
+    
     for (UILabel *label in @[self.authorLabel, self.timeLabel]) {
         label.font = font;
         label.adjustsFontForContentSizeCategory = YES;
+        label.textColor = theme.captionColor;
+        label.backgroundColor = theme.cellColor;
     }
     
 }
@@ -141,7 +154,9 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     self.markerView.image = nil;
     
-    self.titleLabel.textColor = UIColor.blackColor;
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.titleLabel.textColor = theme.titleColor;
 }
 
 @end

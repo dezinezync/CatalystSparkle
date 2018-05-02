@@ -9,8 +9,9 @@
 #import "AppDelegate+Routing.h"
 #import "AppDelegate+Push.h"
 #import "FeedsVC.h"
-#import <DZKit/EFNavController.h>
+
 #import <JLRoutes/JLRoutes.h>
+#import "YetiThemeKit.h"
 
 #import "YetiConstants.h"
 #import "EmptyVC.h"
@@ -39,14 +40,6 @@ AppDelegate *MyAppDelegate = nil;
     [ADZLogger initialize];
     
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    
-    NSString *theme = [[NSUserDefaults standardUserDefaults] valueForKey:kDefaultsTheme];
-    if ([theme isEqualToString:LightTheme]) {
-        [self setupLightTheme];
-    }
-    else {
-        [self setupDarkTheme];
-    }
     
     [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
     
@@ -89,62 +82,31 @@ AppDelegate *MyAppDelegate = nil;
     
     self.window.rootViewController = splitVC;
     
+    [splitVC loadViewIfNeeded];
+    
+    NSString *theme = [[NSUserDefaults standardUserDefaults] valueForKey:kDefaultsTheme];
+    if ([theme isEqualToString:LightTheme]) {
+        YTThemeKit.theme = [YTThemeKit themeNamed:@"light"];
+    }
+    else {
+        YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
+    }
+    
+    [YTThemeKit.theme updateAppearances];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeNeedsUpdateNotification object:nil];
+    
+    [self refreshViews];
+    
 }
 
 #pragma mark - Theming
-
-- (void)setupLightTheme {
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:kWillUpdateTheme object:nil];
-    
-    self.window.tintColor = [UIColor colorWithDisplayP3Red:0.f green:122/255.f blue:1.f alpha:1.f];
-    
-    UINavigationBar *navBar = [UINavigationBar appearance];
-    [navBar setBarStyle:UIBarStyleDefault];
-    
-    UITableView *tableView = [UITableView appearance];
-    tableView.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    
-    UITableViewCell *cell = [UITableViewCell appearance];
-    cell.backgroundColor = [UIColor whiteColor];
-    
-    [self refreshViews];
-    
-}
-
-- (void)setupDarkTheme {
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:kWillUpdateTheme object:nil];
-    
-    self.window.tintColor = [UIColor colorWithDisplayP3Red:1.f green:149/255.f blue:0.f alpha:1.f];
-    
-    UINavigationBar *navBar = [UINavigationBar appearance];
-    [navBar setBarStyle:UIBarStyleBlackTranslucent];
-    
-    UITableView *tableView = [UITableView appearance];
-    tableView.backgroundColor = [UIColor colorWithDisplayP3Red:93/255.f green:93/255.f blue:93/255.f alpha:1.f];
-    
-    UITableViewCell *cell = [UITableViewCell appearance];
-    cell.backgroundColor = [UIColor colorWithDisplayP3Red:100/255.f green:100/255.f blue:100/255.f alpha:1.f];
-    
-    [self refreshViews];
-    
-}
 
 // https://ngs.io/2014/10/26/refresh-ui-appearance/
 
 - (void)refreshViews {
 
-    for (UIWindow *window in [UIApplication sharedApplication].windows) {
-        for (UIView *view in window.subviews) {
-            [view removeFromSuperview];
-            [window addSubview:view];
-        }
-    }
-    
-    [[[[UIApplication sharedApplication] keyWindow] rootViewController] setNeedsStatusBarAppearanceUpdate];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
+   [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
     
 }
 

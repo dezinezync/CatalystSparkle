@@ -11,6 +11,7 @@
 #import "NSAttributedString+Trimming.h"
 
 #import <DZKit/NSString+Extras.h>
+#import "YetiThemeKit.h"
 
 @interface List ()
 
@@ -75,6 +76,8 @@
 
 - (void)append:(Content *)item index:(NSUInteger)index attributedString:(NSMutableAttributedString *)attrs indent:(NSInteger)indent
 {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
     NSString *stepString = formattedString(@"%@%@ ", indent == 1 ? @"\t" : @"", step);
     
@@ -119,7 +122,7 @@
     
     NSDictionary *attributes = @{NSFontAttributeName: self.bodyFont,
                                  NSParagraphStyleAttributeName: Paragraph.paragraphStyle,
-                                 NSForegroundColorAttributeName: [UIColor.blackColor colorWithAlphaComponent:(self.isQuoted ? 0.54f : 1.f)],
+                                 NSForegroundColorAttributeName: theme.subtitleColor,
                                  NSKernAttributeName: @(-0.43f)
                                  };
     
