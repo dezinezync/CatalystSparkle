@@ -12,6 +12,8 @@
 #import "LayoutConstants.h"
 #import "GalleryCell.h"
 
+#import "YetiThemeKit.h"
+
 @interface GalleryImage : Image
 
 @property (nonatomic, assign) CGFloat height;
@@ -63,7 +65,9 @@
 {
     if (self = [super initWithNib]) {
         
-        self.backgroundColor = UIColor.whiteColor;
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        self.backgroundColor = theme.backgroundColor;
         self.imageRefs = [NSPointerArray weakObjectsPointerArray];
         
         self.collectionView.contentInset = UIEdgeInsetsZero;
@@ -71,8 +75,12 @@
         [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(GalleryCell.class) bundle:nil] forCellWithReuseIdentifier:kGalleryCell];
         self.collectionView.dataSource = self;
         self.collectionView.delegate = self;
+        self.collectionView.backgroundColor = theme.backgroundColor;
+        self.collectionView.prefetchingEnabled = NO;
         
         [self.pageControl addTarget:self action:@selector(didChangePage:) forControlEvents:UIControlEventValueChanged];
+        self.pageControl.currentPageIndicatorTintColor = theme.tintColor;
+        self.pageControl.pageIndicatorTintColor = theme.captionColor;
         
 #if DEBUG_LAYOUT == 1
         self.collectionView.backgroundColor = UIColor.cyanColor;
