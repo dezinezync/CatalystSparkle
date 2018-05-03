@@ -100,6 +100,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     
     // Configure the cell...
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
     
     return cell;
 }
@@ -109,6 +113,8 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSIndexSet * reloadSections;
     
     if (indexPath.section == 0) {
         
@@ -123,14 +129,18 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
             YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
         }
         
+        reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
+        
     }
     else if (indexPath.section == 1) {
         
         [defaults setValue:(indexPath.row == 0 ? ALPSystem : ALPSerif) forKey:kDefaultsArticleFont];
         
+        reloadSections = [NSIndexSet indexSetWithIndex:indexPath.section];
+        
     }
     
-    [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
+    [tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];
     
     [defaults synchronize];
     

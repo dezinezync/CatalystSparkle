@@ -5,10 +5,7 @@
     "titleColor": "#000000",
     "borderColor": "#00000012",
     "tableColor": "#EFEFF4",
-    "tintColor": {
-        "rgb": "#2979FF",
-        "p3": true
-    },
+    "tintColor": "#2979FF",
     "unreadBadgeColor": "#E6E6E6",
     "unreadTextColor": "#808080",
     "articlesBarColor": "#FFFFFF",

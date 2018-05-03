@@ -8,6 +8,7 @@
 
 #import "ImageLoadingVC.h"
 #import "LayoutConstants.h"
+#import "YetiThemeKit.h"
 
 @interface ImageLoadingVC ()
 
@@ -76,6 +77,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"imageLoadingCell" forIndexPath:indexPath];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
     
     // Configure the cell...
     switch (indexPath.section) {

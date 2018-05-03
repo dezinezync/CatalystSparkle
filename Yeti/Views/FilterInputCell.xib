@@ -47,6 +47,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
+                <outlet property="label" destination="m4w-Th-tx0" id="HCF-83-BPC"/>
                 <outlet property="stackView" destination="xZx-Tw-ebq" id="nvD-iq-5bs"/>
                 <outlet property="textField" destination="cCb-wz-z16" id="Si9-1s-egb"/>
             </connections>

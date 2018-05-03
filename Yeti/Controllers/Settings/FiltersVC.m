@@ -11,6 +11,7 @@
 #import "FilterInputCell.h"
 
 #import "FeedsManager.h"
+#import "YetiThemeKit.h"
 
 NSString *const kFiltersCell = @"filterCell";
 
@@ -34,9 +35,6 @@ NSString *const kFiltersCell = @"filterCell";
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kFiltersCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FilterInputCell.class) bundle:nil] forCellReuseIdentifier:kFilterInputCell];
-    
-//    self.DS2 = [[DZBasicDatasource alloc] initWithView:self.tableView];
-//    self.DS2.delegate = self;
     
     self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
@@ -87,9 +85,14 @@ NSString *const kFiltersCell = @"filterCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kFiltersCell forIndexPath:indexPath];
         cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
+        
+        cell.textLabel.textColor = theme.titleColor;
+        cell.detailTextLabel.textColor = theme.captionColor;
         
         return cell;
     }
@@ -99,6 +102,12 @@ NSString *const kFiltersCell = @"filterCell";
     if (_keywordInput) {
         cell.textField.text = _keywordInput;
     }
+    
+    cell.label.textColor = theme.titleColor;
+    
+    cell.textField.textColor = theme.titleColor;
+    cell.textField.backgroundColor = theme.backgroundColor;
+    [(UILabel *)[cell.textField valueForKeyPath:@"_placeholderLabel"] setTextColor:theme.captionColor];
     
     cell.textField.delegate = self;
     
@@ -136,30 +145,6 @@ NSString *const kFiltersCell = @"filterCell";
         
     }
 }
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 #pragma mark - <UITextFieldDelegate>
 

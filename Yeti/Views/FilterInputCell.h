@@ -14,5 +14,6 @@ extern NSString *const kFilterInputCell;
 
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
+@property (weak, nonatomic) IBOutlet UILabel *label;
 
 @end

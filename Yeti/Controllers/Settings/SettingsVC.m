@@ -20,6 +20,8 @@
 #import "DZWebViewController.h"
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
+#import "YetiThemeKit.h"
+
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
     BOOL _hasAnimatedFooterView;
@@ -45,7 +47,8 @@
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
-    self.tableView.tableFooterView = self.footerView;
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+    [self didUpdateTheme];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -120,7 +123,13 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -275,6 +284,14 @@
         _settingsUpdated = YES;
 }
 
+- (void)didUpdateTheme {
+    
+    _footerView = nil;
+    self.tableView.tableFooterView = self.footerView;
+    
+    _hasAnimatedFooterView = NO;
+}
+
 #pragma mark - Getters
 
 - (UIView *)footerView
@@ -283,23 +300,30 @@
     if(!_footerView)
     {
         _footerView = [[UIView alloc] init];
-        _footerView.backgroundColor = UIColor.groupTableViewBackgroundColor;
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        _footerView.backgroundColor = theme.tableColor;
         
         _footerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 112.f + 16.f);
         
-        DZView *dz = [[DZView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width - 120.f)/2.f, 0, 120, 70.f) tintColor:self.view.tintColor];
+        DZView *dz = [[DZView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width - 120.f)/2.f, 0, 120, 70.f) tintColor:theme.tintColor];
         dz.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         dz.tag = 30000;
+        dz.tintColor = theme.tintColor;
+        dz.backgroundColor = theme.tableColor;
+        dz.contentMode = UIViewContentModeRedraw;
         
         [_footerView addSubview:dz];
         
         UILabel *_byLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 70.f - 16.f, CGRectGetWidth(self.view.bounds), 30.f)];
-        _byLabel.textColor = [UIColor colorWithWhite:0.38f alpha:1.f];
+        _byLabel.textColor = theme.subtitleColor;
         _byLabel.textAlignment = NSTextAlignmentCenter;
         _byLabel.text = @"A Dezine Zync Studios app.";
         _byLabel.font = [UIFont systemFontOfSize:12.f];
         _byLabel.transform = CGAffineTransformMakeTranslation(0, 30.f);
         _byLabel.autoresizingMask = dz.autoresizingMask;
+        _byLabel.backgroundColor = theme.tableColor;
         
         [_footerView addSubview:_byLabel];
     }

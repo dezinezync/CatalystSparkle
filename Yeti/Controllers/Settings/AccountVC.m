@@ -11,6 +11,7 @@
 #import "FeedsManager.h"
 
 #import "LayoutConstants.h"
+#import "YetiThemeKit.h"
 
 @interface AccountVC ()
 
@@ -58,19 +59,27 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     CGFloat width = tableView.bounds.size.width;
     CGRect frame = CGRectMake(tableView.layoutMargins.left, 0, width, 24.f);
     
     UITextView *textView = [[UITextView alloc] initWithFrame:frame];
-    textView.font = [UIFont systemFontOfSize:13.f];
+    textView.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
     textView.dataDetectorTypes = UIDataDetectorTypeLink;
     textView.editable = NO;
-    textView.backgroundColor = UIColor.groupTableViewBackgroundColor;
+    textView.backgroundColor = theme.tableColor;
     textView.opaque = YES;
     textView.contentInset = UIEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+    textView.textColor = theme.subtitleColor;
+    
+    for (UIView *subview in textView.subviews) {
+        subview.backgroundColor = textView.backgroundColor;
+    }
     
     if (section == 0) {
-        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"If you deactivate your account and wish to activate it again, please email us on info@dezinezync.com with the above UUID. You can long tap the UUID to copy it."];
+        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"If you deactivate your account and wish to activate it again, please email us on info@dezinezync.com with the above UUID. You can long tap the UUID to copy it." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         
         [attrs addAttribute:NSLinkAttributeName value:@"mailto:info@dezinezync.com" range:[attrs.string rangeOfString:@"info@dezinezync.com"]];
         
@@ -78,7 +87,7 @@
         attrs = nil;
     }
     else {
-        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"Your subscription is active and Apple will automatically renew it on 28/03/2018. Your free trial ended on 28/01/2018. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate."];
+        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"Your subscription is active and Apple will automatically renew it on 28/03/2018. Your free trial ended on 28/01/2018. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         
         [attrs addAttribute:NSLinkAttributeName value:@"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions" range:[attrs.string rangeOfString:@"here"]];
         
@@ -99,6 +108,11 @@
     NSString *identifier = (indexPath.section == 0 && indexPath.row == 1) ? @"deactivateCell" : kAccountsCell;
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
     
     switch (indexPath.section) {
         case 0:

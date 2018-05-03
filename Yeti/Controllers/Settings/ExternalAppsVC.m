@@ -9,6 +9,7 @@
 #import "ExternalAppsVC.h"
 #import "SettingsCell.h"
 #import "YetiConstants.h"
+#import "YetiThemeKit.h"
 
 @interface ExternalAppsVC ()
 
@@ -128,6 +129,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kExternalAppsCell forIndexPath:indexPath];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
     
     NSArray <NSString *> * appsArray = nil;
     NSString *sectionKey;
