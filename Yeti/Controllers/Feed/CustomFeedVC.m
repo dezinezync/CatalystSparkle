@@ -82,7 +82,24 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     
 }
 
-#pragma mark
+#pragma mark - Overrides
+
+- (void)didChangeToArticle:(FeedItem *)item
+{
+    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
+    
+    if (index == NSNotFound)
+        return;
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    
+    if (!item.isRead) {
+        [self userMarkedArticle:item read:YES];
+    }
+    else {
+        [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+    }
+}
 
 - (void)loadNextPage
 {

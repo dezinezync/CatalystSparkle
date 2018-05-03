@@ -19,6 +19,8 @@
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
+#import "YetiThemeKit.h"
+
 @implementation TweetPara
 
 - (BOOL)avoidsLazyLoading {
@@ -103,6 +105,7 @@
 - (instancetype)initWithNib
 {
     if (self = [super initWithNib]) {
+        
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
         [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(TweetImage.class) bundle:nil] forCellWithReuseIdentifier:kTweetCell];
@@ -125,10 +128,18 @@
     
     _content = content;
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.backgroundColor = theme.isDark ? [UIColor colorWithRed:51/255.f green:53/255.f blue:55/255.f alpha:1.f] : [UIColor colorWithRed:235/255.f green:247/255.f blue:255/255.f alpha:1.f];
+    self.textview.backgroundColor = self.backgroundColor;
+    
+    self.collectionView.backgroundColor = self.backgroundColor;
+    
     [self.textview setText:content.content ranges:content.ranges attributes:content.attributes];
     self.textview.contentSize = [[self.textview attributedText] boundingRectWithSize:self.textview.bounds.size options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size;
     
     self.usernameLabel.text = formattedString(@"@%@", [content.attributes valueForKey:@"username"]);
+    self.usernameLabel.textColor = theme.isDark ? [UIColor colorWithRed:184/255.f green:208/255.f blue:230/255.f alpha:1.f] : [UIColor colorWithRed:77/255.f green:104/255.f blue:128/255.f alpha:1.f];
     
     weakify(self);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -220,6 +231,8 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     TweetImage *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kTweetCell forIndexPath:indexPath];
+    cell.backgroundColor = self.backgroundColor;
+    cell.imageView.backgroundColor = self.backgroundColor;
     
     Content *image = [self.content.images objectAtIndex:indexPath.item];
     

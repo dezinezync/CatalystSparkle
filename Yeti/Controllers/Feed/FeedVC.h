@@ -32,4 +32,8 @@
 
 - (void)setupHeaderView;
 
+- (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read;
+
+- (void)didChangeToArticle:(FeedItem *)item;
+
 @end

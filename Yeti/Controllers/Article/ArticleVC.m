@@ -159,6 +159,12 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
     
+    NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
+    
+    if (cache) {
+        [cache removeAllObjects];
+    }
+    
     [self.navigationController popViewControllerAnimated:NO];
 }
 
@@ -852,7 +858,7 @@
 }
 
 - (void)addQuote:(Content *)content {
-    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - 48.f, 32.f);
     
     if (!content.content && (!content.items || content.items.count == 0))
         return;
@@ -1056,13 +1062,13 @@
         }
     }
     
-    CGPoint point = scrollView.contentOffset;
-    // adding the scrollView's height here triggers loading of the image as soon as it's about to appear on screen.
-    point.y += scrollView.bounds.size.height;
+//    CGPoint point = scrollView.contentOffset;
+//    // adding the scrollView's height here triggers loading of the image as soon as it's about to appear on screen.
+//    point.y += scrollView.bounds.size.height;
     
     for (Image *imageview in self.images) { @autoreleasepool {
         
-        BOOL contains = CGRectContainsPoint(imageview.frame, point);
+        BOOL contains = CGRectContainsRect(visibleRect, imageview.frame) || CGRectIntersectsRect(visibleRect, imageview.frame);
         // the first image may be out of bounds of the scrollView when it's loaded.
         // check if it's frame is contained within the frame of the scrollView.
         if (imageview.idx == 0) {
@@ -1077,15 +1083,19 @@
             [(Gallery *)imageview setLoading:YES];
         }
         else if (!imageview.imageView.image && contains && !imageview.isLoading) {
-            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
+//            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 imageview.loading = YES;
                 [imageview il_setImageWithURL:imageview.URL];
             });
         }
+        else if (imageview.imageView.image && !contains && imageview.isLoading) {
+            imageview.loading = NO;
+            imageview.imageView.image = nil;
+        }
     } }
     
-    CGFloat y = point.y - scrollView.bounds.size.height;
+    CGFloat y = scrollView.contentOffset.y;
     
     BOOL enableTop = y > (scrollView.bounds.size.height / 2.f);
     if (enableTop != _helperView.startOfArticle.isEnabled)
@@ -1252,7 +1262,7 @@
     }
     
     // links to sections within the article
-    if ([absolute containsString:self.item.articleURL]) {
+    if ([absolute containsString:self.item.articleURL] && ![absolute isEqualToString:self.item.articleURL]) {
         // get the section ID
         NSRange range = [absolute rangeOfString:@"#"];
         

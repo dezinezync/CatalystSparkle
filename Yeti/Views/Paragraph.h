@@ -44,4 +44,6 @@
  */
 - (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
 
+- (NSArray <UIView *> * _Nonnull)ignoreSubviewsFromLayouting;
+
 @end

@@ -51,6 +51,25 @@
 
 #pragma mark - Getters
 
+- (UIEdgeInsets)textContainerInset {
+    UIEdgeInsets insets = [super textContainerInset];
+    
+    insets.left += 50.f;
+    
+    return insets;
+}
+
+- (CGSize)contentSize
+{
+    CGSize size = [super contentSize];
+    
+    size.height -= (self.bodyFont.pointSize * self.class.paragraphStyle.lineHeightMultiple) * 2.f;
+    
+    self.textContainer.size = size;
+    
+    return size;
+}
+
 - (UIFont *)bodyFont {
     
     if (!_bodyFont) {
@@ -65,6 +84,15 @@
 - (UIColor *)textColor {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     return [theme.subtitleColor colorWithAlphaComponent:0.9f];
+}
+
+- (NSArray <UIView *> * _Nonnull)ignoreSubviewsFromLayouting {
+    
+    if (!self.leftBorder) {
+        return @[];
+    }
+    
+    return @[self.leftBorder];
 }
 
 @end

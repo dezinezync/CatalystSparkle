@@ -101,6 +101,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
+        self.contentMode = UIViewContentModeRedraw;
         self.contentInset = UIEdgeInsetsZero;
         self.layoutMargins = UIEdgeInsetsZero;
         self.alwaysBounceVertical = NO;
@@ -108,6 +109,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.opaque = YES;
         
         self.scrollEnabled = NO;
+        
+        self.textContainer.widthTracksTextView = YES;
+        self.textContainer.heightTracksTextView = YES;
         
         [self updateStyle:nil];
     }
@@ -322,13 +326,38 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
+- (NSArray * _Nonnull)ignoreSubviewsFromLayouting {
+    return @[];
+}
+
 - (void)layoutSubviews
 {
+    
+    NSArray <UIView *> *ignoredSubviews = [self ignoreSubviewsFromLayouting];
+    
+    for (UIView *subview in self.subviews) {
+        if ([ignoredSubviews indexOfObject:subview] == NSNotFound) {
+            subview.backgroundColor = self.backgroundColor;
+        }
+    }
+    
     [super layoutSubviews];
     
     if (self.superview) {
         [self invalidateIntrinsicContentSize];
     }
+}
+
+- (UIEdgeInsets)textContainerInset {
+    UIEdgeInsets insets = [super textContainerInset];
+    
+    insets.top = 0.f;
+    insets.bottom = 0.f;
+    
+    insets.left = -self.textContainer.lineFragmentPadding;
+    insets.right = -self.textContainer.lineFragmentPadding;
+    
+    return insets;
 }
 
 - (CGSize)contentSize
@@ -337,9 +366,29 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [self layoutIfNeeded];
     
     CGSize size = [super contentSize];
-    size.width -= self.contentInset.left + self.contentInset.right;
     
-    size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
+    size.width -= self.textContainerInset.left + self.textContainerInset.right;
+    
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin;
+    
+    if (self.attributedText) {
+        size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:options context:nil].size.height;
+    }
+    else if (self.text && ![self.text isBlank]) {
+        NSParagraphStyle *style = nil;
+        
+        if ([self respondsToSelector:@selector(paragraphStyle)]) {
+            style = [self performSelector:@selector(paragraphStyle)];
+        }
+        
+        if (!style) {
+            style = [self.class paragraphStyle];
+        }
+        
+        UIFont *font = [self bodyFont];
+        
+        size.height = [self.text boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:options attributes:@{NSFontAttributeName: font, NSParagraphStyleAttributeName: style} context:nil].size.height;
+    }
     
     return size;
 }

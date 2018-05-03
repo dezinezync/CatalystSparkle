@@ -15,9 +15,5 @@ extern AppDelegate * MyAppDelegate;
 
 @interface AppDelegate : DZAppDelegate
 
-- (void)setupLightTheme;
-
-- (void)setupDarkTheme;
-
 @end
 

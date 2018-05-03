@@ -19,6 +19,8 @@
 #import "FeedsSearchResults.h"
 #import "CustomFeedVC.h"
 
+#import "YetiThemeKit.h"
+
 @interface FeedsVC () <DZDatasource>
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
@@ -131,6 +133,7 @@
 - (void)setupNavigationBar {
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
+    control.tintColor = [[YTThemeKit theme] tintColor];
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     [self.tableView addSubview:control];
