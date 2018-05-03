@@ -44,6 +44,7 @@
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -105,6 +106,12 @@
 {
     return YES;
 }
+
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+#pragma mark - Setups
 
 - (void)setupTableView {
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
@@ -345,6 +352,25 @@
 }
 
 #pragma mark - Notifications
+
+- (void)didUpdateTheme {
+    
+    weakify(self);
+    
+    asyncMain(^{
+        
+        strongify(self);
+        
+        NSArray <NSIndexPath *> *indices = [self.headerView.tableView indexPathsForVisibleRows];
+        
+        [[self.headerView tableView] reloadRowsAtIndexPaths:indices withRowAnimation:UITableViewRowAnimationNone];
+        
+        indices = [self.tableView indexPathsForVisibleRows];
+        
+        [self.tableView reloadRowsAtIndexPaths:indices withRowAnimation:UITableViewRowAnimationNone];
+    });
+    
+}
 
 - (void)updateNotification:(NSNotification *)note {
     

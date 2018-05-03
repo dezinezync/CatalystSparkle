@@ -722,7 +722,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 NSArray *prefiltered = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                     return !obj.isRead;
                 }];
-                self.unread = [prefiltered arrayByAddingObjectsFromArray:items];
+                
+                @try {
+                    self.unread = [prefiltered arrayByAddingObjectsFromArray:items];
+                }
+                @catch (NSException *exc) {}
             }
         }
         // the conditional takes care of filtered article items.

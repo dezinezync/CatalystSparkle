@@ -7,6 +7,7 @@
 //
 
 #import "ArticleHelperView.h"
+#import "YetiThemeKit.h"
 
 @implementation ArticleHelperView
 
@@ -19,11 +20,6 @@
         
         self.accessibilityTraits = UIAccessibilityTraitTabBar;
         self.isAccessibilityElement = NO;
-        
-        for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
-            button.imageView.image = [button.imageView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-            button.translatesAutoresizingMaskIntoConstraints = NO;
-        }
         
         self.previousArticleButton.accessibilityLabel = @"Previous article";
         self.nextArticleButton.accessibilityLabel = @"Next article";
@@ -41,6 +37,20 @@
     [super didMoveToSuperview];
     
     if (self.superview != nil) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        self.tintColor = theme.tintColor;
+        
+        self.backgroundColor = theme.cellColor;
+        for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
+            button.tintColor = theme.tintColor;
+            
+            button.imageView.image = [button.imageView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            button.translatesAutoresizingMaskIntoConstraints = NO;
+            [button setNeedsDisplay];
+            [button setNeedsLayout];
+        }
+        
         [self configureForShadow];
         self.clipsToBounds = NO;
     }
@@ -54,8 +64,10 @@
     
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:self.layer.cornerRadius];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     self.layer.shadowPath = path.CGPath;
-    self.layer.shadowColor = [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;
+    self.layer.shadowColor = theme.isDark ? [UIColor.blackColor colorWithAlphaComponent:0.65f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;
     self.layer.shadowOpacity = 1.f;
     self.layer.shadowRadius = 8.f;
     self.layer.shadowOffset = CGSizeMake(0, 4.f);
