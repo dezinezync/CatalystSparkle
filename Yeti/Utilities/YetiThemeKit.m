@@ -34,6 +34,11 @@ YetiThemeKit * YTThemeKit;
         
         YetiTheme *dark = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
         dark.dark = YES;
+        
+        path = [[NSBundle mainBundle] URLForResource:@"black" withExtension:@"json"];
+        
+        YetiTheme *black = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
+        black.dark = YES;
     });
     
 }

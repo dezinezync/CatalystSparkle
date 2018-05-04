@@ -12,10 +12,14 @@
 
 #import "YetiThemeKit.h"
 
+#import <sys/utsname.h>
+
 NSString *const kSwitchCell = @"cell.switch";
 NSString *const kCheckmarkCell = @"cell.checkmark";
 
-@interface ThemeVC ()
+@interface ThemeVC () {
+    BOOL _isPhoneX;
+}
 
 @end
 
@@ -25,6 +29,8 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     [super viewDidLoad];
     
     self.title = @"Appearance";
+    
+    _isPhoneX = [[self modelIdentifier] isEqualToString:@"iPhone10,3"];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kSwitchCell];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCheckmarkCell];
@@ -52,7 +58,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     if (section == 0) {
-        return 2;
+        return _isPhoneX ? 3 : 2;
     }
     
     return 2;
@@ -67,10 +73,11 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         YetiThemeType theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
         
-        cell.textLabel.text = indexPath.row == 0 ? @"Light" : @"Dark";
+        cell.textLabel.text = indexPath.row == 0 ? @"Light" : (indexPath.row == 1 ? @"Dark" : @"Black");
         
         if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
-            || ([theme isEqualToString:DarkTheme] && indexPath.row == 1)) {
+            || ([theme isEqualToString:DarkTheme] && indexPath.row == 1)
+            || ([theme isEqualToString:BlackTheme] && indexPath.row == 2)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -118,15 +125,18 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     if (indexPath.section == 0) {
         
-        NSString *val = indexPath.row == 0 ? LightTheme : DarkTheme;
+        NSString *val = indexPath.row == 0 ? LightTheme : (indexPath.row == 1 ? DarkTheme : BlackTheme);
         
         [defaults setValue:val forKey:kDefaultsTheme];
         
         if ([val isEqualToString:LightTheme]) {
             YTThemeKit.theme = [YTThemeKit themeNamed:@"light"];
         }
-        else {
+        else if ([val isEqualToString:DarkTheme]) {
             YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
+        }
+        else {
+            YTThemeKit.theme = [YTThemeKit themeNamed:@"black"];
         }
         
         reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
@@ -147,6 +157,20 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
         [self.settingsDelegate didChangeSettings];
     }
+}
+
+#pragma mark - Helpers
+
+- (NSString *)modelIdentifier {
+    NSString *simulatorModelIdentifier = [NSProcessInfo processInfo].environment[@"SIMULATOR_MODEL_IDENTIFIER"];
+    NSLog(@"%@",simulatorModelIdentifier);
+    if (simulatorModelIdentifier) {
+        return simulatorModelIdentifier;
+    }
+    struct utsname sysInfo;
+    uname(&sysInfo);
+    
+    return [NSString stringWithCString:sysInfo.machine encoding:NSUTF8StringEncoding];
 }
 
 @end

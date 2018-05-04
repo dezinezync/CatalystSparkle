@@ -6,8 +6,8 @@
     "borderColor": "#4B4B4B",
     "tableColor": "#222222",
     "tintColor": "#EF6C00",
-    "unreadBadgeColor": "#E6E6E6",
-    "unreadTextColor": "#808080",
+    "unreadBadgeColor": "#555555",
+    "unreadTextColor": "#FFFFFF",
     "articlesBarColor": "#333333",
     "cellColor": "#333333",
     "subbarColor": "#1C1C1C"

@@ -88,6 +88,9 @@ AppDelegate *MyAppDelegate = nil;
     if ([theme isEqualToString:LightTheme]) {
         YTThemeKit.theme = [YTThemeKit themeNamed:@"light"];
     }
+    else if ([theme isEqualToString:@"black"]) {
+        YTThemeKit.theme = [YTThemeKit themeNamed:@"black"];
+    }
     else {
         YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
     }

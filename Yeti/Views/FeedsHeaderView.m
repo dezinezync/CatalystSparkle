@@ -10,6 +10,8 @@
 #import "FeedsCell.h"
 #import "FeedsManager.h"
 
+#import "YetiThemeKit.h"
+
 @interface FeedsHeaderView ()
 
 @end
@@ -97,6 +99,15 @@ static void *KVO_Unread = &KVO_Unread;
     else {
         cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.bookmarks.count));
     }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.faviconView.backgroundColor = theme.cellColor;
+    cell.titleLabel.backgroundColor = theme.cellColor;
+    cell.titleLabel.textColor = theme.titleColor;
+    
+    cell.countLabel.backgroundColor = theme.unreadBadgeColor;
+    cell.countLabel.textColor = theme.unreadTextColor;
     
     return cell;
 }

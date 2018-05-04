@@ -223,6 +223,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     // Configure the cell...
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     if ([feed isKindOfClass:Feed.class]) {
@@ -232,6 +234,13 @@
         // folder
         [cell configureFolder:(Folder *)feed];
     }
+    
+    cell.faviconView.backgroundColor = theme.cellColor;
+    cell.titleLabel.backgroundColor = theme.cellColor;
+    cell.titleLabel.textColor = theme.titleColor;
+    
+    cell.countLabel.backgroundColor = theme.unreadBadgeColor;
+    cell.countLabel.textColor = theme.unreadTextColor;
     
     return cell;
 }
@@ -361,13 +370,9 @@
         
         strongify(self);
         
-        NSArray <NSIndexPath *> *indices = [self.headerView.tableView indexPathsForVisibleRows];
+        [[self.headerView tableView] reloadData];
         
-        [[self.headerView tableView] reloadRowsAtIndexPaths:indices withRowAnimation:UITableViewRowAnimationNone];
-        
-        indices = [self.tableView indexPathsForVisibleRows];
-        
-        [self.tableView reloadRowsAtIndexPaths:indices withRowAnimation:UITableViewRowAnimationNone];
+        [self.tableView reloadData];
     });
     
 }

@@ -139,7 +139,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    self.faviconView.image = [UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")];
+    self.faviconView.image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
 }
