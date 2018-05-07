@@ -68,10 +68,6 @@
 
 @implementation SizedImage
 
-- (BOOL)autoUpdateFrameOrConstraints {
-    return NO;
-}
-
 - (void)setImage:(UIImage *)image
 {
     

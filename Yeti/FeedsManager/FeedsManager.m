@@ -705,11 +705,15 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
+    weakify(self);
+    
     [self.session GET:@"/unread" parameters:@{@"userID": self.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
         }];
+        
+        strongify(self);
         
         if (page == 1) {
             self.unread = items;
@@ -1265,42 +1269,42 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     if (!_bookmarks) {
         
-        NSFileManager *manager = [NSFileManager defaultManager];
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-        NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-        BOOL isDir;
-        
-        if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
-            NSError *error = nil;
-            if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                DDLogError(@"Error creating bookmarks directory: %@", error);
-            }
-        }
-        
-        NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
-        NSArray *objects = enumerator.allObjects;
-        DDLogDebug(@"Have %@ bookmarks", @(objects.count));
-        
-        NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
-        
-        for (NSString *path in objects) {
-            NSString *filePath = [directory stringByAppendingPathComponent:path];
-            FeedItem *item = nil;
-            
-            @try {
-                item = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
-            }
-            @catch (NSException *exception) {
-                DDLogWarn(@"Bookmark load exception: %@", exception);
-            }
-            
-            if (item) {
-                [bookmarkedItems addObject:item];
-            }
-        }
-        
-        [self setBookmarks:bookmarkedItems];
+//        NSFileManager *manager = [NSFileManager defaultManager];
+//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//        NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+//        NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
+//        BOOL isDir;
+//
+//        if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
+//            NSError *error = nil;
+//            if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
+//                DDLogError(@"Error creating bookmarks directory: %@", error);
+//            }
+//        }
+//
+//        NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
+//        NSArray *objects = enumerator.allObjects;
+//        DDLogDebug(@"Have %@ bookmarks", @(objects.count));
+//
+//        NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
+//
+//        for (NSString *path in objects) {
+//            NSString *filePath = [directory stringByAppendingPathComponent:path];
+//            FeedItem *item = nil;
+//
+//            @try {
+//                item = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+//            }
+//            @catch (NSException *exception) {
+//                DDLogWarn(@"Bookmark load exception: %@", exception);
+//            }
+//
+//            if (item) {
+//                [bookmarkedItems addObject:item];
+//            }
+//        }
+//
+//        [self setBookmarks:bookmarkedItems];
     }
     
     return _bookmarks;
@@ -1470,6 +1474,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (!self.userID)
         return;
     
+    return;
+    
     NSArray <NSString *> *existingArr = [self.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
     }];
@@ -1478,7 +1484,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     weakify(self);
     
-    [self.backgroundSession POST:@"/bookmarked" queryParams:@{@"userID": self.userID} parameters:@{@"existing": existing} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSDictionary *params = @{};
+    
+    if (existing) {
+        params = @{@"existing": existing};
+    }
+    
+    [self.backgroundSession POST:@"/bookmarked" queryParams:@{@"userID": self.userID} parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode >= 300) {
             // no changes.
