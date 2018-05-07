@@ -234,7 +234,7 @@
 
 - (void)loadArticle {
     
-    if (!self.loadOnReady)
+    if (self.loadOnReady != nil)
         return;
     
     if (!self.DS.data.count)
@@ -567,7 +567,7 @@
         self->_page++;
         self.loadingNext = NO;
         
-        if ([self loadOnReady]) {
+        if ([self loadOnReady] != nil) {
             weakify(self);
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

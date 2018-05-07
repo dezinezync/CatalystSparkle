@@ -254,7 +254,7 @@
         [dictionary setObject:self.hub forKey:@"hub"];
     }
     
-    if (self.unread) {
+    if (self.unread != nil) {
         [dictionary setObject:self.unread forKey:@"unread"];
     }
     

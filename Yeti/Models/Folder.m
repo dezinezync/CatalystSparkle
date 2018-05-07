@@ -122,7 +122,7 @@
         
     }
 
-    if (self.folderID) {
+    if (self.folderID != nil) {
         [dictionary setObject:self.folderID forKey:@"folderID"];
     }
 
@@ -130,7 +130,7 @@
         [dictionary setObject:self.modified forKey:@"modified"];
     }
 
-    if (self.status) {
+    if (self.status != nil) {
         [dictionary setObject:self.status forKey:@"status"];
     }
 
@@ -138,7 +138,7 @@
         [dictionary setObject:self.title forKey:@"title"];
     }
 
-    if (self.userID) {
+    if (self.userID != nil) {
         [dictionary setObject:self.userID forKey:@"userID"];
     }
 

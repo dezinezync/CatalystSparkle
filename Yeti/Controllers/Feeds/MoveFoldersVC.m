@@ -80,7 +80,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     _feed = feed;
     
     if (_feed) {
-        if (_feed.folderID) {
+        if (_feed.folderID != nil) {
             self.originalFolderID = _feed.folderID;
         }
     }
@@ -95,7 +95,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     if (indexPath.section == 0) {
         cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
         
-        if (!self.feed.folderID) {
+        if (self.feed.folderID != nil) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         }
         else {
@@ -138,7 +138,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     NSArray <NSIndexPath *> *indices = @[indexPath];
     
-    if (currentFolder) {
+    if (currentFolder != nil) {
         
         __block NSUInteger index = NSNotFound;
         
@@ -176,7 +176,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     weakify(self);
     
-    if (self.originalFolderID) {
+    if (self.originalFolderID != nil) {
         
         // if the new and original IDs are same, there's nothing to do here.
         if (self.feed.folderID && [self.originalFolderID isEqualToNumber:self.feed.folderID]) {
@@ -185,7 +185,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         }
         
         // it has been removed from this folder only
-        if (!self.feed.folderID) {
+        if (self.feed.folderID != nil) {
             [MyFeedsManager updateFolder:self.originalFolderID add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 strongify(self);

@@ -97,7 +97,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 {
     BOOL registers = YES;
     
-    if (feed.folderID) {
+    if (feed.folderID != nil) {
         self.indentationLevel = 1;
         self.stackLeading.constant = 8.f + (self.indentationWidth * self.indentationLevel);
         

@@ -72,7 +72,7 @@
             // we have one.
             _UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
             
-            if (!_userID || _userID.integerValue == 0) {
+            if (_userID == nil || _userID.integerValue == 0) {
                 // build 21 (alpha) broke this. This is a patch for that.
                 if (self.delegate) {
 

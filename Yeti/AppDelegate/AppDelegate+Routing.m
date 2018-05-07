@@ -224,7 +224,7 @@
         // check if the current topVC is the same feed
         if ([[[(FeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
             
-            if (articleID) {
+            if (articleID != nil) {
                 asyncMain(^{
                     strongify(self);
                     
@@ -298,7 +298,7 @@
         });
     }
     
-    if (articleID) {
+    if (articleID != nil) {
         asyncMain(^{
             strongify(self);
             
@@ -309,7 +309,7 @@
 
 - (void)showArticle:(NSNumber *)articleID {
     
-    if (!articleID)
+    if (articleID != nil)
         return;
     
     UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
@@ -336,6 +336,9 @@
          URL = formattedURL(@"%@://current/profile?screen_name=%@", twitterScheme, username);
     }
     
+    if (!URL)
+        return;
+    
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
 }
 
@@ -352,6 +355,9 @@
     else if ([twitterScheme isEqualToString:@"twitterrific"]) {
         URL = formattedURL(@"%@://current/tweet?id=%@", twitterScheme, status);
     }
+    
+    if (!URL)
+        return;
     
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
 }
@@ -398,6 +404,9 @@
     else if ([browserScheme isEqualToString:@"firefox"]) {
         URL = formattedURL(@"firefox://open-url?url=%@", uri);
     }
+    
+    if (!URL)
+        return;
 
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
     

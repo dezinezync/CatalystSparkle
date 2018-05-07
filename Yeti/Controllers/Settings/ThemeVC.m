@@ -87,7 +87,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         }
         
     }
-    else if (indexPath.section == 1) {
+    else {//if (indexPath.section == 1) {
         // ARTICLE FONT
         cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
         
@@ -139,8 +139,6 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
             YTThemeKit.theme = [YTThemeKit themeNamed:@"black"];
         }
         
-        reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
-        
     }
     else if (indexPath.section == 1) {
         
@@ -148,6 +146,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         reloadSections = [NSIndexSet indexSetWithIndex:indexPath.section];
         
+    }
+    
+    if (!reloadSections) {
+        reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
     }
     
     [tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];

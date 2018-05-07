@@ -121,7 +121,7 @@
 {
     NSMutableDictionary *dict = @{}.mutableCopy;
     
-    if (self.authorID) {
+    if (self.authorID != nil) {
         [dict setObject:self.authorID forKey:@"authorID"];
     }
     
