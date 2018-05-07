@@ -67,7 +67,7 @@
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.layer.shadowPath = path.CGPath;
-    self.layer.shadowColor = theme.isDark ? [UIColor.blackColor colorWithAlphaComponent:0.65f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;
+    self.layer.shadowColor = theme.isDark ? [UIColor.blackColor colorWithAlphaComponent:0.35f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;
     self.layer.shadowOpacity = 1.f;
     self.layer.shadowRadius = 8.f;
     self.layer.shadowOffset = CGSizeMake(0, 4.f);

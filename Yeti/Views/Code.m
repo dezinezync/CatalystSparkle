@@ -10,6 +10,8 @@
 #import "UIColor+HEX.h"
 #import "PaddedLabel.h"
 
+#import "YetiThemeKit.h"
+
 @interface Code ()
 
 @property (nonatomic, strong) NSLayoutConstraint *labelWidth;
@@ -21,6 +23,11 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        self.backgroundColor = theme.backgroundColor;
+        self.scrollView.backgroundColor = self.backgroundColor;
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.clipsToBounds = NO;
@@ -59,21 +66,6 @@
     return self;
 }
 
-- (void)updateStyle:(id)animated {
-    
-    NSTimeInterval duration = animated ? 0.3 : 0;
-    
-    weakify(self);
-    
-    [UIView animateWithDuration:duration animations:^{
-        strongify(self);
-        self.backgroundColor = [UIColor colorFromHexString:@"#f8f8f8"];
-        self.scrollView.backgroundColor = self.backgroundColor;
-        self.label.backgroundColor = self.scrollView.backgroundColor;
-    }];
-    
-}
-
 - (CGSize)intrinsicContentSize
 {
     CGSize size = CGSizeZero;
@@ -87,8 +79,6 @@
 {
     self.label.attributedText = attrs;
     [self.label sizeToFit];
-    
-    [self updateStyle:nil];
     
     CGSize contentSize = [self.label sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
     
@@ -111,6 +101,10 @@
     [self.scrollView setNeedsLayout];
     
     [self invalidateIntrinsicContentSize];
+    
+    for (UIView *subview in self.scrollView.subviews) {
+        subview.backgroundColor = self.backgroundColor;
+    }
 }
 
 @end

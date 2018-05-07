@@ -27,6 +27,10 @@ static void *KVO_Unread = &KVO_Unread;
     
 //    self.translatesAutoresizingMaskIntoConstraints = NO;
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = theme.tableColor;
+    
     self.tableView.tableFooterView = nil;
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
     

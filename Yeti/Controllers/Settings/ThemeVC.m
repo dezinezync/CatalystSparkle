@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 
 #import "YetiThemeKit.h"
+#import "CodeParser.h"
 
 #import <sys/utsname.h>
 
@@ -112,6 +113,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
+    UIView *selected = [UIView new];
+    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+    cell.selectedBackgroundView = selected;
+    
     return cell;
 }
 
@@ -129,15 +134,19 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         [defaults setValue:val forKey:kDefaultsTheme];
         
+        NSString *themeName = nil;
         if ([val isEqualToString:LightTheme]) {
-            YTThemeKit.theme = [YTThemeKit themeNamed:@"light"];
+            themeName = @"light";
         }
-        else if ([val isEqualToString:DarkTheme]) {
-            YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
+        else if ([val isEqualToString:BlackTheme]) {
+            themeName = @"black";
         }
         else {
-            YTThemeKit.theme = [YTThemeKit themeNamed:@"black"];
+            themeName = @"dark";
         }
+        
+        YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+        [MyCodeParser loadTheme:themeName];
         
     }
     else if (indexPath.section == 1) {

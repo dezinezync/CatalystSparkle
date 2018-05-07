@@ -997,7 +997,7 @@
     Code *code = [[Code alloc] initWithFrame:frame];
     
     if (content.content) {
-        code.attributedText = [self.codeParser parse:content.content];
+        code.attributedText = [MyCodeParser parse:content.content];
 //        CGSize contentSize = code.para.contentSize;
         
 //        frame.size.height = contentSize.height;
@@ -1027,18 +1027,6 @@
 //    [tweet.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
     
     [self addLinebreak];
-}
-
-#pragma mark - Getters
-
-// This getter is always lazily loaded from addPre:
-- (CodeParser *)codeParser
-{
-    if (!_codeParser) {
-        _codeParser = [[CodeParser alloc] init];
-    }
-    
-    return _codeParser;
 }
 
 #pragma mark - Actions
@@ -1111,10 +1099,10 @@
                 [imageview il_setImageWithURL:imageview.URL];
             });
         }
-        else if (imageview.imageView.image && !contains && imageview.isLoading) {
-            imageview.loading = NO;
-            imageview.imageView.image = nil;
-        }
+//        else if (imageview.imageView.image && !contains && imageview.isLoading) {
+//            imageview.loading = NO;
+//            imageview.imageView.image = nil;
+//        }
     } }
     
     CGFloat y = scrollView.contentOffset.y;

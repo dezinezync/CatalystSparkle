@@ -43,6 +43,8 @@
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
 		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
 		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
+		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
+		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
 		F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
@@ -159,7 +161,7 @@
 		F069AC0C206E018F00021ABF /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D07200205E960900A042CD /* ExternalAppsVC.xib */; };
 		F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
-		F069AC0F206E018F00021ABF /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
+		F069AC0F206E018F00021ABF /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F069AC12206E018F00021ABF /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
 		F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
@@ -214,7 +216,7 @@
 		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
-		F09E96492055342000E61681 /* hljs.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* hljs.css */; };
+		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
 		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
@@ -388,6 +390,8 @@
 		F03AC031205533D900FB111A /* CodeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeParser.m; sourceTree = "<group>"; };
 		F03AC032205533D900FB111A /* HTMLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLUtils.h; sourceTree = "<group>"; };
 		F03AC033205533D900FB111A /* HTMLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLUtils.m; sourceTree = "<group>"; };
+		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
+		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
 		F0519D4920848D4D00EB3FE0 /* FiltersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiltersVC.h; sourceTree = "<group>"; };
 		F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FiltersVC.m; sourceTree = "<group>"; };
 		F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterInputCell.h; sourceTree = "<group>"; };
@@ -489,7 +493,7 @@
 		F09E96422055342000E61681 /* highlight.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = highlight.pack.js; sourceTree = "<group>"; };
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
-		F09E96452055342000E61681 /* hljs.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = hljs.css; sourceTree = "<group>"; };
+		F09E96452055342000E61681 /* light.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = light.css; sourceTree = "<group>"; };
 		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
 		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
@@ -1031,8 +1035,10 @@
 			children = (
 				F09E96422055342000E61681 /* highlight.pack.js */,
 				F09E96432055342000E61681 /* hljs.js */,
-				F09E96452055342000E61681 /* hljs.css */,
+				F09E96452055342000E61681 /* light.css */,
 				F09E96442055342000E61681 /* styleHTML.js */,
+				F0469DF120A0514100163C4E /* dark.css */,
+				F0469DF320A0528000163C4E /* black.css */,
 			);
 			path = HLJS;
 			sourceTree = "<group>";
@@ -1269,7 +1275,7 @@
 				F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */,
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
 				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
-				F069AC0F206E018F00021ABF /* hljs.css in Resources */,
+				F069AC0F206E018F00021ABF /* light.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1278,12 +1284,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F09E96472055342000E61681 /* hljs.js in Resources */,
+				F0469DF220A0514100163C4E /* dark.css in Resources */,
 				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */,
 				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
+				F0469DF420A0528000163C4E /* black.css in Resources */,
 				F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
 				F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */,
 				F09E96482055342000E61681 /* styleHTML.js in Resources */,
@@ -1307,7 +1315,7 @@
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
-				F09E96492055342000E61681 /* hljs.css in Resources */,
+				F09E96492055342000E61681 /* light.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

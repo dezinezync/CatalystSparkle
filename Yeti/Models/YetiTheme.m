@@ -23,6 +23,11 @@
     
     for (UIWindow *window in [UIApplication.sharedApplication windows]) {
         window.tintColor = self.tintColor;
+        
+        if (window.rootViewController) {
+            window.rootViewController.view.backgroundColor = self.isDark ? self.cellColor : self.borderColor;
+        }
+        
     };
 
 #endif
@@ -50,6 +55,9 @@
     
     UITableViewCell *cell = [UITableViewCell appearance];
     cell.backgroundColor = self.cellColor;
+    
+    UIScrollView *scrollView = [UIScrollView appearance];
+    scrollView.indicatorStyle = self.isDark ? UIScrollViewIndicatorStyleWhite : UIScrollViewIndicatorStyleDefault;
     
 }
 

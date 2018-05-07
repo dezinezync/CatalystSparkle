@@ -118,6 +118,10 @@
             break;
     }
     
+    UIView *selected = [UIView new];
+    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+    cell.selectedBackgroundView = selected;
+    
     return cell;
 }
 

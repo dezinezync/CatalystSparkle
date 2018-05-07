@@ -7,6 +7,7 @@
 //
 
 #import "SettingsCell.h"
+#import "YetiThemeKit.h"
 
 NSString *const kSettingsCell = @"com.yeti.cell.settings";
 NSString *const kAccountsCell = @"com.yeti.cell.accounts";
@@ -17,6 +18,12 @@ NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if (self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier]) {
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        UIView *selected = [UIView new];
+        selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+        self.selectedBackgroundView = selected;
         
     }
     

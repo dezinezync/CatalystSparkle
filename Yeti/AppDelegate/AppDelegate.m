@@ -15,6 +15,7 @@
 
 #import "YetiConstants.h"
 #import "EmptyVC.h"
+#import "CodeParser.h"
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
@@ -85,17 +86,19 @@ AppDelegate *MyAppDelegate = nil;
     [splitVC loadViewIfNeeded];
     
     NSString *theme = [[NSUserDefaults standardUserDefaults] valueForKey:kDefaultsTheme];
+    NSString *themeName = nil;
     if ([theme isEqualToString:LightTheme]) {
-        YTThemeKit.theme = [YTThemeKit themeNamed:@"light"];
+        themeName = @"light";
     }
-    else if ([theme isEqualToString:@"black"]) {
-        YTThemeKit.theme = [YTThemeKit themeNamed:@"black"];
+    else if ([theme isEqualToString:BlackTheme]) {
+        themeName = @"black";
     }
     else {
-        YTThemeKit.theme = [YTThemeKit themeNamed:@"dark"];
+        themeName = @"dark";
     }
     
-    [YTThemeKit.theme updateAppearances];
+    YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+    [MyCodeParser loadTheme:themeName];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeNeedsUpdateNotification object:nil];
     

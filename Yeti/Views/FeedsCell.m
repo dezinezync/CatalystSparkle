@@ -53,6 +53,10 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
     self.countLabel.textColor = theme.unreadTextColor;
+    
+    UIView *selected = [UIView new];
+    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+    self.selectedBackgroundView = selected;
 }
 
 - (void)prepareForReuse

@@ -255,6 +255,9 @@
         
         strongify(self);
         
+        if (!self)
+            return;
+        
         if (!self->_unbounded)
             return;
         

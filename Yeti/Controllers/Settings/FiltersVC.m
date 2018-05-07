@@ -109,6 +109,10 @@ NSString *const kFiltersCell = @"filterCell";
     cell.textField.backgroundColor = theme.backgroundColor;
     [(UILabel *)[cell.textField valueForKeyPath:@"_placeholderLabel"] setTextColor:theme.captionColor];
     
+    UIView *selected = [UIView new];
+    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+    cell.selectedBackgroundView = selected;
+    
     cell.textField.delegate = self;
     
     return cell;

@@ -39,9 +39,8 @@ CodeParser *MyCodeParser;
         _bundle = [NSBundle bundleForClass:[self class]];
         
         NSString *hlpath = [self.bundle pathForResource:@"hljs" ofType:@"js"];
-        NSString *themePath = [self.bundle pathForResource:@"hljs" ofType:@"css"];
         
-        _theme = [[CodeTheme alloc] initWithThemePath:themePath];
+        [self loadTheme:@"light"];
         
         [_context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
             DDLogDebug(@"%@", aVal);
@@ -64,6 +63,12 @@ CodeParser *MyCodeParser;
     }
     
     return self;
+}
+
+- (void)loadTheme:(NSString *)name {
+    NSString *themePath = [self.bundle pathForResource:name ofType:@"css"];
+    
+    _theme = [[CodeTheme alloc] initWithThemePath:themePath];
 }
 
 static NSString *const hljs = @"window.hljs";

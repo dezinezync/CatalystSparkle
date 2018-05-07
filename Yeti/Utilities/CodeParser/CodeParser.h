@@ -18,4 +18,6 @@ extern CodeParser * _Nonnull MyCodeParser;
 - (NSAttributedString * _Nullable)parse:(NSString * _Nonnull)code language:(NSString * _Nonnull)language;
 - (NSAttributedString * _Nullable)parse:(NSString * _Nonnull)code;
 
+- (void)loadTheme:(NSString *)name;
+
 @end
