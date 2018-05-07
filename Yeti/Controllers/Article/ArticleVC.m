@@ -165,7 +165,7 @@
         [cache removeAllObjects];
     }
     
-    [self.navigationController popViewControllerAnimated:NO];
+//    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (void)viewSafeAreaInsetsDidChange
@@ -179,6 +179,20 @@
     
     [super viewSafeAreaInsetsDidChange];
 }
+
+- (void)dealloc {
+    NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
+    
+    if (cache) {
+        [cache removeAllObjects];
+    }
+    
+    @try {
+        [NSNotificationCenter.defaultCenter removeObserver:self];
+    } @catch (NSException *exc) {}
+}
+
+#pragma mark -
 
 - (void)setupHelperView {
     
@@ -278,6 +292,14 @@
 {
     if (!article)
         return;
+    
+    if (self.item) {
+        NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
+        
+        if (cache) {
+            [cache removeAllObjects];
+        }
+    }
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
     

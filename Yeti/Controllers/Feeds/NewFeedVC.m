@@ -14,6 +14,7 @@
 #import <DZKit/AlertManager.h>
 
 #import "PaddedLabel.h"
+#import "YetiThemeKit.h"
 
 @interface NewFeedVC () <UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
@@ -77,6 +78,31 @@
     [self.input.heightAnchor constraintEqualToConstant:36.f].active = YES;
     
     self.input.delegate = self;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    if (theme.isDark) {
+        if ([theme.name isEqualToString:@"black"]) {
+            [self.toolbar setBarStyle:UIBarStyleBlack];
+            self.toolbar.translucent = NO;
+        }
+        else {
+            [self.toolbar setBarStyle:UIBarStyleBlack];
+            self.toolbar.translucent = YES;
+        }
+    }
+    else {
+        [self.toolbar setBarStyle:UIBarStyleDefault];
+        self.toolbar.translucent = YES;
+    }
+    
+    self.input.backgroundColor = theme.cellColor;
+    self.input.textColor = theme.titleColor;
+    
+    UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
+    if (label) {
+        label.textColor = theme.captionColor;
+    }
 
 }
 
@@ -187,6 +213,9 @@
     }
     
     cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = theme.titleColor;
     
     return cell;
 }

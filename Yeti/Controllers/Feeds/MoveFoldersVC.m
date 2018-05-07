@@ -10,6 +10,7 @@
 #import <DZKit/DZSectionedDatasource.h>
 
 #import <DZKit/AlertManager.h>
+#import "YetiThemeKit.h"
 
 static NSString *const kMoveFolderCell = @"movefoldercell";
 
@@ -62,6 +63,10 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone:)];
     self.navigationItem.rightBarButtonItem = done;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -108,6 +113,10 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
     }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
     
     return cell;
 }
