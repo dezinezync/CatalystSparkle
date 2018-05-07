@@ -180,6 +180,8 @@
         // ensures user can dismiss search bar on scroll
         self.navigationItem.hidesSearchBarWhenScrolling = YES;
     });
+    
+    [self loadNextPage];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -540,6 +542,10 @@
 
 - (void)loadNextPage
 {
+    
+    if (self.loadingNext)
+        return;
+    
     self.loadingNext = YES;
     
     weakify(self);
@@ -550,6 +556,8 @@
         
         if (!self)
             return;
+        
+        self.loadingNext = NO;
         
         if (!responseObject.count) {
             self->_canLoadNext = NO;
@@ -565,7 +573,6 @@
         });
         
         self->_page++;
-        self.loadingNext = NO;
         
         if ([self loadOnReady] != nil) {
             weakify(self);

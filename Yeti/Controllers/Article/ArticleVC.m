@@ -462,15 +462,15 @@
     mainView.translatesAutoresizingMaskIntoConstraints = NO;
     [mainView addSubview:label];
     
-    [label.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor].active = YES;
-    [label.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor].active = YES;
+    [label.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor constant:4.f].active = YES;
+    [label.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor constant:4.f].active = YES;
     [label.topAnchor constraintEqualToAnchor:mainView.topAnchor].active = YES;
     [label setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
     
     [mainView addSubview:sublabel];
     
-    [sublabel.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor].active = YES;
-    [sublabel.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor].active = YES;
+    [sublabel.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor constant:4.f].active = YES;
+    [sublabel.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor constant:4.f].active = YES;
     [sublabel.firstBaselineAnchor constraintEqualToSystemSpacingBelowAnchor:label.lastBaselineAnchor multiplier:1.2f].active = YES;
     [sublabel setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
     
