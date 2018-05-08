@@ -201,7 +201,7 @@
                     NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
                     NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
                     
-                    cell.textLabel.text = @"Yeti";
+                    cell.textLabel.text = @"Elytra";
                     cell.detailTextLabel.text = formattedString(@"%@ (%@)", appVersion, buildNumber);
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
