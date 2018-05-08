@@ -333,7 +333,7 @@
     // add Body
     [self addTitle];
     
-    if (self.item.content.count > 15) {
+    if (self.item.content.count > 20) {
         _deferredProcessing = YES;
     }
     
@@ -929,6 +929,7 @@
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     
     List *list = [[List alloc] initWithFrame:frame];
+    list.avoidsLazyLoading = !_deferredProcessing;
     [list setContent:content];
     
     frame.size.height = list.intrinsicContentSize.height;
@@ -1050,25 +1051,27 @@
     visibleRect.origin = scrollView.contentOffset;
     visibleRect.size = scrollView.bounds.size;
     
-    NSArray <UIView *>  * visibleViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
-        return CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
-    }];
-    
-    // make these views visible
-    for (UIView *subview in visibleViews) { @autoreleasepool {
-        if ([subview isKindOfClass:Paragraph.class] && ![(Paragraph *)subview isAppearing]) {
-            [(Paragraph *)subview viewWillAppear];
-        }
-    } }
-    
-    // tell these views to hide their content
-    NSArray <UIView *> *scrolledOutViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
-        return [obj respondsToSelector:@selector(isAppearing)] && !CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
-    }];
-    
-    for (UIView *subview in scrolledOutViews) {
-        if ([subview isKindOfClass:Paragraph.class] && [(Paragraph *)subview isAppearing]) {
-            [(Paragraph *)subview viewDidDisappear];
+    if (_deferredProcessing) {
+        NSArray <UIView *>  * visibleViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+            return CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
+        }];
+        
+        // make these views visible
+        for (UIView *subview in visibleViews) { @autoreleasepool {
+            if ([subview isKindOfClass:Paragraph.class] && ![(Paragraph *)subview isAppearing]) {
+                [(Paragraph *)subview viewWillAppear];
+            }
+        } }
+        
+        // tell these views to hide their content
+        NSArray <UIView *> *scrolledOutViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+            return [obj respondsToSelector:@selector(isAppearing)] && !CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
+        }];
+        
+        for (UIView *subview in scrolledOutViews) {
+            if ([subview isKindOfClass:Paragraph.class] && [(Paragraph *)subview isAppearing]) {
+                [(Paragraph *)subview viewDidDisappear];
+            }
         }
     }
     
@@ -1177,7 +1180,7 @@
     if (required) {
         CGRect frame = required.frame;
         
-        DDLogDebug(@"Found the paragraph: %@", required);
+//        DDLogDebug(@"Found the paragraph: %@", required);
         
         self.scrollView.userInteractionEnabled = NO;
         // compare against the maximum contentOffset which is contentsize.height - bounds.size.height
@@ -1189,30 +1192,41 @@
         else
             yOffset -= self.scrollView.adjustedContentInset.top;
         
-        [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
-        
-        // animate background on paragraph
-        
         weakify(self);
         
         asyncMain(^{
+            strongify(self);
+            
+            [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
+            self.scrollView.userInteractionEnabled = NO;
+        });
+        
+        weakify(required);
+        
+        // animate background on paragraph
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+            
+            strongify(required);
+            
             required.layer.cornerRadius = 4.f;
+            
             [UIView animateWithDuration:0.1 delay:0.5 options:kNilOptions animations:^{
-                required.backgroundColor = [UIColor colorWithRed:255/255.f green:249/255.f blue:207/255.f alpha:1.f];
+                
+                required.backgroundColor = theme.focusColor;
                 strongify(self);
                 self.scrollView.userInteractionEnabled = YES;
                 
-            } completion:^(BOOL finished) {
+            } completion:^(BOOL finished) { dispatch_async(dispatch_get_main_queue(), ^{
                 
-                [UIView animateWithDuration:0.3 delay:1 options:kNilOptions animations:^{
-                    required.backgroundColor = [UIColor whiteColor];
+                [UIView animateWithDuration:0.3 delay:0.5 options:kNilOptions animations:^{
+                    required.backgroundColor = theme.backgroundColor;
                 } completion:^(BOOL finished) {
                     required.layer.cornerRadius = 0.f;
-                    required = nil;
                 }];
                 
-            }];
-        })
+            }); }];
+        });
     }
     
 }

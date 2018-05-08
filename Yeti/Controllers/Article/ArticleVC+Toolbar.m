@@ -11,6 +11,8 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 
+#import "YetiThemeKit.h"
+
 #import "Paragraph.h"
 #import "FeedsManager.h"
 
@@ -211,6 +213,17 @@
     
     if (!value)
         return;
+    
+    if (!NSThread.isMainThread) {
+        weakify(self);
+        
+        asyncMain(^{
+            strongify(self);
+            [self scrollToRangeRect:value];
+        });
+        
+        return;
+    }
     
     CGRect rect = value.CGRectValue;
     UIScrollView *scrollView = (UIScrollView *)(self.stackView.superview);
@@ -438,33 +451,43 @@
     // now we can highlight across these rects
     _searchingRects = rects;
     
+    asyncMain(^{
+        scrollView.userInteractionEnabled = NO;
+    });
+    
     if (_searchingRects.count > 1) {
         _searchNextButton.enabled = YES;
         _searchPrevButton.enabled = YES;
     }
     
     if (!_searchHighlightingRect) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         // use the first rect's value
         _searchHighlightingRect = [[UIView alloc] initWithFrame:CGRectIntegral(_searchingRects.firstObject.CGRectValue)];
-        _searchHighlightingRect.backgroundColor = [UIColor.yellowColor colorWithAlphaComponent:0.5f];
+        _searchHighlightingRect.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
         _searchHighlightingRect.autoresizingMask = UIViewAutoresizingNone;
-//        _searchHighlightingRect.numberOfLines = 0;
-//        _searchHighlightingRect.font = [[[Paragraph alloc] init] bodyFont];
+        _searchHighlightingRect.translatesAutoresizingMaskIntoConstraints = NO;
         _searchHighlightingRect.layer.cornerRadius = 2.f;
         _searchHighlightingRect.layer.masksToBounds = YES;
         
         // add it to the scrollview
         [scrollView addSubview:_searchHighlightingRect];
-//        [scrollView sendSubviewToBack:_searchHighlightingRect];
     }
-    else {
-        // it's already there. update it's frame
-        _searchHighlightingRect.frame = CGRectIntegral(_searchingRects.firstObject.CGRectValue);
-    }
+    
+    weakify(self);
+    
+    asyncMain(^{
+        strongify(self);
+        self->_searchHighlightingRect.frame = CGRectIntegral(self->_searchingRects.firstObject.CGRectValue);
+    });
     
 //    _searchHighlightingRect.text = searchText;
     _searchCurrentIndex = 0;
     [self scrollToRangeRect:_searchingRects.firstObject];
+    
+    asyncMain(^{
+        scrollView.userInteractionEnabled = YES;
+    });
 }
 
 - (NSInteger)occurancesOfSubstring:(NSString *)substring inString:(NSString *)str {

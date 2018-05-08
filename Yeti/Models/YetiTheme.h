@@ -20,4 +20,6 @@
 
 @property (nonatomic, copy) UIColor *subbarColor;
 
+@property (nonatomic, copy) UIColor *focusColor;
+
 @end

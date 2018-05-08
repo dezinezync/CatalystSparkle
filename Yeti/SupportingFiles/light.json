@@ -10,5 +10,6 @@
     "unreadTextColor": "#808080",
     "articlesBarColor": "#FFFFFF",
     "cellColor": "#FFFFFF",
-    "subbarColor": "#F9F9F9"
+    "subbarColor": "#F9F9F9",
+    "focusColor": "#FFF9CF"
 }
