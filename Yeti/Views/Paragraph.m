@@ -203,6 +203,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     if (ranges && ranges.count) {
         for (Range *range in ranges) { @autoreleasepool {
             
@@ -231,7 +233,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 }
             }
             else if ([range.element isEqualToString:@"mark"]) {
-                [dict setObject:[[UIColor yellowColor] colorWithAlphaComponent:0.35f] forKey:NSBackgroundColorAttributeName];
+                [dict setObject:[theme.tintColor colorWithAlphaComponent:0.35f] forKey:NSBackgroundColorAttributeName];
             }
             else if ([range.element isEqualToString:@"code"]) {
                 
@@ -241,14 +243,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 
                 if (NSThread.isMainThread) {
                     monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Menlo" size:16.f] maximumPointSize:_bodyFont.pointSize];
-                    textcolor = [UIColor colorWithDisplayP3Red:0/255.f green:134.f/255.f blue:179.f/255.f alpha:1.f];
+                    textcolor = theme.tintColor;
                 }
                 else {
                     weakify(self);
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         strongify(self);
                         monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Menlo" size:16.f] maximumPointSize:self->_bodyFont.pointSize];
-                        textcolor = [UIColor colorWithDisplayP3Red:0/255.f green:134.f/255.f blue:179.f/255.f alpha:1.f];
+                        textcolor = theme.tintColor;
                     });
                 }
                 
