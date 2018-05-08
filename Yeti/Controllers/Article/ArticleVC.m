@@ -886,6 +886,7 @@
         return;
     
     Blockquote *para = [[Blockquote alloc] initWithFrame:frame];
+    para.avoidsLazyLoading = !_deferredProcessing;
     
     if (content.content) {
         [para setText:content.content ranges:content.ranges attributes:content.attributes];

@@ -42,7 +42,7 @@
         [_leftBorder.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:(LayoutPadding / -2.f)].active = YES;
         [_leftBorder.topAnchor constraintEqualToAnchor:self.topAnchor constant:(LayoutPadding / 2.f)].active = YES;
         [_leftBorder.widthAnchor constraintEqualToConstant:2.f].active = YES;
-        [_leftBorder.heightAnchor constraintEqualToAnchor:self.heightAnchor constant: (LayoutPadding * -2.f)].active = YES;
+        [_leftBorder.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:-LayoutPadding].active = YES;
         
     }
     
