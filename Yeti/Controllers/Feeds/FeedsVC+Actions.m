@@ -36,7 +36,12 @@
     
     [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [self.headerView.tableView reloadData];
+        asyncMain(^{
+            
+            strongify(self);
+            
+            [self.headerView.tableView reloadData];
+        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"Failed to fetch unread: %@", error);
