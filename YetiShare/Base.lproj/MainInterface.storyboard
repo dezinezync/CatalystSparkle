@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ObA-dk-sSI">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ObA-dk-sSI">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -34,24 +35,36 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="464"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Hxw-Np-ZgW">
-                                <rect key="frame" x="150" y="254" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="foi-AZ-Qfr"/>
-                                    <constraint firstAttribute="height" constant="20" id="rSv-r2-VlI"/>
-                                </constraints>
-                            </activityIndicatorView>
+                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="biK-f0-qE4">
+                                <rect key="frame" x="0.0" y="240" width="320" height="48.5"/>
+                                <subviews>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Hxw-Np-ZgW">
+                                        <rect key="frame" x="150" y="0.0" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="20" id="foi-AZ-Qfr"/>
+                                            <constraint firstAttribute="height" constant="20" id="rSv-r2-VlI"/>
+                                        </constraints>
+                                    </activityIndicatorView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PLd-SI-Wd1">
+                                        <rect key="frame" x="139" y="28" width="42" height="20.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="VVe-Uw-JpX" firstAttribute="trailing" secondItem="NOA-Dm-cuz" secondAttribute="trailing" id="A05-Pj-hrr"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="leading" secondItem="VVe-Uw-JpX" secondAttribute="leading" id="BJO-27-c6P"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="trailing" secondItem="VVe-Uw-JpX" secondAttribute="trailing" id="CbM-EV-qWY"/>
+                            <constraint firstItem="biK-f0-qE4" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leading" id="FUO-PW-VdB"/>
                             <constraint firstItem="NOA-Dm-cuz" firstAttribute="leading" secondItem="VVe-Uw-JpX" secondAttribute="leading" id="HxO-8t-aoh"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="bottom" secondItem="VVe-Uw-JpX" secondAttribute="bottom" id="L1E-sW-27T"/>
-                            <constraint firstItem="Hxw-Np-ZgW" firstAttribute="centerY" secondItem="zMn-AG-sqS" secondAttribute="centerY" id="bgk-px-btE"/>
+                            <constraint firstItem="biK-f0-qE4" firstAttribute="centerY" secondItem="zMn-AG-sqS" secondAttribute="centerY" id="cfV-a8-sE8"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="top" secondItem="NOA-Dm-cuz" secondAttribute="bottom" id="lAb-3B-Ke9"/>
-                            <constraint firstItem="Hxw-Np-ZgW" firstAttribute="centerX" secondItem="zMn-AG-sqS" secondAttribute="centerX" id="qqb-cH-bN8"/>
+                            <constraint firstItem="VVe-Uw-JpX" firstAttribute="trailing" secondItem="biK-f0-qE4" secondAttribute="trailing" id="omt-Lc-Dg9"/>
                             <constraint firstItem="NOA-Dm-cuz" firstAttribute="top" secondItem="VVe-Uw-JpX" secondAttribute="top" id="we0-1t-bgp"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VVe-Uw-JpX"/>
@@ -60,6 +73,7 @@
                     <size key="freeformSize" width="320" height="528"/>
                     <connections>
                         <outlet property="activityIndicator" destination="Hxw-Np-ZgW" id="kCL-7i-5g8"/>
+                        <outlet property="activityLabel" destination="PLd-SI-Wd1" id="r2O-gP-ykc"/>
                         <outlet property="navitem" destination="3HJ-uW-3hn" id="vM8-nk-I0Z"/>
                         <outlet property="tableView" destination="odi-1z-kqM" id="Jly-gQ-3UP"/>
                         <outlet property="view" destination="zMn-AG-sqS" id="Qma-de-2ek"/>

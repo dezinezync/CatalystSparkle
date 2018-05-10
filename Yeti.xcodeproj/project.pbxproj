@@ -18,6 +18,14 @@
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
+		F0202BDE20A41A8D00FBC3E1 /* CustomFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F023E55A2076900E00FF513C /* CustomFeedVC.m */; };
+		F0202BDF20A41A9500FBC3E1 /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D008562081C32400EAFE3B /* FeedHeaderView.m */; };
+		F0202BE020A41A9A00FBC3E1 /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D008582081C33400EAFE3B /* FeedHeaderView.xib */; };
+		F0202BE120A41AB500FBC3E1 /* AuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC06F20831FD3009029E1 /* AuthorVC.m */; };
+		F0202BE220A41AC400FBC3E1 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
+		F0202BE320A41AD400FBC3E1 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
+		F0202BE420A41AD700FBC3E1 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
+		F0202BE520A41AE900FBC3E1 /* FeedsHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */; };
 		F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */ = {isa = PBXBuildFile; fileRef = F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */; };
 		F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */ = {isa = PBXBuildFile; fileRef = F022F0491FBD4BFF006A0036 /* Aside.m */; };
 		F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F023E55A2076900E00FF513C /* CustomFeedVC.m */; };
@@ -1262,6 +1270,7 @@
 				F069AC03206E018F00021ABF /* ArticleHelperView.xib in Resources */,
 				F069AC04206E018F00021ABF /* FeedsCell.xib in Resources */,
 				F0869B5E2099CF0000A5D723 /* light.json in Resources */,
+				F0202BE420A41AD700FBC3E1 /* FilterInputCell.xib in Resources */,
 				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
 				F069AC05206E018F00021ABF /* Gallery.xib in Resources */,
 				F069AC06206E018F00021ABF /* Assets.xcassets in Resources */,
@@ -1276,6 +1285,7 @@
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
 				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
+				F0202BE020A41A9A00FBC3E1 /* FeedHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1438,6 +1448,7 @@
 				F069ABAD206E018F00021ABF /* UITableViewController+ScrollLoad.m in Sources */,
 				F069ABAE206E018F00021ABF /* TweetImage.m in Sources */,
 				F069ABAF206E018F00021ABF /* ArticleVC+Toolbar.m in Sources */,
+				F0202BDF20A41A9500FBC3E1 /* FeedHeaderView.m in Sources */,
 				F069ABB0206E018F00021ABF /* AppDelegate+Routing.m in Sources */,
 				F069ABB1206E018F00021ABF /* ImageLoadingVC.m in Sources */,
 				F069ABB2206E018F00021ABF /* FeedSearchResults.m in Sources */,
@@ -1448,6 +1459,7 @@
 				F069ABB6206E018F00021ABF /* SettingsVC.m in Sources */,
 				F069ABB7206E018F00021ABF /* PaddedTextField.m in Sources */,
 				F069ABB8206E018F00021ABF /* Youtube.m in Sources */,
+				F0202BE220A41AC400FBC3E1 /* FiltersVC.m in Sources */,
 				F069ABB9206E018F00021ABF /* NSDate+DateTools.m in Sources */,
 				F069ABBA206E018F00021ABF /* EmptyVC.m in Sources */,
 				F069ABBB206E018F00021ABF /* Linebreak.m in Sources */,
@@ -1476,6 +1488,7 @@
 				F069ABCD206E018F00021ABF /* FeedsVC.m in Sources */,
 				F069ABCE206E018F00021ABF /* GalleryCell.m in Sources */,
 				F069ABCF206E018F00021ABF /* DTTimePeriod.m in Sources */,
+				F0202BE520A41AE900FBC3E1 /* FeedsHeaderView.m in Sources */,
 				F069ABD0206E018F00021ABF /* DTTimePeriodChain.m in Sources */,
 				F069ABD1206E018F00021ABF /* FeedsVC+Search.m in Sources */,
 				F0D0085D2081C8FE00EAFE3B /* Author.m in Sources */,
@@ -1493,6 +1506,7 @@
 				F05DC074208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F069ABDB206E018F00021ABF /* Image.m in Sources */,
 				F069ABDC206E018F00021ABF /* AppDelegate.m in Sources */,
+				F0202BE320A41AD400FBC3E1 /* FilterInputCell.m in Sources */,
 				F069ABDD206E018F00021ABF /* ArticleHelperView.m in Sources */,
 				F05B93332091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F069ABDE206E018F00021ABF /* CodeParser.m in Sources */,
@@ -1507,10 +1521,12 @@
 				F069ABE7206E018F00021ABF /* Heading.m in Sources */,
 				F069ABE8206E018F00021ABF /* Content.m in Sources */,
 				F069ABE9206E018F00021ABF /* Paragraph.m in Sources */,
+				F0202BDE20A41A8D00FBC3E1 /* CustomFeedVC.m in Sources */,
 				F069ABEA206E018F00021ABF /* Range.m in Sources */,
 				F069ABEB206E018F00021ABF /* UIColor+HEX.m in Sources */,
 				F069ABEC206E018F00021ABF /* Enclosure.m in Sources */,
 				F069ABED206E018F00021ABF /* FeedsCell.m in Sources */,
+				F0202BE120A41AB500FBC3E1 /* AuthorVC.m in Sources */,
 				F069ABEE206E018F00021ABF /* FeedVC+Search.m in Sources */,
 				F069ABEF206E018F00021ABF /* DTTimePeriodCollection.m in Sources */,
 			);

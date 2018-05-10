@@ -19,6 +19,7 @@
 
 @property (nonatomic, copy) NSArray <NSString *> *data;
 @property (nonatomic, assign) NSUInteger selected;
+@property (weak, nonatomic) IBOutlet UILabel *activityLabel;
 
 @end
 
@@ -27,7 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navitem.title = @"Loading...";
+    self.navitem.title = @"Add to Elytra";
     
     self.selected = NSNotFound;
     self.data = @[];
@@ -139,42 +140,60 @@
     if (!url)
         return [self done];
     
-    self.activityIndicator.hidden = NO;
+    self.activityLabel.text = @"Loading...";
+    self.activityIndicator.superview.hidden = NO;
     [self.activityIndicator startAnimating];
     
     NSURLComponents *URLComponents = [[NSURLComponents alloc] initWithString:url.absoluteString];
     // yeti://addFeed?URL=
     NSURL *host = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"%@://%@", URLComponents.scheme, URLComponents.host]];
     
-    [MyFeedsManager addFeed:host success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    weakify(self);
+    
+    // dispatch after 2 seconds to allow FeedsManager to be set up
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        [self.activityIndicator stopAnimating];
-        self.activityIndicator.hidden = YES;
-        
-        if ([responseObject isKindOfClass:NSNumber.class]) {
-            // feed already exists.
+        [MyFeedsManager addFeed:host success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            NSURL *openURL = [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?feedID=%@", responseObject]];
-            [self finalizeURL:openURL];
+            strongify(self);
             
-        }
-        else if ([responseObject isKindOfClass:NSArray.class]) {
-            // multiple choices
-            [self setupTableRows:responseObject];
-        }
-        else if ([responseObject isKindOfClass:Feed.class]) {
-            // feed has been received directly
-        }
-        else {
+            asyncMain(^{
+                [self.activityIndicator stopAnimating];
+                self.activityIndicator.superview.hidden = YES;
+            });
             
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [self.activityIndicator stopAnimating];
-        self.activityIndicator.hidden = YES;
-        
-    }];
+            if ([responseObject isKindOfClass:NSNumber.class]) {
+                // feed already exists.
+                
+                NSURL *openURL = [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?feedID=%@", responseObject]];
+                [self finalizeURL:openURL];
+                
+            }
+            else if ([responseObject isKindOfClass:NSArray.class]) {
+                // multiple choices
+                [self setupTableRows:responseObject];
+            }
+            else if ([responseObject isKindOfClass:Feed.class]) {
+                // feed has been received directly
+            }
+            else {
+                
+            }
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [self.activityIndicator stopAnimating];
+            self.activityIndicator.hidden = YES;
+            
+            strongify(self);
+            
+            asyncMain(^{
+                self.activityLabel.text = error.localizedDescription;
+                [self.activityLabel sizeToFit];
+            });
+            
+        }];
+    });
     
 }
 
