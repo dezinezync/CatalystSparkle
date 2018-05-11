@@ -38,8 +38,16 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
+        UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        
+        if ([fontPref isEqualToString:ALPSerif]) {
+            font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Georgia" size:18.f]];
+        }
+        
         NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = [fontPref isEqualToString:ALPSystem] ? 1.3f : 1.44f;
+//        style.lineHeightMultiple = [fontPref isEqualToString:ALPSystem] ? 1.3f : 1.44f;
+        style.maximumLineHeight = font.pointSize * ([fontPref isEqualToString:ALPSystem] ? 1.44f : 1.44f);
+        style.minimumLineHeight = style.maximumLineHeight;
         
         _paragraphStyle = style.copy;
     }
@@ -321,7 +329,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         strongify(self);
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        self.backgroundColor = theme.backgroundColor;
+        self.backgroundColor = theme.articleBackgroundColor;
     }];
     
 }

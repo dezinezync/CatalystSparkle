@@ -26,7 +26,7 @@
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        self.backgroundColor = theme.backgroundColor;
+        self.backgroundColor = theme.articleBackgroundColor;
         self.scrollView.backgroundColor = self.backgroundColor;
         
         self.translatesAutoresizingMaskIntoConstraints = NO;

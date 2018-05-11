@@ -22,4 +22,6 @@
 
 @property (nonatomic, copy) UIColor *focusColor;
 
+@property (nonatomic, copy) UIColor *articleBackgroundColor;
+
 @end

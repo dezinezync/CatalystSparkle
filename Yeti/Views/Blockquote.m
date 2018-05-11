@@ -42,7 +42,7 @@
         [_leftBorder.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:(LayoutPadding / -2.f)].active = YES;
         [_leftBorder.topAnchor constraintEqualToAnchor:self.topAnchor constant:(LayoutPadding / 2.f)].active = YES;
         [_leftBorder.widthAnchor constraintEqualToConstant:2.f].active = YES;
-        [_leftBorder.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:-LayoutPadding].active = YES;
+        [_leftBorder.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:-(LayoutPadding * 2.f)].active = YES;
         
     }
     
@@ -63,7 +63,7 @@
 {
     CGSize size = [super contentSize];
     
-    size.height -= (self.bodyFont.pointSize * self.class.paragraphStyle.lineHeightMultiple) * 2.f;
+    size.height -= (self.bodyFont.pointSize * self.class.paragraphStyle.lineHeightMultiple) * 3.f;
     
     self.textContainer.size = size;
     

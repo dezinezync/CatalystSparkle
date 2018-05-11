@@ -53,7 +53,7 @@
     [UIView animateWithDuration:duration animations:^{
         strongify(self);
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        self.backgroundColor = theme.backgroundColor;
+        self.backgroundColor = theme.articleBackgroundColor;
     }];
     
 }

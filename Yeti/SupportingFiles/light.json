@@ -11,5 +11,6 @@
     "articlesBarColor": "#FFFFFF",
     "cellColor": "#FFFFFF",
     "subbarColor": "#F9F9F9",
-    "focusColor": "#FFF9CF"
+    "focusColor": "#FFF9CF",
+    "articleBackgroundColor": "#FFFFFF"
 }

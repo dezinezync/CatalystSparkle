@@ -89,7 +89,7 @@
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    self.scrollView.backgroundColor = theme.backgroundColor;
+    self.scrollView.backgroundColor = theme.articleBackgroundColor;
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
@@ -209,7 +209,8 @@
     
     if (idiom == UIUserInterfaceIdiomPad && sizeClass == UIUserInterfaceSizeClassRegular) {
         // on iPad, wide
-        [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
+        // we also push it slightly lower to around where the hands usually are on iPads
+        [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;
         [helperView.heightAnchor constraintEqualToConstant:190.f].active = YES;
         [helperView.widthAnchor constraintEqualToConstant:44.f].active = YES;
         helperView.bottomConstraint = [helperView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-LayoutPadding];
@@ -287,8 +288,14 @@
 
     if (CGSizeEqualToSize(self.view.bounds.size, size))
         return;
+    
+    weakify(self);
 
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+        strongify(self);
+        
+        [self.helperView removeFromSuperview];
 
         for (Image *imageView in self.images) { @autoreleasepool {
             if ([imageView respondsToSelector:@selector(imageView)] && imageView.imageView.image) {
@@ -299,7 +306,11 @@
             }
         } }
 
-    } completion:nil];
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        strongify(self);
+        
+        [self setupHelperView];
+    }];
 }
 
 #pragma mark - <ArticleHandler>
@@ -463,7 +474,7 @@
     
     [label sizeToFit];
     
-    label.backgroundColor = theme.backgroundColor;
+    label.backgroundColor = theme.articleBackgroundColor;
     label.opaque = YES;
     label.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -476,7 +487,7 @@
     
     [sublabel sizeToFit];
     
-    sublabel.backgroundColor = theme.backgroundColor;
+    sublabel.backgroundColor = theme.articleBackgroundColor;
     sublabel.opaque = YES;
     
     UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 48.f)];
@@ -813,7 +824,7 @@
 
 - (void)addLinebreak {
     // this rejects multiple \n in succession which may be undesired.
-    if (_last && [NSStringFromClass(_last.class) isEqualToString:@"UIView"])
+    if (_last && [_last isMemberOfClass:Linebreak.class])
         return;
     
     // append to the para if one is available
@@ -1084,6 +1095,10 @@
     [self addLinebreak];
 }
 
+- (void)addAudio:(Content *)content {
+    
+}
+
 #pragma mark - Actions
 
 - (void)didTapOnImageWithURL:(UITapGestureRecognizer *)sender {
@@ -1274,7 +1289,7 @@
             } completion:^(BOOL finished) { dispatch_async(dispatch_get_main_queue(), ^{
                 
                 [UIView animateWithDuration:0.3 delay:0.5 options:kNilOptions animations:^{
-                    required.backgroundColor = theme.backgroundColor;
+                    required.backgroundColor = theme.articleBackgroundColor;
                 } completion:^(BOOL finished) {
                     required.layer.cornerRadius = 0.f;
                 }];

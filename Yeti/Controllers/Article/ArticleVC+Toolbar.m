@@ -16,6 +16,8 @@
 #import "Paragraph.h"
 #import "FeedsManager.h"
 
+#import "EmptyVC.h"
+
 @implementation ArticleVC (Toolbar)
 
 - (void)setupToolbar:(UITraitCollection *)newCollection
@@ -44,6 +46,17 @@
     self.navigationController.toolbarHidden = YES;
     // these are assigned in reverse order
     self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read];
+    
+    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
+        
+        if (self.navigationItem.leftBarButtonItem) {
+            self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
+        }
+        else {
+            self.navigationItem.leftBarButtonItem = close;
+        }
+    }
 }
 
 - (BOOL)canBecomeFirstResponder
@@ -59,6 +72,21 @@
 }
 
 #pragma mark - Actions
+
+- (void)didTapClose {
+    
+    NSMutableArray <UIViewController *> *controllers = self.navigationController.viewControllers.mutableCopy;
+    
+    EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
+    
+    ArticleVC *vc = (ArticleVC *)[controllers lastObject];
+    
+    controllers = @[vc2].mutableCopy;
+    
+    self.navigationController.viewControllers = controllers.copy;
+    vc = nil;
+    
+}
 
 - (void)didTapShare:(UIBarButtonItem *)sender {
     

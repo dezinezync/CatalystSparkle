@@ -79,6 +79,7 @@ AppDelegate *MyAppDelegate = nil;
     }
     else {
         splitVC.viewControllers = @[nav1];
+        vc2 = nil;
     }
     
     self.window.rootViewController = splitVC;
