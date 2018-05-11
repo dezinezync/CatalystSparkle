@@ -202,13 +202,34 @@
     ArticleHelperView *helperView = [[ArticleHelperView alloc] initWithNib];
     helperView.frame = CGRectMake((self.view.bounds.size.width - 190.f) / 2.f, self.view.bounds.size.height - 44.f - 32.f, 190.f, 44.f);
     
+    UIUserInterfaceIdiom idiom = self.traitCollection.userInterfaceIdiom;
+    UIUserInterfaceSizeClass sizeClass = self.traitCollection.horizontalSizeClass;
+    
     [self.view addSubview:helperView];
     
-    [helperView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
-    [helperView.widthAnchor constraintEqualToConstant:190.f].active = YES;
-    [helperView.heightAnchor constraintEqualToConstant:44.f].active = YES;
-    helperView.bottomConstraint = [helperView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-32.f];
-    helperView.bottomConstraint.active = YES;
+    if (idiom == UIUserInterfaceIdiomPad && sizeClass == UIUserInterfaceSizeClassRegular) {
+        // on iPad, wide
+        [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
+        [helperView.heightAnchor constraintEqualToConstant:190.f].active = YES;
+        [helperView.widthAnchor constraintEqualToConstant:44.f].active = YES;
+        helperView.bottomConstraint = [helperView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-LayoutPadding];
+        
+        helperView.bottomConstraint.active = YES;
+        helperView.stackView.axis = UILayoutConstraintAxisVertical;
+        
+        // since we're modifying the bounds, update the shadow path
+        [helperView setNeedsUpdateConstraints];
+        [helperView layoutIfNeeded];
+        [helperView updateShadowPath];
+    }
+    else {
+        // in compact mode
+        [helperView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
+        [helperView.widthAnchor constraintEqualToConstant:190.f].active = YES;
+        [helperView.heightAnchor constraintEqualToConstant:44.f].active = YES;
+        helperView.bottomConstraint = [helperView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-32.f];
+        helperView.bottomConstraint.active = YES;
+    }
     
     _helperView = helperView;
     _helperView.handlerDelegate = self;
@@ -563,6 +584,11 @@
     else if ([content.type isEqualToString:@"linebreak"]) {
         [self addLinebreak];
     }
+    else if ([content.type isEqualToString:@"figure"] && content.items && content.items.count) {
+        for (Content *image in content.items) {
+            [self addImage:image];
+        }
+    }
     else if ([content.type isEqualToString:@"image"]) {
         [self addImage:content];
     }
@@ -585,7 +611,10 @@
     else if ([content.type isEqualToString:@"gallery"]) {
         [self addGallery:content];
     }
-    else if ([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"]) {
+    else if (([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"])
+             || ([content.type isEqualToString:@"b"] || [content.type isEqualToString:@"strong"])
+             || ([content.type isEqualToString:@"i"] || [content.type isEqualToString:@"em"])
+             || ([content.type isEqualToString:@"sup"] || [content.type isEqualToString:@"sub"])) {
         
         if (content.content && content.content.length) {
             [self addParagraph:content caption:NO];
@@ -611,6 +640,9 @@
     }
     else if ([content.type isEqualToString:@"tweet"]) {
         [self addTweet:content];
+    }
+    else if ([content.type isEqualToString:@"br"]) {
+        [self addLinebreak];
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
@@ -644,30 +676,48 @@
     
     para.caption = caption;
     
+    BOOL rangeAdded = NO;
+    
     // check if attributes has href
-    if (content.attributes && [content.attributes valueForKey:@"href"]) {
-        NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
-        
-        Range *newRange = [Range new];
-        newRange.element = @"anchor";
-        newRange.range = NSMakeRange(0, content.content.length);
-        newRange.url = [content.attributes valueForKey:@"href"];
-        
-        [ranges addObject:newRange];
-        
-        content.ranges = ranges.copy;
-    }
-    else if (content.url) {
-        NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
-        
-        Range *newRange = [Range new];
-        newRange.element = @"anchor";
-        newRange.range = NSMakeRange(0, content.content.length);
-        newRange.url = content.url;
-        
-        [ranges addObject:newRange];
-        
-        content.ranges = ranges.copy;
+    if (![content.type isEqualToString:@"paragraph"]) {
+        if (content.attributes && [content.attributes valueForKey:@"href"]) {
+            NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+            
+            Range *newRange = [Range new];
+            newRange.element = @"anchor";
+            newRange.range = NSMakeRange(0, content.content.length);
+            newRange.url = [content.attributes valueForKey:@"href"];
+            
+            [ranges addObject:newRange];
+            
+            content.ranges = ranges.copy;
+            rangeAdded = YES;
+        }
+        else if (content.url) {
+            NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+            
+            Range *newRange = [Range new];
+            newRange.element = @"anchor";
+            newRange.range = NSMakeRange(0, content.content.length);
+            newRange.url = content.url;
+            
+            [ranges addObject:newRange];
+            
+            content.ranges = ranges.copy;
+            rangeAdded = YES;
+        }
+        else {
+            NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+            
+            Range *newRange = [Range new];
+            newRange.element = content.type;
+            newRange.range = NSMakeRange(0, content.content.length);
+            
+            [ranges addObject:newRange];
+            
+            content.ranges = ranges.copy;
+            rangeAdded = YES;
+        }
     }
     
     if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
@@ -679,7 +729,7 @@
         
         NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges attributes:content.attributes];
         
-        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]];
+        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")]];
         [attrs appendAttributedString:newAttrs];
         
         last.attributedText = attrs.copy;

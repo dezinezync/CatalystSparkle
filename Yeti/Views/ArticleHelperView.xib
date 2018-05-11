@@ -62,6 +62,7 @@
                 <outlet property="endOfArticle" destination="U16-9T-q3c" id="UFR-Wv-970"/>
                 <outlet property="nextArticleButton" destination="Kfe-aF-BgH" id="dNn-oA-Ups"/>
                 <outlet property="previousArticleButton" destination="wtp-Ot-O2I" id="x1u-wC-RRf"/>
+                <outlet property="stackView" destination="18a-3E-AOS" id="hxv-lp-2rn"/>
                 <outlet property="startOfArticle" destination="ZIO-zc-vIi" id="yTz-NK-7BP"/>
             </connections>
             <point key="canvasLocation" x="-59" y="-258"/>

@@ -12,6 +12,8 @@
 
 @interface ArticleHelperView : NibView
 
+@property (weak, nonatomic) IBOutlet UIStackView *stackView;
+
 @property (weak, nonatomic) IBOutlet UIButton * _Nullable nextArticleButton;
 @property (weak, nonatomic) IBOutlet UIButton * _Nullable previousArticleButton;
 @property (weak, nonatomic) IBOutlet UIButton * _Nullable startOfArticle;
@@ -21,5 +23,7 @@
 
 @property (nonatomic, weak) id <ArticleProvider> _Nullable providerDelegate;
 @property (nonatomic, weak) id <ArticleHandler> _Nullable handlerDelegate;
+
+- (void)updateShadowPath;
 
 @end
