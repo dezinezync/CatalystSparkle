@@ -230,6 +230,7 @@
 		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
+		F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
@@ -1284,6 +1285,7 @@
 				F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */,
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
 				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
+				F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
 				F0202BE020A41A9A00FBC3E1 /* FeedHeaderView.xib in Resources */,
 			);

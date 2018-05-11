@@ -840,10 +840,11 @@
     linebreak.backgroundColor = UIColor.greenColor;
 #endif
 #endif
-
-    _last = linebreak;
     
     [self.stackView addArrangedSubview:linebreak];
+    [self.stackView setCustomSpacing:0.f afterView:_last];
+
+    _last = linebreak;
 }
 
 - (void)addImage:(Content *)content {
