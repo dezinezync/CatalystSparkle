@@ -845,6 +845,8 @@
     [self.stackView setCustomSpacing:0.f afterView:_last];
 
     _last = linebreak;
+    
+    [self.stackView setCustomSpacing:0.f afterView:_last];
 }
 
 - (void)addImage:(Content *)content {
