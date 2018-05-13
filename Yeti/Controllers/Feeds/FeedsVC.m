@@ -342,18 +342,8 @@
     }
     
     // ensures search bar does not dismiss on refresh or first load
-    weakify(self);
-    
     @try {
-        self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        
         self.DS.data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:feeds];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            // ensures user can dismiss search bar on scroll
-            self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
-        });
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
     }

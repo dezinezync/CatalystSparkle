@@ -1345,9 +1345,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     else {
         NSInteger itemID = item.identifier.integerValue;
         
-        self.bookmarks = [self.bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-            return obj.identifier.integerValue != itemID;
-        }];
+        @try {
+            self.bookmarks = [self.bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                return obj.identifier.integerValue != itemID;
+            }];
+        } @catch (NSException *excp) {}
     }
     
 }
