@@ -33,12 +33,13 @@
 #endif
     
     UINavigationBar *navBar = [UINavigationBar appearance];
-    UITextView *textView = [UITextView appearance];
-    UITextField *textField = [UITextField appearance];
+//    UITextView *textView = [UITextView appearance];
+//    UITextField *textField = [UITextField appearance];
+    
+    navBar.translucent = ![self.name isEqualToString:@"black"];
     
     if (self.isDark) {
         [navBar setBarStyle:UIBarStyleBlack];
-        navBar.translucent = ![self.name isEqualToString:@"black"];
         
 //        textView.keyboardAppearance = UIKeyboardAppearanceDark;
     }
@@ -48,7 +49,7 @@
 //        textView.keyboardAppearance = UIKeyboardAppearanceLight;
     }
     
-    textField.keyboardAppearance = textView.keyboardAppearance;
+//    textField.keyboardAppearance = textView.keyboardAppearance;
     
     UITableView *tableView = [UITableView appearance];
     tableView.backgroundColor = self.tableColor;

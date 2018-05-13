@@ -57,7 +57,7 @@
     [super viewWillAppear:animated];
     
     // makes sure search bar is visible when it appears
-    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+//    self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -140,7 +140,7 @@
 - (void)setupNavigationBar {
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
-    control.tintColor = [[YTThemeKit theme] tintColor];
+    control.tintColor = [[YTThemeKit theme] isDark] ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     [self.tableView addSubview:control];
@@ -345,15 +345,14 @@
     weakify(self);
     
     @try {
-        self.navigationItem.hidesSearchBarWhenScrolling = NO;
+        self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         
         self.DS.data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:feeds];
-        self.navigationItem.hidesSearchBarWhenScrolling = NO;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             strongify(self);
             // ensures user can dismiss search bar on scroll
-            self.navigationItem.hidesSearchBarWhenScrolling = YES;
+            self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
         });
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
@@ -369,6 +368,8 @@
     asyncMain(^{
         
         strongify(self);
+        
+        self.refreshControl.tintColor = [[YTThemeKit theme] isDark] ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
         
         [[self.headerView tableView] reloadData];
         

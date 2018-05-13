@@ -1279,29 +1279,38 @@
         weakify(required);
         
         // animate background on paragraph
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        strongify(required);
+        
+        required.layer.cornerRadius = 4.f;
+        
+        NSTimeInterval animationDuration = 0.3;
+        
+        [UIView animateWithDuration:animationDuration delay:1 options:kNilOptions animations:^{
             
-            strongify(required);
+            required.backgroundColor = theme.focusColor;
             
-            required.layer.cornerRadius = 4.f;
+            strongify(self);
+            self.scrollView.userInteractionEnabled = YES;
             
-            [UIView animateWithDuration:0.1 delay:0.5 options:kNilOptions animations:^{
-                
-                required.backgroundColor = theme.focusColor;
-                strongify(self);
-                self.scrollView.userInteractionEnabled = YES;
-                
-            } completion:^(BOOL finished) { dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [UIView animateWithDuration:0.3 delay:0.5 options:kNilOptions animations:^{
+        } completion:^(BOOL finished) { dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (finished) {
+                [UIView animateWithDuration:animationDuration delay:1.5 options:kNilOptions animations:^{
+                    
                     required.backgroundColor = theme.articleBackgroundColor;
+                    
                 } completion:^(BOOL finished) {
                     required.layer.cornerRadius = 0.f;
                 }];
-                
-            }); }];
-        });
+            }
+            
+        }); }];
+    }
+    else {
+        // try and see if a heading is idefinited
+        [self scrollToHeading:identifier];
     }
     
 }

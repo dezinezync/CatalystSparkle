@@ -340,12 +340,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
-- (NSArray * _Nonnull)ignoreSubviewsFromLayouting {
-    return @[];
-}
-
-- (void)layoutSubviews
-{
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    [super setBackgroundColor:backgroundColor];
     
     NSArray <UIView *> *ignoredSubviews = [self ignoreSubviewsFromLayouting];
     
@@ -354,6 +350,16 @@ static NSParagraphStyle * _paragraphStyle = nil;
             subview.backgroundColor = self.backgroundColor;
         }
     }
+}
+
+- (NSArray * _Nonnull)ignoreSubviewsFromLayouting {
+    return @[];
+}
+
+- (void)layoutSubviews
+{
+    
+    [self setBackgroundColor:self.backgroundColor];
     
     [super layoutSubviews];
     

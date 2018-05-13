@@ -75,6 +75,9 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     self.indentationLevel = 0;
     self.stackLeading.constant = 8.f;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
 }
 
 - (void)removeObservorInfo {
