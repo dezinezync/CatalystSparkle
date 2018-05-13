@@ -127,7 +127,6 @@
     [super viewWillAppear:animated];
     
     // makes sure search bar is visible when it appears
-    self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -172,14 +171,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    weakify(self);
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        strongify(self);
-        // ensures user can dismiss search bar on scroll
-        self.navigationItem.hidesSearchBarWhenScrolling = YES;
-    });
     
     [self loadNextPage];
 }

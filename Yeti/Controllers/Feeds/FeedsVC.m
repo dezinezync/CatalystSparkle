@@ -56,9 +56,6 @@
 {
     [super viewWillAppear:animated];
     
-    // makes sure search bar is visible when it appears
-//    self.navigationItem.hidesSearchBarWhenScrolling = NO;
-    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     if (self.tableView.indexPathForSelectedRow) {

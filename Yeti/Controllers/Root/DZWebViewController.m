@@ -18,15 +18,17 @@
 
 @implementation DZWebViewController
 
+- (void)loadView
+{
+    self.view = self.webview;
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.hidesBottomBarWhenPushed = YES;
-    
-    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    
-    [self.view addSubview:self.webview];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -51,8 +53,7 @@
 - (WKWebView *)webview
 {
     if (!_webview) {
-        _webview = [[WKWebView alloc] initWithFrame:self.view.bounds];
-        _webview.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
+        _webview = [[WKWebView alloc] initWithFrame:UIScreen.mainScreen.bounds];
         _webview.backgroundColor = [UIColor groupTableViewBackgroundColor];
         _webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         
