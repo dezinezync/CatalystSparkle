@@ -44,10 +44,13 @@ static NSParagraphStyle * _paragraphStyle = nil;
             font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Georgia" size:18.f]];
         }
         
-        NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-//        style.lineHeightMultiple = [fontPref isEqualToString:ALPSystem] ? 1.3f : 1.44f;
-        style.maximumLineHeight = font.pointSize * ([fontPref isEqualToString:ALPSystem] ? 1.44f : 1.44f);
-        style.minimumLineHeight = style.maximumLineHeight;
+        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        style.lineHeightMultiple = font.pointSize * 1.4f;
+        style.maximumLineHeight = font.pointSize * 1.55f;
+        style.minimumLineHeight = font.pointSize * 1.3f;
+        
+        style.paragraphSpacing = 0.f;
+        style.paragraphSpacingBefore = 0.f;
         
         _paragraphStyle = style.copy;
     }
@@ -195,9 +198,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
             offset = offset/3.f;
         }
         
-        para.firstLineHeadIndent = offset;
-        para.headIndent = offset;
-        para.tailIndent = offset * -1.f;
+//        para.firstLineHeadIndent = offset;
+//        para.headIndent = offset;
+//        para.tailIndent = offset * -1.f;
     }
     
     NSLocaleLanguageDirection direction = [self.class languageDirectionForText:text];
@@ -207,7 +210,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     NSDictionary *baseAttributes = @{NSFontAttributeName : [self bodyFont],
                                      NSForegroundColorAttributeName: self.textColor,
-                                     NSParagraphStyleAttributeName: para};
+                                     NSParagraphStyleAttributeName: para,
+                                     NSKernAttributeName: [NSNull null]};
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
     

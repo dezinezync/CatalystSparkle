@@ -385,8 +385,9 @@
     self.stackView.hidden = NO;
     [self setupHelperViewActions];
     
-    if (self.item && !self.item.isRead)
+    if (self.item && !self.item.isRead) {
         [MyFeedsManager article:self.item markAsRead:YES];
+    }
     
     weakify(self);
     
@@ -431,8 +432,10 @@
     
     NSString *subline = formattedString(@"%@ • %@", author, [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
     
-    NSMutableParagraphStyle *para = [[NSMutableParagraphStyle alloc] init];
+    NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     para.lineHeightMultiple = 1.025f;
+    para.paragraphSpacingBefore = 0.f;
+    para.paragraphSpacing = 0.f;
     
     ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
     CGFloat baseFontSize = 32.f;
@@ -657,6 +660,9 @@
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
+    }
+    else if ([content.type isEqualToString:@"script"]) {
+        // wont be handled at the moment
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);

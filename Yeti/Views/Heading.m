@@ -69,8 +69,8 @@
 - (NSParagraphStyle *)paragraphStyle {
     
     if (!_paragraphStyle) {
-        NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
-        style.lineHeightMultiple = 1.f;
+        NSMutableParagraphStyle *style = [[Paragraph paragraphStyle] mutableCopy];
+        style.lineHeightMultiple = 1.44f;
         _paragraphStyle = style;
     }
     
