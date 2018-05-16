@@ -26,6 +26,7 @@
 
 @interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
+    BOOL _ignoreLoadScroll;
 }
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
@@ -57,6 +58,8 @@
     self.DS.addAnimation = UITableViewRowAnimationFade;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
     
@@ -105,14 +108,15 @@
     _canLoadNext = YES;
     
     if (self.feed) {
-        self.feed.articles = nil;
+        self.feed.articles = @[];
     }
     
     [AlertManager showGenericAlertWithTitle:@"Memory Warning" message:@"The app received a memory warning and to prevent unexpected crashes, it had to clear articles from the current feed. Please reload the feed to continue viewing."];
 }
 
 - (void)dealloc {
-    self.feed.articles = nil;
+    self.feed.articles = @[];
+    self.DS.data = @[];
 }
 
 #pragma mark - Appearance
@@ -125,10 +129,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    // makes sure search bar is visible when it appears
-    
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
@@ -537,6 +537,9 @@
     if (self.loadingNext)
         return;
     
+    if (self->_ignoreLoadScroll)
+        return;
+    
     self.loadingNext = YES;
     
     weakify(self);
@@ -560,6 +563,7 @@
             strongify(self);
             
             self.feed.articles = [(self.feed.articles ?: @[]) arrayByAddingObjectsFromArray:responseObject];
+            self->_ignoreLoadScroll = YES;
             self.DS.data = self.feed.articles;
         });
         
@@ -571,6 +575,7 @@
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 strongify(self);
                 [self loadArticle];
+                self->_ignoreLoadScroll = NO;
             });
         }
         

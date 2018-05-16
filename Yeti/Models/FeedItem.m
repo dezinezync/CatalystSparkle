@@ -316,4 +316,14 @@ static NSDateFormatter *_formatter = nil;
     _formatter = formatter;
 }
 
+#pragma mark - Setter
+
+- (void)setCoverImage:(NSString *)coverImage {
+    if (coverImage && [coverImage isBlank]) {
+        coverImage = nil;
+    }
+    
+    _coverImage = coverImage;
+}
+
 @end

@@ -76,6 +76,10 @@
         return;
     }
     
+    if ([image isKindOfClass:NSData.class]) {
+        image = [UIImage imageWithData:(NSData *)image];
+    }
+    
     [super setImage:image];
     
     if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])

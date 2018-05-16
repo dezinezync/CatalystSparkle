@@ -369,6 +369,14 @@
         _deferredProcessing = YES;
     }
     
+    if (self.item.coverImage) {
+        Content *content = [Content new];
+        content.type = @"image";
+        content.url = self.item.coverImage;
+        
+        [self addImage:content];
+    }
+    
     for (Content *content in self.item.content) { @autoreleasepool {
         [self processContent:content];
     } }

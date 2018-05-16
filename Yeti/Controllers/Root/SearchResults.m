@@ -20,6 +20,8 @@
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
+    
+    self.tableView.tableFooterView = [UIView new];
 }
 
 
