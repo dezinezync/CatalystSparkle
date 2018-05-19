@@ -11,11 +11,16 @@
 #import "FeedsManager.h"
 
 #import "LayoutConstants.h"
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
+
+#import <Store/Store.h>
 
 @interface AccountVC ()
 
 @property (nonatomic, assign) NSInteger subscriptionType;
+@property (nonatomic, assign) NSInteger knownSubscriptionType;
+@property (nonatomic, strong) NSArray <SKProduct *> *products;
 
 @end
 
@@ -24,7 +29,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.subscriptionType = 1;
+    YetiSubscriptionType subscriptionType = [[NSUserDefaults standardUserDefaults] valueForKey:kSubscriptionType];
+    
+    self.subscriptionType = [subscriptionType isEqualToString:YTSubscriptionYearly] ? 1 : ([subscriptionType isEqualToString:YTSubscriptionMonthly] ? 0 : -1);
+    self.knownSubscriptionType = self.subscriptionType;
+    
     self.title = @"Account";
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
@@ -32,11 +41,87 @@
     
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone:)];
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    
+    NSSet *products = [NSSet setWithObjects:YTSubscriptionMonthly, YTSubscriptionYearly,  nil];
+    
+    [MyStoreManager loadProducts:products success:^(NSArray *products, NSArray *invalidIdentifiers) {
+        
+        self.products = [products sortedArrayUsingSelector:@selector(productIdentifier)];
+        
+        if (invalidIdentifiers && invalidIdentifiers.count) {
+            DDLogError(@"Invalid identifiers: %@", invalidIdentifiers);
+        }
+        
+    } error:^(NSError *error) {
+       
+        DDLogError(@"Error loading products: %@", error);
+        
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Actions
+
+- (void)didTapDone:(UIBarButtonItem *)sender {
+    
+    sender.enabled = NO;
+    
+    SKProduct *product = [self.products objectAtIndex:self.subscriptionType];
+    
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
+    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
+                
+    [MyStoreManager purhcaseProduct:product];
+    
+}
+
+- (void)didPurchase:(NSNotification *)note {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+ 
+    NSArray <SKPaymentTransaction *> *transactions = [note.userInfo valueForKey:@"transactions"];
+    
+    // we're only expecting one.
+    SKPaymentTransaction *transaction = [transactions firstObject];
+    
+    if (!transaction)
+        return;
+    
+    if (transaction.transactionState == SKPaymentTransactionStateFailed) {
+        
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+        
+        [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:transaction.error.localizedDescription];
+        return;
+    }
+    
+    YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
+    
+    self.subscriptionType = [subscriptionType isEqualToString:YTSubscriptionYearly] ? 1 : ([subscriptionType isEqualToString:YTSubscriptionMonthly] ? 0 : -1);
+    self.knownSubscriptionType = self.subscriptionType;
+    
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+    
+}
+
+- (void)didFail:(NSNotification *)note {
+    
+    NSError *error = [[note userInfo] valueForKey:@"error"];
+    
+    [AlertManager showGenericAlertWithTitle:@"Purhcase/Restore Error" message:error.localizedDescription];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+    
 }
 
 #pragma mark - Table view data source
@@ -138,23 +223,51 @@
             break;
             
         default:
-            switch (indexPath.row) {
-                case 0:
-                {
-                    cell.textLabel.text = @"Monthly";
-                    cell.detailTextLabel.text = @"$2.99";
-                    cell.accessoryType = self.subscriptionType == 0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        {
+            if (self.products) {
+                SKProduct *product = self.products[indexPath.row];
+                
+                switch (indexPath.row) {
+                    case 0:
+                    {
+                        cell.accessoryType = self.subscriptionType == 0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+                    }
+                        break;
+                        
+                    case 1:
+                    {
+                        cell.accessoryType = self.subscriptionType == 1 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+                    }
+                        break;
                 }
-                    break;
-                    
-                default:
-                {
-                    cell.textLabel.text = @"Yearly";
-                    cell.detailTextLabel.text = @"$29.99";
-                    cell.accessoryType = self.subscriptionType == 1 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-                }
-                    break;
+                
+                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+                formatter.locale = product.priceLocale;
+                formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+                
+                cell.textLabel.text = [product localizedTitle];
+                cell.detailTextLabel.text = [formatter stringFromNumber:product.price];
             }
+            else {
+                switch (indexPath.row) {
+                    case 0:
+                    {
+                        cell.textLabel.text = @"Monthly";
+                        cell.detailTextLabel.text = @"$2.99";
+                        cell.accessoryType = self.subscriptionType == 0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+                    }
+                        break;
+                        
+                    case 1:
+                    {
+                        cell.textLabel.text = @"Yearly";
+                        cell.detailTextLabel.text = @"$32.99";
+                        cell.accessoryType = self.subscriptionType == 1 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+                    }
+                        break;
+                }
+            }
+        }
             break;
     }
     
@@ -191,6 +304,9 @@
         NSIndexSet *set = [NSIndexSet indexSetWithIndex:1];
         
         [self.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
+        
+        self.navigationItem.rightBarButtonItem.enabled = [self changedPreference];
+        
         return;
     }
     
@@ -207,6 +323,25 @@
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     
+}
+
+#pragma mark - Getters
+
+- (BOOL)changedPreference {
+    return self.subscriptionType != self.knownSubscriptionType;
+}
+
+#pragma mark - Setters
+
+- (void)setProducts:(NSArray<SKProduct *> *)products {
+    _products = products;
+    
+    weakify(self);
+    asyncMain(^{
+        strongify(self);
+        
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+    })
 }
 
 @end

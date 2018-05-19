@@ -47,3 +47,13 @@ NSString * const kDefaultsArticleFont = @"articleFont";
 
 ArticleLayoutPreference const ALPSerif = @"articlelayout.serifs";
 ArticleLayoutPreference const ALPSystem = @"articlelayout.system";
+
+#pragma mark - Subscription
+
+NSString *const kSubscriptionType = @"subscriptionType";
+
+YetiSubscriptionType const YTSubscriptionMonthly = @"com.dezinezync.elytra.pro.1m";
+YetiSubscriptionType const YTSubscriptionYearly = @"com.dezinezync.elytra.pro.12m";
+
+NSNotificationName YTDidPurchaseProduct = @"com.elytra.note.purchased";
+NSNotificationName YTPurchaseProductFailed = @"com.elytra.note.purhcaseFailed";

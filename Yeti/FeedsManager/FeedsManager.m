@@ -1081,6 +1081,26 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }];
 }
 
+#pragma mark - Store
+
+- (void)postAppReceipt:(NSData *)receipt success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSString *receiptString = [receipt base64EncodedStringWithOptions:0];
+    
+    [self.session POST:@"/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Setters
 
 - (void)setPushToken:(NSString *)pushToken
@@ -1194,7 +1214,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
@@ -1340,7 +1360,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     if (isBookmarked) {
         // it was added
-        self.bookmarks = [self.bookmarks arrayByAddingObject:item];
+        @try {
+            self.bookmarks = [self.bookmarks arrayByAddingObject:item];
+        }
+        @catch (NSException *exc) {}
     }
     else {
         NSInteger itemID = item.identifier.integerValue;

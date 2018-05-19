@@ -8,6 +8,7 @@
 
 #import "AppDelegate+Routing.h"
 #import "AppDelegate+Push.h"
+#import "AppDelegate+Store.h"
 #import "FeedsVC.h"
 
 #import <JLRoutes/JLRoutes.h>
@@ -48,6 +49,8 @@ AppDelegate *MyAppDelegate = nil;
         [application registerForRemoteNotifications];
     });
     
+    [self setupStoreManager];
+    
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -59,7 +62,8 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsNotifications: @NO,
              kDefaultsImageLoading: ImageLoadingMediumRes,
              kDefaultsImageBandwidth: ImageLoadingAlways,
-             kDefaultsArticleFont: ALPSystem
+             kDefaultsArticleFont: ALPSystem,
+             kSubscriptionType: @"None"
              };
 }
 

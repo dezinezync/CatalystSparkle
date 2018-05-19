@@ -17,6 +17,7 @@ YETI_EXPORT NSString * const kDefaultsBackgroundRefresh;
 YETI_EXPORT NSString * const kDefaultsNotifications;
 YETI_EXPORT NSString * const kDefaultsImageLoading;
 YETI_EXPORT NSString * const kDefaultsImageBandwidth;
+YETI_EXPORT NSString * const kSubscriptionType;
 
 typedef NSString * ImageLoadingOption NS_STRING_ENUM;
 
@@ -49,5 +50,12 @@ typedef NSString * ArticleLayoutPreference NS_STRING_ENUM;
 YETI_EXPORT NSString * const kDefaultsArticleFont;
 YETI_EXPORT ArticleLayoutPreference const ALPSerif;
 YETI_EXPORT ArticleLayoutPreference const ALPSystem;
+
+typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
+YETI_EXPORT YetiSubscriptionType const YTSubscriptionMonthly;
+YETI_EXPORT YetiSubscriptionType const YTSubscriptionYearly;
+
+FOUNDATION_EXPORT NSNotificationName YTDidPurchaseProduct;
+FOUNDATION_EXPORT NSNotificationName YTPurchaseProductFailed;
 
 #endif /* YetiConstants_h */

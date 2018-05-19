@@ -108,6 +108,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)unsubscribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#pragma mark - Store
+
+- (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
 #pragma mark - Error formatting
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
