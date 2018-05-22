@@ -79,7 +79,7 @@
     
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
     
-    ArticleVC *vc = (ArticleVC *)[controllers lastObject];
+    __unused ArticleVC *vc = (ArticleVC *)[controllers lastObject];
     
     controllers = @[vc2].mutableCopy;
     

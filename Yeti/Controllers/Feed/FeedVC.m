@@ -24,6 +24,8 @@
 #import "FeedHeaderView.h"
 #import <UserNotifications/UserNotifications.h>
 
+#import "YetiThemeKit.h"
+
 @interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
@@ -60,6 +62,7 @@
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.extendedLayoutIncludesOpaqueBars = YES;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
     
@@ -90,6 +93,9 @@
         searchController.searchBar.placeholder = @"Search articles";
         searchController.searchBar.accessibilityHint = @"Search loaded articles";
         searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         
         self.navigationItem.searchController = searchController;
     }

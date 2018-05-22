@@ -130,6 +130,9 @@
     
     self.tableView.tableFooterView = [UIView new];
     
+    self.extendedLayoutIncludesOpaqueBars = YES;
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
+    
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
     [self.tableView addGestureRecognizer:longPress];
 }
@@ -137,7 +140,6 @@
 - (void)setupNavigationBar {
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
-    control.tintColor = [[YTThemeKit theme] isDark] ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     [self.tableView addSubview:control];
@@ -153,12 +155,15 @@
     
     // Search Controller setup
     {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
         
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search feeds";
         searchController.searchBar.accessibilityHint = @"Search your feeds";
+        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         self.navigationItem.searchController = searchController;
     }
     
@@ -356,9 +361,10 @@
         
         strongify(self);
         
-        self.refreshControl.tintColor = [[YTThemeKit theme] isDark] ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         [[self.headerView tableView] reloadData];
+        self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         
         [self.tableView reloadData];
     });

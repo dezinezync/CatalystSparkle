@@ -66,6 +66,8 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     [self.tableView registerClass:AddFeedCell.class forCellReuseIdentifier:kAddFeedCell];
     
+    self.extendedLayoutIncludesOpaqueBars = YES;
+    
     self.title = @"Add Feed";
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     
@@ -80,6 +82,8 @@
     self.input.delegate = self;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
     
     if (theme.isDark) {
         if ([theme.name isEqualToString:@"black"]) {

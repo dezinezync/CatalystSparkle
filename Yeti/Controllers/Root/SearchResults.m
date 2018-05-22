@@ -22,6 +22,8 @@
     self.DS.delegate = self;
     
     self.tableView.tableFooterView = [UIView new];
+    self.extendedLayoutIncludesOpaqueBars = YES;
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
 }
 
 

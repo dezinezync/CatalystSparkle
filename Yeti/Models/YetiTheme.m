@@ -36,6 +36,8 @@
 //    UITextView *textView = [UITextView appearance];
 //    UITextField *textField = [UITextField appearance];
     
+    // setting this to NO causes jumpy navigation bars
+    // update UIViewController to set viewController.extendedLayoutIncludesOpaqueBars=YES;
     navBar.translucent = ![self.name isEqualToString:@"black"];
     
     if (self.isDark) {
@@ -53,6 +55,9 @@
     
     UITableView *tableView = [UITableView appearance];
     tableView.backgroundColor = self.tableColor;
+    
+    UIRefreshControl *refresh = [UIRefreshControl appearance];
+    refresh.tintColor = self.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
     
     UITableViewCell *cell = [UITableViewCell appearance];
     cell.backgroundColor = self.cellColor;

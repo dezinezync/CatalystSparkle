@@ -20,6 +20,10 @@ YetiThemeKit * YTThemeKit;
     return YetiTheme.class;
 }
 
+- (BOOL)autoReloadWindow {
+    return YES;
+}
+
 + (void)loadThemeKit {
     
     static dispatch_once_t onceToken;
