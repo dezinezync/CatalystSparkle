@@ -326,6 +326,7 @@
         return;
     
     if (self.item) {
+        self.item.content = nil;
         NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
         
         if (cache) {
@@ -334,6 +335,13 @@
     }
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
+    
+    self.stackView.hidden = YES;
+    
+    if (self.loader.isHidden) {
+        self.loader.hidden = NO;
+        [self.loader startAnimating];
+    }
     
     if (self.stackView.arrangedSubviews.count > 0) {
         weakify(self);
@@ -360,65 +368,105 @@
     NSDate *start = NSDate.date;
 #endif
     
-    self.stackView.hidden = YES;
-    
-    // add Body
-    [self addTitle];
-    
-    if (self.item.content.count > 20) {
-        _deferredProcessing = YES;
-    }
-    
-    if (self.item.coverImage) {
-        Content *content = [Content new];
-        content.type = @"image";
-        content.url = self.item.coverImage;
-        
-        [self addImage:content];
-    }
-    
-    for (Content *content in self.item.content) { @autoreleasepool {
-        [self processContent:content];
-    } }
-    
-    [self.loader stopAnimating];
-    [self.loader removeFromSuperview];
-    
-    _last = nil;
-    
-#ifdef DEBUG
-    DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
-#endif
-    
-    self.stackView.hidden = NO;
-    [self setupHelperViewActions];
-    
-    if (self.item && !self.item.isRead) {
-        [MyFeedsManager article:self.item markAsRead:YES];
-    }
-    
     weakify(self);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [MyFeedsManager getArticle:self.item.identifier success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
         strongify(self);
-        [self scrollViewDidScroll:self.scrollView];
         
-        CGSize contentSize = self.scrollView.contentSize;
-        contentSize.width = self.view.bounds.size.width;
+        if (!self.item) {
+            self.item = responseObject;
+        }
+        else {
+            self.item.content = [responseObject content];
+        }
         
-        self.scrollView.contentSize = contentSize;
+        // add Body
+        [self addTitle];
         
-        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
-    });
-    
-    if (isChangingArticle && self.providerDelegate) {
-        [(NSObject *)(self.providerDelegate) performSelectorOnMainThread:@selector(didChangeToArticle:) withObject:article waitUntilDone:NO];
-    }
+        if (self.item.content.count > 20) {
+            self->_deferredProcessing = YES;
+        }
+        
+        if (self.item.coverImage) {
+            Content *content = [Content new];
+            content.type = @"image";
+            content.url = self.item.coverImage;
+            
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                [self addImage:content];
+            });
+        }
+        
+        for (Content *content in self.item.content) { @autoreleasepool {
+            asyncMain(^{
+                strongify(self);
+                [self processContent:content];
+            });
+        } }
+        
+        asyncMain(^{
+            strongify(self);
+            [self.loader stopAnimating];
+            self.loader.hidden = YES;
+        });
+        
+        self->_last = nil;
+        
+#ifdef DEBUG
+        DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
+#endif
+        
+        asyncMain(^{
+            self.stackView.hidden = NO;
+            [self setupHelperViewActions];
+        });
+        
+        if (self.item && !self.item.isRead) {
+            [MyFeedsManager article:self.item markAsRead:YES];
+        }
+        
+        weakify(self);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self scrollViewDidScroll:self.scrollView];
+            
+            CGSize contentSize = self.scrollView.contentSize;
+            contentSize.width = self.view.bounds.size.width;
+            
+            self.scrollView.contentSize = contentSize;
+            
+            DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
+        });
+        
+        if (isChangingArticle && self.providerDelegate) {
+            [(NSObject *)(self.providerDelegate) performSelectorOnMainThread:@selector(didChangeToArticle:) withObject:article waitUntilDone:NO];
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Failed to load the article" message:error.localizedDescription];
+        
+    }];
 }
 
 #pragma mark - Drawing
 
 - (void)addTitle {
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            [self addTitle];
+        });
+        
+        return;
+    }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     

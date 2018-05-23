@@ -57,7 +57,7 @@
     self.DS.delegate = self;
     self.DS.data = self.feed.articles;
     
-    self.DS.addAnimation = UITableViewRowAnimationFade;
+    self.DS.addAnimation = UITableViewRowAnimationLeft;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
@@ -581,9 +581,14 @@
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 strongify(self);
                 [self loadArticle];
-                self->_ignoreLoadScroll = NO;
             });
         }
+        
+        asyncMain(^{
+            if (self->_ignoreLoadScroll) {
+                self->_ignoreLoadScroll = NO;
+            }
+        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
