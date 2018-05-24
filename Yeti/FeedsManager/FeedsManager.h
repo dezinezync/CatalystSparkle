@@ -114,6 +114,18 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
+#ifndef SHARE_EXTENSION
+
+#pragma mark - <YTUserDelegate>
+
+- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
+
+- (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
+
+- (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock)successCB error:(errorBlock)errorCB;
+
+#endif
+
 #pragma mark - Error formatting
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;

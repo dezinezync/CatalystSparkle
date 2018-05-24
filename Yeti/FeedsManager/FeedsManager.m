@@ -1214,7 +1214,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
@@ -1456,6 +1456,42 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             errorCB(error, response, task);
         else {
             DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+}
+
+- (void)getUserInformationFor:(NSString *)uuid success:(successBlock)successCB error:(errorBlock)errorCB
+{
+    if (!uuid || [uuid isBlank]) {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-10 userInfo:@{NSLocalizedDescriptionKey: @"Please provide a valid UUID to fetch."}];
+            
+            errorCB(error, nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSDictionary *params = @{@"userID": uuid};
+    
+    weakify(self);
+    
+    [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        strongify(self);
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (error) {
+            if (errorCB)
+                errorCB(error, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
         }
     }];
 }

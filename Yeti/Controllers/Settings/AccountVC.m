@@ -16,7 +16,10 @@
 
 #import <Store/Store.h>
 
-@interface AccountVC ()
+@interface AccountVC () <UITextFieldDelegate> {
+    UITextField *_textField;
+    UIAlertAction *_okayAction;
+}
 
 @property (nonatomic, assign) NSInteger subscriptionType;
 @property (nonatomic, assign) NSInteger knownSubscriptionType;
@@ -131,6 +134,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == 0)
+        return 3;
     return 2;
 }
 
@@ -210,6 +215,14 @@
                         
                         cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUID.UUIDString;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    }
+                        break;
+                    case 1:
+                    {
+                        cell.textLabel.text = @"Change Account ID";
+                        cell.textLabel.textColor = theme.tintColor;
+                        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+                        cell.separatorInset = UIEdgeInsetsZero;
                     }
                         break;
                     default:
@@ -313,6 +326,10 @@
     if (indexPath.section == 0) {
         
         if (indexPath.row == 1) {
+            [self showReplaceIDController];
+        }
+        
+        if (indexPath.row == 2) {
             UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Are you sure?" message:@"Because this button does nothing yet!" preferredStyle:UIAlertControllerStyleAlert];
             
             [avc addAction:[UIAlertAction actionWithTitle:@"Ok, sorry" style:UIAlertActionStyleDefault handler:nil]];
@@ -342,6 +359,101 @@
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
     })
+}
+
+#pragma mark - Actions
+
+- (void)showReplaceIDController {
+    
+    if (self.navigationController.presentedViewController)
+        return;
+    
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:@"Replace Account ID" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    weakify(self);
+    
+    UIAlertAction *okay = [UIAlertAction actionWithTitle:@"Okay" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        strongify(self);
+        
+        NSString *text = [self->_textField text];
+        
+        [MyFeedsManager getUserInformationFor:text success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            NSDictionary *user = [responseObject valueForKey:@"user"];
+            
+            if (!user) {
+                [AlertManager showGenericAlertWithTitle:@"No user" message:@"No user was found with this UUID."];
+                return;
+            }
+            
+            NSString *UUID = [user valueForKey:@"uuid"];
+            NSNumber *userID = [user valueForKey:@"id"];
+            
+//            if ([MyFeedsManager.userIDManager.userID isEqualToNumber:userID]) {
+//                return;
+//            }
+            
+            MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUID];
+            MyFeedsManager.userIDManager.userID = userID;
+            MyFeedsManager.userID = userID;
+            
+            asyncMain(^{
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+            });
+            
+            [AlertManager showGenericAlertWithTitle:@"Updated" message:@"Your account was successfully updated to use the new ID."];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Fetch Error" message:error.localizedDescription];
+            
+        }];
+        
+        self->_okayAction = nil;
+        self->_textField = nil;
+        
+    }];
+    
+    okay.enabled =  NO;
+    
+    [alertVC addAction:okay];
+    _okayAction = okay;
+    
+    [alertVC addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+        strongify(self);
+        
+        self->_okayAction = nil;
+        self->_textField = nil;
+        
+    }]];
+    
+    [alertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+       
+        textField.placeholder = @"Account ID";
+        textField.delegate = self;
+        
+        strongify(self);
+        
+        self->_textField = textField;
+        
+    }];
+    
+    [self presentViewController:alertVC animated:YES completion:nil];
+    
+}
+
+#pragma mark - <UITextFieldDelegate>
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    NSString *text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    
+    _okayAction.enabled = text.length == 36;
+    
+    return YES;
 }
 
 @end

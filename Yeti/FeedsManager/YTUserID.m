@@ -148,6 +148,12 @@
 - (void)setUUID:(NSUUID *)UUID
 {
     _UUID = UUID;
+    
+    if (_UUID != nil) {
+        NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
+        [store setObject:[_UUID UUIDString] forKey:@"YTUserID"];
+        [store synchronize];
+    }
 }
 
 - (NSString *)UUIDString {
