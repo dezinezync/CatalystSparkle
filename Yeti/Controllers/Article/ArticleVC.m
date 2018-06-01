@@ -299,10 +299,13 @@
 
         for (Image *imageView in self.images) { @autoreleasepool {
             if ([imageView respondsToSelector:@selector(imageView)] && imageView.imageView.image) {
+                [imageView invalidateIntrinsicContentSize];
+                [imageView.imageView invalidateIntrinsicContentSize];
                 [imageView.imageView updateAspectRatioWithImage:imageView.imageView.image];
             }
             else if ([imageView respondsToSelector:@selector(image)] && [(UIImageView *)imageView image]) {
                 [(SizedImage *)imageView updateAspectRatioWithImage:[(UIImageView *)imageView image]];
+                [imageView invalidateIntrinsicContentSize];
             }
         } }
 
@@ -500,7 +503,7 @@
         baseFontSize = 26.f;
     }
     
-    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:@"Georgia-Bold" size:baseFontSize];
+    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
     
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
     
@@ -512,7 +515,7 @@
     
     // Subline
     baseFontSize = 16.f;
-    baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:baseFontSize weight:UIFontWeightMedium] : [UIFont fontWithName:@"Georgia" size:baseFontSize];
+    baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:baseFontSize weight:UIFontWeightMedium] : [UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:baseFontSize];
     
     UIFont *subtextFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:baseFont];
     

@@ -37,7 +37,7 @@
         
         if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
             [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin*2].active = YES;
-            [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-4.f].active = YES;
+            [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-2.f].active = YES;
         }
         else {
             [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
@@ -86,11 +86,6 @@
         return;
     
     weakify(self);
-    
-    // this no longer applies and we need to contraint the imageview to the maximum width of the image.
-//    if (image.size.width < self.bounds.size.width) {
-////        self.contentMode = UIViewContentModeCenter;
-//    }
     
     asyncMain(^{
         strongify(self);

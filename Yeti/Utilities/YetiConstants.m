@@ -45,8 +45,9 @@ NSNotificationName kDidUpdateTheme = @"com.yeti.note.didUpdateTheme";
 
 NSString * const kDefaultsArticleFont = @"articleFont";
 
-ArticleLayoutPreference const ALPSerif = @"articlelayout.serifs";
+ArticleLayoutPreference const ALPSerif = @"articlelayout.georgia";
 ArticleLayoutPreference const ALPSystem = @"articlelayout.system";
+ArticleLayoutPreference const ALPHelvetica = @"articlelayout.helveticaNeue";
 
 #pragma mark - Subscription
 

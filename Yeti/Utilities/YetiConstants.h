@@ -50,6 +50,7 @@ typedef NSString * ArticleLayoutPreference NS_STRING_ENUM;
 YETI_EXPORT NSString * const kDefaultsArticleFont;
 YETI_EXPORT ArticleLayoutPreference const ALPSerif;
 YETI_EXPORT ArticleLayoutPreference const ALPSystem;
+YETI_EXPORT ArticleLayoutPreference const ALPHelvetica;
 
 typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType const YTSubscriptionMonthly;

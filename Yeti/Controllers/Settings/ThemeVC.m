@@ -20,6 +20,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
 
 @interface ThemeVC () {
     BOOL _isPhoneX;
+    NSArray <ArticleLayoutPreference> * _fonts;
 }
 
 @end
@@ -30,6 +31,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     [super viewDidLoad];
     
     self.title = @"Appearance";
+    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica];
     
     _isPhoneX = [[self modelIdentifier] isEqualToString:@"iPhone10,3"];
     
@@ -62,7 +64,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         return _isPhoneX ? 3 : 2;
     }
     
-    return 2;
+    return self->_fonts.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -94,10 +96,11 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        cell.textLabel.text = [[(indexPath.row == 0 ? ALPSystem : ALPSerif) stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        cell.textLabel.text = [[self->_fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
         
         if (([fontPref isEqualToString:ALPSystem] && indexPath.row == 0)
-            || ([fontPref isEqualToString:ALPSerif] && indexPath.row == 1)) {
+            || ([fontPref isEqualToString:ALPSerif] && indexPath.row == 1)
+            || ([fontPref isEqualToString:ALPHelvetica] && indexPath.row == 2)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -151,7 +154,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     else if (indexPath.section == 1) {
         
-        [defaults setValue:(indexPath.row == 0 ? ALPSystem : ALPSerif) forKey:kDefaultsArticleFont];
+        [defaults setValue:self->_fonts[indexPath.row] forKey:kDefaultsArticleFont];
         
         reloadSections = [NSIndexSet indexSetWithIndex:indexPath.section];
         
@@ -173,11 +176,14 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
 #pragma mark - Helpers
 
 - (NSString *)modelIdentifier {
+    
     NSString *simulatorModelIdentifier = [NSProcessInfo processInfo].environment[@"SIMULATOR_MODEL_IDENTIFIER"];
     NSLog(@"%@",simulatorModelIdentifier);
+    
     if (simulatorModelIdentifier) {
         return simulatorModelIdentifier;
     }
+    
     struct utsname sysInfo;
     uname(&sysInfo);
     

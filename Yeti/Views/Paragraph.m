@@ -40,8 +40,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         
-        if ([fontPref isEqualToString:ALPSerif]) {
-            font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Georgia" size:18.f]];
+        if (![fontPref isEqualToString:ALPSystem]) {
+            font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:18.f]];
         }
         
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -433,7 +433,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        __block UIFont * bodyFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:18.f] : [UIFont fontWithName:@"Georgia" size:18.f];
+        __block UIFont * bodyFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:18.f] : [UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:18.f];
         __block UIFont * baseFont;
         
         if (self.isCaption) {

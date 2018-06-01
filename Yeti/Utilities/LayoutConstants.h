@@ -10,7 +10,6 @@
 #define LayoutConstants_h
 
 #define LayoutPadding 12.f
-#define LayoutImageMargin 16.f
-
+#define LayoutImageMargin 14.f
 
 #endif /* LayoutConstants_h */

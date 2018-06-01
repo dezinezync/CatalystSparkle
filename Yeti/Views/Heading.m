@@ -116,8 +116,8 @@
     
     UIFont * bodyFont = [UIFont boldSystemFontOfSize:fontSize];
     
-    if ([fontPref isEqualToString:ALPSerif]) {
-        bodyFont = [UIFont fontWithName:@"Georgia" size:fontSize];
+    if (![fontPref isEqualToString:ALPSystem]) {
+        bodyFont = [UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:fontSize];
         UIFontDescriptor *boldDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute: bodyFont.familyName,
                                                                                                 UIFontDescriptorFaceAttribute : @"Bold"}];
         
