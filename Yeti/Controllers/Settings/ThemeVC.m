@@ -31,7 +31,9 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     [super viewDidLoad];
     
     self.title = @"Appearance";
-    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica];
+    // when adding a new font here or removing one,
+    // update the method -[tableview:cellForRowAtIndexPath:]
+    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans];
     
     _isPhoneX = [[self modelIdentifier] isEqualToString:@"iPhone10,3"];
     
@@ -100,7 +102,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         if (([fontPref isEqualToString:ALPSystem] && indexPath.row == 0)
             || ([fontPref isEqualToString:ALPSerif] && indexPath.row == 1)
-            || ([fontPref isEqualToString:ALPHelvetica] && indexPath.row == 2)) {
+            || ([fontPref isEqualToString:ALPHelvetica] && indexPath.row == 2)
+            || ([fontPref isEqualToString:ALPMerriweather] && indexPath.row == 3)
+            || ([fontPref isEqualToString:ALPPlexSerif] && indexPath.row == 4)
+            || ([fontPref isEqualToString:ALPPlexSans] && indexPath.row == 5)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             

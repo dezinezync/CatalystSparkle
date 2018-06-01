@@ -38,6 +38,8 @@ AppDelegate *MyAppDelegate = nil;
         MyAppDelegate = self;
     });
     
+    [self yt_log_fontnames];
+    
     // Override point for customization after application launch.
     [ADZLogger initialize];
     
@@ -52,6 +54,20 @@ AppDelegate *MyAppDelegate = nil;
     [self setupStoreManager];
     
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+// logs all fonts loaded by the app
+- (void)yt_log_fontnames {
+    
+    for (NSString* family in [UIFont familyNames])
+    {
+        NSLog(@"- %@", family);
+        
+        for (NSString* name in [UIFont fontNamesForFamilyName: family])
+        {
+            NSLog(@"\t|- %@", name);
+        }
+    }
 }
 
 #pragma mark - <DZAppDelegateProtocol>

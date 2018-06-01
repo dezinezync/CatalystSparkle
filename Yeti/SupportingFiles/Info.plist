@@ -80,5 +80,40 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Merriweather-Black.ttf</string>
+		<string>Merriweather-BlackItalic.ttf</string>
+		<string>Merriweather-Bold.ttf</string>
+		<string>Merriweather-BoldItalic.ttf</string>
+		<string>Merriweather-Italic.ttf</string>
+		<string>Merriweather-Light.ttf</string>
+		<string>Merriweather-LightItalic.ttf</string>
+		<string>Merriweather-Regular.ttf</string>
+		<string>IBMPlexSerif-Bold.ttf</string>
+		<string>IBMPlexSerif-BoldItalic.ttf</string>
+		<string>IBMPlexSerif-Light.ttf</string>
+		<string>IBMPlexSerif-LightItalic.ttf</string>
+		<string>IBMPlexSerif-Italic.ttf</string>
+		<string>IBMPlexSerif-Medium.ttf</string>
+		<string>IBMPlexSerif-MediumItalic.ttf</string>
+		<string>IBMPlexSerif-Regular.ttf</string>
+		<string>IBMPlexSerif-SemiBold.ttf</string>
+		<string>IBMPlexSerif-SemiBoldItalic.ttf</string>
+		<string>IBMPlexSerif-Thin.ttf</string>
+		<string>IBMPlexSerif-ThinItalic.ttf</string>
+		<string>IBMPlexSans-Bold.ttf</string>
+		<string>IBMPlexSans-BoldItalic.ttf</string>
+		<string>IBMPlexSans-Italic.ttf</string>
+		<string>IBMPlexSans-Light.ttf</string>
+		<string>IBMPlexSans-LightItalic.ttf</string>
+		<string>IBMPlexSans-Medium.ttf</string>
+		<string>IBMPlexSans-MediumItalic.ttf</string>
+		<string>IBMPlexSans-Regular.ttf</string>
+		<string>IBMPlexSans-SemiBold.ttf</string>
+		<string>IBMPlexSans-SemiBoldItalic.ttf</string>
+		<string>IBMPlexSans-Thin.ttf</string>
+		<string>IBMPlexSans-ThinItalic.ttf</string>
+	</array>
 </dict>
 </plist>

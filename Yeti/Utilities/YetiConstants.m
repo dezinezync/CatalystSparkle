@@ -48,6 +48,9 @@ NSString * const kDefaultsArticleFont = @"articleFont";
 ArticleLayoutPreference const ALPSerif = @"articlelayout.georgia";
 ArticleLayoutPreference const ALPSystem = @"articlelayout.system";
 ArticleLayoutPreference const ALPHelvetica = @"articlelayout.helveticaNeue";
+ArticleLayoutPreference const ALPMerriweather = @"articlelayout.merriweather";
+ArticleLayoutPreference const ALPPlexSerif = @"articlelayout.IBMPlexSerif";
+ArticleLayoutPreference const ALPPlexSans = @"articlelayout.IBMPlexSans";
 
 #pragma mark - Subscription
 
