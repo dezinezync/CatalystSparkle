@@ -21,6 +21,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
 @interface ThemeVC () {
     BOOL _isPhoneX;
     NSArray <ArticleLayoutPreference> * _fonts;
+    NSDictionary <ArticleLayoutPreference, NSString *> *_fontNamesMap;
 }
 
 @end
@@ -33,7 +34,16 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     self.title = @"Appearance";
     // when adding a new font here or removing one,
     // update the method -[tableview:cellForRowAtIndexPath:]
-    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans];
+    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral];
+    _fontNamesMap = @{
+                      ALPSystem : @"System (San Fransico)",
+                      ALPSerif : @"Georgia",
+                      ALPHelvetica : @"Helvetica Neue",
+                      ALPMerriweather : @"Merriweather",
+                      ALPPlexSerif : @"Plex Serif",
+                      ALPPlexSans : @"Plex Sans",
+                      ALPSpectral : @"Spectral"
+                      };
     
     _isPhoneX = [[self modelIdentifier] isEqualToString:@"iPhone10,3"];
     
@@ -98,14 +108,15 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        cell.textLabel.text = [[self->_fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        cell.textLabel.text = _fontNamesMap[_fonts[indexPath.row]];
         
         if (([fontPref isEqualToString:ALPSystem] && indexPath.row == 0)
             || ([fontPref isEqualToString:ALPSerif] && indexPath.row == 1)
             || ([fontPref isEqualToString:ALPHelvetica] && indexPath.row == 2)
             || ([fontPref isEqualToString:ALPMerriweather] && indexPath.row == 3)
             || ([fontPref isEqualToString:ALPPlexSerif] && indexPath.row == 4)
-            || ([fontPref isEqualToString:ALPPlexSans] && indexPath.row == 5)) {
+            || ([fontPref isEqualToString:ALPPlexSans] && indexPath.row == 5)
+            || ([fontPref isEqualToString:ALPSpectral] && indexPath.row == 6)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             

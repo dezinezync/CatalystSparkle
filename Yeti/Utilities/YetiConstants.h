@@ -54,6 +54,7 @@ YETI_EXPORT ArticleLayoutPreference const ALPHelvetica;
 YETI_EXPORT ArticleLayoutPreference const ALPMerriweather;
 YETI_EXPORT ArticleLayoutPreference const ALPPlexSerif;
 YETI_EXPORT ArticleLayoutPreference const ALPPlexSans;
+YETI_EXPORT ArticleLayoutPreference const ALPSpectral;
 
 typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType const YTSubscriptionMonthly;

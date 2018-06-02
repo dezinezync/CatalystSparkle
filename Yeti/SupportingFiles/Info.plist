@@ -114,6 +114,16 @@
 		<string>IBMPlexSans-SemiBoldItalic.ttf</string>
 		<string>IBMPlexSans-Thin.ttf</string>
 		<string>IBMPlexSans-ThinItalic.ttf</string>
+		<string>Spectral-Bold.ttf</string>
+		<string>Spectral-BoldItalic.ttf</string>
+		<string>Spectral-Italic.ttf</string>
+		<string>Spectral-Light.ttf</string>
+		<string>Spectral-LightItalic.ttf</string>
+		<string>Spectral-Medium.ttf</string>
+		<string>Spectral-MediumItalic.ttf</string>
+		<string>Spectral-Regular.ttf</string>
+		<string>Spectral-SemiBold.ttf</string>
+		<string>Spectral-SemiBoldItalic.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -53,6 +53,26 @@
 		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
+		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
+		F047F4E320C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
+		F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */; };
+		F047F4E720C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */; };
+		F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D720C25FB900626968 /* Spectral-Bold.ttf */; };
+		F047F4E920C25FB900626968 /* Spectral-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D720C25FB900626968 /* Spectral-Bold.ttf */; };
+		F047F4EA20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D820C25FB900626968 /* Spectral-SemiBoldItalic.ttf */; };
+		F047F4EB20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D820C25FB900626968 /* Spectral-SemiBoldItalic.ttf */; };
+		F047F4EE20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DA20C25FB900626968 /* Spectral-BoldItalic.ttf */; };
+		F047F4EF20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DA20C25FB900626968 /* Spectral-BoldItalic.ttf */; };
+		F047F4F020C25FB900626968 /* Spectral-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DB20C25FB900626968 /* Spectral-Light.ttf */; };
+		F047F4F120C25FB900626968 /* Spectral-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DB20C25FB900626968 /* Spectral-Light.ttf */; };
+		F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DD20C25FB900626968 /* Spectral-Medium.ttf */; };
+		F047F4F520C25FB900626968 /* Spectral-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DD20C25FB900626968 /* Spectral-Medium.ttf */; };
+		F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */; };
+		F047F4F920C25FB900626968 /* Spectral-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */; };
+		F047F4FA20C25FB900626968 /* Spectral-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E020C25FB900626968 /* Spectral-Italic.ttf */; };
+		F047F4FB20C25FB900626968 /* Spectral-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E020C25FB900626968 /* Spectral-Italic.ttf */; };
+		F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */; };
+		F047F4FD20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */; };
 		F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
@@ -523,6 +543,16 @@
 		F03AC033205533D900FB111A /* HTMLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLUtils.m; sourceTree = "<group>"; };
 		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
 		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
+		F047F4D420C25FB800626968 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
+		F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-MediumItalic.ttf"; sourceTree = "<group>"; };
+		F047F4D720C25FB900626968 /* Spectral-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Bold.ttf"; sourceTree = "<group>"; };
+		F047F4D820C25FB900626968 /* Spectral-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		F047F4DA20C25FB900626968 /* Spectral-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-BoldItalic.ttf"; sourceTree = "<group>"; };
+		F047F4DB20C25FB900626968 /* Spectral-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Light.ttf"; sourceTree = "<group>"; };
+		F047F4DD20C25FB900626968 /* Spectral-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Medium.ttf"; sourceTree = "<group>"; };
+		F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBold.ttf"; sourceTree = "<group>"; };
+		F047F4E020C25FB900626968 /* Spectral-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Italic.ttf"; sourceTree = "<group>"; };
+		F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
 		F0519D4920848D4D00EB3FE0 /* FiltersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiltersVC.h; sourceTree = "<group>"; };
 		F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FiltersVC.m; sourceTree = "<group>"; };
 		F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterInputCell.h; sourceTree = "<group>"; };
@@ -891,6 +921,23 @@
 			path = CodeParser;
 			sourceTree = "<group>";
 		};
+		F047F4D220C25FAC00626968 /* Spectral */ = {
+			isa = PBXGroup;
+			children = (
+				F047F4D720C25FB900626968 /* Spectral-Bold.ttf */,
+				F047F4DA20C25FB900626968 /* Spectral-BoldItalic.ttf */,
+				F047F4E020C25FB900626968 /* Spectral-Italic.ttf */,
+				F047F4DB20C25FB900626968 /* Spectral-Light.ttf */,
+				F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */,
+				F047F4DD20C25FB900626968 /* Spectral-Medium.ttf */,
+				F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */,
+				F047F4D420C25FB800626968 /* Spectral-Regular.ttf */,
+				F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */,
+				F047F4D820C25FB900626968 /* Spectral-SemiBoldItalic.ttf */,
+			);
+			path = Spectral;
+			sourceTree = "<group>";
+		};
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
@@ -1218,6 +1265,7 @@
 		F0A5AE5920C197BF00CFA1D2 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				F047F4D220C25FAC00626968 /* Spectral */,
 				F0A5AE7520C19CAA00CFA1D2 /* PlexSerif */,
 				F0A5AE7420C19CA400CFA1D2 /* PlexSans */,
 				F0A5AE5B20C197DE00CFA1D2 /* Merriweather */,
@@ -1528,6 +1576,7 @@
 				F0A5AE7320C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
 				F0A5AE8720C19CB400CFA1D2 /* IBMPlexSerif-LightItalic.ttf in Resources */,
 				F069ABFD206E018F00021ABF /* highlight.pack.js in Resources */,
+				F047F4E720C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
 				F0A5AE6520C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */,
 				F069ABFE206E018F00021ABF /* LaunchScreen.storyboard in Resources */,
 				F0A5AEBF20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
@@ -1536,9 +1585,12 @@
 				F0A5AE8D20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0A5AE9320C19CB400CFA1D2 /* IBMPlexSerif-BoldItalic.ttf in Resources */,
 				F0A5AE9120C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
+				F047F4E320C25FB900626968 /* Spectral-Regular.ttf in Resources */,
 				F0A5AE8B20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AEB120C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
+				F047F4EF20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */,
 				F0A5AEB720C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
+				F047F4E920C25FB900626968 /* Spectral-Bold.ttf in Resources */,
 				F069AC00206E018F00021ABF /* GalleryCell.xib in Resources */,
 				F0A5AE9D20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
 				F0A5AE9920C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
@@ -1548,18 +1600,22 @@
 				F069AC02206E018F00021ABF /* Tweet.xib in Resources */,
 				F0A5AE8920C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
 				F0A5AE9F20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
+				F047F4EB20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */,
 				F069AC03206E018F00021ABF /* ArticleHelperView.xib in Resources */,
 				F0A5AEAD20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
+				F047F4F520C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEC320C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
 				F069AC04206E018F00021ABF /* FeedsCell.xib in Resources */,
 				F0A5AEBD20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				F0A5AE6B20C197EF00CFA1D2 /* Merriweather-Light.ttf in Resources */,
 				F0869B5E2099CF0000A5D723 /* light.json in Resources */,
 				F0202BE420A41AD700FBC3E1 /* FilterInputCell.xib in Resources */,
+				F047F4F920C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0A5AE6920C197EF00CFA1D2 /* Merriweather-Regular.ttf in Resources */,
 				F0A5AE6F20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0A5AEB920C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
 				F0A5AE9B20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
+				F047F4FD20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
 				F0A5AE9720C19CB400CFA1D2 /* IBMPlexSerif-Regular.ttf in Resources */,
 				F0A5AEB320C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
@@ -1574,6 +1630,7 @@
 				F0A5AEB520C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F069AC0C206E018F00021ABF /* attributions.html in Resources */,
 				F0A5AEC120C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */,
+				F047F4FB20C25FB900626968 /* Spectral-Italic.ttf in Resources */,
 				F0A5AE9520C19CB400CFA1D2 /* IBMPlexSerif-SemiBold.ttf in Resources */,
 				F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */,
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
@@ -1582,6 +1639,7 @@
 				F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
 				F0202BE020A41A9A00FBC3E1 /* FeedHeaderView.xib in Resources */,
+				F047F4F120C25FB900626968 /* Spectral-Light.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1589,6 +1647,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F047F4FA20C25FB900626968 /* Spectral-Italic.ttf in Resources */,
 				F0A5AE6A20C197EF00CFA1D2 /* Merriweather-Light.ttf in Resources */,
 				F0A5AE7220C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
 				F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */,
@@ -1608,6 +1667,7 @@
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
 				F0469DF420A0528000163C4E /* black.css in Resources */,
 				F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
+				F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
 				F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */,
 				F0A5AE9820C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
@@ -1632,18 +1692,25 @@
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
+				F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
+				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
+				F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */,
 				F0A5AE8820C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
+				F047F4F020C25FB900626968 /* Spectral-Light.ttf in Resources */,
+				F047F4EE20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */,
 				F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */,
 				F0A5AEC020C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */,
 				F078B639206637B40048DBEA /* EmptyVC.xib in Resources */,
 				F0869B5D2099CF0000A5D723 /* light.json in Resources */,
+				F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
+				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
@@ -1652,6 +1719,7 @@
 				F0A5AE6620C197EF00CFA1D2 /* Merriweather-BoldItalic.ttf in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 				F0A5AE6820C197EF00CFA1D2 /* Merriweather-Regular.ttf in Resources */,
+				F047F4EA20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */,
 				F0A5AE8620C19CB400CFA1D2 /* IBMPlexSerif-LightItalic.ttf in Resources */,
 				F09E96492055342000E61681 /* light.css in Resources */,
 			);

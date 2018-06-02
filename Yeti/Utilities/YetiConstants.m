@@ -51,6 +51,7 @@ ArticleLayoutPreference const ALPHelvetica = @"articlelayout.helveticaNeue";
 ArticleLayoutPreference const ALPMerriweather = @"articlelayout.merriweather";
 ArticleLayoutPreference const ALPPlexSerif = @"articlelayout.IBMPlexSerif";
 ArticleLayoutPreference const ALPPlexSans = @"articlelayout.IBMPlexSans";
+ArticleLayoutPreference const ALPSpectral = @"articlelayout.Spectral";
 
 #pragma mark - Subscription
 
