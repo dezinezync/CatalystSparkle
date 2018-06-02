@@ -42,11 +42,11 @@
         strongify(self);
         
         if (!read) {
-            self.unread = [self.unread arrayByAddingObjectsFromArray:items];
+            MyFeedsManager.unread = [self.unread arrayByAddingObjectsFromArray:items];
         }
         else {
             
-            self.unread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            MyFeedsManager.unread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                 return ![articles containsObject:obj.identifier];
             }];
         }
