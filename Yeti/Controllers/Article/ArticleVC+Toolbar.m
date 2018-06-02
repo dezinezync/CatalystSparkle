@@ -78,7 +78,7 @@
     NSMutableArray <UIViewController *> *controllers = self.navigationController.viewControllers.mutableCopy;
     
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-    
+    vc2.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     __unused ArticleVC *vc = (ArticleVC *)[controllers lastObject];
     
     controllers = @[vc2].mutableCopy;

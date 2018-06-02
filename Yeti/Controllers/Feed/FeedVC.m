@@ -280,7 +280,11 @@
         
         strongify(self);
         
-        [MyFeedsManager articles:(NSArray <FeedItem *> *)self.DS.data markAsRead:YES];
+        NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            return !obj.isRead;
+        }];
+        
+        [MyFeedsManager articles:unread markAsRead:YES];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];

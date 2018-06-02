@@ -94,7 +94,7 @@ AppDelegate *MyAppDelegate = nil;
     
     if (self.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:vc2];
-        
+        vc2.navigationItem.leftBarButtonItem = splitVC.displayModeButtonItem;
         splitVC.viewControllers = @[nav1, nav2];
     }
     else {
