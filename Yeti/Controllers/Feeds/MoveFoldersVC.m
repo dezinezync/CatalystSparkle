@@ -95,7 +95,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     if (indexPath.section == 0) {
         cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
         
-        if (self.feed.folderID != nil) {
+        if (self.feed.folderID == nil) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         }
         else {
