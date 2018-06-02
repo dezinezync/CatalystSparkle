@@ -12,6 +12,7 @@
 #import <DZKit/AlertManager.h>
 
 #import "FeedsManager.h"
+#import "YTNavigationController.h"
 
 @interface NewFolderVC ()
 
@@ -25,7 +26,7 @@
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
     nav.transitioningDelegate = vc.newVCTD;
     nav.modalPresentationStyle = UIModalPresentationCustom;
     
@@ -37,7 +38,7 @@
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     vc.folder = folder;
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
     nav.transitioningDelegate = vc.newVCTD;
     nav.modalPresentationStyle = UIModalPresentationCustom;
     

@@ -195,6 +195,8 @@
 		F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
 		F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */; };
 		F06B766020C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */; };
+		F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
+		F06B766520C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -583,6 +585,8 @@
 		F069AC19206E060C00021ABF /* CheckWifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckWifi.m; sourceTree = "<group>"; };
 		F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Keyboard.h"; sourceTree = "<group>"; };
 		F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Keyboard.m"; sourceTree = "<group>"; };
+		F06B766220C27CD000FBCDE7 /* YTNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTNavigationController.h; sourceTree = "<group>"; };
+		F06B766320C27CD000FBCDE7 /* YTNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTNavigationController.m; sourceTree = "<group>"; };
 		F070C2D91FBABC3500912CCF /* Yeti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yeti.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F070C2DC1FBABC3500912CCF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F070C2DD1FBABC3600912CCF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -1088,6 +1092,8 @@
 				F078B635206637B40048DBEA /* EmptyVC.h */,
 				F078B636206637B40048DBEA /* EmptyVC.m */,
 				F078B637206637B40048DBEA /* EmptyVC.xib */,
+				F06B766220C27CD000FBCDE7 /* YTNavigationController.h */,
+				F06B766320C27CD000FBCDE7 /* YTNavigationController.m */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1857,6 +1863,7 @@
 				F069ABB3206E018F00021ABF /* SearchResults.m in Sources */,
 				F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */,
 				F069ABB4206E018F00021ABF /* YetiConstants.m in Sources */,
+				F06B766520C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F069ABB5206E018F00021ABF /* DTConstants.m in Sources */,
 				F069ABB6206E018F00021ABF /* SettingsVC.m in Sources */,
 				F069ABB7206E018F00021ABF /* PaddedTextField.m in Sources */,
@@ -1992,6 +1999,7 @@
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
+				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
 				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,

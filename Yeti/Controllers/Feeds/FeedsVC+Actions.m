@@ -17,6 +17,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 #import "NewFolderVC.h"
+#import "YTNavigationController.h"
 
 @implementation FeedsVC (Actions)
 
@@ -104,7 +105,7 @@
 {
     SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
     
-    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+    YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:settingsVC];
     navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];

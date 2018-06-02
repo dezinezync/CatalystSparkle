@@ -7,6 +7,7 @@
 //
 
 #import "FeedsVC+Keyboard.h"
+#import "FeedsVC+Actions.h"
 
 @implementation FeedsVC (Keyboard)
 
@@ -14,15 +15,27 @@
     return YES;
 }
 
-- (BOOL)canResignFirstResponder {
-    return YES;
-}
-
 - (NSArray <UIKeyCommand *> *)keyCommands {
     
-    NSMutableArray *commands = @[].mutableCopy;
+    // New Feed
+    UIKeyCommand *newFeed = [UIKeyCommand keyCommandWithInput:@"N" modifierFlags:UIKeyModifierCommand action:@selector(didTapAdd:) discoverabilityTitle:@"New Feed"];
+    UIKeyCommand *newFolder = [UIKeyCommand keyCommandWithInput:@"F" modifierFlags:UIKeyModifierCommand action:@selector(didTapAddFolder:) discoverabilityTitle:@"New Folder"];
+    UIKeyCommand *settings = [UIKeyCommand keyCommandWithInput:@"," modifierFlags:UIKeyModifierCommand action:@selector(didTapSettings) discoverabilityTitle:@"Settings"];
     
-    return commands;
+    UIKeyCommand *upItem = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(didTapPrev) discoverabilityTitle:@"Prev Item"];
+    UIKeyCommand *downItem = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(didTapNext) discoverabilityTitle:@"Next Item"];
+    
+    return @[newFeed, newFolder, settings, upItem, downItem];
+    
+}
+
+- (void)didTapPrev {
+    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+    
+}
+
+- (void)didTapNext {
+    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
     
 }
 

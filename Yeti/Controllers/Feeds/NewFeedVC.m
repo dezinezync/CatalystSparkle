@@ -16,6 +16,8 @@
 #import "PaddedLabel.h"
 #import "YetiThemeKit.h"
 
+#import "YTNavigationController.h"
+
 @interface NewFeedVC () <UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
@@ -33,7 +35,7 @@
 {
     NewFeedVC *vc = [[NewFeedVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
     nav.transitioningDelegate = vc.newVCTD;
     nav.modalPresentationStyle = UIModalPresentationCustom;
     nav.navigationBar.shadowImage = [UIImage new];

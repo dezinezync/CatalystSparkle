@@ -13,6 +13,7 @@
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
+#import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>
 #import <SafariServices/SafariServices.h>
@@ -22,7 +23,7 @@
 - (void)popToRoot
 {
     UISplitViewController *splitVC = (UISplitViewController *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
-    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] firstObject];
+    YTNavigationController *nav = (YTNavigationController *)[[splitVC viewControllers] firstObject];
     
     if ([[nav viewControllers] count] > 1) {
         asyncMain(^{
@@ -218,7 +219,7 @@
     __block NSUInteger folderIndex = NSNotFound;
     
     // get the primary navigation controller
-    UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
     
     if ([[nav topViewController] isKindOfClass:FeedVC.class]) {
         // check if the current topVC is the same feed
@@ -312,7 +313,7 @@
     if (articleID != nil)
         return;
     
-    UINavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
     
     FeedVC *feedVC = (FeedVC *)[nav topViewController];
     

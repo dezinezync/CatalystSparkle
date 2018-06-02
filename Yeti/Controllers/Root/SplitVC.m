@@ -10,6 +10,7 @@
 #import "YetiConstants.h"
 
 #import "YetiThemeKit.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @interface SplitVC ()
 
