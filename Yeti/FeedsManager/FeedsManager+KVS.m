@@ -51,16 +51,6 @@
             }];
         }
         
-//        asyncMain(^{
-//            for (NSNumber *feedID in feeds.allObjects) { @autoreleasepool {
-//                [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:feedID userInfo:@{@"read": @(read)}];
-//            } }
-//
-//            strongify(self);
-//
-//            self.totalUnread = MAX(0, self.totalUnread - items.count);
-//        });
-        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         // silently handle
@@ -148,22 +138,10 @@
     NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-//    // Clear everything regardless of actual key:
-//    for (NSString *key in store.dictionaryRepresentation.allKeys)
-//    {
-//        [store removeObjectForKey:key];
-//    }
-//
-//    // clear all local defaults
-//    NSString *bundleID = [NSBundle.mainBundle bundleIdentifier];
-//    [defaults removePersistentDomainForName:bundleID];
-    
     if (store) {
         [[NSNotificationCenter defaultCenter] addObserver:MyFeedsManager selector: @selector (storeDidChange:) name: NSUbiquitousKeyValueStoreDidChangeExternallyNotification object:store];
         [NSNotificationCenter.defaultCenter addObserver:MyFeedsManager selector:@selector(defaultsDidChange:) name:NSUserDefaultsDidChangeNotification object:defaults];
     }
-    
-//    [defaults synchronize];
     
 }
 
