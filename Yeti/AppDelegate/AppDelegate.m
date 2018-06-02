@@ -38,7 +38,7 @@ AppDelegate *MyAppDelegate = nil;
         MyAppDelegate = self;
     });
     
-    [self yt_log_fontnames];
+//    [self yt_log_fontnames];
     
     // Override point for customization after application launch.
     [ADZLogger initialize];
