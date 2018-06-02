@@ -89,6 +89,7 @@
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
+    self.view.backgroundColor = theme.articleBackgroundColor;
     self.scrollView.backgroundColor = theme.articleBackgroundColor;
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;

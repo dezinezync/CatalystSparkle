@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -15,16 +15,16 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="88"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" placeholderIntrinsicWidth="375" placeholderIntrinsicHeight="88" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="zYp-mX-bwR">
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" placeholderIntrinsicWidth="375" placeholderIntrinsicHeight="88" layoutMarginsFollowReadableWidth="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="zYp-mX-bwR">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </tableView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="zYp-mX-bwR" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="GKj-Ur-bgl"/>
+                <constraint firstItem="zYp-mX-bwR" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="GKj-Ur-bgl"/>
                 <constraint firstAttribute="height" secondItem="zYp-mX-bwR" secondAttribute="height" constant="-12" id="LVY-LY-Zi2"/>
-                <constraint firstItem="zYp-mX-bwR" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="rvb-Mi-cB6"/>
+                <constraint firstItem="zYp-mX-bwR" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="rvb-Mi-cB6"/>
                 <constraint firstItem="zYp-mX-bwR" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="wg7-sw-tXP"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
