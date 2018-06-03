@@ -10,6 +10,7 @@
 #import "FeedsHeaderView.h"
 
 @class Feed;
+@class DZBasicDatasource;
 
 @interface FeedsVC : UITableViewController {
     BOOL _refreshing;
@@ -17,9 +18,12 @@
     BOOL _noPreSetup;
     
     NSDate *_sinceDate;
+    NSIndexPath *_highlightedRow;
 }
 
 @property (nonatomic, weak) FeedsHeaderView *headerView;
+
+@property (nonatomic, strong, readonly) DZBasicDatasource *DS;
 
 @property (nonatomic, copy) NSDate *sinceDate;
 

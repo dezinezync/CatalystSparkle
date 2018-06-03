@@ -46,9 +46,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.indentationWidth = 28.f;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.faviconView.backgroundColor = theme.cellColor;
-    self.titleLabel.backgroundColor = theme.cellColor;
+    self.backgroundColor = theme.cellColor;
+
     self.titleLabel.textColor = theme.titleColor;
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
@@ -88,7 +87,31 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     }
 }
 
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    [super setHighlighted:highlighted animated:animated];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    NSTimeInterval duration = animated ? 0.2 : 0;
+    
+    weakify(self);
+    [UIView animateWithDuration:duration animations:^{
+        strongify(self);
+        
+        self.backgroundColor = highlighted ? [theme.tintColor colorWithAlphaComponent:0.2f] : theme.cellColor;
+        self.countLabel.backgroundColor = theme.unreadBadgeColor;
+    }];
+}
+
 #pragma mark - Setter
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    [super setBackgroundColor:backgroundColor];
+    
+    self.contentView.backgroundColor = backgroundColor;
+    for (UIView *subview in self.contentView.subviews) {
+        subview.backgroundColor = backgroundColor;
+    }
+}
 
 - (void)setObject:(id)object {
     _object = object;
