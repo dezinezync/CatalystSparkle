@@ -47,13 +47,10 @@
     // first successful image load.
     BOOL _unbounded;
     
-    NSInteger _compundedPaging;
+    NSInteger _compoundedPaging;
 }
 
 @property (nonatomic, assign) CGFloat maxHeight;
-
-@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property (weak, nonatomic) IBOutlet UIPageControl *pageControl;
 
 @property (nonatomic, strong) NSPointerArray *imageRefs;
 
@@ -159,7 +156,11 @@
         suggestedMaxHeight = ceil(MAX(suggestedMaxHeight, height));
     } }
     
-    self.maxHeight = suggestedMaxHeight;
+    if (self.maxScreenHeight == 0) {
+        self.maxScreenHeight = suggestedMaxHeight;
+    }
+    
+    self.maxHeight = MIN(self.maxScreenHeight, suggestedMaxHeight);
     
     if (self.maxHeight > 0.f) {
         [self setupHeight];
@@ -181,8 +182,8 @@
     }
     
     if (([self.pageControl sizeForNumberOfPages:images.count].width - LayoutPadding) > width) {
-        _compundedPaging = 5;
-        self.pageControl.numberOfPages = floor(images.count / _compundedPaging);
+        _compoundedPaging = 5;
+        self.pageControl.numberOfPages = floor(images.count / _compoundedPaging);
     }
     else {
         self.pageControl.numberOfPages = images.count;
@@ -287,8 +288,8 @@
     CGPoint point = scrollView.contentOffset;
     
     // update page control
-    if (_compundedPaging) {
-        self.pageControl.currentPage = floor(ceil(point.x / scrollView.bounds.size.width) / _compundedPaging);
+    if (_compoundedPaging) {
+        self.pageControl.currentPage = floor(ceil(point.x / scrollView.bounds.size.width) / _compoundedPaging);
     }
     else {
         self.pageControl.currentPage = ceil(point.x / scrollView.bounds.size.width);
