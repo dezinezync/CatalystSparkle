@@ -102,6 +102,10 @@
         return prev || [current isKindOfClass:Gallery.class] ? current : nil;
     }];
     
+    if (![gallery isKindOfClass:Gallery.class]) {
+        return nil;
+    }
+    
     return gallery;
     
 }
