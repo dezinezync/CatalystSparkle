@@ -37,7 +37,6 @@
 
 #import <SafariServices/SafariServices.h>
 
-#import "ArticleHelperView.h"
 #import "YetiThemeKit.h"
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
@@ -56,7 +55,6 @@
 @property (nonatomic, strong) NSPointerArray *images;
 
 @property (nonatomic, strong) CodeParser *codeParser;
-@property (nonatomic, weak) ArticleHelperView *helperView;
 
 @end
 
@@ -1008,6 +1006,7 @@
     
     Gallery *gallery = [[Gallery alloc] initWithNib];
     gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
+    gallery.maxScreenHeight = self.view.bounds.size.height - (self.view.safeAreaInsets.top + self.additionalSafeAreaInsets.bottom) - 12.f - 38.f;
     
     [self.stackView addArrangedSubview:gallery];
     // set images after adding it to the superview since -[Gallery setImages:] triggers layout.

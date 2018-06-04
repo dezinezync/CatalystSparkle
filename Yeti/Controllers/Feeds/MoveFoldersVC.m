@@ -11,6 +11,7 @@
 
 #import <DZKit/AlertManager.h>
 #import "YetiThemeKit.h"
+#import "YTNavigationController.h"
 
 static NSString *const kMoveFolderCell = @"movefoldercell";
 
@@ -31,7 +32,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     MoveFoldersVC *vc = [[MoveFoldersVC alloc] initWithStyle:UITableViewStyleGrouped];
     vc.feed = feed;
     
-    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:vc];
+    YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:vc];
     
     return navVC;
 }

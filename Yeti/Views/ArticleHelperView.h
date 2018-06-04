@@ -26,4 +26,12 @@
 
 - (void)updateShadowPath;
 
+- (IBAction)didTapPreviousArticle:(UIButton *)sender;
+
+- (IBAction)didTapNextArticle:(UIButton *)sender;
+
+- (IBAction)didTapArticleTop:(UIButton *)sender;
+
+- (IBAction)didTapArticleEnd:(UIButton *)sender;
+
 @end

@@ -51,6 +51,11 @@
     if (!_UUID) {
         // check if the store already has one
         NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+        
+        if (!store) {
+            store = (NSUbiquitousKeyValueStore *)[NSUserDefaults standardUserDefaults];
+        }
+        
         NSString *UUIDString = [store stringForKey:@"YTUserID"];
         
         self.userID = @([store longLongForKey:@"userID"]);

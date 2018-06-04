@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "ArticleProvider.h"
 #import "ArticleHandler.h"
+#import "ArticleHelperView.h"
 #import "FeedItem.h"
 
 @interface ArticleVC : UIViewController <ArticleHandler> {
@@ -32,5 +33,7 @@
 @property (nonatomic, strong) UIInputView * _Nonnull searchView;
 
 @property (nonatomic, weak) id <ArticleProvider> _Nullable providerDelegate;
+
+@property (nonatomic, weak) ArticleHelperView *helperView;
 
 @end

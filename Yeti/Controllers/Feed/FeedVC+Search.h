@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC.h"
+#import "FeedVC+Keyboard.h"
 
 @interface FeedVC (Search) <UISearchResultsUpdating>
 

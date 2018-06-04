@@ -78,7 +78,7 @@
     NSMutableArray <UIViewController *> *controllers = self.navigationController.viewControllers.mutableCopy;
     
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-    
+    vc2.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     __unused ArticleVC *vc = (ArticleVC *)[controllers lastObject];
     
     controllers = @[vc2].mutableCopy;
@@ -111,6 +111,11 @@
 }
 
 - (void)didTapBookmark:(UIBarButtonItem *)button {
+    
+    if (![button respondsToSelector:@selector(setEnabled:)]) {
+        button = [self.navigationItem.rightBarButtonItems objectAtIndex:2];
+    }
+    
     button.enabled = NO;
     
     [MyFeedsManager article:self.item markAsBookmarked:(!self.item.isBookmarked) success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -125,17 +130,23 @@
         else {
             self.item.bookmarked = !self.item.bookmarked;
         }
-        
+     
         button.enabled = YES;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
         [AlertManager showGenericAlertWithTitle:@"Service Error" message:error.localizedDescription];
         
+        button.enabled = YES;
+        
     }];
 }
 
 - (void)didTapRead:(UIBarButtonItem *)button {
+    
+    if (![button respondsToSelector:@selector(setEnabled:)]) {
+        button = [self.navigationItem.rightBarButtonItems objectAtIndex:3];
+    }
     
     button.enabled = NO;
     

@@ -16,6 +16,8 @@
     NSOperation *_searchOperation;
     NSInteger _page;
     BOOL _canLoadNext;
+    
+    NSIndexPath *_highlightedRow;
 }
 
 @property (nonatomic, assign) NSNumber *loadOnReady;

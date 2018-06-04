@@ -21,6 +21,7 @@
 #import <UserNotifications/UNUserNotificationCenter.h>
 
 #import "SplitVC.h"
+#import "YTNavigationController.h"
 
 AppDelegate *MyAppDelegate = nil;
 
@@ -88,13 +89,13 @@ AppDelegate *MyAppDelegate = nil;
     FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
     
-    UINavigationController *nav1 = [[UINavigationController alloc] initWithRootViewController:vc];
+    YTNavigationController *nav1 = [[YTNavigationController alloc] initWithRootViewController:vc];
     
     SplitVC *splitVC = [[SplitVC alloc] init];
     
     if (self.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:vc2];
-        
+        YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
+        vc2.navigationItem.leftBarButtonItem = splitVC.displayModeButtonItem;
         splitVC.viewControllers = @[nav1, nav2];
     }
     else {

@@ -193,6 +193,10 @@
 		F069AC12206E018F00021ABF /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
 		F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
+		F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */; };
+		F06B766020C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */; };
+		F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
+		F06B766520C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -226,6 +230,12 @@
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
 		F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A66572055539D00BA2D9F /* UIColor+HEX.m */; };
 		F07A665B205554FF00BA2D9F /* Code.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A665A205554FF00BA2D9F /* Code.m */; };
+		F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */; };
+		F07DCA3C20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */; };
+		F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */; };
+		F07DCA4120C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */; };
+		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
+		F07DCA4520C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
 		F0869B592099CE6600A5D723 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F0869B582099CE6600A5D723 /* YetiTheme.m */; };
 		F0869B5A2099CE9000A5D723 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F0869B582099CE6600A5D723 /* YetiTheme.m */; };
 		F0869B5B2099CE9000A5D723 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F0869B582099CE6600A5D723 /* YetiTheme.m */; };
@@ -579,6 +589,10 @@
 		F069AC16206E018F00021ABF /* Yeti Debug Layout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Yeti Debug Layout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F069AC18206E05FC00021ABF /* CheckWifi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckWifi.h; sourceTree = "<group>"; };
 		F069AC19206E060C00021ABF /* CheckWifi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckWifi.m; sourceTree = "<group>"; };
+		F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Keyboard.h"; sourceTree = "<group>"; };
+		F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Keyboard.m"; sourceTree = "<group>"; };
+		F06B766220C27CD000FBCDE7 /* YTNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTNavigationController.h; sourceTree = "<group>"; };
+		F06B766320C27CD000FBCDE7 /* YTNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTNavigationController.m; sourceTree = "<group>"; };
 		F070C2D91FBABC3500912CCF /* Yeti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Yeti.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F070C2DC1FBABC3500912CCF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F070C2DD1FBABC3600912CCF /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -636,6 +650,12 @@
 		F07A66572055539D00BA2D9F /* UIColor+HEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HEX.m"; sourceTree = "<group>"; };
 		F07A6659205554FF00BA2D9F /* Code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Code.h; sourceTree = "<group>"; };
 		F07A665A205554FF00BA2D9F /* Code.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Code.m; sourceTree = "<group>"; };
+		F07DCA3920C517D20068ED51 /* UITableViewController+KeyboardScroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UITableViewController+KeyboardScroll.h"; path = "Yeti/Categories/UITableViewController+KeyboardScroll.h"; sourceTree = SOURCE_ROOT; };
+		F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "UITableViewController+KeyboardScroll.m"; path = "Yeti/Categories/UITableViewController+KeyboardScroll.m"; sourceTree = SOURCE_ROOT; };
+		F07DCA3E20C51AF30068ED51 /* FeedVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Keyboard.h"; sourceTree = "<group>"; };
+		F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Keyboard.m"; sourceTree = "<group>"; };
+		F07DCA4220C51B550068ED51 /* ArticleVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Keyboard.h"; sourceTree = "<group>"; };
+		F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Keyboard.m"; sourceTree = "<group>"; };
 		F0869B572099CE6600A5D723 /* YetiTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YetiTheme.h; sourceTree = "<group>"; };
 		F0869B582099CE6600A5D723 /* YetiTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiTheme.m; sourceTree = "<group>"; };
 		F0869B5C2099CF0000A5D723 /* light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = light.json; sourceTree = "<group>"; };
@@ -750,6 +770,7 @@
 		F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodGroup.m; sourceTree = "<group>"; };
 		F0D3003D1FE2633E0040D10D /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DateTools.m"; sourceTree = "<group>"; };
+		F0DD418520C3BC5B00ACE58F /* UITableView+APL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITableView+APL.h"; sourceTree = "<group>"; };
 		F0E06097205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+GTMNSStringHTMLAdditions.h"; sourceTree = "<group>"; };
 		F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+GTMNSStringHTMLAdditions.m"; sourceTree = "<group>"; };
 		F0E0609A205A4423003FFD18 /* NSString+HTML.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
@@ -874,6 +895,8 @@
 				F02459D020591224002906C3 /* FeedSearchResults.m */,
 				F02459D22059135E002906C3 /* FeedVC+Search.h */,
 				F02459D32059135E002906C3 /* FeedVC+Search.m */,
+				F07DCA3E20C51AF30068ED51 /* FeedVC+Keyboard.h */,
+				F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */,
 				F023E5592076900E00FF513C /* CustomFeedVC.h */,
 				F023E55A2076900E00FF513C /* CustomFeedVC.m */,
 				F05DC07820832DB5009029E1 /* AuthorBioVC.h */,
@@ -893,6 +916,8 @@
 				F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */,
 				F0D030A4205FC4DD00D46B34 /* ArticleProvider.h */,
 				F0A4798020639EB000A20195 /* ArticleHandler.h */,
+				F07DCA4220C51B550068ED51 /* ArticleVC+Keyboard.h */,
+				F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -1045,6 +1070,9 @@
 				F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */,
 				F0E0609A205A4423003FFD18 /* NSString+HTML.h */,
 				F0E0609B205A4423003FFD18 /* NSString+HTML.m */,
+				F0DD418520C3BC5B00ACE58F /* UITableView+APL.h */,
+				F07DCA3920C517D20068ED51 /* UITableViewController+KeyboardScroll.h */,
+				F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1084,6 +1112,8 @@
 				F078B635206637B40048DBEA /* EmptyVC.h */,
 				F078B636206637B40048DBEA /* EmptyVC.m */,
 				F078B637206637B40048DBEA /* EmptyVC.xib */,
+				F06B766220C27CD000FBCDE7 /* YTNavigationController.h */,
+				F06B766320C27CD000FBCDE7 /* YTNavigationController.m */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1097,6 +1127,8 @@
 				F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */,
 				F02459C62058FFF1002906C3 /* FeedsVC+Search.h */,
 				F02459C72058FFF1002906C3 /* FeedsVC+Search.m */,
+				F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */,
+				F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */,
 				F02459CC20590F03002906C3 /* FeedsSearchResults.h */,
 				F02459CD20590F03002906C3 /* FeedsSearchResults.m */,
 				F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */,
@@ -1851,6 +1883,7 @@
 				F069ABB3206E018F00021ABF /* SearchResults.m in Sources */,
 				F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */,
 				F069ABB4206E018F00021ABF /* YetiConstants.m in Sources */,
+				F06B766520C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F069ABB5206E018F00021ABF /* DTConstants.m in Sources */,
 				F069ABB6206E018F00021ABF /* SettingsVC.m in Sources */,
 				F069ABB7206E018F00021ABF /* PaddedTextField.m in Sources */,
@@ -1880,8 +1913,11 @@
 				F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */,
 				F0CCD21A2098923D00920AE4 /* SplitVC.m in Sources */,
 				F069ABCB206E018F00021ABF /* AddFeedCell.m in Sources */,
+				F07DCA4520C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F069ABCC206E018F00021ABF /* DTError.m in Sources */,
+				F07DCA3C20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F069ABCD206E018F00021ABF /* FeedsVC.m in Sources */,
+				F06B766020C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F069ABCE206E018F00021ABF /* GalleryCell.m in Sources */,
 				F099466620AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F069ABCF206E018F00021ABF /* DTTimePeriod.m in Sources */,
@@ -1916,6 +1952,7 @@
 				F069ABE5206E018F00021ABF /* SettingsCell.m in Sources */,
 				F069ABE6206E018F00021ABF /* Feed.m in Sources */,
 				F069ABE7206E018F00021ABF /* Heading.m in Sources */,
+				F07DCA4120C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */,
 				F069ABE8206E018F00021ABF /* Content.m in Sources */,
 				F069ABE9206E018F00021ABF /* Paragraph.m in Sources */,
 				F0202BDE20A41A8D00FBC3E1 /* CustomFeedVC.m in Sources */,
@@ -1936,6 +1973,7 @@
 				F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */,
 				F08808A3206B967A00ECE1E6 /* TweetImage.m in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
+				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F02459D120591224002906C3 /* FeedSearchResults.m in Sources */,
@@ -1947,8 +1985,10 @@
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
+				F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
+				F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
@@ -1984,6 +2024,7 @@
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
+				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
 				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,
@@ -2016,6 +2057,7 @@
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
+				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,
 				F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */,

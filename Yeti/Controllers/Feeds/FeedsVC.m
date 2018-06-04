@@ -23,7 +23,7 @@
 
 @interface FeedsVC () <DZDatasource>
 
-@property (nonatomic, strong) DZBasicDatasource *DS;
+@property (nonatomic, strong, readwrite) DZBasicDatasource *DS;
 //@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 
 @end
@@ -342,6 +342,8 @@
         });
         return;
     }
+    
+    self->_highlightedRow = nil;
     
     // ensures search bar does not dismiss on refresh or first load
     @try {

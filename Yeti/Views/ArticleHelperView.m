@@ -79,6 +79,10 @@
 
 - (IBAction)didTapPreviousArticle:(UIButton *)sender {
     
+    if (![sender respondsToSelector:@selector(setEnabled:)]) {
+        sender = [self.stackView.arrangedSubviews objectAtIndex:1];
+    }
+    
     if (!self.providerDelegate) {
         sender.enabled = NO;
         return;
@@ -94,6 +98,10 @@
 }
 
 - (IBAction)didTapNextArticle:(UIButton *)sender {
+    
+    if (![sender respondsToSelector:@selector(setEnabled:)]) {
+        sender = [self.stackView.arrangedSubviews objectAtIndex:0];
+    }
     
     if (!self.providerDelegate) {
         sender.enabled = NO;
@@ -111,6 +119,10 @@
 
 - (IBAction)didTapArticleTop:(UIButton *)sender {
     
+    if (![sender respondsToSelector:@selector(setEnabled:)]) {
+        sender = [self.stackView.arrangedSubviews objectAtIndex:2];
+    }
+    
     UIScrollView *scrollView = (UIScrollView *)[[self.superview subviews] firstObject];
 //    CGSize contentSize = [scrollView contentSize];
     
@@ -124,6 +136,10 @@
 }
 
 - (IBAction)didTapArticleEnd:(UIButton *)sender {
+    
+    if (![sender respondsToSelector:@selector(setEnabled:)]) {
+        sender = [self.stackView.arrangedSubviews objectAtIndex:3];
+    }
     
     UIScrollView *scrollView = (UIScrollView *)[[self.superview subviews] firstObject];
     CGSize contentSize = [scrollView contentSize];
