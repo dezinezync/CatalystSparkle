@@ -366,9 +366,7 @@
     self.images = [NSPointerArray weakObjectsPointerArray];
     [self setupToolbar:self.traitCollection];
     
-#ifdef DEBUG
     NSDate *start = NSDate.date;
-#endif
     
     if (self.item.content && self.item.content.count) {
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
@@ -434,10 +432,8 @@
     });
     
     self->_last = nil;
-    
-#ifdef DEBUG
+
     DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
-#endif
     
     asyncMain(^{
         self.stackView.hidden = NO;
