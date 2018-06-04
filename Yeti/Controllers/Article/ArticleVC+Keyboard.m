@@ -55,7 +55,7 @@
     CGSize maxSize = scrollView.contentSize;
     
     CGPoint targetOffset = currentOffset;
-    targetOffset.y = MIN(targetOffset.y - 150, maxSize.height - scrollView.bounds.size.height);
+    targetOffset.y = MAX(targetOffset.y - 150, -self.view.safeAreaInsets.top + 20.f);
     
     [scrollView setContentOffset:targetOffset animated:YES];
 }

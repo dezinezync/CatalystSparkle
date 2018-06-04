@@ -109,7 +109,21 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.contentView.backgroundColor = backgroundColor;
     for (UIView *subview in self.contentView.subviews) {
-        subview.backgroundColor = backgroundColor;
+        if ([subview isKindOfClass:UIStackView.class]) {
+            UIColor *color = backgroundColor;
+            CGFloat alpha;
+            
+            [color getRed:nil green:nil blue:nil alpha:&alpha];
+            if (alpha < 1.f)
+                color = [UIColor clearColor];
+            
+            [[(UIStackView *)subview arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.backgroundColor = color;
+            }];
+        }
+        else {
+            subview.backgroundColor = backgroundColor;
+        }
     }
 }
 
