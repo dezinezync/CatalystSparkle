@@ -52,6 +52,9 @@ AppDelegate *MyAppDelegate = nil;
         [application registerForRemoteNotifications];
     });
     
+    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
+    DDLogDebug(@"EX:%@", data);
+    
     [self setupStoreManager];
     
     return [super application:application didFinishLaunchingWithOptions:launchOptions];

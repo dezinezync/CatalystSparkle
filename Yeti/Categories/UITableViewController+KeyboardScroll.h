@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UITableView+APL.h"
 
 @interface UITableViewController (KeyboardScroll)
 
