@@ -7,8 +7,11 @@
 //
 
 #import "OPMLVC.h"
+#import "FeedsManager.h"
 #import "YetiThemeKit.h"
+
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <DZNetworking/DZUploadSession.h>
 
 @interface OPMLVC () <UIDocumentPickerDelegate> {
     BOOL _hasSetup;
@@ -35,6 +38,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     // Do any additional setup after loading the view from its nib.
     self.detailsView.layer.cornerRadius = 18.f;
     self.detailsView.clipsToBounds = YES;
@@ -43,6 +47,8 @@
     self.ioView.layer.cornerRadius = 18.f;
     self.ioView.clipsToBounds = YES;
     self.ioView.hidden = YES;
+    
+    [self.ioDoneButton addTarget:self action:@selector(didTapCancel:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -51,6 +57,9 @@
     if (!_hasSetup) {
         self.state = OPMLStateDefault;
         _hasSetup = YES;
+    }
+    else if (self.state == OPMLStateExport) {
+        [self didTapCancel:nil];
     }
 }
 
@@ -83,7 +92,7 @@
         
         UIView *view = self.detailsView.isHidden ? self.ioView : self.detailsView;
         
-        [UIView animateWithDuration:(duration * 0.75) animations:^{
+        [UIView animateWithDuration:(duration/2) animations:^{
             view.transform = CGAffineTransformMakeTranslation(0, view.bounds.size.height + 24.f);
         }];
         
@@ -173,9 +182,16 @@
     
     [self presentViewController:importVC animated:YES completion:nil];
     
+    self.state = OPMLStateImport;
+    
 }
 
 - (IBAction)didTapExport:(UIButton *)sender {
+    
+    self.state = OPMLStateExport;
+    
+    [self downloadFile];
+    
 }
 
 - (IBAction)didTapCancel:(UIButton *)sender {
@@ -196,8 +212,124 @@
     if (!urls.count)
         return;
     
+    if (self.state == OPMLStateExport)
+        return;
+    
     self.importURL = [urls firstObject];
-    self.state = OPMLStateImport;
+    
+    [self uploadFile];
+    
+}
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    
+    if (!self.ioView.isHidden) {
+        self.ioDoneButton.enabled = YES;
+    }
+    
+}
+
+#pragma mark - Network File IO
+
+- (void)downloadFile {
+    
+    weakify(self);
+    
+    [MyFeedsManager getOPMLWithSuccess:^(NSString *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        asyncMain(^{
+            self.ioProgressView.progress = 0.5f;
+        });
+        
+        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:@"elytra-opml.xml"];
+        
+        NSURL *fileURL = [NSURL fileURLWithPath:path];
+        
+        NSError *error = nil;
+        
+        if (![responseObject writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+            [AlertManager showGenericAlertWithTitle:@"Write Error" message:error.localizedDescription fromVC:self];
+            return;
+        }
+        
+        asyncMain(^{
+            self.ioProgressView.progress = 0.75f;
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            self.ioProgressView.progress = 1.f;
+            
+            UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initWithURLs:@[fileURL] inMode:UIDocumentPickerModeMoveToService];
+            
+            [self presentViewController:exportVC animated:YES completion:nil];
+            
+            self.ioDoneButton.enabled = YES;
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        strongify(self);
+        
+        [AlertManager showGenericAlertWithTitle:@"An error occurred" message:error.localizedDescription fromVC:self];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.ioDoneButton.enabled = YES;
+        });
+        
+    }];
+    
+}
+
+- (void)uploadFile {
+    
+    if (!self.importURL)
+        return;
+    
+    self.ioDoneButton.enabled = NO;
+    
+    NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
+#ifndef DEBUG
+    url = @"https://api.elytra.app/user/opml";
+#endif
+    
+    url = [url stringByAppendingFormat:@"?userID=%@", MyFeedsManager.userID];
+    
+    weakify(self);
+    
+    __unused NSURLSessionTask *task = [[DZUploadSession shared] UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.ioSubtitleLabel.text = @"Uploaded. Please refresh your feeds to update your subscriptions on this device.";
+            [self.ioSubtitleLabel sizeToFit];
+            
+            self.ioDoneButton.enabled = YES;
+            self.ioProgressView.progress = 1.f;
+        });
+        
+    } progress:^(double completed, NSProgress *progress) {
+        
+        strongify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.ioProgressView.progress = completed;
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        [AlertManager showGenericAlertWithTitle:@"An error occurred" message:error.localizedDescription fromVC:self];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.ioDoneButton.enabled = YES;
+        });
+        
+    }];
     
 }
 

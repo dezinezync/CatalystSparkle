@@ -114,6 +114,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
+- (void)getOPMLWithSuccess:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
 #ifndef SHARE_EXTENSION
 
 #pragma mark - <YTUserDelegate>
