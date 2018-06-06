@@ -291,6 +291,7 @@
     self.ioDoneButton.enabled = NO;
     
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
+    url = @"https://api.elytra.app/user/opml";
 #ifndef DEBUG
     url = @"https://api.elytra.app/user/opml";
 #endif
