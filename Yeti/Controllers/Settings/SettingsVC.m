@@ -15,6 +15,7 @@
 #import "ExternalAppsVC.h"
 #import "FiltersVC.h"
 #import "ThemeVC.h"
+#import "OPMLVC.h"
 
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
@@ -121,7 +122,7 @@
             return 2;
             break;
         default:
-            return 5;
+            return 6;
             break;
     }
 }
@@ -180,12 +181,17 @@
                 case 3:
                     cell.textLabel.text = @"External Apps";
                     break;
-                default:
+                case 4:
                     cell.textLabel.text = @"Product Links";
+                    break;
+                case 5:
+                    cell.textLabel.text = @"Import/Export OPML";
+                    break;
+                default:
                     break;
             }
             
-            if (indexPath.row != 1) {
+            if (indexPath.row != 1 && indexPath.row != 5) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             else {
@@ -254,6 +260,8 @@
                     break;
                 case 3:
                     vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
+                case 5:
+                    vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
                 default:
                     break;
             }
@@ -272,6 +280,14 @@
     
     if ([vc conformsToProtocol:@protocol(SettingsNotifier)]) {
         [(id<SettingsNotifier>)vc setSettingsDelegate:self];
+    }
+    
+    if ([vc isKindOfClass:OPMLVC.class]) {
+        
+        [self presentViewController:vc animated:YES completion:nil];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+        return;
     }
     
     // Push the view controller.

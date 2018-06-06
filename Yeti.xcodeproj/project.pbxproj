@@ -92,6 +92,10 @@
 		F0647BEA2099D2A9002291B9 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0647BE92099D2A9002291B9 /* dark.json */; };
 		F0647BEB2099D2A9002291B9 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0647BE92099D2A9002291B9 /* dark.json */; };
 		F0647BEC2099D2A9002291B9 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0647BE92099D2A9002291B9 /* dark.json */; };
+		F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0673AFF20C6A1EB00C42062 /* OPMLVC.m */; };
+		F0673B0220C6A1EB00C42062 /* OPMLVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0673AFF20C6A1EB00C42062 /* OPMLVC.m */; };
+		F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
+		F0673B0420C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
 		F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F069ABA5206DFCB200021ABF /* GalleryCell.m */; };
 		F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F069ABA6206DFCB200021ABF /* GalleryCell.xib */; };
 		F069ABAD206E018F00021ABF /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
@@ -583,6 +587,9 @@
 		F05DC07920832DB5009029E1 /* AuthorBioVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorBioVC.m; sourceTree = "<group>"; };
 		F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorBioVC.xib; sourceTree = "<group>"; };
 		F0647BE92099D2A9002291B9 /* dark.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dark.json; sourceTree = "<group>"; };
+		F0673AFE20C6A1EB00C42062 /* OPMLVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLVC.h; sourceTree = "<group>"; };
+		F0673AFF20C6A1EB00C42062 /* OPMLVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLVC.m; sourceTree = "<group>"; };
+		F0673B0020C6A1EB00C42062 /* OPMLVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OPMLVC.xib; sourceTree = "<group>"; };
 		F069ABA4206DFCB200021ABF /* GalleryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GalleryCell.h; sourceTree = "<group>"; };
 		F069ABA5206DFCB200021ABF /* GalleryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GalleryCell.m; sourceTree = "<group>"; };
 		F069ABA6206DFCB200021ABF /* GalleryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalleryCell.xib; sourceTree = "<group>"; };
@@ -879,6 +886,9 @@
 				F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */,
 				F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */,
 				F03A5F6020971BAE00CE7D5E /* ThemeVC.m */,
+				F0673AFE20C6A1EB00C42062 /* OPMLVC.h */,
+				F0673AFF20C6A1EB00C42062 /* OPMLVC.m */,
+				F0673B0020C6A1EB00C42062 /* OPMLVC.xib */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1667,6 +1677,7 @@
 				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F0A5AE7120C197EF00CFA1D2 /* Merriweather-Italic.ttf in Resources */,
 				F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */,
+				F0673B0420C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
 				F0202BE020A41A9A00FBC3E1 /* FeedHeaderView.xib in Resources */,
 				F047F4F120C25FB900626968 /* Spectral-Light.ttf in Resources */,
@@ -1713,6 +1724,7 @@
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
 				F0647BEA2099D2A9002291B9 /* dark.json in Resources */,
+				F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */,
 				F0A5AE6C20C197EF00CFA1D2 /* Merriweather-Black.ttf in Resources */,
 				F0B4FC22209C55A900C7941A /* black.json in Resources */,
@@ -1905,6 +1917,7 @@
 				F069ABC5206E018F00021ABF /* HTMLUtils.m in Sources */,
 				F069ABC6206E018F00021ABF /* NSString+HTML.m in Sources */,
 				F069ABC7206E018F00021ABF /* Gallery.m in Sources */,
+				F0673B0220C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F069ABC8206E018F00021ABF /* FeedsManager+KVS.m in Sources */,
 				F069ABC9206E018F00021ABF /* Tweet.m in Sources */,
 				F069ABCA206E018F00021ABF /* Aside.m in Sources */,
@@ -2032,6 +2045,7 @@
 				F05D21861FF2222F003DE813 /* YTUserID.m in Sources */,
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
 				F00411051FC9960E00B513A9 /* Image.m in Sources */,
+				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */,
