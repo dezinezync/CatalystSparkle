@@ -12,6 +12,8 @@
 #import "YetiThemeKit.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
+#import <DZKit/AlertManager.h>
+
 @interface Image ()
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
@@ -67,12 +69,58 @@
 
 - (void)il_setImageWithURL:(id)url
 {
-    [self.imageView il_setImageWithURL:url];
+    BOOL isGIF = NO;
+    
+    if ([url isKindOfClass:NSString.class]) {
+        isGIF = [(NSString *)url containsString:@".gif"];
+    }
+    else if ([url isKindOfClass:NSURL.class]) {
+        isGIF = [[(NSURL *)url absoluteString] containsString:@".gif"];
+    }
+    
+    if (isGIF) {
+        self.URL = url;
+        [self setupGIFLoadingControl];
+    }
+    else {
+        [self.imageView il_setImageWithURL:url];
+    }
 }
 
 - (CGSize)intrinsicContentSize
 {
     return self.imageView.intrinsicContentSize;
+}
+
+- (void)setupGIFLoadingControl {
+    
+    if (!NSThread.isMainThread) {
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            
+            [self setupGIFLoadingControl];
+        });
+        
+        return;
+    }
+    
+    UIButton *gifButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    gifButton.translatesAutoresizingMaskIntoConstraints = NO;
+    gifButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+    gifButton.layer.cornerRadius = 3.f;
+    
+    [gifButton setImage:[[UIImage imageNamed:@"gif"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [gifButton sizeToFit];
+    
+    [gifButton.widthAnchor constraintEqualToConstant:gifButton.bounds.size.width + 16.f].active = YES;
+    [gifButton.heightAnchor constraintEqualToConstant:gifButton.bounds.size.height + 8.f].active = YES;
+    
+    [self addSubview:gifButton];
+    [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
+    [gifButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+    
+    [gifButton addTarget:self action:@selector(didTapGIF:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)setupAnimationControls {
@@ -100,6 +148,28 @@
     [startStopButton addTarget:self action:@selector(didTapStartStop:) forControlEvents:UIControlEventTouchUpInside];
     
     _startStopButton = startStopButton;
+    
+}
+
+- (void)didTapGIF:(UIButton *)sender {
+    
+    if (!self.URL)
+        return;
+    
+    weakify(self);
+    
+    [self.imageView il_setImageWithURL:self.URL success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+        
+        strongify(self);
+        self.URL = nil;
+        
+        [sender removeFromSuperview];
+        
+    } error:^(NSError * _Nonnull error) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Failed to load GIF" message:error.localizedDescription];
+        
+    }];
     
 }
 

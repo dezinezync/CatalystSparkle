@@ -1138,13 +1138,11 @@
     
     if (content.content) {
         code.attributedText = [MyCodeParser parse:content.content];
-//        CGSize contentSize = code.para.contentSize;
-        
-//        frame.size.height = contentSize.height;
-//        code.frame = frame;
     }
     else {
-        
+        for (Content *item in content.items) { @autoreleasepool {
+            [self processContent:item];
+        } }
     }
     
     [self.stackView addArrangedSubview:code];
