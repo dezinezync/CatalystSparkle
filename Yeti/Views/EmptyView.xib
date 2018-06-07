@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="EmptyView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="167"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="b3y-Kr-PCg">
+                    <rect key="frame" x="12" y="0.0" width="351" height="167"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XEh-Wg-Y8D">
+                            <rect key="frame" x="85.5" y="0.0" width="180" height="120"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="180" id="fT8-oM-aFx"/>
+                                <constraint firstAttribute="height" constant="120" id="yfn-4m-gBx"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalCompressionResistancePriority="1000" text="Get started by adding a RSS Subscription Get started by adding a RSS Subscription" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xFb-j1-31P">
+                            <rect key="frame" x="32" y="128" width="287" height="39"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="xFb-j1-31P" firstAttribute="leading" secondItem="b3y-Kr-PCg" secondAttribute="leading" constant="32" id="mxp-fR-hHj"/>
+                        <constraint firstItem="XEh-Wg-Y8D" firstAttribute="leading" secondItem="b3y-Kr-PCg" secondAttribute="leading" constant="85.5" id="pmo-XP-TYf"/>
+                        <constraint firstItem="xFb-j1-31P" firstAttribute="width" secondItem="b3y-Kr-PCg" secondAttribute="width" priority="999" id="yHV-4m-dNo"/>
+                    </constraints>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="b3y-Kr-PCg" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="GFl-Dk-X0w"/>
+                <constraint firstItem="b3y-Kr-PCg" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="12" id="GVa-B6-3SW"/>
+                <constraint firstItem="b3y-Kr-PCg" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="-12" id="akI-oi-mZ9"/>
+                <constraint firstItem="b3y-Kr-PCg" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="lbt-he-OXl"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="imageView" destination="XEh-Wg-Y8D" id="uof-PS-6ON"/>
+                <outlet property="label" destination="xFb-j1-31P" id="LlD-rf-P0s"/>
+                <outlet property="stackView" destination="b3y-Kr-PCg" id="hOD-Xi-wVX"/>
+            </connections>
+            <point key="canvasLocation" x="-0.5" y="80.5"/>
+        </view>
+    </objects>
+</document>

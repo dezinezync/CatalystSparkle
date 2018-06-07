@@ -12,6 +12,9 @@
 #import <DZKit/DZBasicDatasource.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "EmptyView.h"
+#import "YetiThemeKit.h"
+
 static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 
 @interface CustomFeedVC () {
@@ -80,6 +83,21 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
         } @catch (NSException *exc) {}
     }
     
+}
+
+- (UIView *)viewForEmptyDataset {
+    
+    EmptyView *view = [[EmptyView alloc] initWithNib];
+    view.imageView.image = [UIImage imageNamed:@"feeds-empty"];
+    view.label.text = self.isUnread ? @"All your unread articles will appear here." : @"All your bookmarked articles will appear here.";
+    [view.label sizeToFit];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    view.label.textColor = theme.subtitleColor;
+    view.backgroundColor = theme.tableColor;
+    
+    return view;
 }
 
 #pragma mark - Overrides

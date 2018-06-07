@@ -20,6 +20,7 @@
 #import "CustomFeedVC.h"
 
 #import "YetiThemeKit.h"
+#import "EmptyView.h"
 
 @interface FeedsVC () <DZDatasource>
 
@@ -327,7 +328,22 @@
 //    return _activityView;
 //}
 
-#pragma mark -
+#pragma mark - Data
+
+- (UIView *)viewForEmptyDataset {
+    
+    EmptyView *view = [[EmptyView alloc] initWithNib];
+    view.imageView.image = [UIImage imageNamed:@"feeds-empty"];
+    view.label.text = @"Get started by adding a RSS Subscription.";
+    [view.label sizeToFit];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    view.label.textColor = theme.subtitleColor;
+    view.backgroundColor = theme.tableColor;
+    
+    return view;
+}
 
 - (void)setupData:(NSArray <Feed *> *)feeds
 {

@@ -51,6 +51,10 @@
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
 		F03AC035205533D900FB111A /* CodeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC031205533D900FB111A /* CodeParser.m */; };
 		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
+		F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
+		F03BC4E520C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
+		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
+		F03BC4EA20C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
 		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
@@ -555,6 +559,9 @@
 		F03AC031205533D900FB111A /* CodeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeParser.m; sourceTree = "<group>"; };
 		F03AC032205533D900FB111A /* HTMLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLUtils.h; sourceTree = "<group>"; };
 		F03AC033205533D900FB111A /* HTMLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLUtils.m; sourceTree = "<group>"; };
+		F03BC4E320C9015A007B574F /* EmptyView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyView.xib; sourceTree = "<group>"; };
+		F03BC4E720C9016A007B574F /* EmptyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyView.h; sourceTree = "<group>"; };
+		F03BC4E820C9016A007B574F /* EmptyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyView.m; sourceTree = "<group>"; };
 		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
 		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
 		F047F4D420C25FB800626968 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
@@ -1262,6 +1269,9 @@
 				F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */,
 				F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */,
 				F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */,
+				F03BC4E720C9016A007B574F /* EmptyView.h */,
+				F03BC4E820C9016A007B574F /* EmptyView.m */,
+				F03BC4E320C9015A007B574F /* EmptyView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1614,6 +1624,7 @@
 				F069ABFB206E018F00021ABF /* NewFeedVC.xib in Resources */,
 				F069ABFC206E018F00021ABF /* ArticleCell.xib in Resources */,
 				F0A5AE7320C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
+				F03BC4E520C9015A007B574F /* EmptyView.xib in Resources */,
 				F0A5AE8720C19CB400CFA1D2 /* IBMPlexSerif-LightItalic.ttf in Resources */,
 				F069ABFD206E018F00021ABF /* highlight.pack.js in Resources */,
 				F047F4E720C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
@@ -1754,6 +1765,7 @@
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
+				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
@@ -1899,6 +1911,7 @@
 				F069ABB7206E018F00021ABF /* PaddedTextField.m in Sources */,
 				F069ABB8206E018F00021ABF /* Youtube.m in Sources */,
 				F0202BE220A41AC400FBC3E1 /* FiltersVC.m in Sources */,
+				F03BC4EA20C9016A007B574F /* EmptyView.m in Sources */,
 				F069ABB9206E018F00021ABF /* NSDate+DateTools.m in Sources */,
 				F069ABBA206E018F00021ABF /* EmptyVC.m in Sources */,
 				F069ABBB206E018F00021ABF /* Linebreak.m in Sources */,
@@ -2028,6 +2041,7 @@
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
 				F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */,
 				F0D300421FE2633E0040D10D /* DTTimePeriod.m in Sources */,
+				F03BC4E920C9016A007B574F /* EmptyView.m in Sources */,
 				F0D300431FE2633E0040D10D /* DTTimePeriodChain.m in Sources */,
 				F0D0085C2081C72300EAFE3B /* Author.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,

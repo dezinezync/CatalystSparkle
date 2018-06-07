@@ -716,11 +716,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         strongify(self);
         
         if (page == 1) {
-            self.unread = items;
+            MyFeedsManager.unread = items;
         }
         else {
             if (!self.unread) {
-                self.unread = items;
+                MyFeedsManager.unread = items;
             }
             else {
                 NSArray *prefiltered = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
@@ -728,13 +728,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 }];
                 
                 @try {
-                    self.unread = [prefiltered arrayByAddingObjectsFromArray:items];
+                    MyFeedsManager.unread = [prefiltered arrayByAddingObjectsFromArray:items];
                 }
                 @catch (NSException *exc) {}
             }
         }
         // the conditional takes care of filtered article items.
-        self.totalUnread = self.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+        MyFeedsManager.totalUnread = self.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         
         if (successCB)
             successCB(responseObject, response, task);
