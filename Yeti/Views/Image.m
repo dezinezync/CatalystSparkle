@@ -15,7 +15,6 @@
 @interface Image ()
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
-@property (nonatomic, assign, getter=isAnimating, readwrite) BOOL animating;
 
 @end
 
@@ -58,9 +57,16 @@
 
 #pragma mark -
 
+- (BOOL)isAnimating {
+    
+    if (!self.isAnimatable)
+        return NO;
+    
+    return self.imageView.animating;
+}
+
 - (void)il_setImageWithURL:(id)url
 {
-    
     [self.imageView il_setImageWithURL:url];
 }
 
@@ -70,20 +76,43 @@
 }
 
 - (void)setupAnimationControls {
+    // ensure this gets called only once.
+    if (self.isAnimatable)
+        return;
     
     self.animatable = YES;
-    self.animating = NO;
     
     UIButton *startStopButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [startStopButton setImage:[UIImage imageNamed:@"unread"] forState:UIControlStateNormal];
+    startStopButton.translatesAutoresizingMaskIntoConstraints = NO;
+    startStopButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
+    startStopButton.layer.cornerRadius = 3.f;
+    
+    [startStopButton setImage:[[UIImage imageNamed:@"gif_play"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [startStopButton sizeToFit];
     
-    [startStopButton.widthAnchor constraintEqualToConstant:startStopButton.bounds.size.width].active = YES;
-    [startStopButton.heightAnchor constraintEqualToConstant:startStopButton.bounds.size.height].active = YES;
+    [startStopButton.widthAnchor constraintEqualToConstant:startStopButton.bounds.size.width + 16.f].active = YES;
+    [startStopButton.heightAnchor constraintEqualToConstant:startStopButton.bounds.size.height + 8.f].active = YES;
     
     [self addSubview:startStopButton];
-    [startStopButton.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8.f];
-    [startStopButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-8.f];
+    [startStopButton.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8.f].active = YES;
+    [startStopButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+    
+    [startStopButton addTarget:self action:@selector(didTapStartStop:) forControlEvents:UIControlEventTouchUpInside];
+    
+    _startStopButton = startStopButton;
+    
+}
+
+- (void)didTapStartStop:(UIButton *)sender {
+    
+    if (self.isAnimating) {
+        [self.imageView stopAnimating];
+        [sender setImage:[[UIImage imageNamed:@"gif_play"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    }
+    else {
+        [self.imageView startAnimating];
+        [sender setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    }
     
 }
 
@@ -103,10 +132,16 @@
         image = [UIImage imageWithData:(NSData *)image];
     }
     
-    [super setImage:image];
-    
     if (image.images && image.images.count && self.superview && [self.superview isKindOfClass:Image.class]) {
+        super.image = image.images.lastObject;
+        self.animationImages = image.images;
+        self.animationDuration = [[image valueForKey:@"_duration"] doubleValue];
+        self.animationRepeatCount = 0;
+        
         [(Image *)self.superview setupAnimationControls];
+    }
+    else {
+        [super setImage:image];
     }
     
     if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])

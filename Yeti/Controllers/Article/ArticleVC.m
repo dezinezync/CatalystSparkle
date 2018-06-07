@@ -1245,10 +1245,11 @@
                 [imageview il_setImageWithURL:imageview.URL];
             });
         }
-//        else if (imageview.imageView.image && !contains && imageview.isLoading) {
-//            imageview.loading = NO;
-//            imageview.imageView.image = nil;
-//        }
+        else if (imageview.imageView.image && !contains && imageview.isLoading) {
+            if ([imageview isAnimatable] && imageview.isAnimating) {
+                [imageview didTapStartStop:imageview.startStopButton];
+            }
+        }
     } }
     
     CGFloat y = scrollView.contentOffset.y;

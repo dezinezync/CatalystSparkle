@@ -31,4 +31,8 @@
 
 - (void)setupAnimationControls;
 
+@property (nonatomic, weak) UIButton *startStopButton;
+
+- (void)didTapStartStop:(UIButton *)sender;
+
 @end
