@@ -38,6 +38,7 @@
 #import <SafariServices/SafariServices.h>
 
 #import "YetiThemeKit.h"
+#import <AVKit/AVKit.h>
 
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
@@ -53,6 +54,8 @@
 @property (weak, nonatomic) id nextItem; // next item which will be processed
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loader;
 @property (nonatomic, strong) NSPointerArray *images;
+
+@property (nonatomic, strong) NSPointerArray *videos;
 
 @property (nonatomic, strong) CodeParser *codeParser;
 
@@ -368,6 +371,8 @@
     self.item = article;
     
     self.images = [NSPointerArray weakObjectsPointerArray];
+    self.videos = [NSPointerArray strongObjectsPointerArray];
+    
     [self setupToolbar:self.traitCollection];
     
     NSDate *start = NSDate.date;
@@ -730,6 +735,9 @@
     }
     else if ([content.type isEqualToString:@"script"]) {
         // wont be handled at the moment
+    }
+    else if ([content.type isEqualToString:@"video"]) {
+        [self addVideo:content];
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);
@@ -1169,6 +1177,35 @@
 
 - (void)addAudio:(Content *)content {
     
+}
+
+- (void)addVideo:(Content *)content {
+    
+    if (content.url == nil && content.content == nil)
+        return;
+    
+    if (![_last isKindOfClass:Linebreak.class]) {
+        [self addLinebreak];
+    }
+    
+    AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
+    playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:(content.url ?: content.content)]];
+    playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    
+    [self addChildViewController:playerController];
+    
+    UIView *playerView = playerController.view;
+    playerView.translatesAutoresizingMaskIntoConstraints = NO;
+    [playerView.heightAnchor constraintEqualToAnchor:playerView.widthAnchor multiplier:(9.f/16.f)].active = YES;
+    
+    [self.stackView addArrangedSubview:playerView];
+    [playerController didMoveToParentViewController:self];
+    
+    [self.videos addPointer:(__bridge void *)playerController];
+    
+    _last = playerView;
+    
+    [self addLinebreak];
 }
 
 #pragma mark - Actions
