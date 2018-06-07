@@ -10,8 +10,12 @@
 #import "LayoutConstants.h"
 
 #import "YetiThemeKit.h"
+#import <DZNetworking/UIImageView+ImageLoading.h>
 
 @interface Image ()
+
+@property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
+@property (nonatomic, assign, getter=isAnimating, readwrite) BOOL animating;
 
 @end
 
@@ -56,12 +60,31 @@
 
 - (void)il_setImageWithURL:(id)url
 {
-    [self.imageView performSelector:@selector(il_setImageWithURL:) withObject:url];
+    
+    [self.imageView il_setImageWithURL:url];
 }
 
 - (CGSize)intrinsicContentSize
 {
     return self.imageView.intrinsicContentSize;
+}
+
+- (void)setupAnimationControls {
+    
+    self.animatable = YES;
+    self.animating = NO;
+    
+    UIButton *startStopButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [startStopButton setImage:[UIImage imageNamed:@"unread"] forState:UIControlStateNormal];
+    [startStopButton sizeToFit];
+    
+    [startStopButton.widthAnchor constraintEqualToConstant:startStopButton.bounds.size.width].active = YES;
+    [startStopButton.heightAnchor constraintEqualToConstant:startStopButton.bounds.size.height].active = YES;
+    
+    [self addSubview:startStopButton];
+    [startStopButton.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8.f];
+    [startStopButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-8.f];
+    
 }
 
 @end
@@ -81,6 +104,10 @@
     }
     
     [super setImage:image];
+    
+    if (image.images && image.images.count && self.superview && [self.superview isKindOfClass:Image.class]) {
+        [(Image *)self.superview setupAnimationControls];
+    }
     
     if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])
         return;

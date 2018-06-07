@@ -26,4 +26,9 @@
 
 - (void)il_setImageWithURL:(id)url;
 
+@property (nonatomic, assign, getter=isAnimatable, readonly) BOOL animatable;
+@property (nonatomic, assign, getter=isAnimating, readonly) BOOL animating;
+
+- (void)setupAnimationControls;
+
 @end
