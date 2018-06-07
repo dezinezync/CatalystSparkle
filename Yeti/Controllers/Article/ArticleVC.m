@@ -328,7 +328,11 @@
         return;
     
     if (self.item) {
-        self.item.content = nil;
+        
+        if (!self.item.isBookmarked) {
+            self.item.content = nil;
+        }
+        
         NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
         
         if (cache) {
