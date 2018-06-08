@@ -721,8 +721,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             return [FeedItem instanceFromDictionary:obj];
         }];
         
-        strongify(self);
-        
         if (page == 1) {
             MyFeedsManager.unread = items;
         }
@@ -1471,6 +1469,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 #ifndef SHARE_EXTENSION
         if ([[responseObject valueForKey:@"status"] boolValue]) {
             Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+        
+#ifndef DEBUG
+            if ([[sub.environment lowercaseString] isEqualToString:@"sandbox"]) {
+                sub = [Subscription new];
+                sub.error = [NSError errorWithDomain:@"Yeti" code:-201 userInfo:@{NSLocalizedDescriptionKey: @"An incompatible subscription was received from the service. Please contact us to get this checked."}];
+            }
+#endif
+            
             MyFeedsManager.subscription = sub;
         }
         else {
