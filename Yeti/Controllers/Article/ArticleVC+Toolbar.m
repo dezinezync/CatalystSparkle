@@ -37,7 +37,7 @@
     share.accessibilityValue = @"Share article";
     share.accessibilityLabel = @"Share";
     
-    UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(didTapSearch)];
+    UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
     search.accessibilityValue = @"Search in article";
     search.accessibilityLabel = @"Search";
