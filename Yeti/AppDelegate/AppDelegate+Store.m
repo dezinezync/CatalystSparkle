@@ -28,6 +28,14 @@
         
         if (processed && processed.count) {
             
+            // we're expecting only one. So get the last one.
+            SKPaymentTransaction *transaction = [processed lastObject];
+            
+            if (transaction.transactionState == SKPaymentTransactionStateFailed) {
+                [AlertManager showGenericAlertWithTitle:@"Purchase Failed" message:@"Your purchase failed because the transaction was cancelled or failed before being added to the Apple server queue."];
+                return;
+            }
+            
             NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
             
             if (receiptURL) {

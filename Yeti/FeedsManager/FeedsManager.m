@@ -1095,7 +1095,19 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSString *receiptString = [receipt base64EncodedStringWithOptions:0];
     
-    [self.session POST:@"/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    weakify(self);
+    
+    [self.session POST:@"/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+      
+        strongify(self);
+        
+        [self _updateSubscriptionState];
+        
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
         error = [self errorFromResponse:error.userInfo];
         
@@ -1436,6 +1448,21 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [self updateBookmarksFromServer];
     });
     
+    if (MyFeedsManager.userID) {
+        
+        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+        
+        NSData *data = [[NSData alloc] initWithContentsOfURL:receiptURL];
+        
+        if (data) {
+            [self postAppReceipt:data success:nil error:nil];
+        }
+        
+    }
+    
+}
+
+- (void)_updateSubscriptionState {
     if (!MyFeedsManager.userID)
         return;
     
@@ -1464,7 +1491,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         MyFeedsManager.subscription = sub;
 #endif
     }];
-    
 }
 
 #pragma mark - <YTUserDelegate>
