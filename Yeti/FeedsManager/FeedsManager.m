@@ -59,7 +59,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
-        DDLogWarn(@"%@", self.bookmarks);
+        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
@@ -94,7 +94,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     NSString *docsDir;
     NSArray *dirPaths;
     
-    if (self.userID == nil) {
+    if (MyFeedsManager.userID == nil) {
         // if the following error is thrown, it casues an undesirable user experience.
 //        if (errorCB) {
 //            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user account present."}];
@@ -108,7 +108,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (!_feedsCachePath) {
         dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         docsDir = [dirPaths objectAtIndex:0];
-        NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:@"feedscache.json"]];
+        
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+        NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
+        
+        NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
         
 #ifdef DEBUG
         path = [path stringByAppendingString:@".debug"];
@@ -154,7 +159,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                     NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
                     
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5  * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        self->_feeds = feeds;
+                        MyFeedsManager->_feeds = feeds;
                         
                         asyncMain(^{
                             successCB(@1, nil, nil);
@@ -163,13 +168,15 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 }
             }
             
+            data = nil;
+            
         });
     }
     
-    NSDictionary *params = @{@"userID": self.userID};
+    NSDictionary *params = @{@"userID": MyFeedsManager.userID};
     
     // only consider this param when we have feeds
-    if (since && self.feeds.count) {
+    if (since && MyFeedsManager.feeds.count) {
         
         if ([NSDate.date timeIntervalSinceDate:since] < 3600) {
             
@@ -177,7 +184,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             formatter.dateFormat = @"YYYY/MM/dd HH:mm:ss";
             
             params = @{
-                       @"userID": self.userID,
+                       @"userID": MyFeedsManager.userID,
                        @"since": [formatter stringFromDate:since]
                        };
             
@@ -190,15 +197,15 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
-        if (!since || !self.feeds.count) {
-            self.feeds = feeds;
+        if (!since || !MyFeedsManager.feeds.count) {
+            MyFeedsManager.feeds = feeds;
             
             // cache it
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
                 strongify(self);
                 NSError *error = nil;
-                NSData *data = [NSKeyedArchiver archivedDataWithRootObject:responseObject];
+                NSData *data = [NSJSONSerialization dataWithJSONObject:responseObject options:kNilOptions error:&error];
                 
                 if (error) {
                     DDLogError(@"Error caching feeds: %@", error);
@@ -214,11 +221,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
             if (feeds.count) {
 
-                NSArray <Feed *> *copy = [self.feeds copy];
+                NSArray <Feed *> *copy = [MyFeedsManager.feeds copy];
 
                 for (Feed *feed in feeds) {
                     // get the corresponding feed from the memory
-                    Feed *main = [self.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+                    Feed *main = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
                         if (current.feedID.integerValue == feed.feedID.integerValue)
                             return current;
                         return prev;
@@ -247,11 +254,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 }
 
                 @synchronized(self) {
-                    self.feeds = feeds;
+                    MyFeedsManager.feeds = feeds;
                 }
             }
             else {
-                self.feeds = feeds;
+                MyFeedsManager.feeds = feeds;
             }
 
         }
@@ -327,7 +334,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (Feed *)feedForID:(NSNumber *)feedID
 {
     
-    __block Feed *feed = [self.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+    __block Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
         if ([current.feedID isEqualToNumber:feedID])
             return current;
         return prev;
@@ -336,7 +343,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (!feed) {
         // check in folders
         
-        [self.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [MyFeedsManager.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            
             [obj.feeds enumerateObjectsUsingBlock:^(Feed *  _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
                
@@ -363,7 +370,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     NSMutableDictionary *params = @{@"page": @(page)}.mutableCopy;
     
     if ([self userID] != nil) {
-        params[@"userID"] = self.userID;
+        params[@"userID"] = MyFeedsManager.userID;
     }
     
     [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -394,7 +401,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (void)addFeed:(NSURL *)url success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-    NSArray <Feed *> *existing = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+    NSArray <Feed *> *existing = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
         return [obj.url isEqualToString:url.absoluteString];
     }];
     
@@ -411,7 +418,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         params = @{@"URL": url, @"userID": [self userID]};
     }
     
-    [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
             
@@ -481,7 +488,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)addFeedByID:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    NSArray <Feed *> *existing = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+    NSArray <Feed *> *existing = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
         return obj.feedID.integerValue == feedID.integerValue;
     }];
     
@@ -494,11 +501,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }
     
     NSDictionary *params = @{@"feedID" : feedID};
-    if ([self userID] != nil) {
+    if ([MyFeedsManager userID] != nil) {
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
     
-    [self.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
     
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
@@ -530,7 +537,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSString *path = formattedString(@"/article/%@", articleID);
     
-    [self.backgroundSession GET:path parameters:@{@"userID" : self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.backgroundSession GET:path parameters:@{@"userID" : MyFeedsManager.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             
@@ -642,7 +649,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
     
-    NSArray <FeedItem *> *newUnread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <FeedItem *> *newUnread = [MyFeedsManager.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
         BOOL isRead = obj.isRead;
         if (isRead) {
             [markedRead addObject:obj.identifier];
@@ -656,9 +663,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     _unread = newUnread;
     
     // propagate changes to the feeds object as well
-    [self updateFeedsReadCount:self.feeds markedRead:markedRead];
+    [self updateFeedsReadCount:MyFeedsManager.feeds markedRead:markedRead];
     
-    for (Folder *folder in self.folders) { @autoreleasepool {
+    for (Folder *folder in MyFeedsManager.folders) { @autoreleasepool {
        
         [self updateFeedsReadCount:folder.feeds markedRead:markedRead];
         
@@ -707,7 +714,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     weakify(self);
     
-    [self.session GET:@"/unread" parameters:@{@"userID": self.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session GET:@"/unread" parameters:@{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
@@ -719,11 +726,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             MyFeedsManager.unread = items;
         }
         else {
-            if (!self.unread) {
+            if (!MyFeedsManager.unread) {
                 MyFeedsManager.unread = items;
             }
             else {
-                NSArray *prefiltered = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                NSArray *prefiltered = [MyFeedsManager.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                     return !obj.isRead;
                 }];
                 
@@ -734,7 +741,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             }
         }
         // the conditional takes care of filtered article items.
-        MyFeedsManager.totalUnread = self.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+        MyFeedsManager.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         
         if (successCB)
             successCB(responseObject, response, task);
@@ -755,13 +762,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSString *existing = @"";
     
-    if (self.bookmarks.count) {
-        existing = [[self.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    if (MyFeedsManager.bookmarks.count) {
+        existing = [[MyFeedsManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return obj.identifier.stringValue;
         }] componentsJoinedByString:@","];
     }
     
-    [self.session POST:formattedString(@"/bookmarked?userID=%@", self.userID) parameters:@{@"existing": existing} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session POST:formattedString(@"/bookmarked?userID=%@", MyFeedsManager.userID) parameters:@{@"existing": existing} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
@@ -787,7 +794,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         strongify(self);
         
-        self.folders = [self.folders arrayByAddingObject:instance];
+        MyFeedsManager.folders = [MyFeedsManager.folders arrayByAddingObject:instance];
         
         if (successCB)
             successCB(instance, response, task);
@@ -822,7 +829,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         strongify(self);
         
         // update our caches
-        [self.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [MyFeedsManager.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            
             if ([obj.folderID isEqualToNumber:folderID]) {
                 obj.title = title;
@@ -832,7 +839,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         }];
         
         // this will fire the notification
-        self.folders = [self folders];
+        MyFeedsManager.folders = [self folders];
         
         if (successCB) {
             successCB(responseObject, response, task);
@@ -880,7 +887,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         strongify(self);
         
-        Folder *folder = [self.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+        Folder *folder = [MyFeedsManager.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
             if ([current.folderID isEqualToNumber:folderID])
                 return current;
             return prev;
@@ -900,12 +907,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 return [del indexOfObject:obj.feedID] == NSNotFound;
             }];
             
-            self.feeds = [self.feeds arrayByAddingObjectsFromArray:removedFeeds];
+            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:removedFeeds];
         }
         
         // now run add ops
         if (add && add.count) {
-            NSArray <Feed *> * addedFeeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return [add indexOfObject:obj.feedID] != NSNotFound;
             }];
             
@@ -913,7 +920,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 obj.folderID = folderID;
             }];
             
-            self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            MyFeedsManager.feeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return [add indexOfObject:obj.feedID] == NSNotFound;
             }];
             
@@ -1140,23 +1147,19 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             DDLogError(@"Error saving push token file: %@", error.localizedDescription);
         }
 #ifndef SHARE_EXTENSION
-        if (self.subsribeAfterPushEnabled) {
+        if (MyFeedsManager.subsribeAfterPushEnabled) {
             
-            weakify(self);
-            
-            [self subsribe:self.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [self subsribe:MyFeedsManager.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:SubscribedToFeed object:self.subsribeAfterPushEnabled];
+                [[NSNotificationCenter defaultCenter] postNotificationName:SubscribedToFeed object:MyFeedsManager.subsribeAfterPushEnabled];
                 
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    self.subsribeAfterPushEnabled = nil;
+                    MyFeedsManager.subsribeAfterPushEnabled = nil;
                 });
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                
-                strongify(self);
-                
-                self.subsribeAfterPushEnabled = nil;
+                MyFeedsManager.subsribeAfterPushEnabled = nil;
                 
                 [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
                 
@@ -1385,7 +1388,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (isBookmarked) {
         // it was added
         @try {
-            self.bookmarks = [self.bookmarks arrayByAddingObject:item];
+            MyFeedsManager.bookmarks = [MyFeedsManager.bookmarks arrayByAddingObject:item];
         }
         @catch (NSException *exc) {}
     }
@@ -1393,7 +1396,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         NSInteger itemID = item.identifier.integerValue;
         
         @try {
-            self.bookmarks = [self.bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            MyFeedsManager.bookmarks = [MyFeedsManager.bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                 return obj.identifier.integerValue != itemID;
             }];
         } @catch (NSException *excp) {}
@@ -1426,12 +1429,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSDictionary *params;
     
-    if (self.userID != nil) {
-        params = @{@"userID": self.userID};
+    if (MyFeedsManager.userID != nil) {
+        params = @{@"userID": MyFeedsManager.userID};
     }
 #ifndef SHARE_EXTENSION
-    else if ([self userIDManager]->_UUID) {
-        params = @{@"userID" : [self.userIDManager UUIDString]};
+    else if ([MyFeedsManager userIDManager]->_UUID) {
+        params = @{@"userID" : [MyFeedsManager.userIDManager UUIDString]};
     }
 #else
     if (errorCB) {
@@ -1464,7 +1467,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
 {
-    if (!self.userIDManager.UUID) {
+    if (!MyFeedsManager.userIDManager.UUID) {
         if (errorCB) {
             NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user ID currently present"}];
             errorCB(error, nil, nil);
@@ -1473,7 +1476,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
-    [self.session PUT:@"/user" parameters:@{@"uuid": self.userIDManager.UUIDString} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session PUT:@"/user" parameters:@{@"uuid": MyFeedsManager.userIDManager.UUIDString} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
@@ -1556,10 +1559,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (void)updateBookmarksFromServer
 {
     
-    if (self.userID == nil)
+    if (MyFeedsManager.userID == nil)
         return;
     
-    NSArray <NSString *> *existingArr = [self.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <NSString *> *existingArr = [MyFeedsManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
     }];
     
@@ -1573,7 +1576,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         params = @{@"existing": existing};
     }
     
-    [self.backgroundSession POST:@"/bookmarked" queryParams:@{@"userID": self.userID} parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.backgroundSession POST:@"/bookmarked" queryParams:@{@"userID": MyFeedsManager.userID} parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode >= 300) {
             // no changes.
@@ -1589,7 +1592,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         if ((bookmarked && bookmarked.count) || (deleted && deleted.count)) {
             
-            NSMutableArray <FeedItem *> *bookmarks = self.bookmarks.mutableCopy;
+            NSMutableArray <FeedItem *> *bookmarks = MyFeedsManager.bookmarks.mutableCopy;
          
             if (deleted && deleted.count) {
                 
@@ -1653,7 +1656,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                         count--;
                         
                         if (count == 0) {
-                            self.bookmarks = bookmarks;
+                            MyFeedsManager.bookmarks = bookmarks;
                         }
                         
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1661,7 +1664,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                         count--;
                         
                         if (count == 0) {
-                            self.bookmarks = bookmarks;
+                            MyFeedsManager.bookmarks = bookmarks;
                         }
                         
                     }];
@@ -1670,7 +1673,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 
             }
             else {
-                self.bookmarks = bookmarks;
+                MyFeedsManager.bookmarks = bookmarks;
             }
             
         }

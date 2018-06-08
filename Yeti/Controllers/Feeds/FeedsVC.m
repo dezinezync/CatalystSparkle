@@ -334,7 +334,7 @@
     
     EmptyView *view = [[EmptyView alloc] initWithNib];
     view.imageView.image = [UIImage imageNamed:@"feeds-empty"];
-    view.label.text = @"Get started by adding a RSS Subscription.";
+    view.label.text = self.refreshControl.isRefreshing ? @"Loading your subscriptions" : @"Get started by adding a RSS Subscription.";
     [view.label sizeToFit];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
