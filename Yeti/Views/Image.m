@@ -8,6 +8,7 @@
 
 #import "Image.h"
 #import "LayoutConstants.h"
+#import "Paragraph.h"
 
 #import "YetiThemeKit.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
@@ -118,7 +119,13 @@
     
     [self addSubview:gifButton];
     [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
-    [gifButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+    
+    if (UIApplication.sharedApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
+        [gifButton.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:0.f].active = YES;
+    }
+    else {
+        [gifButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+    }
     
     [gifButton addTarget:self action:@selector(didTapGIF:) forControlEvents:UIControlEventTouchUpInside];
 }
@@ -143,7 +150,13 @@
     
     [self addSubview:startStopButton];
     [startStopButton.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8.f].active = YES;
-    [startStopButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+    
+    if (UIApplication.sharedApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
+        [startStopButton.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:0.f].active = YES;
+    }
+    else {
+        [startStopButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
+    }
     
     [startStopButton addTarget:self action:@selector(didTapStartStop:) forControlEvents:UIControlEventTouchUpInside];
     
