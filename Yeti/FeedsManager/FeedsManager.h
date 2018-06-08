@@ -12,6 +12,7 @@
 #import "Feed.h"
 #import "Folder.h"
 #import "YTUserID.h"
+#import "Subscription.h"
 
 typedef NSString * FMNotification;
 
@@ -31,6 +32,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     
     NSString * kPushTokenFilePath;
 }
+
+#ifndef SHARE_EXTENSION
+@property (nonatomic, strong, readonly) Subscription *subscription;
+#endif
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 

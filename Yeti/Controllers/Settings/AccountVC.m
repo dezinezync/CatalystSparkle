@@ -50,6 +50,8 @@
     
     NSSet *products = [NSSet setWithObjects:YTSubscriptionMonthly, YTSubscriptionYearly,  nil];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateSubscription) name:YTDidPurchaseProduct object:nil];
+    
     [MyStoreManager loadProducts:products success:^(NSArray *products, NSArray *invalidIdentifiers) {
         
         self.products = [products sortedArrayUsingSelector:@selector(productIdentifier)];
@@ -177,9 +179,28 @@
         attrs = nil;
     }
     else {
-        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"Your subscription is active and Apple will automatically renew it on 28/03/2018. Your free trial ended on 28/01/2018. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         
-        [attrs addAttribute:NSLinkAttributeName value:@"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions" range:[attrs.string rangeOfString:@"here"]];
+        NSMutableAttributedString *attrs;
+        
+        if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
+            
+            NSString *formatted = @"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate.";
+         
+            attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
+            
+        }
+        else {
+            if (MyFeedsManager.subscription && MyFeedsManager.subscription.error) {
+                attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
+            }
+            else {
+                attrs = [[NSMutableAttributedString alloc] initWithString:@"You don't have an active subscription or it has expired. To check, tap here." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
+            }
+        }
+        
+        if ([attrs.string containsString:@"here."]) {
+            [attrs addAttribute:NSLinkAttributeName value:@"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions" range:[attrs.string rangeOfString:@"here"]];
+        }
         
         textView.attributedText = attrs.copy;
         attrs = nil;
@@ -195,9 +216,18 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSString *identifier = (indexPath.section == 0 && indexPath.row == 1) ? @"deactivateCell" : kAccountsCell;
+    NSString *identifier = (indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2)) ? @"deactivateCell" : kAccountsCell;
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
+    
+    if (!cell) {
+        if ([identifier isEqualToString:kAccountsCell]) {
+            cell = [[AccountsCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kAccountsCell];
+        }
+        else {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"deactivateCell"];
+        }
+    }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -359,6 +389,14 @@
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
     })
+}
+
+#pragma mark - Notifications
+
+- (void)didUpdateSubscription {
+    
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+    
 }
 
 #pragma mark - Actions
