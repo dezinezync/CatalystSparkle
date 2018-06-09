@@ -15,7 +15,7 @@
     [super awakeFromNib];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.backgroundColor = theme.backgroundColor;
+    self.backgroundColor = theme.tableColor;
     
     for (UIButton *button in @[self.learnButton, self.restoreButton]) {
         button.layer.cornerRadius = 4.f;

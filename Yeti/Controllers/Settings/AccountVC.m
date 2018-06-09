@@ -122,6 +122,7 @@
     if (transaction.transactionState == SKPaymentTransactionStateFailed) {
         
         [self enableRestoreButton];
+        [self didUpdateSubscription];
         
         [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:transaction.error.localizedDescription];
         return;
@@ -131,6 +132,8 @@
     
     self.subscriptionType = [subscriptionType isEqualToString:YTSubscriptionYearly] ? 1 : ([subscriptionType isEqualToString:YTSubscriptionMonthly] ? 0 : -1);
     self.knownSubscriptionType = self.subscriptionType;
+    
+    [self didUpdateSubscription];
     
     [self enableRestoreButton];
     
@@ -460,19 +463,21 @@
 - (void)setProducts:(NSArray<SKProduct *> *)products {
     _products = products;
     
-    weakify(self);
-    asyncMain(^{
-        strongify(self);
-        
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
-    })
+    [self didUpdateSubscription];
 }
 
 #pragma mark - Notifications
 
 - (void)didUpdateSubscription {
     
+    self.subscriptionType = [MyFeedsManager.subscription hasExpired] ? -1 : self.knownSubscriptionType;
+    self.knownSubscriptionType = self.subscriptionType;
+    
+    weakify(self);
+    
     asyncMain(^{
+        strongify(self);
+        
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
     });
     
