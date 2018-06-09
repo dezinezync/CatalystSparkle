@@ -117,9 +117,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Store
 
-- (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+- (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)getOPMLWithSuccess:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+- (void)getOPMLWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #ifndef SHARE_EXTENSION
 

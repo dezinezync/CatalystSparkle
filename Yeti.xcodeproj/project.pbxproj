@@ -234,6 +234,8 @@
 		F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3581FBAE7A200912CCF /* ArticleVC.xib */; };
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
 		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
+		F0711EB220CBB459009F413A /* Store.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; };
+		F0711EB320CBB459009F413A /* Store.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F074D804208DC2B4002F22CB /* WebP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F074D802208DC2B4002F22CB /* WebP.framework */; };
 		F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F074D802208DC2B4002F22CB /* WebP.framework */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
@@ -264,10 +266,6 @@
 		F099466220AD86CB00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F099466620AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
-		F099466720AD94E700E5520F /* Store.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; };
-		F099466820AD94E700E5520F /* Store.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F099466C20AD94F600E5520F /* Store.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; };
-		F099466D20AD94F600E5520F /* Store.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
 		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
@@ -402,6 +400,14 @@
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
+		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
+		F0FA472A20CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
+		F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
+		F0FA473320CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
+		F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0FA473420CBAE500035B1F5 /* subscriptions.html */; };
+		F0FA473620CBAE500035B1F5 /* subscriptions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0FA473420CBAE500035B1F5 /* subscriptions.html */; };
+		F0FA474520CBB3960035B1F5 /* Store.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; };
+		F0FA474620CBB3960035B1F5 /* Store.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A29820ACAA2300FE06E6 /* Store.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -433,14 +439,7 @@
 			remoteGlobalIDString = F070C2D81FBABC3500912CCF;
 			remoteInfo = Yeti;
 		};
-		F099466920AD94E700E5520F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F0E8A27720ACA9F000FE06E6;
-			remoteInfo = Store;
-		};
-		F099466E20AD94F600E5520F /* PBXContainerItemProxy */ = {
+		F0711EB420CBB459009F413A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
 			proxyType = 1;
@@ -460,6 +459,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = F0E8A28120ACA9F000FE06E6;
 			remoteInfo = StoreTests;
+		};
+		F0FA474220CBB38B0035B1F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0E8A27720ACA9F000FE06E6;
+			remoteInfo = Store;
+		};
+		F0FA474720CBB3960035B1F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0E8A27720ACA9F000FE06E6;
+			remoteInfo = Store;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -486,24 +499,24 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F099466B20AD94E800E5520F /* Embed Frameworks */ = {
+		F0711EB620CBB459009F413A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F099466820AD94E700E5520F /* Store.framework in Embed Frameworks */,
+				F0711EB320CBB459009F413A /* Store.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F099467020AD94F700E5520F /* Embed Frameworks */ = {
+		F0FA474920CBB3960035B1F5 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F099466D20AD94F600E5520F /* Store.framework in Embed Frameworks */,
+				F0FA474620CBB3960035B1F5 /* Store.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -809,6 +822,10 @@
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
+		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
+		F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFooterView.h; sourceTree = "<group>"; };
+		F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFooterView.m; sourceTree = "<group>"; };
+		F0FA473420CBAE500035B1F5 /* subscriptions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = subscriptions.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -835,7 +852,7 @@
 				F069ABF5206E018F00021ABF /* JLRoutes.framework in Frameworks */,
 				F069ABF6206E018F00021ABF /* DZKit.framework in Frameworks */,
 				F074D804208DC2B4002F22CB /* WebP.framework in Frameworks */,
-				F099466C20AD94F600E5520F /* Store.framework in Frameworks */,
+				F0FA474520CBB3960035B1F5 /* Store.framework in Frameworks */,
 				F069ABF7206E018F00021ABF /* CocoaLumberjack.framework in Frameworks */,
 				F069ABF8206E018F00021ABF /* OMGHTTPURLRQ.framework in Frameworks */,
 			);
@@ -853,7 +870,7 @@
 				F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
 				F070C3291FBAC10600912CCF /* DZKit.framework in Frameworks */,
-				F099466720AD94E700E5520F /* Store.framework in Frameworks */,
+				F0711EB220CBB459009F413A /* Store.framework in Frameworks */,
 				F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */,
 				F070C32B1FBAC10600912CCF /* OMGHTTPURLRQ.framework in Frameworks */,
 			);
@@ -1178,6 +1195,7 @@
 				F0869B5C2099CF0000A5D723 /* light.json */,
 				F0647BE92099D2A9002291B9 /* dark.json */,
 				F0B4FC21209C55A900C7941A /* black.json */,
+				F0FA473420CBAE500035B1F5 /* subscriptions.html */,
 			);
 			path = SupportingFiles;
 			sourceTree = "<group>";
@@ -1278,6 +1296,9 @@
 				F03BC4E720C9016A007B574F /* EmptyView.h */,
 				F03BC4E820C9016A007B574F /* EmptyView.m */,
 				F03BC4E320C9015A007B574F /* EmptyView.xib */,
+				F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */,
+				F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */,
+				F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1452,13 +1473,13 @@
 				F069ABF9206E018F00021ABF /* Resources */,
 				F069AC10206E018F00021ABF /* Carthage */,
 				F069AC11206E018F00021ABF /* Embed App Extensions */,
-				F099467020AD94F700E5520F /* Embed Frameworks */,
+				F0FA474920CBB3960035B1F5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				F069ABAA206E018F00021ABF /* PBXTargetDependency */,
-				F099466F20AD94F600E5520F /* PBXTargetDependency */,
+				F0FA474820CBB3960035B1F5 /* PBXTargetDependency */,
 			);
 			name = "Yeti Debug Layout";
 			productName = Yeti;
@@ -1474,13 +1495,14 @@
 				F070C2D71FBABC3500912CCF /* Resources */,
 				F070C31D1FBAC00000912CCF /* Carthage */,
 				F035A22420617EC3005A88EE /* Embed App Extensions */,
-				F099466B20AD94E800E5520F /* Embed Frameworks */,
+				F0711EB620CBB459009F413A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
-				F099466A20AD94E700E5520F /* PBXTargetDependency */,
+				F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */,
+				F0711EB520CBB459009F413A /* PBXTargetDependency */,
 			);
 			name = Yeti;
 			productName = Yeti;
@@ -1627,6 +1649,7 @@
 				F069ABFA206E018F00021ABF /* hljs.js in Resources */,
 				F0A5AE6D20C197EF00CFA1D2 /* Merriweather-Black.ttf in Resources */,
 				F0A5AEBB20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
+				F0FA472A20CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
 				F069ABFB206E018F00021ABF /* NewFeedVC.xib in Resources */,
 				F069ABFC206E018F00021ABF /* ArticleCell.xib in Resources */,
 				F0A5AE7320C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
@@ -1676,6 +1699,7 @@
 				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
 				F0A5AE9720C19CB400CFA1D2 /* IBMPlexSerif-Regular.ttf in Resources */,
 				F0A5AEB320C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
+				F0FA473620CBAE500035B1F5 /* subscriptions.html in Resources */,
 				F069AC05206E018F00021ABF /* Gallery.xib in Resources */,
 				F069AC06206E018F00021ABF /* Assets.xcassets in Resources */,
 				F0647BEB2099D2A9002291B9 /* dark.json in Resources */,
@@ -1714,6 +1738,7 @@
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
 				F0A5AEB220C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
 				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
+				F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F0A5AE9020C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
 				F0A5AE9A20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
@@ -1727,6 +1752,7 @@
 				F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
 				F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
+				F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */,
 				F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */,
 				F0A5AE9820C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
 				F0A5AEAC20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
@@ -1992,6 +2018,7 @@
 				F069ABEC206E018F00021ABF /* Enclosure.m in Sources */,
 				F069ABED206E018F00021ABF /* FeedsCell.m in Sources */,
 				F0202BE120A41AB500FBC3E1 /* AuthorVC.m in Sources */,
+				F0FA473320CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
 				F069ABEE206E018F00021ABF /* FeedVC+Search.m in Sources */,
 				F069ABEF206E018F00021ABF /* DTTimePeriodCollection.m in Sources */,
 			);
@@ -2011,6 +2038,7 @@
 				F0869B592099CE6600A5D723 /* YetiTheme.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */,
+				F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
 				F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */,
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
@@ -2146,15 +2174,20 @@
 			target = F070C2D81FBABC3500912CCF /* Yeti */;
 			targetProxy = F070C2FD1FBABC3600912CCF /* PBXContainerItemProxy */;
 		};
-		F099466A20AD94E700E5520F /* PBXTargetDependency */ = {
+		F0711EB520CBB459009F413A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Store;
-			targetProxy = F099466920AD94E700E5520F /* PBXContainerItemProxy */;
+			targetProxy = F0711EB420CBB459009F413A /* PBXContainerItemProxy */;
 		};
-		F099466F20AD94F600E5520F /* PBXTargetDependency */ = {
+		F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Store;
-			targetProxy = F099466E20AD94F600E5520F /* PBXContainerItemProxy */;
+			targetProxy = F0FA474220CBB38B0035B1F5 /* PBXContainerItemProxy */;
+		};
+		F0FA474820CBB3960035B1F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Store;
+			targetProxy = F0FA474720CBB3960035B1F5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

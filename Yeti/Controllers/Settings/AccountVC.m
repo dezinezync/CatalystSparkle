@@ -13,12 +13,15 @@
 #import "LayoutConstants.h"
 #import "YetiConstants.h"
 #import "YetiThemeKit.h"
+#import "AccountFooterView.h"
+#import "DZWebViewController.h"
 
 #import <Store/Store.h>
 
 @interface AccountVC () <UITextFieldDelegate> {
     UITextField *_textField;
     UIAlertAction *_okayAction;
+    BOOL _didTapDone;
 }
 
 @property (nonatomic, assign) NSInteger subscriptionType;
@@ -50,7 +53,15 @@
     
     NSSet *products = [NSSet setWithObjects:YTSubscriptionMonthly, YTSubscriptionYearly,  nil];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateSubscription) name:YTDidPurchaseProduct object:nil];
+    AccountFooterView *footerView = [[AccountFooterView alloc] initWithNib];
+    [footerView.learnButton addTarget:self action:@selector(didTapLearn:) forControlEvents:UIControlEventTouchUpInside];
+    [footerView.restoreButton addTarget:self action:@selector(didTapRestore:) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
+        footerView.restoreButton.enabled = NO;
+    }
+    
+    self.tableView.tableFooterView = footerView;
     
     [MyStoreManager loadProducts:products success:^(NSArray *products, NSArray *invalidIdentifiers) {
         
@@ -76,6 +87,8 @@
 
 - (void)didTapDone:(UIBarButtonItem *)sender {
     
+    _didTapDone = YES;
+    
     sender.enabled = NO;
     
     SKProduct *product = [self.products objectAtIndex:self.subscriptionType];
@@ -94,15 +107,21 @@
  
     NSArray <SKPaymentTransaction *> *transactions = [note.userInfo valueForKey:@"transactions"];
     
+    for (SKPaymentTransaction *transaction in transactions) {
+        [MyStoreManager finishTransaction:transaction];
+    }
+    
     // we're only expecting one.
     SKPaymentTransaction *transaction = [transactions firstObject];
+    
+    [self didUpdateSubscription];
     
     if (!transaction)
         return;
     
     if (transaction.transactionState == SKPaymentTransactionStateFailed) {
         
-        self.navigationItem.rightBarButtonItem.enabled = YES;
+        [self enableRestoreButton];
         
         [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:transaction.error.localizedDescription];
         return;
@@ -113,7 +132,7 @@
     self.subscriptionType = [subscriptionType isEqualToString:YTSubscriptionYearly] ? 1 : ([subscriptionType isEqualToString:YTSubscriptionMonthly] ? 0 : -1);
     self.knownSubscriptionType = self.subscriptionType;
     
-    self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self enableRestoreButton];
     
 }
 
@@ -125,7 +144,59 @@
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self enableRestoreButton];
+    
+}
+
+- (void)enableRestoreButton {
+    weakify(self);
+    
+    if (![[(AccountFooterView *)self.tableView.tableFooterView restoreButton] isEnabled]) {
+        asyncMain(^{
+            strongify(self);
+            
+            if (self->_didTapDone) {
+                self->_didTapDone = NO;
+            }
+            else {
+                self.navigationItem.rightBarButtonItem.enabled = YES;
+            }
+            
+            [[(AccountFooterView *)self.tableView.tableFooterView restoreButton] setEnabled:YES];
+        });
+    }
+    else if (!self.navigationItem.rightBarButtonItem.isEnabled) {
+        if (_didTapDone) {
+            _didTapDone = NO;
+            return;
+        }
+        
+        asyncMain(^{
+            strongify(self);
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+        });
+    }
+}
+
+- (void)didTapLearn:(UIButton *)sender {
+    DZWebViewController *webVC = [[DZWebViewController alloc] init];
+    webVC.title = @"About Subscriptions";
+    
+    webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"subscriptions" withExtension:@"html"];
+    
+    [self.navigationController pushViewController:webVC animated:YES];
+}
+
+- (void)didTapRestore:(UIButton *)sender {
+    
+    sender.enabled = NO;
+    
+    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+    
+    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
+    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
+    
+    [MyStoreManager restorePurchases];
     
 }
 
@@ -184,7 +255,13 @@
         
         if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
             
-            NSString *formatted = @"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate.";
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateStyle = NSDateFormatterMediumStyle;
+            formatter.timeStyle = NSDateFormatterShortStyle;
+            formatter.locale = [NSLocale currentLocale];
+            formatter.timeZone = [NSTimeZone systemTimeZone];
+            
+            NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
          
             attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
             
