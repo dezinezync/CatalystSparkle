@@ -23,11 +23,18 @@
 
 + (void)load
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // get changes that might have happened while this
-        // instance of our app wasn't running
-        [NSUbiquitousKeyValueStore.defaultStore synchronize];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            // get changes that might have happened while this
+            // instance of our app wasn't running
+            NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+            if (store) {
+                @synchronized (store) {
+                    [store synchronize];
+                }
+            }
+        });
     });
 }
 

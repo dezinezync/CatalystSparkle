@@ -27,7 +27,6 @@ extern FMNotification _Nonnull const SubscribedToFeed;
 extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject {
-    NSArray <FeedItem *> * _bookmarks;
     NSString *_pushToken;
     
     NSString * kPushTokenFilePath;

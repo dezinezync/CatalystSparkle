@@ -25,14 +25,14 @@ FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidU
 FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFeed";
 
 #ifdef SHARE_EXTENSION
-@interface FeedsManager () {
-    NSString *_feedsCachePath;
-}
+@interface FeedsManager ()
 #else
-@interface FeedsManager () <YTUserDelegate> {
-    NSString *_feedsCachePath;
-}
+@interface FeedsManager () <YTUserDelegate>
 #endif
+{
+    NSString *_feedsCachePath;
+    NSString *_receiptLastUpdatePath;
+}
 
 @property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession;
 #ifndef SHARE_EXTENSION
@@ -75,6 +75,45 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         if (error) {
             DDLogError(@"Error loading push token from disk: %@", error.localizedDescription);
         }
+        
+        NSString *docsDir;
+        NSArray *dirPaths;
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        
+        if (!_feedsCachePath) {
+            dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            docsDir = [dirPaths objectAtIndex:0];
+            
+            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+            NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
+            
+            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
+            
+#ifdef DEBUG
+            path = [path stringByAppendingString:@".debug"];
+#endif
+            
+            _feedsCachePath = path;
+        }
+        
+        if (_receiptLastUpdatePath == nil) {
+            if (!docsDir) {
+                dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+                docsDir = [dirPaths objectAtIndex:0];
+            }
+            
+            NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+            NSString *filename = formattedString(@"receiptDate-%@.json", buildNumber);
+            
+            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
+            
+#ifdef DEBUG
+            path = [path stringByAppendingString:@".debug"];
+#endif
+            
+            _receiptLastUpdatePath = path;
+        }
 #endif
     }
     
@@ -96,9 +135,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     weakify(self);
     
-    NSString *docsDir;
-    NSArray *dirPaths;
-    
     if (MyFeedsManager.userID == nil) {
         // if the following error is thrown, it casues an undesirable user experience.
 //        if (errorCB) {
@@ -108,23 +144,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         if (errorCB)
             errorCB(nil, nil, nil);
         return;
-    }
-    
-    if (!_feedsCachePath) {
-        dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        docsDir = [dirPaths objectAtIndex:0];
-        
-        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-        NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-        NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
-        
-        NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
-        
-#ifdef DEBUG
-        path = [path stringByAppendingString:@".debug"];
-#endif
-        
-        _feedsCachePath = path;
     }
     
     __block NSError *error = nil;
@@ -1095,6 +1114,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)postAppReceipt:(NSData *)receipt success:(successBlock)successCB error:(errorBlock)errorCB {
     
+    if (!self.userID)
+        return;
+    
     NSString *receiptString = [receipt base64EncodedStringWithOptions:0];
     
     weakify(self);
@@ -1494,12 +1516,28 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     if (MyFeedsManager.userID) {
         
+        NSDate *lastUpdate = [NSKeyedUnarchiver unarchiveObjectWithFile:_receiptLastUpdatePath];
+        
+        if (lastUpdate) {
+            // check every 3 days
+            NSTimeInterval threeDays = 86400 * 3;
+            if ([NSDate.date timeIntervalSinceDate:lastUpdate] < threeDays) {
+                return;
+            }
+        }
+        
         NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
         
         NSData *data = [[NSData alloc] initWithContentsOfURL:receiptURL];
         
         if (data) {
             [self postAppReceipt:data success:nil error:nil];
+        }
+        
+        lastUpdate = NSDate.date;
+        
+        if (![NSKeyedArchiver archiveRootObject:lastUpdate toFile:_receiptLastUpdatePath]) {
+            DDLogError(@"Failed to archive receipt update date");
         }
         
     }

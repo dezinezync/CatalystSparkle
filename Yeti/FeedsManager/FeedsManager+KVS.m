@@ -135,13 +135,27 @@
 + (void)load
 {
     
-    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     
-    if (store) {
-        [[NSNotificationCenter defaultCenter] addObserver:MyFeedsManager selector: @selector (storeDidChange:) name: NSUbiquitousKeyValueStoreDidChangeExternallyNotification object:store];
-        [NSNotificationCenter.defaultCenter addObserver:MyFeedsManager selector:@selector(defaultsDidChange:) name:NSUserDefaultsDidChangeNotification object:defaults];
-    }
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            
+            NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            
+            if (store) {
+                @synchronized (store) {
+                    [[NSNotificationCenter defaultCenter] addObserver:MyFeedsManager selector: @selector (storeDidChange:) name: NSUbiquitousKeyValueStoreDidChangeExternallyNotification object:store];
+                }
+                
+                @synchronized (defaults) {
+                    [NSNotificationCenter.defaultCenter addObserver:MyFeedsManager selector:@selector(defaultsDidChange:) name:NSUserDefaultsDidChangeNotification object:defaults];
+                }
+            }
+            
+        });
+        
+    });
     
 }
 
