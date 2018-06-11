@@ -260,8 +260,10 @@
                     break;
                 case 3:
                     vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
+                    break;
                 case 5:
                     vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                    break;
                 default:
                     break;
             }

@@ -64,7 +64,7 @@
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        self.backgroundColor = theme.backgroundColor;
+        self.backgroundColor = theme.articleBackgroundColor;
         self.imageRefs = [NSPointerArray weakObjectsPointerArray];
         
         self.collectionView.contentInset = UIEdgeInsetsZero;
@@ -72,7 +72,7 @@
         [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(GalleryCell.class) bundle:nil] forCellWithReuseIdentifier:kGalleryCell];
         self.collectionView.dataSource = self;
         self.collectionView.delegate = self;
-        self.collectionView.backgroundColor = theme.backgroundColor;
+        self.collectionView.backgroundColor = theme.articleBackgroundColor;
         self.collectionView.prefetchingEnabled = NO;
         
         [self.pageControl addTarget:self action:@selector(didChangePage:) forControlEvents:UIControlEventValueChanged];
@@ -80,7 +80,6 @@
         self.pageControl.pageIndicatorTintColor = theme.captionColor;
         
 #if DEBUG_LAYOUT == 1
-        self.collectionView.backgroundColor = UIColor.cyanColor;
         self.collectionView.backgroundColor = UIColor.purpleColor;
 #endif
     }

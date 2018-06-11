@@ -132,6 +132,11 @@
     }
     
     if (shadowImage) {
+        
+        if ([shadowImage isHidden]) {
+            shadowImage.hidden = NO;
+        }
+        
         UIImageView *copy = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:shadowImage]];
         copy.hidden = NO;
         copy.alpha = 1.f;

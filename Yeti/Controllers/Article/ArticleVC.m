@@ -1008,7 +1008,7 @@
     if (![self showImage])
         return;
     
-    if ([_last isMemberOfClass:Heading.class]) {
+    if (_last && ![_last isKindOfClass:Linebreak.class]) {
         [self addLinebreak];
     }
     

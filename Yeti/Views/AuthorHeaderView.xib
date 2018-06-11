@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -15,8 +15,8 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="65"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="All articles by" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lBj-DK-0Bw">
-                    <rect key="frame" x="16" y="0.0" width="343" height="57"/>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="251" editable="NO" text="All articles by" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lBj-DK-0Bw">
+                    <rect key="frame" x="16" y="4" width="343" height="57"/>
                     <color key="backgroundColor" red="0.97647058819999999" green="0.97647058819999999" blue="0.97647058819999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -24,8 +24,8 @@
             </subviews>
             <color key="backgroundColor" red="0.97647058819999999" green="0.97647058819999999" blue="0.97647058819999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="lBj-DK-0Bw" secondAttribute="bottom" constant="8" id="Vze-8q-9Eb"/>
-                <constraint firstItem="lBj-DK-0Bw" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="YF6-e6-Wor"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="lBj-DK-0Bw" secondAttribute="bottom" constant="4" id="Vze-8q-9Eb"/>
+                <constraint firstItem="lBj-DK-0Bw" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="4" id="YF6-e6-Wor"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="lBj-DK-0Bw" secondAttribute="trailing" constant="16" id="iaO-up-ITk"/>
                 <constraint firstItem="lBj-DK-0Bw" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="ziG-0D-fv0"/>
             </constraints>

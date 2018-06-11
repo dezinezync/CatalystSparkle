@@ -25,6 +25,7 @@
 #import <UserNotifications/UserNotifications.h>
 
 #import "YetiThemeKit.h"
+#import "UIViewController+Hairline.h"
 
 @interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
@@ -138,47 +139,15 @@
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-    if (self.headerView) {
-        weakify(self);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            strongify(self);
-            
-            UIView *searchBarSuperview = self.navigationItem.searchController.searchBar.superview;
-            
-            SEL imagesSelector = NSSelectorFromString(@"findHairlineImageViewUnder:");
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-            UIImageView *image = [self performSelector:imagesSelector withObject:searchBarSuperview];
-#pragma clang diagnostic pop
-            
-            if ([NSStringFromClass(image.class) containsString:@"SearchBar"]) {
-                image = nil;
-            }
-            
-            if (image) {
-                self->_barImageView = image;
-                
-                if ([self headerView]) {
-                    [self headerView].shadowImage = image;
-                }
-                
-                [UIView transitionWithView:image duration:0.2 options:kNilOptions animations:^{
-                    image.hidden = YES;
-                } completion:nil];
-            }
-            
-        });
-    }
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    [self loadNextPage];
+    if (self.DS.data == nil || self.DS.data.count == 0) {
+        [self loadNextPage];
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -206,8 +175,13 @@
     if (_headerView)
         return;
     
+    UIImageView *imageView = [self yt_findHairlineImageViewUnder:self.navigationController.navigationBar];
+    
     FeedHeaderView *headerView = [[FeedHeaderView alloc] initWithNib];
     headerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
+    [headerView setShadowImage:imageView];
+    
+    imageView.hidden = YES;
     
     [headerView configure:self.feed];
     headerView.delegate = self;

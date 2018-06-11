@@ -264,12 +264,30 @@
         return;
     }
     
-    CGRect rect = value.CGRectValue;
     UIScrollView *scrollView = (UIScrollView *)(self.stackView.superview);
+    
+    CGRect rect = value.CGRectValue;
+    CGRect frame = rect;
+    frame.origin.y += 0.5f; //(scrollView.adjustedContentInset.top / 2.f);
+    
+    weakify(self);
+    
+    asyncMain(^{
+        strongify(self);
+        self->_searchHighlightingRect.frame = frame;
+    });
+
     // since we reference the scrollRect from 0,0 (top, left) in iOS.
     rect.origin.y -= scrollView.adjustedContentInset.top;
     
-    [scrollView setContentOffset:rect.origin];
+    asyncMain(^{
+        [scrollView setContentOffset:rect.origin];
+    })
+    
+//    asyncMain(^{
+//        strongify(self);
+//        self->_searchHighlightingRect.frame = frame;
+//    });
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>

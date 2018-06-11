@@ -587,7 +587,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
-    if ([self userID] != nil) {
+    if ([self userID] == nil) {
         if (errorCB) {
             errorCB(nil, nil, nil);
         }

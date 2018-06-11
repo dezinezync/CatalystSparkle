@@ -9,6 +9,7 @@
 #import "AuthorVC.h"
 #import "FeedsManager.h"
 #import "AuthorHeaderView.h"
+#import "UIViewController+Hairline.h"
 
 @interface AuthorVC ()
 
@@ -24,9 +25,15 @@
     if (_headerView)
         return;
     
+    UIImageView *imageView = [self yt_findHairlineImageViewUnder:self.navigationController.navigationBar];
+    
     AuthorHeaderView *headerView = [[AuthorHeaderView alloc] initWithNib];
     headerView.author = self.author;
     headerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
+    
+    [headerView setShadowImage:imageView];
+    
+    imageView.hidden = YES;
     
     self.tableView.tableHeaderView = headerView;
     
@@ -53,6 +60,10 @@
         
         if (![responseObject count]) {
             self->_canLoadNext = NO;
+        }
+        
+        if (self->_page == 1 && self.DS.data.count) {
+            self.DS.data = @[];
         }
         
         self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];

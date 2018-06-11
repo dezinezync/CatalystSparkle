@@ -102,6 +102,8 @@
 		F0673B0220C6A1EB00C42062 /* OPMLVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0673AFF20C6A1EB00C42062 /* OPMLVC.m */; };
 		F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
 		F0673B0420C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
+		F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */; };
+		F0695B2120CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */; };
 		F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F069ABA5206DFCB200021ABF /* GalleryCell.m */; };
 		F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F069ABA6206DFCB200021ABF /* GalleryCell.xib */; };
 		F069ABAD206E018F00021ABF /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
@@ -614,6 +616,8 @@
 		F0673AFE20C6A1EB00C42062 /* OPMLVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLVC.h; sourceTree = "<group>"; };
 		F0673AFF20C6A1EB00C42062 /* OPMLVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLVC.m; sourceTree = "<group>"; };
 		F0673B0020C6A1EB00C42062 /* OPMLVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OPMLVC.xib; sourceTree = "<group>"; };
+		F0695B1E20CE6B7600517AF8 /* UIViewController+Hairline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Hairline.h"; sourceTree = "<group>"; };
+		F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Hairline.m"; sourceTree = "<group>"; };
 		F069ABA4206DFCB200021ABF /* GalleryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GalleryCell.h; sourceTree = "<group>"; };
 		F069ABA5206DFCB200021ABF /* GalleryCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GalleryCell.m; sourceTree = "<group>"; };
 		F069ABA6206DFCB200021ABF /* GalleryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GalleryCell.xib; sourceTree = "<group>"; };
@@ -1109,6 +1113,8 @@
 				F0E0609B205A4423003FFD18 /* NSString+HTML.m */,
 				F07DCA3920C517D20068ED51 /* UITableViewController+KeyboardScroll.h */,
 				F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */,
+				F0695B1E20CE6B7600517AF8 /* UIViewController+Hairline.h */,
+				F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1928,6 +1934,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F069ABAD206E018F00021ABF /* UITableViewController+ScrollLoad.m in Sources */,
+				F0695B2120CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
 				F069ABAE206E018F00021ABF /* TweetImage.m in Sources */,
 				F069ABAF206E018F00021ABF /* ArticleVC+Toolbar.m in Sources */,
 				F0202BDF20A41A9500FBC3E1 /* FeedHeaderView.m in Sources */,
@@ -2070,6 +2077,7 @@
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F088089D206B8B9300ECE1E6 /* Tweet.m in Sources */,
+				F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
 				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
 				F0D300411FE2633E0040D10D /* DTError.m in Sources */,
