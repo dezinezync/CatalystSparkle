@@ -61,7 +61,7 @@
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     self.extendedLayoutIncludesOpaqueBars = YES;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];

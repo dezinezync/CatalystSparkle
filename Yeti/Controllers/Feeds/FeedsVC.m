@@ -57,7 +57,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     if (self.tableView.indexPathForSelectedRow) {
         [self dz_smoothlyDeselectRows:self.tableView];
@@ -150,9 +150,10 @@
     UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
     UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     
-    self.navigationItem.rightBarButtonItems = @[settings, add, folder];
+    self.navigationItem.rightBarButtonItems = @[add, folder];
+    self.navigationItem.leftBarButtonItem = settings;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     // Search Controller setup
     {
