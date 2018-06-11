@@ -44,9 +44,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 @implementation FeedsManager
 
 + (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        MyFeedsManager = [[FeedsManager alloc] init];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager = [[FeedsManager alloc] init];
+            }
+        });
     });
 }
 
@@ -1161,6 +1165,18 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 #pragma mark - Setters
 
+//- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
+//{
+//    if (bookmarks) {
+//        NSArray <FeedItem *> *sorted = [bookmarks sortedArrayUsingSelector:@selector(compare:)];
+//
+//        _bookmarks = sorted;
+//    }
+//    else {
+//        _bookmarks = bookmarks;
+//    }
+//}
+
 - (void)setPushToken:(NSString *)pushToken
 {
     _pushToken = pushToken;
@@ -1339,6 +1355,44 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 }
 
 //#ifndef SHARE_EXTENSION
+
+- (NSNumber *)bookmarksCount {
+    
+    if (!_bookmarksCount) {
+        
+        weakify(self);
+        
+        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            NSFileManager *manager = [NSFileManager defaultManager];
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+            NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
+            BOOL isDir;
+            
+            if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
+                NSError *error = nil;
+                if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
+                    DDLogError(@"Error creating bookmarks directory: %@", error);
+                }
+            }
+            
+            NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
+            NSArray *objects = enumerator.allObjects;
+            
+            strongify(self);
+            
+            self->_bookmarksCount = @(objects.count);
+            dispatch_semaphore_signal(sema);
+        });
+        
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+    }
+    
+    return _bookmarksCount;
+}
+
 - (NSArray <FeedItem *> *)bookmarks {
     
     if (!_bookmarks) {
@@ -1348,53 +1402,41 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
         NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
         BOOL isDir;
-
+        
         if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
             NSError *error = nil;
             if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
                 DDLogError(@"Error creating bookmarks directory: %@", error);
             }
         }
-
+        
         NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
         NSArray *objects = enumerator.allObjects;
-        DDLogDebug(@"Have %@ bookmarks", @(objects.count));
-
+//            DDLogDebug(@"Have %@ bookmarks", @(objects.count));
+        
         NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
-
-        for (NSString *path in objects) {
+        
+        for (NSString *path in objects) { @autoreleasepool {
             NSString *filePath = [directory stringByAppendingPathComponent:path];
             FeedItem *item = nil;
-
+            
             @try {
                 item = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
             }
             @catch (NSException *exception) {
                 DDLogWarn(@"Bookmark load exception: %@", exception);
             }
-
+            
             if (item) {
                 [bookmarkedItems addObject:item];
             }
-        }
-
-        [self setBookmarks:bookmarkedItems];
+        } }
+        
+        _bookmarks = [bookmarkedItems sortedArrayUsingSelector:@selector(compare:)];
     }
     
     return _bookmarks;
     
-}
-
-- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
-{
-    if (bookmarks) {
-        NSArray <FeedItem *> *sorted = [bookmarks sortedArrayUsingSelector:@selector(compare:)];
-        
-        _bookmarks = sorted;
-    }
-    else {
-        _bookmarks = bookmarks;
-    }
 }
 
 //#endif
@@ -1404,6 +1446,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (void)didUpdateBookmarks:(NSNotification *)note {
     
     FeedItem *item = [note object];
+    
+    @synchronized(self) {
+        self->_bookmarksCount = nil;
+    }
     
     if (!item) {
         DDLogWarn(@"A bookmark notification was posted but did not include a FeedItem object.");
@@ -1734,9 +1780,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                        
                         count--;
                         
-                        if (count == 0) {
-                            MyFeedsManager.bookmarks = bookmarks;
-                        }
+//                        if (count == 0) {
+//                            MyFeedsManager.bookmarks = bookmarks;
+//                        }
                         
                     }];
                     

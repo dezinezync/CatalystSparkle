@@ -101,7 +101,7 @@ static void *KVO_Unread = &KVO_Unread;
         cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
     }
     else {
-        cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.bookmarks.count));
+        cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];

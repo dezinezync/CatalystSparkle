@@ -50,7 +50,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #endif
 
-@property (nonatomic, copy) NSArray <FeedItem *> * _Nonnull bookmarks;
+@property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
+@property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
 
 #pragma mark - Feeds
 

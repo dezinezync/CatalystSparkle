@@ -31,31 +31,43 @@ AppDelegate *MyAppDelegate = nil;
 
 @implementation AppDelegate
 
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         MyAppDelegate = self;
     });
     
+    weakify(self);
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        strongify(self);
+    
+        [ADZLogger initialize];
+        
+        [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
+        
+        [self setupStoreManager];
+    });
+
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
 //    [self yt_log_fontnames];
     
     // Override point for customization after application launch.
-    [ADZLogger initialize];
-    
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    
-    [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
-    
+#ifndef TARGET_OS_SIMULATOR
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [application registerForRemoteNotifications];
     });
+#endif
     
 //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
 //    DDLogDebug(@"EX:%@", data);
-    
-    [self setupStoreManager];
     
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
