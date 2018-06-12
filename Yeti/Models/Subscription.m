@@ -34,13 +34,10 @@
     
     if (([key isEqualToString:@"expiry"] || [key isEqualToString:@"created"]) && [value isKindOfClass:NSString.class]) {
         
-        value = [value stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-        value = [value stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        
         // convert NSString to NSDate
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
-        formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+        formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'.'zzz'Z'";
+        formatter.timeZone = [NSTimeZone systemTimeZone];
         
         NSDate *date = [formatter dateFromString:value];
         
@@ -77,9 +74,11 @@
     if (self.expiry == nil)
         return YES;
     
-    NSTimeInterval interval = [self.expiry timeIntervalSinceNow];
+    NSDate *now = [NSDate date];
     
-    return interval <= 60;
+    NSTimeInterval interval = [now timeIntervalSinceDate:self.expiry];
+    
+    return interval > 0;
     
 }
 

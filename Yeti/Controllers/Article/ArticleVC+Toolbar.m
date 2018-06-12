@@ -51,10 +51,15 @@
         UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
         
         if (self.navigationItem.leftBarButtonItem) {
-            self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
+            if (self.navigationItem.leftBarButtonItem == self.splitViewController.displayModeButtonItem) {
+                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
+            }
+            else {
+                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, self.splitViewController.displayModeButtonItem, close];
+            }
         }
         else {
-            self.navigationItem.leftBarButtonItem = close;
+            self.navigationItem.leftBarButtonItems = @[self.splitViewController.displayModeButtonItem, close];
         }
     }
 }

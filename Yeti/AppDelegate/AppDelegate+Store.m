@@ -49,6 +49,14 @@
         
     }];
     
+    if (SKPaymentQueue.defaultQueue.transactions.count) {
+        
+        for (SKPaymentTransaction *pending in SKPaymentQueue.defaultQueue.transactions) {
+            DDLogDebug(@"Pending transaction:%@", pending.payment.productIdentifier);
+        }
+        
+    }
+    
 }
 
 - (void)processTransactions:(NSArray <SKPaymentTransaction *> *)transactions {
@@ -63,6 +71,14 @@
         SKPaymentTransaction *transaction = [processed lastObject];
         
         if (transaction.transactionState == SKPaymentTransactionStateFailed) {
+            
+            // if we're showing the settings controller
+            // the user is interactively purchasing or restoring
+            // otherwise this is happening during app launch
+            if ([[UIApplication.sharedApplication.keyWindow rootViewController] presentedViewController] == nil) {
+                return;
+            }
+            
             [AlertManager showGenericAlertWithTitle:@"Purchase Failed" message:@"Your purchase failed because the transaction was cancelled or failed before being added to the Apple server queue."];
             return;
         }

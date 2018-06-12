@@ -119,6 +119,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)getSubscriptionWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)getOPMLWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #ifndef SHARE_EXTENSION

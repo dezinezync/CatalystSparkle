@@ -1518,7 +1518,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         NSDate *lastUpdate = [NSKeyedUnarchiver unarchiveObjectWithFile:_receiptLastUpdatePath];
         
-        if (lastUpdate) {
+        if (lastUpdate != nil) {
             // check every 3 days
             NSTimeInterval threeDays = 86400 * 3;
             if ([NSDate.date timeIntervalSinceDate:lastUpdate] < threeDays) {

@@ -78,6 +78,45 @@
     }];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    weakify(self);
+    
+    if (!MyFeedsManager.subscription) {
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if ([[responseObject valueForKey:@"status"] boolValue]) {
+                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                
+                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
+            }
+            else {
+                Subscription *sub = [Subscription new];
+                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
+                
+                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
+            }
+            
+            strongify(self);
+            [self didUpdateSubscription];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            DDLogError(@"Error loading subscription: %@", error.localizedDescription);
+            Subscription *sub = MyFeedsManager.subscription ?: [Subscription new];
+            sub.error = error;
+            
+            [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
+            
+            [self didUpdateSubscription];
+            
+        }];
+    }
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -475,10 +514,17 @@
     
     weakify(self);
     
-    asyncMain(^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+        [(AccountFooterView *)(self.tableView.tableFooterView) restoreButton].enabled = !(MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]);
+        
+        if (MyFeedsManager.subscription) {
+            [self.tableView reloadData];
+        }
+        else {
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
+        }
     });
     
 }
