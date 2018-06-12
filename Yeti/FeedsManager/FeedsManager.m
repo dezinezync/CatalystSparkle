@@ -222,8 +222,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
         if (!since || !MyFeedsManager.feeds.count) {
-            MyFeedsManager.feeds = feeds;
-            
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.feeds = feeds;
+            }
+                
             // cache it
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
@@ -745,11 +747,15 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         }];
         
         if (page == 1) {
-            MyFeedsManager.unread = items;
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.unread = items;
+            }
         }
         else {
             if (!MyFeedsManager.unread) {
-                MyFeedsManager.unread = items;
+                @synchronized (MyFeedsManager) {
+                    MyFeedsManager.unread = items;
+                }
             }
             else {
                 NSArray *prefiltered = [MyFeedsManager.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
@@ -757,13 +763,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 }];
                 
                 @try {
-                    MyFeedsManager.unread = [prefiltered arrayByAddingObjectsFromArray:items];
+                    @synchronized (MyFeedsManager) {
+                        MyFeedsManager.unread = [prefiltered arrayByAddingObjectsFromArray:items];
+                    }
                 }
                 @catch (NSException *exc) {}
             }
         }
         // the conditional takes care of filtered article items.
-        MyFeedsManager.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+        @synchronized (MyFeedsManager) {
+            MyFeedsManager.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+        }
         
         if (successCB)
             successCB(responseObject, response, task);
@@ -816,7 +826,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         strongify(self);
         
-        MyFeedsManager.folders = [MyFeedsManager.folders arrayByAddingObject:instance];
+        @synchronized (MyFeedsManager) {
+            MyFeedsManager.folders = [MyFeedsManager.folders arrayByAddingObject:instance];
+        }
         
         if (successCB)
             successCB(instance, response, task);
@@ -861,7 +873,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         }];
         
         // this will fire the notification
-        MyFeedsManager.folders = [self folders];
+        @synchronized (MyFeedsManager) {
+            MyFeedsManager.folders = [self folders];
+        }
         
         if (successCB) {
             successCB(responseObject, response, task);
@@ -929,7 +943,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 return [del indexOfObject:obj.feedID] == NSNotFound;
             }];
             
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:removedFeeds];
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:removedFeeds];
+            }
         }
         
         // now run add ops
@@ -942,9 +958,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 obj.folderID = folderID;
             }];
             
-            MyFeedsManager.feeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                return [add indexOfObject:obj.feedID] == NSNotFound;
-            }];
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.feeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                    return [add indexOfObject:obj.feedID] == NSNotFound;
+                }];
+            }
             
             folder.feeds = [folder.feeds arrayByAddingObjectsFromArray:addedFeeds];
         }
@@ -1219,12 +1237,16 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 [[NSNotificationCenter defaultCenter] postNotificationName:SubscribedToFeed object:MyFeedsManager.subsribeAfterPushEnabled];
                 
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    MyFeedsManager.subsribeAfterPushEnabled = nil;
+                    @synchronized (MyFeedsManager) {
+                        MyFeedsManager.subsribeAfterPushEnabled = nil;
+                    }
                 });
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-               
-                MyFeedsManager.subsribeAfterPushEnabled = nil;
+                
+                @synchronized (MyFeedsManager) {
+                    MyFeedsManager.subsribeAfterPushEnabled = nil;
+                }
                 
                 [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
                 
@@ -1554,13 +1576,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         if ([[responseObject valueForKey:@"status"] boolValue]) {
             Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
             
-            MyFeedsManager.subscription = sub;
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.subscription = sub;
+            }
         }
         else {
             Subscription *sub = [Subscription new];
             sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
             
-            MyFeedsManager.subscription = sub;
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.subscription = sub;
+            }
         }
 #endif
         
@@ -1571,7 +1597,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         Subscription *sub = [Subscription new];
         sub.error = error;
         
-        MyFeedsManager.subscription = sub;
+        @synchronized (MyFeedsManager) {
+            MyFeedsManager.subscription = sub;
+        }
 #endif
     }];
 }
@@ -1811,7 +1839,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                         count--;
                         
                         if (count == 0) {
-                            MyFeedsManager.bookmarks = bookmarks;
+                            @synchronized (MyFeedsManager) {
+                                MyFeedsManager.bookmarks = bookmarks;
+                            }
                         }
                         
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1828,7 +1858,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 
             }
             else {
-                MyFeedsManager.bookmarks = bookmarks;
+                @synchronized (MyFeedsManager) {
+                    MyFeedsManager.bookmarks = bookmarks;
+                }
             }
             
         }
