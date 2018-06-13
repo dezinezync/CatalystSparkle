@@ -132,11 +132,49 @@
     
     SKProduct *product = [self.products objectAtIndex:self.subscriptionType];
     
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
-    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
+//    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+//    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
+//    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
                 
-    [MyStoreManager purhcaseProduct:product];
+    [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
+        
+        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
+            
+            if (receipt) {
+                // verify with server
+                [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    if ([[responseObject valueForKey:@"status"] boolValue]) {
+                        YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
+                        
+                        [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                    }
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    
+                }];
+            }
+            else {
+                [AlertManager showGenericAlertWithTitle:@"No receipt data" message:@"The App Store did not provide receipt data for this transaction"];
+            }
+        });
+
+        
+    } error:^(SKPaymentQueue *queue, NSError *error) {
+        
+        [AlertManager showGenericAlertWithTitle:@"Purhcase Error" message:error.localizedDescription];
+        
+    }];
     
 }
 

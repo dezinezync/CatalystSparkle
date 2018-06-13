@@ -23,15 +23,15 @@
     
     [MyStoreManager setPaymentQueueUpdatedTransactionsBlock:^(SKPaymentQueue *queue, NSArray <SKPaymentTransaction *> *transactions) {
         
-        strongify(self);
-        
-        [self processTransactions:transactions];
+        for (SKPaymentTransaction *transaction in transactions) {
+            DDLogDebug(@"Transaction for: %@ in state: %@", transaction.payment.productIdentifier, @(transaction.transactionState));
+        }
         
     }];
     
     [MyStoreManager setPaymentQueueRemovedTransactionsBlock:^(SKPaymentQueue *queue, NSArray *transactions) {
         
-        
+        DDLogDebug(@"Removed transactions from Queue: %@", transactions);
         
     }];
     
@@ -92,39 +92,32 @@
         
         if (receiptURL && [fileManager fileExistsAtPath:receiptURL.filePathURL.absoluteString]) {
             
-            SKReceiptRefreshRequest *request = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:nil];
-            [request start];
+            NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                
-                NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
-                
-                if (receipt) {
-                    // verify with server
-                    [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            if (receipt) {
+                // verify with server
+                [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    if ([[responseObject valueForKey:@"status"] boolValue]) {
+                        YetiSubscriptionType subscriptionType = [processed firstObject].payment.productIdentifier;
                         
-                        if ([[responseObject valueForKey:@"status"] boolValue]) {
-                            YetiSubscriptionType subscriptionType = [processed firstObject].payment.productIdentifier;
-                            
-                            [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
-                            [[NSUserDefaults standardUserDefaults] synchronize];
-                        }
-                        
-                        [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
-                        
-                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                        
-                        [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
-                        
-                        [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
-                        
-                    }];
-                }
-                else {
-                    [AlertManager showGenericAlertWithTitle:@"No receipt data" message:@"The App Store did not provide receipt data for this transaction"];
-                }
-                
-            });
+                        [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                    }
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                    
+                }];
+            }
+            else {
+                [AlertManager showGenericAlertWithTitle:@"No receipt data" message:@"The App Store did not provide receipt data for this transaction"];
+            }
 
         }
         else {
