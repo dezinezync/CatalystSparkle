@@ -37,11 +37,11 @@
     
     [MyStoreManager setPaymentQueueRestoreCompletedTransactionsWithSuccess:^(SKPaymentQueue *queue) {
         
-        if (queue.transactions) {
-            strongify(self);
-            
-            [self processTransactions:queue.transactions];
-        }
+        strongify(self);
+        NSArray <SKPaymentTransaction *> *transactions = queue.transactions;
+        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"transactionDate" ascending:YES];
+        transactions = [transactions sortedArrayUsingDescriptors:@[descriptor]];
+        [self processTransactions:@[transactions.lastObject]];
         
     } failure:^(SKPaymentQueue *queue, NSError *error) {
        
@@ -76,6 +76,10 @@
         
         if (transaction.transactionState == SKPaymentTransactionStateFailed) {
             
+            if (transaction.error.code == SKErrorPaymentCancelled) {
+                return;
+            }
+            
             // if we're showing the settings controller
             // the user is interactively purchasing or restoring
             // otherwise this is happening during app launch
@@ -83,14 +87,16 @@
                 return;
             }
             
-            [AlertManager showGenericAlertWithTitle:@"Purchase Failed" message:@"Your purchase failed because the transaction was cancelled or failed before being added to the Apple server queue."];
+            NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"Your purchase failed because the transaction was cancelled or failed before being added to the Apple server queue."}];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
             return;
         }
         
         NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
         NSFileManager *fileManager = [NSFileManager defaultManager];
         
-        if (receiptURL && [fileManager fileExistsAtPath:receiptURL.filePathURL.absoluteString]) {
+        if (receiptURL && [fileManager fileExistsAtPath:receiptURL.path]) {
             
             NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
             
@@ -116,12 +122,16 @@
                 }];
             }
             else {
-                [AlertManager showGenericAlertWithTitle:@"No receipt data" message:@"The App Store did not provide receipt data for this transaction"];
+                NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"The App Store did not provide receipt data for this transaction"}];
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
             }
 
         }
         else {
-            [AlertManager showGenericAlertWithTitle:@"No receipt" message:@"The App Store did not provide a receipt for this transaction"];
+            NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"The App Store did not provide a receipt for this transaction"}];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
         }
         
     }

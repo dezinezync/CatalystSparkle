@@ -135,6 +135,8 @@
 //    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 //    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
 //    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
+    
+    weakify(self);
                 
     [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
         
@@ -154,13 +156,19 @@
                         [[NSUserDefaults standardUserDefaults] synchronize];
                     }
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    strongify(self);
+                    
+                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    
+                    [self didPurchase:note];
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    
+                    [self didPurchase:note];
                     
                 }];
             }
@@ -184,14 +192,8 @@
  
     NSArray <SKPaymentTransaction *> *transactions = [note.userInfo valueForKey:@"transactions"];
     
-    for (SKPaymentTransaction *transaction in transactions) {
-        [MyStoreManager finishTransaction:transaction];
-    }
-    
     // we're only expecting one.
     SKPaymentTransaction *transaction = [transactions firstObject];
-    
-    [self didUpdateSubscription];
     
     if (!transaction)
         return;
@@ -200,6 +202,10 @@
         
         [self enableRestoreButton];
         [self didUpdateSubscription];
+        
+        if (transaction.error.code == SKErrorPaymentCancelled) {
+            return;
+        }
         
         [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:transaction.error.localizedDescription];
         return;
@@ -219,6 +225,10 @@
 - (void)didFail:(NSNotification *)note {
     
     NSError *error = [[note userInfo] valueForKey:@"error"];
+    // no transactions to restore.
+    if (error.code == 9304) {
+        return;
+    }
     
     [AlertManager showGenericAlertWithTitle:@"Purhcase/Restore Error" message:error.localizedDescription];
     

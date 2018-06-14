@@ -75,10 +75,9 @@
         return YES;
     
     NSDate *now = [NSDate date];
+    NSComparisonResult result = [now compare:self.expiry];
     
-    NSTimeInterval interval = [now timeIntervalSinceDate:self.expiry];
-    
-    return interval > 0;
+    return result != NSOrderedAscending;
     
 }
 
