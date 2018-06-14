@@ -10,6 +10,8 @@
 #import "FeedsManager.h"
 #import <DZKit/AlertManager.h>
 
+NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
+
 @interface YTUserID () {
     // how many attempts have we made since waiting.
     // max is 2. Starts with 0.
@@ -42,7 +44,7 @@
     if (self = [super init]) {
         self.delegate = delegate;
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             DDLogInfo(@"Initialised with: %@ %@", self.UUID, self.userID);
         });
     }
@@ -108,6 +110,10 @@
         }
         else {
             
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
+            });
+            
             // check server
             if (self.delegate) {
                 
@@ -165,6 +171,12 @@
         NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
         [store setObject:[_UUID UUIDString] forKey:@"YTUserID"];
         [store synchronize];
+        
+        NSUbiquitousKeyValueStore *ubstore = [NSUbiquitousKeyValueStore defaultStore];
+        if (ubstore) {
+            [ubstore setObject:[_UUID UUIDString] forKey:@"YTUserID"];
+            [ubstore synchronize];
+        }
     }
 }
 
@@ -180,6 +192,12 @@
         NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
         [store setObject:_userID forKey:@"userID"];
         [store synchronize];
+        
+        NSUbiquitousKeyValueStore *ubstore = [NSUbiquitousKeyValueStore defaultStore];
+        if (ubstore) {
+            [ubstore setObject:_userID forKey:@"userID"];
+            [ubstore synchronize];
+        }
     }
     
     MyFeedsManager.userID = _userID;

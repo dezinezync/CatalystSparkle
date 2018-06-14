@@ -12,6 +12,9 @@
 #import "YetiThemeKit.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "YTUserID.h"
+#import "IntroVC.h"
+
 @interface SplitVC ()
 
 @end
@@ -22,6 +25,14 @@
     [super viewDidLoad];
     
     [YetiThemeKit loadThemeKit];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self userNotFound];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -30,6 +41,16 @@
     
     return [theme isEqualToString:LightTheme] ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
     
+}
+
+#pragma mark -
+
+- (void)userNotFound {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    
+    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
+    
+    [self presentViewController:vc animated:YES completion:nil];
 }
 
 @end

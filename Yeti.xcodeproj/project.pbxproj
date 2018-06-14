@@ -343,6 +343,18 @@
 		F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
 		F0A5AEC320C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
 		F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
+		F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF313820D27F7700E074D6 /* IntroVC.m */; };
+		F0AF313B20D27F7700E074D6 /* IntroVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF313820D27F7700E074D6 /* IntroVC.m */; };
+		F0AF313C20D27F7700E074D6 /* IntroVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF313920D27F7700E074D6 /* IntroVC.xib */; };
+		F0AF313D20D27F7700E074D6 /* IntroVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF313920D27F7700E074D6 /* IntroVC.xib */; };
+		F0AF314020D287E600E074D6 /* IntroViewDefault.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF313F20D287E600E074D6 /* IntroViewDefault.xib */; };
+		F0AF314120D287E600E074D6 /* IntroViewDefault.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF313F20D287E600E074D6 /* IntroViewDefault.xib */; };
+		F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314320D287F400E074D6 /* IntroViewDefault.m */; };
+		F0AF314520D287F400E074D6 /* IntroViewDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314320D287F400E074D6 /* IntroViewDefault.m */; };
+		F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */; };
+		F0AF314820D28EFD00E074D6 /* IntroViewUUID.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */; };
+		F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */; };
+		F0AF314C20D28F0800E074D6 /* IntroViewUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */; };
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
@@ -750,6 +762,15 @@
 		F0A5AEA920C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
 		F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-ThinItalic.ttf"; sourceTree = "<group>"; };
 		F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-MediumItalic.ttf"; sourceTree = "<group>"; };
+		F0AF313720D27F7700E074D6 /* IntroVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroVC.h; sourceTree = "<group>"; };
+		F0AF313820D27F7700E074D6 /* IntroVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroVC.m; sourceTree = "<group>"; };
+		F0AF313920D27F7700E074D6 /* IntroVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntroVC.xib; sourceTree = "<group>"; };
+		F0AF313F20D287E600E074D6 /* IntroViewDefault.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntroViewDefault.xib; sourceTree = "<group>"; };
+		F0AF314220D287F400E074D6 /* IntroViewDefault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroViewDefault.h; sourceTree = "<group>"; };
+		F0AF314320D287F400E074D6 /* IntroViewDefault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroViewDefault.m; sourceTree = "<group>"; };
+		F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntroViewUUID.xib; sourceTree = "<group>"; };
+		F0AF314920D28F0800E074D6 /* IntroViewUUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroViewUUID.h; sourceTree = "<group>"; };
+		F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroViewUUID.m; sourceTree = "<group>"; };
 		F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderVC.h; sourceTree = "<group>"; };
 		F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderVC.m; sourceTree = "<group>"; };
 		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
@@ -1158,6 +1179,9 @@
 				F078B637206637B40048DBEA /* EmptyVC.xib */,
 				F06B766220C27CD000FBCDE7 /* YTNavigationController.h */,
 				F06B766320C27CD000FBCDE7 /* YTNavigationController.m */,
+				F0AF313720D27F7700E074D6 /* IntroVC.h */,
+				F0AF313820D27F7700E074D6 /* IntroVC.m */,
+				F0AF313920D27F7700E074D6 /* IntroVC.xib */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1305,6 +1329,12 @@
 				F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */,
 				F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */,
 				F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */,
+				F0AF314220D287F400E074D6 /* IntroViewDefault.h */,
+				F0AF314320D287F400E074D6 /* IntroViewDefault.m */,
+				F0AF313F20D287E600E074D6 /* IntroViewDefault.xib */,
+				F0AF314920D28F0800E074D6 /* IntroViewUUID.h */,
+				F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */,
+				F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1652,6 +1682,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0AF314820D28EFD00E074D6 /* IntroViewUUID.xib in Resources */,
 				F069ABFA206E018F00021ABF /* hljs.js in Resources */,
 				F0A5AE6D20C197EF00CFA1D2 /* Merriweather-Black.ttf in Resources */,
 				F0A5AEBB20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
@@ -1717,8 +1748,10 @@
 				F0A5AEB520C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F069AC0C206E018F00021ABF /* attributions.html in Resources */,
 				F0A5AEC120C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */,
+				F0AF314120D287E600E074D6 /* IntroViewDefault.xib in Resources */,
 				F047F4FB20C25FB900626968 /* Spectral-Italic.ttf in Resources */,
 				F0A5AE9520C19CB400CFA1D2 /* IBMPlexSerif-SemiBold.ttf in Resources */,
+				F0AF313D20D27F7700E074D6 /* IntroVC.xib in Resources */,
 				F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */,
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
 				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
@@ -1767,6 +1800,7 @@
 				F09E96482055342000E61681 /* styleHTML.js in Resources */,
 				F088089F206B8B9C00ECE1E6 /* Tweet.xib in Resources */,
 				F0A5AE9620C19CB400CFA1D2 /* IBMPlexSerif-Regular.ttf in Resources */,
+				F0AF314020D287E600E074D6 /* IntroViewDefault.xib in Resources */,
 				F0A5AE9C20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
 				F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
@@ -1784,6 +1818,7 @@
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
+				F0AF313C20D27F7700E074D6 /* IntroVC.xib in Resources */,
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
@@ -1791,6 +1826,7 @@
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
+				F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */,
 				F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */,
 				F0A5AE8820C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
 				F047F4F020C25FB900626968 /* Spectral-Light.ttf in Resources */,
@@ -1942,6 +1978,8 @@
 				F069ABB1206E018F00021ABF /* ImageLoadingVC.m in Sources */,
 				F069ABB2206E018F00021ABF /* FeedSearchResults.m in Sources */,
 				F069ABB3206E018F00021ABF /* SearchResults.m in Sources */,
+				F0AF313B20D27F7700E074D6 /* IntroVC.m in Sources */,
+				F0AF314520D287F400E074D6 /* IntroViewDefault.m in Sources */,
 				F069AC1B206E10F200021ABF /* CheckWifi.m in Sources */,
 				F069ABB4206E018F00021ABF /* YetiConstants.m in Sources */,
 				F06B766520C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
@@ -1993,6 +2031,7 @@
 				F069ABD3206E018F00021ABF /* ArticleVC.m in Sources */,
 				F069ABD4206E018F00021ABF /* NewFeedVC.m in Sources */,
 				F069ABD5206E018F00021ABF /* NewVCAnimator.m in Sources */,
+				F0AF314C20D28F0800E074D6 /* IntroViewUUID.m in Sources */,
 				F03A5F6220971BB300CE7D5E /* ThemeVC.m in Sources */,
 				F069ABD6206E018F00021ABF /* FeedsSearchResults.m in Sources */,
 				F069ABD7206E018F00021ABF /* ArticleCell.m in Sources */,
@@ -2105,9 +2144,11 @@
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
+				F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */,
 				F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
+				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
@@ -2126,6 +2167,7 @@
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
+				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,

@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <DZNetworking/DZNetworking.h>
 
+extern NSNotificationName const YTUserNotFound;
+
 @protocol YTUserDelegate <NSObject>
 
 - (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB;

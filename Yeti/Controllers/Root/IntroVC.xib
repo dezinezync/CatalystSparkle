@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IntroVC">
+            <connections>
+                <outlet property="bottomStackView" destination="33C-gL-8Cb" id="xjj-gv-B0x"/>
+                <outlet property="button" destination="ib6-J0-Wrk" id="ZGM-ry-kUl"/>
+                <outlet property="disclaimerLabel" destination="7bi-HN-ng1" id="L6R-sk-CQX"/>
+                <outlet property="scrollView" destination="PcB-fS-rex" id="4TE-2W-9O1"/>
+                <outlet property="stackView" destination="pCp-7l-ElB" id="Hyc-Iw-sqP"/>
+                <outlet property="topLabel" destination="rm3-mg-3cw" id="22L-Cf-46B"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PcB-fS-rex">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" axis="vertical" distribution="equalSpacing" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="pCp-7l-ElB">
+                            <rect key="frame" x="16" y="0.0" width="343" height="157"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Welcome to Elytra" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rm3-mg-3cw">
+                                    <rect key="frame" x="0.0" y="0.0" width="343" height="47"/>
+                                    <fontDescription key="fontDescription" name="SFProDisplay-Heavy" family="SF Pro Display" pointSize="40"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="33C-gL-8Cb">
+                                    <rect key="frame" x="0.0" y="71" width="343" height="86"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ib6-J0-Wrk">
+                                            <rect key="frame" x="148.5" y="0.0" width="46" height="30"/>
+                                            <state key="normal" title="Button"/>
+                                            <connections>
+                                                <action selector="didTapContinue:" destination="-1" eventType="touchUpInside" id="93x-Us-ey1"/>
+                                            </connections>
+                                        </button>
+                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="752" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="To read our Terms of Service or Privacy Policy, please tap here." adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7bi-HN-ng1">
+                                            <rect key="frame" x="2.5" y="38" width="338" height="48"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                        </textView>
+                                    </subviews>
+                                </stackView>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="pCp-7l-ElB" firstAttribute="leading" secondItem="PcB-fS-rex" secondAttribute="leading" constant="16" id="EvY-7d-LG5"/>
+                        <constraint firstItem="pCp-7l-ElB" firstAttribute="width" secondItem="PcB-fS-rex" secondAttribute="width" constant="-32" id="UqH-1Y-u6d"/>
+                        <constraint firstItem="pCp-7l-ElB" firstAttribute="top" secondItem="PcB-fS-rex" secondAttribute="top" id="kzk-vI-u7S"/>
+                    </constraints>
+                </scrollView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="PcB-fS-rex" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="3BG-MB-YP5"/>
+                <constraint firstItem="PcB-fS-rex" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="SKt-Dp-yXk"/>
+                <constraint firstItem="PcB-fS-rex" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="Tsp-wj-O49"/>
+                <constraint firstItem="PcB-fS-rex" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="aFW-lc-31O"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
+            <point key="canvasLocation" x="24.5" y="51.5"/>
+        </view>
+    </objects>
+</document>

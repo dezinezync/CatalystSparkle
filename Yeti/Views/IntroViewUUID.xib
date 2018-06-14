@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="IntroViewUUID">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="473"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" axis="vertical" distribution="equalSpacing" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="sQv-HS-XI7">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="473"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P1Y-en-9HS">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="122"/>
+                            <string key="text">To keep your account anonymous and your personal information secure, Elytra has  automatically created an account ID for you. 
+
+Please note it somewhere safe as you’ll need it when contacting us or restoring your account. </string>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TAM-5n-P3u">
+                            <rect key="frame" x="0.0" y="261" width="375" height="30"/>
+                            <gestureRecognizers/>
+                            <nil key="textColor"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <textInputTraits key="textInputTraits" textContentType="username"/>
+                        </textField>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5er-FM-PCW">
+                            <rect key="frame" x="0.0" y="430" width="375" height="43"/>
+                            <string key="text">You can always access this ID under the App’s settings.
+
+You can long tap on the ID to copy it.</string>
+                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <gestureRecognizers/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="aWK-qA-dZP" appends="YES" id="AV4-by-BgT"/>
+                    </connections>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="sQv-HS-XI7" secondAttribute="bottom" id="6HB-CE-54u"/>
+                <constraint firstItem="sQv-HS-XI7" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="D5D-BL-XMs"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="sQv-HS-XI7" secondAttribute="trailing" id="EPv-Wa-ndc"/>
+                <constraint firstItem="sQv-HS-XI7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="eYT-3l-hYz"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="textField" destination="TAM-5n-P3u" id="IvC-00-IKv"/>
+            </connections>
+            <point key="canvasLocation" x="8" y="37"/>
+        </view>
+        <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="aWK-qA-dZP">
+            <connections>
+                <action selector="didLongTap:" destination="iN0-l3-epB" id="F3o-4k-twd"/>
+            </connections>
+        </pongPressGestureRecognizer>
+    </objects>
+</document>
