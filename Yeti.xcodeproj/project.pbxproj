@@ -405,6 +405,8 @@
 		F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E0609B205A4423003FFD18 /* NSString+HTML.m */; };
 		F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E219432054FB83004B5FF5 /* Linebreak.m */; };
 		F0E656872063EF0D00450959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
+		F0E6FDB820D2DFC60057FDC3 /* SimpleKeychain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E6FDB620D2DFC60057FDC3 /* SimpleKeychain.framework */; };
+		F0E6FDB920D2DFC60057FDC3 /* SimpleKeychain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E6FDB620D2DFC60057FDC3 /* SimpleKeychain.framework */; };
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
 		F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */; };
@@ -833,6 +835,7 @@
 		F0E219412054F846004B5FF5 /* LayoutConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutConstants.h; sourceTree = "<group>"; };
 		F0E219422054FB83004B5FF5 /* Linebreak.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Linebreak.h; sourceTree = "<group>"; };
 		F0E219432054FB83004B5FF5 /* Linebreak.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Linebreak.m; sourceTree = "<group>"; };
+		F0E6FDB620D2DFC60057FDC3 /* SimpleKeychain.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SimpleKeychain.framework; path = Carthage/Build/iOS/SimpleKeychain.framework; sourceTree = SOURCE_ROOT; };
 		F0E71E6D1FD6F2D400408CFF /* FeedsManager+KVS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsManager+KVS.h"; sourceTree = "<group>"; };
 		F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsManager+KVS.m"; sourceTree = "<group>"; };
 		F0E71E701FD6F72200408CFF /* PaddedLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
@@ -871,6 +874,7 @@
 			files = (
 				F099466220AD86CB00E5520F /* StoreKit.framework in Frameworks */,
 				F069ABF1206E018F00021ABF /* DZNetworking.framework in Frameworks */,
+				F0E6FDB920D2DFC60057FDC3 /* SimpleKeychain.framework in Frameworks */,
 				F0E8A81120998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F069ABF2206E018F00021ABF /* MobileCoreServices.framework in Frameworks */,
 				F069ABF3206E018F00021ABF /* DZAppdelegate.framework in Frameworks */,
@@ -887,6 +891,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0E6FDB820D2DFC60057FDC3 /* SimpleKeychain.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
@@ -1248,6 +1253,7 @@
 		F070C3211FBAC0EE00912CCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0E6FDB620D2DFC60057FDC3 /* SimpleKeychain.framework */,
 				F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
 				F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */,
@@ -1911,6 +1917,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/JLRoutes.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OMGHTTPURLRQ.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/DZThemeKit.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SimpleKeychain.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -1921,10 +1928,11 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JLRoutes.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OMGHTTPURLRQ.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZThemeKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SimpleKeychain.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 		F0A589F2205A569C00488015 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;

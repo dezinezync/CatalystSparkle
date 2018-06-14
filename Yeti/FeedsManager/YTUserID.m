@@ -10,6 +10,10 @@
 #import "FeedsManager.h"
 #import <DZKit/AlertManager.h>
 
+#import <SimpleKeychain/SimpleKeychain.h>
+
+NSString *const kAccountID = @"YTUserID";
+NSString *const kUserID = @"userID";
 NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 @interface YTUserID () {
@@ -59,27 +63,46 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (!_UUID) {
         // check if the store already has one
-        NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+        A0SimpleKeychain *keychain = [A0SimpleKeychain keychain];
         
-        if (!store) {
-            store = (NSUbiquitousKeyValueStore *)[NSUserDefaults standardUserDefaults];
-        }
+        NSString *UUIDString = [keychain stringForKey:kAccountID];
         
-        NSString *UUIDString = [store stringForKey:@"YTUserID"];
-        
-        self.userID = @([store longLongForKey:@"userID"]);
-        
-        if (!UUIDString || (_userID == nil || ![_userID integerValue])) {
-            if (_tries < 2) {
-                _tries++;
-                return [self performSelector:@selector(UUID)];
-            }
-        }
+        self.userID = @([[keychain stringForKey:kUserID] integerValue]);
         
         if (_userID && _userID.integerValue == 0) {
             _userID = nil;
             _UUID = nil;
             UUIDString = nil;
+        }
+        
+        // migrate from NSUbiquitousKeyValueStore
+        if (!UUIDString || !self.userID) {
+            NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
+            UUIDString = [defaults stringForKey:kAccountID];
+            
+            if (UUIDString) {
+                self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
+            }
+            
+            NSInteger userID = [defaults longLongForKey:kUserID];
+            if (userID) {
+                self.userID = @(userID);
+            }
+        }
+        
+        // migrate from NSUserDefaults
+        if (!UUIDString || !self.userID) {
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            UUIDString = [defaults stringForKey:kAccountID];
+            
+            if (UUIDString) {
+                self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
+            }
+            
+            NSInteger userID = [[defaults valueForKey:kUserID] integerValue];
+            if (userID) {
+                self.userID = @(userID);
+            }
         }
         
         if (UUIDString) {
@@ -129,17 +152,15 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
                     self->_userID = @([[user valueForKey:@"id"] integerValue]);
                     self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
                     
-                    [store setLongLong:self->_userID.longLongValue forKey:@"userID"];
-                    [store setString:self->_UUID.UUIDString forKey:@"YTUserID"];
-                    [store synchronize];
+                    [keychain setString:self->_userID.stringValue forKey:kUserID];
+                    [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     strongify(self);
                     
                     self->_UUID = [NSUUID UUID];
-                    [store setString:self->_UUID.UUIDString forKey:@"YTUserID"];
-                    [store synchronize];
+                    [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
                     
                     // let our server know about these changes
                     [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -168,15 +189,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     _UUID = UUID;
     
     if (_UUID != nil) {
-        NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
-        [store setObject:[_UUID UUIDString] forKey:@"YTUserID"];
-        [store synchronize];
-        
-        NSUbiquitousKeyValueStore *ubstore = [NSUbiquitousKeyValueStore defaultStore];
-        if (ubstore) {
-            [ubstore setObject:[_UUID UUIDString] forKey:@"YTUserID"];
-            [ubstore synchronize];
-        }
+        [[A0SimpleKeychain keychain] setString:UUID.UUIDString forKey:kAccountID];
     }
 }
 
@@ -189,15 +202,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     _userID = userID;
     
     if (_userID != nil) {
-        NSUserDefaults *store = [NSUserDefaults standardUserDefaults];
-        [store setObject:_userID forKey:@"userID"];
-        [store synchronize];
-        
-        NSUbiquitousKeyValueStore *ubstore = [NSUbiquitousKeyValueStore defaultStore];
-        if (ubstore) {
-            [ubstore setObject:_userID forKey:@"userID"];
-            [ubstore synchronize];
-        }
+        [[A0SimpleKeychain keychain] setString:userID.stringValue forKey:kUserID];
     }
     
     MyFeedsManager.userID = _userID;

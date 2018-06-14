@@ -48,9 +48,9 @@
 - (void)userNotFound {
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
-    
-    [self presentViewController:vc animated:YES completion:nil];
+//    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
+//    
+//    [self presentViewController:vc animated:YES completion:nil];
 }
 
 @end

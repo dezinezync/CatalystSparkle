@@ -1,5 +1,6 @@
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
 github "MatthewYork/DateTools" "4.0.0"
+github "auth0/SimpleKeychain" "0.8.1"
 github "dezinezync/DZKit" "2.1.9"
 github "dezinezync/WebP" "1.0.0"
 github "dzns/DZAppDelegate" "1.0.2"
