@@ -9,58 +9,78 @@
 #import "IntroViewDefault.h"
 
 @interface IntroViewDefault ()
-@property (weak, nonatomic) IBOutlet UIImageView *image1;
-@property (weak, nonatomic) IBOutlet UIImageView *image2;
-@property (weak, nonatomic) IBOutlet UIImageView *image3;
 
-@property (weak, nonatomic) IBOutlet UILabel *label1;
-@property (weak, nonatomic) IBOutlet UILabel *label2;
-@property (weak, nonatomic) IBOutlet UILabel *label3;
+@property (weak, nonatomic) IBOutlet UIImageView *card1;
+@property (weak, nonatomic) IBOutlet UIImageView *card2;
+@property (weak, nonatomic) IBOutlet UIImageView *card3;
 
 @end
 
 @implementation IntroViewDefault
 
 - (void)awakeFromNib {
-    
     [super awakeFromNib];
     
-    UIFont *font = [UIFont systemFontOfSize:22.f weight:UIFontWeightRegular];
-    UIFont *titleFont = [UIFont systemFontOfSize:22.f weight:UIFontWeightMedium];
+    self.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UIColor *black = UIColor.blackColor;
-    UIColor *color = [black colorWithAlphaComponent:0.54f];
-    
-    NSDictionary *attributes = @{NSFontAttributeName: font,
-                                 NSForegroundColorAttributeName: color
-                                 };
-    
-    NSDictionary *titleAttributes = @{NSFontAttributeName: titleFont,
-                                      NSForegroundColorAttributeName: black
-                                      };
-    
-    NSString *text = @"Native text rendering\nAffords a superiour reading experience.";
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
-    [attrs addAttributes:titleAttributes range:[text rangeOfString:@"Native text rendering"]];
-    
-    self.label1.attributedText = attrs;
-    
-    text = @"Realtime subscriptions\nSo you can always stay in the loop.";
-    attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
-    [attrs addAttributes:titleAttributes range:[text rangeOfString:@"Realtime subscriptions"]];
-    
-    self.label2.attributedText = attrs;
-    
-    text = @"Light & Dark Themes\nComfortable reading in most environments.";
-    attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
-    [attrs addAttributes:titleAttributes range:[text rangeOfString:@"Light & Dark Themes"]];
-    
-    self.label3.attributedText = attrs;
-    
-    for (UILabel *label in @[self.label1, self.label2, self.label3]) {
-        [label sizeToFit];
+    for (UIView *view in @[self.card1, self.card2, self.card3]) {
+        [self addHorizontalTilt:20.f verticalTilt:20.f ToView:view];
     }
     
+}
+
+- (CGSize)intrinsicContentSize {
+    CGSize size = [super intrinsicContentSize];
+    
+    if (self.superview) {
+        size.width = self.superview.bounds.size.width + 32.f;
+        size.height = 704.f;
+    }
+    
+    return size;
+}
+
+#pragma mark -
+
+- (void)addHorizontalTilt:(CGFloat)x verticalTilt:(CGFloat)y ToView:(UIView *)view
+{
+    UIInterpolatingMotionEffect *xAxis = nil;
+    UIInterpolatingMotionEffect *yAxis = nil;
+    
+    if (x != 0.0)
+    {
+        xAxis = [[UIInterpolatingMotionEffect alloc]
+                 initWithKeyPath:@"center.x"
+                 type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+        xAxis.minimumRelativeValue = [NSNumber numberWithFloat:-x];
+        xAxis.maximumRelativeValue = [NSNumber numberWithFloat:x];
+    }
+    
+    if (y != 0.0)
+    {
+        yAxis = [[UIInterpolatingMotionEffect alloc]
+                 initWithKeyPath:@"center.y"
+                 type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+        yAxis.minimumRelativeValue = [NSNumber numberWithFloat:-y];
+        yAxis.maximumRelativeValue = [NSNumber numberWithFloat:y];
+    }
+    
+    if (xAxis || yAxis)
+    {
+        UIMotionEffectGroup *group = [[UIMotionEffectGroup alloc] init];
+        NSMutableArray *effects = [[NSMutableArray alloc] init];
+        if (xAxis)
+        {
+            [effects addObject:xAxis];
+        }
+        
+        if (yAxis)
+        {
+            [effects addObject:yAxis];
+        }
+        group.motionEffects = effects;
+        [view addMotionEffect:group];
+    }
 }
 
 @end

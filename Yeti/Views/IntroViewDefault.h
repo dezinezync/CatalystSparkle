@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IntroViewDefault : NibView
 
+@property (weak, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;
+
 @end
 
 NS_ASSUME_NONNULL_END

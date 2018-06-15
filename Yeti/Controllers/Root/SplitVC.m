@@ -50,7 +50,7 @@
     
 //    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
 //    
-//    [self presentViewController:vc animated:YES completion:nil];
+//    [self presentViewController:vc animated:NO completion:nil];
 }
 
 @end

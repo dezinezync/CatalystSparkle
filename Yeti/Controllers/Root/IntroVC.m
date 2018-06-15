@@ -9,11 +9,14 @@
 #import "IntroVC.h"
 #import "IntroViewDefault.h"
 #import "IntroViewUUID.h"
+#import "SubscriptionView.h"
+#import <Store/Store.h>
 
 typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateDefault,
     IntroStateUUID,
-    IntroStateSubscription
+    IntroStateSubscription,
+    IntroStateSubscriptionDone
 };
 
 @interface IntroVC ()
@@ -43,7 +46,9 @@ typedef NS_ENUM(NSInteger, IntroState) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.scrollView.contentInset = UIEdgeInsetsMake(48.f, 0, 0, 16.f);
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0, 12.f);
+    
+    self.button.layer.cornerRadius = 8.f;
     
     self.state = IntroStateDefault;
     [self.view setNeedsLayout];
@@ -52,7 +57,16 @@ typedef NS_ENUM(NSInteger, IntroState) {
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
+    if (self.state == IntroStateSubscriptionDone) {
+        return;
+    }
+    
     if (self.activeView) {
+        
+        if ([self.activeView isKindOfClass:IntroViewDefault.class]) {
+            [[(IntroViewDefault *)self.activeView tapGesture] removeTarget:self action:@selector(didTapStart:)];
+        }
+        
         [self.stackView removeArrangedSubview:self.activeView];
         [self.activeView removeFromSuperview];
     }
@@ -64,6 +78,21 @@ typedef NS_ENUM(NSInteger, IntroState) {
     NSDictionary *attributes = @{NSFontAttributeName: font,
                                  NSForegroundColorAttributeName: black
                                  };
+    
+    switch (self.state) {
+        case IntroStateUUID:
+        case IntroStateSubscription:
+        {
+            self.scrollView.scrollEnabled = YES;
+            self.bottomStackView.hidden = NO;
+        }
+            break;
+        default:
+        {
+            self.scrollView.scrollEnabled = NO;
+            self.bottomStackView.hidden = YES;
+        }
+    }
     
     switch (self.state) {
         case IntroStateUUID:
@@ -91,6 +120,10 @@ typedef NS_ENUM(NSInteger, IntroState) {
             
             self.topLabel.attributedText = attrs;
             [self.topLabel sizeToFit];
+            
+            SubscriptionView *view = [[SubscriptionView alloc] initWithNib];
+            [self.stackView insertArrangedSubview:view atIndex:1];
+            self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
         }
             break;
         default:
@@ -104,19 +137,9 @@ typedef NS_ENUM(NSInteger, IntroState) {
             self.topLabel.attributedText = attrs;
             [self.topLabel sizeToFit];
             
-            attributes = @{NSFontAttributeName: self.disclaimerLabel.font,
-                           NSForegroundColorAttributeName: self.disclaimerLabel.textColor,
-                           };
-            
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"To read our Terms of Service or Privacy Policy, please tap here." attributes:attributes];
-            [attrs addAttribute:NSLinkAttributeName value:@"https://elytra.app/docs/terms" range:[attrs.string rangeOfString:@"here"]];
-            
-            self.disclaimerLabel.textAlignment = NSTextAlignmentCenter;
-            self.disclaimerLabel.attributedText = attrs;
-            
-            [self.button setTitle:@"Get Started" forState:UIControlStateNormal];
-            
             IntroViewDefault *view = [[IntroViewDefault alloc] initWithNib];
+            [view.tapGesture addTarget:self action:@selector(didTapStart:)];
+            
             [self.stackView insertArrangedSubview:view atIndex:1];
             self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
         }
@@ -138,16 +161,24 @@ typedef NS_ENUM(NSInteger, IntroState) {
 
 #pragma mark -
 
-- (IBAction)didTapContinue:(UIButton *)sender {
+- (IBAction)didTapContinue:(id)sender {
     
     if (self.state == IntroStateSubscription) {
         // confirm purchase and continue
-        [self dismissViewControllerAnimated:YES completion:nil];
+        
+    }
+    
+    if (self.state == IntroStateSubscriptionDone) {
+        return;
     }
     
     self.state = self.state == IntroStateDefault ? IntroStateUUID : IntroStateSubscription;
     [self.view setNeedsLayout];
     
+}
+
+- (void)didTapStart:(id)sender {
+    [self didTapContinue:sender];
 }
 
 @end

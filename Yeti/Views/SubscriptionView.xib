@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSerif-Bold.ttf">
+            <string>IBMPlexSerif-Bold</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="SubscriptionView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oaX-w6-ZbA">
+                    <rect key="frame" x="0.0" y="44" width="375" height="380"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ZPD-De-sYa">
+                            <rect key="frame" x="0.0" y="12" width="375" height="356"/>
+                            <subviews>
+                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="wFX-I4-EKm">
+                                    <rect key="frame" x="0.0" y="0.0" width="187.5" height="356"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$2.99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iuN-ZQ-kAu">
+                                            <rect key="frame" x="56" y="0.0" width="76" height="36.5"/>
+                                            <fontDescription key="fontDescription" name="IBMPlexSerif-Bold" family="IBM Plex Serif" pointSize="28"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="month" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dAn-DW-tAi">
+                                            <rect key="frame" x="55" y="118" width="77.5" height="33.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(1 week free trial)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5De-GP-DPa">
+                                            <rect key="frame" x="34.5" y="232.5" width="118.5" height="18"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sub-unchecked" translatesAutoresizingMaskIntoConstraints="NO" id="5vm-hq-v8t">
+                                            <rect key="frame" x="82" y="332" width="24" height="24"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="24" id="Kf8-2K-lTN"/>
+                                                <constraint firstAttribute="width" constant="24" id="z6O-T2-M8T"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <gestureRecognizers/>
+                                    <connections>
+                                        <outletCollection property="gestureRecognizers" destination="BsU-ZM-ggB" appends="YES" id="2HT-sq-YtL"/>
+                                    </connections>
+                                </stackView>
+                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7d6-pH-GeP">
+                                    <rect key="frame" x="187.5" y="0.0" width="187.5" height="356"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$29.99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X9L-gZ-nN2">
+                                            <rect key="frame" x="47.5" y="0.0" width="92.5" height="36.5"/>
+                                            <fontDescription key="fontDescription" name="IBMPlexSerif-Bold" family="IBM Plex Serif" pointSize="28"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="year" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AkV-jc-RNX">
+                                            <rect key="frame" x="68" y="118" width="52" height="33.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(1 month free trial)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1fT-5M-HHd">
+                                            <rect key="frame" x="30.5" y="232.5" width="126.5" height="18"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sub-checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="Hmn-Dy-vvX">
+                                            <rect key="frame" x="82" y="332" width="24" height="24"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="24" id="hsf-lD-tLc"/>
+                                                <constraint firstAttribute="width" constant="24" id="wiX-vG-oNV"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <gestureRecognizers/>
+                                    <connections>
+                                        <outletCollection property="gestureRecognizers" destination="rNe-4K-REG" appends="YES" id="MA3-fU-2mX"/>
+                                    </connections>
+                                </stackView>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="ZPD-De-sYa" firstAttribute="leading" secondItem="oaX-w6-ZbA" secondAttribute="leading" id="C2m-Mo-Kgz"/>
+                        <constraint firstAttribute="height" secondItem="ZPD-De-sYa" secondAttribute="height" constant="24" id="anE-YD-nYu"/>
+                        <constraint firstAttribute="trailing" secondItem="ZPD-De-sYa" secondAttribute="trailing" id="axK-zi-s4D"/>
+                        <constraint firstItem="ZPD-De-sYa" firstAttribute="top" secondItem="oaX-w6-ZbA" secondAttribute="top" constant="12" id="tTf-gQ-g0D"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MRW-j1-GmB">
+                    <rect key="frame" x="0.0" y="472" width="375" height="183"/>
+                    <string key="text">To learn more about Elytra subscriptions, tap here.
+
+You can evaluate Elytra during the trail period. If you decide to stop using Elytra, remember to cancel the subscription in time.
+
+Apple will charge your card one day before your trail expires.</string>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="MRW-j1-GmB" secondAttribute="trailing" id="NNW-pN-LX2"/>
+                <constraint firstItem="oaX-w6-ZbA" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="24" id="ZmQ-iz-nua"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="MRW-j1-GmB" secondAttribute="bottom" constant="12" id="Znk-UV-tqt"/>
+                <constraint firstItem="MRW-j1-GmB" firstAttribute="top" secondItem="oaX-w6-ZbA" secondAttribute="bottom" constant="48" id="bir-qe-eWJ"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="oaX-w6-ZbA" secondAttribute="trailing" id="dmR-Eb-GZm"/>
+                <constraint firstItem="oaX-w6-ZbA" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="szh-Hp-smK"/>
+                <constraint firstItem="MRW-j1-GmB" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="xmG-11-R2p"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="monthImage" destination="5vm-hq-v8t" id="Nbh-tY-eBM"/>
+                <outlet property="viewBox" destination="oaX-w6-ZbA" id="hxE-aT-Frx"/>
+                <outlet property="yearImage" destination="Hmn-Dy-vvX" id="1nm-aK-vUs"/>
+            </connections>
+            <point key="canvasLocation" x="-36" y="-110"/>
+        </view>
+        <tapGestureRecognizer id="BsU-ZM-ggB">
+            <connections>
+                <action selector="didTapMonth:" destination="iN0-l3-epB" id="nBf-d1-WtV"/>
+            </connections>
+        </tapGestureRecognizer>
+        <tapGestureRecognizer id="rNe-4K-REG">
+            <connections>
+                <action selector="didTapYear:" destination="iN0-l3-epB" id="bbc-CR-GDG"/>
+            </connections>
+        </tapGestureRecognizer>
+    </objects>
+    <resources>
+        <image name="sub-checkmark" width="24" height="24"/>
+        <image name="sub-unchecked" width="24" height="24"/>
+    </resources>
+</document>
