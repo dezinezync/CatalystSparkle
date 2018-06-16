@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SubscriptionView : NibView
 
 @property (nonatomic, copy) YetiSubscriptionType selected;
+@property (weak, nonatomic) IBOutlet UIButton *restoreButton;
 
 @end
 

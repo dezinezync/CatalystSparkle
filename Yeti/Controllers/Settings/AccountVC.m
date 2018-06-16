@@ -26,7 +26,7 @@
 
 @property (nonatomic, assign) NSInteger subscriptionType;
 @property (nonatomic, assign) NSInteger knownSubscriptionType;
-@property (nonatomic, strong) NSArray <SKProduct *> *products;
+@property (nonatomic, weak) NSArray <SKProduct *> *products;
 
 @end
 
@@ -63,19 +63,32 @@
     
     self.tableView.tableFooterView = footerView;
     
-    [MyStoreManager loadProducts:products success:^(NSArray *products, NSArray *invalidIdentifiers) {
-        
-        self.products = [products sortedArrayUsingSelector:@selector(productIdentifier)];
-        
-        if (invalidIdentifiers && invalidIdentifiers.count) {
-            DDLogError(@"Invalid identifiers: %@", invalidIdentifiers);
-        }
-        
-    } error:^(NSError *error) {
-       
-        DDLogError(@"Error loading products: %@", error);
-        
-    }];
+    weakify(self);
+    
+    if (!MyStoreManager.products || !MyStoreManager.products.count) {
+        [MyStoreManager loadProducts:products success:^(NSArray *products, NSArray *invalidIdentifiers) {
+            
+            strongify(self);
+            
+            products = [products sortedArrayUsingSelector:@selector(productIdentifier)];
+            
+            [MyStoreManager setValue:products forKey:@"products"];
+            
+            self.products = MyStoreManager.products;
+            
+            if (invalidIdentifiers && invalidIdentifiers.count) {
+                DDLogError(@"Invalid identifiers: %@", invalidIdentifiers);
+            }
+            
+        } error:^(NSError *error) {
+            
+            DDLogError(@"Error loading products: %@", error);
+            
+        }];
+    }
+    else {
+        self.products = MyStoreManager.products;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -167,6 +180,8 @@
                     [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
                     
                     NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+                    
+                    strongify(self);
                     
                     [self didPurchase:note];
                     

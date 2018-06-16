@@ -21,6 +21,8 @@
     
     weakify(self);
     
+    MyStoreManager.defaultProductIdentifiers = [NSSet setWithObjects:YTSubscriptionMonthly, YTSubscriptionYearly, nil];
+    
     [MyStoreManager setPaymentQueueUpdatedTransactionsBlock:^(SKPaymentQueue *queue, NSArray <SKPaymentTransaction *> *transactions) {
         
         for (SKPaymentTransaction *transaction in transactions) {

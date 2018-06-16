@@ -15,6 +15,10 @@
 #import "YTUserID.h"
 #import "IntroVC.h"
 
+#import <SimpleKeychain/SimpleKeychain.h>
+
+NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
+
 @interface SplitVC ()
 
 @end
@@ -32,7 +36,11 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self userNotFound];
+    if (![[A0SimpleKeychain keychain] stringForKey:kHasShownOnboarding]) {
+        [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
+        
+        [[A0SimpleKeychain keychain] setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+    }
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -48,9 +56,9 @@
 - (void)userNotFound {
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-//    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
-//    
-//    [self presentViewController:vc animated:NO completion:nil];
+    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
+    
+    [self presentViewController:vc animated:NO completion:nil];
 }
 
 @end
