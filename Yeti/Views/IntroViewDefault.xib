@@ -36,13 +36,12 @@
                     <rect key="frame" x="-72" y="408" width="230" height="275"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="230" id="SaJ-Az-9I5"/>
-                        <constraint firstAttribute="height" constant="275" id="arP-qC-mCx"/>
+                        <constraint firstAttribute="width" priority="999" constant="230" id="SaJ-Az-9I5"/>
+                        <constraint firstAttribute="height" priority="999" constant="275" id="arP-qC-mCx"/>
                     </constraints>
                 </imageView>
-                <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="intro-getstarted-button" highlightedImage="intro-getstarted-button-highlighted" translatesAutoresizingMaskIntoConstraints="NO" id="2gU-sb-ykc">
+                <imageView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="intro-getstarted-button" highlightedImage="intro-getstarted-button-highlighted" translatesAutoresizingMaskIntoConstraints="NO" id="2gU-sb-ykc">
                     <rect key="frame" x="195" y="448" width="244" height="168"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <gestureRecognizers/>
                     <constraints>
                         <constraint firstAttribute="width" constant="244" id="NnV-Ec-S8o"/>
@@ -69,8 +68,11 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
+                <outlet property="buttonBottom" destination="hj5-Dz-M0I" id="IbB-Q3-bOw"/>
                 <outlet property="card1" destination="rIu-1g-cN6" id="BnE-TF-tsW"/>
+                <outlet property="card1Trailing" destination="rYc-FY-Eu2" id="1B6-Th-jhP"/>
                 <outlet property="card2" destination="o7o-SW-n4p" id="QXm-De-jMh"/>
+                <outlet property="card2Leading" destination="2oz-H9-xEa" id="sOq-gz-sqf"/>
                 <outlet property="card3" destination="XHV-a5-CkA" id="sbw-w2-YId"/>
                 <outlet property="tapGesture" destination="k9W-ge-Jz9" id="dWf-by-8Kf"/>
             </connections>

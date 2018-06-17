@@ -186,7 +186,7 @@
     else if ([key isEqualToString:@"id"]) {
         self.feedID = value;
     }
-    else if ([key isEqualToString:@"status"] || [key isEqualToString:@"created"] || [key isEqualToString:@"modified"] || [key isEqualToString:@"flags"]) {}
+    else if ([key isEqualToString:@"status"] || [key isEqualToString:@"created"] || [key isEqualToString:@"modified"] || [key isEqualToString:@"flags"] || [key isEqualToString:@"hubLease"]) {}
     else {
         DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
     }

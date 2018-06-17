@@ -14,6 +14,10 @@
 @property (weak, nonatomic) IBOutlet UIImageView *card2;
 @property (weak, nonatomic) IBOutlet UIImageView *card3;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *card1Trailing;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *card2Leading;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonBottom;
+
 @end
 
 @implementation IntroViewDefault
@@ -23,7 +27,23 @@
     
     self.translatesAutoresizingMaskIntoConstraints = NO;
     
-    for (UIView *view in @[self.card1, self.card2, self.card3]) {
+    NSArray <UIView *> *activeViews = @[self.card1, self.card2];
+    
+    if ([[UIApplication sharedApplication] keyWindow].bounds.size.height > 568.f) {
+        activeViews = [activeViews arrayByAddingObject:self.card3];
+    }
+    else {
+        self.card2Leading.constant -= 24.f;
+        self.card1Trailing.constant -= 24.f;
+        self.buttonBottom.constant -= 87.f + 32.f;
+        
+//        [self setNeedsUpdateConstraints];
+//        [self layoutIfNeeded];
+        
+        self.card3.hidden = YES;
+    }
+    
+    for (UIView *view in activeViews) {
         [self addHorizontalTilt:20.f verticalTilt:20.f ToView:view];
     }
     
@@ -35,6 +55,10 @@
     if (self.superview) {
         size.width = self.superview.bounds.size.width + 32.f;
         size.height = 704.f;
+        
+        if (self.card3.isHidden) {
+            size.height -= 275.f + 10.f;
+        }
     }
     
     return size;

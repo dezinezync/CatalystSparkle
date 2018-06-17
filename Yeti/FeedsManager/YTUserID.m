@@ -30,6 +30,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 + (void)load
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             // get changes that might have happened while this
@@ -63,11 +64,11 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (!_UUID) {
         // check if the store already has one
-        A0SimpleKeychain *keychain = [A0SimpleKeychain keychain];
+        A0SimpleKeychain *keychain = self.delegate.keychain;
         
         NSString *UUIDString = [keychain stringForKey:kAccountID];
         
-        self.userID = @([[keychain stringForKey:kUserID] integerValue]);
+        _userID = @([[keychain stringForKey:kUserID] integerValue]);
         
         if (_userID && _userID.integerValue == 0) {
             _userID = nil;
@@ -189,7 +190,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     _UUID = UUID;
     
     if (_UUID != nil) {
-        [[A0SimpleKeychain keychain] setString:UUID.UUIDString forKey:kAccountID];
+        [self.delegate.keychain setString:UUID.UUIDString forKey:kAccountID];
     }
 }
 
@@ -202,7 +203,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     _userID = userID;
     
     if (_userID != nil) {
-        [[A0SimpleKeychain keychain] setString:userID.stringValue forKey:kUserID];
+        [self.delegate.keychain setString:userID.stringValue forKey:kUserID];
     }
     
     MyFeedsManager.userID = _userID;

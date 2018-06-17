@@ -15,7 +15,7 @@
 #import "YTUserID.h"
 #import "IntroVC.h"
 
-#import <SimpleKeychain/SimpleKeychain.h>
+#import "FeedsManager.h"
 
 NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
 
@@ -36,10 +36,9 @@ NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (![[A0SimpleKeychain keychain] stringForKey:kHasShownOnboarding]) {
+    if (![MyFeedsManager.keychain stringForKey:kHasShownOnboarding]) {
         [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
-        
-        [[A0SimpleKeychain keychain] setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
     }
 }
 

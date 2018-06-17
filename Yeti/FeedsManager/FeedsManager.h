@@ -14,6 +14,10 @@
 #import "YTUserID.h"
 #import "Subscription.h"
 
+#ifndef SHARE_EXTENSION
+#import <SimpleKeychain/SimpleKeychain.h>
+#endif
+
 typedef NSString * FMNotification;
 
 extern FMNotification _Nonnull const FeedDidUpReadCount;
@@ -47,6 +51,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
 
+@property (nonatomic, strong) A0SimpleKeychain *keychain;
 #endif
 
 @property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
@@ -60,6 +65,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
 @property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
+
+#pragma mark -
 
 - (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

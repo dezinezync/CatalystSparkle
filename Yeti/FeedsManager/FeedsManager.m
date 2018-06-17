@@ -1299,6 +1299,21 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 #pragma mark - Getters
 
+#ifndef SHARE_EXTENSION
+- (A0SimpleKeychain *)keychain {
+    
+    if (!_keychain) {
+        A0SimpleKeychain *keychain = [A0SimpleKeychain keychain];
+        keychain.useAccessControl = YES;
+        keychain.additionalAttributes = @{(__bridge id)kSecAttrSynchronizable: keychain.service};
+        
+        _keychain = keychain;
+    }
+    
+    return _keychain;
+}
+#endif
+
 - (DZURLSession *)session
 {
     if (!_session) {

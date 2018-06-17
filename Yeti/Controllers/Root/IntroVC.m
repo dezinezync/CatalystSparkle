@@ -49,7 +49,8 @@ typedef NS_ENUM(NSInteger, IntroState) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0, 12.f);
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0.f, 0);
+    self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 37.f + 12.f + 12.f, 0);
     
     self.button.layer.cornerRadius = 8.f;
     
@@ -177,6 +178,10 @@ typedef NS_ENUM(NSInteger, IntroState) {
 - (IBAction)didTapContinue:(id)sender {
     
     if (self.state == IntroStateSubscription) {
+#ifdef DEBUG
+        self.state = IntroStateSubscriptionDone;
+        return;
+#endif
         // confirm purchase and continue
         YetiSubscriptionType selected = [(SubscriptionView *)self.activeView selected];
         
