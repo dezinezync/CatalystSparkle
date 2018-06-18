@@ -17,6 +17,8 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *card1Trailing;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *card2Leading;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonBottom;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *card3Leading;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonTrailing;
 
 @end
 
@@ -41,6 +43,17 @@
 //        [self layoutIfNeeded];
         
         self.card3.hidden = YES;
+    }
+    
+    if ([[UIApplication sharedApplication] keyWindow].bounds.size.width >= 768.f) {
+        activeViews = [activeViews arrayByAddingObject:self.card3];
+        
+        CGFloat const space = 96.f;
+        
+        self.card2Leading.constant = space;
+        self.card1Trailing.constant = space;
+        self.card3Leading.constant = space;
+        self.buttonTrailing.constant = space;
     }
     
     for (UIView *view in activeViews) {

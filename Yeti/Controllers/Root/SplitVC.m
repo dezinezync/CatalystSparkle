@@ -42,7 +42,7 @@ NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
     
     if (!hasShownIntro || [hasShownIntro boolValue] == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
-//        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
     }
 }
 

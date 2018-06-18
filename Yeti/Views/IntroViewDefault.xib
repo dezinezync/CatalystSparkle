@@ -12,7 +12,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="IntroViewDefault">
+        <view contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="iN0-l3-epB" customClass="IntroViewDefault">
             <rect key="frame" x="0.0" y="0.0" width="375" height="703"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -69,14 +69,16 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
                 <outlet property="buttonBottom" destination="hj5-Dz-M0I" id="IbB-Q3-bOw"/>
+                <outlet property="buttonTrailing" destination="DNZ-Ay-3pG" id="1qA-gr-3Vf"/>
                 <outlet property="card1" destination="rIu-1g-cN6" id="BnE-TF-tsW"/>
                 <outlet property="card1Trailing" destination="rYc-FY-Eu2" id="1B6-Th-jhP"/>
                 <outlet property="card2" destination="o7o-SW-n4p" id="QXm-De-jMh"/>
                 <outlet property="card2Leading" destination="2oz-H9-xEa" id="sOq-gz-sqf"/>
                 <outlet property="card3" destination="XHV-a5-CkA" id="sbw-w2-YId"/>
+                <outlet property="card3Leading" destination="k7w-DY-ZiM" id="8Yc-gQ-ayl"/>
                 <outlet property="tapGesture" destination="k9W-ge-Jz9" id="dWf-by-8Kf"/>
             </connections>
-            <point key="canvasLocation" x="90.5" y="-2.5"/>
+            <point key="canvasLocation" x="83" y="-7"/>
         </view>
         <tapGestureRecognizer id="k9W-ge-Jz9"/>
     </objects>

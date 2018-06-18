@@ -54,6 +54,15 @@ typedef NS_ENUM(NSInteger, IntroState) {
     
     self.button.layer.cornerRadius = 8.f;
     
+    UILayoutGuide *readable = self.view.readableContentGuide;
+    
+    if (UIApplication.sharedApplication.keyWindow.bounds.size.width <= 414.f) {
+        readable = [self.view.layoutGuides firstObject];
+    }
+    
+    [self.scrollView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor].active = YES;
+    [self.scrollView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor].active = YES;
+    
     self.setupState = -1L;
     self.state = IntroStateDefault;
     [self.view setNeedsLayout];
@@ -118,6 +127,11 @@ typedef NS_ENUM(NSInteger, IntroState) {
             
             IntroViewUUID *view = [[IntroViewUUID alloc] initWithNib];
             [self.stackView insertArrangedSubview:view atIndex:1];
+            
+            if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+                [self.stackView setCustomSpacing:96.f afterView:self.stackView.arrangedSubviews.firstObject];
+            }
+            
             self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
         }
             break;
@@ -135,6 +149,11 @@ typedef NS_ENUM(NSInteger, IntroState) {
             [view.restoreButton addTarget:self action:@selector(didTapRestore:) forControlEvents:UIControlEventTouchUpInside];
             
             [self.stackView insertArrangedSubview:view atIndex:1];
+            
+            if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+                [self.stackView setCustomSpacing:96.f afterView:self.stackView.arrangedSubviews.firstObject];
+            }
+            
             self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
         }
             break;
@@ -150,9 +169,15 @@ typedef NS_ENUM(NSInteger, IntroState) {
             [self.topLabel sizeToFit];
             
             IntroViewDefault *view = [[IntroViewDefault alloc] initWithNib];
+            
             [view.tapGesture addTarget:self action:@selector(didTapStart:)];
             
             [self.stackView insertArrangedSubview:view atIndex:1];
+            
+            if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+                [self.stackView setCustomSpacing:96.f afterView:self.stackView.arrangedSubviews.firstObject];
+            }
+            
             self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
         }
             break;
