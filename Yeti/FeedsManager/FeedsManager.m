@@ -1217,6 +1217,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 //    }
 //}
 
+- (void)setFeeds:(NSArray<Feed *> *)feeds {
+    
+    _feeds = feeds;
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self];
+    
+}
+
 - (void)setPushToken:(NSString *)pushToken
 {
     _pushToken = pushToken;

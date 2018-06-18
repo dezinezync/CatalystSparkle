@@ -18,6 +18,8 @@
 #import <DZKit/AlertManager.h>
 #import <SafariServices/SafariServices.h>
 
+#import <DZKit/UIAlertController+Extended.h>
+
 @implementation AppDelegate (Routing)
 
 - (void)popToRoot
@@ -121,6 +123,77 @@
 
 #pragma mark - Internal
 
+- (void)_showAddingFeedDialog {
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self _showAddingFeedDialog];
+        });
+        return;
+    }
+    
+    if (self.addFeedDialog != nil) {
+        return;
+    }
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Adding Feed" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alert dz_configureContentView:^(UIView *contentView) {
+        
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        activity.color = UIColor.lightGrayColor;
+        [activity sizeToFit];
+        activity.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [contentView addSubview:activity];
+        
+        [activity.widthAnchor constraintEqualToConstant:activity.bounds.size.width].active = YES;
+        [activity.heightAnchor constraintEqualToConstant:activity.bounds.size.height].active = YES;
+        
+        [activity.centerXAnchor constraintEqualToAnchor:contentView.centerXAnchor].active = YES;
+        [activity.topAnchor constraintEqualToAnchor:contentView.topAnchor constant:12.f].active = YES;
+        
+        [activity startAnimating];
+        
+    }];
+    
+    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    
+    while (vc.presentedViewController != nil) {
+        vc = vc.presentedViewController;
+    }
+    
+    [vc presentViewController:alert animated:YES completion:nil];
+    
+    self.addFeedDialog = alert;
+    
+}
+
+- (void)_dismissAddingFeedDialog {
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self _dismissAddingFeedDialog];
+        });
+        return;
+    }
+    
+    if (self.addFeedDialog == nil) {
+        return;
+    }
+    
+    [self.addFeedDialog dismissViewControllerAnimated:YES completion:nil];
+    
+    self.addFeedDialog = nil;
+    
+}
+
 - (BOOL)addFeed:(NSURL *)url {
     // check if we already have this feed
     Feed * have = nil;
@@ -138,6 +211,10 @@
         return YES;
     }
     
+    [self _showAddingFeedDialog];
+    
+    weakify(self);
+    
     [MyFeedsManager addFeed:url success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         // check again if we have the feed
@@ -149,17 +226,29 @@
             }
         }
         
+        strongify(self);
+        
+        [self _dismissAddingFeedDialog];
+        
         if (!haveItem) {
             // we don't have it.
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
         }
         else {
-            [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
+        strongify(self);
+        
+        [self _dismissAddingFeedDialog];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
+        });
         
     }];
     
@@ -168,6 +257,10 @@
 
 - (BOOL)addFeedByID:(NSNumber *)feedID
 {
+    
+    [self _showAddingFeedDialog];
+    
+    weakify(self);
     
     [MyFeedsManager addFeedByID:feedID success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -180,17 +273,29 @@
             }
         }
         
+        strongify(self);
+        
+        [self _dismissAddingFeedDialog];
+        
         if (!haveItem) {
             // we don't have it.
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
         }
         else {
-            [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
+        strongify(self);
+        
+        [self _dismissAddingFeedDialog];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
+        });
         
     }];
     

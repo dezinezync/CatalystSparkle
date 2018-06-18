@@ -364,7 +364,7 @@
     
     // ensures search bar does not dismiss on refresh or first load
     @try {
-        self.DS.data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:feeds];
+        self.DS.data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:MyFeedsManager.feeds];
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
     }

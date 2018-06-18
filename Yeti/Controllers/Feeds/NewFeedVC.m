@@ -17,6 +17,7 @@
 #import "YetiThemeKit.h"
 
 #import "YTNavigationController.h"
+#import "AppDelegate+Routing.h"
 
 @interface NewFeedVC () <UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
@@ -136,6 +137,17 @@
 #pragma mark -
 
 - (IBAction)didTapCancel {
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            [self didTapCancel];
+        });
+        
+        return;
+    }
     
     self.cancelButton.enabled = NO;
     
@@ -312,6 +324,8 @@
         return NO;
     }
     
+    [MyAppDelegate _showAddingFeedDialog];
+    
     weakify(self);
     
     [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -319,6 +333,8 @@
         NSInteger status = response.statusCode;
         
         strongify(self);
+        
+        [MyAppDelegate _dismissAddingFeedDialog];
         
         asyncMain(^{
             textField.enabled = YES;
@@ -333,7 +349,7 @@
         else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
             
-            asyncMain(^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.selected = NSNotFound;
                 [self didTapCancel];
             });
@@ -346,12 +362,14 @@
         
         strongify(self);
         
+        [MyAppDelegate _dismissAddingFeedDialog];
+        
         asyncMain(^{
             textField.enabled = YES;
             self.cancelButton.enabled = YES;
         });
        
-        asyncMain(^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
         });
         

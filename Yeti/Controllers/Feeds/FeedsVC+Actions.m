@@ -59,7 +59,7 @@
         
         asyncMain(^{
             
-            [self setupData:MyFeedsManager.feeds];
+//            [self setupData:MyFeedsManager.feeds];
             
             if ([responseObject integerValue] == 2) {
                 [sender endRefreshing];

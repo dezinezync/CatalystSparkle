@@ -12,4 +12,8 @@
 
 - (void)setupRouting;
 
+- (void)_showAddingFeedDialog;
+
+- (void)_dismissAddingFeedDialog;
+
 @end
