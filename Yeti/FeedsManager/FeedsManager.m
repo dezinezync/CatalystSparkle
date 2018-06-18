@@ -1304,8 +1304,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     if (!_keychain) {
         A0SimpleKeychain *keychain = [A0SimpleKeychain keychain];
+        // explicity set to NO incase future updates changes the default value
+        // setting to YES causes the user to enter the passcode for the device
         keychain.useAccessControl = YES;
-        keychain.additionalAttributes = @{(__bridge id)kSecAttrSynchronizable: keychain.service};
+        keychain.defaultAccessiblity = A0SimpleKeychainItemAccessibleAfterFirstUnlock;
+        keychain.additionalAttributes = @{(__bridge id)kSecAttrSynchronizable: (__bridge id)kSecAttrSynchronizableAny};
         
         _keychain = keychain;
     }
