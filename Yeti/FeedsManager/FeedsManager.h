@@ -15,7 +15,7 @@
 #import "Subscription.h"
 
 #ifndef SHARE_EXTENSION
-#import <SimpleKeychain/SimpleKeychain.h>
+#import <UICKeyChainStore/UICKeyChainStore.h>
 #endif
 
 typedef NSString * FMNotification;
@@ -51,7 +51,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
 
-@property (nonatomic, strong) A0SimpleKeychain *keychain;
+@property (nonatomic, strong) UICKeyChainStore *keychain;
 #endif
 
 @property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;

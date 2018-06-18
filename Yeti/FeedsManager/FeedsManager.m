@@ -1300,15 +1300,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 #pragma mark - Getters
 
 #ifndef SHARE_EXTENSION
-- (A0SimpleKeychain *)keychain {
+- (UICKeyChainStore *)keychain {
     
     if (!_keychain) {
-        A0SimpleKeychain *keychain = [A0SimpleKeychain keychain];
-        // explicity set to NO incase future updates changes the default value
-        // setting to YES causes the user to enter the passcode for the device
-        keychain.useAccessControl = YES;
-        keychain.defaultAccessiblity = A0SimpleKeychainItemAccessibleAfterFirstUnlock;
-        keychain.additionalAttributes = @{(__bridge id)kSecAttrSynchronizable: (__bridge id)kSecAttrSynchronizableAny};
+        UICKeyChainStore *keychain = [UICKeyChainStore keyChainStoreWithService:@"com.dezinezync.Yeti"];
+        keychain.synchronizable = YES;
+        
+//        [keychain setAccessibility:kSecAccessControlApplicationPassword authenticationPolicy:UICKeyChainStoreAuthenticationPolicyUserPresence];
+//        keychain.authenticationPrompt = @"Elytra needs to access your account ID securely.";
         
         _keychain = keychain;
     }

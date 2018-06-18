@@ -10,8 +10,6 @@
 #import "FeedsManager.h"
 #import <DZKit/AlertManager.h>
 
-#import <SimpleKeychain/SimpleKeychain.h>
-
 NSString *const kAccountID = @"YTUserID";
 NSString *const kUserID = @"userID";
 NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
@@ -64,16 +62,18 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (!_UUID) {
         // check if the store already has one
-        A0SimpleKeychain *keychain = self.delegate.keychain;
+        UICKeyChainStore *keychain = self.delegate.keychain;
         
-        NSString *UUIDString = [keychain stringForKey:kAccountID];
-        
-        _userID = @([[keychain stringForKey:kUserID] integerValue]);
+        NSString *UUIDString = keychain[kAccountID];
+        NSString *userID = keychain[kUserID];
         
         if (_userID && _userID.integerValue == 0) {
             _userID = nil;
             _UUID = nil;
             UUIDString = nil;
+        }
+        else {
+            _userID = @([userID integerValue]);
         }
         
         // migrate from NSUbiquitousKeyValueStore
