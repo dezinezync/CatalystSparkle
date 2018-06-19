@@ -186,8 +186,6 @@
 - (void)setupHeaderView
 {
     
-    [self ef_hideNavBorder:self.navigationController.transitionCoordinator];
-    
     if (_headerView)
         return;
     
@@ -429,7 +427,17 @@
         return header;
     }
     
-    return nil;
+    return [UIView new];
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section {
+    
+    if (self.headerView != nil) {
+        return 52.f;
+    }
+    
+    return 0.f;
     
 }
 
