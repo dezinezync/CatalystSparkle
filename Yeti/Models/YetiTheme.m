@@ -42,12 +42,13 @@
     
     if (self.isDark) {
         [navBar setBarStyle:UIBarStyleBlack];
+        [navBar setBarTintColor:self.cellColor];
         
 //        textView.keyboardAppearance = UIKeyboardAppearanceDark;
     }
     else {
         [navBar setBarStyle:UIBarStyleDefault];
-        
+        [navBar setBarTintColor:UIColor.whiteColor];
 //        textView.keyboardAppearance = UIKeyboardAppearanceLight;
     }
     

@@ -18,14 +18,20 @@
 
 #import "FeedsSearchResults.h"
 #import "CustomFeedVC.h"
+#import "UIViewController+Hairline.h"
 
 #import "YetiThemeKit.h"
 #import "EmptyView.h"
+#import "TableHeader.h"
 
-@interface FeedsVC () <DZDatasource>
+static void *KVO_Bookmarks = &KVO_Bookmarks;
+static void *KVO_Unread = &KVO_Unread;
 
-@property (nonatomic, strong, readwrite) DZBasicDatasource *DS;
-//@property (nonatomic, strong) UIActivityIndicatorView *activityView;
+@interface FeedsVC () <DZSDatasource>
+
+@property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
+@property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
+@property (nonatomic, weak) UIView *hairlineView;
 
 @end
 
@@ -46,6 +52,11 @@
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+    
+    NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
+    
+    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -57,7 +68,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     if (self.tableView.indexPathForSelectedRow) {
         [self dz_smoothlyDeselectRows:self.tableView];
@@ -74,7 +85,7 @@
         [self dz_smoothlyDeselectRows:self.headerView.tableView];
     }
     
-    if (!self.DS.data || (!self.DS.data.count && !_noPreSetup)) {
+    if (!self.DS2.data || (!self.DS2.data.count && !_noPreSetup)) {
         
         weakify(self);
         
@@ -107,27 +118,44 @@
 
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    
+    if (self.observationInfo) {
+        @try {
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(unread)];
+        } @catch (NSException *exc) {}
+    }
 }
 
 #pragma mark - Setups
 
 - (void)setupTableView {
-    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
+    self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
     
     self.DS.addAnimation = UITableViewRowAnimationFade;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
+    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
+    DS1.data = @[@"Unread", @"Bookmarks"];
+    
+    DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
+    
+    self.DS.datasources = @[DS1, DS2];
+    self.DS1 = [self.DS.datasources firstObject];
+    self.DS2 = [self.DS.datasources lastObject];
+    
+    self.DS.delegate = self;
+    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
     
-    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
-    headerView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 88.f);
-    [headerView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+//    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
+//    headerView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 88.f);
+//    [headerView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
     
-    self.tableView.tableHeaderView = headerView;
-    _headerView = headerView;
-    _headerView.tableView.delegate = self;
+//    self.tableView.tableHeaderView = headerView;
+//    _headerView = headerView;
+//    _headerView.tableView.delegate = self;
     
     self.tableView.tableFooterView = [UIView new];
     
@@ -152,8 +180,11 @@
     
     self.navigationItem.rightBarButtonItems = @[add, folder];
     self.navigationItem.leftBarButtonItem = settings;
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    self.navigationController.navigationBar.translucent = NO;
     
     // Search Controller setup
     {
@@ -166,7 +197,22 @@
         searchController.searchBar.placeholder = @"Search feeds";
         searchController.searchBar.accessibilityHint = @"Search your feeds";
         searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        
+        searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
+        
+        CGFloat height = 1.f/self.traitCollection.displayScale;
+        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
+        hairline.backgroundColor = theme.cellColor;
+        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+        
+        [searchController.searchBar addSubview:hairline];
+        self.hairlineView = hairline;
+        
         self.navigationItem.searchController = searchController;
+    }
+    
+    {
+        [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     }
     
 }
@@ -224,20 +270,52 @@
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    TableHeader *view = [[TableHeader alloc] initWithNib];
     
-    // Configure the cell...
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
-    if ([feed isKindOfClass:Feed.class]) {
-        [cell configure:feed];
+    if (section == 0) {
+        view.label.text = [@"Smart Feeds" uppercaseString];
     }
     else {
-        // folder
-        [cell configureFolder:(Folder *)feed];
+        view.label.text =  [@"Subscriptions" uppercaseString];
     }
+    
+    return view;
+    
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+    
+    if (indexPath.section == 0) {
+        cell.titleLabel.text = [self.DS objectAtIndexPath:indexPath];
+        
+        NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
+        cell.faviconView.image = [UIImage imageNamed:imageName];
+        
+        if (indexPath.row == 0) {
+            cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
+        }
+        else {
+            cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
+        }
+        
+    }
+    else {
+        // Configure the cell...
+        Feed *feed = [self.DS objectAtIndexPath:indexPath];
+        if ([feed isKindOfClass:Feed.class]) {
+            [cell configure:feed];
+        }
+        else {
+            // folder
+            [cell configureFolder:(Folder *)feed];
+        }
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     cell.faviconView.backgroundColor = theme.cellColor;
     cell.titleLabel.backgroundColor = theme.cellColor;
@@ -252,7 +330,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    if (tableView == self.headerView.tableView) {
+    if (indexPath.section == 0) {
         CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
         vc.unread = indexPath.row == 0;
         
@@ -270,7 +348,7 @@
     else {
         // it's a folder
         Folder *folder = (Folder *)feed;
-        NSUInteger index = [self.DS.data indexOfObject:folder];
+        NSUInteger index = [self.DS2.data indexOfObject:folder];
         
         if (folder.isExpanded) {
             
@@ -278,7 +356,7 @@
             folder.expanded = NO;
             
             // remove these feeds from the datasource
-            self.DS.data = [self.DS.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            [self.DS setData:[self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
                 
                 if ([obj isKindOfClass:Folder.class])
                     return YES;
@@ -289,7 +367,7 @@
                 
                 return YES;
                 
-            }];
+            }] section:1];
             
         }
         else {
@@ -297,13 +375,13 @@
             DDLogDebug(@"Opening index: %@", @(index));
             
             // add these feeds to the datasource after the above index
-            NSMutableArray * data = [self.DS.data mutableCopy];
+            NSMutableArray * data = [self.DS2.data mutableCopy];
             
             NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.count)];
             
             [data insertObjects:folder.feeds atIndexes:set];
             
-            self.DS.data = data;
+            [self.DS setData:data section:1];
             
         }
         
@@ -317,17 +395,6 @@
     }
     
 }
-
-//- (UIView *)viewForEmptyDataset
-//{
-//    if (!_activityView) {
-//        _activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-//        _activityView.color = self.view.tintColor;
-//        [_activityView startAnimating];
-//    }
-//
-//    return _activityView;
-//}
 
 #pragma mark - Data
 
@@ -364,9 +431,38 @@
     
     // ensures search bar does not dismiss on refresh or first load
     @try {
-        self.DS.data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:MyFeedsManager.feeds];
+        [self.DS setData:[(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:MyFeedsManager.feeds] section:1];
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
+    }
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    weakify(self);
+    
+    if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
+        asyncMain(^{
+            strongify(self);
+            
+            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            cell.countLabel.text = [@([[(FeedsManager *)object unread] count]) stringValue];
+        });
+    }
+    else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
+        
+        asyncMain(^{
+            strongify(self);
+            
+            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+            cell.countLabel.text = [@([[(FeedsManager *)object bookmarks] count]) stringValue];
+        });
+        
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
@@ -381,6 +477,8 @@
         strongify(self);
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        self.hairlineView.backgroundColor = theme.cellColor;
         
         [[self.headerView tableView] reloadData];
         self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;

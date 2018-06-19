@@ -10,6 +10,7 @@
 #import "FeedsHeaderView.h"
 
 @class Feed;
+@class DZSectionedDatasource;
 @class DZBasicDatasource;
 
 @interface FeedsVC : UITableViewController {
@@ -23,7 +24,8 @@
 
 @property (nonatomic, weak) FeedsHeaderView *headerView;
 
-@property (nonatomic, strong, readonly) DZBasicDatasource *DS;
+@property (nonatomic, strong, readonly) DZSectionedDatasource *DS;
+@property (nonatomic, weak, readonly) DZBasicDatasource *DS1, *DS2;
 
 @property (nonatomic, copy) NSDate *sinceDate;
 

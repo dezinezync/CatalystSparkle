@@ -25,7 +25,7 @@
 #import <UserNotifications/UserNotifications.h>
 
 #import "YetiThemeKit.h"
-#import "UIViewController+Hairline.h"
+#import "TableHeader.h"
 
 @interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
@@ -33,6 +33,7 @@
 }
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
+@property (nonatomic, weak) UIView *hairlineView;
 
 @end
 
@@ -62,7 +63,6 @@
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
     self.extendedLayoutIncludesOpaqueBars = YES;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
@@ -83,6 +83,11 @@
         notifications.accessibilityLabel = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         
         self.navigationItem.rightBarButtonItems = @[allRead, notifications];
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        self.navigationController.navigationBar.prefersLargeTitles = YES;
+        
+        self.navigationItem.hidesSearchBarWhenScrolling = NO;
+        self.navigationController.navigationBar.translucent = NO;
     }
     
     // Search Controller setup
@@ -99,6 +104,15 @@
         searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         
         self.navigationItem.searchController = searchController;
+        self.navigationItem.hidesSearchBarWhenScrolling = NO;
+        
+        CGFloat height = 1.f/self.traitCollection.displayScale;
+        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
+        hairline.backgroundColor = theme.cellColor;
+        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+        
+        [searchController.searchBar addSubview:hairline];
+        self.hairlineView = hairline;
     }
     
     if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
@@ -136,6 +150,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
@@ -175,13 +191,8 @@
     if (_headerView)
         return;
     
-    UIImageView *imageView = [self yt_findHairlineImageViewUnder:self.navigationController.navigationBar];
-    
     FeedHeaderView *headerView = [[FeedHeaderView alloc] initWithNib];
     headerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
-    [headerView setShadowImage:imageView];
-    
-    imageView.hidden = YES;
     
     [headerView configure:self.feed];
     headerView.delegate = self;
@@ -408,6 +419,19 @@
 }
 
 #pragma mark - Table view data source
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    
+    if (self.headerView != nil) {
+        TableHeader *header = [[TableHeader alloc] initWithNib];
+        header.label.text = @"All Articles".uppercaseString;
+        
+        return header;
+    }
+    
+    return nil;
+    
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];

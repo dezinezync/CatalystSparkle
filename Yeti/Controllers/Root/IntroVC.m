@@ -22,6 +22,8 @@ typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateSubscriptionDone
 };
 
+static void * buttonStateContext = &buttonStateContext;
+
 @interface IntroVC ()
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -66,6 +68,8 @@ typedef NS_ENUM(NSInteger, IntroState) {
     self.setupState = -1L;
     self.state = IntroStateDefault;
     [self.view setNeedsLayout];
+    
+    [self.button addObserver:self forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:&buttonStateContext];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -82,7 +86,7 @@ typedef NS_ENUM(NSInteger, IntroState) {
     if (self.activeView) {
         
         if ([self.activeView isKindOfClass:IntroViewDefault.class]) {
-            [[(IntroViewDefault *)self.activeView tapGesture] removeTarget:self action:@selector(didTapStart:)];
+            [[(IntroViewDefault *)self.activeView button] removeTarget:self action:@selector(didTapStart:) forControlEvents:UIControlEventTouchUpInside];
         }
         
         [self.stackView removeArrangedSubview:self.activeView];
@@ -170,7 +174,7 @@ typedef NS_ENUM(NSInteger, IntroState) {
             
             IntroViewDefault *view = [[IntroViewDefault alloc] initWithNib];
             
-            [view.tapGesture addTarget:self action:@selector(didTapStart:)];
+            [view.button addTarget:self action:@selector(didTapStart:) forControlEvents:UIControlEventTouchUpInside];
             
             [self.stackView insertArrangedSubview:view atIndex:1];
             
@@ -338,6 +342,25 @@ typedef NS_ENUM(NSInteger, IntroState) {
     if (error && error.code != SKErrorUnknown) {
         [AlertManager showGenericAlertWithTitle:@"Restore Failed" message:error.localizedDescription];
     }
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if (context == &buttonStateContext) {
+        // we're observing the enabled property here.
+        UIColor *tint = self.view.tintColor;
+        if (self.button.isEnabled == NO) {
+            tint = [tint colorWithAlphaComponent:0.5f];
+        }
+        
+        [self.button setBackgroundColor:tint];
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+    
 }
 
 @end

@@ -117,7 +117,7 @@
     
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];
     
-    if (!indexPath) {
+    if (!indexPath || indexPath.section == 0) {
         return;
     }
     
@@ -325,6 +325,9 @@
 
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip
 {
+    
+    if (ip.section == 0)
+        return nil;
     
     if (tableView != self.tableView)
         return nil;

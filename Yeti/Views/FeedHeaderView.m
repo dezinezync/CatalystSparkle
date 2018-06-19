@@ -54,13 +54,13 @@
     [self setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.backgroundColor = theme.subbarColor;
+    self.backgroundColor = theme.cellColor;
     
-    self.descriptionLabel.backgroundColor = theme.subbarColor;
+    self.descriptionLabel.backgroundColor = theme.cellColor;
     self.descriptionLabel.textColor = theme.subtitleColor;
-    self.scrollView.backgroundColor = theme.subbarColor;
+    self.scrollView.backgroundColor = theme.cellColor;
     self.authorLabel.textColor = theme.titleColor;
-    self.authorLabel.backgroundColor = theme.subbarColor;
+    self.authorLabel.backgroundColor = theme.cellColor;
 }
 
 - (void)didMoveToSuperview

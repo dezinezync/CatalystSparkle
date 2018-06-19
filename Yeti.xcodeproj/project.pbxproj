@@ -85,6 +85,10 @@
 		F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */; };
 		F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
 		F05B93332091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
+		F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */; };
+		F05C7AA020D8E1F3007D6B5C /* TableHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */; };
+		F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05C7AA220D8E203007D6B5C /* TableHeader.xib */; };
+		F05C7AA420D8E203007D6B5C /* TableHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05C7AA220D8E203007D6B5C /* TableHeader.xib */; };
 		F05D21861FF2222F003DE813 /* YTUserID.m in Sources */ = {isa = PBXBuildFile; fileRef = F05D21851FF2222F003DE813 /* YTUserID.m */; };
 		F05DC07020831FD3009029E1 /* AuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC06F20831FD3009029E1 /* AuthorVC.m */; };
 		F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC072208328EC009029E1 /* AuthorHeaderView.m */; };
@@ -621,6 +625,9 @@
 		F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Toolbar.m"; sourceTree = "<group>"; };
 		F05B93302091BA50009BBDDB /* MoveFoldersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveFoldersVC.h; sourceTree = "<group>"; };
 		F05B93312091BA50009BBDDB /* MoveFoldersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoveFoldersVC.m; sourceTree = "<group>"; };
+		F05C7A9D20D8E1F3007D6B5C /* TableHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableHeader.h; sourceTree = "<group>"; };
+		F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableHeader.m; sourceTree = "<group>"; };
+		F05C7AA220D8E203007D6B5C /* TableHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableHeader.xib; sourceTree = "<group>"; };
 		F05D21841FF2222F003DE813 /* YTUserID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTUserID.h; sourceTree = "<group>"; };
 		F05D21851FF2222F003DE813 /* YTUserID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTUserID.m; sourceTree = "<group>"; };
 		F05DC06E20831FD3009029E1 /* AuthorVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorVC.h; sourceTree = "<group>"; };
@@ -1353,6 +1360,9 @@
 				F06F913F20D3E55A00A358B0 /* SubscriptionView.h */,
 				F06F914020D3E55A00A358B0 /* SubscriptionView.m */,
 				F06F914420D3E56400A358B0 /* SubscriptionView.xib */,
+				F05C7A9D20D8E1F3007D6B5C /* TableHeader.h */,
+				F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */,
+				F05C7AA220D8E203007D6B5C /* TableHeader.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1750,6 +1760,7 @@
 				F0A5AE6920C197EF00CFA1D2 /* Merriweather-Regular.ttf in Resources */,
 				F0A5AE6F20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0A5AEB920C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
+				F05C7AA420D8E203007D6B5C /* TableHeader.xib in Resources */,
 				F0A5AE9B20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
 				F047F4FD20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
@@ -1852,6 +1863,7 @@
 				F047F4EE20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */,
 				F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */,
 				F0A5AEC020C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */,
+				F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */,
 				F078B639206637B40048DBEA /* EmptyVC.xib in Resources */,
 				F0869B5D2099CF0000A5D723 /* light.json in Resources */,
 				F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */,
@@ -2036,6 +2048,7 @@
 				F069ABC9206E018F00021ABF /* Tweet.m in Sources */,
 				F069ABCA206E018F00021ABF /* Aside.m in Sources */,
 				F0B21BBD208C7F54007E5A3B /* NewFolderVC.m in Sources */,
+				F05C7AA020D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0CCD21A2098923D00920AE4 /* SplitVC.m in Sources */,
 				F069ABCB206E018F00021ABF /* AddFeedCell.m in Sources */,
 				F07DCA4520C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
@@ -2194,6 +2207,7 @@
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
+				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,
 				F0315DBC20CA59FB00F5674A /* Subscription.m in Sources */,
 				F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */,

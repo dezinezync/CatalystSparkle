@@ -15,7 +15,7 @@
 @implementation FeedsVC (Keyboard)
 
 - (NSArray *)data {
-    return self.DS.data;
+    return self.DS2.data;
 }
 
 - (BOOL)canBecomeFirstResponder {

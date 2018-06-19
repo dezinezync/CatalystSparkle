@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IntroViewDefault : NibView
 
-@property (weak, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;
+@property (weak, nonatomic) IBOutlet UIButton *button;
 
 @end
 

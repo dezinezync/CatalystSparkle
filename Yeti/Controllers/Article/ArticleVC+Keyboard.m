@@ -52,7 +52,7 @@
     CGPoint currentOffset = scrollView.contentOffset;
     
     // max height of ths scrollView
-    CGSize maxSize = scrollView.contentSize;
+//    CGSize maxSize = scrollView.contentSize;
     
     CGPoint targetOffset = currentOffset;
     targetOffset.y = MAX(targetOffset.y - 150, -self.view.safeAreaInsets.top + 20.f);

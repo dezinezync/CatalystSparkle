@@ -191,6 +191,12 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (_UUID != nil) {
         [self.delegate.keychain setString:UUID.UUIDString forKey:kAccountID];
+        
+        NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
+        if (defaults) {
+            [defaults setString:UUID.UUIDString forKey:kAccountID];
+            [defaults synchronize];
+        }
     }
 }
 
@@ -204,6 +210,12 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (_userID != nil) {
         [self.delegate.keychain setString:userID.stringValue forKey:kUserID];
+        
+        NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
+        if (defaults) {
+            [defaults setLongLong:userID.longLongValue forKey:kUserID];
+            [defaults synchronize];
+        }
     }
     
     MyFeedsManager.userID = _userID;

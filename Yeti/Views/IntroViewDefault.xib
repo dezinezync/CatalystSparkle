@@ -40,25 +40,23 @@
                         <constraint firstAttribute="height" priority="999" constant="275" id="arP-qC-mCx"/>
                     </constraints>
                 </imageView>
-                <imageView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="intro-getstarted-button" highlightedImage="intro-getstarted-button-highlighted" translatesAutoresizingMaskIntoConstraints="NO" id="2gU-sb-ykc">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nwS-8e-WNX">
                     <rect key="frame" x="195" y="448" width="244" height="168"/>
-                    <gestureRecognizers/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="244" id="NnV-Ec-S8o"/>
-                        <constraint firstAttribute="height" constant="168" id="wjj-Nv-9rf"/>
+                        <constraint firstAttribute="height" constant="168" id="6YV-8o-jkv"/>
+                        <constraint firstAttribute="width" constant="244" id="7Hp-1p-F40"/>
                     </constraints>
-                    <connections>
-                        <outletCollection property="gestureRecognizers" destination="k9W-ge-Jz9" appends="YES" id="sEx-hB-Zwu"/>
-                    </connections>
-                </imageView>
+                    <state key="normal" backgroundImage="intro-getstarted-button"/>
+                    <state key="selected" backgroundImage="intro-getstarted-button-highlighted"/>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="o7o-SW-n4p" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="-72" id="2oz-H9-xEa"/>
-                <constraint firstAttribute="trailing" secondItem="2gU-sb-ykc" secondAttribute="trailing" constant="-64" id="DNZ-Ay-3pG"/>
+                <constraint firstAttribute="bottom" secondItem="nwS-8e-WNX" secondAttribute="bottom" constant="87" id="FJh-lj-QPH"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="nwS-8e-WNX" secondAttribute="trailing" constant="-64" id="Nfk-vL-AY7"/>
                 <constraint firstItem="XHV-a5-CkA" firstAttribute="top" secondItem="o7o-SW-n4p" secondAttribute="bottom" constant="10" id="VWu-bU-NHe"/>
                 <constraint firstItem="rIu-1g-cN6" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="-22" id="XTR-6o-bqf"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="2gU-sb-ykc" secondAttribute="bottom" constant="87" id="hj5-Dz-M0I"/>
                 <constraint firstItem="XHV-a5-CkA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="-72" id="k7w-DY-ZiM"/>
                 <constraint firstAttribute="trailing" secondItem="rIu-1g-cN6" secondAttribute="trailing" constant="-50" id="rYc-FY-Eu2"/>
                 <constraint firstItem="o7o-SW-n4p" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="20" id="tEX-WT-GnL"/>
@@ -68,19 +66,18 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
-                <outlet property="buttonBottom" destination="hj5-Dz-M0I" id="IbB-Q3-bOw"/>
-                <outlet property="buttonTrailing" destination="DNZ-Ay-3pG" id="1qA-gr-3Vf"/>
+                <outlet property="button" destination="nwS-8e-WNX" id="dml-6g-eXD"/>
+                <outlet property="buttonBottom" destination="FJh-lj-QPH" id="yYX-9w-i9n"/>
+                <outlet property="buttonTrailing" destination="Nfk-vL-AY7" id="BUF-ja-6e9"/>
                 <outlet property="card1" destination="rIu-1g-cN6" id="BnE-TF-tsW"/>
                 <outlet property="card1Trailing" destination="rYc-FY-Eu2" id="1B6-Th-jhP"/>
                 <outlet property="card2" destination="o7o-SW-n4p" id="QXm-De-jMh"/>
                 <outlet property="card2Leading" destination="2oz-H9-xEa" id="sOq-gz-sqf"/>
                 <outlet property="card3" destination="XHV-a5-CkA" id="sbw-w2-YId"/>
                 <outlet property="card3Leading" destination="k7w-DY-ZiM" id="8Yc-gQ-ayl"/>
-                <outlet property="tapGesture" destination="k9W-ge-Jz9" id="dWf-by-8Kf"/>
             </connections>
             <point key="canvasLocation" x="83" y="-7"/>
         </view>
-        <tapGestureRecognizer id="k9W-ge-Jz9"/>
     </objects>
     <resources>
         <image name="intro-card-1" width="230" height="358"/>

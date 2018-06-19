@@ -39,16 +39,13 @@
         self.card1Trailing.constant -= 24.f;
         self.buttonBottom.constant -= 87.f + 32.f;
         
-//        [self setNeedsUpdateConstraints];
-//        [self layoutIfNeeded];
-        
         self.card3.hidden = YES;
     }
     
     if ([[UIApplication sharedApplication] keyWindow].bounds.size.width >= 768.f) {
         activeViews = [activeViews arrayByAddingObject:self.card3];
         
-        CGFloat const space = 96.f;
+        CGFloat const space = 80.f;
         
         self.card2Leading.constant = space;
         self.card1Trailing.constant = space;

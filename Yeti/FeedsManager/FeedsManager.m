@@ -738,8 +738,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
-    weakify(self);
-    
     [self.session GET:@"/unread" parameters:@{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
@@ -816,15 +814,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-    weakify(self);
-    
     [self.session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         id retval = [responseObject valueForKey:@"folder"];
         
         Folder *instance = [Folder instanceFromDictionary:retval];
-        
-        strongify(self);
         
         @synchronized (MyFeedsManager) {
             MyFeedsManager.folders = [MyFeedsManager.folders arrayByAddingObject:instance];
@@ -907,8 +901,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [dict setObject:toDel forKey:@"del"];
     }
     
-    weakify(self);
-    
     [self updateFolder:folderID properties:dict.copy success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [[responseObject valueForKey:@"status"] boolValue];
@@ -920,8 +912,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             }
             return;
         }
-        
-        strongify(self);
         
         Folder *folder = [MyFeedsManager.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
             if ([current.folderID isEqualToNumber:folderID])
