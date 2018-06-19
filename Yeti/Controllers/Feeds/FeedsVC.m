@@ -133,7 +133,7 @@ static void *KVO_Unread = &KVO_Unread;
     self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
     
     self.DS.addAnimation = UITableViewRowAnimationFade;
-    self.DS.deleteAnimation = UITableViewRowAnimationFade;
+    self.DS.deleteAnimation = UITableViewRowAnimationNone;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
     DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
@@ -269,6 +269,10 @@ static void *KVO_Unread = &KVO_Unread;
 }
 
 #pragma mark - Table view data source
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return indexPath.section == 1;
+}
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     

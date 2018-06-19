@@ -121,7 +121,7 @@
         return;
     }
     
-    DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
+    DZSectionedDatasource *DS = [self valueForKeyPath:@"DS"];
     id obj = [DS objectAtIndexPath:indexPath];
     
     UIAlertController *avc = nil;
