@@ -254,9 +254,12 @@ static void *KVO_UNREAD = &KVO_UNREAD;
                     
                     if ([oldSet containsObject:obj.feedID]) {
                         
-                        obj.unread = @([[MyFeedsManager.unread rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
-                            return [objx.feedID isEqualToNumber:obj.feedID];
-                        }] count]);
+                        @try {
+                            obj.unread = @([[MyFeedsManager.unread rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
+                                return [objx.feedID isEqualToNumber:obj.feedID];
+                            }] count]);
+                        }
+                        @catch (NSException *exc) {}
                         
                         changed = YES;
                         
@@ -273,9 +276,12 @@ static void *KVO_UNREAD = &KVO_UNREAD;
                 Feed *feed = self.object;
                 
                 if (feed) {
-                    feed.unread = @([[MyFeedsManager.unread rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
-                        return [objx.feedID isEqualToNumber:feed.feedID];
-                    }] count]);
+                    @try {
+                        feed.unread = @([[MyFeedsManager.unread rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
+                            return [objx.feedID isEqualToNumber:feed.feedID];
+                        }] count]);
+                    }
+                    @catch (NSException *exc) {}
                     
                     weakify(self);
                     
