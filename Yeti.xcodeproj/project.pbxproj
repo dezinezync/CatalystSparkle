@@ -404,6 +404,9 @@
 		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
 		F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D07200205E960900A042CD /* ExternalAppsVC.xib */; };
 		F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D07204205E9EC400A042CD /* DZWebViewController.m */; };
+		F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */; };
+		F0D1C5DF20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */; };
+		F0D1C5E020DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */; };
 		F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0D3002F1FE2633E0040D10D /* DateTools.bundle */; };
 		F0D300401FE2633E0040D10D /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0D300411FE2633E0040D10D /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
@@ -828,6 +831,8 @@
 		F0D07204205E9EC400A042CD /* DZWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZWebViewController.m; sourceTree = "<group>"; };
 		F0D07205205E9EC400A042CD /* DZWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZWebViewController.h; sourceTree = "<group>"; };
 		F0D07207205E9F6700A042CD /* attributions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributions.html; sourceTree = "<group>"; };
+		F0D1C5DC20DA29AD0069BDA5 /* FeedsManagerErrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsManagerErrors.h; sourceTree = "<group>"; };
+		F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsManagerErrors.m; sourceTree = "<group>"; };
 		F0D3002F1FE2633E0040D10D /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0D300301FE2633E0040D10D /* DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTools.h; sourceTree = "<group>"; };
 		F0D300311FE2633E0040D10D /* DTConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTConstants.h; sourceTree = "<group>"; };
@@ -1370,6 +1375,8 @@
 		F070C3361FBAC3C100912CCF /* FeedsManager */ = {
 			isa = PBXGroup;
 			children = (
+				F0D1C5DC20DA29AD0069BDA5 /* FeedsManagerErrors.h */,
+				F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */,
 				F070C3371FBAC3CC00912CCF /* FeedsManager.h */,
 				F070C3381FBAC3CC00912CCF /* FeedsManager.m */,
 				F0E71E6D1FD6F2D400408CFF /* FeedsManager+KVS.h */,
@@ -1991,6 +1998,7 @@
 				F035A2252061812F005A88EE /* FeedsManager.m in Sources */,
 				F035A22D206181C8005A88EE /* Range.m in Sources */,
 				F035A229206181C8005A88EE /* Enclosure.m in Sources */,
+				F0D1C5E020DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F035A22C206181C8005A88EE /* FeedItem.m in Sources */,
 				F0D0085E2081C90100EAFE3B /* Author.m in Sources */,
 				F0869B5B2099CE9000A5D723 /* YetiTheme.m in Sources */,
@@ -2057,6 +2065,7 @@
 				F069ABCD206E018F00021ABF /* FeedsVC.m in Sources */,
 				F06B766020C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F069ABCE206E018F00021ABF /* GalleryCell.m in Sources */,
+				F0D1C5DF20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F099466620AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F069ABCF206E018F00021ABF /* DTTimePeriod.m in Sources */,
 				F0202BE520A41AE900FBC3E1 /* FeedsHeaderView.m in Sources */,
@@ -2206,6 +2215,7 @@
 				F06F914120D3E55A00A358B0 /* SubscriptionView.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
+				F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */,

@@ -48,18 +48,24 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
-    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
-    [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
-    self.tableView.refreshControl = refresh;
-    
     self.tableView.tableFooterView = [UIView new];
     
     if (!self.isUnread) {
-//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_BOOKMARKS];
         self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
     }
     else {
+        UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        if (theme.isDark) {
+            refresh.tintColor = [theme captionColor];
+        }
+        
+        [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
+        self.tableView.refreshControl = refresh;
+        
         self.DS.data = [MyFeedsManager unread];
     }
 }

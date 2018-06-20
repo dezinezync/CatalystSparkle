@@ -28,7 +28,7 @@
     if (self = [super initWithFrame:frame]) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        self.backgroundColor = theme.backgroundColor;
+        self.backgroundColor = theme.cellColor;
         
         SizedImage *imageView = [[SizedImage alloc] initWithFrame:self.bounds];
         imageView.contentMode = UIViewContentModeScaleAspectFit;

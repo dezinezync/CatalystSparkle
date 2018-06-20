@@ -144,16 +144,16 @@
     self.activityIndicator.superview.hidden = NO;
     [self.activityIndicator startAnimating];
     
-    NSURLComponents *URLComponents = [[NSURLComponents alloc] initWithString:url.absoluteString];
+//    NSURLComponents *URLComponents = [[NSURLComponents alloc] initWithString:url.absoluteString];
     // yeti://addFeed?URL=
-    NSURL *host = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"%@://%@", URLComponents.scheme, URLComponents.host]];
+//    NSURL *host = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"%@://%@", URLComponents.scheme, URLComponents.host]];
     
     weakify(self);
     
     // dispatch after 2 seconds to allow FeedsManager to be set up
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        [MyFeedsManager addFeed:host success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);
             

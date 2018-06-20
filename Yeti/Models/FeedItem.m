@@ -162,7 +162,12 @@ static NSDateFormatter *_formatter = nil;
     }
     else if ([key isEqualToString:@"summary"]) {
         if (value && ![value isBlank]) {
-            self.summary = [value htmlToPlainText];
+            @try {
+                self.summary = [value htmlToPlainText];
+            }
+            @catch (NSException *exc) {
+                DDLogWarn(@"Exception when setting summary: %@", exc);
+            }
         }
     }
     else if ([key isEqualToString:@"bookmarked"]) {

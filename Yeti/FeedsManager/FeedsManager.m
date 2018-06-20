@@ -520,7 +520,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     if (existing.count) {
         if (errorCB) {
-            errorCB([NSError errorWithDomain:@"FeedsManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"You already have this feed in your list."}], nil, nil);
+            errorCB([NSError errorWithDomain:@"FeedsManager" code:kFMErrorExisting userInfo:@{NSLocalizedDescriptionKey: @"You already have this feed in your list."}], nil, nil);
         }
         
         return;

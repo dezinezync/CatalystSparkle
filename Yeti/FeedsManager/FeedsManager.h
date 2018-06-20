@@ -13,6 +13,7 @@
 #import "Folder.h"
 #import "YTUserID.h"
 #import "Subscription.h"
+#import "FeedsManagerErrors.h"
 
 #ifndef SHARE_EXTENSION
 #import <UICKeyChainStore/UICKeyChainStore.h>

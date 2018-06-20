@@ -169,6 +169,13 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)setupNavigationBar {
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    if (theme.isDark) {
+        control.tintColor = [theme captionColor];
+    }
+    
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     [self.tableView addSubview:control];
@@ -481,6 +488,8 @@ static void *KVO_Unread = &KVO_Unread;
         strongify(self);
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        self.refreshControl.tintColor = [theme captionColor];
         
         self.hairlineView.backgroundColor = theme.cellColor;
         

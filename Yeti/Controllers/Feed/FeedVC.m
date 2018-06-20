@@ -489,37 +489,13 @@
         
         FeedItem * item = [self.DS objectAtIndexPath:indexPath];
         
-        NSString *url = [item articleURL];
-        
-        NSString *externalApp = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalBrowserAppScheme] lowercaseString];
-        NSString *scheme = nil;
-        
-        if ([externalApp isEqualToString:@"safari"]) {
-            scheme = url;
-        }
-        else if ([externalApp isEqualToString:@"chrome"]) {
-            // googlechromes for https, googlechrome for http
-            if ([url containsString:@"https:"]) {
-                scheme = formattedString(@"googlechromes://%@", [url stringByReplacingOccurrencesOfString:@"https://" withString:@""]);
-            }
-            else {
-                scheme = formattedString(@"googlechrome://%@", [url stringByReplacingOccurrencesOfString:@"http://" withString:@""]);
-            }
-        }
-        else if ([externalApp isEqualToString:@"firefox"]) {
-            scheme = formattedString(@"firefox://open-url?url=%@", url);
-        }
-        
-        DDLogDebug(@"External App:%@\nURL:%@\nScheme:%@", externalApp, url, scheme);
-        
-        if (!scheme) {
-            completionHandler(NO);
-            return;
-        }
+        NSURL *URL = formattedURL(@"yeti://external?link=%@", [item articleURL]);
         
         asyncMain(^{
-            [UIApplication.sharedApplication openURL:[NSURL URLWithString:scheme] options:@{} completionHandler:completionHandler];
-        })
+            [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:completionHandler];
+        });
+        
+        
     }];
     
     action.backgroundColor = self.view.tintColor;

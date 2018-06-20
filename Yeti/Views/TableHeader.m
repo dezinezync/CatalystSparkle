@@ -16,7 +16,7 @@
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         self.backgroundColor = theme.cellColor;
         
-        self.label.textColor = theme.isDark ? theme.subtitleColor : theme.titleColor;
+        self.label.textColor = theme.isDark ? theme.captionColor : theme.titleColor;
     }
 }
 

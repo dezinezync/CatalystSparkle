@@ -294,7 +294,14 @@
         [self _dismissAddingFeedDialog];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
+            
+            NSString *title = @"Error adding feed";
+            
+            if (error.code == kFMErrorExisting) {
+                title = @"You are already subscribed.";
+            }
+            
+            [AlertManager showGenericAlertWithTitle:title message:error.localizedDescription];
         });
         
     }];

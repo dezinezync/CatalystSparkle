@@ -90,6 +90,9 @@
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
+    self.loader.color = theme.captionColor;
+    self.loader.tintColor = theme.captionColor;
+    
     self.view.backgroundColor = theme.articleBackgroundColor;
     self.scrollView.backgroundColor = theme.articleBackgroundColor;
     

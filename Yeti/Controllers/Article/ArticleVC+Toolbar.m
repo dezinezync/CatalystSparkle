@@ -42,10 +42,14 @@
     search.accessibilityValue = @"Search in article";
     search.accessibilityLabel = @"Search";
     
+    UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"open_in_browser"] style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
+    browser.accessibilityValue = @"Open the article in the browser";
+    browser.accessibilityLabel = @"Browser";
+    
     self.toolbarItems = nil;
     self.navigationController.toolbarHidden = YES;
     // these are assigned in reverse order
-    self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read];
+    self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read, browser];
     
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
@@ -167,6 +171,12 @@
     
     button.enabled = YES;
     
+}
+
+- (void)openInBrowser {
+    NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
+    
+    [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
 }
 
 - (void)didTapSearch
