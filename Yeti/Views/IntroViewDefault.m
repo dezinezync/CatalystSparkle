@@ -42,6 +42,10 @@
         self.card3.hidden = YES;
     }
     
+    if ([[UIApplication sharedApplication] keyWindow].bounds.size.height <= 667.f) {
+        self.buttonBottom.constant += 87.f;
+    }
+    
     if ([[UIApplication sharedApplication] keyWindow].bounds.size.width >= 768.f) {
         activeViews = [activeViews arrayByAddingObject:self.card3];
         

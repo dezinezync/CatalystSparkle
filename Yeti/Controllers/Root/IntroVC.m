@@ -322,13 +322,29 @@ static void * buttonStateContext = &buttonStateContext;
 }
 
 - (void)didRestore:(NSNotification *)note {
+    
+    if (!NSThread.isMainThread) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self didRestore:note];
+        });
+        return;
+    }
+    
     [self _removeRestoreObservers];
     
-    [AlertManager showGenericAlertWithTitle:@"Purchases Restored" message:@"Your purchases have been successfully restored."];
+    if (note != nil) {
+        [AlertManager showGenericAlertWithTitle:@"Purchases Restored" message:@"Your purchases have been successfully restored."];
+    }
     
     SubscriptionView *view = (SubscriptionView *)[self activeView];
     if (view.restoreButton.isEnabled) {
         view.restoreButton.enabled = NO;
+    }
+    
+    if (self.button.isEnabled == NO) {
+        self.button.enabled = YES;
     }
     
     self.state = IntroStateSubscriptionDone;
