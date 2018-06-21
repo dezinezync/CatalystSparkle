@@ -169,8 +169,6 @@
     if (!self.content)
         return;
     
-    self.content.images = [self.content.images arrayByAddingObject:self.content.images.firstObject];
-    
     if (self.content.images.count > 2) {
         // double height
         self.collectionViewHeight.constant = 128.f * 2;
@@ -205,7 +203,7 @@
         size.height += self.collectionView.bounds.size.height;
     }
     
-    size.height += [self.textview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height + ((self.textview.bodyFont.pointSize * MAX(1.333f, self.textview.paragraphStyle.lineHeightMultiple)) * 4);
+    size.height += [self.textview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
     size.height += [self.avatar.superview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
     // add the inter-elements padding
     size.height += LayoutPadding * (self.collectionView.isHidden ? 2 : 3);

@@ -526,7 +526,7 @@
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: theme.titleColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-1.14f) : [NSNull null],
+                                     NSKernAttributeName: [NSNull null],
                                      };
     
     // Subline
