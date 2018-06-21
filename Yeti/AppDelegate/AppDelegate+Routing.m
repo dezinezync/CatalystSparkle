@@ -480,7 +480,7 @@
     if (!uri || [uri isBlank])
         return;
     
-    NSString *browserScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalBrowserAppScheme] lowercaseString];
+    NSString *browserScheme = [([NSUserDefaults.standardUserDefaults valueForKey:ExternalBrowserAppScheme] ?: @"safari") lowercaseString];
     NSURL *URL;
     
     if ([browserScheme isEqualToString:@"safari"]) {
