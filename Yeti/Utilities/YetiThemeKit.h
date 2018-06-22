@@ -20,4 +20,6 @@ extern YetiThemeKit * _Nonnull YTThemeKit;
  */
 + (void)loadThemeKit;
 
++ (NSArray <UIColor *> *)colours;
+
 @end

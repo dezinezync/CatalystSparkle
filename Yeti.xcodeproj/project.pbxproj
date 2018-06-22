@@ -27,6 +27,12 @@
 		F0202BE420A41AD700FBC3E1 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
 		F0202BE520A41AE900FBC3E1 /* FeedsHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */; };
 		F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */ = {isa = PBXBuildFile; fileRef = F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */; };
+		F022B0D820DC2D9500030185 /* AccentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0D620DC2D9500030185 /* AccentCell.m */; };
+		F022B0D920DC2D9500030185 /* AccentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0D620DC2D9500030185 /* AccentCell.m */; };
+		F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F022B0D720DC2D9500030185 /* AccentCell.xib */; };
+		F022B0DB20DC2D9500030185 /* AccentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F022B0D720DC2D9500030185 /* AccentCell.xib */; };
+		F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0DE20DC30DE00030185 /* AccentButton.m */; };
+		F022B0E020DC30DE00030185 /* AccentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0DE20DC30DE00030185 /* AccentButton.m */; };
 		F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */ = {isa = PBXBuildFile; fileRef = F022F0491FBD4BFF006A0036 /* Aside.m */; };
 		F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F023E55A2076900E00FF513C /* CustomFeedVC.m */; };
 		F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459C72058FFF1002906C3 /* FeedsVC+Search.m */; };
@@ -573,6 +579,11 @@
 		F01D71541FBC232200DF84B9 /* List.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = List.m; sourceTree = "<group>"; };
 		F0213E792085E525000DDD4A /* AppDelegate+Push.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Push.h"; sourceTree = "<group>"; };
 		F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Push.m"; sourceTree = "<group>"; };
+		F022B0D520DC2D9500030185 /* AccentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccentCell.h; sourceTree = "<group>"; };
+		F022B0D620DC2D9500030185 /* AccentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccentCell.m; sourceTree = "<group>"; };
+		F022B0D720DC2D9500030185 /* AccentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccentCell.xib; sourceTree = "<group>"; };
+		F022B0DD20DC30DE00030185 /* AccentButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccentButton.h; sourceTree = "<group>"; };
+		F022B0DE20DC30DE00030185 /* AccentButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccentButton.m; sourceTree = "<group>"; };
 		F022F0481FBD4BFF006A0036 /* Aside.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aside.h; sourceTree = "<group>"; };
 		F022F0491FBD4BFF006A0036 /* Aside.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Aside.m; sourceTree = "<group>"; };
 		F023E5592076900E00FF513C /* CustomFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeedVC.h; sourceTree = "<group>"; };
@@ -1368,6 +1379,11 @@
 				F05C7A9D20D8E1F3007D6B5C /* TableHeader.h */,
 				F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */,
 				F05C7AA220D8E203007D6B5C /* TableHeader.xib */,
+				F022B0D520DC2D9500030185 /* AccentCell.h */,
+				F022B0D620DC2D9500030185 /* AccentCell.m */,
+				F022B0D720DC2D9500030185 /* AccentCell.xib */,
+				F022B0DD20DC30DE00030185 /* AccentButton.h */,
+				F022B0DE20DC30DE00030185 /* AccentButton.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1762,6 +1778,7 @@
 				F0A5AEBD20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				F0A5AE6B20C197EF00CFA1D2 /* Merriweather-Light.ttf in Resources */,
 				F0869B5E2099CF0000A5D723 /* light.json in Resources */,
+				F022B0DB20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F0202BE420A41AD700FBC3E1 /* FilterInputCell.xib in Resources */,
 				F047F4F920C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0A5AE6920C197EF00CFA1D2 /* Merriweather-Regular.ttf in Resources */,
@@ -1877,6 +1894,7 @@
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
+				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
@@ -2051,6 +2069,7 @@
 				F069ABC6206E018F00021ABF /* NSString+HTML.m in Sources */,
 				F0315DBD20CA59FB00F5674A /* Subscription.m in Sources */,
 				F069ABC7206E018F00021ABF /* Gallery.m in Sources */,
+				F022B0E020DC30DE00030185 /* AccentButton.m in Sources */,
 				F0673B0220C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F069ABC8206E018F00021ABF /* FeedsManager+KVS.m in Sources */,
 				F069ABC9206E018F00021ABF /* Tweet.m in Sources */,
@@ -2094,6 +2113,7 @@
 				F069ABDF206E018F00021ABF /* FeedsVC+Actions.m in Sources */,
 				F069ABE0206E018F00021ABF /* FeedsManager.m in Sources */,
 				F069ABE1206E018F00021ABF /* FeedItem.m in Sources */,
+				F022B0D920DC2D9500030185 /* AccentCell.m in Sources */,
 				F069ABE2206E018F00021ABF /* AccountVC.m in Sources */,
 				F069ABE3206E018F00021ABF /* ExternalAppsVC.m in Sources */,
 				F069ABE4206E018F00021ABF /* PaddedLabel.m in Sources */,
@@ -2146,6 +2166,7 @@
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
+				F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
 				F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */,
 				F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */,
@@ -2179,6 +2200,7 @@
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
+				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
 				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,

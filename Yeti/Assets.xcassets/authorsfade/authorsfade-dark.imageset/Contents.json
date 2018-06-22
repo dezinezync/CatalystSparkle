@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "authorsfade.png",
+      "filename" : "authorsfade-dark.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "authorsfade@2x.png",
+      "filename" : "authorsfade-dark@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "authorsfade@3x.png",
+      "filename" : "authorsfade-dark@3x.png",
       "scale" : "3x"
     }
   ],

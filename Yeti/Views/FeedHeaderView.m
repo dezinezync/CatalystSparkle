@@ -56,6 +56,11 @@
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.backgroundColor = theme.cellColor;
     
+    NSString *imageName = formattedString(@"authorsfade-%@", theme.name);
+    UIImage *image = [UIImage imageNamed:imageName];
+    
+    self.authorsFade.image = image;
+    
     self.descriptionLabel.backgroundColor = theme.cellColor;
     self.descriptionLabel.textColor = theme.subtitleColor;
     self.scrollView.backgroundColor = theme.cellColor;

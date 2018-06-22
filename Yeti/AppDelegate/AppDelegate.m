@@ -148,6 +148,10 @@ AppDelegate *MyAppDelegate = nil;
 // https://ngs.io/2014/10/26/refresh-ui-appearance/
 
 - (void)refreshViews {
+    
+    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+        window.tintColor = YTThemeKit.theme.tintColor;
+    }
 
    [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
     

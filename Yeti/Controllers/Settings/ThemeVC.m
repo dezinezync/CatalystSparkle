@@ -12,8 +12,11 @@
 
 #import "YetiThemeKit.h"
 #import "CodeParser.h"
+#import "AccentCell.h"
 
 #import <sys/utsname.h>
+
+static void * KVO_SELECTED_BUTTON = &KVO_SELECTED_BUTTON;
 
 NSString *const kSwitchCell = @"cell.switch";
 NSString *const kCheckmarkCell = @"cell.checkmark";
@@ -49,6 +52,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kSwitchCell];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCheckmarkCell];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AccentCell.class) bundle:nil] forCellReuseIdentifier:kAccentCell];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -60,20 +64,23 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0)
-        return @"App wide";
+        return @"Theme";
     else if (section == 1)
-        return @"Article Font";
-    return nil;
+        return @"Accent Color";
+    return @"Article Font";
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     if (section == 0) {
         return _isPhoneX ? 3 : 2;
+    }
+    else if (section == 1) {
+        return 1;
     }
     
     return self->_fonts.count;
@@ -102,7 +109,22 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         }
         
     }
-    else {//if (indexPath.section == 1) {
+    else if (indexPath.section == 1) { // Accent Colour
+        cell = [tableView dequeueReusableCellWithIdentifier:kAccentCell forIndexPath:indexPath];
+        
+        NSArray <UIButton *> *buttons = [[(AccentCell *)cell stackView] arrangedSubviews];
+        
+        // get selection for current theme or default value
+        YetiThemeType themeType = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+        NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
+        NSInteger colorIndex = [NSUserDefaults.standardUserDefaults integerForKey:defaultsKey] ?: [(YetiTheme *)[YTThemeKit theme] tintColorIndex].integerValue;
+        
+        [(AccentCell *)cell didTapButton:buttons[colorIndex]];
+        
+        [cell addObserver:self forKeyPath:NSStringFromSelector(@selector(selectedButton)) options:NSKeyValueObservingOptionNew context:&KVO_SELECTED_BUTTON];
+        
+    }
+    else {
         // ARTICLE FONT
         cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
         
@@ -127,16 +149,35 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     
     // Configure the cell...
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
-    
-    UIView *selected = [UIView new];
-    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
-    cell.selectedBackgroundView = selected;
+    if (indexPath.section != 1) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        cell.textLabel.textColor = theme.titleColor;
+        cell.detailTextLabel.textColor = theme.captionColor;
+        
+        UIView *selected = [UIView new];
+        selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+        cell.selectedBackgroundView = selected;
+    }
+    else {
+        cell.selectedBackgroundView = [UIView new];
+    }
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)c forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.section == 1 && indexPath.row == 0) {
+        AccentCell *cell = (AccentCell *)c;
+        if (self.observationInfo) {
+            @try {
+                [cell removeObserver:self forKeyPath:NSStringFromSelector(@selector(selectedButton)) context:&KVO_SELECTED_BUTTON];
+            }
+            @catch (NSException *exc) {}
+        }
+    }
+    
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -170,6 +211,9 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     else if (indexPath.section == 1) {
         
+    }
+    else if (indexPath.section == 2) {
+        
         [defaults setValue:self->_fonts[indexPath.row] forKey:kDefaultsArticleFont];
         
         reloadSections = [NSIndexSet indexSetWithIndex:indexPath.section];
@@ -177,7 +221,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     
     if (!reloadSections) {
-        reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];
+        reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)];
     }
     
     [tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];
@@ -204,6 +248,50 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     uname(&sysInfo);
     
     return [NSString stringWithCString:sysInfo.machine encoding:NSUTF8StringEncoding];
+}
+
+#pragma mark -
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if (context == KVO_SELECTED_BUTTON) {
+        NSArray <UIButton *> *buttons = [[(AccentCell *)object stackView] arrangedSubviews];
+        NSArray <UIColor *> *colours = [YetiThemeKit colours];
+        
+        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+        YetiThemeType themeType = [defaults valueForKey:kDefaultsTheme];
+        NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
+        
+        UIButton *selectedButton = [object valueForKeyPath:keyPath];
+        
+        NSInteger buttonIndex = [buttons indexOfObject:selectedButton];
+        UIColor *selectedColor = colours[buttonIndex];
+        
+        [defaults setInteger:buttonIndex forKey:defaultsKey];
+        
+        [(YetiTheme *)[YTThemeKit theme] setTintColor:selectedColor];
+        
+#ifndef SHARE_EXTENSION
+        
+        for (UIWindow *window in [UIApplication.sharedApplication windows]) {
+            window.tintColor = selectedColor;
+        };
+        
+#endif
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:ThemeDidUpdate object:nil];
+        
+        NSIndexSet * reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)];;
+        
+        [self.tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];
+        
+        [defaults synchronize];
+        
+        if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
+            [self.settingsDelegate didChangeSettings];
+        }
+    }
+    
 }
 
 @end

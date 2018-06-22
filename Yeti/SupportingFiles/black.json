@@ -12,5 +12,6 @@
     "cellColor": "#030303",
     "subbarColor": "#000000",
     "focusColor": "#45D8E830",
-    "articleBackgroundColor": "#030303"
+    "articleBackgroundColor": "#030303",
+    "tintColorIndex": 5
 }
