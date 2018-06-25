@@ -72,6 +72,16 @@ static void * buttonStateContext = &buttonStateContext;
     [self.button addObserver:self forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:&buttonStateContext];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+    [super viewWillAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    [super viewWillDisappear:animated];
+}
+
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
@@ -149,6 +159,7 @@ static void * buttonStateContext = &buttonStateContext;
             [self.topLabel sizeToFit];
             
             SubscriptionView *view = [[SubscriptionView alloc] initWithNib];
+            view.navigationController = self.navigationController;
             
             [view.restoreButton addTarget:self action:@selector(didTapRestore:) forControlEvents:UIControlEventTouchUpInside];
             

@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) YetiSubscriptionType selected;
 @property (weak, nonatomic) IBOutlet UIButton *restoreButton;
 
+@property (weak, nonatomic) UINavigationController *navigationController;
+
 @end
 
 NS_ASSUME_NONNULL_END

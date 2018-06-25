@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -23,13 +22,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oaX-w6-ZbA">
-                    <rect key="frame" x="0.0" y="44" width="375" height="411"/>
+                    <rect key="frame" x="0.0" y="44" width="375" height="334"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ZPD-De-sYa">
-                            <rect key="frame" x="0.0" y="12" width="375" height="387"/>
+                            <rect key="frame" x="0.0" y="12" width="375" height="310"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="wFX-I4-EKm">
-                                    <rect key="frame" x="0.0" y="0.0" width="187.5" height="387"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="187.5" height="310"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$2.99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="iuN-ZQ-kAu">
                                             <rect key="frame" x="56" y="0.0" width="76" height="36.5"/>
@@ -38,19 +37,19 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="month" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dAn-DW-tAi">
-                                            <rect key="frame" x="55" y="128" width="77.5" height="33.5"/>
+                                            <rect key="frame" x="55" y="102.5" width="77.5" height="33.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(1 week free trial)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5De-GP-DPa">
-                                            <rect key="frame" x="34.5" y="253.5" width="118.5" height="18"/>
+                                            <rect key="frame" x="34.5" y="202" width="118.5" height="18"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sub-unchecked" translatesAutoresizingMaskIntoConstraints="NO" id="5vm-hq-v8t">
-                                            <rect key="frame" x="82" y="363" width="24" height="24"/>
+                                            <rect key="frame" x="82" y="286" width="24" height="24"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="Kf8-2K-lTN"/>
                                                 <constraint firstAttribute="width" constant="24" id="z6O-T2-M8T"/>
@@ -63,7 +62,7 @@
                                     </connections>
                                 </stackView>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7d6-pH-GeP">
-                                    <rect key="frame" x="187.5" y="0.0" width="187.5" height="387"/>
+                                    <rect key="frame" x="187.5" y="0.0" width="187.5" height="310"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$29.99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="X9L-gZ-nN2">
                                             <rect key="frame" x="47.5" y="0.0" width="92.5" height="36.5"/>
@@ -72,19 +71,19 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="year" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AkV-jc-RNX">
-                                            <rect key="frame" x="68" y="128" width="52" height="33.5"/>
+                                            <rect key="frame" x="68" y="102.5" width="52" height="33.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.38" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(1 month free trial)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1fT-5M-HHd">
-                                            <rect key="frame" x="30.5" y="253.5" width="126.5" height="18"/>
+                                            <rect key="frame" x="30.5" y="202" width="126.5" height="18"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sub-checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="Hmn-Dy-vvX">
-                                            <rect key="frame" x="82" y="363" width="24" height="24"/>
+                                            <rect key="frame" x="82" y="286" width="24" height="24"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="hsf-lD-tLc"/>
                                                 <constraint firstAttribute="width" constant="24" id="wiX-vG-oNV"/>
@@ -108,7 +107,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fEU-kv-UV9">
-                    <rect key="frame" x="123" y="479" width="129" height="30"/>
+                    <rect key="frame" x="123" y="402" width="129" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="3J2-9e-XBf"/>
                         <constraint firstAttribute="width" constant="129" id="yTP-IZ-ZFz"/>
@@ -116,29 +115,53 @@
                     <state key="normal" title="Restore Purchases"/>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MRW-j1-GmB">
-                    <rect key="frame" x="0.0" y="533" width="375" height="122"/>
+                    <rect key="frame" x="0.0" y="472" width="375" height="183"/>
                     <string key="text">You can evaluate Elytra during the trail period. If you decide to stop using Elytra, remember to cancel the subscription in time.
 
-Apple will charge your card one day before your trail expires.</string>
+Apple will charge your card one day before your trail expires.
+
+To learn more about Elytra subscriptions, tap here.</string>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="751" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pPg-Mm-mjY">
+                    <rect key="frame" x="0.0" y="456" width="375" height="199"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <string key="text">You can evaluate Elytra during the trail period. If you decide to stop using Elytra, remember to cancel the subscription in time.
+
+Apple will charge your card one day before your trail expires.
+
+To learn more about Elytra subscriptions, tap here.</string>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="pPg-Mm-mjY" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="0kR-jM-pBX"/>
                 <constraint firstItem="MRW-j1-GmB" firstAttribute="top" secondItem="fEU-kv-UV9" secondAttribute="bottom" constant="24" id="59X-In-OFZ"/>
+                <constraint firstItem="pPg-Mm-mjY" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="CgG-58-vWe"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="MRW-j1-GmB" secondAttribute="trailing" id="NNW-pN-LX2"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="pPg-Mm-mjY" secondAttribute="bottom" constant="12" id="T3A-Yy-L0Z"/>
                 <constraint firstItem="oaX-w6-ZbA" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="24" id="ZmQ-iz-nua"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="MRW-j1-GmB" secondAttribute="bottom" constant="12" id="Znk-UV-tqt"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="oaX-w6-ZbA" secondAttribute="trailing" id="dmR-Eb-GZm"/>
                 <constraint firstItem="fEU-kv-UV9" firstAttribute="top" secondItem="oaX-w6-ZbA" secondAttribute="bottom" constant="24" id="hLh-Xh-XDx"/>
                 <constraint firstItem="oaX-w6-ZbA" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="szh-Hp-smK"/>
                 <constraint firstItem="MRW-j1-GmB" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="xmG-11-R2p"/>
+                <constraint firstItem="pPg-Mm-mjY" firstAttribute="top" secondItem="fEU-kv-UV9" secondAttribute="bottom" constant="24" id="xqC-7n-3XJ"/>
                 <constraint firstItem="fEU-kv-UV9" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="zsZ-Nb-vZx"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <variation key="default">
+                <mask key="subviews">
+                    <exclude reference="MRW-j1-GmB"/>
+                </mask>
+            </variation>
             <connections>
+                <outlet property="descriptionLabel" destination="pPg-Mm-mjY" id="Omq-Sq-ngz"/>
                 <outlet property="monthImage" destination="5vm-hq-v8t" id="Nbh-tY-eBM"/>
                 <outlet property="monthLabel" destination="iuN-ZQ-kAu" id="yLm-Aa-eDa"/>
                 <outlet property="restoreButton" destination="fEU-kv-UV9" id="Bod-Ev-VCU"/>
@@ -146,7 +169,7 @@ Apple will charge your card one day before your trail expires.</string>
                 <outlet property="yearImage" destination="Hmn-Dy-vvX" id="1nm-aK-vUs"/>
                 <outlet property="yearLabel" destination="X9L-gZ-nN2" id="add-3Y-kZV"/>
             </connections>
-            <point key="canvasLocation" x="-36" y="-110"/>
+            <point key="canvasLocation" x="-36.5" y="-110.5"/>
         </view>
         <tapGestureRecognizer id="BsU-ZM-ggB">
             <connections>

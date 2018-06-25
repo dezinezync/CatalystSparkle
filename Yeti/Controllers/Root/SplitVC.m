@@ -60,8 +60,9 @@ NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
     IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
-    [self presentViewController:vc animated:NO completion:nil];
+    [self presentViewController:nav animated:NO completion:nil];
 }
 
 @end

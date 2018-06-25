@@ -8,14 +8,16 @@
 
 #import "SubscriptionView.h"
 #import <Store/Store.h>
+#import "DZWebViewController.h"
 
-@interface SubscriptionView ()
+@interface SubscriptionView () <UITextViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *monthImage;
 @property (weak, nonatomic) IBOutlet UIImageView *yearImage;
 @property (weak, nonatomic) IBOutlet UIView *viewBox;
 @property (weak, nonatomic) IBOutlet UILabel *monthLabel;
 @property (weak, nonatomic) IBOutlet UILabel *yearLabel;
+@property (weak, nonatomic) IBOutlet UITextView *descriptionLabel;
 
 @property (nonatomic, strong) NSNumberFormatter *currencyFormatter;
 
@@ -35,6 +37,18 @@
     self.viewBox.layer.shadowOffset = CGSizeMake(0.f, 6.f);
     self.viewBox.layer.shadowColor = UIColor.blackColor.CGColor;
     self.viewBox.layer.shadowOpacity = 0.13f;
+    
+    NSString *description = self.descriptionLabel.text;
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:description attributes:@{NSFontAttributeName: self.descriptionLabel.font,
+                                                                                                                  NSForegroundColorAttributeName: (self.descriptionLabel.textColor ?: [UIColor blackColor])
+                                                                                                                  }];
+    
+    NSURL *link = formattedURL(@"yeti://subscriptionsLearnMore");
+    [attrs addAttribute:NSLinkAttributeName value:link range:[description rangeOfString:@"here"]];
+    
+    self.descriptionLabel.attributedText = attrs;
+    [self.descriptionLabel setNeedsUpdateConstraints];
+    self.descriptionLabel.delegate = self;
     
     self.selected = YTSubscriptionYearly;
 }
@@ -75,6 +89,22 @@
         self.yearImage.image = [UIImage imageNamed:@"sub-checkmark"];
         self.monthImage.image = [UIImage imageNamed:@"sub-unchecked"];
     }
+}
+
+#pragma mark -
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+    
+    if ([URL.absoluteString isEqualToString:@"yeti://subscriptionsLearnMore"]) {
+        DZWebViewController *webVC = [[DZWebViewController alloc] init];
+        webVC.title = @"About Subscriptions";
+        
+        webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"subscriptions" withExtension:@"html"];
+        
+        [self.navigationController pushViewController:webVC animated:YES];
+    }
+    
+    return NO;
 }
 
 @end
