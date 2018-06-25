@@ -15,20 +15,26 @@
     if (self = [super initWithCoder:aDecoder]) {
         
         CAShapeLayer *borderLayer = [CAShapeLayer layer];
-        borderLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(self.bounds, -2.f, -2.f) cornerRadius:12.f].CGPath;
+        borderLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(self.bounds, -2.f, -2.f) cornerRadius:14.f].CGPath;
         borderLayer.fillColor = [UIColor blackColor].CGColor;
         borderLayer.opacity = 0.25f;
         borderLayer.hidden = YES;
         
         [self.layer addSublayer:borderLayer];
         self.borderLayer = borderLayer;
-        
-        // setting this removes a weird issue where the imageView is always 
-        // rendered with the same background color as the button.
-        self.imageView.image = nil;
     }
     
     return self;
+}
+
+- (void)addSubview:(UIView *)view {
+    
+}
+
+// setting this removes a weird issue where the imageView is always
+// rendered with the same background color as the button.
+- (UIImageView *)imageView {
+    return nil;
 }
 
 - (void)setHighlighted:(BOOL)highlighted {

@@ -50,6 +50,9 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     _isPhoneX = [[self modelIdentifier] isEqualToString:@"iPhone10,3"];
     
+    self.tableView.estimatedRowHeight = 52.f;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kSwitchCell];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCheckmarkCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AccentCell.class) bundle:nil] forCellReuseIdentifier:kAccentCell];
@@ -160,7 +163,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         cell.selectedBackgroundView = selected;
     }
     else {
-        cell.selectedBackgroundView = [UIView new];
+        cell.selectedBackgroundView = nil;
     }
     
     return cell;
