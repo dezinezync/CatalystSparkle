@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <DZNetworking/DZNetworking.h>
+#import "Reachability.h"
 
 #import "Feed.h"
 #import "Folder.h"
@@ -66,6 +67,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
 @property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
+
+#pragma mark - Networking
+
+@property (nonatomic, strong, readonly) Reachability *reachability;
 
 #pragma mark -
 

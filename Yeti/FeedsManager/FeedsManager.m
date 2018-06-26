@@ -35,6 +35,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 }
 
 @property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession;
+@property (nonatomic, strong, readwrite) Reachability *reachability;
 #ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readwrite) YTUserID *userIDManager;
 @property (nonatomic, strong, readwrite) Subscription *subscription;
@@ -1307,6 +1308,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 //}
 
 #pragma mark - Getters
+
+- (Reachability *)reachability {
+    if (!_reachability) {
+        _reachability = [Reachability reachabilityWithHostName:@"api.elytra.app"];
+    }
+    
+    return _reachability;
+}
 
 #ifndef SHARE_EXTENSION
 - (UICKeyChainStore *)keychain {

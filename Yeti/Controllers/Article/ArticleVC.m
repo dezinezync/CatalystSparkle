@@ -40,6 +40,13 @@
 #import "YetiThemeKit.h"
 #import <AVKit/AVKit.h>
 
+typedef NS_ENUM(NSInteger, ArticleState) {
+    ArticleStateLoaded,
+    ArticleStateLoading,
+    ArticleStateError,
+    ArticleStateEmpty
+};
+
 @interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
     BOOL _hasRendered;
     
@@ -61,6 +68,13 @@
 
 @property (nonatomic, weak) UIView *hairlineView;
 
+@property (nonatomic, assign) ArticleState state;
+
+@property (nonatomic, strong) NSError *articleLoadingError;
+@property (weak, nonatomic) IBOutlet UILabel *errorTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *errorDescriptionLabel;
+@property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
+
 @end
 
 @implementation ArticleVC
@@ -73,6 +87,7 @@
 {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {
         self.item = item;
+        self.state = (item.content && item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     }
     
     return self;
@@ -338,6 +353,96 @@
 
 #pragma mark - <ArticleHandler>
 
+- (void)setState:(ArticleState)state {
+    
+    if ([NSThread isMainThread] == NO) {
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            [self setState:state];
+        });
+        return;
+    }
+    
+    _state = state;
+    
+    switch (state) {
+        case ArticleStateLoading:
+        {
+            self.errorStackView.hidden = YES;
+            self.stackView.hidden = YES;
+            
+            if (self.loader.isHidden) {
+                self.loader.hidden = NO;
+                [self.loader startAnimating];
+            }
+            
+            if (self.stackView.arrangedSubviews.count > 0) {
+                weakify(self);
+                
+                [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    
+                    strongify(self);
+                    [self.stackView removeArrangedSubview:obj];
+                    [obj removeFromSuperview];
+                    
+                }];
+            }
+            
+            if (self.scrollView.contentOffset.y > self.scrollView.adjustedContentInset.top) {
+                [self.scrollView setContentOffset:CGPointMake(0, -self.scrollView.adjustedContentInset.top) animated:NO];
+            }
+            
+            self.images = [NSPointerArray weakObjectsPointerArray];
+            self.videos = [NSPointerArray strongObjectsPointerArray];
+            
+            [self setupToolbar:self.traitCollection];
+        }
+            break;
+        case ArticleStateLoaded:
+        {
+            self.errorStackView.hidden = YES;
+            
+            [self.loader stopAnimating];
+            self.loader.hidden = YES;
+            
+            self.stackView.hidden = NO;
+            [self setupHelperViewActions];
+        }
+            break;
+        case ArticleStateError:
+        {
+            if (!self.articleLoadingError) {
+                break;
+            }
+            
+            [self.loader stopAnimating];
+            self.loader.hidden = YES;
+            
+            self.stackView.hidden = YES;
+            
+            self.errorTitleLabel.text = @"Error loading the article";
+            self.errorDescriptionLabel.text = [self.articleLoadingError localizedDescription];
+            
+            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+            self.errorTitleLabel.textColor = theme.titleColor;
+            self.errorDescriptionLabel.textColor = theme.captionColor;
+            
+            for (UILabel *label in @[self.errorTitleLabel, self.errorDescriptionLabel]) {
+                label.backgroundColor = theme.articleBackgroundColor;
+                label.opaque = YES;
+            }
+            
+            self.errorStackView.hidden = NO;
+            
+            self.articleLoadingError = nil;
+        }
+            break;
+        default:
+            break;
+    }
+}
+
 - (FeedItem *)currentArticle
 {
     return self.item;
@@ -363,40 +468,21 @@
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
     
-    self.stackView.hidden = YES;
-    
-    if (self.loader.isHidden) {
-        self.loader.hidden = NO;
-        [self.loader startAnimating];
-    }
-    
-    if (self.stackView.arrangedSubviews.count > 0) {
-        weakify(self);
-        
-        [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            
-            strongify(self);
-            [self.stackView removeArrangedSubview:obj];
-            [obj removeFromSuperview];
-            
-        }];
-    }
-    
-    if (self.scrollView.contentOffset.y > self.scrollView.adjustedContentInset.top) {
-        [self.scrollView setContentOffset:CGPointMake(0, -self.scrollView.adjustedContentInset.top) animated:NO];
-    }
+    self.state = ArticleStateLoading;
     
     self.item = article;
-    
-    self.images = [NSPointerArray weakObjectsPointerArray];
-    self.videos = [NSPointerArray strongObjectsPointerArray];
-    
-    [self setupToolbar:self.traitCollection];
     
     NSDate *start = NSDate.date;
     
     if (self.item.content && self.item.content.count) {
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
+        return;
+    }
+    
+    if (MyFeedsManager.reachability.currentReachabilityStatus == NotReachable) {
+        NSError *error = [NSError errorWithDomain:@"ArticleInterface" code:500 userInfo:@{NSLocalizedDescriptionKey: @"Elytra cannot connect to the internet at the moment. Please check your connection and try again."}];
+        self.articleLoadingError = error;
+        self.state = ArticleStateError;
         return;
     }
     
@@ -410,7 +496,10 @@
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
-        [AlertManager showGenericAlertWithTitle:@"Failed to load the article" message:error.localizedDescription];
+        strongify(self);
+        
+        self.articleLoadingError = error;
+        self.state = ArticleStateError;
         
     }];
 }
@@ -452,20 +541,11 @@
         });
     } }
     
-    asyncMain(^{
-        strongify(self);
-        [self.loader stopAnimating];
-        self.loader.hidden = YES;
-    });
-    
     self->_last = nil;
 
     DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
     
-    asyncMain(^{
-        self.stackView.hidden = NO;
-        [self setupHelperViewActions];
-    });
+    self.state = ArticleStateLoaded;
     
     if (self.item && !self.item.isRead) {
         [MyFeedsManager article:self.item markAsRead:YES];
@@ -1487,23 +1567,25 @@
     
     NSString *absolute = URL.absoluteString;
     
-    // footlinks and the like
-    if (absolute.length && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"]) {
-        [self scrollToIdentifer:absolute];
-        return NO;
-    }
-    
-    // links to sections within the article
-    if ([absolute containsString:self.item.articleURL] && ![absolute isEqualToString:self.item.articleURL]) {
-        // get the section ID
-        NSRange range = [absolute rangeOfString:@"#"];
+    if (interaction != UITextItemInteractionPresentActions) {
+        // footlinks and the like
+        if (absolute.length && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"]) {
+            [self scrollToIdentifer:absolute];
+            return NO;
+        }
         
-        NSString *identifier = [absolute substringFromIndex:range.location];
-        
-        BOOL retval = [self scrollToHeading:identifier];
-        
-        if (!retval)
-            return retval;
+        // links to sections within the article
+        if ([absolute containsString:self.item.articleURL] && ![absolute isEqualToString:self.item.articleURL]) {
+            // get the section ID
+            NSRange range = [absolute rangeOfString:@"#"];
+            
+            NSString *identifier = [absolute substringFromIndex:range.location];
+            
+            BOOL retval = [self scrollToHeading:identifier];
+            
+            if (!retval)
+                return retval;
+        }
     }
     
     if (interaction == UITextItemInteractionPreview)
@@ -1512,6 +1594,15 @@
     if (interaction == UITextItemInteractionPresentActions) {
         NSString *text = [textView.attributedText.string substringWithRange:characterRange];
         UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, URL] applicationActivities:nil];
+        
+        if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            
+            UIPopoverPresentationController *pvc = [avc popoverPresentationController];
+            pvc.sourceView = textView;
+            pvc.sourceRect = [self boundingRectIn:textView forCharacterRange:characterRange];
+            
+            DDLogDebug(@"view: %@", pvc.sourceView);
+        }
         
         [self presentViewController:avc animated:YES completion:nil];
     }
@@ -1522,6 +1613,20 @@
     }
     
     return NO;
+}
+
+- (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range
+{
+    NSTextStorage *textStorage = [textview textStorage];
+    NSLayoutManager *layoutManager = [[textStorage layoutManagers] firstObject];
+    NSTextContainer *textContainer = [[layoutManager textContainers] firstObject];
+    
+    NSRange glyphRange;
+    
+    // Convert the range for glyphs.
+    [layoutManager characterRangeForGlyphRange:range actualGlyphRange:&glyphRange];
+    
+    return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
 }
 
 @end

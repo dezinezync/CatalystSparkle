@@ -357,6 +357,9 @@
 		F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
 		F0A5AEC320C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
 		F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
+		F0AD76D520E2217C0003787B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AD76D420E2217C0003787B /* Reachability.m */; };
+		F0AD76D620E2217C0003787B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AD76D420E2217C0003787B /* Reachability.m */; };
+		F0AD76D720E2217C0003787B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AD76D420E2217C0003787B /* Reachability.m */; };
 		F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF313820D27F7700E074D6 /* IntroVC.m */; };
 		F0AF313B20D27F7700E074D6 /* IntroVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF313820D27F7700E074D6 /* IntroVC.m */; };
 		F0AF313C20D27F7700E074D6 /* IntroVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF313920D27F7700E074D6 /* IntroVC.xib */; };
@@ -793,6 +796,8 @@
 		F0A5AEA920C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
 		F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-ThinItalic.ttf"; sourceTree = "<group>"; };
 		F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-MediumItalic.ttf"; sourceTree = "<group>"; };
+		F0AD76D320E2217C0003787B /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		F0AD76D420E2217C0003787B /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		F0AF313720D27F7700E074D6 /* IntroVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroVC.h; sourceTree = "<group>"; };
 		F0AF313820D27F7700E074D6 /* IntroVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroVC.m; sourceTree = "<group>"; };
 		F0AF313920D27F7700E074D6 /* IntroVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntroVC.xib; sourceTree = "<group>"; };
@@ -1150,6 +1155,8 @@
 				F069AC19206E060C00021ABF /* CheckWifi.m */,
 				F0869B602099CFE100A5D723 /* YetiThemeKit.h */,
 				F0869B612099CFE100A5D723 /* YetiThemeKit.m */,
+				F0AD76D320E2217C0003787B /* Reachability.h */,
+				F0AD76D420E2217C0003787B /* Reachability.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2010,6 +2017,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0AD76D720E2217C0003787B /* Reachability.m in Sources */,
 				F0869B642099CFE100A5D723 /* YetiThemeKit.m in Sources */,
 				F035A22B206181C8005A88EE /* Feed.m in Sources */,
 				F035A21920617EC3005A88EE /* ActionViewController.m in Sources */,
@@ -2055,6 +2063,7 @@
 				F069ABBC206E018F00021ABF /* Code.m in Sources */,
 				F0869B632099CFE100A5D723 /* YetiThemeKit.m in Sources */,
 				F069ABBD206E018F00021ABF /* CodeTheme.m in Sources */,
+				F0AD76D620E2217C0003787B /* Reachability.m in Sources */,
 				F069ABBE206E018F00021ABF /* List.m in Sources */,
 				F0869B5A2099CE9000A5D723 /* YetiTheme.m in Sources */,
 				F069ABBF206E018F00021ABF /* DTTimePeriodGroup.m in Sources */,
@@ -2233,6 +2242,7 @@
 				F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */,
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
+				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F06F914120D3E55A00A358B0 /* SubscriptionView.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,

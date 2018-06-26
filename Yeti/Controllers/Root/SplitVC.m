@@ -31,7 +31,6 @@ NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
     [YetiThemeKit loadThemeKit];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -64,12 +63,6 @@ NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
     [self presentViewController:nav animated:NO completion:nil];
-}
-
-- (void)didUpdateTheme {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.view.backgroundColor = theme.backgroundColor;
 }
 
 @end

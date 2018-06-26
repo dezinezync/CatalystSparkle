@@ -41,16 +41,19 @@
         
         strongify(self);
         
+        NSArray <FeedItem *> *items = self.unread;
+        
+        if (!read) {
+            items = [items arrayByAddingObjectsFromArray:items];
+        }
+        else {
+            items = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                return ![articles containsObject:obj.identifier];
+            }];
+        }
+        
         @synchronized (MyFeedsManager) {
-            if (!read) {
-                MyFeedsManager.unread = [self.unread arrayByAddingObjectsFromArray:items];
-            }
-            else {
-                
-                MyFeedsManager.unread = [self.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                    return ![articles containsObject:obj.identifier];
-                }];
-            }
+             MyFeedsManager.unread = items;
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

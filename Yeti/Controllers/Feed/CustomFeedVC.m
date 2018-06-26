@@ -100,7 +100,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    view.label.textColor = theme.subtitleColor;
+    view.label.textColor = theme.captionColor;
     view.backgroundColor = theme.tableColor;
     
     return view;

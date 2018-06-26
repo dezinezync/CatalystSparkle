@@ -36,4 +36,8 @@
 
 @property (nonatomic, weak) ArticleHelperView *helperView;
 
+#pragma mark - Private
+
+- (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range;
+
 @end
