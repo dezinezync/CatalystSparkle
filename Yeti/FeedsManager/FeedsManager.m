@@ -11,6 +11,10 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#ifndef SHARE_EXTENSION
+#import <CommonCrypto/CommonHMAC.h>
+#endif
+
 #ifndef DDLogError
 #import <DZKit/DZLogger.h>
 #import <CocoaLumberjack/CocoaLumberjack.h>
@@ -1363,19 +1367,39 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
-        
+
+#ifndef SHARE_EXTENSION
+        weakify(self);
+#endif
         session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
           
             NSMutableURLRequest *mutableReq = request.mutableCopy;
             [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+#ifndef SHARE_EXTENSION
+            // compute Authorization
+            strongify(self);
             
+            NSNumber *userID = self.userIDManager.userID ?: @0;
+            
+            NSString *UUID = userID.integerValue > 0 ? self.userIDManager.UUIDString : @"x890371abdgvdfggsnnaa=";
+            NSString *encoded = [[UUID dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+            
+            NSString *timecode = @([NSDate.date timeIntervalSince1970]).stringValue;
+            NSString *stringToSign = formattedString(@"%@_%@_%@", userID, UUID, timecode);
+            
+            NSString *signature = [self hmac:stringToSign withKey:encoded];
+            
+            [mutableReq setValue:signature forHTTPHeaderField:@"Authorization"];
+            [mutableReq setValue:userID.stringValue forHTTPHeaderField:@"x-userID"];
+            [mutableReq setValue:timecode forHTTPHeaderField:@"x-timestamp"];
+#endif
             return mutableReq;
             
         };
@@ -1418,14 +1442,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
         
-        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
-            
-            NSMutableURLRequest *mutableReq = request.mutableCopy;
-            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-            
-            return mutableReq;
-            
-        };
+        session.requestModifier = self.session.requestModifier;
         
         _backgroundSession = session;
     }
@@ -1433,6 +1450,23 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     return _backgroundSession;
 }
 
+#ifndef SHARE_EXTENSION
+- (NSString *)hmac:(NSString *)plaintext withKey:(NSString *)key
+{
+    const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
+    const char *cData = [plaintext cStringUsingEncoding:NSASCIIStringEncoding];
+    unsigned char cHMAC[CC_SHA256_DIGEST_LENGTH];
+    CCHmac(kCCHmacAlgSHA256, cKey, strlen(cKey), cData, strlen(cData), cHMAC);
+    NSData *HMACData = [NSData dataWithBytes:cHMAC length:sizeof(cHMAC)];
+    const unsigned char *buffer = (const unsigned char *)[HMACData bytes];
+    NSMutableString *HMAC = [NSMutableString stringWithCapacity:HMACData.length * 2];
+    for (int i = 0; i < HMACData.length; ++i){
+        [HMAC appendFormat:@"%02x", buffer[i]];
+    }
+    
+    return HMAC;
+}
+#endif
 //#ifndef SHARE_EXTENSION
 
 - (NSNumber *)bookmarksCount {
