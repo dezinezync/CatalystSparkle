@@ -135,6 +135,24 @@
     return errored;
 }
 
+- (void)removeAllLocalBookmarks {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+       
+        NSFileManager *manager = [NSFileManager defaultManager];
+        NSError *error = nil;
+        if (![manager removeItemAtPath:directory error:&error]) {
+            DDLogError(@"Error deleting directory %@", directory);
+        }
+        
+    });
+    
+}
+
 #pragma mark -
 
 + (void)load

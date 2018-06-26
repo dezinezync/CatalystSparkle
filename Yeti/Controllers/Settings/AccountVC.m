@@ -15,10 +15,12 @@
 #import "YetiThemeKit.h"
 #import "AccountFooterView.h"
 #import "DZWebViewController.h"
+#import <DZKit/DZMessagingController.h>
 
 #import <Store/Store.h>
+#import "SplitVC.h"
 
-@interface AccountVC () <UITextFieldDelegate> {
+@interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate> {
     UITextField *_textField;
     UIAlertAction *_okayAction;
     BOOL _didTapDone;
@@ -347,7 +349,7 @@
     }
     
     if (section == 0) {
-        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"If you deactivate your account and wish to activate it again, please email us on info@dezinezync.com with the above UUID. You can long tap the UUID to copy it." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
+        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         
         [attrs addAttribute:NSLinkAttributeName value:@"mailto:info@dezinezync.com" range:[attrs.string rangeOfString:@"info@dezinezync.com"]];
         
@@ -542,9 +544,20 @@
         }
         
         if (indexPath.row == 2) {
-            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Are you sure?" message:@"Because this button does nothing yet!" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Are you sure?" message:@"Please ensure you have cancelled your Elytra Pro subscription before continuing" preferredStyle:UIAlertControllerStyleAlert];
             
-            [avc addAction:[UIAlertAction actionWithTitle:@"Ok, sorry" style:UIAlertActionStyleDefault handler:nil]];
+            [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+            
+            weakify(self);
+            
+            [avc addAction:[UIAlertAction actionWithTitle:@"Deactivate" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+                
+                asyncMain(^{
+                    strongify(self);
+                    [self showInterfaceToSendDeactivationEmail];
+                });
+                
+            }]];
             
             [self presentViewController:avc animated:YES completion:nil];
         }
@@ -593,6 +606,14 @@
 }
 
 #pragma mark - Actions
+
+- (void)showInterfaceToSendDeactivationEmail {
+    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.userIDManager.UUIDString);
+    
+    DZMessagingController.shared.delegate = self;
+    
+    [DZMessagingController presentEmailWithBody:formatted subject:@"Deactivate Elytra Account" recipients:@[@"support@elytra.app"] fromController:self];
+}
 
 - (void)showReplaceIDController {
     
@@ -685,6 +706,65 @@
     _okayAction.enabled = text.length == 36;
     
     return YES;
+}
+
+#pragma mark - <DZMessagingDelegate>
+
+- (void)userDidSendEmail {
+    
+    [DZMessagingController shared].delegate = nil;
+    
+    MyFeedsManager.folders = nil;
+    MyFeedsManager.feeds = nil;
+    MyFeedsManager.bookmarks = nil;
+    MyFeedsManager.unread = nil;
+    MyFeedsManager.totalUnread = 0;
+    
+    [MyFeedsManager removeAllLocalBookmarks];
+    
+    NSString *kAccountID = @"YTUserID";
+    NSString *kUserID = @"userID";
+    
+    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+    if (store) {
+        [store removeObjectForKey:kAccountID];
+        [store removeObjectForKey:kUserID];
+        [store synchronize];
+    }
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (defaults) {
+        [defaults removeObjectForKey:kAccountID];
+        [defaults removeObjectForKey:kUserID];
+        [defaults synchronize];
+    }
+    
+    UICKeyChainStore *keychain = [MyFeedsManager keychain];
+    keychain[kAccountID] = nil;
+    keychain[kUserID] = nil;
+    
+    MyFeedsManager.userIDManager.UUID = nil;
+    MyFeedsManager.userIDManager.userID = nil;
+    
+    UINavigationController *nav = self.navigationController;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [nav popToRootViewControllerAnimated:NO];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [nav dismissViewControllerAnimated:YES completion:^{
+                
+                SplitVC *v = (SplitVC *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+                [v userNotFound];
+                
+            }];
+        });
+    });
+    
+}
+
+- (void)emailWasCancelledOrFailedToSend {
+    [DZMessagingController shared].delegate = nil;
 }
 
 @end

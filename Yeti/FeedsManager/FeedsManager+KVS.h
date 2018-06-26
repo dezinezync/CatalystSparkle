@@ -20,5 +20,6 @@
 
 - (BOOL)removeLocalBookmark:(FeedItem *)item;
 
+- (void)removeAllLocalBookmarks;
 
 @end
