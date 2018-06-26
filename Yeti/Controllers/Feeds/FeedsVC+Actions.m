@@ -184,9 +184,11 @@
     if (avc) {
         if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             
+            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            
             UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-            pvc.sourceView = self.tableView;
-            pvc.sourceRect = CGRectMake(MAX(0, location.x -  pvc.sourceView.bounds.size.width), location.y, pvc.sourceView.bounds.size.width, pvc.sourceView.bounds.size.height);
+            pvc.sourceView = cell;
+            pvc.sourceRect = CGRectMake(MAX(0, location.x -  pvc.sourceView.bounds.size.width), 0, pvc.sourceView.bounds.size.width, pvc.sourceView.bounds.size.height);
             
         }
         
