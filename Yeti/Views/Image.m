@@ -23,6 +23,10 @@
 
 @implementation Image
 
+- (UIAccessibilityTraits)accessibilityTraits {
+    return UIAccessibilityTraitImage;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
@@ -33,7 +37,7 @@
         SizedImage *imageView = [[SizedImage alloc] initWithFrame:self.bounds];
         imageView.contentMode = UIViewContentModeScaleAspectFit;
         imageView.translatesAutoresizingMaskIntoConstraints = NO;
-        imageView.backgroundColor = theme.cellColor;
+        imageView.backgroundColor = theme.articleBackgroundColor;
         
         [self addSubview:imageView];
         

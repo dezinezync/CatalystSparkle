@@ -761,8 +761,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 }];
                 
                 @try {
+                    prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
                     @synchronized (MyFeedsManager) {
-                        MyFeedsManager.unread = [prefiltered arrayByAddingObjectsFromArray:items];
+                        MyFeedsManager.unread = prefiltered;
                     }
                 }
                 @catch (NSException *exc) {}
@@ -793,7 +794,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     NSString *existing = @"";
     
     if (MyFeedsManager.bookmarks.count) {
-        existing = [[MyFeedsManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        NSArray <FeedItem *> *bookmarks = MyFeedsManager.bookmarks;
+        existing = [[bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return obj.identifier.stringValue;
         }] componentsJoinedByString:@","];
     }
@@ -820,8 +822,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         Folder *instance = [Folder instanceFromDictionary:retval];
         
+        NSArray <Folder *> *folders = [MyFeedsManager folders];
+        folders = [folders arrayByAddingObject:instance];
+        
         @synchronized (MyFeedsManager) {
-            MyFeedsManager.folders = [MyFeedsManager.folders arrayByAddingObject:instance];
+            MyFeedsManager.folders = folders;
         }
         
         if (successCB)
@@ -840,7 +845,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)renameFolder:(NSNumber *)folderID to:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
 {
-    weakify(self);
     
     [self updateFolder:folderID properties:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -854,10 +858,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             return;
         }
       
-        strongify(self);
+        NSArray <Folder *> *folders = [MyFeedsManager folders];
         
         // update our caches
-        [MyFeedsManager.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            
             if ([obj.folderID isEqualToNumber:folderID]) {
                 obj.title = title;
@@ -868,7 +872,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         // this will fire the notification
         @synchronized (MyFeedsManager) {
-            MyFeedsManager.folders = [self folders];
+            MyFeedsManager.folders = folders;
         }
         
         if (successCB) {
@@ -913,7 +917,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             return;
         }
         
-        Folder *folder = [MyFeedsManager.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+        NSArray <Folder *> *folders = MyFeedsManager.folders;
+        
+        Folder *folder = [folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
             if ([current.folderID isEqualToNumber:folderID])
                 return current;
             return prev;
@@ -933,8 +939,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 return [del indexOfObject:obj.feedID] == NSNotFound;
             }];
             
+            NSArray <Feed *> *feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:removedFeeds];
+            
             @synchronized (MyFeedsManager) {
-                MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:removedFeeds];
+                MyFeedsManager.feeds = feeds;
             }
         }
         
@@ -949,9 +957,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             }];
             
             @synchronized (MyFeedsManager) {
-                MyFeedsManager.feeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                NSArray *feeds = MyFeedsManager.feeds;
+                feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                     return [add indexOfObject:obj.feedID] == NSNotFound;
                 }];
+                
+                MyFeedsManager.feeds = feeds;
             }
             
             folder.feeds = [folder.feeds arrayByAddingObjectsFromArray:addedFeeds];
@@ -1520,7 +1531,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (isBookmarked) {
         // it was added
         @try {
-            MyFeedsManager.bookmarks = [MyFeedsManager.bookmarks arrayByAddingObject:item];
+            NSArray *bookmarks = [MyFeedsManager.bookmarks arrayByAddingObject:item];
+            MyFeedsManager.bookmarks = bookmarks;
         }
         @catch (NSException *exc) {}
     }
@@ -1528,9 +1540,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         NSInteger itemID = item.identifier.integerValue;
         
         @try {
-            MyFeedsManager.bookmarks = [MyFeedsManager.bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            NSArray <FeedItem *> *bookmarks = MyFeedsManager.bookmarks;
+            bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                 return obj.identifier.integerValue != itemID;
             }];
+            
+            MyFeedsManager.bookmarks = bookmarks;
         } @catch (NSException *excp) {}
     }
     

@@ -59,6 +59,8 @@
 
 @property (nonatomic, strong) CodeParser *codeParser;
 
+@property (nonatomic, weak) UIView *hairlineView;
+
 @end
 
 @implementation ArticleVC
@@ -138,6 +140,19 @@
     
     if (!_hasRendered) {
         [self.loader startAnimating];
+    }
+    
+    if (!self.hairlineView) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        UINavigationBar *navbar = self.navigationController.navigationBar;
+        
+        CGFloat height = 1.f/self.traitCollection.displayScale;
+        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
+        hairline.backgroundColor = theme.cellColor;
+        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+        
+        [navbar addSubview:hairline];
+        self.hairlineView = hairline;
     }
     
     if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
@@ -995,7 +1010,9 @@
     
     if ((content.alt && ![content.alt isBlank]) || (content.attributes && ![([content.attributes valueForKey:@"alt"] ?: @"") isBlank])) {
         
+        imageView.accessibilityLabel = @"Image";
         imageView.accessibilityValue = content.alt ?: [content.attributes valueForKey:@"alt"];
+        imageView.accessibilityHint = imageView.accessibilityValue;
         imageView.isAccessibilityElement = YES;
         
         Content *caption = [Content new];

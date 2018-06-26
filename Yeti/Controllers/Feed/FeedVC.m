@@ -459,7 +459,8 @@
     vc.providerDelegate = self;
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        EFNavController *nav = [[EFNavController alloc] initWithRootViewController:vc];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.view.backgroundColor = [(YetiTheme *)[YTThemeKit theme] backgroundColor];
         
         [self.splitViewController showDetailViewController:nav sender:self];
         // hide the primary controller

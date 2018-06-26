@@ -29,7 +29,7 @@
         
         [self copyUUID:sender];
         
-        [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your AccountID has been copied to your device's clipboard."];
+        [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your Account ID has been copied to your device's clipboard."];
         
     }
     
