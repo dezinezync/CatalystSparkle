@@ -14,9 +14,11 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
         
+        Theme *theme = YTThemeKit.theme;
+        
         CAShapeLayer *borderLayer = [CAShapeLayer layer];
         borderLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(self.bounds, -2.f, -2.f) cornerRadius:14.f].CGPath;
-        borderLayer.fillColor = [UIColor blackColor].CGColor;
+        borderLayer.fillColor = theme.isDark ? [UIColor whiteColor].CGColor : [UIColor blackColor].CGColor;
         borderLayer.opacity = 0.25f;
         borderLayer.hidden = YES;
         
