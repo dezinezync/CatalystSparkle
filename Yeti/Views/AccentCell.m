@@ -20,10 +20,14 @@ NSString *const kAccentCell = @"com.yeti.cell.accentColour";
     
     NSArray <UIColor *> *colours = [YetiThemeKit colours];
     
-    [self.stackView.arrangedSubviews enumerateObjectsUsingBlock:^(__kindof UIButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    [self.stackView.arrangedSubviews enumerateObjectsUsingBlock:^(__kindof AccentButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         UIColor *colour = colours[idx];
         [obj setBackgroundColor:colour];
         obj.layer.cornerRadius = 12.f;
+        
+        obj.borderLayer.fillColor = theme.isDark ? [UIColor whiteColor].CGColor : [UIColor blackColor].CGColor;
         
         [obj addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
     }];
