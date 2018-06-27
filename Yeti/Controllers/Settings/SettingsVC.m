@@ -23,6 +23,7 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "YetiThemeKit.h"
+#import <StoreKit/SKStoreReviewController.h>
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -119,11 +120,12 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
-        case 2:
             return 2;
+        case 2:
+            return 3;
             break;
         default:
-            return 6;
+            return 5;
             break;
     }
 }
@@ -183,9 +185,6 @@
                     cell.textLabel.text = @"External Apps";
                     break;
                 case 4:
-                    cell.textLabel.text = @"Product Links";
-                    break;
-                case 5:
                     cell.textLabel.text = @"Import/Export OPML";
                     break;
                 default:
@@ -213,14 +212,31 @@
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
                     break;
-                    
-                default:
+                case 2:
                     cell.textLabel.text = @"Attributions";
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
+                default:
+                    cell.textLabel.text = @"Rate";
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             break;
     }
+    
+    NSString *title = [[cell.textLabel.text lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+    if ([title containsString:@"opml"]) {
+        title = @"settings_opml";
+    }
+    if ([title containsString:@"background"]) {
+        title = @"sync";
+    }
+    if ([title containsString:@"elytra"]) {
+        title = @"settings_elytra";
+    }
+    
+    UIImage *image = [UIImage imageNamed:title];
+    
+    cell.imageView.image = image;
     
     return cell;
 }
@@ -262,7 +278,7 @@
                 case 3:
                     vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
                     break;
-                case 5:
+                case 4:
                     vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
                     break;
                 default:
@@ -270,7 +286,7 @@
             }
             break;
         default:
-            if (indexPath.row == 1) {
+            if (indexPath.row == 2) {
                 DZWebViewController *webVC = [[DZWebViewController alloc] init];
                 webVC.title = @"Attributions";
                 
@@ -286,6 +302,10 @@
                 }
                 
                 vc = webVC;
+            }
+            else if (indexPath.row == 1) {
+                [tableView deselectRowAtIndexPath:indexPath animated:YES];
+                [SKStoreReviewController requestReview];
             }
             break;
     }
