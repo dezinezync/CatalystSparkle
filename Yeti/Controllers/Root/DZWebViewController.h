@@ -14,4 +14,10 @@
 @property (nonatomic, copy) NSURL *URL;
 @property (nonatomic, strong, readonly) WKWebView *webview;
 
+
+/**
+ Value is nilled out after loading
+ */
+@property (nonatomic, copy) NSString *evalJSOnLoad;
+
 @end

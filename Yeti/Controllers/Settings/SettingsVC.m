@@ -9,6 +9,7 @@
 #import "SettingsVC.h"
 #import "SettingsCell.h"
 #import "YetiConstants.h"
+#import "UIColor+HEX.h"
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -274,6 +275,15 @@
                 webVC.title = @"Attributions";
                 
                 webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
+                
+                Theme *theme = YTThemeKit.theme;
+                
+                if (![theme.name isEqualToString:@"light"]) {
+                    NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
+                    NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
+                    
+                    webVC.evalJSOnLoad = js;
+                }
                 
                 vc = webVC;
             }

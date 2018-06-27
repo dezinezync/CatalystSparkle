@@ -29,11 +29,6 @@
     [super viewDidLoad];
     
     self.hidesBottomBarWhenPushed = YES;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
     
     if (self.URL) {
         NSError *error = nil;
@@ -45,6 +40,26 @@
         else {
             [self.webview loadHTMLString:html baseURL:NSBundle.mainBundle.bundleURL];
         }
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (self.evalJSOnLoad) {
+        weakify(self);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.webview evaluateJavaScript:self.evalJSOnLoad completionHandler:^(id _Nullable retval, NSError * _Nullable error) {
+                
+                strongify(self);
+                self.evalJSOnLoad = nil;
+                
+                if (error) {
+                    DDLogError(@"Attributions view error: %@", error);
+                }
+            }];
+        });
     }
 }
 

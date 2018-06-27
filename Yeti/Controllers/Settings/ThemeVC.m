@@ -133,7 +133,17 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        cell.textLabel.text = _fontNamesMap[_fonts[indexPath.row]];
+        NSString *fontName = _fontNamesMap[_fonts[indexPath.row]];
+        cell.textLabel.text = fontName;
+        
+        if (![fontName containsString:@"System"]) {
+            fontName = [_fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
+            UIFont *cellFont = [UIFont fontWithName:fontName size:17.f];
+            
+            cellFont = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:cellFont];
+            
+            cell.textLabel.font = cellFont;
+        }
         
         if (([fontPref isEqualToString:ALPSystem] && indexPath.row == 0)
             || ([fontPref isEqualToString:ALPSerif] && indexPath.row == 1)

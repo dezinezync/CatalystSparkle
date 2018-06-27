@@ -22,7 +22,7 @@
         }
         
         body {
-            padding-top: max(156px, env(safe-area-inset-bottom));
+            padding-top: max(12px, env(safe-area-inset-top));
             padding-bottom: max(12px, env(safe-area-inset-bottom));
             padding-left: max(12px, env(safe-area-inset-left));
             padding-right: max(12px, env(safe-area-inset-right));
@@ -38,8 +38,22 @@
         </style>
         
         <meta name="viewport" id="viewport" content="initial-scale=1, viewport-fit=cover">
-            
-            </head>
+        
+        <script>
+            const darkStyle = function (type = 1) {
+                if (type == 0) {
+                    document.body.style.color = "#FFFFFF";
+                    document.body.style.backgroundColor = "#030303";
+                }
+                else {
+                    document.body.style.color = "#FFFFFF";
+                    document.body.style.backgroundColor = "#222222";
+                }
+                
+                return true;
+            }
+        </script>
+    </head>
     
     <body>
         <p>Information about Elytra subscriptions:</p>

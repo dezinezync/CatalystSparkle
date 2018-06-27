@@ -9,6 +9,7 @@
 #import "AccountVC.h"
 #import "SettingsCell.h"
 #import "FeedsManager.h"
+#import "UIColor+HEX.h"
 
 #import "LayoutConstants.h"
 #import "YetiConstants.h"
@@ -290,6 +291,15 @@
     webVC.title = @"About Subscriptions";
     
     webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"subscriptions" withExtension:@"html"];
+    
+    Theme *theme = YTThemeKit.theme;
+    
+    if (![theme.name isEqualToString:@"light"]) {
+        NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
+        NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
+        
+        webVC.evalJSOnLoad = js;
+    }
     
     [self.navigationController pushViewController:webVC animated:YES];
 }
