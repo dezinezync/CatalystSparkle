@@ -38,7 +38,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     NSString *_receiptLastUpdatePath;
 }
 
-@property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession;
+@property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession, *gifSession;
 @property (nonatomic, strong, readwrite) Reachability *reachability;
 #ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readwrite) YTUserID *userIDManager;
@@ -1448,6 +1448,31 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }
     
     return _backgroundSession;
+}
+
+- (DZURLSession *)gifSession
+{
+    if (!_gifSession) {
+        
+        DZURLSession *session = [[DZURLSession alloc] init];
+        
+        NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        defaultConfig.HTTPMaximumConnectionsPerHost = 5;
+        
+        defaultConfig.allowsCellularAccess = YES;
+        defaultConfig.HTTPShouldUsePipelining = YES;
+        
+        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
+        
+        [session setValue:sessionSession forKeyPath:@"session"];
+    
+        session.useOMGUserAgent = YES;
+        session.useActivityManager = NO;
+        
+        _gifSession = session;
+    }
+    
+    return _gifSession;
 }
 
 #ifndef SHARE_EXTENSION

@@ -42,7 +42,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong, readonly) Subscription *subscription;
 #endif
 
-@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
+@property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession, * _Nonnull gifSession;
 
 #ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;

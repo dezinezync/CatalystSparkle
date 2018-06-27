@@ -910,6 +910,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
+    // prevents the period from overflowing to the next line.
+    if (content.content && [[content.content stringByStrippingWhitespace] isEqualToString:@"."]) {
+        rangeAdded = YES;
+    }
+    
     if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
         
         // since the last one is a paragraph as well, simlpy append to it.
@@ -918,8 +923,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
         
         NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges attributes:content.attributes];
-        
-        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")]];
+        NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+        [attrs appendAttributedString:accessory];
         [attrs appendAttributedString:newAttrs];
         
         last.attributedText = attrs.copy;

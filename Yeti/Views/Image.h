@@ -7,8 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <FLAnimatedImage/FLAnimatedImageView.h>
 
 @interface SizedImage : UIImageView
+
+- (void)updateAspectRatioWithImage:(UIImage *)image;
+
+@end
+
+@interface SizedAnimatedImage : FLAnimatedImageView
 
 - (void)updateAspectRatioWithImage:(UIImage *)image;
 

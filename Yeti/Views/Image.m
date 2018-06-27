@@ -9,11 +9,13 @@
 #import "Image.h"
 #import "LayoutConstants.h"
 #import "Paragraph.h"
+#import "FeedsManager.h"
 
 #import "YetiThemeKit.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import <DZKit/AlertManager.h>
+#import <FLAnimatedImage/FLAnimatedImage.h>
 
 @interface Image ()
 
@@ -34,32 +36,63 @@
         
         self.backgroundColor = theme.cellColor;
         
-        SizedImage *imageView = [[SizedImage alloc] initWithFrame:self.bounds];
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
-        imageView.translatesAutoresizingMaskIntoConstraints = NO;
-        imageView.backgroundColor = theme.articleBackgroundColor;
-        
-        [self addSubview:imageView];
-        
-        [imageView.topAnchor constraintEqualToAnchor:self.topAnchor constant:0].active = YES;
-        [imageView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:0].active = YES;
-        [imageView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
-        
-        if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
-            [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin*2].active = YES;
-            [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-2.f].active = YES;
-        }
-        else {
-            [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
-        }
-        
-        _imageView = imageView;
-        
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.layoutMargins = UIEdgeInsetsZero;
     }
     
     return self;
+}
+
+#pragma mark - Image
+
+- (void)_setupImage {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    SizedImage *imageView = [[SizedImage alloc] initWithFrame:self.bounds];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    imageView.backgroundColor = theme.borderColor;
+    
+    [self addSubview:imageView];
+    
+    [imageView.topAnchor constraintEqualToAnchor:self.topAnchor constant:0].active = YES;
+    [imageView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:0].active = YES;
+    [imageView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+    
+    if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
+        [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin*2].active = YES;
+        [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-2.f].active = YES;
+    }
+    else {
+        [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
+    }
+    
+    _imageView = imageView;
+}
+
+- (void)_setupAnimatedImage {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    SizedAnimatedImage *imageView = [[SizedAnimatedImage alloc] initWithFrame:self.bounds];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    imageView.backgroundColor = theme.borderColor;
+    
+    [self addSubview:imageView];
+    
+    [imageView.topAnchor constraintEqualToAnchor:self.topAnchor constant:0].active = YES;
+    [imageView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:0].active = YES;
+    [imageView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+    
+    if (![self isKindOfClass:NSClassFromString(@"GalleryImage")]) {
+        [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:LayoutImageMargin*2].active = YES;
+        [imageView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutPadding-2.f].active = YES;
+    }
+    else {
+        [imageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
+    }
+    
+    _imageView = (SizedImage *)imageView;
 }
 
 #pragma mark -
@@ -69,7 +102,7 @@
     if (!self.isAnimatable)
         return NO;
     
-    return self.imageView.animating;
+    return [self.imageView isAnimating];
 }
 
 - (void)il_setImageWithURL:(id)url
@@ -83,12 +116,23 @@
         isGIF = [[(NSURL *)url absoluteString] containsString:@".gif"];
     }
     
+    weakify(self);
+    
     if (isGIF) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self _setupAnimatedImage];
+        });
+        
         self.URL = url;
         [self setupGIFLoadingControl];
     }
     else {
-        [self.imageView il_setImageWithURL:url];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self _setupImage];
+            [self.imageView il_setImageWithURL:url];
+        });
     }
 }
 
@@ -114,6 +158,9 @@
     gifButton.translatesAutoresizingMaskIntoConstraints = NO;
     gifButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
     gifButton.layer.cornerRadius = 3.f;
+    [gifButton setTitle:@"  Tap to load" forState:UIControlStateNormal];
+    [gifButton setTitle:@"  Loading..." forState:UIControlStateDisabled];
+    gifButton.titleLabel.font = [UIFont systemFontOfSize:13.f];
     
     [gifButton setImage:[[UIImage imageNamed:@"gif"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [gifButton sizeToFit];
@@ -125,7 +172,7 @@
     [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
     
     if (UIApplication.sharedApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
-        [gifButton.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:0.f].active = YES;
+        [gifButton.leadingAnchor constraintEqualToAnchor:self.trailingAnchor constant:8.f].active = YES;
     }
     else {
         [gifButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:0.f].active = YES;
@@ -146,7 +193,7 @@
     startStopButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
     startStopButton.layer.cornerRadius = 3.f;
     
-    [startStopButton setImage:[[UIImage imageNamed:@"gif_play"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [startStopButton setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [startStopButton sizeToFit];
     
     [startStopButton.widthAnchor constraintEqualToConstant:startStopButton.bounds.size.width + 16.f].active = YES;
@@ -173,24 +220,41 @@
     if (!self.URL)
         return;
     
-    weakify(self);
+    if ([sender isKindOfClass:UIButton.class]) {
+        [sender setEnabled:NO];
+    }
     
-    [self.imageView il_setImageWithURL:self.URL success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+    [MyFeedsManager.gifSession GET:self.URL.absoluteString parameters:@{} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        strongify(self);
-        self.URL = nil;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [sender removeFromSuperview];
+        });
+
+        FLAnimatedImage *image = [[FLAnimatedImage alloc] initWithAnimatedGIFData:responseObject];
         
-        [sender removeFromSuperview];
+        [(SizedAnimatedImage *)[self imageView] setAnimatedImage:image];
         
-    } error:^(NSError * _Nonnull error) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Failed to load GIF" message:error.localizedDescription];
+        [self setupAnimationControls];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [sender setTitle:@"  Failed. Tap to retry." forState:UIControlStateNormal];
+        });
         
     }];
     
 }
 
 - (void)didTapStartStop:(UIButton *)sender {
+    
+    if ([NSThread isMainThread] == NO) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self didTapStartStop:sender];
+        });
+    }
     
     if (self.isAnimating) {
         [self.imageView stopAnimating];
@@ -278,6 +342,48 @@
     }
     
     return size;
+}
+
+@end
+
+@implementation SizedAnimatedImage
+
+- (void)updateAspectRatioWithImage:(UIImage *)image
+{
+    if (!image)
+        return;
+    
+    NSLayoutConstraint *aspectRatio = [(Image *)[self superview] aspectRatio];
+    
+    if (aspectRatio) {
+        [self removeConstraint:aspectRatio];
+    }
+    
+    CGFloat aspectRatioValue = image.size.height / image.size.width;
+    aspectRatio = [self.heightAnchor constraintEqualToConstant:aspectRatioValue * self.bounds.size.width];
+    aspectRatio.priority = 999;
+    
+    [(Image *)[self superview] setAspectRatio:aspectRatio];
+    
+    [self.superview addConstraint:aspectRatio];
+    
+}
+
+- (CGSize)intrinsicContentSize
+{
+    CGSize size = [super intrinsicContentSize];
+    
+    if (self.image) {
+        size.width = MIN(self.bounds.size.width, self.image.size.width);
+        size.height = ceilf(self.image.size.height / (self.image.size.width / size.width));
+    }
+    
+    return size;
+}
+
+- (void)setAnimatedImage:(FLAnimatedImage *)animatedImage {
+    [super setAnimatedImage:animatedImage];
+    self.animationRepeatCount = 0;
 }
 
 @end
