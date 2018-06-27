@@ -204,9 +204,11 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     PaddedLabel *label = [[PaddedLabel alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 28.f)];
-    label.backgroundColor = [UIColor whiteColor];
-    label.textColor = tableView.tintColor;
+    label.backgroundColor = [theme backgroundColor];
+    label.textColor = theme.tintColor;
     label.font = [UIFont systemFontOfSize:12.f];
     label.opaque = YES;
     
@@ -226,7 +228,9 @@
     NSString *url = self.data[indexPath.row];
     
     cell.textLabel.text = url;
-    if ([url containsString:@"json"]) {
+    cell.textLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    
+    if ([url containsString:@".json"] || [url containsString:@"/json"]) {
         cell.detailTextLabel.text = @"Recommended";
     }
     
