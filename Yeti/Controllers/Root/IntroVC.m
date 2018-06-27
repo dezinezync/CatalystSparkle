@@ -253,6 +253,8 @@ static void * buttonStateContext = &buttonStateContext;
                             
                             [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
                             [[NSUserDefaults standardUserDefaults] synchronize];
+                            
+                            [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
                         }
                         
                         strongify(self);
@@ -277,6 +279,10 @@ static void * buttonStateContext = &buttonStateContext;
         } error:^(SKPaymentQueue *queue, NSError *error) {
             
             [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:error.localizedDescription];
+            
+            strongify(self);
+            
+            [self _removeRestoreObservers];
             
         }];
     }

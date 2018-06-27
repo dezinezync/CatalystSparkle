@@ -8,6 +8,8 @@
 
 #import "YetiConstants.h"
 
+NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
+
 #pragma mark - NSUserDefaults Keys
 
 NSString * const kDefaultsBackgroundRefresh = @"backgroundRefresh";
