@@ -525,6 +525,29 @@
     });
 }
 
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView leadingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+    
+    NSString *title = item.isRead ? @"Mark as Unread" : @"Mark as read";
+    
+    UIContextualAction *action = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:title handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        
+        [MyFeedsManager article:item markAsRead:!NO];
+        
+        item.read = !item.isRead;
+        
+    }];
+    
+    action.backgroundColor = [UIColor colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
+    
+    UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:@[action]];
+    config.performsFirstActionWithFullSwipe = YES;
+    
+    return config;
+    
+}
+
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     weakify(self);

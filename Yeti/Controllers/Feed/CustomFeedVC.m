@@ -108,6 +108,15 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 
 #pragma mark - Overrides
 
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView leadingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (self.isUnread) {
+        return [super tableView:tableView leadingSwipeActionsConfigurationForRowAtIndexPath:indexPath];
+    }
+    
+    return nil;
+}
+
 - (void)didChangeToArticle:(FeedItem *)item
 {
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
