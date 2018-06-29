@@ -328,6 +328,12 @@
         return NO;
     }
     
+    NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
+    if (!components.scheme)
+        components.scheme = @"http";
+    
+    url = components.URL;
+    
     [MyAppDelegate _showAddingFeedDialog];
     
     weakify(self);
