@@ -183,9 +183,10 @@ static void *KVO_Unread = &KVO_Unread;
     
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
     UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"whatshot"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
     UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     
-    self.navigationItem.rightBarButtonItems = @[add, folder];
+    self.navigationItem.rightBarButtonItems = @[add, folder, recommendations];
     self.navigationItem.leftBarButtonItem = settings;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     self.navigationController.navigationBar.prefersLargeTitles = YES;

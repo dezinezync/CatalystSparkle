@@ -26,6 +26,8 @@
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 
+@property (nonatomic, assign, getter=isExploring) BOOL exploring;
+
 - (instancetype _Nonnull)initWithFeed:(Feed * _Nonnull)feed;
 
 @property (nonatomic, strong) Feed * _Nullable feed;

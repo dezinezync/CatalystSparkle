@@ -18,6 +18,7 @@
 
 #import "NewFolderVC.h"
 #import "YTNavigationController.h"
+#import "RecommendationsVC.h"
 
 @implementation FeedsVC (Actions)
 
@@ -109,6 +110,13 @@
     navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];
+}
+
+- (void)didTapRecommendations:(UIBarButtonItem *)sender
+{
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)didLongTapOnCell:(UITapGestureRecognizer *)sender

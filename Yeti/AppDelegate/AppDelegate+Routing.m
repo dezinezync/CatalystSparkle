@@ -279,7 +279,10 @@
         
         if (!haveItem) {
             // we don't have it.
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+            feeds = [feeds arrayByAddingObject:responseObject];
+            
+            MyFeedsManager.feeds = feeds;
         }
         else {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

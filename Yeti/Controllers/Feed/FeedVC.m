@@ -72,7 +72,18 @@
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityLabel = @"Mark all articles are read";
     
-    if (!(self.feed.hubSubscribed && self.feed.hub)) {
+    if (self.isExploring) {
+        // check if the user is subscribed to this feed
+        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
+        if (!existing) {
+            // allow subscription
+            UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
+            subscribe.accessibilityLabel = @"Subscribe";
+            subscribe.accessibilityHint = @"Add this feed to your list";
+            self.navigationItem.rightBarButtonItem = subscribe;
+        }
+    }
+    else if (!(self.feed.hubSubscribed && self.feed.hub)) {
         self.navigationItem.rightBarButtonItem = allRead;
     }
     else {
@@ -80,15 +91,17 @@
         NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
         
         UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityLabel = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+        notifications.accessibilityLabel = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         
         self.navigationItem.rightBarButtonItems = @[allRead, notifications];
-        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-        self.navigationController.navigationBar.prefersLargeTitles = YES;
-        
-        self.navigationItem.hidesSearchBarWhenScrolling = NO;
-        self.navigationController.navigationBar.translucent = NO;
     }
+    
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    self.navigationController.navigationBar.translucent = NO;
     
     // Search Controller setup
     {
@@ -387,6 +400,38 @@
     
 }
 
+- (void)subscribeToFeed:(UIBarButtonItem *)sender {
+    
+    sender.enabled = NO;
+    
+    weakify(self);
+    
+    [MyFeedsManager addFeedByID:self.feed.feedID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+        feeds = [feeds arrayByAddingObject:responseObject];
+        
+        MyFeedsManager.feeds = feeds;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            self.navigationItem.rightBarButtonItem = nil;
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        dispatch_async(dispatch_get_main_queue(), ^{
+            sender.enabled = YES;
+        });
+        
+        [AlertManager showGenericAlertWithTitle:@"Error subscribing" message:error.localizedDescription];
+        
+    }];
+    
+}
+
+// this is push notifications
 - (void)subscribedToFeed:(NSNotification *)note {
     
     Feed *obj = note.object;

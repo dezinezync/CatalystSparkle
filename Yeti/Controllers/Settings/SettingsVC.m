@@ -23,7 +23,6 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "YetiThemeKit.h"
-#import <StoreKit/SKStoreReviewController.h>
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -304,8 +303,11 @@
                 vc = webVC;
             }
             else if (indexPath.row == 1) {
-                [tableView deselectRowAtIndexPath:indexPath animated:YES];
-                [SKStoreReviewController requestReview];
+                NSURL *URL = formattedURL(@"https://itunes.apple.com/app/id1173774272?action=write-review");
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
+                });
             }
             break;
     }

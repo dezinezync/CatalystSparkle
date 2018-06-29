@@ -641,6 +641,48 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 #ifndef SHARE_EXTENSION
 
+- (void)getRecommendationsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB {
+    
+    [self.session GET:@"/recommendations" parameters:@{} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (!successCB)
+            return;
+        
+        NSMutableDictionary *dict = [responseObject mutableCopy];
+        
+        NSArray <Feed *> *trending = [dict[@"trending"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        NSArray <Feed *> *subs = [dict[@"highestSubs"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        NSArray <Feed *> *read = [dict[@"mostRead"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        dict[@"trending"] = trending;
+        dict[@"highestSubs"] = subs;
+        dict[@"mostRead"] = read;
+        
+        if (successCB) {
+            successCB(dict.copy, response, task);
+            dict = nil;
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
+}
+
 - (void)removeFeed:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB
 {
     NSDictionary *params = @{};

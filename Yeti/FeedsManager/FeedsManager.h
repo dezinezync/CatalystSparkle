@@ -90,6 +90,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #ifndef SHARE_EXTENSION
 
+- (void)getRecommendationsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB;
+
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Custom Feeds

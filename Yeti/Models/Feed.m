@@ -15,18 +15,26 @@
 {
     NSString *url = nil;
     
-    if (self.favicon && ![self.favicon isBlank]) {
-        url = self.favicon;
-    }
-    else if (self.extra) {
+    if (self.extra) {
         
-        if ([self.extra valueForKey:@"appleTouch"] && [self.extra[@"appleTouch"] count]) {
-            // get the base image
-            url = [self.extra[@"appleTouch"] valueForKey:@"base"];
-        }
-        else if ([self.extra valueForKey:@"apple-touch-icon"] && [self.extra[@"apple-touch-icon"] count]) {
-            // get the base image
-            url = [self.extra[@"apple-touch-icon"] valueForKey:@"152"] ?: [self.extra[@"apple-touch-icon"] valueForKey:@"base"];
+        if ([self.extra valueForKey:@"apple-touch-icon"] && [self.extra[@"apple-touch-icon"] count]) {
+            
+            NSMutableArray *availableKeys = [[[self.extra valueForKey:@"apple-touch-icon"] allKeys] mutableCopy];
+            NSInteger baseIndex = [availableKeys indexOfObject:@"base"];
+            
+            if (baseIndex != NSNotFound) {
+                [availableKeys removeObjectAtIndex:baseIndex];
+            }
+            
+            availableKeys = [[availableKeys rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
+                return @(obj.integerValue);
+            }] sortedArrayUsingSelector:@selector(compare:)].mutableCopy;
+            
+            url = [self.extra valueForKey:@"apple-touch-icon"][[[availableKeys lastObject] stringValue]];
+            
+            if (!url && baseIndex != NSNotFound) {
+                url = [self.extra[@"apple-touch-icon"] valueForKey:@"base"];
+            }
         }
         else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
             url = [self.extra[@"opengraph"] valueForKey:@"image:secure_url"];
@@ -35,6 +43,24 @@
             url = [self.extra[@"opengraph"] valueForKey:@"image"];
         }
         
+    }
+    
+    if (!url && (self.favicon && ![self.favicon isBlank])) {
+        url = self.favicon;
+    }
+    
+    if (!url)
+        return url;
+    
+    // ensure this is not an absolute URL
+    NSURLComponents *components = [NSURLComponents componentsWithString:url];
+    
+    if (components.host == nil) {
+        // this is a relative string
+        components = [NSURLComponents componentsWithString:self.url];
+        components.path = url;
+        
+        url = [components URL].absoluteString;
     }
     
     return url;

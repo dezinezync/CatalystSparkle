@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="U6b-Vx-4bR" customClass="CollectionHeader">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="WIF-VE-Wg7">
+                    <rect key="frame" x="16" y="24" width="288" height="18"/>
+                    <subviews>
+                        <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IW2-d9-nzp">
+                            <rect key="frame" x="-16" y="0.0" width="0.0" height="18"/>
+                            <constraints>
+                                <constraint firstAttribute="height" priority="999" constant="16" id="eIH-S1-dGm"/>
+                                <constraint firstAttribute="width" priority="999" constant="16" id="oJG-va-LDA"/>
+                            </constraints>
+                        </imageView>
+                        <label userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wpH-yT-XgO">
+                            <rect key="frame" x="0.0" y="0.0" width="288" height="18"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="15"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="WIF-VE-Wg7" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" constant="16" id="AKr-u8-kJn"/>
+                <constraint firstItem="WIF-VE-Wg7" firstAttribute="top" secondItem="9Gg-ye-v9C" secondAttribute="top" constant="24" id="jYp-FS-260"/>
+                <constraint firstItem="9Gg-ye-v9C" firstAttribute="bottom" secondItem="WIF-VE-Wg7" secondAttribute="bottom" constant="8" id="lbj-ly-GgZ"/>
+                <constraint firstItem="9Gg-ye-v9C" firstAttribute="trailing" secondItem="WIF-VE-Wg7" secondAttribute="trailing" constant="16" id="tTt-Mk-Cdl"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="9Gg-ye-v9C"/>
+            <connections>
+                <outlet property="imageView" destination="IW2-d9-nzp" id="1QD-bE-FoA"/>
+                <outlet property="label" destination="wpH-yT-XgO" id="Muo-VQ-l71"/>
+            </connections>
+        </collectionReusableView>
+    </objects>
+</document>

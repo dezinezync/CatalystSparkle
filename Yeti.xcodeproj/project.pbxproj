@@ -63,6 +63,10 @@
 		F03BC4E520C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
 		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
 		F03BC4EA20C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
+		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
+		F04416E820E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
+		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
+		F04416EA20E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
 		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
@@ -426,6 +430,14 @@
 		F0D300441FE2633E0040D10D /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
 		F0D300451FE2633E0040D10D /* DTTimePeriodGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */; };
 		F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */; };
+		F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */; };
+		F0DDA0ED20E5F71400C5D97E /* RecommendationsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */; };
+		F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
+		F0DDA0EF20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
+		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
+		F0DDA0F520E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
+		F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
+		F0DDA0F720E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
 		F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */; };
 		F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E0609B205A4423003FFD18 /* NSString+HTML.m */; };
 		F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E219432054FB83004B5FF5 /* Linebreak.m */; };
@@ -623,6 +635,9 @@
 		F03BC4E320C9015A007B574F /* EmptyView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyView.xib; sourceTree = "<group>"; };
 		F03BC4E720C9016A007B574F /* EmptyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyView.h; sourceTree = "<group>"; };
 		F03BC4E820C9016A007B574F /* EmptyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyView.m; sourceTree = "<group>"; };
+		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
+		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
+		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
 		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
 		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
 		F047F4D420C25FB800626968 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
@@ -868,6 +883,12 @@
 		F0D3003C1FE2633E0040D10D /* DTTimePeriodGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodGroup.m; sourceTree = "<group>"; };
 		F0D3003D1FE2633E0040D10D /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		F0D3003E1FE2633E0040D10D /* NSDate+DateTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+DateTools.m"; sourceTree = "<group>"; };
+		F0DDA0E920E5F71400C5D97E /* RecommendationsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecommendationsVC.h; sourceTree = "<group>"; };
+		F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecommendationsVC.m; sourceTree = "<group>"; };
+		F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecommendationsVC.xib; sourceTree = "<group>"; };
+		F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsGridCell.h; sourceTree = "<group>"; };
+		F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsGridCell.m; sourceTree = "<group>"; };
+		F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsGridCell.xib; sourceTree = "<group>"; };
 		F0E06097205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+GTMNSStringHTMLAdditions.h"; sourceTree = "<group>"; };
 		F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+GTMNSStringHTMLAdditions.m"; sourceTree = "<group>"; };
 		F0E0609A205A4423003FFD18 /* NSString+HTML.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
@@ -1256,6 +1277,9 @@
 				F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */,
 				F05B93302091BA50009BBDDB /* MoveFoldersVC.h */,
 				F05B93312091BA50009BBDDB /* MoveFoldersVC.m */,
+				F0DDA0E920E5F71400C5D97E /* RecommendationsVC.h */,
+				F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */,
+				F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */,
 			);
 			path = Feeds;
 			sourceTree = "<group>";
@@ -1397,6 +1421,12 @@
 				F022B0D720DC2D9500030185 /* AccentCell.xib */,
 				F022B0DD20DC30DE00030185 /* AccentButton.h */,
 				F022B0DE20DC30DE00030185 /* AccentButton.m */,
+				F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */,
+				F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */,
+				F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */,
+				F04416E420E618F8008AB1D3 /* CollectionHeader.h */,
+				F04416E520E618F8008AB1D3 /* CollectionHeader.m */,
+				F04416E620E618F8008AB1D3 /* CollectionHeader.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1753,6 +1783,7 @@
 				F0FA472A20CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
 				F06F914620D3E56400A358B0 /* SubscriptionView.xib in Resources */,
 				F069ABFB206E018F00021ABF /* NewFeedVC.xib in Resources */,
+				F0DDA0F720E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
 				F069ABFC206E018F00021ABF /* ArticleCell.xib in Resources */,
 				F0A5AE7320C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
 				F03BC4E520C9015A007B574F /* EmptyView.xib in Resources */,
@@ -1783,6 +1814,7 @@
 				F0A5AE8920C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
 				F0A5AE9F20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
 				F047F4EB20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */,
+				F04416EA20E618F8008AB1D3 /* CollectionHeader.xib in Resources */,
 				F069AC03206E018F00021ABF /* ArticleHelperView.xib in Resources */,
 				F0A5AEAD20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
 				F047F4F520C25FB900626968 /* Spectral-Medium.ttf in Resources */,
@@ -1800,6 +1832,7 @@
 				F05C7AA420D8E203007D6B5C /* TableHeader.xib in Resources */,
 				F0A5AE9B20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
 				F047F4FD20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
+				F0DDA0EF20E5F71400C5D97E /* RecommendationsVC.xib in Resources */,
 				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
 				F0A5AE9720C19CB400CFA1D2 /* IBMPlexSerif-Regular.ttf in Resources */,
 				F0A5AEB320C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
@@ -1877,10 +1910,12 @@
 				F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */,
 				F0A5AE6C20C197EF00CFA1D2 /* Merriweather-Black.ttf in Resources */,
+				F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */,
 				F0B4FC22209C55A900C7941A /* black.json in Resources */,
 				F0A5AE9220C19CB400CFA1D2 /* IBMPlexSerif-BoldItalic.ttf in Resources */,
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
+				F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
@@ -1898,6 +1933,7 @@
 				F0A5AE8820C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
 				F047F4F020C25FB900626968 /* Spectral-Light.ttf in Resources */,
 				F047F4EE20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */,
+				F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */,
 				F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */,
 				F0A5AEC020C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */,
 				F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */,
@@ -2066,6 +2102,7 @@
 				F0202BE220A41AC400FBC3E1 /* FiltersVC.m in Sources */,
 				F03BC4EA20C9016A007B574F /* EmptyView.m in Sources */,
 				F069ABB9206E018F00021ABF /* NSDate+DateTools.m in Sources */,
+				F04416E820E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F069ABBA206E018F00021ABF /* EmptyVC.m in Sources */,
 				F069ABBB206E018F00021ABF /* Linebreak.m in Sources */,
 				F069ABBC206E018F00021ABF /* Code.m in Sources */,
@@ -2102,6 +2139,7 @@
 				F06B766020C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F069ABCE206E018F00021ABF /* GalleryCell.m in Sources */,
 				F0D1C5DF20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
+				F0DDA0ED20E5F71400C5D97E /* RecommendationsVC.m in Sources */,
 				F099466620AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F069ABCF206E018F00021ABF /* DTTimePeriod.m in Sources */,
 				F0202BE520A41AE900FBC3E1 /* FeedsHeaderView.m in Sources */,
@@ -2131,6 +2169,7 @@
 				F069ABE0206E018F00021ABF /* FeedsManager.m in Sources */,
 				F069ABE1206E018F00021ABF /* FeedItem.m in Sources */,
 				F022B0D920DC2D9500030185 /* AccentCell.m in Sources */,
+				F0DDA0F520E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F069ABE2206E018F00021ABF /* AccountVC.m in Sources */,
 				F069ABE3206E018F00021ABF /* ExternalAppsVC.m in Sources */,
 				F069ABE4206E018F00021ABF /* PaddedLabel.m in Sources */,
@@ -2175,6 +2214,7 @@
 				F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
+				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
@@ -2199,6 +2239,7 @@
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F088089D206B8B9300ECE1E6 /* Tweet.m in Sources */,
+				F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */,
 				F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
 				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
@@ -2232,6 +2273,7 @@
 				F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
+				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,

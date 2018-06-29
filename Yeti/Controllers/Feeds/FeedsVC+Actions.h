@@ -14,6 +14,8 @@
 
 - (void)didTapAddFolder:(UIBarButtonItem *)add;
 
+- (void)didTapRecommendations:(UIBarButtonItem *)sender;
+
 - (void)didTapSettings;
 
 - (void)beginRefreshing:(UIRefreshControl *)sender;
