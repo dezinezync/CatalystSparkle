@@ -117,6 +117,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
     cell.textLabel.text = self.data[indexPath.row];
+    cell.textLabel.lineBreakMode = NSLineBreakByTruncatingHead;
     
     cell.accessoryType = indexPath.row == self.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     
