@@ -115,11 +115,7 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         self.markerView.layer.cornerRadius = self.markerView.bounds.size.width/2.f;
         
         // show the publisher's favicon
-        Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
-            if (current.feedID.integerValue == item.feedID.integerValue)
-                return current;
-            return prev;
-        }];
+        Feed *feed = [MyFeedsManager feedForID:item.feedID];
         
         if (feed) {
             NSString *url = [feed faviconURI];
