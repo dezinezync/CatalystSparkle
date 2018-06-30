@@ -190,6 +190,7 @@
 {
     _showSearchBar = NO;
     [_searchBar resignFirstResponder];
+    [_searchBar setText:nil];
     [self reloadInputViews];
 }
 
@@ -283,26 +284,25 @@
     
     CGRect rect = value.CGRectValue;
     CGRect frame = rect;
-    frame.origin.y += 0.5f; //(scrollView.adjustedContentInset.top / 2.f);
+    frame.origin.x += 13.f;
+    frame.origin.y += 12.f; //(scrollView.adjustedContentInset.top / 2.f);
     
     weakify(self);
     
-    asyncMain(^{
+    CGRect scrollRect = rect;
+    // since we reference the scrollRect from 0,0 (top, left) in iOS.
+    scrollRect.origin.y -= scrollView.adjustedContentInset.top;
+    
+    if (!CGPointEqualToPoint(scrollRect.origin, scrollView.contentOffset)) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [scrollView setContentOffset:CGPointMake(0.f, scrollRect.origin.y) animated:YES];
+        });
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         self->_searchHighlightingRect.frame = frame;
     });
-
-    // since we reference the scrollRect from 0,0 (top, left) in iOS.
-    rect.origin.y -= scrollView.adjustedContentInset.top;
-    
-    asyncMain(^{
-        [scrollView setContentOffset:rect.origin];
-    })
-    
-//    asyncMain(^{
-//        strongify(self);
-//        self->_searchHighlightingRect.frame = frame;
-//    });
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>
@@ -321,6 +321,8 @@
 - (UIInputView *)searchView
 {
     if (!_searchView) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 52.f);
         
         _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
@@ -328,15 +330,21 @@
         _searchBar.keyboardType = UIKeyboardTypeDefault;
         _searchBar.returnKeyType = UIReturnKeySearch;
         _searchBar.delegate = self;
-//        _searchBar.translatesAutoresizingMaskIntoConstraints = NO;
-//        [_searchBar setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+        _searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        _searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        
+        UITextField *searchField = [_searchBar valueForKeyPath:@"searchField"];
+        if (searchField) {
+            searchField.textColor = theme.titleColor;
+        }
         
         _searchBar.backgroundColor = UIColor.clearColor;
         _searchBar.backgroundImage = nil;
         _searchBar.scopeBarBackgroundImage = nil;
         _searchBar.searchBarStyle = UISearchBarStyleMinimal;
         _searchBar.translucent = NO;
-        _searchBar.accessibilityHint = @"Search keywords in article";
+        _searchBar.accessibilityHint = @"Search for keywords in the article";
         
         _searchView = [[UIInputView alloc] initWithFrame:frame];
         [_searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
@@ -401,6 +409,11 @@
         
         _searchPrevButton = prev;
         _searchNextButton = next;
+        
+        UIColor *tint = theme.tintColor;
+        prev.tintColor = tint;
+        next.tintColor = tint;
+        [done setTitleColor:tint forState:UIControlStateNormal];
         
         _searchPrevButton.enabled = NO;
         _searchNextButton.enabled = NO;
@@ -506,8 +519,8 @@
 //                UIEdgeInsets adjustedInsets = scrollView.adjustedContentInset;
 //                UIEdgeInsets contentInsets = scrollView.contentInset;
                 
-                rect.origin.y += 16.f;//(((adjustedInsets.bottom - contentInsets.bottom) + (adjustedInsets.top - contentInsets.top))/2.f) - 2.5f;
-                rect.origin.x += 16.f;
+//                rect.origin.y -= scrollView.bounds.size.height;
+//                rect.origin.x += -contentInsets.left;
                 
                 NSValue *rectValue = [NSValue valueWithCGRect:rect];
                 
@@ -535,7 +548,7 @@
     if (!_searchHighlightingRect) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         // use the first rect's value
-        _searchHighlightingRect = [[UIView alloc] initWithFrame:CGRectIntegral(_searchingRects.firstObject.CGRectValue)];
+        _searchHighlightingRect = [[UIView alloc] initWithFrame:CGRectZero];
         _searchHighlightingRect.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
         _searchHighlightingRect.autoresizingMask = UIViewAutoresizingNone;
         _searchHighlightingRect.translatesAutoresizingMaskIntoConstraints = NO;
@@ -545,13 +558,6 @@
         // add it to the scrollview
         [scrollView addSubview:_searchHighlightingRect];
     }
-    
-    weakify(self);
-    
-    asyncMain(^{
-        strongify(self);
-        self->_searchHighlightingRect.frame = CGRectIntegral(self->_searchingRects.firstObject.CGRectValue);
-    });
     
 //    _searchHighlightingRect.text = searchText;
     _searchCurrentIndex = 0;

@@ -753,6 +753,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     for (Feed *obj in feeds) { @autoreleasepool {
         
         BOOL marked = NO;
+        NSNumber *feedID = obj.feedID.copy;
         
         for (FeedItem *item in obj.articles) {
             
@@ -769,7 +770,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         }
         
         if (marked) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:obj.feedID];
+            [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:feedID];
         }
         
     }}
@@ -1642,7 +1643,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         // it was added
         @try {
             NSArray *bookmarks = [MyFeedsManager.bookmarks arrayByAddingObject:item];
-            MyFeedsManager.bookmarks = bookmarks;
+            @synchronized (self) {
+                self.bookmarks = bookmarks;
+            }
         }
         @catch (NSException *exc) {}
     }
@@ -1655,7 +1658,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 return obj.identifier.integerValue != itemID;
             }];
             
-            MyFeedsManager.bookmarks = bookmarks;
+            @synchronized (self) {
+                self.bookmarks = bookmarks;
+            }
         } @catch (NSException *excp) {}
     }
     
