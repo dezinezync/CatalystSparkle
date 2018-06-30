@@ -22,6 +22,8 @@
 
 #import "SplitVC.h"
 #import "YTNavigationController.h"
+#import "YetiConstants.h"
+#import "FeedsManager.h"
 
 AppDelegate *MyAppDelegate = nil;
 
@@ -50,6 +52,12 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupStoreManager];
     });
+    
+    if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications]) {
+        asyncMain(^{
+            [application registerForRemoteNotifications];
+        });
+    }
 
     return YES;
 }

@@ -14,6 +14,7 @@
 #define YETI_EXPORT FOUNDATION_EXPORT
 
 YETI_EXPORT NSString * const kHasShownOnboarding;
+YETI_EXPORT NSString * const kIsSubscribingToPushNotifications;
 
 YETI_EXPORT NSString * const kDefaultsBackgroundRefresh;
 YETI_EXPORT NSString * const kDefaultsNotifications;

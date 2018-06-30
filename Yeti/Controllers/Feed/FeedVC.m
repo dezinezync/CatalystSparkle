@@ -358,6 +358,8 @@
                 if (granted) {
                     strongify(self);
                     
+                    MyFeedsManager.keychain[kIsSubscribingToPushNotifications] = [@YES stringValue];
+                    
                     asyncMain(^{
                         [UIApplication.sharedApplication registerForRemoteNotifications];
                     });
@@ -370,6 +372,11 @@
             return;
         }
         else {
+            
+            if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications] == nil) {
+                MyFeedsManager.keychain[kIsSubscribingToPushNotifications] = [@YES stringValue];
+            }
+            
             asyncMain(^{
                 [UIApplication.sharedApplication registerForRemoteNotifications];
             });

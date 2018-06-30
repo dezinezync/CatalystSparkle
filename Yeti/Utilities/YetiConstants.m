@@ -9,6 +9,7 @@
 #import "YetiConstants.h"
 
 NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
+NSString *const kIsSubscribingToPushNotifications = @"com.yeti.internal.isSubscribingToPushNotifications";
 
 #pragma mark - NSUserDefaults Keys
 

@@ -34,8 +34,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject {
     NSString *_pushToken;
-    
-    NSString * kPushTokenFilePath;
 }
 
 #ifndef SHARE_EXTENSION

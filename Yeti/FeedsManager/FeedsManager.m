@@ -65,8 +65,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     if (self = [super init]) {
         
-        self->kPushTokenFilePath = [@"~/Documents/push.dat" stringByExpandingTildeInPath];
-        
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         DDLogWarn(@"%@", MyFeedsManager.bookmarks);
@@ -75,7 +73,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
         
         NSError *error = nil;
-        _pushToken = [[NSString alloc] initWithContentsOfFile:self->kPushTokenFilePath encoding:NSUTF8StringEncoding error:&error];
         
         if (error) {
             DDLogError(@"Error loading push token from disk: %@", error.localizedDescription);
@@ -1278,14 +1275,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     _pushToken = pushToken;
     
-    NSFileManager *manager = [NSFileManager defaultManager];
-    
-    NSError *error = nil;
-    
     if (_pushToken) {
-        if (![_pushToken writeToFile:kPushTokenFilePath atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
-            DDLogError(@"Error saving push token file: %@", error.localizedDescription);
-        }
 #ifndef SHARE_EXTENSION
         if (MyFeedsManager.subsribeAfterPushEnabled) {
             
@@ -1320,11 +1310,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             DDLogError(@"Add push token error: %@", error);
         }];
 #endif
-    }
-    else {
-        if (![manager removeItemAtPath:kPushTokenFilePath error:&error]) {
-            DDLogError(@"Error removing push token file: %@", error.localizedDescription);
-        }
     }
 }
 
