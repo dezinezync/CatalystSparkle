@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Baseline standard spacing" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -53,7 +53,7 @@
                         <constraint firstItem="Koz-Bm-Ohl" firstAttribute="top" secondItem="uJz-Sh-cST" secondAttribute="top" id="ff0-OK-TqP"/>
                     </constraints>
                 </scrollView>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="authorsfade" translatesAutoresizingMaskIntoConstraints="NO" id="Ft5-xF-0pa">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="authorsfade-light" translatesAutoresizingMaskIntoConstraints="NO" id="Ft5-xF-0pa">
                     <rect key="frame" x="0.0" y="36" width="32" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="32" id="Mxd-Af-DUC"/>
@@ -86,6 +86,6 @@
         </view>
     </objects>
     <resources>
-        <image name="authorsfade" width="32" height="34"/>
+        <image name="authorsfade-light" width="32" height="34"/>
     </resources>
 </document>

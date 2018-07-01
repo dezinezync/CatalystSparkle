@@ -359,7 +359,11 @@
         else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
             
+            weakify(self);
+            
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+                
                 self.selected = NSNotFound;
                 [self didTapCancel];
             });
@@ -370,11 +374,11 @@
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        strongify(self);
-        
         [MyAppDelegate _dismissAddingFeedDialog];
         
         asyncMain(^{
+            strongify(self);
+            
             textField.enabled = YES;
             self.cancelButton.enabled = YES;
         });

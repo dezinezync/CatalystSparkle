@@ -149,8 +149,9 @@
 }
 
 - (void)dealloc {
-    self.feed.articles = @[];
-    self.DS.data = @[];
+    if (self.feed) {
+        self.feed.articles = @[];
+    }
 }
 
 #pragma mark - Appearance
@@ -282,8 +283,13 @@
         
         [MyFeedsManager articles:unread markAsRead:YES];
         
+        weakify(self);
+        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
+            strongify(self);
+            if (self && [self tableView]) {
+                [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
+            }
         });
         
     }]];

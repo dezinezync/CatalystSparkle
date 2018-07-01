@@ -161,7 +161,11 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
             
             self.loadingNext = NO;
             
+            weakify(self);
+            
             asyncMain(^{
+                strongify(self);
+                
                 if ([self.tableView.refreshControl isRefreshing]) {
                     [self.tableView.refreshControl endRefreshing];
                 }
@@ -175,7 +179,11 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
             
             self.loadingNext = NO;
             
+            weakify(self);
+            
             asyncMain(^{
+                strongify(self);
+                
                 if ([self.tableView.refreshControl isRefreshing]) {
                     [self.tableView.refreshControl endRefreshing];
                 }
