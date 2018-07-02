@@ -95,6 +95,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     if (indexPath.section == 0) {
         // THEME
         cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
+        cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
         
         YetiThemeType theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
         
@@ -183,7 +184,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     if (indexPath.section == 1 && indexPath.row == 0) {
         AccentCell *cell = (AccentCell *)c;
-        if (self.observationInfo) {
+        if ([cell observationInfo] != nil) {
             @try {
                 [cell removeObserver:self forKeyPath:NSStringFromSelector(@selector(selectedButton)) context:&KVO_SELECTED_BUTTON];
             }

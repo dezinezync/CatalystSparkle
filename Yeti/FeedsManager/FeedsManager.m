@@ -783,25 +783,30 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
+    weakify(self);
+    
     [self.session GET:@"/unread" parameters:@{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
         }];
         
+        strongify(self);
+        
         if (page == 1) {
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager.unread = items;
+            @synchronized (self) {
+                self.unread = items;
             }
         }
         else {
             if (!MyFeedsManager.unread) {
-                @synchronized (MyFeedsManager) {
-                    MyFeedsManager.unread = items;
+                @synchronized (self) {
+                    self.unread = items;
                 }
             }
             else {
-                NSArray *prefiltered = [MyFeedsManager.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                NSArray *unread = MyFeedsManager.unread.copy;
+                NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                     return !obj.isRead;
                 }];
                 
@@ -815,8 +820,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             }
         }
         // the conditional takes care of filtered article items.
-        @synchronized (MyFeedsManager) {
-            MyFeedsManager.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+        @synchronized (self) {
+            self.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         }
         
         if (successCB)

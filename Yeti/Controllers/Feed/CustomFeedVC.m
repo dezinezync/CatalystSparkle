@@ -83,10 +83,19 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 
 - (void)dealloc {
     
-    if (self.observationInfo) {
-        @try {
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
-        } @catch (NSException *exc) {}
+    if (MyFeedsManager.observationInfo != nil && self.unread == NO) {
+        
+        NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
+        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [obj valueForKeyPath:@"observer"];
+        }];
+        
+        if ([observingObjects indexOfObject:self] != NSNotFound) {
+            @try {
+                [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
+            } @catch (NSException *exc) {}
+        }
+        
     }
     
 }
