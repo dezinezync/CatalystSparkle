@@ -128,9 +128,9 @@ To learn more about Elytra subscriptions, tap here.</string>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="751" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pPg-Mm-mjY">
                     <rect key="frame" x="0.0" y="456" width="375" height="199"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <string key="text">You can evaluate Elytra during the trail period. If you decide to stop using Elytra, remember to cancel the subscription in time.
+                    <string key="text">You can evaluate Elytra during the trial period. If you decide to stop using Elytra, remember to cancel the subscription in time.
 
-Apple will charge your card one day before your trail expires.
+Apple will charge your card one day before your trial expires.
 
 To learn more about Elytra subscriptions, tap here.</string>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
