@@ -86,6 +86,7 @@ static void * buttonStateContext = &buttonStateContext;
     [super viewDidLayoutSubviews];
     
     if (self.state == IntroStateSubscriptionDone) {
+        [self dismissViewControllerAnimated:YES completion:nil];
         return;
     }
     
@@ -218,10 +219,11 @@ static void * buttonStateContext = &buttonStateContext;
 - (IBAction)didTapContinue:(id)sender {
     
     if (self.state == IntroStateSubscription) {
-#ifdef DEBUG
-        self.state = IntroStateSubscriptionDone;
-        return;
-#endif
+//#ifdef DEBUG
+//        self.state = IntroStateSubscriptionDone;
+//        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+//        return;
+//#endif
         // confirm purchase and continue
         YetiSubscriptionType selected = [(SubscriptionView *)self.activeView selected];
         
@@ -235,7 +237,11 @@ static void * buttonStateContext = &buttonStateContext;
         
         self.button.enabled = NO;
         
+        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+        
         weakify(self);
+        
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didFailRestore:) name:YTPurchaseProductFailed object:nil];
         
         [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
             
@@ -253,8 +259,6 @@ static void * buttonStateContext = &buttonStateContext;
                             
                             [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
                             [[NSUserDefaults standardUserDefaults] synchronize];
-                            
-                            [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
                         }
                         
                         strongify(self);
@@ -278,7 +282,9 @@ static void * buttonStateContext = &buttonStateContext;
             
         } error:^(SKPaymentQueue *queue, NSError *error) {
             
-            [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:error.localizedDescription];
+            if (error.code != SKErrorPaymentCancelled) {
+                [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:error.localizedDescription];
+            }
             
             strongify(self);
             

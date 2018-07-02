@@ -209,8 +209,10 @@
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
     
-    if (!urls.count)
+    if (!urls.count) {
+        self.state = OPMLStateDefault;
         return;
+    }
     
     if (self.state == OPMLStateExport)
         return;
@@ -226,6 +228,8 @@
     if (!self.ioView.isHidden) {
         self.ioDoneButton.enabled = YES;
     }
+    
+    self.state = OPMLStateDefault;
     
 }
 
@@ -291,7 +295,7 @@
     self.ioDoneButton.enabled = NO;
     
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
-    url = @"https://api.elytra.app/user/opml";
+//    url = @"https://api.elytra.app/user/opml";
 #ifndef DEBUG
     url = @"https://api.elytra.app/user/opml";
 #endif
