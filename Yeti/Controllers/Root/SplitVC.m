@@ -41,8 +41,6 @@
     if (!hasShownIntro || [hasShownIntro boolValue] == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
     }
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {

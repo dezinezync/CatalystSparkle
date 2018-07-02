@@ -219,11 +219,11 @@ static void * buttonStateContext = &buttonStateContext;
 - (IBAction)didTapContinue:(id)sender {
     
     if (self.state == IntroStateSubscription) {
-//#ifdef DEBUG
-//        self.state = IntroStateSubscriptionDone;
-//        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
-//        return;
-//#endif
+#ifdef DEBUG
+        self.state = IntroStateSubscriptionDone;
+        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+        return;
+#endif
         // confirm purchase and continue
         YetiSubscriptionType selected = [(SubscriptionView *)self.activeView selected];
         
