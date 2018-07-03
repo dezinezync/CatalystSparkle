@@ -348,19 +348,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return UIAccessibilityTraitStaticText;
 }
 
-- (NSString *)accessibilityValue {
-    
-    if (self.cachedAttributedText) {
-        return self.cachedAttributedText.string;
-    }
-    
-    if (self.attributedText) {
-        return self.attributedText.string;
-    }
-    
-    return nil;
-}
-
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     [super setBackgroundColor:backgroundColor];
     

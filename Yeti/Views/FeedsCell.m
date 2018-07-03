@@ -217,6 +217,28 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
 }
 
+- (NSString *)accessibilityValue {
+    if ([self.object isKindOfClass:Folder.class]) {
+        return formattedString(@"Folder %@", [(Folder *)self.object title]);
+    }
+    
+    return [super accessibilityValue];
+}
+
+- (NSString *)accessibilityHint {
+    if ([self.object isKindOfClass:Folder.class]) {
+        Folder *folder = self.object;
+        
+        if ([folder isExpanded]) {
+            return @"Close Folder";
+        }
+        
+        return @"Open Folder";
+    }
+    
+    return [super accessibilityValue];
+}
+
 #pragma mark - KVO
 
 - (void)updateFolderCount {

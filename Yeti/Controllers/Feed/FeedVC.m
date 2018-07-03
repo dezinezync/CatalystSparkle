@@ -70,7 +70,7 @@
     self.tableView.tableFooterView = [UIView new];
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
-    allRead.accessibilityLabel = @"Mark all articles are read";
+    allRead.accessibilityLabel = @"Mark all articles as read";
     
     if (self.isExploring) {
         // check if the user is subscribed to this feed

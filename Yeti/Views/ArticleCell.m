@@ -101,6 +101,7 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     }
     
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
+    self.timeLabel.accessibilityValue = [item.timestamp timeAgoSinceNow];
     
     if (!isCustomFeed) {
         if (!item.isRead)
@@ -133,6 +134,8 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
             }
         }
     }
+    
+    self.titleLabel.accessibilityValue = [self.titleLabel.text stringByReplacingOccurrencesOfString:@" | " withString:@" by "];
     
     if (([Paragraph languageDirectionForText:item.articleTitle] == NSLocaleLanguageDirectionRightToLeft)
         || (item.summary && [Paragraph languageDirectionForText:item.summary] == NSLocaleLanguageDirectionRightToLeft)) {
