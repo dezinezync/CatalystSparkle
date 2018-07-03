@@ -329,8 +329,11 @@
     }
     
     NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
-    if (!components.scheme)
+    if (!components.scheme) {
         components.scheme = @"http";
+        components.host = components.host ?: components.path;
+        components.path = nil;
+    }
     
     url = components.URL;
     
