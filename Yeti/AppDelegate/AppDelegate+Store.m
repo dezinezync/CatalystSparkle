@@ -40,10 +40,14 @@
     [MyStoreManager setPaymentQueueRestoreCompletedTransactionsWithSuccess:^(SKPaymentQueue *queue) {
         
         strongify(self);
+        
         NSArray <SKPaymentTransaction *> *transactions = queue.transactions;
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"transactionDate" ascending:YES];
         transactions = [transactions sortedArrayUsingDescriptors:@[descriptor]];
-        [self processTransactions:@[transactions.lastObject]];
+        
+        if (transactions.count) {
+            [self processTransactions:@[transactions.lastObject]];
+        }
         
     } failure:^(SKPaymentQueue *queue, NSError *error) {
        

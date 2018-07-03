@@ -168,6 +168,16 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 #pragma mark - Actions
 
 - (void)didTapCancel {
+    
+    if (NSThread.isMainThread == NO) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self didTapCancel];
+        });
+        return;
+    }
+    
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 

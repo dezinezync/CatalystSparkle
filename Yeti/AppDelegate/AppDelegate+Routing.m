@@ -489,6 +489,9 @@
     if ([browserScheme isEqualToString:@"safari"]) {
         URL = [NSURL URLWithString:uri];
         
+        if (!URL)
+            return;
+        
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
         
         // get the top VC

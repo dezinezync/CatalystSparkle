@@ -144,9 +144,12 @@
     
     _didTapDone = YES;
     
-    sender.enabled = NO;
+    SKProduct *product = [self.products safeObjectAtIndex:self.subscriptionType];
     
-    SKProduct *product = [self.products objectAtIndex:self.subscriptionType];
+    if (product == nil)
+        return;
+    
+    sender.enabled = NO;
     
 //    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 //    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];

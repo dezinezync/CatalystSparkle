@@ -375,7 +375,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
            
             [obj.feeds enumerateObjectsUsingBlock:^(Feed *  _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
                
-                if ([objx.feedID isEqualToNumber:feedID]) {
+                if (objx && objx.feedID != nil && [objx.feedID isEqualToNumber:feedID]) {
                     feed = objx;
                     *stopx = YES;
                     *stop = YES;
@@ -1136,6 +1136,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)addPushToken:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB
 {
+    if (token == nil)
+        return;
+    
+    if ([self userID] == nil)
+        return;
+    
     [self.session PUT:@"/user/token" queryParams:@{@"userID": [self userID]} parameters:@{@"token": token} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
