@@ -60,6 +60,14 @@
 
 #pragma mark - Getters
 
+- (NSString *)accessibilityLabel {
+    return formattedString(@"Heading level %@", @(self.level));
+}
+
+- (UIAccessibilityTraits)accessibilityTraits {
+    return UIAccessibilityTraitStaticText|UIAccessibilityTraitHeader;
+}
+
 - (UIColor *)textColor
 {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];

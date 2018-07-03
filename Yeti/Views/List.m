@@ -58,6 +58,10 @@
     
 }
 
+- (NSString *)accessibilityLabel {
+    return self.type == OrderedList ? @"Ordered List" : @"Unordered list";
+}
+
 - (void)setContent:(Content *)content {
     
     weakify(self);

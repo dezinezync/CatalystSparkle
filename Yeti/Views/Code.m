@@ -66,6 +66,12 @@
     return self;
 }
 
+#pragma mark - Overrides
+
+- (NSString *)accessibilityLabel {
+    return @"Code block";
+}
+
 - (CGSize)intrinsicContentSize
 {
     CGSize size = CGSizeZero;

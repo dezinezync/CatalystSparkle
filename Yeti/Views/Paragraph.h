@@ -10,7 +10,7 @@
 #import "Range.h"
 #import "LayoutConstants.h"
 
-@interface Paragraph : UITextView
+@interface Paragraph : UITextView 
 
 @property (nonatomic, assign, getter=isAppearing) BOOL appearing;
 

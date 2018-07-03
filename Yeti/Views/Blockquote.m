@@ -51,6 +51,10 @@
 
 #pragma mark - Getters
 
+- (NSString *)accessibilityLabel {
+    return @"Quote";
+}
+
 - (UIEdgeInsets)textContainerInset {
     UIEdgeInsets insets = [super textContainerInset];
     

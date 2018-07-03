@@ -340,6 +340,27 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Overrides
 
+- (NSString *)accessibilityLabel {
+    return @"Paragraph";
+}
+
+- (UIAccessibilityTraits)accessibilityTraits {
+    return UIAccessibilityTraitStaticText;
+}
+
+- (NSString *)accessibilityValue {
+    
+    if (self.cachedAttributedText) {
+        return self.cachedAttributedText.string;
+    }
+    
+    if (self.attributedText) {
+        return self.attributedText.string;
+    }
+    
+    return nil;
+}
+
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     [super setBackgroundColor:backgroundColor];
     
