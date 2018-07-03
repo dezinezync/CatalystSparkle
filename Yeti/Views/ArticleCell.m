@@ -112,7 +112,7 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     }
     else {
         self.markerView.autoUpdateFrameOrConstraints = NO;
-        self.markerView.layer.cornerRadius = self.markerView.bounds.size.width/2.f;
+        self.markerView.layer.cornerRadius = 4.f;
         
         // show the publisher's favicon
         Feed *feed = [MyFeedsManager feedForID:item.feedID];

@@ -36,7 +36,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
-    self.faviconView.layer.cornerRadius = ceilf(self.faviconView.bounds.size.height/2.f);
+    self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.clipsToBounds = YES;
     
     self.countLabel.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
@@ -68,7 +68,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     [self.faviconView il_cancelImageLoading];
     
-    self.faviconView.layer.cornerRadius = ceilf(self.faviconView.bounds.size.height/2.f);
+    self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.image = nil;
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
