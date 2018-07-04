@@ -219,7 +219,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 
 - (NSString *)accessibilityValue {
     if ([self.object isKindOfClass:Folder.class]) {
-        return formattedString(@"Folder %@", [(Folder *)self.object title]);
+        return @"Folder";
     }
     
     return [super accessibilityValue];

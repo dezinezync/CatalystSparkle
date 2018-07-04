@@ -70,7 +70,7 @@
     self.tableView.tableFooterView = [UIView new];
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
-    allRead.accessibilityLabel = @"Mark all articles as read";
+    allRead.accessibilityValue = @"Mark all articles as read";
     
     if (self.isExploring) {
         // check if the user is subscribed to this feed
@@ -78,8 +78,7 @@
         if (!existing) {
             // allow subscription
             UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
-            subscribe.accessibilityLabel = @"Subscribe";
-            subscribe.accessibilityHint = @"Add this feed to your list";
+            subscribe.accessibilityValue = @"Subscribe to this feed";
             self.navigationItem.rightBarButtonItem = subscribe;
         }
     }
@@ -91,7 +90,7 @@
         NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
         
         UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityLabel = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
         notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         
         self.navigationItem.rightBarButtonItems = @[allRead, notifications];
@@ -110,7 +109,7 @@
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search articles";
-        searchController.searchBar.accessibilityHint = @"Search loaded articles";
+        searchController.searchBar.accessibilityValue = @"Search loaded articles";
         searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -325,7 +324,7 @@
             asyncMain(^{
                 sender.enabled = YES;
                 sender.image = [UIImage imageNamed:@"notifications_off"];
-                sender.accessibilityLabel = @"Subscribe to notifications";
+                sender.accessibilityValue = @"Subscribe to notifications";
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -399,7 +398,7 @@
         asyncMain(^{
             sender.enabled = YES;
             sender.image = [UIImage imageNamed:@"notifications_on"];
-            sender.accessibilityLabel = @"Unsubscribe from notifications";
+            sender.accessibilityValue = @"Unsubscribe from notifications";
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -469,7 +468,7 @@
         UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems lastObject];
         
         sender.image = [UIImage imageNamed:@"notifications_on"];
-        sender.accessibilityLabel = @"Unsubscribe from notifications";
+        sender.accessibilityValue = @"Unsubscribe from notifications";
         
     });
 }

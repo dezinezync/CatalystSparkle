@@ -438,7 +438,7 @@
                     case 0:
                     {
                         cell.textLabel.text = @"Acc. ID";
-                        cell.textLabel.accessibilityLabel = @"Account Label";
+                        cell.textLabel.accessibilityValue = @"Account Label";
                         
                         cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUID.UUIDString;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;

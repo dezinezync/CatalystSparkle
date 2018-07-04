@@ -403,11 +403,35 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         {
             self.errorStackView.hidden = YES;
             
-            [self.loader stopAnimating];
-            self.loader.hidden = YES;
+            weakify(self);
             
+            self.stackView.alpha = 0.f;
             self.stackView.hidden = NO;
-            [self setupHelperViewActions];
+            self.loader.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                strongify(self);
+                
+                [self.loader stopAnimating];
+                self.loader.transform = CGAffineTransformMakeScale(0.25f, 0.25f);
+                self.loader.alpha = 0.f;
+                
+                self.stackView.alpha = 1.f;
+                self.stackView.transform = CGAffineTransformMakeScale(1.f, 1.f);
+                
+            } completion:^(BOOL finished) {
+               
+                strongify(self);
+                
+                self.loader.hidden = YES;
+                self.loader.transform = CGAffineTransformMakeScale(1.f, 1.f);
+                self.loader.alpha = 1.f;
+                
+                [self setupHelperViewActions];
+                
+            }];
+            
         }
             break;
         case ArticleStateError:
@@ -911,8 +935,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     // prevents the period from overflowing to the next line.
-    if (content.content && [[content.content stringByStrippingWhitespace] isEqualToString:@"."]) {
-        rangeAdded = YES;
+    if (content.content) {
+        NSString *ctx = [content content];
+        
+        if ([ctx isEqualToString:@"."] || [ctx isEqualToString:@","])
+            rangeAdded = YES;
+        else if (ctx.length && ([[ctx substringToIndex:1] isEqualToString:@"."] || [[ctx substringToIndex:1] isEqualToString:@","] || [[ctx substringToIndex:1] isEqualToString:@" "]))
+            rangeAdded = YES;
     }
     
     if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {

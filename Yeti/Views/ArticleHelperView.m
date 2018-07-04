@@ -21,10 +21,10 @@
         self.accessibilityTraits = UIAccessibilityTraitTabBar;
         self.isAccessibilityElement = NO;
         
-        self.previousArticleButton.accessibilityLabel = @"Previous article";
-        self.nextArticleButton.accessibilityLabel = @"Next article";
-        self.startOfArticle.accessibilityLabel = @"Start of article";
-        self.endOfArticle.accessibilityLabel = @"End of article";
+        self.previousArticleButton.accessibilityValue = @"Previous article";
+        self.nextArticleButton.accessibilityValue = @"Next article";
+        self.startOfArticle.accessibilityValue = @"Scroll to beginning of the article";
+        self.endOfArticle.accessibilityValue = @"Scroll to end of the article";
         
         self.layer.cornerRadius = 22.f;
     }

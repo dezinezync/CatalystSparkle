@@ -1,7 +1,7 @@
 github "CocoaLumberjack/CocoaLumberjack" "3.4.2"
 github "Flipboard/FLAnimatedImage" "1.0.14"
 github "MatthewYork/DateTools" "4.0.0"
-github "dezinezync/DZKit" "2.1.9"
+github "dezinezync/DZKit" "2.2.0"
 github "dezinezync/WebP" "1.0.0"
 github "dzns/DZAppDelegate" "1.0.2"
 github "dzns/DZNetworking" "1.4.2"
