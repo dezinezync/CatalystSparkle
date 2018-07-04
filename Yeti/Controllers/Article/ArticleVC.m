@@ -319,6 +319,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
+    
+    [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if ([obj isKindOfClass:Paragraph.class] && [(Paragraph *)obj isBigContainer]) {
+            
+            [(Paragraph *)obj setAccessibileElements:nil];
+            
+        }
+        
+    }];
+    
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
     if (CGSizeEqualToSize(self.view.bounds.size, size))
@@ -953,8 +964,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges attributes:content.attributes];
         NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+        
         [attrs appendAttributedString:accessory];
         [attrs appendAttributedString:newAttrs];
+        
+        if (!rangeAdded) {
+            last.bigContainer = YES;
+#ifdef DEBUG
+            last.backgroundColor = UIColor.redColor;
+#endif
+        }
         
         last.attributedText = attrs.copy;
         attrs = nil;

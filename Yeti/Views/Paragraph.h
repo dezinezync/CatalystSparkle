@@ -46,4 +46,17 @@
 
 - (NSArray <UIView *> * _Nonnull)ignoreSubviewsFromLayouting;
 
+#pragma mark -
+
+/**
+  Set this to true when appending multiple paragraphs to the same Interface. Affects Voice Over and enables paragraph by paragraph control.
+ */
+@property (nonatomic, assign, getter=isBigContainer) BOOL bigContainer;
+
+@property (nonatomic, strong) NSMutableArray *accessibileElements;
+
+#pragma mark -
+
++ (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range;
+
 @end

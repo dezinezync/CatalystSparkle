@@ -15,9 +15,11 @@
 #import "YetiConstants.h"
 #import "YetiThemeKit.h"
 
+#import <DZKit/NSArray+Safe.h>
+
 @interface Paragraph ()
 
-@property (nonatomic, copy) NSAttributedString *cachedAttributedText;
+@property (nonatomic, copy) NSAttributedString *cachedAttributedText; 
 
 @end
 
@@ -197,10 +199,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         if (UIApplication.sharedApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
             offset = offset/3.f;
         }
-        
-//        para.firstLineHeadIndent = offset;
-//        para.headIndent = offset;
-//        para.tailIndent = offset * -1.f;
+
     }
     
     NSLocaleLanguageDirection direction = [self.class languageDirectionForText:text];
@@ -339,14 +338,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
 }
 
 #pragma mark - Overrides
-
-- (NSString *)accessibilityLabel {
-    return @"Paragraph";
-}
-
-- (UIAccessibilityTraits)accessibilityTraits {
-    return UIAccessibilityTraitStaticText;
-}
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     [super setBackgroundColor:backgroundColor];
@@ -529,6 +520,85 @@ static NSParagraphStyle * _paragraphStyle = nil;
 - (BOOL)automaticallyAdjustsScrollViewInsets
 {
     return NO;
+}
+
+#pragma mark - <UIAccessibilityContainer>
+
+- (BOOL)isAccessibilityElement {
+    return !self.isBigContainer;
+}
+
+- (NSString *)accessibilityLabel {
+    if (self.isCaption)
+        return @"Caption";
+    
+    return @"Paragraph";
+}
+
+- (UIAccessibilityTraits)accessibilityTraits {
+    return UIAccessibilityTraitStaticText;
+}
+
+- (NSMutableArray *)accessibileElements {
+    if (_accessibileElements == nil) {
+        _accessibileElements = [NSMutableArray new];
+        
+        NSAttributedString *attrs = self.attributedText;
+        
+        NSString *separator = @"\n\n";
+        NSArray *separatedArray = [attrs.string componentsSeparatedByString:separator];
+        
+        NSInteger start = 0;
+        for (NSString *sub in separatedArray) {
+            NSRange range = NSMakeRange(start, sub.length);
+            NSAttributedString *substr = [attrs attributedSubstringFromRange:range];
+            
+            UIAccessibilityElement *elem = [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
+            elem.accessibilityLabel = @"Paragraph";
+            elem.accessibilityValue = substr.string;
+            elem.accessibilityAttributedValue = substr;
+            elem.accessibilityTraits = UIAccessibilityTraitStaticText;
+            
+            CGRect frame = [Paragraph boundingRectIn:self forCharacterRange:range];
+            frame = [self convertRect:frame toView:nil];
+            
+            elem.accessibilityFrame = frame;
+            
+            [_accessibileElements addObject:elem];
+            
+            start += range.length + separator.length;
+        }
+    }
+    
+    return _accessibileElements;
+}
+
+- (NSInteger)accessibilityElementCount {
+    return self.accessibileElements.count;
+}
+
+- (id)accessibilityElementAtIndex:(NSInteger)index {
+    return [self.accessibileElements safeObjectAtIndex:index];
+}
+
+- (NSInteger)indexOfAccessibilityElement:(id)element {
+    return [self.accessibileElements indexOfObject:element];
+}
+
+#pragma mark -
+
++ (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range
+{
+    NSTextStorage *textStorage = [textview textStorage];
+    NSLayoutManager *layoutManager = [[textStorage layoutManagers] firstObject];
+    NSTextContainer *textContainer = [[layoutManager textContainers] firstObject];
+    
+    NSRange glyphRange;
+    
+    // Convert the range for glyphs.
+    [layoutManager characterRangeForGlyphRange:range actualGlyphRange:&glyphRange];
+    
+    return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
 }
 
 @end
