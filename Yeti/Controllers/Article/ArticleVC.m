@@ -970,9 +970,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         if (!rangeAdded) {
             last.bigContainer = YES;
-#ifdef DEBUG
-            last.backgroundColor = UIColor.redColor;
-#endif
         }
         
         last.attributedText = attrs.copy;
