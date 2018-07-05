@@ -15,6 +15,8 @@
 - (void)setupToolbar:(UITraitCollection *)newCollection;
 
 - (void)didTapSearch;
+- (void)didTapSearchNext;
+- (void)didTapSearchDone;
 
 - (void)didTapRead:(id)sender;
 - (void)didTapBookmark:(id)sender;

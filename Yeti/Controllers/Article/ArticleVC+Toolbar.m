@@ -188,6 +188,10 @@
 
 - (void)didTapSearchDone
 {
+    if (_searchHighlightingRect == nil) {
+        return;
+    }
+    
     _showSearchBar = NO;
     [_searchBar resignFirstResponder];
     [_searchBar setText:nil];
@@ -196,6 +200,11 @@
 
 - (void)didTapSearchPrevious
 {
+    
+    if (_searchHighlightingRect == nil) {
+        return;
+    }
+    
     if (_searchCurrentIndex == 0) {
         // we are on the first possible result. This shouldn't be possible.
         _searchPrevButton.enabled = NO;
@@ -227,6 +236,10 @@
 
 - (void)didTapSearchNext
 {
+    if (_searchHighlightingRect == nil) {
+        return;
+    }
+    
     if (_searchCurrentIndex == (_searchingRects.count-1)) {
         // we are on the last result. This shouldn't be possible.
         _searchNextButton.enabled = NO;
@@ -284,8 +297,8 @@
     
     CGRect rect = value.CGRectValue;
     CGRect frame = rect;
-    frame.origin.x += 13.f;
-    frame.origin.y += 12.f; //(scrollView.adjustedContentInset.top / 2.f);
+    frame.origin.x += self.stackView.frame.origin.x;
+    frame.origin.y += 12.f;
     
     weakify(self);
     
@@ -438,6 +451,15 @@
     return YES;
 }
 
+- (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if ([text isEqualToString:@"\n"]) {
+        [self didTapSearchNext];
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     if (!searchText || [searchText isBlank]) {
@@ -502,25 +524,15 @@
         NSString *toCheck = searchText.lowercaseString;
         
         NSRange range = NSMakeRange(0, length);
-//        NSMutableArray <NSValue *> *subranges = @[].mutableCopy;
-        
-        NSTextStorage *textStorage = obj.textStorage;
-        NSLayoutManager *layoutManager = [[textStorage layoutManagers] firstObject];
-        NSTextContainer *textContainer = [[layoutManager textContainers] firstObject];
         
         while(range.location != NSNotFound)
         {
             range = [checkIn rangeOfString:toCheck options:0 range:range];
+            
             if(range.location != NSNotFound)
             {
-                CGRect rect = [layoutManager boundingRectForGlyphRange:range inTextContainer:textContainer];
+                CGRect rect = [Paragraph boundingRectIn:obj forCharacterRange:range];
                 rect = [obj convertRect:rect toView:obj.superview];
-                
-//                UIEdgeInsets adjustedInsets = scrollView.adjustedContentInset;
-//                UIEdgeInsets contentInsets = scrollView.contentInset;
-                
-//                rect.origin.y -= scrollView.bounds.size.height;
-//                rect.origin.x += -contentInsets.left;
                 
                 NSValue *rectValue = [NSValue valueWithCGRect:rect];
                 

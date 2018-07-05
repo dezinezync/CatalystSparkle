@@ -1649,7 +1649,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             UIPopoverPresentationController *pvc = [avc popoverPresentationController];
             pvc.sourceView = textView;
-            pvc.sourceRect = [self boundingRectIn:textView forCharacterRange:characterRange];
+            pvc.sourceRect = [Paragraph boundingRectIn:textView forCharacterRange:characterRange];
             
             DDLogDebug(@"view: %@", pvc.sourceView);
         }
