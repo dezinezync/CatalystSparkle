@@ -63,6 +63,31 @@ static NSString * const reuseIdentifier = @"Cell";
 {
     [super viewWillAppear:animated];
     
+    if ([self.collectionView.indexPathsForSelectedItems count] > 0) {
+        
+        NSArray <NSIndexPath *> *indices = self.collectionView.indexPathsForSelectedItems;
+        
+        if (self.transitionCoordinator) {
+            
+            weakify(self);
+            
+            [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+                
+                strongify(self);
+                
+                for (NSIndexPath *indexPath in indices) {
+                    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+                }
+                
+            } completion:nil];
+        }
+        else {
+            for (NSIndexPath *indexPath in indices) {
+                [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+            }
+        }
+    }
+    
     [self _updateMetrics];
     
     if (self.state == ReccoStateLoaded)
@@ -74,14 +99,22 @@ static NSString * const reuseIdentifier = @"Cell";
         strongify(self);
         
         self.recommendations = responseObject;
-        self.state = ReccoStateLoaded;
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            self.state = ReccoStateLoaded;
+        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
         self.loadError = error;
-        self.state = ReccoStateError;
+        weakify(self);
+        asyncMain(^{
+            strongify(self);
+            self.state = ReccoStateError;
+        });
         
     }];
 }
@@ -126,6 +159,7 @@ static NSString * const reuseIdentifier = @"Cell";
         }
         
         self.collectionView.hidden = NO;
+        [self.collectionView reloadData];
     }
     else {
         self.collectionView.hidden = YES;
