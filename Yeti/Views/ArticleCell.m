@@ -88,6 +88,22 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     self.summaryLabel.text = item.summary;
     
+    if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
+        // find the first paragraph
+        Content *content = [item.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
+            
+            if (prev && [prev.type isEqualToString:@"paragraph"]) {
+                return prev;
+            }
+            
+            return current;
+        }];
+        
+        if (content) {
+            self.summaryLabel.text = content.content;
+        }
+    }
+    
     if (item.author) {
         if ([item.author isKindOfClass:NSString.class]) {
             self.authorLabel.text = [(item.author ?: @"") stringByStrippingHTML];
