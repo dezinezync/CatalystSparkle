@@ -211,7 +211,7 @@
  
     weakify(self);
     
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Are you sure?" message:@"Are you sure you want to delete this feed?" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Delete Feed?" message:@"Are you sure you want to delete this feed?" preferredStyle:UIAlertControllerStyleAlert];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
@@ -283,7 +283,7 @@
     
     weakify(self);
     
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Are you sure?" message:@"Are you sure you want to delete this folder?" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Delete Folder?" message:@"Are you sure you want to delete this folder?" preferredStyle:UIAlertControllerStyleAlert];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         

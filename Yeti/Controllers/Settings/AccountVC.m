@@ -557,7 +557,7 @@
         }
         
         if (indexPath.row == 2) {
-            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Are you sure?" message:@"Please ensure you have cancelled your Elytra Pro subscription before continuing" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Deactivate your Account?" message:@"Please ensure you have cancelled your Elytra Pro subscription before continuing." preferredStyle:UIAlertControllerStyleAlert];
             
             [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
             
