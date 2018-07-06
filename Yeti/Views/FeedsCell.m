@@ -20,11 +20,12 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 }
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackLeading;
-@property (weak, nonatomic) id object;
+@property (weak, nonatomic) NSObject * object;
 
 @end
 
 static void *KVO_UNREAD = &KVO_UNREAD;
+static void *KVO_FOLDER = &KVO_FOLDER;
 
 @implementation FeedsCell
 
@@ -104,6 +105,21 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             } @catch (NSException *exc) {}
         }
     }
+    
+//    if (self.object && [self.object isKindOfClass:Folder.class] && [self.object observationInfo] != nil) {
+//        
+//        NSArray *observingObjects = [(id)(self.object.observationInfo) valueForKeyPath:@"_observances"];
+//        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [obj valueForKeyPath:@"observer"];
+//        }];
+//        
+//        if ([observingObjects indexOfObject:self] != NSNotFound) {
+//        
+//            @try {
+//                [self.object removeObserver:self forKeyPath:@"expanded"];
+//            } @catch (NSException *exc) {}
+//        }
+//    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
@@ -152,11 +168,12 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 }
 
 - (void)setObject:(id)object {
-    _object = object;
     
-    if (!_object) {
+    if (object == nil) {
         [self removeObservorInfo];
     }
+    
+    _object = object;
 }
 
 #pragma mark -
@@ -215,6 +232,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.faviconView.image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
+//    [folder addObserver:self forKeyPath:@"expanded" options:NSKeyValueObservingOptionNew context:KVO_FOLDER];
 }
 
 - (NSString *)accessibilityValue {
@@ -227,7 +245,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 
 - (NSString *)accessibilityHint {
     if ([self.object isKindOfClass:Folder.class]) {
-        Folder *folder = self.object;
+        Folder *folder = (Folder *)[self object];
         
         if ([folder isExpanded]) {
             return @"Close Folder";
@@ -297,7 +315,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             
             if ([self.object isKindOfClass:Folder.class]) {
                 
-                Folder *folder = self.object;
+                Folder *folder = (Folder *)[self object];
                 
                 __block BOOL changed = NO;
                 
@@ -324,7 +342,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
                  
             }
             else {
-                Feed *feed = self.object;
+                Feed *feed = (Feed *)[self object];
                 
                 if (feed) {
                     @try {
@@ -382,7 +400,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             
             BOOL changed = NO;
             
-            Feed *feed = self.object;
+            Feed *feed = (Feed *)[self object];
             
             if ([diffedNew containsObject:feed.feedID]) {
                 NSInteger unread = [feed.unread integerValue];
@@ -414,6 +432,10 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             
         }
         
+    }
+    else if (context == KVO_FOLDER && [keyPath isEqualToString:@"expanded"]) {
+        BOOL isExpanded = [(Folder *)[self object] isExpanded];
+        self.faviconView.image = [[UIImage imageNamed:(isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

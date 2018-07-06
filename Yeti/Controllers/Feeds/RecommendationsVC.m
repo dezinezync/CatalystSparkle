@@ -16,9 +16,22 @@
 #import "FeedsVC.h"
 #import "FeedVC.h"
 
+typedef NS_ENUM(NSInteger, ReccoState) {
+    ReccoStateLoading,
+    ReccoStateLoaded,
+    ReccoStateError
+};
+
 @interface RecommendationsVC ()
 
 @property (nonatomic, copy) NSDictionary *recommendations;
+@property (nonatomic, strong) NSError *loadError;
+@property (nonatomic, assign) ReccoState state;
+
+@property (nonatomic, strong) UIActivityIndicatorView *activity;
+@property (nonatomic, strong) UIStackView *errorView;
+@property (nonatomic, weak) UILabel *errorTitle;
+@property (nonatomic, weak) UILabel *errorCaption;
 
 @end
 
@@ -33,6 +46,8 @@ static NSString * const reuseIdentifier = @"Cell";
     
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
+    
+    self.state = ReccoStateLoading;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.collectionView.backgroundColor = theme.backgroundColor;
@@ -50,19 +65,24 @@ static NSString * const reuseIdentifier = @"Cell";
     
     [self _updateMetrics];
     
+    if (self.state == ReccoStateLoaded)
+        return;
+    
     weakify(self);
     [MyFeedsManager getRecommendationsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
         self.recommendations = responseObject;
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.collectionView reloadData];
-        });
+        self.state = ReccoStateLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-#warning handle the error
+        
+        strongify(self);
+        
+        self.loadError = error;
+        self.state = ReccoStateError;
+        
     }];
 }
 
@@ -90,6 +110,58 @@ static NSString * const reuseIdentifier = @"Cell";
 
 #pragma mark -
 
+- (void)setState:(ReccoState)state {
+    ReccoState original = _state;
+    
+    _state = state;
+    
+    if (original == _state)
+        return;
+    
+    if (_state == ReccoStateLoaded) {
+        
+        if (original == ReccoStateLoading) {
+            [self.activity stopAnimating];
+            self.activity.hidden = YES;
+        }
+        
+        self.collectionView.hidden = NO;
+    }
+    else {
+        self.collectionView.hidden = YES;
+        
+        if (_state == ReccoStateLoading) {
+            if (self.activity.superview == nil) {
+                UIView *view = self.collectionView.superview;
+                [view addSubview:self.activity];
+                
+                [self.activity.centerXAnchor constraintEqualToAnchor:view.centerXAnchor].active = YES;
+                [self.activity.centerYAnchor constraintEqualToAnchor:view.centerYAnchor].active = YES;
+            }
+            
+            self.activity.hidden = NO;
+            [self.activity startAnimating];
+        }
+        else {
+            if (self.errorView.superview == nil) {
+                UIView *view = self.collectionView.superview;
+                [view addSubview:self.errorView];
+                
+                [self.errorView.centerXAnchor constraintEqualToAnchor:view.centerXAnchor].active = YES;
+                [self.errorView.centerYAnchor constraintEqualToAnchor:view.centerYAnchor].active = YES;
+            }
+            
+//            self.errorTitle.text = @"Error loading reccomendations";
+            self.errorCaption.text = self.loadError ? self.loadError.localizedDescription : @"An unknown error occurred when loading recommendations.";
+            [self.errorCaption sizeToFit];
+            
+            self.errorView.hidden = NO;
+        }
+    }
+}
+
+#pragma mark -
+
 - (void)_updateMetrics {
     CGFloat width = MIN(self.collectionView.bounds.size.width, self.collectionView.contentSize.width);
     CGFloat columnWidth = floor((width - 2.f) / 3.f);
@@ -103,7 +175,11 @@ static NSString * const reuseIdentifier = @"Cell";
 #pragma mark <UICollectionViewDataSource>
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
-    return 3;
+    if (self.state == ReccoStateLoaded) {
+        return 3;
+    }
+    
+    return 0;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -201,6 +277,25 @@ static NSString * const reuseIdentifier = @"Cell";
         [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     }
     
+}
+
+#pragma mark -
+
+- (UIActivityIndicatorView *)activity {
+    if (_activity == nil) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        activity.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+        
+        [activity sizeToFit];
+        [activity.widthAnchor constraintEqualToConstant:activity.bounds.size.width].active = YES;
+        [activity.heightAnchor constraintEqualToConstant:activity.bounds.size.height].active = YES;
+        
+        _activity = activity;
+    }
+    
+    return _activity;
 }
 
 @end

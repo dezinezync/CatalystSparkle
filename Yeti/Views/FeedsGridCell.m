@@ -37,6 +37,8 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
     }
     
     self.titleLabel.text = feed.title;
+    self.imageView.layer.cornerRadius = 8.f;
+    self.imageView.clipsToBounds = YES;
     
     NSString *imageURI = [feed faviconURI];
     

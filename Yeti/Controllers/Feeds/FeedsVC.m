@@ -49,6 +49,8 @@ static void *KVO_Unread = &KVO_Unread;
     [self setupTableView];
     [self setupNavigationBar];
     
+    self.tableView.estimatedRowHeight = UITableViewAutomaticDimension;
+    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
@@ -142,7 +144,7 @@ static void *KVO_Unread = &KVO_Unread;
     self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
     
     self.DS.addAnimation = UITableViewRowAnimationFade;
-    self.DS.deleteAnimation = UITableViewRowAnimationNone;
+    self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
     DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
@@ -371,13 +373,17 @@ static void *KVO_Unread = &KVO_Unread;
         Folder *folder = (Folder *)feed;
         NSUInteger index = [self.DS2.data indexOfObject:folder];
         
+        CGPoint contentOffset = self.tableView.contentOffset;
+        
+        FeedsCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        
         if (folder.isExpanded) {
             
             DDLogDebug(@"Closing index: %@", @(index));
             folder.expanded = NO;
             
             // remove these feeds from the datasource
-            [self.DS setData:[self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
                 
                 if ([obj isKindOfClass:Folder.class])
                     return YES;
@@ -388,7 +394,9 @@ static void *KVO_Unread = &KVO_Unread;
                 
                 return YES;
                 
-            }] section:1];
+            }];
+            
+            [self.DS setData:data section:1];
             
         }
         else {
@@ -406,12 +414,14 @@ static void *KVO_Unread = &KVO_Unread;
             
         }
         
+        cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        
         weakify(self);
         
-        asyncMain(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
-            
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            [self.tableView.layer removeAllAnimations];
+            [self.tableView setContentOffset:contentOffset animated:NO];
         });
     }
     
@@ -452,7 +462,13 @@ static void *KVO_Unread = &KVO_Unread;
     
     // ensures search bar does not dismiss on refresh or first load
     @try {
-        [self.DS setData:[(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:MyFeedsManager.feeds] section:1];
+        NSArray *data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:MyFeedsManager.feeds];
+        CGPoint contentOffset = self.tableView.contentOffset;
+        
+        [self.DS setData:data section:1];
+        [self.tableView.layer removeAllAnimations];
+        [self.tableView setContentOffset:contentOffset animated:NO];
+        
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
     }
@@ -501,7 +517,9 @@ static void *KVO_Unread = &KVO_Unread;
         
         self.refreshControl.tintColor = [theme captionColor];
         
-        self.hairlineView.backgroundColor = theme.cellColor;
+        if (self.hairlineView) {
+            self.hairlineView.backgroundColor = theme.cellColor;
+        }
         
         [[self.headerView tableView] reloadData];
         self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
