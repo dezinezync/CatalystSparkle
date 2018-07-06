@@ -140,11 +140,11 @@
         
         Feed *feed = (Feed *)obj;
         
-        avc = [UIAlertController alertControllerWithTitle:@"Feed options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        avc = [UIAlertController alertControllerWithTitle:@"Feed Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
         
-        [avc addAction:[UIAlertAction actionWithTitle:@"Move to folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [avc addAction:[UIAlertAction actionWithTitle:@"Move to Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
             UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
             
@@ -154,7 +154,7 @@
             
         }]];
         
-        [avc addAction:[UIAlertAction actionWithTitle:@"Delete feed" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [avc addAction:[UIAlertAction actionWithTitle:@"Delete Feed" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
             
             strongify(self);
             
@@ -166,11 +166,11 @@
     else if ([obj isKindOfClass:Folder.class]) {
         Folder *folder = (Folder *)obj;
         
-        avc = [UIAlertController alertControllerWithTitle:@"Folder options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        avc = [UIAlertController alertControllerWithTitle:@"Folder Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
         
-        [avc addAction:[UIAlertAction actionWithTitle:@"Rename folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [avc addAction:[UIAlertAction actionWithTitle:@"Rename Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
             UINavigationController *nav = [NewFolderVC instanceWithFolder:folder];
             
@@ -180,7 +180,7 @@
             
         }]];
         
-        [avc addAction:[UIAlertAction actionWithTitle:@"Delete folder" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [avc addAction:[UIAlertAction actionWithTitle:@"Delete Folder" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
             
             strongify(self);
             
@@ -373,7 +373,21 @@
     UISwipeActionsConfiguration *configuration = nil;
     
     if (folder) {
-         configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete]];
+        UIContextualAction *rename = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Rename" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+           
+            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder];
+            
+            strongify(self);
+            
+            [self presentViewController:nav animated:YES completion:^{
+                completionHandler(YES);
+            }];
+            
+        }];
+        
+        rename.backgroundColor = self.view.tintColor;
+        
+         configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, rename]];
     }
     else {
         

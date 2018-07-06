@@ -268,11 +268,11 @@
 
 - (void)didTapAllRead:(UIBarButtonItem *)sender {
     
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Mark All Read" message:@"Are you sure you want to mark all articles as read?" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     weakify(self);
     
-    [avc addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [avc addAction:[UIAlertAction actionWithTitle:@"Mark All Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         strongify(self);
         
