@@ -48,7 +48,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         self.delegate = delegate;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            DDLogInfo(@"Initialised with: %@ %@", self.UUID, self.userID);
+            NSUUID *UUID = self.UUID;
+            NSNumber *userID = self.userID;
+            DDLogInfo(@"Initialised with: %@ %@", UUID, userID);
         });
     }
     

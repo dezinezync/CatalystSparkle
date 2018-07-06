@@ -34,7 +34,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 @interface FeedsManager () <YTUserDelegate>
 #endif
 {
-    NSString *_feedsCachePath;
+//    NSString *_feedsCachePath;
     NSString *_receiptLastUpdatePath;
 }
 
@@ -82,21 +82,21 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         NSArray *dirPaths;
         NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
         
-        if (!_feedsCachePath) {
-            dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-            docsDir = [dirPaths objectAtIndex:0];
-            
-            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-            NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
-            
-            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
-            
-#ifdef DEBUG
-            path = [path stringByAppendingString:@".debug"];
-#endif
-            
-            _feedsCachePath = path;
-        }
+//        if (!_feedsCachePath) {
+//            dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+//            docsDir = [dirPaths objectAtIndex:0];
+//            
+//            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+//            NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
+//            
+//            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
+//            
+//#ifdef DEBUG
+//            path = [path stringByAppendingString:@".debug"];
+//#endif
+//            
+//            _feedsCachePath = path;
+//        }
         
         if (_receiptLastUpdatePath == nil) {
             if (!docsDir) {
@@ -234,7 +234,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 //                strongify(self);
 //                NSError *error = nil;
 //                NSData *data = [NSJSONSerialization dataWithJSONObject:responseObject options:kNilOptions error:&error];
-//                
+//
 //                if (error) {
 //                    DDLogError(@"Error caching feeds: %@", error);
 //                }

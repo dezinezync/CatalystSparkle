@@ -25,7 +25,6 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 @end
 
 static void *KVO_UNREAD = &KVO_UNREAD;
-static void *KVO_FOLDER = &KVO_FOLDER;
 
 @implementation FeedsCell
 
@@ -105,21 +104,6 @@ static void *KVO_FOLDER = &KVO_FOLDER;
             } @catch (NSException *exc) {}
         }
     }
-    
-//    if (self.object && [self.object isKindOfClass:Folder.class] && [self.object observationInfo] != nil) {
-//        
-//        NSArray *observingObjects = [(id)(self.object.observationInfo) valueForKeyPath:@"_observances"];
-//        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-//            return [obj valueForKeyPath:@"observer"];
-//        }];
-//        
-//        if ([observingObjects indexOfObject:self] != NSNotFound) {
-//        
-//            @try {
-//                [self.object removeObserver:self forKeyPath:@"expanded"];
-//            } @catch (NSException *exc) {}
-//        }
-//    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
@@ -232,7 +216,6 @@ static void *KVO_FOLDER = &KVO_FOLDER;
     self.faviconView.image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
-//    [folder addObserver:self forKeyPath:@"expanded" options:NSKeyValueObservingOptionNew context:KVO_FOLDER];
 }
 
 - (NSString *)accessibilityValue {
@@ -432,10 +415,6 @@ static void *KVO_FOLDER = &KVO_FOLDER;
             
         }
         
-    }
-    else if (context == KVO_FOLDER && [keyPath isEqualToString:@"expanded"]) {
-        BOOL isExpanded = [(Folder *)[self object] isExpanded];
-        self.faviconView.image = [[UIImage imageNamed:(isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
