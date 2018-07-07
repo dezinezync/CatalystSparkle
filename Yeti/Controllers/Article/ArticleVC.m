@@ -1427,7 +1427,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 //            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 imageview.loading = YES;
-                [imageview il_setImageWithURL:imageview.URL];
+                if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
+                    [imageview il_setImageWithURL:imageview.URL];
+                }
             });
         }
         else if (imageview.imageView.image && !contains && imageview.isLoading) {

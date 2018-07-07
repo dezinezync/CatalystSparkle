@@ -118,6 +118,9 @@
     
     weakify(self);
     
+    if (!url)
+       return;
+    
     if (isGIF) {
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
