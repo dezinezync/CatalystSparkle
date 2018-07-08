@@ -33,6 +33,8 @@ static void *KVO_Unread = &KVO_Unread;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
 @property (nonatomic, weak) UIView *hairlineView;
 
+@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
+
 @end
 
 @implementation FeedsVC
@@ -262,6 +264,15 @@ static void *KVO_Unread = &KVO_Unread;
 
 #pragma mark - Getters
 
+- (UISelectionFeedbackGenerator *)feedbackGenerator {
+    if (!_feedbackGenerator) {
+        _feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
+        [_feedbackGenerator prepare];
+    }
+    
+    return _feedbackGenerator;
+}
+
 - (NSDate *)sinceDate
 {
     if (!_sinceDate) {
@@ -413,6 +424,9 @@ static void *KVO_Unread = &KVO_Unread;
             [self.DS setData:data section:1];
             
         }
+        
+        [self.feedbackGenerator selectionChanged];
+        [self.feedbackGenerator prepare];
         
         cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         
