@@ -17,6 +17,7 @@
 @interface NewFolderVC ()
 
 @property (nonatomic, weak, readwrite) Folder *folder;
+@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
 
 @end
 
@@ -95,43 +96,79 @@
             
             self.cancelButton.enabled = YES;
             
-            [self didTapCancel];
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self didTapCancel];
+                
+            });
+
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
-            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
             
-            strongify(self);
-            
-            textField.enabled = YES;
-            self.cancelButton.enabled = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                [self.notificationGenerator prepare];
+                
+                textField.enabled = YES;
+                self.cancelButton.enabled = YES;
+                
+            });
             
         }];
     }
     else {
         [MyFeedsManager addFolder:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            strongify(self);
-            
-            self.cancelButton.enabled = YES;
-            
-            [self didTapCancel];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                self.cancelButton.enabled = YES;
+                
+                
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self didTapCancel];
+                
+            });
             
             [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : MyFeedsManager.feeds, @"folders": MyFeedsManager.folders}];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
             
-            strongify(self);
-            
-            textField.enabled = YES;
-            self.cancelButton.enabled = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                [self.notificationGenerator prepare];
+                
+                textField.enabled = YES;
+                self.cancelButton.enabled = YES;
+                
+            });
             
         }];
     }
     
     return YES;
+}
+
+#pragma mark - Getters
+
+- (UINotificationFeedbackGenerator *)notificationGenerator {
+    if (_notificationGenerator == nil) {
+        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        [_notificationGenerator prepare];
+    }
+    
+    return _notificationGenerator;
 }
 
 @end
