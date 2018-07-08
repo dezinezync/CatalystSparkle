@@ -176,11 +176,34 @@ AppDelegate *MyAppDelegate = nil;
 
 - (void)refreshViews {
     
+    if ([NSThread isMainThread] == NO) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self refreshViews];
+        });
+        
+        return;
+    }
+    
     for (UIWindow *window in UIApplication.sharedApplication.windows) {
         window.tintColor = YTThemeKit.theme.tintColor;
     }
 
    [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
+    
+}
+
+#pragma mark -
+
+- (UINotificationFeedbackGenerator *)notificationGenerator {
+    
+    if (!_notificationGenerator) {
+        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        [_notificationGenerator prepare];
+    }
+    
+    return _notificationGenerator;
     
 }
 

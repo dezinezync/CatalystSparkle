@@ -28,6 +28,8 @@
 @property (nonatomic, copy) NSArray <NSString *> *data;
 @property (nonatomic, assign) NSInteger selected;
 
+@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
+
 @end
 
 @implementation NewFeedVC
@@ -168,6 +170,13 @@
             if ([responseObject isKindOfClass:Feed.class]) {
                 MyFeedsManager.feeds = [[MyFeedsManager feeds] arrayByAddingObject:responseObject];
                 
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [self.notificationGenerator prepare];
+                });
+                
                 asyncMain(^{
                     self.selected = NSNotFound;
                     [self didTapCancel];
@@ -186,11 +195,29 @@
            
             strongify(self);
             
+            if (error.code == 304) {
+                self.selected = NSNotFound;
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    
+                    [self didTapCancel];
+                });
+                return;
+            }
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                [self.notificationGenerator prepare];
+            });
+            
             asyncMain(^{
                 self.cancelButton.enabled = YES;
             });
             
-            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
             
         }];
         
@@ -307,6 +334,15 @@
     return _newVCTD;
 }
 
+- (UINotificationFeedbackGenerator *)notificationGenerator {
+    if (_notificationGenerator == nil) {
+        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        [_notificationGenerator prepare];
+    }
+    
+    return _notificationGenerator;
+}
+
 #pragma mark - <UIToolbarDelegate>
 
 - (UIBarPosition)positionForBar:(id <UIBarPositioning>)bar
@@ -357,12 +393,26 @@
         if (status == 300) {
             // multiple options
             self.data = responseObject;
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                [self.notificationGenerator prepare];
+            });
+            
             return;
         }
         else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
             
             weakify(self);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self.notificationGenerator prepare];
+            });
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 strongify(self);
@@ -378,6 +428,13 @@
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [MyAppDelegate _dismissAddingFeedDialog];
+        
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+            [self.notificationGenerator prepare];
+        });
         
         asyncMain(^{
             strongify(self);

@@ -233,8 +233,24 @@
         if (!haveItem) {
             // we don't have it.
             MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self.notificationGenerator prepare];
+            });
+            
         }
         else {
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                [self.notificationGenerator prepare];
+            });
+            
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
             });
@@ -245,6 +261,13 @@
         strongify(self);
         
         [self _dismissAddingFeedDialog];
+        
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+            [self.notificationGenerator prepare];
+        });
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
@@ -283,8 +306,24 @@
             feeds = [feeds arrayByAddingObject:responseObject];
             
             MyFeedsManager.feeds = feeds;
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self.notificationGenerator prepare];
+            });
+            
         }
         else {
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                [self.notificationGenerator prepare];
+            });
+            
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
             });
@@ -295,6 +334,13 @@
         strongify(self);
         
         [self _dismissAddingFeedDialog];
+        
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+            [self.notificationGenerator prepare];
+        });
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
