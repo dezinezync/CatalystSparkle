@@ -80,6 +80,25 @@ AppDelegate *MyAppDelegate = nil;
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
+    
+    if (reset) {
+        [MyFeedsManager resetAccount];
+        
+        SplitVC *v = (SplitVC *)[[application keyWindow] rootViewController];
+        [v userNotFound];
+        
+        [defaults setBool:NO forKey:kResetAccountSettingsPref];
+        [defaults synchronize];
+    }
+    
+}
+
+#pragma mark -
+
 // logs all fonts loaded by the app
 - (void)yt_log_fontnames {
     

@@ -33,6 +33,8 @@ extern NSNotificationName const YTUserNotFound;
 
 @property (nonatomic, weak) id<YTUserDelegate> delegate;
 
+- (void)setupAccountWithSuccess:(successBlock)successCB error:(errorBlock)errorCB;
+
 - (NSString *)UUIDString;
 
 @end

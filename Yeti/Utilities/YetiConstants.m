@@ -8,8 +8,9 @@
 
 #import "YetiConstants.h"
 
-NSString *const kHasShownOnboarding = @"com.yeti.onboarding.main";
-NSString *const kIsSubscribingToPushNotifications = @"com.yeti.internal.isSubscribingToPushNotifications";
+NSString * const kResetAccountSettingsPref = @"reset_account_preference";
+NSString * const kHasShownOnboarding = @"com.yeti.onboarding.main";
+NSString * const kIsSubscribingToPushNotifications = @"com.yeti.internal.isSubscribingToPushNotifications";
 
 #pragma mark - NSUserDefaults Keys
 

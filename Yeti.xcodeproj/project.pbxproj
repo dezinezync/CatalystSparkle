@@ -287,6 +287,8 @@
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F099466620AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UITableViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */; };
+		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
+		F09BE12920F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
@@ -771,6 +773,7 @@
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
 		F09B3B331FBCB348001D4B09 /* UITableViewController+ScrollLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITableViewController+ScrollLoad.h"; sourceTree = "<group>"; };
 		F09B3B341FBCB348001D4B09 /* UITableViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITableViewController+ScrollLoad.m"; sourceTree = "<group>"; };
+		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		F09E96422055342000E61681 /* highlight.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = highlight.pack.js; sourceTree = "<group>"; };
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
@@ -1169,6 +1172,7 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F09BE12720F1C370000D1EB9 /* Settings.bundle */,
 				F03AC02D205533C200FB111A /* CodeParser */,
 				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
 				F0A589F3205A580300488015 /* LinguisticSearch.h */,
@@ -1802,6 +1806,7 @@
 				F0A5AE8B20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AEB120C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F047F4EF20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */,
+				F09BE12920F1C370000D1EB9 /* Settings.bundle in Resources */,
 				F0A5AEB720C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F047F4E920C25FB900626968 /* Spectral-Bold.ttf in Resources */,
 				F069AC00206E018F00021ABF /* GalleryCell.xib in Resources */,
@@ -1877,6 +1882,7 @@
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
 				F0A5AEB220C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
 				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
+				F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */,
 				F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F0A5AE9020C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,

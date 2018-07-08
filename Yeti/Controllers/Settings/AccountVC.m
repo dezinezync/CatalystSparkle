@@ -727,37 +727,7 @@
     
     [DZMessagingController shared].delegate = nil;
     
-    MyFeedsManager.folders = nil;
-    MyFeedsManager.feeds = nil;
-    MyFeedsManager.bookmarks = nil;
-    MyFeedsManager.unread = nil;
-    MyFeedsManager.totalUnread = 0;
-    
-    [MyFeedsManager removeAllLocalBookmarks];
-    
-    NSString *kAccountID = @"YTUserID";
-    NSString *kUserID = @"userID";
-    
-    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-    if (store) {
-        [store removeObjectForKey:kAccountID];
-        [store removeObjectForKey:kUserID];
-        [store synchronize];
-    }
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if (defaults) {
-        [defaults removeObjectForKey:kAccountID];
-        [defaults removeObjectForKey:kUserID];
-        [defaults synchronize];
-    }
-    
-    UICKeyChainStore *keychain = [MyFeedsManager keychain];
-    keychain[kAccountID] = nil;
-    keychain[kUserID] = nil;
-    
-    MyFeedsManager.userIDManager.UUID = nil;
-    MyFeedsManager.userIDManager.userID = nil;
+    [MyFeedsManager resetAccount];
     
     UINavigationController *nav = self.navigationController;
     

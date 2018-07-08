@@ -138,6 +138,7 @@ static void * buttonStateContext = &buttonStateContext;
             [self.topLabel sizeToFit];
             
             [self.button setTitle:@"Continue" forState:UIControlStateNormal];
+            self.button.enabled = NO;
             self.disclaimerLabel.hidden = YES;
             
             IntroViewUUID *view = [[IntroViewUUID alloc] initWithNib];
@@ -148,6 +149,8 @@ static void * buttonStateContext = &buttonStateContext;
             }
             
             self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
+            
+            [self getAccountInfo];
         }
             break;
         case IntroStateSubscription:
@@ -329,7 +332,7 @@ static void * buttonStateContext = &buttonStateContext;
     
 }
 
-#pragma mark -
+#pragma mark - StoreKit
 
 - (void)_removeRestoreObservers {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -381,6 +384,30 @@ static void * buttonStateContext = &buttonStateContext;
     if (error && error.code != SKErrorUnknown) {
         [AlertManager showGenericAlertWithTitle:@"Restore Failed" message:error.localizedDescription];
     }
+}
+
+#pragma mark - Account
+
+- (void)getAccountInfo {
+    
+    weakify(self);
+    
+    [[MyFeedsManager userIDManager] setupAccountWithSuccess:^(YTUserID * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            strongify(self);
+            
+            [[(IntroViewUUID *)[self activeView] textField] setText:responseObject.UUIDString];
+            self.button.enabled = YES;
+            
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Error Setting Up" message:error.localizedDescription];
+        
+    }];
 }
 
 #pragma mark - KVO

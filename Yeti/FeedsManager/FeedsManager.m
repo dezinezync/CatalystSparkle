@@ -1427,7 +1427,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             
             NSNumber *userID = self.userIDManager.userID ?: @0;
             
-            NSString *UUID = userID.integerValue > 0 ? self.userIDManager.UUIDString : @"x890371abdgvdfggsnnaa=";
+            NSString *UUID = (userID.integerValue > 0 && self.userIDManager.UUIDString) ? self.userIDManager.UUIDString : @"x890371abdgvdfggsnnaa=";
             NSString *encoded = [[UUID dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
             
             NSString *timecode = @([NSDate.date timeIntervalSince1970]).stringValue;
@@ -1744,6 +1744,43 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 #endif
     }];
 }
+
+#pragma mark -
+#ifndef SHARE_EXTENSION
+- (void)resetAccount {
+    self.folders = nil;
+    self.feeds = nil;
+    self.bookmarks = nil;
+    self.unread = nil;
+    self.totalUnread = 0;
+    
+    [self removeAllLocalBookmarks];
+    
+    NSString *kAccountID = @"YTUserID";
+    NSString *kUserID = @"userID";
+    
+    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+    if (store) {
+        [store removeObjectForKey:kAccountID];
+        [store removeObjectForKey:kUserID];
+        [store synchronize];
+    }
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (defaults) {
+        [defaults removeObjectForKey:kAccountID];
+        [defaults removeObjectForKey:kUserID];
+        [defaults synchronize];
+    }
+    
+    UICKeyChainStore *keychain = [self keychain];
+    keychain[kAccountID] = nil;
+    keychain[kUserID] = nil;
+    
+    self.userIDManager.UUID = nil;
+    self.userIDManager.userID = nil;
+}
+#endif
 
 #pragma mark - <YTUserDelegate>
 

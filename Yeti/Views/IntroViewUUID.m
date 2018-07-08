@@ -19,19 +19,11 @@
     self.textField.delegate = self;
     
 }
-
-- (IBAction)didLongTap:(UILongPressGestureRecognizer *)sender {
+- (IBAction)didTap:(UITapGestureRecognizer *)sender {
     
-    CGPoint point = [sender locationInView:sender.view];
-    CGRect requiredFrame = CGRectOffset(self.textField.frame, -12.f, -12.f);
+    [self copyUUID:sender];
     
-    if (CGRectContainsPoint(requiredFrame, point)) {
-        
-        [self copyUUID:sender];
-        
-        [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your Account ID has been copied to your device's clipboard."];
-        
-    }
+    [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your Account ID has been copied to your device's clipboard."];
     
 }
 
@@ -44,6 +36,21 @@
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     return NO;
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    
+    UIView *view = [super hitTest:point withEvent:event];
+    
+    CGRect requiredFrame = CGRectOffset(self.textField.frame, -12.f, -24.f);
+    
+    if (view != self.textField && CGRectContainsPoint(requiredFrame, point)) {
+        
+        view = self.textField;
+        
+    }
+    
+    return view;
 }
 
 @end

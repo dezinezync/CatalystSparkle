@@ -136,7 +136,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getOPMLWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#pragma mark - 
+
 #ifndef SHARE_EXTENSION
+
+- (void)resetAccount;
 
 #pragma mark - <YTUserDelegate>
 

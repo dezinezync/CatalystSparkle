@@ -13,6 +13,7 @@
 
 #define YETI_EXPORT FOUNDATION_EXPORT
 
+YETI_EXPORT NSString * const kResetAccountSettingsPref;
 YETI_EXPORT NSString * const kHasShownOnboarding;
 YETI_EXPORT NSString * const kIsSubscribingToPushNotifications;
 

@@ -33,12 +33,15 @@ Please note it somewhere safe as you’ll need it when contacting us or restorin
                             <nil key="textColor"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <textInputTraits key="textInputTraits" textContentType="username"/>
+                            <connections>
+                                <outletCollection property="gestureRecognizers" destination="He8-dg-vks" appends="YES" id="k5Z-zE-0mO"/>
+                            </connections>
                         </textField>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5er-FM-PCW">
                             <rect key="frame" x="0.0" y="430" width="375" height="43"/>
                             <string key="text">You can always access this ID under the App’s settings.
 
-You can long tap on the ID to copy it.</string>
+You can tap on the ID to copy it.</string>
                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
@@ -69,5 +72,10 @@ You can long tap on the ID to copy it.</string>
                 <action selector="didLongTap:" destination="iN0-l3-epB" id="F3o-4k-twd"/>
             </connections>
         </pongPressGestureRecognizer>
+        <tapGestureRecognizer id="He8-dg-vks">
+            <connections>
+                <action selector="didTap:" destination="iN0-l3-epB" id="ha0-YA-1uI"/>
+            </connections>
+        </tapGestureRecognizer>
     </objects>
 </document>

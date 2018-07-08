@@ -57,6 +57,62 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     return self;
 }
 
+- (void)setupAccountWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    // check server
+    if (self.delegate) {
+        
+        UICKeyChainStore *keychain = self.delegate.keychain;
+        
+        weakify(self);
+        
+        [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            NSDictionary *user = [responseObject valueForKey:@"user"];
+            DDLogDebug(@"Got existing user: %@", user);
+            
+            self->_userID = @([[user valueForKey:@"id"] integerValue]);
+            self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
+            
+            [keychain setString:self->_userID.stringValue forKey:kUserID];
+            [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
+            
+            if (successCB) {
+                successCB(self, response, task);
+            }
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            self->_UUID = [NSUUID UUID];
+            [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
+            
+            // let our server know about these changes
+            [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                DDLogDebug(@"created new user");
+                NSDictionary *user = [responseObject valueForKey:@"user"];
+                self.userID = @([[user valueForKey:@"id"] integerValue]);
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                if (successCB) {
+                    successCB(self, response, task);
+                }
+                
+            } error:errorCB];
+            
+        }];
+    }
+    else {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The UserManager was not setup correctly and therefore an account could not be created. Please restart the app to continue."}];
+            errorCB(error, nil, nil);
+        }
+    }
+}
+
 #pragma mark -
 
 - (NSUUID *)UUID
@@ -139,46 +195,6 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             dispatch_async(dispatch_get_main_queue(), ^{
                 [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
             });
-            
-            // check server
-            if (self.delegate) {
-                
-                weakify(self);
-                
-                [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    strongify(self);
-                    
-                    NSDictionary *user = [responseObject valueForKey:@"user"];
-                    DDLogDebug(@"Got existing user: %@", user);
-                    
-                    self->_userID = @([[user valueForKey:@"id"] integerValue]);
-                    self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
-                    
-                    [keychain setString:self->_userID.stringValue forKey:kUserID];
-                    [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    strongify(self);
-                    
-                    self->_UUID = [NSUUID UUID];
-                    [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
-                    
-                    // let our server know about these changes
-                    [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                        DDLogDebug(@"created new user");
-                        NSDictionary *user = [responseObject valueForKey:@"user"];
-                        self.userID = @([[user valueForKey:@"id"] integerValue]);
-                        
-                        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                        
-                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                        [AlertManager showGenericAlertWithTitle:@"Error loading user" message:error.localizedDescription];
-                    }];
-                    
-                }];
-            }
             
         }
         
