@@ -25,7 +25,7 @@
 #import <UserNotifications/UserNotifications.h>
 
 #import "YetiThemeKit.h"
-#import "TableHeader.h"
+#import "TableHeader.h" 
 
 @interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
@@ -34,6 +34,8 @@
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
 @property (nonatomic, weak) UIView *hairlineView;
+
+@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
 @end
 
@@ -211,6 +213,19 @@
     self.tableView.tableHeaderView = headerView;
     
     _headerView = headerView;
+}
+
+#pragma mark - Getters
+
+- (UISelectionFeedbackGenerator *)feedbackGenerator {
+    
+    if (!_feedbackGenerator) {
+        _feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
+        [_feedbackGenerator prepare];
+    }
+    
+    return _feedbackGenerator;
+    
 }
 
 #pragma mark - Setters
@@ -676,6 +691,15 @@
 
 #pragma mark - <ArticleProvider>
 
+- (void)willChangeArticle {
+    weakify(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self.feedbackGenerator selectionChanged];
+        [self.feedbackGenerator prepare];
+    });
+}
+
 // the logic for the following two methods is inversed
 // since the articles are displayed in reverse chronological order
 - (BOOL)hasNextArticleForArticle:(FeedItem *)item
@@ -732,6 +756,9 @@
     
     if (index > 0) {
         index--;
+        
+        [self willChangeArticle];
+        
         return ((NSArray <FeedItem *> *)self.DS.data)[index];
     }
     
@@ -753,6 +780,9 @@
     
     if (index < (((NSArray <FeedItem *> *)self.DS.data).count - 1)) {
         index++;
+        
+        [self willChangeArticle];
+        
         return ((NSArray <FeedItem *> *)self.DS.data)[index];
     }
     
@@ -782,6 +812,19 @@
 
 - (void)didChangeToArticle:(FeedItem *)item
 {
+    
+    if ([NSThread isMainThread] == NO) {
+        weakify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            [self didChangeToArticle:item];
+        });
+        
+        return;
+    }
+    
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
     
     if (index == NSNotFound)

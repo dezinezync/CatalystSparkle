@@ -1681,4 +1681,24 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
 }
 
+#pragma mark - Getters
+
+- (UINotificationFeedbackGenerator *)notificationGenerator {
+    if (!_notificationGenerator) {
+        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        [_notificationGenerator prepare];
+    }
+    
+    return _notificationGenerator;
+}
+
+- (UISelectionFeedbackGenerator *)feedbackGenerator {
+    if (!_feedbackGenerator) {
+        _feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
+        [_feedbackGenerator prepare];
+    }
+    
+    return _feedbackGenerator;
+}
+
 @end

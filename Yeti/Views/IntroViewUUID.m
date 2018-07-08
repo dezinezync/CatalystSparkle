@@ -9,6 +9,12 @@
 #import "IntroViewUUID.h"
 #import "FeedsManager.h"
 
+@interface IntroViewUUID ()
+
+@property (nonatomic, strong) UISelectionFeedbackGenerator *generator;
+
+@end
+
 @implementation IntroViewUUID
 
 - (void)awakeFromNib {
@@ -21,15 +27,33 @@
 }
 - (IBAction)didTap:(UITapGestureRecognizer *)sender {
     
-    [self copyUUID:sender];
-    
-    [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your Account ID has been copied to your device's clipboard."];
+    switch (sender.state) {
+        case UIGestureRecognizerStatePossible:
+        case UIGestureRecognizerStateChanged:
+        case UIGestureRecognizerStateBegan:
+            break;
+        case UIGestureRecognizerStateFailed:
+        case UIGestureRecognizerStateCancelled:
+        {
+            self.generator = nil;
+        }
+            break;
+        default:
+        {
+            [self copyUUID:sender];
+            [self.generator selectionChanged];
+            self.generator = nil;
+        }
+            break;
+    }
     
 }
 
 - (void)copyUUID:(id)sender {
     
     [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
+    
+    [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your account ID has been copied to the clipboard."];
     
 }
 
@@ -51,6 +75,15 @@
     }
     
     return view;
+}
+
+- (UISelectionFeedbackGenerator *)generator {
+    if (!_generator) {
+        _generator = [[UISelectionFeedbackGenerator alloc] init];
+        [_generator prepare];
+    }
+    
+    return _generator;
 }
 
 @end

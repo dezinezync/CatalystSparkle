@@ -8,6 +8,7 @@
 
 #import "ArticleHelperView.h"
 #import "YetiThemeKit.h"
+#import "ArticleVC.h"
 
 @implementation ArticleHelperView
 
@@ -124,13 +125,12 @@
     }
     
     UIScrollView *scrollView = (UIScrollView *)[[self.superview subviews] firstObject];
-//    CGSize contentSize = [scrollView contentSize];
-    
-//    sender.enabled = NO;
-//    self.endOfArticle.enabled = YES;
+    ArticleVC *vc = (ArticleVC *)[scrollView valueForKey:@"delegate"];
     
     asyncMain(^{
         [scrollView setContentOffset:CGPointMake(0, -scrollView.adjustedContentInset.top) animated:YES];
+        [[vc notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+        [[vc notificationGenerator] prepare];
     });
     
 }
@@ -144,13 +144,14 @@
     UIScrollView *scrollView = (UIScrollView *)[[self.superview subviews] firstObject];
     CGSize contentSize = [scrollView contentSize];
     
-//    sender.enabled = NO;
-//    self.startOfArticle.enabled = YES;
-    
     CGRect rect = CGRectMake(0, contentSize.height - scrollView.bounds.size.height, scrollView.bounds.size.width, scrollView.bounds.size.height);
+    
+    ArticleVC *vc = (ArticleVC *)[scrollView valueForKey:@"delegate"];
     
     asyncMain(^{
         [scrollView setContentOffset:CGPointMake(0, rect.origin.y + scrollView.adjustedContentInset.bottom) animated:YES];
+        [[vc notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+        [[vc notificationGenerator] prepare];
     });
     
 }

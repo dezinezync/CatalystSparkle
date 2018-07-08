@@ -127,7 +127,11 @@
     
     button.enabled = NO;
     
+    weakify(self);
+    
     [MyFeedsManager article:self.item markAsBookmarked:(!self.item.isBookmarked) success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
         
         BOOL errored = self.item.isBookmarked ? [MyFeedsManager addLocalBookmark:self.item] : [MyFeedsManager removeLocalBookmark:self.item];
         
@@ -142,11 +146,31 @@
      
         button.enabled = YES;
         
+        weakify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            strongify(self);
+            
+            [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+            [[self notificationGenerator] prepare];
+            
+        });
+        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
         [AlertManager showGenericAlertWithTitle:@"Service Error" message:error.localizedDescription];
         
         button.enabled = YES;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            strongify(self);
+            
+            [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeError];
+            [[self notificationGenerator] prepare];
+            
+        });
         
     }];
 }
@@ -170,6 +194,17 @@
     }
     
     button.enabled = YES;
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+        [[self notificationGenerator] prepare];
+        
+    });
     
 }
 
@@ -232,6 +267,9 @@
     // if previous was tappable, next should be tappable now
     if (!_searchNextButton.isEnabled)
         _searchNextButton.enabled = YES;
+    
+    [self.feedbackGenerator selectionChanged];
+    [self.feedbackGenerator prepare];
 }
 
 - (void)didTapSearchNext
@@ -259,6 +297,9 @@
     // if next was tappable, previous should be tappable now
     if (!_searchPrevButton.isEnabled)
         _searchPrevButton.enabled = YES;
+    
+    [self.feedbackGenerator selectionChanged];
+    [self.feedbackGenerator prepare];
 }
 
 - (void)keyboardFrameChanged:(NSNotification *)note

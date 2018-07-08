@@ -36,6 +36,9 @@
 
 @property (nonatomic, weak) ArticleHelperView *helperView;
 
+@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
+@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
+
 #pragma mark - Private
 
 - (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range;
