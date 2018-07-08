@@ -129,7 +129,12 @@
     if (![[NSFileManager defaultManager] removeItemAtPath:path error:&error]) {
         errored = YES;
         
-        [AlertManager showGenericAlertWithTitle:@"App Error" message:error.localizedDescription];
+        if (error.code == 4) {
+            errored = NO;
+        }
+        else {
+            [AlertManager showGenericAlertWithTitle:@"App Error" message:error.localizedDescription];
+        }
     }
     
     return errored;

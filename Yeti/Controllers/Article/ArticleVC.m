@@ -1644,7 +1644,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return YES;
     
     if (interaction == UITextItemInteractionPresentActions) {
+        NSString * const linkedHeader = @"🔗 ";
+        
         NSString *text = [textView.attributedText.string substringWithRange:characterRange];
+        
+        if ([text isEqualToString:linkedHeader]) {
+            text = [[textView text] stringByReplacingOccurrencesOfString:linkedHeader withString:@""];
+            
+            NSString *articleTitle = (self.item.articleTitle && ![self.item.articleTitle isBlank]) ? formattedString(@"- %@", self.item.articleTitle) : @"";
+            text = formattedString(@"%@%@", text, articleTitle);
+        }
+        
         UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, URL] applicationActivities:nil];
         
         if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
