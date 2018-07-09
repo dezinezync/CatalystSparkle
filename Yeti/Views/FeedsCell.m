@@ -32,7 +32,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     [super awakeFromNib];
     // Initialization code
     
-    self.faviconView.image = nil;
+    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
@@ -69,7 +69,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     [self.faviconView il_cancelImageLoading];
     
     self.faviconView.layer.cornerRadius = 4.f;
-    self.faviconView.image = nil;
+    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
