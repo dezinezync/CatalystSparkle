@@ -42,7 +42,14 @@
         else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image"]) {
             url = [self.extra[@"opengraph"] valueForKey:@"image"];
         }
-        
+        else if ([self.extra valueForKey:@"favicon"] && ![[self.extra valueForKey:@"favicon"] isBlank]) {
+            url = [self.extra valueForKey:@"favicon"];
+            
+            if ([[url pathExtension] isEqualToString:@"ico"]) {
+                NSURLComponents *components = [NSURLComponents componentsWithString:[self.extra valueForKey:@"favicon"]];
+                url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
+            }
+        }
     }
     
     if (!url && (self.favicon && ![self.favicon isBlank])) {
