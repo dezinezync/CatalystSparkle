@@ -348,7 +348,7 @@
                 sender.enabled = YES;
             });
            
-            [AlertManager showGenericAlertWithTitle:@"Unsubscribe failed" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"Unsubscribe Failed" message:error.localizedDescription];
             
         }];
         
@@ -422,7 +422,7 @@
             sender.enabled = YES;
         });
         
-        [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
+        [AlertManager showGenericAlertWithTitle:@"Subscribe Failed" message:error.localizedDescription];
     }];
     
 }
@@ -452,7 +452,7 @@
             sender.enabled = YES;
         });
         
-        [AlertManager showGenericAlertWithTitle:@"Error subscribing" message:error.localizedDescription];
+        [AlertManager showGenericAlertWithTitle:@"Error Subscribing" message:error.localizedDescription];
         
     }];
     

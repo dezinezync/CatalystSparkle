@@ -277,7 +277,7 @@
        
         strongify(self);
         
-        [AlertManager showGenericAlertWithTitle:@"An error occurred" message:error.localizedDescription fromVC:self];
+        [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.ioDoneButton.enabled = YES;
@@ -328,7 +328,7 @@
         
         strongify(self);
         
-        [AlertManager showGenericAlertWithTitle:@"An error occurred" message:error.localizedDescription fromVC:self];
+        [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.ioDoneButton.enabled = YES;

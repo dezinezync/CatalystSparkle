@@ -179,7 +179,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
                         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
                         
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                        [AlertManager showGenericAlertWithTitle:@"Error loading user" message:error.localizedDescription];
+                        [AlertManager showGenericAlertWithTitle:@"Error Loading User" message:error.localizedDescription];
                     }];
                     
                 }

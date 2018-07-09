@@ -206,7 +206,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                
                 asyncMain(^{
-                    [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+                    [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
                 });
                 
                 strongify(self);
@@ -233,7 +233,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 asyncMain(^{
-                    [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+                    [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
                 });
                 
                 strongify(self);
@@ -245,7 +245,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             asyncMain(^{
-                [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+                [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
             });
             
             strongify(self);
@@ -266,7 +266,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
             
             strongify(self);
             

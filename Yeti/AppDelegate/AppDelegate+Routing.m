@@ -65,7 +65,7 @@
             NSURL *url = [NSURL URLWithString:path];
             
             if (!url) {
-                [AlertManager showGenericAlertWithTitle:@"Invalid link" message:@"The link seems to be invalid or Yeti was unable to process it correctly."];
+                [AlertManager showGenericAlertWithTitle:@"Invalid Link" message:@"The link seems to be invalid or Yeti was unable to process it correctly."];
                 return YES;
             }
             
@@ -270,7 +270,7 @@
         });
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [AlertManager showGenericAlertWithTitle:@"Error adding feed" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"Error Adding Feed" message:error.localizedDescription];
         });
         
     }];
@@ -344,10 +344,10 @@
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            NSString *title = @"Error adding feed";
+            NSString *title = @"Error Adding Feed";
             
             if (error.code == kFMErrorExisting) {
-                title = @"You are already subscribed.";
+                title = @"Already Subscribed.";
             }
             
             [AlertManager showGenericAlertWithTitle:title message:error.localizedDescription];

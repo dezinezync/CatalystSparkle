@@ -62,7 +62,7 @@ NSString *const kFiltersCell = @"filterCell";
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
-        [AlertManager showGenericAlertWithTitle:@"Failed to load filters" message:error.localizedDescription];
+        [AlertManager showGenericAlertWithTitle:@"Failed to Load Filters" message:error.localizedDescription];
         
     }];
     
@@ -144,7 +144,7 @@ NSString *const kFiltersCell = @"filterCell";
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [AlertManager showGenericAlertWithTitle:@"Failed to delete filter" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
             
         }];
         
@@ -182,7 +182,7 @@ NSString *const kFiltersCell = @"filterCell";
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
-        [AlertManager showGenericAlertWithTitle:@"Failed to add a new filter" message:error.localizedDescription];
+        [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
         
     }];
     

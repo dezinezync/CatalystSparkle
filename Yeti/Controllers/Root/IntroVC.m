@@ -279,7 +279,7 @@ static void * buttonStateContext = &buttonStateContext;
                     }];
                 }
                 else {
-                    [AlertManager showGenericAlertWithTitle:@"No receipt data" message:@"The App Store did not provide receipt data for this transaction"];
+                    [AlertManager showGenericAlertWithTitle:@"No Receipt Data" message:@"The App Store did not provide receipt data for this transaction"];
                 }
             });
             

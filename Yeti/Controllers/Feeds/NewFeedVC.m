@@ -444,7 +444,7 @@
         });
        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
         });
         
     }];

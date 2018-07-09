@@ -255,7 +255,7 @@
             }
             else {
                 asyncMain(^{
-                    [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+                    [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
                 });
                 
                 if (completionHandler) {
@@ -308,7 +308,7 @@
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             asyncMain(^{
-                [AlertManager showGenericAlertWithTitle:@"Something went wrong" message:error.localizedDescription];
+                [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
             });
             
             if (completionHandler) {

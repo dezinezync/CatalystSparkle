@@ -1306,7 +1306,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                     MyFeedsManager.subsribeAfterPushEnabled = nil;
                 }
                 
-                [AlertManager showGenericAlertWithTitle:@"Subscribe failed" message:error.localizedDescription];
+                [AlertManager showGenericAlertWithTitle:@"Subscribe Failed" message:error.localizedDescription];
                 
             }];
             

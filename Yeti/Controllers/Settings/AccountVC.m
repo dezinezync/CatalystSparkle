@@ -194,7 +194,7 @@
                 }];
             }
             else {
-                [AlertManager showGenericAlertWithTitle:@"No receipt data" message:@"The App Store did not provide receipt data for this transaction"];
+                [AlertManager showGenericAlertWithTitle:@"No Receipt Data" message:@"The App Store did not provide receipt data for this transaction"];
             }
         });
 
@@ -648,7 +648,7 @@
             NSDictionary *user = [responseObject valueForKey:@"user"];
             
             if (!user) {
-                [AlertManager showGenericAlertWithTitle:@"No user" message:@"No user was found with this UUID."];
+                [AlertManager showGenericAlertWithTitle:@"No User" message:@"No user was found with this UUID."];
                 return;
             }
             

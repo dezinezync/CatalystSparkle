@@ -74,12 +74,12 @@
     NSString *title = [textField text];
     
     if ([title isBlank]) {
-        [AlertManager showGenericAlertWithTitle:@"Incomplete title" message:@"Please provide a title for your new folder"];
+        [AlertManager showGenericAlertWithTitle:@"Incomplete Title" message:@"Please provide a title for your new folder"];
         return NO;
     }
     
-    if (title.length < 3 || title.length > 32) {
-        [AlertManager showGenericAlertWithTitle:@"Title length" message:@"Folder titles should be more than 3 letters and no longer than 32 characters."];
+    if (title.length < 2 || title.length > 32) {
+        [AlertManager showGenericAlertWithTitle:@"Title Length" message:@"Folder titles should be atleast 3 characters and no longer than 32 characters."];
         return NO;
     }
     
