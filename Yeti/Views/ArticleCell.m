@@ -70,11 +70,23 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         Feed * feed = [MyFeedsManager feedForID:item.feedID];
         
         if (feed) {
-            NSString *formatted = formattedString(@"%@ | %@", item.articleTitle, feed.title);
+            NSString *articleTitle = item.articleTitle;
+            
+            if (articleTitle && ![articleTitle isBlank]) {
+                articleTitle = [articleTitle stringByAppendingString:@" | "];
+            }
+            
+            NSString *formatted = formattedString(@"%@%@", articleTitle, feed.title);
+            
+            NSRange range = [formatted rangeOfString:formattedString(@" | %@", feed.title)];
+            if (range.location == NSNotFound) {
+                range = [formatted rangeOfString:feed.title];
+            }
+            
             UIFont *titleFont = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
             
             NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : titleFont}];
-            [attrs setAttributes:@{NSForegroundColorAttributeName : theme.captionColor} range:[formatted rangeOfString:formattedString(@" | %@", feed.title)]];
+            [attrs setAttributes:@{NSForegroundColorAttributeName : theme.captionColor} range:range];
             
             self.titleLabel.attributedText = attrs;
         }
@@ -101,6 +113,7 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         
         if (content) {
             self.summaryLabel.text = content.content;
+            self.summaryLabel.textColor = [[YTThemeKit theme] titleColor];
         }
     }
     
