@@ -632,7 +632,9 @@
     
     weakify(self);
     
-    [MyFeedsManager getFeed:self.feed page:(_page+1) success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSInteger page = self->_page + 1;
+    
+    [MyFeedsManager getFeed:self.feed page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -655,7 +657,7 @@
             self.DS.data = self.feed.articles;
         });
         
-        self->_page++;
+        self->_page = page;
         
         if ([self loadOnReady] != nil) {
             weakify(self);

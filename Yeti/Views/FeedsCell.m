@@ -255,11 +255,14 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         return;
     }
     
-    self.countLabel.text = [[[(Folder *)self.object feeds] rz_reduce:^id(NSNumber *prev, Feed *current, NSUInteger idx, NSArray *array) {
+    NSArray <Feed *> *feeds = [(Folder *)self.object feeds];
+    NSNumber *totalUnread = (NSNumber *)[feeds rz_reduce:^id(NSNumber *prev, Feed *current, NSUInteger idx, NSArray *array) {
         
         return @([prev integerValue] + (current.unread ?: @0).integerValue);
         
-    } initialValue:@(0)] stringValue];
+    } initialValue:@(0)];
+    
+    self.countLabel.text = [totalUnread stringValue];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context

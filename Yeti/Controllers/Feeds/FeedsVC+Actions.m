@@ -24,7 +24,7 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing || !_noPreSetup) {
+    if (_refreshing && !_noPreSetup) {
         
         if ([sender isRefreshing])
             [sender endRefreshing];
@@ -42,7 +42,7 @@
             
             strongify(self);
             
-            [self.headerView.tableView reloadData];
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -59,9 +59,6 @@
 #endif
         
         asyncMain(^{
-            
-//            [self setupData:MyFeedsManager.feeds];
-            
             if ([responseObject integerValue] == 2) {
                 [sender endRefreshing];
             }
@@ -233,9 +230,13 @@
                 }];
             }
             
-            MyFeedsManager.feeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+            
+            feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return obj.feedID.integerValue != feedID.integerValue;
             }];
+            
+            MyFeedsManager.feeds = feeds;
             
             if (completionHandler) {
                 asyncMain(^{

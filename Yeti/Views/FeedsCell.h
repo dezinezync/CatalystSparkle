@@ -23,4 +23,6 @@ extern NSString *const _Nonnull kFeedsCell;
 
 - (void)configureFolder:(Folder *_Nonnull)folder;
 
+- (void)updateFolderCount;
+
 @end

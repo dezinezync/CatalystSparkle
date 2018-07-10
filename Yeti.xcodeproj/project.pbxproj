@@ -13,6 +13,10 @@
 		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
 		F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */; };
 		F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
+		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
+		F00B0FA120F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
+		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
+		F00B0FA320F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
@@ -587,6 +591,9 @@
 		F0095FAD20764130009BFFF3 /* FeedsHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsHeaderView.h; sourceTree = "<group>"; };
 		F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsHeaderView.m; sourceTree = "<group>"; };
 		F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsHeaderView.xib; sourceTree = "<group>"; };
+		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
+		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
+		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
@@ -1431,6 +1438,9 @@
 				F04416E420E618F8008AB1D3 /* CollectionHeader.h */,
 				F04416E520E618F8008AB1D3 /* CollectionHeader.m */,
 				F04416E620E618F8008AB1D3 /* CollectionHeader.xib */,
+				F00B0F9D20F487090012EB03 /* EmptyCell.h */,
+				F00B0F9E20F487090012EB03 /* EmptyCell.m */,
+				F00B0F9F20F487090012EB03 /* EmptyCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1836,6 +1846,7 @@
 				F0A5AEB920C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
 				F05C7AA420D8E203007D6B5C /* TableHeader.xib in Resources */,
 				F0A5AE9B20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
+				F00B0FA320F487090012EB03 /* EmptyCell.xib in Resources */,
 				F047F4FD20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F0DDA0EF20E5F71400C5D97E /* RecommendationsVC.xib in Resources */,
 				F0B21BBE208C7F59007E5A3B /* NewFolderVC.xib in Resources */,
@@ -1884,6 +1895,7 @@
 				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
 				F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */,
 				F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
+				F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F0A5AE9020C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
 				F0A5AE9A20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
@@ -2120,6 +2132,7 @@
 				F069ABBD206E018F00021ABF /* CodeTheme.m in Sources */,
 				F0AD76D620E2217C0003787B /* Reachability.m in Sources */,
 				F069ABBE206E018F00021ABF /* List.m in Sources */,
+				F00B0FA120F487090012EB03 /* EmptyCell.m in Sources */,
 				F0869B5A2099CE9000A5D723 /* YetiTheme.m in Sources */,
 				F069ABBF206E018F00021ABF /* DTTimePeriodGroup.m in Sources */,
 				F069ABC0206E018F00021ABF /* FeedVC.m in Sources */,
@@ -2265,6 +2278,7 @@
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
+				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,

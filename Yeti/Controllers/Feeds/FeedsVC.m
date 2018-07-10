@@ -24,6 +24,8 @@
 #import "EmptyView.h"
 #import "TableHeader.h"
 
+#import "EmptyCell.h"
+
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
@@ -160,6 +162,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.DS.delegate = self;
     
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(EmptyCell.class) bundle:nil] forCellReuseIdentifier:kEmptyCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
     
 //    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
@@ -338,14 +341,21 @@ static void *KVO_Unread = &KVO_Unread;
         
     }
     else {
+        
+        if (!self.DS2.data.count) {
+            return [self rowForEmptySection:indexPath.section];
+        }
+        
         // Configure the cell...
         Feed *feed = [self.DS objectAtIndexPath:indexPath];
-        if ([feed isKindOfClass:Feed.class]) {
-            [cell configure:feed];
-        }
-        else {
-            // folder
-            [cell configureFolder:(Folder *)feed];
+        if (feed) {
+            if ([feed isKindOfClass:Feed.class]) {
+                [cell configure:feed];
+            }
+            else {
+                // folder
+                [cell configureFolder:(Folder *)feed];
+            }
         }
     }
     
@@ -387,6 +397,7 @@ static void *KVO_Unread = &KVO_Unread;
         CGPoint contentOffset = self.tableView.contentOffset;
         
         FeedsCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [cell updateFolderCount];
         
         if (folder.isExpanded) {
             
@@ -458,6 +469,22 @@ static void *KVO_Unread = &KVO_Unread;
     return view;
 }
 
+- (UITableViewCell *)rowForEmptySection:(NSInteger)section {
+    
+    if (section == 1) {
+        EmptyCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kEmptyCell forIndexPath:[NSIndexPath indexPathForRow:0 inSection:section]];
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        cell.backgroundColor = theme.cellColor;
+        cell.activityIndicator.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+        
+        return cell;
+    }
+    
+    return nil;
+    
+}
+
 - (void)setupData:(NSArray <Feed *> *)feeds
 {
     
@@ -474,9 +501,41 @@ static void *KVO_Unread = &KVO_Unread;
     
     self->_highlightedRow = nil;
     
+    // get a list of open folders
+    NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+        return [obj isKindOfClass:Folder.class] && [(Folder *)obj isExpanded];
+    }] rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+        return obj.folderID;
+    }];
+    
     // ensures search bar does not dismiss on refresh or first load
     @try {
-        NSArray *data = [(MyFeedsManager.folders ?: @[]) arrayByAddingObjectsFromArray:MyFeedsManager.feeds];
+        NSArray *folders = (MyFeedsManager.folders ?: @[]);
+        
+        if (openFolders.count) {
+            [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([openFolders containsObject:obj.folderID]) {
+                    obj.expanded = YES;
+                }
+            }];
+        }
+        
+        NSMutableArray *data = @[].mutableCopy;
+        
+        [folders enumerateObjectsUsingBlock:^(Folder *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            [data addObject:obj];
+            
+            if (obj.isExpanded) {
+                [data addObjectsFromArray:obj.feeds];
+            }
+            
+        }];
+        
+        if (MyFeedsManager.feeds.count) {
+            [data addObjectsFromArray:MyFeedsManager.feeds];
+        }
+        
         CGPoint contentOffset = self.tableView.contentOffset;
         
         [self.DS setData:data section:1];
