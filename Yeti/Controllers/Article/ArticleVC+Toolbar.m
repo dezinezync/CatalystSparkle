@@ -223,10 +223,6 @@
 
 - (void)didTapSearchDone
 {
-    if (_searchHighlightingRect == nil) {
-        return;
-    }
-    
     _showSearchBar = NO;
     [_searchBar resignFirstResponder];
     [_searchBar setText:nil];

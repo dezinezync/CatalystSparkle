@@ -103,8 +103,8 @@
             button.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
         }
         
-        self.detailsTitleLabel.textColor = theme.titleColor;
-        self.detailsSubtitleLabel.textColor = theme.captionColor;
+//        self.detailsTitleLabel.textColor = theme.titleColor;
+//        self.detailsSubtitleLabel.textColor = theme.captionColor;
         
         CGAffineTransform base = self.detailsView.transform;
         
@@ -141,8 +141,8 @@
             self.ioSubtitleLabel.text = @"Preparing your file";
         }
         
-        self.ioTitleLabel.textColor = theme.titleColor;
-        self.ioSubtitleLabel.textColor = theme.captionColor;
+//        self.ioTitleLabel.textColor = theme.titleColor;
+//        self.ioSubtitleLabel.textColor = theme.captionColor;
         
         if (current == OPMLStateDefault) {
             
@@ -160,7 +160,11 @@
                 
                 self.detailsView.hidden = YES;
                 
+                weakify(self);
+                
                 [UIView animateWithDuration:(duration/2) delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0.5 options:UIViewAnimationOptionAllowUserInteraction animations:^{
+                    
+                    strongify(self);
                     
                     self.ioView.transform = base;
                     
@@ -265,7 +269,11 @@
             self.ioProgressView.progress = 0.75f;
         });
         
+        weakify(self);
+        
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            strongify(self);
             
             self.ioProgressView.progress = 1.f;
             
@@ -282,7 +290,11 @@
         
         [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
         
+        weakify(self);
+        
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
             self.ioDoneButton.enabled = YES;
         });
         
@@ -309,9 +321,9 @@
     
     __unused NSURLSessionTask *task = [[DZUploadSession shared] UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        strongify(self);
-        
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
             self.ioSubtitleLabel.text = @"Uploaded. Please refresh your feeds to update your subscriptions on this device.";
             [self.ioSubtitleLabel sizeToFit];
             
@@ -321,9 +333,8 @@
         
     } progress:^(double completed, NSProgress *progress) {
         
-        strongify(self);
-        
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             self.ioProgressView.progress = completed;
         });
         
@@ -333,7 +344,10 @@
         
         [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
         
+        weakify(self);
+        
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             self.ioDoneButton.enabled = YES;
         });
         

@@ -54,7 +54,11 @@
     
 //    textField.keyboardAppearance = textView.keyboardAppearance;
     
-    UITableView *tableView = [UITableView appearance];
+    Class splitVCClass = NSClassFromString(@"SplitVC");
+    Class navClass = NSClassFromString(@"YTNavigationController");
+    Class settingsClass = NSClassFromString(@"SettingsVC");
+    
+    UITableView *tableView = [UITableView appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     tableView.backgroundColor = self.tableColor;
     
     UIRefreshControl *refresh = [UIRefreshControl appearance];
