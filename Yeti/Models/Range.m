@@ -1,4 +1,6 @@
 #import "Range.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSString+Extras.h>
 
 #ifndef DDLogError
 #import <DZKit/DZLogger.h>
@@ -63,6 +65,16 @@
     
     if ([key isEqualToString:@"range"] && [value isKindOfClass:NSString.class]) {
         value = [NSValue valueWithRange:NSRangeFromString(value)];
+    }
+    
+    if ([key isEqualToString:@"url"] && value && [value isKindOfClass:NSArray.class]) {
+        value = [(NSArray *)value rz_reduce:^id(id prev, id current, NSUInteger idx, NSArray *array) {
+            if ([current isKindOfClass:NSString.class] && [(NSString *)current isBlank] == NO) {
+                return current;
+            }
+            
+            return prev;
+        }];
     }
     
     [super setValue:value forKey:key];

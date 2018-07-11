@@ -74,7 +74,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 {
     [super viewDidAppear:animated];
     
-    if (_reloadDataset && !self.isUnread) {
+    if (_reloadDataset && self.isUnread == NO) {
         _reloadDataset = NO;
         
         self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
