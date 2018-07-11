@@ -588,6 +588,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
+        
+        [self.stackView layoutIfNeeded];
+        
         [self scrollViewDidScroll:self.scrollView];
         
         CGSize contentSize = self.scrollView.contentSize;
@@ -957,22 +960,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
         
+        para = nil;
+        
         // since the last one is a paragraph as well, simlpy append to it.
         Paragraph *last = (Paragraph *)_last;
         
         NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
         
-        NSAttributedString *newAttrs = [para processText:content.content ranges:content.ranges attributes:content.attributes];
-        NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+        NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
         
-        [attrs appendAttributedString:accessory];
-        [attrs appendAttributedString:newAttrs];
-        
-        if (!rangeAdded) {
-            last.bigContainer = YES;
+        if (newAttrs) {
+            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+            
+            [attrs appendAttributedString:accessory];
+            [attrs appendAttributedString:newAttrs];
+            
+            if (!rangeAdded) {
+                last.bigContainer = YES;
+            }
+            
+            last.attributedText = attrs.copy;
         }
         
-        last.attributedText = attrs.copy;
         attrs = nil;
         newAttrs = nil;
         return;

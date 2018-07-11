@@ -74,6 +74,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (void)viewWillAppear
 {
+    if (self.appearing == YES)
+        return;
+    
     self.appearing = YES;
     
     if (self.avoidsLazyLoading)
@@ -92,6 +95,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (void)viewDidDisappear
 {
+    
+    if (self.appearing == NO)
+        return;
 
     self.appearing = NO;
     
@@ -102,7 +108,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     DDLogDebug(@"%p did disappear", &self);
     
-    if ([super attributedText]) {
+    if ([super attributedText] != nil) {
         self.cachedAttributedText = [super attributedText].copy;
         self.attributedText = nil;
     }
