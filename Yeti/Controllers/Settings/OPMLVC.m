@@ -93,7 +93,7 @@
         UIView *view = self.detailsView.isHidden ? self.ioView : self.detailsView;
         
         [UIView animateWithDuration:(duration/2) animations:^{
-            view.transform = CGAffineTransformMakeTranslation(0, view.bounds.size.height + 24.f);
+            view.transform = CGAffineTransformMakeTranslation(0, view.bounds.size.height + 32.f);
         }];
         
     }
@@ -110,7 +110,7 @@
         
         self.detailsView.transform = CGAffineTransformTranslate(base, 0, self.detailsView.bounds.size.height);
         self.detailsView.hidden = NO;
-        self.detailsView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
+//        self.detailsView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
         
         weakify(self);
         
@@ -127,10 +127,10 @@
         self.ioProgressView.progress = 0.0f;
         
         CGAffineTransform base = self.ioView.transform;
-        self.ioView.transform = CGAffineTransformTranslate(base, 0, self.ioView.bounds.size.height + 24.f);
+        self.ioView.transform = CGAffineTransformTranslate(base, 0, self.ioView.bounds.size.height + 32.f);
         self.ioView.hidden = NO;
         
-        self.ioView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
+//        self.ioView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
         
         if (state == OPMLStateImport) {
             self.ioTitleLabel.text = @"Importing OPML";
@@ -152,7 +152,7 @@
                 
                 strongify(self);
                 
-                self.detailsView.transform = CGAffineTransformMakeTranslation(0, self.detailsView.bounds.size.height + 24.f);
+                self.detailsView.transform = CGAffineTransformMakeTranslation(0, self.detailsView.bounds.size.height + 32.f);
                 
             } completion:^(BOOL finished) { if (finished) {
                 
@@ -176,13 +176,14 @@
 
 - (IBAction)didTapImport:(UIButton *)sender {
     
-    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[(__bridge NSString *)kUTTypeXML] inMode:UIDocumentPickerModeImport];
+    // get the UTI for an extension
+    NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
+    
+    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[(__bridge NSString *)kUTTypeXML, typeForExt] inMode:UIDocumentPickerModeImport];
     
     importVC.delegate = self;
     
     [self presentViewController:importVC animated:YES completion:nil];
-    
-    self.state = OPMLStateImport;
     
 }
 
@@ -216,6 +217,8 @@
     
     if (self.state == OPMLStateExport)
         return;
+    
+    self.state = OPMLStateImport;
     
     self.importURL = [urls firstObject];
     

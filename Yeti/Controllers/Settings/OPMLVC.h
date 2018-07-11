@@ -19,13 +19,13 @@ typedef NS_ENUM(NSInteger, OPMLState) {
 
 @property (nonatomic, assign) OPMLState state;
 
-@property (weak, nonatomic) IBOutlet UIVisualEffectView *ioView;
+@property (weak, nonatomic) IBOutlet UIView *ioView;
 @property (weak, nonatomic) IBOutlet UILabel *ioTitleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *ioDoneButton;
 @property (weak, nonatomic) IBOutlet UIProgressView *ioProgressView;
 @property (weak, nonatomic) IBOutlet UILabel *ioSubtitleLabel;
 
-@property (weak, nonatomic) IBOutlet UIVisualEffectView *detailsView;
+@property (weak, nonatomic) IBOutlet UIView *detailsView;
 @property (weak, nonatomic) IBOutlet UILabel *detailsTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailsSubtitleLabel;
 
