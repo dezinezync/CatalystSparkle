@@ -170,7 +170,8 @@ NSString *const kFiltersCell = @"filterCell";
         strongify(self);
         
         if ([responseObject boolValue]) {
-            self.DS2.data = [@[self->_keywordInput] arrayByAddingObjectsFromArray:self.DS2.data];
+            NSArray *data = [@[self->_keywordInput] arrayByAddingObjectsFromArray:self.DS2.data];
+            self.DS2.data = data;
             self->_keywordInput = nil;
             
             asyncMain(^{

@@ -1931,13 +1931,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     weakify(self);
     
-    NSDictionary *params = @{};
+    NSDictionary *params = @{}, *queryParams = @{};
     
     if (existing) {
         params = @{@"existing": existing};
     }
     
-    [self.backgroundSession POST:@"/bookmarked" queryParams:@{@"userID": MyFeedsManager.userID} parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (self.userID) {
+        queryParams = @{@"userID": MyFeedsManager.userID};
+    }
+    
+    [self.backgroundSession POST:@"/bookmarked" queryParams:queryParams parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode >= 300) {
             // no changes.

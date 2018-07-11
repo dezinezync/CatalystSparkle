@@ -446,8 +446,10 @@
     if (!isFolder || (isFolder && !isFolderExpanded)) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
         
-        [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-        [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+            [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+        });
     }
     
     // if it is a folder, it's expanded at this point

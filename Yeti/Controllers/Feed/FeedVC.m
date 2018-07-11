@@ -761,7 +761,7 @@
         
         [self willChangeArticle];
         
-        return ((NSArray <FeedItem *> *)self.DS.data)[index];
+        return [((NSArray <FeedItem *> *)self.DS.data) safeObjectAtIndex:index];
     }
     
     return nil;
@@ -785,7 +785,7 @@
         
         [self willChangeArticle];
         
-        return ((NSArray <FeedItem *> *)self.DS.data)[index];
+        return [((NSArray <FeedItem *> *)self.DS.data) safeObjectAtIndex:index];
     }
     
     return nil;
@@ -793,6 +793,10 @@
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read
 {
+    
+    if (!article)
+        return;
+    
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
     
     if (index == NSNotFound)
@@ -802,13 +806,24 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
-        self.feed.articles[index].read = read;
-        [(NSArray <FeedItem *> *)self.DS.data objectAtIndex:index].read = read;
         
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        FeedItem *articleInFeed = [self.feed.articles safeObjectAtIndex:index];
+        if (articleInFeed) {
+            articleInFeed.read = read;
+        }
         
-        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        FeedItem *articleInDS = [(NSArray <FeedItem *> *)self.DS.data safeObjectAtIndex:index];
+        
+        if (articleInDS) {
+            articleInDS.read = read;
+            // if the article exists in the datasource,
+            // we can expect a cell for it and therefore
+            // reload it.
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+            
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        }
     });
 }
 

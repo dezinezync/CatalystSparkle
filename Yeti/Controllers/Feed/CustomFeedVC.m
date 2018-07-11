@@ -154,8 +154,8 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     weakify(self);
     
     if (self.isUnread) {
-        _page++;
-        [MyFeedsManager getUnreadForPage:_page success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        NSInteger page = self->_page + 1;
+        [MyFeedsManager getUnreadForPage:page success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);
             
@@ -165,6 +165,8 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
             if (![(NSArray *)[responseObject objectForKey:@"articles"] count]) {
                 self->_canLoadNext = NO;
             }
+            
+            self->_page = page;
             
             self.DS.data = MyFeedsManager.unread;
             
@@ -184,7 +186,9 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
             DDLogError(@"%@", error);
             
             strongify(self);
-            self->_page--;
+            
+            if (!self)
+                return;
             
             self.loadingNext = NO;
             

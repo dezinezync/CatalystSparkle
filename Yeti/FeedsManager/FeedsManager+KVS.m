@@ -15,6 +15,9 @@
 
 - (void)article:(FeedItem *)item markAsRead:(BOOL)read
 {
+    if (!item)
+        return;
+    
     [self articles:@[item] markAsRead:read];
     
 }
