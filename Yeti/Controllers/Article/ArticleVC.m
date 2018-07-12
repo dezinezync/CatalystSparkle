@@ -569,12 +569,36 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         });
     }
     
-    for (Content *content in self.item.content) { @autoreleasepool {
-        asyncMain(^{
+    [self.item.content enumerateObjectsUsingBlock:^(Content *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        strongify(self);
+        
+        /**
+         * 1. Check the first item in the list
+         * 2. If it's an image
+         * 3. The article declares a cover image
+         */
+        if (idx == 0 && ([obj.type isEqualToString:@"img"] || [obj.type isEqualToString:@"image"]) && self.item.coverImage != nil) {
+            // check if the cover image and the first image
+            // are the same entities
+            
+            NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
+            NSURLComponents *imageComponents = [NSURLComponents componentsWithString:obj.url];
+            
+            if ([coverComponents.path isEqualToString:imageComponents.path]) {
+                return;
+            }
+        }
+       
+        weakify(self);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
-            [self processContent:content];
+            
+            [self processContent:obj];
         });
-    } }
+        
+    }];
     
     self->_last = nil;
 
