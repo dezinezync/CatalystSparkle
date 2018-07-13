@@ -40,8 +40,7 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
     if (self = [super init]) {
         self.themePath = path;
         
-        self.codeFont = [UIFont fontWithName:@"Menlo" size:16.f];
-        self.codeFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:self.codeFont];
+        [self setupFont];
         
         self.strippedTheme = [self stripTheme];
         self.themeDict = [self strippedThemeToTheme:self.strippedTheme];
@@ -70,9 +69,37 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
         if (!self.backgroundColor)
             self.backgroundColor = [UIColor whiteColor];
         
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdatePreferredContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
+        
     }
     
     return self;
+}
+
+- (void)setupFont {
+    UIFont *base = [UIFont fontWithName:@"Menlo" size:16.f];
+    UIFont *required = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:base];
+    
+    self.codeFont = required;
+}
+
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void)didUpdatePreferredContentCategory {
+    
+    if ([NSThread isMainThread] == NO) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self didUpdatePreferredContentCategory];
+        });
+        return;
+    }
+    
+    [self setupFont];
+    
 }
 
 - (NSAttributedString *)applyStyle:(NSArray <NSString *> *)styleList toString:(NSString *)string {
