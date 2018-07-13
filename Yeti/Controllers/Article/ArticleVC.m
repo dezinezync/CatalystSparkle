@@ -668,7 +668,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
-    NSString *firstLine = formattedString(@"%@\n%@", feed.title, author);
+    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.title stringByAppendingString:@"\n"] : @"", author);
     NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
     
     NSString *sublineText = formattedString(@"%@%@", firstLine, timestamp);
@@ -708,7 +708,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                                         };
     
     NSMutableAttributedString *subline = [[NSMutableAttributedString alloc] initWithString:sublineText attributes:subtextAttributes];
-    NSRange feedTitleRange = [sublineText rangeOfString:feed.title];
+    NSRange feedTitleRange = NSMakeRange(NSNotFound, 0);
+    
+    if (feed) {
+        feedTitleRange = [sublineText rangeOfString:feed.title];
+    }
     
     if (feedTitleRange.location != NSNotFound) {
         [subline addAttribute:NSForegroundColorAttributeName value:theme.tintColor range:feedTitleRange];
