@@ -805,7 +805,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 }
             }
             else {
-                NSArray *unread = MyFeedsManager.unread.copy;
+                NSArray *unread = MyFeedsManager.unread;
                 NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                     return !obj.isRead;
                 }];

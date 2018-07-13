@@ -87,7 +87,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (self.cachedAttributedText) {
         self.attributedText = self.cachedAttributedText.copy;
         
-        DDLogDebug(@"%p will appear. Has cached text: %@", &self, self.cachedAttributedText != nil ? @"Yes" : @"No");
+//        DDLogDebug(@"%p will appear. Has cached text: %@", &self, self.cachedAttributedText != nil ? @"Yes" : @"No");
         
         self.cachedAttributedText = nil;
     }
@@ -106,7 +106,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     self.alpha = 0.f;
     
-    DDLogDebug(@"%p did disappear", &self);
+//    DDLogDebug(@"%p did disappear", &self);
     
     if ([super attributedText] != nil) {
         self.cachedAttributedText = [super attributedText].copy;

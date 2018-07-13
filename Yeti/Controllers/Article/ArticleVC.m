@@ -662,7 +662,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     author = [author stringByStrippingHTML];
     
-    NSString *subline = formattedString(@"%@ • %@", author, [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES]);
+    if ([author isBlank] == NO) {
+        author = [author stringByAppendingString:@" • "];
+    }
+    
+    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+    
+    NSString *firstLine = formattedString(@"%@\n%@", feed.title, author);
+    NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
+    
+    NSString *sublineText = formattedString(@"%@%@", firstLine, timestamp);
     
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     para.lineHeightMultiple = 1.025f;
@@ -698,6 +707,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                                         NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-0.43f) : [NSNull null]
                                         };
     
+    NSMutableAttributedString *subline = [[NSMutableAttributedString alloc] initWithString:sublineText attributes:subtextAttributes];
+    NSRange feedTitleRange = [sublineText rangeOfString:feed.title];
+    
+    if (feedTitleRange.location != NSNotFound) {
+        [subline addAttribute:NSForegroundColorAttributeName value:theme.tintColor range:feedTitleRange];
+    }
+    
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
@@ -715,7 +731,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     UILabel *sublabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
     sublabel.numberOfLines = 0;
-    sublabel.attributedText = [[NSAttributedString alloc] initWithString:subline attributes:subtextAttributes];
+    sublabel.attributedText = subline;
     sublabel.translatesAutoresizingMaskIntoConstraints = NO;
     sublabel.lineBreakMode = NSLineBreakByWordWrapping;
 //    sublabel.preferredMaxLayoutWidth = self.view.bounds.size.width;

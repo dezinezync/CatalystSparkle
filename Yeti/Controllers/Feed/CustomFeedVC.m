@@ -67,6 +67,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
         self.tableView.refreshControl = refresh;
         
         self.DS.data = [MyFeedsManager unread];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     }
 }
 
@@ -74,10 +75,15 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 {
     [super viewDidAppear:animated];
     
-    if (_reloadDataset && self.isUnread == NO) {
+    if (_reloadDataset) {
         _reloadDataset = NO;
         
-        self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        if (self.unread == NO) {
+            self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        }
+        else {
+            self.DS.data = MyFeedsManager.unread;
+        }
     }
 }
 
@@ -229,8 +235,15 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 
 - (void)didUpdateBookmarks
 {
-    if (!_reloadDataset)
+    if (!_reloadDataset) {
         _reloadDataset = YES;
+    }
+}
+
+- (void)didUpdateUnread {
+    if (!_reloadDataset) {
+        _reloadDataset = YES;
+    }
 }
 
 #pragma mark - KVO

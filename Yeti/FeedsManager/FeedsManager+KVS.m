@@ -24,48 +24,97 @@
 
 - (void)articles:(NSArray<FeedItem *> *)items markAsRead:(BOOL)read
 {
-    NSMutableSet *feeds = [NSMutableSet setWithCapacity:items.count];
+    NSMutableDictionary *folders = @{}.mutableCopy;
+    NSMutableDictionary *feeds = @{}.mutableCopy;
+    
     NSMutableArray *articles = [NSMutableArray arrayWithCapacity:items.count];
 
     for (FeedItem *item in items) {
         [articles addObject:item.identifier];
-        [feeds addObject:item.feedID];
+        
+        Feed *feed = [self feedForID:item.feedID];
+        if (feed != nil) {
+            if (feed.folderID != nil) {
+                // get the existing count, if one is available.
+                NSString *key = feed.folderID.stringValue;
+                NSNumber *count = folders[key];
+                
+                if (!count) {
+                    count = @1;
+                }
+                else {
+                    count = @(count.integerValue + 1);
+                }
+                
+                // update the count against the folder ID
+                folders[key] = count;
+            }
+            
+            // get the existing count, if one is available.
+            NSString *key = feed.feedID.stringValue;
+            NSNumber *count = feeds[key];
+            
+            if (!count) {
+                count = @1;
+            }
+            else {
+                count = @(count.integerValue + 1);
+            }
+            
+            // update the count against the feed ID
+            feeds[key] = count;
+            
+        }
     }
 
     NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
     
     weakify(self);
-    
+
     [self.backgroundSession POST:path parameters:@{@"articles": articles, @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
+
         for (FeedItem *item in items) {
             item.read = read;
         }
-        
+
         strongify(self);
-        
-        NSArray <FeedItem *> *items = self.unread;
-        
+
+        NSArray <FeedItem *> *unread = self.unread;
+
         if (!read) {
-            items = [items arrayByAddingObjectsFromArray:items];
+            unread = [unread arrayByAddingObjectsFromArray:items];
         }
         else {
-            items = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            unread = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                 return ![articles containsObject:obj.identifier];
             }];
         }
-        
-        @synchronized (MyFeedsManager) {
-             MyFeedsManager.unread = items;
+
+        @synchronized (self) {
+            // new total unread
+            NSInteger currentUnread = self.totalUnread;
+            NSInteger newUnread = currentUnread;
+            
+            if (read) {
+                newUnread -= items.count;
+            }
+            else {
+                newUnread += items.count;
+            }
+            
+            self.totalUnread = newUnread;
+            self.unread = unread;
         }
         
+        [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:self userInfo:@{@"folders": folders, @"feeds": feeds, @"read": @(read)}];
+
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
+
         // silently handle
         error = [self errorFromResponse:error.userInfo];
-        
+
         DDLogError(@"error marking %@ as read: %@", articles, error.localizedDescription);
-        
+
     }];
 }
 

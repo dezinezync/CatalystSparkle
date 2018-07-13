@@ -1,12 +1,14 @@
 
 #import <DZKit/DZCloudObject.h>
 
+@class Feed;
+
 @interface Folder : DZCloudObject <NSCoding, NSCopying> {
 
 }
 
 @property (nonatomic, copy) NSString *created;
-@property (nonatomic, copy) NSArray *feeds;
+@property (nonatomic, copy) NSArray <Feed *> *feeds;
 @property (nonatomic, copy) NSNumber *folderID;
 @property (nonatomic, copy) NSString *modified;
 @property (nonatomic, copy) NSNumber *status;

@@ -194,9 +194,9 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         });
     }
     
-    if (registers) {
-        [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
-    }
+//    if (registers) {
+//        [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
+//    }
 }
 
 - (void)configureFolder:(Folder *)folder {
@@ -215,7 +215,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.faviconView.image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
-    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
+//    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
 }
 
 - (NSString *)accessibilityValue {
