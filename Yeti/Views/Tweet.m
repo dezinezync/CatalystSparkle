@@ -162,6 +162,10 @@
         [self setupCollectionView];
         
     }
+    
+    [self.textview layoutIfNeeded];
+    [self.collectionView layoutIfNeeded];
+    [self layoutIfNeeded];
 }
 
 - (void)setupCollectionView {
@@ -204,6 +208,8 @@
     }
     
     size.height += [self.textview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
+//    size.height += self.textview.layoutMargins.top + self.textview.layoutMargins.bottom + 16.f;
+    
     size.height += [self.avatar.superview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
     // add the inter-elements padding
     size.height += LayoutPadding * (self.collectionView.isHidden ? 2 : 3);

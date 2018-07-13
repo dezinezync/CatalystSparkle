@@ -354,6 +354,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 [imageView invalidateIntrinsicContentSize];
             }
         } }
+        
+        [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            if ([obj isKindOfClass:Paragraph.class] && [(Paragraph *)obj isBigContainer]) {
+                
+                [(Paragraph *)obj setAccessibileElements:nil];
+                
+            }
+            if ([obj isKindOfClass:Tweet.class]) {
+                [(Tweet *)obj invalidateIntrinsicContentSize];
+            }
+        }];
 
     } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
         strongify(self);
@@ -1361,7 +1373,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)addTweet:(Content *)content {
-    CGRect frame = CGRectMake(0, 0, MAX(self.view.bounds.size.width, 480.f), 0);
+    CGRect frame = CGRectMake(0, 0, MIN(self.stackView.bounds.size.width, 480.f), 0);
     Tweet *tweet = [[Tweet alloc] initWithNib];
     tweet.frame = frame;
     
@@ -1428,6 +1440,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    
+    if (scrollView != self.stackView.superview)
+        return;
+    
     CGRect visibleRect;
     visibleRect.origin = scrollView.contentOffset;
     visibleRect.size = scrollView.bounds.size;
