@@ -335,6 +335,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (CGSizeEqualToSize(self.view.bounds.size, size))
         return;
     
+    // get the first visible view
+    NSArray <UIView *> *visibleViews = [self visibleViews];
+    UIView *firstVisible = nil;
+    
+    if (visibleViews != nil && [visibleViews count]) {
+        firstVisible = [visibleViews firstObject];
+    }
+    
     weakify(self);
 
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
@@ -371,6 +379,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         strongify(self);
         
         [self setupHelperView];
+        [self scrollViewDidScroll:(UIScrollView *)[self.stackView superview]];
+        
+        if (firstVisible) {
+            CGFloat yOffset = firstVisible.frame.origin.y + (self.scrollView.bounds.size.height / 2);
+            [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
+        }
     }];
 }
 
@@ -1438,6 +1452,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 #pragma mark - <UIScrollViewDelegate>
 
+- (NSArray <UIView *> *)visibleViews {
+    
+    if (self.stackView == nil || self.stackView.arrangedSubviews.count == 0) {
+        return @[];
+    }
+    
+    UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
+    
+    CGRect visibleRect;
+    visibleRect.origin = scrollView.contentOffset;
+    visibleRect.size = scrollView.bounds.size;
+    
+    return [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
+        return CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
+    }];
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     
@@ -1449,9 +1480,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     visibleRect.size = scrollView.bounds.size;
     
     if (_deferredProcessing) {
-        NSArray <UIView *>  * visibleViews = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
-            return CGRectIntersectsRect(visibleRect, CGRectOffset(obj.frame, 0, 48.f));
-        }];
+        NSArray <UIView *>  * visibleViews = [self visibleViews];
         
         // make these views visible
         for (UIView *subview in visibleViews) { @autoreleasepool {
