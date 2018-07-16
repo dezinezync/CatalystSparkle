@@ -308,7 +308,22 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     // mutating the backing store is fine as the mutable attributedString keeps track of these changes
     // and automatically updates itself.
-//    [attrs.mutableString replaceOccurrencesOfString:@"\t" withString:@"    " options:kNilOptions range:NSMakeRange(0, attrs.mutableString.length)];
+    NSError *error = nil;
+    NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"(\\s{3,})" options:NSRegularExpressionAllowCommentsAndWhitespace error:&error];
+    
+    if (error == nil && exp) {
+        NSString *backing = attrs.string;
+        NSArray <NSTextCheckingResult *> *results = [exp matchesInString:backing options:kNilOptions range:NSMakeRange(0, backing.length)];
+        
+        for (NSTextCheckingResult *result in results.reverseObjectEnumerator) {
+            NSRange range = result.range;
+            if (range.location != NSNotFound && (range.location + range.length) < backing.length) {
+                [attrs replaceCharactersInRange:range withString:@" "];
+            }
+        }
+        
+        results = nil;
+    }
     
     NSAttributedString *retval = [[NSAttributedString alloc] initWithAttributedString:attrs];
     attrs = nil;
