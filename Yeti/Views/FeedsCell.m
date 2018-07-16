@@ -262,7 +262,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         
     } initialValue:@(0)];
     
-    self.countLabel.text = [totalUnread stringValue];
+    self.countLabel.text = [(totalUnread ?: @0) stringValue];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
