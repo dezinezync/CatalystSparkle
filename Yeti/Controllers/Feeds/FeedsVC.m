@@ -99,7 +99,9 @@ static void *KVO_Unread = &KVO_Unread;
     if (_noPreSetup == NO) {
         _noPreSetup = YES;
         
-        [self beginRefreshing:self.refreshControl];
+        if (MyFeedsManager.userID) {
+            [self userDidUpdate];
+        }
     }
 }
 
@@ -577,7 +579,7 @@ static void *KVO_Unread = &KVO_Unread;
     }
     
     // during betas and for testflight builds, this option should be left on.
-    id betaCheck = [MyFeedsManager.keychain valueForKey:YTBetaHasSubscribed];
+    id betaCheck = [MyFeedsManager.keychain stringForKey:YTBetaHasSubscribed];
     BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
     
     if (betaVal) {
@@ -595,8 +597,8 @@ static void *KVO_Unread = &KVO_Unread;
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         [self.splitViewController presentViewController:nav animated:YES completion:^{
-            [MyFeedsManager.keychain setValue:@(YES) forKey:YTBetaHasSubscribed];
-        }];
+            [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTBetaHasSubscribed];
+        }] ;
     });
     
 }
@@ -650,7 +652,7 @@ static void *KVO_Unread = &KVO_Unread;
         });
     });
     
-    if (!MyFeedsManager.subscription) {
+    if (MyFeedsManager.subscription == nil) {
         [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);

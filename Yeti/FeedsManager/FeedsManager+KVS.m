@@ -102,11 +102,15 @@
                 newUnread += items.count;
             }
             
-            self.totalUnread = newUnread;
+            self.totalUnread = MAX(0, newUnread);
             self.unread = unread;
         }
         
-        [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:self userInfo:@{@"folders": folders, @"feeds": feeds, @"read": @(read)}];
+        // only post the notification if it's affecting a feed or folder
+        // this avoids reducing or incrementing the count for unsubscribed feeds
+        if ([[folders allKeys] count] || [[feeds allKeys] count]) {
+            [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:self userInfo:@{@"folders": folders, @"feeds": feeds, @"read": @(read)}];
+        }
 
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
