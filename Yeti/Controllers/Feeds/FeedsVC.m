@@ -25,6 +25,8 @@
 #import "TableHeader.h"
 
 #import "EmptyCell.h"
+#import "YetiStoreVC.h"
+#import "YetiConstants.h"
 
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
@@ -92,31 +94,6 @@ static void *KVO_Unread = &KVO_Unread;
         }
         
         [self dz_smoothlyDeselectRows:self.headerView.tableView];
-    }
-    
-    if (!self.DS2.data || (!self.DS2.data.count && !_noPreSetup)) {
-        
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            [self.refreshControl beginRefreshing];
-            self->_noPreSetup = YES;
-            
-            weakify(self);
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                asyncMain(^{
-                    strongify(self);
-                    [self beginRefreshing:self.refreshControl];
-                });
-            });
-        })
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            self->_preCommitLoading = YES;
-        });
     }
 }
 
@@ -579,6 +556,45 @@ static void *KVO_Unread = &KVO_Unread;
     }
 }
 
+#pragma mark - Subscription Handler
+
+- (void)showSubscriptionsInterface {
+    
+    if (NSThread.isMainThread == NO) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            [self showSubscriptionsInterface];
+        });
+        return;
+    }
+    
+    // during betas and for testflight builds, this option should be left on.
+    id betaCheck = [MyFeedsManager.keychain valueForKey:YTBetaHasSubscribed];
+    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
+    
+    if (betaVal) {
+        DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
+        return;
+    }
+    
+    if (self.presentedViewController != nil) {
+        DDLogWarn(@"FeedsVC is already presenting a viewController. Not showing the subscriptions interface.");
+    }
+    
+    UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
+    
+    weakify(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self.splitViewController presentViewController:nav animated:YES completion:^{
+            [MyFeedsManager.keychain setValue:@(YES) forKey:YTBetaHasSubscribed];
+        }];
+    });
+    
+}
+
 #pragma mark - Notifications
 
 - (void)didUpdateTheme {
@@ -615,6 +631,10 @@ static void *KVO_Unread = &KVO_Unread;
     // we only need this once.
     [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
     
+    if (MyFeedsManager.userID == nil || [MyFeedsManager.userID isEqualToNumber:@(0)]) {
+        return;
+    }
+    
     weakify(self);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -623,6 +643,35 @@ static void *KVO_Unread = &KVO_Unread;
             [self beginRefreshing:self.refreshControl];
         });
     });
+    
+    if (!MyFeedsManager.subscription) {
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if (MyFeedsManager.subscription == nil) {
+                [self showSubscriptionsInterface];
+                return;
+            }
+            
+            if ([MyFeedsManager.subscription hasExpired]) {
+                [self showSubscriptionsInterface];
+                return;
+            }
+            
+            DDLogDebug(@"Get Subscription: %@", MyFeedsManager.subscription.expiry);
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            DDLogDebug(@"Get Subscription: %@", MyFeedsManager.subscription.error.localizedDescription);
+            
+            if ([MyFeedsManager.subscription hasExpired]) {
+                [self showSubscriptionsInterface];
+                return;
+            }
+            
+        }];
+    }
 }
 
 - (void)didUpdateReadCount:(NSNotification *)note {

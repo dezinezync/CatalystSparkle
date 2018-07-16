@@ -51,7 +51,7 @@
         
     } failure:^(SKPaymentQueue *queue, NSError *error) {
        
-        [[NSNotificationCenter defaultCenter] postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
         
     }];
     
@@ -95,7 +95,7 @@
             
             NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"Your purchase failed because the transaction was cancelled or failed before being added to the Apple server queue."}];
             
-            [NSNotificationCenter.defaultCenter postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
+            [NSNotificationCenter.defaultCenter postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
             return;
         }
         
@@ -117,27 +117,27 @@
                         [[NSUserDefaults standardUserDefaults] synchronize];
                     }
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:StoreDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:StoreDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
                     
                 }];
             }
             else {
                 NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"The App Store did not provide receipt data for this transaction"}];
                 
-                [NSNotificationCenter.defaultCenter postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
+                [NSNotificationCenter.defaultCenter postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
             }
 
         }
         else {
             NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"The App Store did not provide a receipt for this transaction"}];
             
-            [NSNotificationCenter.defaultCenter postNotificationName:YTPurchaseProductFailed object:nil userInfo:@{@"error": error}];
+            [NSNotificationCenter.defaultCenter postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
         }
         
     }

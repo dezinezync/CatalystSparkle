@@ -365,6 +365,8 @@
 		F0A5AEC120C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */; };
 		F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
 		F0A5AEC320C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
+		F0A7B8F420FA21C00056A2C0 /* YetiStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A7B8F320FA21C00056A2C0 /* YetiStoreVC.m */; };
+		F0A7B8F520FA21C00056A2C0 /* YetiStoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A7B8F320FA21C00056A2C0 /* YetiStoreVC.m */; };
 		F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
 		F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */; };
 		F0AC8FE720E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */; };
@@ -823,6 +825,8 @@
 		F0A5AEA920C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
 		F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-ThinItalic.ttf"; sourceTree = "<group>"; };
 		F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-MediumItalic.ttf"; sourceTree = "<group>"; };
+		F0A7B8F220FA21C00056A2C0 /* YetiStoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YetiStoreVC.h; sourceTree = "<group>"; };
+		F0A7B8F320FA21C00056A2C0 /* YetiStoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiStoreVC.m; sourceTree = "<group>"; };
 		F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = SOURCE_ROOT; };
 		F0AD76D320E2217C0003787B /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		F0AD76D420E2217C0003787B /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -1263,6 +1267,8 @@
 				F0AF313720D27F7700E074D6 /* IntroVC.h */,
 				F0AF313820D27F7700E074D6 /* IntroVC.m */,
 				F0AF313920D27F7700E074D6 /* IntroVC.xib */,
+				F0A7B8F220FA21C00056A2C0 /* YetiStoreVC.h */,
+				F0A7B8F320FA21C00056A2C0 /* YetiStoreVC.m */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -2145,6 +2151,7 @@
 				F069ABC5206E018F00021ABF /* HTMLUtils.m in Sources */,
 				F069ABC6206E018F00021ABF /* NSString+HTML.m in Sources */,
 				F0315DBD20CA59FB00F5674A /* Subscription.m in Sources */,
+				F0A7B8F520FA21C00056A2C0 /* YetiStoreVC.m in Sources */,
 				F069ABC7206E018F00021ABF /* Gallery.m in Sources */,
 				F022B0E020DC30DE00030185 /* AccentButton.m in Sources */,
 				F0673B0220C6A1EB00C42062 /* OPMLVC.m in Sources */,
@@ -2265,6 +2272,7 @@
 				F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */,
 				F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
 				F022F04A1FBD4BFF006A0036 /* Aside.m in Sources */,
+				F0A7B8F420FA21C00056A2C0 /* YetiStoreVC.m in Sources */,
 				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
 				F0D300411FE2633E0040D10D /* DTError.m in Sources */,
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,

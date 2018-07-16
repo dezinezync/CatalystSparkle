@@ -1200,11 +1200,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
       
         strongify(self);
         
-        [self _updateSubscriptionState];
-        
-        if (successCB) {
-            successCB(responseObject, response, task);
-        }
+        [self _updateSubscriptionStateWithSuccess:^(id responseObjectx, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (successCB) {
+                successCB(responseObject, response, task);
+            }
+            
+        } error:errorCB];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
@@ -1246,7 +1248,41 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)getSubscriptionWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+     
+#ifndef SHARE_EXTENSION
+        if ([[responseObject valueForKey:@"status"] boolValue]) {
+            Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+            
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.subscription = sub;
+            }
+        }
+        else {
+            Subscription *sub = [Subscription new];
+            sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
+            
+            @synchronized (MyFeedsManager) {
+                MyFeedsManager.subscription = sub;
+            }
+        }
+#endif
+        
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        DDLogError(@"Subscription Error: %@", error.localizedDescription);
+#ifndef SHARE_EXTENSION
+        Subscription *sub = [Subscription new];
+        sub.error = error;
+        
+        @synchronized (MyFeedsManager) {
+            MyFeedsManager.subscription = sub;
+        }
+#endif
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1707,42 +1743,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
 }
 
-- (void)_updateSubscriptionState {
-    if (!MyFeedsManager.userID)
+- (void)_updateSubscriptionStateWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    if (!MyFeedsManager.userID) {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-401 userInfo:@{NSLocalizedDescriptionKey : @"No user account exists on this device."}];
+            errorCB(error, nil, nil);
+        }
+        
         return;
+    }
     
-    [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-#ifndef SHARE_EXTENSION
-        if ([[responseObject valueForKey:@"status"] boolValue]) {
-            Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
-            
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager.subscription = sub;
-            }
-        }
-        else {
-            Subscription *sub = [Subscription new];
-            sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
-            
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager.subscription = sub;
-            }
-        }
-#endif
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        DDLogError(@"Subscription Error: %@", error.localizedDescription);
-#ifndef SHARE_EXTENSION
-        Subscription *sub = [Subscription new];
-        sub.error = error;
-        
-        @synchronized (MyFeedsManager) {
-            MyFeedsManager.subscription = sub;
-        }
-#endif
-    }];
+    [self getSubscriptionWithSuccess:successCB error:errorCB];
 }
 
 #pragma mark -

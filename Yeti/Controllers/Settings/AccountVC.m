@@ -94,44 +94,44 @@
     }
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    weakify(self);
-    
-    if (!MyFeedsManager.subscription) {
-        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if ([[responseObject valueForKey:@"status"] boolValue]) {
-                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
-                
-                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
-            }
-            else {
-                Subscription *sub = [Subscription new];
-                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
-                
-                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
-            }
-            
-            strongify(self);
-            [self didUpdateSubscription];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            DDLogError(@"Error loading subscription: %@", error.localizedDescription);
-            Subscription *sub = MyFeedsManager.subscription ?: [Subscription new];
-            sub.error = error;
-            
-            [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
-            
-            [self didUpdateSubscription];
-            
-        }];
-    }
-}
+//- (void)viewDidAppear:(BOOL)animated {
+//    [super viewDidAppear:animated];
+//    
+//    weakify(self);
+//    
+//    if (!MyFeedsManager.subscription) {
+//        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            if ([[responseObject valueForKey:@"status"] boolValue]) {
+//                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+//                
+//                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
+//            }
+//            else {
+//                Subscription *sub = [Subscription new];
+//                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
+//                
+//                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
+//            }
+//            
+//            strongify(self);
+//            [self didUpdateSubscription];
+//            
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            strongify(self);
+//            
+//            DDLogError(@"Error loading subscription: %@", error.localizedDescription);
+//            Subscription *sub = MyFeedsManager.subscription ?: [Subscription new];
+//            sub.error = error;
+//            
+//            [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
+//            
+//            [self didUpdateSubscription];
+//            
+//        }];
+//    }
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -144,66 +144,66 @@
     
     _didTapDone = YES;
     
-    SKProduct *product = [self.products safeObjectAtIndex:self.subscriptionType];
-    
-    if (product == nil)
-        return;
-    
-    sender.enabled = NO;
-    
-//    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-//    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
-//    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
-    
-    weakify(self);
-                
-    [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
-        
-        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
-            
-            if (receipt) {
-                // verify with server
-                [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    if ([[responseObject valueForKey:@"status"] boolValue]) {
-                        YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
-                        
-                        [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
-                        [[NSUserDefaults standardUserDefaults] synchronize];
-                    }
-                    
-                    strongify(self);
-                    
-                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
-                    
-                    [self didPurchase:note];
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
-                    
-                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
-                    
-                    strongify(self);
-                    
-                    [self didPurchase:note];
-                    
-                }];
-            }
-            else {
-                [AlertManager showGenericAlertWithTitle:@"No Receipt Data" message:@"The App Store did not provide receipt data for this transaction"];
-            }
-        });
-
-        
-    } error:^(SKPaymentQueue *queue, NSError *error) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Purhcase Error" message:error.localizedDescription];
-        
-    }];
+//    SKProduct *product = [self.products safeObjectAtIndex:self.subscriptionType];
+//    
+//    if (product == nil)
+//        return;
+//    
+//    sender.enabled = NO;
+//    
+////    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+////    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
+////    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
+//    
+//    weakify(self);
+//                
+//    [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
+//        
+//        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+//        
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//            NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
+//            
+//            if (receipt) {
+//                // verify with server
+//                [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                    
+//                    if ([[responseObject valueForKey:@"status"] boolValue]) {
+//                        YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
+//                        
+//                        [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
+//                        [[NSUserDefaults standardUserDefaults] synchronize];
+//                    }
+//                    
+//                    strongify(self);
+//                    
+//                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+//                    
+//                    [self didPurchase:note];
+//                    
+//                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//                    
+//                    [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
+//                    
+//                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
+//                    
+//                    strongify(self);
+//                    
+//                    [self didPurchase:note];
+//                    
+//                }];
+//            }
+//            else {
+//                [AlertManager showGenericAlertWithTitle:@"No Receipt Data" message:@"The App Store did not provide receipt data for this transaction"];
+//            }
+//        });
+//
+//        
+//    } error:^(SKPaymentQueue *queue, NSError *error) {
+//        
+//        [AlertManager showGenericAlertWithTitle:@"Purhcase Error" message:error.localizedDescription];
+//        
+//    }];
     
 }
 
@@ -311,12 +311,12 @@
     
     sender.enabled = NO;
     
-    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
-    
-    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
-    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
-    
-    [MyStoreManager restorePurchases];
+//    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+//    
+//    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
+//    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
+//    
+//    [MyStoreManager restorePurchases];
     
 }
 

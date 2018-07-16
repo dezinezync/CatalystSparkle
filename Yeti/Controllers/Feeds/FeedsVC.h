@@ -31,4 +31,6 @@
 
 - (void)setupData:(NSArray <Feed *> *)feeds;
 
+- (void)showSubscriptionsInterface;
+
 @end
