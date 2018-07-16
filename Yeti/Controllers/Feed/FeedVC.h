@@ -40,4 +40,6 @@
 
 - (void)didChangeToArticle:(FeedItem *)item;
 
+- (void)_didFinishAllReadActionSuccessfully;
+
 @end

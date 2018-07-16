@@ -95,6 +95,12 @@ static void *KVO_Unread = &KVO_Unread;
         
         [self dz_smoothlyDeselectRows:self.headerView.tableView];
     }
+    
+    if (_noPreSetup == NO) {
+        _noPreSetup = YES;
+        
+        [self beginRefreshing:self.refreshControl];
+    }
 }
 
 - (BOOL)definesPresentationContext

@@ -15,6 +15,8 @@
 
 #import <DZKit/AlertManager.h>
 
+static void *KVO_Subscription = &KVO_Subscription;
+
 @interface YetiStoreVC () {
     BOOL _hasSetup;
 }
@@ -42,6 +44,39 @@
     
     footer.footerLabel.backgroundColor = theme.articleBackgroundColor;
     footer.footerLabel.textColor = theme.captionColor;
+    
+    if (MyFeedsManager.subscription) {
+        [self didPurchase:nil];
+    }
+    
+    [MyFeedsManager addObserver:self forKeyPath:propSel(subscription) options:NSKeyValueObservingOptionNew context:KVO_Subscription];
+}
+
+- (void)dealloc {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    
+    if (MyFeedsManager.observationInfo != nil) {
+        
+        NSArray *observances = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
+        NSMutableArray * observingObjects = [[NSMutableArray alloc] init];
+        
+        [observances enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            id observer = [obj valueForKeyPath:@"observer"];
+            if (observer) {
+                [observingObjects addObject:observer];
+            }
+        }];
+        
+        if ([observingObjects indexOfObject:self] != NSNotFound) {
+            @try {
+                [MyFeedsManager removeObserver:self forKeyPath:propSel(subscription)];
+            }
+            @catch (NSException *exc) {}
+        }
+        
+    }
+    
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -54,6 +89,8 @@
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
+#pragma mark -
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     StoreCell *cell = (StoreCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
@@ -64,6 +101,9 @@
     
     if (theme.isDark) {
         cell.baseView.layer.shadowColor = [UIColor blackColor].CGColor;
+    }
+    else {
+        cell.selectedBackgroundColor = [UIColor whiteColor];
     }
 
     cell.itemTitle.textColor = theme.titleColor;
@@ -117,7 +157,9 @@
 #pragma mark - Notifications
 
 - (void)didPurchase:(NSNotification *)note {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (note) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
     
     UITextView *textView = self.footer.footerLabel;
     __block NSMutableAttributedString *attrs;
@@ -175,6 +217,16 @@
     
 }
 
+#pragma mark - KVO
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:propSel(subscription)] && context == KVO_Subscription) {
+        
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
 
 @end

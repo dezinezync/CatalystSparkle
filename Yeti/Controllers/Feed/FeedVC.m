@@ -303,6 +303,7 @@
             strongify(self);
             if (self && [self tableView]) {
                 [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
+                [self _didFinishAllReadActionSuccessfully];
             }
         });
         
@@ -319,6 +320,10 @@
     
     [self presentViewController:avc animated:YES completion:nil];
     
+    
+}
+
+- (void)_didFinishAllReadActionSuccessfully {
     
 }
 

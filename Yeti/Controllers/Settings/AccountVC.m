@@ -21,15 +21,13 @@
 #import <Store/Store.h>
 #import "SplitVC.h"
 
+#import "YetiStoreVC.h"
+
 @interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate> {
     UITextField *_textField;
     UIAlertAction *_okayAction;
     BOOL _didTapDone;
 }
-
-@property (nonatomic, assign) NSInteger subscriptionType;
-@property (nonatomic, assign) NSInteger knownSubscriptionType;
-@property (nonatomic, weak) NSArray <SKProduct *> *products;
 
 @end
 
@@ -38,11 +36,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    YetiSubscriptionType subscriptionType = [[NSUserDefaults standardUserDefaults] valueForKey:kSubscriptionType];
-    
-    self.subscriptionType = [subscriptionType isEqualToString:YTSubscriptionYearly] ? 1 : ([subscriptionType isEqualToString:YTSubscriptionMonthly] ? 0 : -1);
-    self.knownSubscriptionType = self.subscriptionType;
-    
     self.title = @"Account";
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
@@ -50,88 +43,7 @@
     
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone:)];
-    self.navigationItem.rightBarButtonItem.enabled = NO;
-    
-    NSSet *products = [NSSet setWithObjects:YTSubscriptionMonthly, YTSubscriptionYearly,  nil];
-    
-    AccountFooterView *footerView = [[AccountFooterView alloc] initWithNib];
-    [footerView.learnButton addTarget:self action:@selector(didTapLearn:) forControlEvents:UIControlEventTouchUpInside];
-    [footerView.restoreButton addTarget:self action:@selector(didTapRestore:) forControlEvents:UIControlEventTouchUpInside];
-    
-    if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
-        footerView.restoreButton.enabled = NO;
-    }
-    
-    self.tableView.tableFooterView = footerView;
-    
-    weakify(self);
-    
-    if (!MyStoreManager.products || !MyStoreManager.products.count) {
-        [MyStoreManager loadProducts:products success:^(NSArray *products, NSArray *invalidIdentifiers) {
-            
-            strongify(self);
-            
-            products = [products sortedArrayUsingSelector:@selector(productIdentifier)];
-            
-            [MyStoreManager setValue:products forKey:@"products"];
-            
-            self.products = MyStoreManager.products;
-            
-            if (invalidIdentifiers && invalidIdentifiers.count) {
-                DDLogError(@"Invalid identifiers: %@", invalidIdentifiers);
-            }
-            
-        } error:^(NSError *error) {
-            
-            DDLogError(@"Error loading products: %@", error);
-            
-        }];
-    }
-    else {
-        self.products = MyStoreManager.products;
-    }
 }
-
-//- (void)viewDidAppear:(BOOL)animated {
-//    [super viewDidAppear:animated];
-//    
-//    weakify(self);
-//    
-//    if (!MyFeedsManager.subscription) {
-//        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//            
-//            if ([[responseObject valueForKey:@"status"] boolValue]) {
-//                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
-//                
-//                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
-//            }
-//            else {
-//                Subscription *sub = [Subscription new];
-//                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
-//                
-//                [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
-//            }
-//            
-//            strongify(self);
-//            [self didUpdateSubscription];
-//            
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//            
-//            strongify(self);
-//            
-//            DDLogError(@"Error loading subscription: %@", error.localizedDescription);
-//            Subscription *sub = MyFeedsManager.subscription ?: [Subscription new];
-//            sub.error = error;
-//            
-//            [MyFeedsManager setValue:sub forKeyPath:@"subscription"];
-//            
-//            [self didUpdateSubscription];
-//            
-//        }];
-//    }
-//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -139,186 +51,6 @@
 }
 
 #pragma mark - Actions
-
-- (void)didTapDone:(UIBarButtonItem *)sender {
-    
-    _didTapDone = YES;
-    
-//    SKProduct *product = [self.products safeObjectAtIndex:self.subscriptionType];
-//    
-//    if (product == nil)
-//        return;
-//    
-//    sender.enabled = NO;
-//    
-////    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-////    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
-////    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
-//    
-//    weakify(self);
-//                
-//    [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
-//        
-//        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-//        
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//            NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
-//            
-//            if (receipt) {
-//                // verify with server
-//                [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//                    
-//                    if ([[responseObject valueForKey:@"status"] boolValue]) {
-//                        YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
-//                        
-//                        [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
-//                        [[NSUserDefaults standardUserDefaults] synchronize];
-//                    }
-//                    
-//                    strongify(self);
-//                    
-//                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
-//                    
-//                    [self didPurchase:note];
-//                    
-//                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//                    
-//                    [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
-//                    
-//                    NSNotification *note = [NSNotification notificationWithName:YTDidPurchaseProduct object:nil userInfo:@{@"transactions": @[transaction]}];
-//                    
-//                    strongify(self);
-//                    
-//                    [self didPurchase:note];
-//                    
-//                }];
-//            }
-//            else {
-//                [AlertManager showGenericAlertWithTitle:@"No Receipt Data" message:@"The App Store did not provide receipt data for this transaction"];
-//            }
-//        });
-//
-//        
-//    } error:^(SKPaymentQueue *queue, NSError *error) {
-//        
-//        [AlertManager showGenericAlertWithTitle:@"Purhcase Error" message:error.localizedDescription];
-//        
-//    }];
-    
-}
-
-- (void)didPurchase:(NSNotification *)note {
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
- 
-    NSArray <SKPaymentTransaction *> *transactions = [note.userInfo valueForKey:@"transactions"];
-    
-    // we're only expecting one.
-    SKPaymentTransaction *transaction = [transactions firstObject];
-    
-    if (!transaction)
-        return;
-    
-    if (transaction.transactionState == SKPaymentTransactionStateFailed) {
-        
-        [self enableRestoreButton];
-        [self didUpdateSubscription];
-        
-        if (transaction.error.code == SKErrorPaymentCancelled) {
-            return;
-        }
-        
-        [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:transaction.error.localizedDescription];
-        return;
-    }
-    
-    YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
-    
-    self.subscriptionType = [subscriptionType isEqualToString:YTSubscriptionYearly] ? 1 : ([subscriptionType isEqualToString:YTSubscriptionMonthly] ? 0 : -1);
-    self.knownSubscriptionType = self.subscriptionType;
-    
-    [self didUpdateSubscription];
-    
-    [self enableRestoreButton];
-    
-}
-
-- (void)didFail:(NSNotification *)note {
-    
-    NSError *error = [[note userInfo] valueForKey:@"error"];
-    // no transactions to restore.
-    if (error.code == 9304) {
-        return;
-    }
-    
-    [AlertManager showGenericAlertWithTitle:@"Purhcase/Restore Error" message:error.localizedDescription];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [self enableRestoreButton];
-    
-}
-
-- (void)enableRestoreButton {
-    weakify(self);
-    
-    if (![[(AccountFooterView *)self.tableView.tableFooterView restoreButton] isEnabled]) {
-        asyncMain(^{
-            strongify(self);
-            
-            if (self->_didTapDone) {
-                self->_didTapDone = NO;
-            }
-            else {
-                self.navigationItem.rightBarButtonItem.enabled = YES;
-            }
-            
-            [[(AccountFooterView *)self.tableView.tableFooterView restoreButton] setEnabled:YES];
-        });
-    }
-    else if (!self.navigationItem.rightBarButtonItem.isEnabled) {
-        if (_didTapDone) {
-            _didTapDone = NO;
-            return;
-        }
-        
-        asyncMain(^{
-            strongify(self);
-            self.navigationItem.rightBarButtonItem.enabled = YES;
-        });
-    }
-}
-
-- (void)didTapLearn:(UIButton *)sender {
-    DZWebViewController *webVC = [[DZWebViewController alloc] init];
-    webVC.title = @"About Subscriptions";
-    
-    webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"subscriptions" withExtension:@"html"];
-    
-    Theme *theme = YTThemeKit.theme;
-    
-    if (![theme.name isEqualToString:@"light"]) {
-        NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
-        NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
-        
-        webVC.evalJSOnLoad = js;
-    }
-    
-    [self.navigationController pushViewController:webVC animated:YES];
-}
-
-- (void)didTapRestore:(UIButton *)sender {
-    
-    sender.enabled = NO;
-    
-//    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
-//    
-//    [center addObserver:self selector:@selector(didPurchase:) name:YTDidPurchaseProduct object:nil];
-//    [center addObserver:self selector:@selector(didFail:) name:YTPurchaseProductFailed object:nil];
-//    
-//    [MyStoreManager restorePurchases];
-    
-}
 
 #pragma mark - Table view data source
 
@@ -329,7 +61,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0)
         return 3;
-    return 2;
+    return 1;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -337,78 +69,15 @@
     if (section == 1)
         return @"Subscription";
     
-    return nil;
+    return @"Acount ID";
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    CGFloat width = tableView.bounds.size.width;
-    CGRect frame = CGRectMake(tableView.layoutMargins.left, 0, width, 24.f);
-    
-    UITextView *textView = [[UITextView alloc] initWithFrame:frame];
-    textView.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
-    textView.dataDetectorTypes = UIDataDetectorTypeLink;
-    textView.editable = NO;
-    textView.backgroundColor = theme.tableColor;
-    textView.opaque = YES;
-    textView.contentInset = UIEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
-    textView.textColor = theme.subtitleColor;
-    
-    for (UIView *subview in textView.subviews) {
-        subview.backgroundColor = textView.backgroundColor;
-    }
-    
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if (section == 0) {
-        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:@"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
-        
-        [attrs addAttribute:NSLinkAttributeName value:@"mailto:info@dezinezync.com" range:[attrs.string rangeOfString:@"info@dezinezync.com"]];
-        
-        textView.attributedText = attrs.copy;
-        attrs = nil;
-    }
-    else {
-        
-        NSMutableAttributedString *attrs;
-        
-        if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
-            
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            formatter.dateStyle = NSDateFormatterMediumStyle;
-            formatter.timeStyle = NSDateFormatterShortStyle;
-            formatter.locale = [NSLocale currentLocale];
-            formatter.timeZone = [NSTimeZone systemTimeZone];
-            
-            NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
-         
-            attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
-            
-        }
-        else {
-            if (MyFeedsManager.subscription && MyFeedsManager.subscription.error) {
-                attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
-            }
-            else {
-                attrs = [[NSMutableAttributedString alloc] initWithString:@"You don't have an active subscription or it has expired. To check, tap here." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
-            }
-        }
-        
-        if ([attrs.string containsString:@"here."]) {
-            [attrs addAttribute:NSLinkAttributeName value:@"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions" range:[attrs.string rangeOfString:@"here"]];
-        }
-        
-        textView.attributedText = attrs.copy;
-        attrs = nil;
+        return @"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
     }
     
-    frame.size = [textView sizeThatFits:CGSizeMake(width - (LayoutPadding * 2), CGFLOAT_MAX)];
-    
-    textView.bounds = CGRectIntegral(frame);
-    [textView.heightAnchor constraintGreaterThanOrEqualToConstant:textView.bounds.size.height].active = YES;
-    
-    return textView;
+    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -442,6 +111,7 @@
                         
                         cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUID.UUIDString;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                        cell.separatorInset = UIEdgeInsetsZero;
                     }
                         break;
                     case 1:
@@ -464,49 +134,8 @@
             
         default:
         {
-            if (self.products) {
-                SKProduct *product = self.products[indexPath.row];
-                
-                switch (indexPath.row) {
-                    case 0:
-                    {
-                        cell.accessoryType = self.subscriptionType == 0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-                    }
-                        break;
-                        
-                    case 1:
-                    {
-                        cell.accessoryType = self.subscriptionType == 1 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-                    }
-                        break;
-                }
-                
-                NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-                formatter.locale = product.priceLocale;
-                formatter.numberStyle = NSNumberFormatterCurrencyStyle;
-                
-                cell.textLabel.text = [product localizedTitle];
-                cell.detailTextLabel.text = [formatter stringFromNumber:product.price];
-            }
-            else {
-                switch (indexPath.row) {
-                    case 0:
-                    {
-                        cell.textLabel.text = @"Monthly";
-                        cell.detailTextLabel.text = @"$2.99";
-                        cell.accessoryType = self.subscriptionType == 0 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-                    }
-                        break;
-                        
-                    case 1:
-                    {
-                        cell.textLabel.text = @"Yearly";
-                        cell.detailTextLabel.text = @"$32.99";
-                        cell.accessoryType = self.subscriptionType == 1 ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-                    }
-                        break;
-                }
-            }
+            cell.textLabel.text = @"Your Subscription";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
             break;
     }
@@ -539,18 +168,7 @@
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    if (indexPath.section == 1) {
-        self.subscriptionType = indexPath.row;
-        NSIndexSet *set = [NSIndexSet indexSetWithIndex:1];
-        
-        [self.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
-        
-        self.navigationItem.rightBarButtonItem.enabled = [self changedPreference];
-        
-        return;
-    }
-    
-    if (indexPath.section == 0) {
+   if (indexPath.section == 0) {
         
         if (indexPath.row == 1) {
             [self showReplaceIDController];
@@ -577,46 +195,17 @@
         
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
+   else {
+       
+       YetiStoreVC *vc = [[YetiStoreVC alloc] initWithStyle:UITableViewStylePlain];
+       vc.inStack = YES;
+       [self.navigationController pushViewController:vc animated:YES];
+       
+   }
     
 }
 
 #pragma mark - Getters
-
-- (BOOL)changedPreference {
-    return self.subscriptionType != self.knownSubscriptionType;
-}
-
-#pragma mark - Setters
-
-- (void)setProducts:(NSArray<SKProduct *> *)products {
-    _products = products;
-    
-    [self didUpdateSubscription];
-}
-
-#pragma mark - Notifications
-
-- (void)didUpdateSubscription {
-    
-    self.subscriptionType = [MyFeedsManager.subscription hasExpired] ? -1 : self.knownSubscriptionType;
-    self.knownSubscriptionType = self.subscriptionType;
-    
-    weakify(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        strongify(self);
-        
-        [(AccountFooterView *)(self.tableView.tableFooterView) restoreButton].enabled = !(MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]);
-        
-        if (MyFeedsManager.subscription) {
-            [self.tableView reloadData];
-        }
-        else {
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationFade];
-        }
-    });
-    
-}
 
 #pragma mark - Actions
 

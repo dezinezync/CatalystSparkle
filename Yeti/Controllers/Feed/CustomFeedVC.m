@@ -87,6 +87,12 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     }
 }
 
+- (void)_didFinishAllReadActionSuccessfully {
+    if (self.isUnread) {
+        self.DS.data = MyFeedsManager.unread;
+    }
+}
+
 - (void)dealloc {
     
     if (MyFeedsManager.observationInfo != nil && self.unread == NO) {

@@ -115,7 +115,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
-   [self setupHelperView];
+    [self setupHelperView];
     
     [self.stackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding/2.f].active = YES;
     [self.stackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:-LayoutPadding/2.f].active = YES;
@@ -379,7 +379,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         strongify(self);
         
         [self setupHelperView];
-        [self scrollViewDidScroll:(UIScrollView *)[self.stackView superview]];
+        [self scrollViewDidScroll:self.scrollView];
         
         if (firstVisible) {
             CGFloat yOffset = firstVisible.frame.origin.y + (self.scrollView.bounds.size.height / 2);
@@ -1458,7 +1458,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return @[];
     }
     
-    UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
+    UIScrollView *scrollView = self.scrollView;
     
     CGRect visibleRect;
     visibleRect.origin = scrollView.contentOffset;

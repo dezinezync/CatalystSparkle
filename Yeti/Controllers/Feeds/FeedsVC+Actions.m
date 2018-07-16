@@ -24,10 +24,12 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing && !_noPreSetup) {
+    if (_refreshing) {
         
         if ([sender isRefreshing])
             [sender endRefreshing];
+        
+        _refreshing = NO;
         
         return;
     }
