@@ -860,7 +860,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             }}
         }
     }
-    else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"]) {
+    else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
         if (content.content.length)
             [self addParagraph:content caption:NO];
         else if (content.items) {
@@ -1026,6 +1026,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             rangeAdded = YES;
         else if (ctx.length && ([[ctx substringToIndex:1] isEqualToString:@"."] || [[ctx substringToIndex:1] isEqualToString:@","] || [[ctx substringToIndex:1] isEqualToString:@" "]))
             rangeAdded = YES;
+        else if ([[ctx stringByStrippingWhitespace] length] < 6) {
+            rangeAdded = YES;
+        }
+        else if ([[[ctx stringByStrippingWhitespace] componentsSeparatedByString:@" "] count] == 1) {
+            rangeAdded = YES;
+        }
     }
     
     if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
