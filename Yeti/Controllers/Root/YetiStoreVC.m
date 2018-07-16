@@ -222,7 +222,12 @@ static void *KVO_Subscription = &KVO_Subscription;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
 {
     if ([keyPath isEqualToString:propSel(subscription)] && context == KVO_Subscription) {
-        
+        if (MyFeedsManager.subscription != nil) {
+            self.state = StoreStatePurchased;
+        }
+        else {
+            self.state = StoreStateLoaded;
+        }
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
