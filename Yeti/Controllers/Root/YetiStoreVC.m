@@ -12,6 +12,7 @@
 #import "FeedsManager.h"
 #import "DZWebViewController.h"
 #import "UIColor+HEX.h"
+#import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>
 
@@ -24,6 +25,15 @@ static void *KVO_Subscription = &KVO_Subscription;
 @end
 
 @implementation YetiStoreVC
+
++ (UINavigationController *)instanceInNavigationController {
+    
+    YetiStoreVC *vc = [[YetiStoreVC alloc] initWithStyle:UITableViewStylePlain];
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
+    
+    return nav;
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -223,7 +233,12 @@ static void *KVO_Subscription = &KVO_Subscription;
 {
     if ([keyPath isEqualToString:propSel(subscription)] && context == KVO_Subscription) {
         if (MyFeedsManager.subscription != nil) {
-            self.state = StoreStatePurchased;
+            if ([MyFeedsManager.subscription hasExpired]) {
+                self.state = StoreStateLoaded;
+            }
+            else {
+                self.state = StoreStatePurchased;
+            }
         }
         else {
             self.state = StoreStateLoaded;

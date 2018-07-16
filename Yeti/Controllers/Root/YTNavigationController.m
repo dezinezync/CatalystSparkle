@@ -7,6 +7,7 @@
 //
 
 #import "YTNavigationController.h"
+#import "YetiThemeKit.h"
 
 @interface YTNavigationController ()
 
@@ -20,6 +21,10 @@
     }
     
     return NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
