@@ -216,6 +216,12 @@
 
 - (void)didTapSearch
 {
+    
+    if (_showSearchBar == YES) {
+        [self didTapSearchDone];
+        return;
+    }
+    
     _showSearchBar = YES;
     [self reloadInputViews];
     [_searchBar becomeFirstResponder];
