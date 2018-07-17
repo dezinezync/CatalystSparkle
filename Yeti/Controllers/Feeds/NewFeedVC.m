@@ -71,6 +71,8 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     [self.tableView registerClass:AddFeedCell.class forCellReuseIdentifier:kAddFeedCell];
     
+    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.extendedLayoutIncludesOpaqueBars = YES;
@@ -235,7 +237,7 @@
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     PaddedLabel *label = [[PaddedLabel alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 28.f)];
-    label.backgroundColor = [theme backgroundColor];
+    label.backgroundColor = [theme cellColor];
     label.textColor = theme.tintColor;
     label.font = [UIFont systemFontOfSize:12.f];
     label.opaque = YES;
@@ -252,6 +254,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     AddFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:kAddFeedCell forIndexPath:indexPath];
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     NSString *url = self.data[indexPath.row];
     
@@ -260,11 +263,10 @@
     
     if ([url containsString:@".json"] || [url containsString:@"/json"]) {
         cell.detailTextLabel.text = @"Recommended";
+        cell.detailTextLabel.textColor = theme.tintColor;
     }
     
     cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     cell.textLabel.textColor = theme.titleColor;
     
     return cell;
