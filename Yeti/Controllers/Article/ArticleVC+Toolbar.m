@@ -373,7 +373,7 @@
     if (!_searchView) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 52.f);
+        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
         
         _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
         _searchBar.placeholder = @"Search article";
