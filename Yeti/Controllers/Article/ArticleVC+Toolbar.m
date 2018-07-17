@@ -383,6 +383,7 @@
         _searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         _searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
         UITextField *searchField = [_searchBar valueForKeyPath:@"searchField"];
         if (searchField) {
