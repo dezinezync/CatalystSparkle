@@ -59,13 +59,20 @@
 
 - (void)updateShadowPath
 {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    if (self.previousArticleButton) {
+        for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
+            button.tintColor = theme.tintColor;
+            [button setNeedsDisplay];
+            [button setNeedsLayout];
+        }
+    }
     
     CGRect frame = self.bounds;
     frame.size.width = self.bounds.size.width;
     
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:self.layer.cornerRadius];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.layer.shadowPath = path.CGPath;
     self.layer.shadowColor = theme.isDark ? [UIColor.blackColor colorWithAlphaComponent:0.35f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;

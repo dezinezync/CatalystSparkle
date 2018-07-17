@@ -105,13 +105,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.loader.color = theme.captionColor;
-    self.loader.tintColor = theme.captionColor;
-    
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    [self didUpdateTheme];
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
@@ -144,6 +138,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
 }
 
@@ -290,6 +285,30 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 #pragma mark -
+
+- (void)didUpdateTheme {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.loader.color = theme.captionColor;
+    self.loader.tintColor = theme.captionColor;
+    
+    self.view.backgroundColor = theme.articleBackgroundColor;
+    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    
+    if (self.hairlineView != nil) {
+        self.hairlineView.backgroundColor = theme.articleBackgroundColor;
+    }
+    
+    if (self.helperView != nil) {
+        self.helperView.backgroundColor = theme.articlesBarColor;
+        self.helperView.tintColor = theme.tintColor;
+        [self.helperView updateShadowPath];
+    }
+    
+    [self didChangePreferredContentSize:nil];
+    
+}
 
 - (void)didChangePreferredContentSize:(NSNotification *)note {
     
