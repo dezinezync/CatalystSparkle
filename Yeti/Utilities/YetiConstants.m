@@ -19,6 +19,8 @@ NSString * const kDefaultsNotifications = @"notifications";
 NSString * const kDefaultsImageLoading = @"imageLoading";
 NSString * const kDefaultsImageBandwidth = @"imageBandwidth";
 
+NSString * const kShowArticleCoverImages = @"showArticleCoverImages";
+
 #pragma mark - Image Loading
 
 ImageLoadingOption const ImageLoadingLowRes = @"Low Res";

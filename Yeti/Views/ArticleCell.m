@@ -10,7 +10,9 @@
 #import "NSDate+DateTools.h"
 #import "NSString+HTML.h"
 #import "Paragraph.h"
+#import "CheckWifi.h"
 
+#import "YetiConstants.h"
 #import "FeedsManager.h"
 
 #import <DZKit/NSString+Extras.h>
@@ -175,6 +177,26 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         
         self.authorLabel.textAlignment = NSTextAlignmentRight;
     }
+    
+    BOOL coverImagePref = [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages];
+    BOOL showImage = coverImagePref == YES ? [self showImage] : NO;
+    
+    if (coverImagePref == NO || item.coverImage == nil || showImage == NO) {
+        if (self.coverImageView.isHidden == NO) {
+            self.coverImageView.hidden = YES;
+            self.coverImageHeight.constant = 0.f;
+        }
+    }
+    else {
+        
+        if (self.coverImageView.isHidden == YES) {
+            self.coverImageView.hidden = NO;
+        }
+        
+        self.coverImageHeight.constant = floor(self.bounds.size.width * (9.f / 21.f));
+        
+        [self.coverImageView il_setImageWithURL:item.coverImage];
+    }
 }
 
 - (void)prepareForReuse
@@ -185,12 +207,27 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     self.summaryLabel.text = nil;
     self.authorLabel.text = nil;
     self.timeLabel.text = nil;
-    
+    self.coverImageView.image = nil;
     self.markerView.image = nil;
+    
+    if (self.coverImageView.isHidden == NO) {
+        [self.coverImageView il_cancelImageLoading];
+    }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.titleLabel.textColor = theme.titleColor;
+}
+
+- (BOOL)showImage {
+    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+        return NO;
+    
+    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+        return CheckWiFi();
+    }
+    
+    return YES;
 }
 
 @end

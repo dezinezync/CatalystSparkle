@@ -23,6 +23,8 @@ YETI_EXPORT NSString * const kDefaultsImageLoading;
 YETI_EXPORT NSString * const kDefaultsImageBandwidth;
 YETI_EXPORT NSString * const kSubscriptionType;
 
+YETI_EXPORT NSString * const kShowArticleCoverImages;
+
 typedef NSString * ImageLoadingOption NS_STRING_ENUM;
 
 YETI_EXPORT ImageLoadingOption const ImageLoadingLowRes;
