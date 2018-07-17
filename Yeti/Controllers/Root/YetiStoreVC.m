@@ -176,6 +176,15 @@ static void *KVO_Subscription = &KVO_Subscription;
     UITextView *textView = self.footer.footerLabel;
     __block NSMutableAttributedString *attrs;
     
+    NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    para.alignment = NSTextAlignmentCenter;
+    
+    NSDictionary *attributes = @{
+                                 NSFontAttributeName : textView.font,
+                                 NSForegroundColorAttributeName : textView.textColor,
+                                 NSParagraphStyleAttributeName : para
+                                 };
+    
     if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
         
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -186,7 +195,7 @@ static void *KVO_Subscription = &KVO_Subscription;
         
         NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
         
-        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
+        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
         
         self.state = StoreStateRestored;
         
@@ -196,7 +205,7 @@ static void *KVO_Subscription = &KVO_Subscription;
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
         else {
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"You don't have an active subscription or it has expired. To check, tap here." attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
+            attrs = [[NSMutableAttributedString alloc] initWithString:@"You don't have an active subscription or it has expired. To check, tap here." attributes:attributes];
         }
         
         self.state = StoreStateLoaded;
