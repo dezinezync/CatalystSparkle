@@ -232,6 +232,21 @@
 
 - (void)setLoadOnReady:(NSNumber *)loadOnReady
 {
+    if (loadOnReady == nil) {
+        _loadOnReady = loadOnReady;
+        return;
+    }
+    
+    if (self.DS == nil || self.DS.data == nil || self.DS.data.count == 0) {
+        weakify(self);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self setLoadOnReady:loadOnReady];
+        });
+        
+        return;
+    }
+    
     _loadOnReady = loadOnReady;
     
     if (loadOnReady && [[self navigationController] visibleViewController] == self) {
@@ -244,7 +259,7 @@
 
 - (void)loadArticle {
     
-    if (self.loadOnReady != nil)
+    if (self.loadOnReady == nil)
         return;
     
     if (!self.DS.data.count)

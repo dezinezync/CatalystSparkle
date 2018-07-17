@@ -54,6 +54,7 @@ static void *KVO_Subscription = &KVO_Subscription;
     
     footer.footerLabel.backgroundColor = theme.articleBackgroundColor;
     footer.footerLabel.textColor = theme.captionColor;
+    footer.footerLabel.textAlignment = NSTextAlignmentCenter;
     
     if (MyFeedsManager.subscription) {
         [self didPurchase:nil];
@@ -111,6 +112,7 @@ static void *KVO_Subscription = &KVO_Subscription;
     
     if (theme.isDark) {
         cell.baseView.layer.shadowColor = [UIColor blackColor].CGColor;
+        cell.baseView.layer.shadowOpacity = 0.4f;
     }
     else {
         cell.selectedBackgroundColor = [UIColor whiteColor];

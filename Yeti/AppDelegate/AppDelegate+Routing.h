@@ -16,4 +16,6 @@
 
 - (void)_dismissAddingFeedDialog;
 
+- (void)openFeed:(NSNumber *)feedID article:(NSNumber *)articleID;
+
 @end
