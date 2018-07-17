@@ -71,6 +71,8 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     [self.tableView registerClass:AddFeedCell.class forCellReuseIdentifier:kAddFeedCell];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     self.extendedLayoutIncludesOpaqueBars = YES;
     
     self.title = @"Add Feed";
@@ -79,14 +81,13 @@
     self.tableView.contentInset = UIEdgeInsetsMake(48.f, 0, 0, 0);
     
     self.toolbar.delegate = self;
+    self.toolbar.barTintColor = theme.cellColor;
     [self.toolbar setShadowImage:[UIImage new] forToolbarPosition:UIBarPositionTopAttached];
     
     self.input.layoutMargins = UIEdgeInsetsMake(0, 8.f, 0, 8.f);
     [self.input.heightAnchor constraintEqualToConstant:36.f].active = YES;
     
     self.input.delegate = self;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
     
