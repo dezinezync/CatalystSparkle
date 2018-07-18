@@ -579,9 +579,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)getArticle:(NSNumber *)articleID success:(successBlock)successCB error:(errorBlock)errorCB {
     
+    if (articleID == nil || [articleID integerValue] == 0) {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedsManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"Invalid or no article ID"}];
+            errorCB(error, nil, nil);
+        }
+        return;
+    }
+    
     NSString *path = formattedString(@"/article/%@", articleID);
     
-    [self.backgroundSession GET:path parameters:@{@"userID" : MyFeedsManager.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session GET:path parameters:@{@"userID" : MyFeedsManager.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             

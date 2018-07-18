@@ -312,6 +312,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)didChangePreferredContentSize:(NSNotification *)note {
     
+    if (self.state == ArticleStateLoading) {
+        return;
+    }
+    
     [self setupArticle:self.currentArticle];
     
 }
