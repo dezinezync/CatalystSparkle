@@ -82,6 +82,10 @@
 {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
+    if (index > 1) {
+        [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
+    }
+    
     NSString *step = self.type == UnorderedList ? @"•" : [@(index).stringValue stringByAppendingString:@"."];
     NSString *stepString = formattedString(@"%@%@ ", indent == 1 ? @"\t" : @"", step);
     
@@ -132,7 +136,6 @@
     
     [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:stepString attributes:attributes]];
     [attrs appendAttributedString:sub];
-    [attrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n" attributes:@{NSParagraphStyleAttributeName: Paragraph.paragraphStyle}]];
     
 }
 
