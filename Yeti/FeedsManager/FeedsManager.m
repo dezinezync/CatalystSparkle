@@ -20,6 +20,8 @@
 #import <CocoaLumberjack/CocoaLumberjack.h>
 #endif
 
+#import "YetiConstants.h"
+
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
@@ -446,6 +448,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         params = @{@"URL": url, @"userID": [self userID]};
     }
     
+    weakify(self);
+    
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
@@ -489,6 +493,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             
             return;
         }
+
+#ifndef SHARE_EXTENSION
+        strongify(self);
+
+        self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
+#endif
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
@@ -533,8 +543,14 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
     
-    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    weakify(self);
     
+    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+#ifndef SHARE_EXTENSION
+        strongify(self);
+        
+        self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
+#endif
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         

@@ -66,6 +66,7 @@ typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType const YTSubscriptionMonthly;
 YETI_EXPORT YetiSubscriptionType const YTSubscriptionYearly;
 
-YETI_EXPORT NSString * const YTBetaHasSubscribed;
+YETI_EXPORT NSString * const YTSubscriptionPurchased;
+YETI_EXPORT NSString * const YTSubscriptionHasAddedFirstFeed;
 
 #endif /* YetiConstants_h */

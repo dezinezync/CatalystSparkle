@@ -578,17 +578,28 @@ static void *KVO_Unread = &KVO_Unread;
         return;
     }
     
+    UICKeyChainStore *keychain = MyFeedsManager.keychain;
+    
     // during betas and for testflight builds, this option should be left on.
-    id betaCheck = [MyFeedsManager.keychain stringForKey:YTBetaHasSubscribed];
+    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
     BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
     
-    if (betaVal) {
+    if (betaVal == YES) {
         DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
         return;
     }
     
     if (self.presentedViewController != nil) {
         DDLogWarn(@"FeedsVC is already presenting a viewController. Not showing the subscriptions interface.");
+        return;
+    }
+    
+    id addedFirst = [keychain stringForKey:YTSubscriptionHasAddedFirstFeed];
+    BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
+    
+    if (addedVal == NO) {
+        DDLogWarn(@"User hasn't added their first feed yet. Ignoring.");
+        return;
     }
     
     UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
@@ -596,9 +607,7 @@ static void *KVO_Unread = &KVO_Unread;
     weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        [self.splitViewController presentViewController:nav animated:YES completion:^{
-            [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTBetaHasSubscribed];
-        }] ;
+        [self.splitViewController presentViewController:nav animated:YES completion:nil];
     });
     
 }

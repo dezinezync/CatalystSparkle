@@ -18,7 +18,6 @@
 typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateDefault,
     IntroStateUUID,
-    IntroStateSubscription,
     IntroStateSubscriptionDone
 };
 
@@ -114,7 +113,6 @@ static void * buttonStateContext = &buttonStateContext;
     
     switch (self.state) {
         case IntroStateUUID:
-        case IntroStateSubscription:
         {
             self.scrollView.scrollEnabled = YES;
             self.bottomStackView.hidden = NO;
@@ -151,29 +149,6 @@ static void * buttonStateContext = &buttonStateContext;
             self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
             
             [self getAccountInfo];
-        }
-            break;
-        case IntroStateSubscription:
-        {
-            NSString *text = @"Select your subscription";
-            
-            NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:attributes];
-            
-            self.topLabel.attributedText = attrs;
-            [self.topLabel sizeToFit];
-            
-            SubscriptionView *view = [[SubscriptionView alloc] initWithNib];
-            view.navigationController = self.navigationController;
-            
-            [view.restoreButton addTarget:self action:@selector(didTapRestore:) forControlEvents:UIControlEventTouchUpInside];
-            
-            [self.stackView insertArrangedSubview:view atIndex:1];
-            
-            if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-                [self.stackView setCustomSpacing:96.f afterView:self.stackView.arrangedSubviews.firstObject];
-            }
-            
-            self.activeView = [[self.stackView arrangedSubviews] objectAtIndex:1];
         }
             break;
         default:
@@ -221,79 +196,9 @@ static void * buttonStateContext = &buttonStateContext;
 
 - (IBAction)didTapContinue:(id)sender {
     
-    if (self.state == IntroStateSubscription) {
-//#ifdef DEBUG
+    if (self.state == IntroStateUUID) {
         self.state = IntroStateSubscriptionDone;
         [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
-        return;
-//#endif
-        // confirm purchase and continue
-//        YetiSubscriptionType selected = [(SubscriptionView *)self.activeView selected];
-//
-//        SKProduct *product = [MyStoreManager.products rz_reduce:^id(SKProduct *prev, SKProduct *current, NSUInteger idx, NSArray *array) {
-//            return [current.productIdentifier isEqualToString:selected] ? current : prev;
-//        }];
-//
-//        if (!product) {
-//            return;
-//        }
-//
-//        self.button.enabled = NO;
-//
-//        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
-//
-//        weakify(self);
-//
-//        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didFailRestore:) name:YTPurchaseProductFailed object:nil];
-//
-//        [MyStoreManager purhcaseProduct:product success:^(SKPaymentQueue *queue, SKPaymentTransaction * _Nullable transaction) {
-//
-//            NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-//
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//                NSData *receipt = [[NSData alloc] initWithContentsOfURL:receiptURL];
-//
-//                if (receipt) {
-//                    // verify with server
-//                    [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                        if ([[responseObject valueForKey:@"status"] boolValue]) {
-//                            YetiSubscriptionType subscriptionType = transaction.payment.productIdentifier;
-//
-//                            [[NSUserDefaults standardUserDefaults] setValue:subscriptionType forKey:kSubscriptionType];
-//                            [[NSUserDefaults standardUserDefaults] synchronize];
-//                        }
-//
-//                        strongify(self);
-//
-//                        [self didRestore:nil];
-//
-//                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                        [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
-//
-//                        strongify(self);
-//
-//                        [self didRestore:nil];
-//
-//                    }];
-//                }
-//                else {
-//                    [AlertManager showGenericAlertWithTitle:@"No Receipt Data" message:@"The App Store did not provide receipt data for this transaction"];
-//                }
-//            });
-//
-//        } error:^(SKPaymentQueue *queue, NSError *error) {
-//
-//            if (error.code != SKErrorPaymentCancelled) {
-//                [AlertManager showGenericAlertWithTitle:@"Purchase Error" message:error.localizedDescription];
-//            }
-//
-//            strongify(self);
-//
-//            [self _removeRestoreObservers];
-//
-//        }];
     }
     
     if (self.state == IntroStateSubscriptionDone) {
@@ -301,7 +206,7 @@ static void * buttonStateContext = &buttonStateContext;
         return;
     }
     
-    self.state = self.state == IntroStateDefault ? IntroStateUUID : IntroStateSubscription;
+    self.state = self.state == IntroStateDefault ? IntroStateUUID : IntroStateSubscriptionDone;
     
     weakify(self);
     [UIView animateWithDuration:0.3 animations:^{
@@ -314,76 +219,6 @@ static void * buttonStateContext = &buttonStateContext;
 
 - (void)didTapStart:(id)sender {
     [self didTapContinue:sender];
-}
-
-- (void)didTapRestore:(id)sender {
-    
-    if ([sender isKindOfClass:UIButton.class]) {
-        [(UIButton *)sender setEnabled:NO];
-    }
-    
-//    self.button.enabled = NO;
-//
-//    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-//    [center addObserver:self selector:@selector(didRestore:) name:YTDidPurchaseProduct object:nil];
-//    [center addObserver:self selector:@selector(didFailRestore:) name:YTPurchaseProductFailed object:nil];
-//
-//    [MyStoreManager restorePurchases];
-    
-}
-
-#pragma mark - StoreKit
-
-- (void)_removeRestoreObservers {
-//    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-//    [center removeObserver:self name:YTDidPurchaseProduct object:nil];
-//    [center removeObserver:self name:YTPurchaseProductFailed object:nil];
-//    
-//    SubscriptionView *view = (SubscriptionView *)[self activeView];
-//    if (!view.restoreButton.isEnabled) {
-//        view.restoreButton.enabled = YES;
-//    }
-//    
-//    self.button.enabled = YES;
-}
-
-- (void)didRestore:(NSNotification *)note {
-    
-    if (!NSThread.isMainThread) {
-        weakify(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            [self didRestore:note];
-        });
-        return;
-    }
-    
-    [self _removeRestoreObservers];
-    
-    if (note != nil) {
-        [AlertManager showGenericAlertWithTitle:@"Purchases Restored" message:@"Your purchases have been successfully restored."];
-    }
-    
-    SubscriptionView *view = (SubscriptionView *)[self activeView];
-    if (view.restoreButton.isEnabled) {
-        view.restoreButton.enabled = NO;
-    }
-    
-    if (self.button.isEnabled == NO) {
-        self.button.enabled = YES;
-    }
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)didFailRestore:(NSNotification *)note {
-    [self _removeRestoreObservers];
-    
-    NSError *error = [note.userInfo valueForKey:@"error"];
-    
-    if (error && error.code != SKErrorUnknown) {
-        [AlertManager showGenericAlertWithTitle:@"Restore Failed" message:error.localizedDescription];
-    }
 }
 
 #pragma mark - Account

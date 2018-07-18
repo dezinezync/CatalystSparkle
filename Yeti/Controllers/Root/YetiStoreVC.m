@@ -126,6 +126,14 @@ static void *KVO_Subscription = &KVO_Subscription;
     
 }
 
+- (void)setState:(StoreState)state {
+    [super setState:state];
+    
+    if (state == StoreStateRestored || state == StoreStatePurchased) {
+        [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTSubscriptionPurchased];
+    }
+}
+
 #pragma mark - Actions
 
 - (void)didTapRestore:(UIButton *)sender {
