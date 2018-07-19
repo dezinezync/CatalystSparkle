@@ -539,7 +539,7 @@
 
 - (void)openURL:(NSString *)uri {
     
-    if (!uri || [uri isBlank])
+    if (uri == nil || [uri isBlank])
         return;
     
     NSString *browserScheme = [([NSUserDefaults.standardUserDefaults valueForKey:ExternalBrowserAppScheme] ?: @"safari") lowercaseString];
@@ -548,7 +548,7 @@
     if ([browserScheme isEqualToString:@"safari"]) {
         URL = [NSURL URLWithString:uri];
         
-        if (!URL)
+        if (URL == nil || [URL host] == nil)
             return;
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];

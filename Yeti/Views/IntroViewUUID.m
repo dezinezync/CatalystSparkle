@@ -51,6 +51,10 @@
 
 - (void)copyUUID:(id)sender {
     
+    if (MyFeedsManager.userIDManager.UUID == nil) {
+        return;
+    }
+    
     [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
     
     [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your account ID has been copied to the clipboard."];

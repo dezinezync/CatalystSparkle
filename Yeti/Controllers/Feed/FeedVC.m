@@ -672,9 +672,16 @@
         asyncMain(^{
             strongify(self);
             
-            self.feed.articles = [(self.feed.articles ?: @[]) arrayByAddingObjectsFromArray:responseObject];
+            NSArray *articles = [(self.feed.articles ?: @[]) arrayByAddingObjectsFromArray:responseObject];
+            self.feed.articles = articles;
             self->_ignoreLoadScroll = YES;
-            self.DS.data = self.feed.articles;
+            
+            @try {
+                self.DS.data = self.feed.articles;
+            }
+            @catch (NSException *exc) {
+                DDLogWarn(@"Exception updating feed articles: %@", exc);
+            }
         });
         
         self->_page = page;

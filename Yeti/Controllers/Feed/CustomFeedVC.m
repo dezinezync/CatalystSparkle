@@ -180,7 +180,12 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
             
             self->_page = page;
             
-            self.DS.data = MyFeedsManager.unread;
+            @try {
+                self.DS.data = MyFeedsManager.unread;
+            }
+            @catch (NSException *exc) {
+                DDLogWarn(@"Exception setting unread articles: %@", exc);
+            }
             
             self.loadingNext = NO;
             
