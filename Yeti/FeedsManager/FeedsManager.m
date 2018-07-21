@@ -1442,7 +1442,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (!_session) {
         
         // Set app-wide shared cache (first number is megabyte value)
-        NSUInteger cacheSizeMemory = 500*1024*1024; // 500 MB
+        NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
         NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
         NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
         [NSURLCache setSharedURLCache:sharedCache];
@@ -1460,6 +1460,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         defaultConfig.allowsCellularAccess = YES;
         defaultConfig.HTTPShouldUsePipelining = YES;
+        defaultConfig.waitsForConnectivity = NO;
 
         NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
 
@@ -1524,7 +1525,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         defaultConfig.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
         
         defaultConfig.allowsCellularAccess = YES;
-        defaultConfig.waitsForConnectivity = YES;
+        defaultConfig.waitsForConnectivity = NO;
         defaultConfig.HTTPShouldUsePipelining = YES;
         
         [defaultConfig setHTTPAdditionalHeaders:@{
@@ -1560,6 +1561,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         defaultConfig.allowsCellularAccess = YES;
         defaultConfig.HTTPShouldUsePipelining = YES;
+        defaultConfig.waitsForConnectivity = NO;
         
         NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
         
@@ -1945,6 +1947,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         return [NSError errorWithDomain:@"TTKit" code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
     }
+    else {
+        errorString = [userInfo valueForKey:NSLocalizedDescriptionKey];
+    }
+    
+    if (errorString)
+        return [NSError errorWithDomain:@"TTKit" code:0 userInfo:userInfo];
     
     return [NSError errorWithDomain:@"TTKit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
     

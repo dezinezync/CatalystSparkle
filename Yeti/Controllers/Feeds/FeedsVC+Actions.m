@@ -72,6 +72,10 @@
         
         DDLogError(@"%@", error);
         
+        if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
+            [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
+        }
+        
         asyncMain(^{
             [sender endRefreshing];
         });

@@ -70,6 +70,12 @@
         url = [components URL].absoluteString;
     }
     
+    if (components.scheme && [components.scheme isEqualToString:@"http"]) {
+        components.scheme = @"https";
+        
+        url = [components URL].absoluteString;
+    }
+    
     return url;
 }
 

@@ -221,15 +221,17 @@ static NSString * const reuseIdentifier = @"Cell";
         return 0;
     }
     
+    NSInteger const maxCells = 9;
+    
     switch (section) {
         case 1:
-            return MIN(6, [self.recommendations[@"mostRead"] count]);
+            return MIN(maxCells, [self.recommendations[@"mostRead"] count]);
             break;
         case 2:
-            return MIN(6, [self.recommendations[@"highestSubs"] count]);
+            return MIN(maxCells, [self.recommendations[@"highestSubs"] count]);
             break;
         default:
-            return MIN(6, [self.recommendations[@"trending"] count]);
+            return MIN(maxCells, [self.recommendations[@"trending"] count]);
             break;
     }
 }

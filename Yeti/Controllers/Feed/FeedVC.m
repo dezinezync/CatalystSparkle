@@ -563,13 +563,14 @@
         [self.navigationController pushViewController:vc animated:YES];
     }
     
-//    weakify(self);
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        strongify(self);
-//        item.read = YES;
-//        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-//        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-//    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
+            cell.markerView.image = nil;
+        }
+        
+    });
 }
 
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView leadingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -848,8 +849,27 @@
             // reload it.
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+            NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
+            BOOL isVisible = NO;
+            for (NSIndexPath *ip in visible) {
+                if (ip.row == index) {
+                    isVisible = YES;
+                    break;
+                }
+            }
+            
+            if (isVisible) {
+                ArticleCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if (cell != nil && articleInDS.isBookmarked == NO) {
+                    if (read) {
+                        cell.markerView.image = nil;
+                    }
+                    else {
+                        cell.markerView.image = [UIImage imageNamed:@"m_unread"];
+                    }
+                }
+            }
         }
     });
 }
