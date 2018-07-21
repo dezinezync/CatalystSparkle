@@ -866,7 +866,7 @@
                         cell.markerView.image = nil;
                     }
                     else {
-                        cell.markerView.image = [UIImage imageNamed:@"m_unread"];
+                        cell.markerView.image = [UIImage imageNamed:@"munread"];
                     }
                 }
             }
