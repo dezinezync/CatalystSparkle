@@ -9,25 +9,24 @@
 #import "AppDelegate+Routing.h"
 #import "AppDelegate+Push.h"
 #import "AppDelegate+Store.h"
-#import "FeedsVC.h"
 
 #import <JLRoutes/JLRoutes.h>
 #import "YetiThemeKit.h"
 
 #import "YetiConstants.h"
-#import "EmptyVC.h"
 #import "CodeParser.h"
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
 #import "SplitVC.h"
-#import "YTNavigationController.h"
 #import "YetiConstants.h"
 #import "FeedsManager.h"
 
 AppDelegate *MyAppDelegate = nil;
 
-@interface AppDelegate ()
+@interface AppDelegate () {
+    BOOL _restoring;
+}
 
 @end
 
@@ -39,6 +38,10 @@ AppDelegate *MyAppDelegate = nil;
     dispatch_once(&onceToken, ^{
         MyAppDelegate = self;
     });
+    
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    __unused BOOL unused = [super application:application willFinishLaunchingWithOptions:launchOptions];
     
     weakify(self);
 
@@ -67,24 +70,22 @@ AppDelegate *MyAppDelegate = nil;
 //
 //        [self openFeed:@(18) article:@(97012)];
 //    });
+    
+    //    [self yt_log_fontnames];
+    
+    //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
+    //    DDLogDebug(@"EX:%@", data);
 
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-//    [self yt_log_fontnames];
-    
-    // Override point for customization after application launch.
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 #ifndef TARGET_OS_SIMULATOR
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [application registerForRemoteNotifications];
     });
 #endif
-    
-//    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
-//    DDLogDebug(@"EX:%@", data);
     
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
@@ -104,6 +105,59 @@ AppDelegate *MyAppDelegate = nil;
         [defaults synchronize];
     }
     
+}
+
+#pragma mark - State Restoration
+
+- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+    
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    
+    DDLogDebug(@"Will save application state for version: %@", version);
+    [coder encodeObject:version forKey:@"version"];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
+    
+    if (reset) {
+        return NO;
+    }
+    
+    NSString *oldVersion = [coder decodeObjectForKey:@"version"];
+    
+    if (oldVersion) {
+        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
+        // don't restore across versions.
+        if (isNewer) {
+            return NO;
+        }
+    }
+    
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
+    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
+    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
+        DDLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
+        return NO;
+    }
+    
+    _restoring = YES;
+    
+    DDLogDebug(@"Will restore application state");
+    return YES;
+}
+
+- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
+    DDLogDebug(@"Application will save restoration data");
+}
+
+- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
+    DDLogDebug(@"Application did restore");
 }
 
 #pragma mark -
@@ -138,22 +192,12 @@ AppDelegate *MyAppDelegate = nil;
 
 - (void)setupRootController {
     
-    FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
-    EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-    
-    YTNavigationController *nav1 = [[YTNavigationController alloc] initWithRootViewController:vc];
+    if (_restoring == YES) {
+        _restoring = NO;
+        return;
+    }
     
     SplitVC *splitVC = [[SplitVC alloc] init];
-    
-    if (self.window.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
-        vc2.navigationItem.leftBarButtonItem = splitVC.displayModeButtonItem;
-        splitVC.viewControllers = @[nav1, nav2];
-    }
-    else {
-        splitVC.viewControllers = @[nav1];
-        vc2 = nil;
-    }
     
     self.window.rootViewController = splitVC;
     

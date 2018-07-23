@@ -27,7 +27,7 @@
 #import "YetiThemeKit.h"
 #import "TableHeader.h" 
 
-@interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
+@interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
 }
@@ -47,6 +47,9 @@
         self.feed = feed;
         _canLoadNext = YES;
         _page = 0;
+        
+        self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), feed.feedID);
+        self.restorationClass = self.class;
     }
     
     return self;
@@ -56,6 +59,7 @@
     [super viewDidLoad];
     
     self.title = self.feed.title;
+    self.tableView.restorationIdentifier = self.restorationIdentifier;
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
@@ -106,21 +110,22 @@
     
     // Search Controller setup
     {
-        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-        
+
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search articles";
         searchController.searchBar.accessibilityValue = @"Search loaded articles";
         searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        
+        searchController.searchBar.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchbar"];
+        searchController.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchController"];
+
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         
         self.navigationItem.searchController = searchController;
         self.navigationItem.hidesSearchBarWhenScrolling = NO;
         
-        CGFloat height = 1.f/self.traitCollection.displayScale;
+        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
         UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
         hairline.backgroundColor = theme.cellColor;
         hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
@@ -914,6 +919,42 @@
     vc.author = author;
     
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - State Restoration
+
+NSString * const kFeedData = @"FeedData";
+NSString * const kCurrentPage = @"FeedsLoadedPage";
+
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    Feed *feed = [coder decodeObjectForKey:kFeedData];
+    
+    if (feed) {
+        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+        return vc;
+    }
+    
+    return nil;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.feed forKey:kFeedData];
+    [coder encodeInteger:_page forKey:kCurrentPage];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+    
+    Feed *feed = [coder decodeObjectForKey:kFeedData];
+    
+    if (feed) {
+        self.feed = feed;
+        self.DS.data = self.feed.articles;
+        _page = [coder decodeIntegerForKey:kCurrentPage];
+    }
+    
 }
 
 @end

@@ -31,7 +31,7 @@
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
-@interface FeedsVC () <DZSDatasource>
+@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration>
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
@@ -42,6 +42,14 @@ static void *KVO_Unread = &KVO_Unread;
 @end
 
 @implementation FeedsVC
+
+- (instancetype)initWithStyle:(UITableViewStyle)style {
+    if (self = [super initWithStyle:style]) {
+        self.restorationIdentifier = NSStringFromClass(self.class);
+    }
+    
+    return self;
+}
 
 - (BOOL)ef_hidesNavBorder {
     return NO;
@@ -133,6 +141,9 @@ static void *KVO_Unread = &KVO_Unread;
 #pragma mark - Setups
 
 - (void)setupTableView {
+    
+    self.tableView.restorationIdentifier = self.restorationIdentifier;
+    
     self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
     
     self.DS.addAnimation = UITableViewRowAnimationFade;
@@ -212,7 +223,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
         
-        CGFloat height = 1.f/self.traitCollection.displayScale;
+        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
         UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
         hairline.backgroundColor = theme.cellColor;
         hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
@@ -440,6 +451,33 @@ static void *KVO_Unread = &KVO_Unread;
     
 }
 
+#pragma mark - Restoration
+
+NSString * const kDS2Data = @"DS2Data";
+
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    return [[FeedsVC alloc] initWithStyle:UITableViewStyleGrouped];
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+    
+    NSArray *data = self.DS2.data;
+    
+    [coder encodeObject:data forKey:kDS2Data];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+    
+    NSArray *data = [coder decodeObjectForKey:kDS2Data];
+    
+    if (data) {
+        self.DS2.data = data;
+    }
+    
+}
+
 #pragma mark - Data
 
 - (UIView *)viewForEmptyDataset {
@@ -654,12 +692,14 @@ static void *KVO_Unread = &KVO_Unread;
     
     weakify(self);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        asyncMain(^{
-            strongify(self);
-            [self beginRefreshing:self.refreshControl];
+    if (self.DS2.data == nil || self.DS2.data.count == 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            asyncMain(^{
+                strongify(self);
+                [self beginRefreshing:self.refreshControl];
+            });
         });
-    });
+    }
     
     if (MyFeedsManager.subscription == nil) {
         [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {

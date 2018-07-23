@@ -19,6 +19,14 @@
 
 @implementation EmptyVC
 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+        self.restorationIdentifier = NSStringFromClass(self.class);
+    }
+    
+    return self;
+}
+
 - (void)viewDidLoad {
     
     [super viewDidLoad];

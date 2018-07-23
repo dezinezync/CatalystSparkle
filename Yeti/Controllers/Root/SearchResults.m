@@ -16,6 +16,9 @@
 
 - (void)viewDidLoad {
     
+    self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), @"-searchResults");
+    self.tableView.restorationIdentifier = self.restorationIdentifier;
+    
     [super viewDidLoad];
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
