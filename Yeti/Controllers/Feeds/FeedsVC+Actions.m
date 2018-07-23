@@ -157,6 +157,40 @@
             
         }]];
         
+        [avc addAction:[UIAlertAction actionWithTitle:@"Share Feed URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            NSString *feedURL = [feed url];
+            NSURL *URL = [NSURL URLWithString:feedURL];
+            
+            UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                [self presentViewController:activityVC animated:YES completion:nil];
+                
+            });
+            
+        }]];
+        
+        if ([[feed extra] valueForKey:@"url"]) {
+            
+            [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+                NSString *websiteURL = [[feed extra] valueForKey:@"url"];
+                NSURL *URL = [NSURL URLWithString:websiteURL];
+                
+                UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [self presentViewController:activityVC animated:YES completion:nil];
+                    
+                });
+                
+            }]];
+            
+        }
+        
         [avc addAction:[UIAlertAction actionWithTitle:@"Delete Feed" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
             
             strongify(self);
@@ -412,7 +446,34 @@
         
         move.backgroundColor = [UIColor colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
         
-        configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, move]];
+        UIContextualAction *share = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Share" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+           
+            completionHandler(YES);
+            
+            if ([[feed extra] valueForKey:@"url"]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self showShareOptionsVC:feed];
+                });
+            }
+            else {
+                NSString *feedURL = [feed url];
+                NSURL *URL = [NSURL URLWithString:feedURL];
+                
+                UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    strongify(self);
+                    
+                    [self presentViewController:activityVC animated:YES completion:nil];
+                    
+                });
+            }
+            
+        }];
+        
+        configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, move, share]];
         
     }
     
@@ -420,6 +481,54 @@
     
     return configuration;
 
+}
+
+- (void)showShareOptionsVC:(Feed *)feed {
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    if ([[feed valueForKey:@"extra"] valueForKey:@"url"] == nil) {
+        return;
+    }
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Share Feed URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        NSString *feedURL = [feed url];
+        NSURL *URL = [NSURL URLWithString:feedURL];
+        
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self presentViewController:activityVC animated:YES completion:nil];
+            
+        });
+        
+    }]];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        NSString *websiteURL = [[feed extra] valueForKey:@"url"];
+        NSURL *URL = [NSURL URLWithString:websiteURL];
+        
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self presentViewController:activityVC animated:YES completion:nil];
+            
+        });
+        
+    }]];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
 }
 
 @end
