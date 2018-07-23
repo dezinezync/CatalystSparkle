@@ -192,6 +192,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.content == nil || [self.item.content count] == 0) {
         [self setupArticle:self.item];
     }
+    else {
+        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -548,7 +551,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item) {
         
-        if (!self.item.isBookmarked) {
+        if (self.item.isBookmarked == NO) {
             if (_isRestoring == YES) {
                 _isRestoring = NO;
             }
