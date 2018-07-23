@@ -41,8 +41,8 @@
 #import <AVKit/AVKit.h>
 
 typedef NS_ENUM(NSInteger, ArticleState) {
-    ArticleStateLoaded,
     ArticleStateLoading,
+    ArticleStateLoaded,
     ArticleStateError,
     ArticleStateEmpty
 };
@@ -177,7 +177,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     [super viewDidLayoutSubviews];
     
-    if (_hasRendered)
+    if (_hasRendered == YES)
         return;
     
     _hasRendered = YES;
@@ -312,7 +312,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)didChangePreferredContentSize:(NSNotification *)note {
     
-    if (self.state == ArticleStateLoading) {
+    if (self.state == ArticleStateLoading || self.state == ArticleStateLoaded) {
         return;
     }
     

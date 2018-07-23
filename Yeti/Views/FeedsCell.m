@@ -46,6 +46,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.indentationWidth = 28.f;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     self.backgroundColor = theme.cellColor;
 
     self.titleLabel.textColor = theme.titleColor;
@@ -148,6 +149,11 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         else {
             subview.backgroundColor = backgroundColor;
         }
+    }
+    
+    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
+        Theme *theme = [YTThemeKit theme];
+        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
     }
 }
 
