@@ -65,11 +65,18 @@
     if ([key isEqualToString:@"feeds"]) {
 
         if ([value isKindOfClass:[NSArray class]])
-{
+        {
 
             NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
+            
             for (id valueMember in value) {
-                [myMembers addObject:valueMember];
+                if ([valueMember isKindOfClass:NSDictionary.class]) {
+                    Feed *obj = [Feed instanceFromDictionary:valueMember];
+                    [myMembers addObject:obj];
+                }
+                else {
+                    [myMembers addObject:valueMember];
+                }
             }
 
             self.feeds = myMembers;
@@ -106,19 +113,18 @@
 
     if (self.feeds) {
         
-        if ([self.feeds count] && [[self.feeds objectAtIndex:0] isKindOfClass:Folder.class]) {
+        NSMutableArray *feedMembers = [NSMutableArray arrayWithCapacity:self.feeds.count];
+        
+        for (Feed *feed in self.feeds) {
+            if (feed.folderID == nil) {
+                feed.folderID = self.folderID;
+            }
             
-            NSMutableArray *members = [NSMutableArray arrayWithCapacity:self.feeds.count];
-            
-            [self.feeds enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                [members addObject:[(Feed *)obj dictionaryRepresentation]];
-            }];
-            
-            [dictionary setObject:members forKey:@"feeds"];
+            NSDictionary *dict = [feed dictionaryRepresentation];
+            [feedMembers addObject:dict];
         }
-        else {
-            [dictionary setObject:self.feeds forKey:@"feeds"];
-        }
+        
+        [dictionary setObject:feedMembers forKey:@"feeds"];
         
     }
 

@@ -47,12 +47,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
     
     BOOL _deferredProcessing;
+    
+    BOOL _isRestoring;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -88,6 +90,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {
         self.item = item;
         self.state = (item.content && item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
+        
+        self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), item.identifier);
+        self.restorationClass = self.class;
     }
     
     return self;
@@ -104,6 +109,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
     }
+    
+    self.scrollView.restorationIdentifier = self.restorationIdentifier;
     
     [self didUpdateTheme];
     
@@ -156,7 +163,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         UINavigationBar *navbar = self.navigationController.navigationBar;
         
-        CGFloat height = 1.f/self.traitCollection.displayScale;
+        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
         UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
         hairline.backgroundColor = theme.cellColor;
         hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
@@ -182,7 +189,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     _hasRendered = YES;
     
-    [self setupArticle:self.item];
+    if (self.item.content == nil || [self.item.content count] == 0) {
+        [self setupArticle:self.item];
+    }
+    else {
+        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -539,8 +551,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item) {
         
-        if (!self.item.isBookmarked) {
-            self.item.content = nil;
+        if (self.item.isBookmarked == NO) {
+            if (_isRestoring == YES) {
+                _isRestoring = NO;
+            }
+            else {
+                // only do this when not restoring state.
+                self.item.content = nil;
+            }
         }
         
         NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
@@ -591,7 +609,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
     weakify(self);
     
-    if (!self.item) {
+    if (self.item == nil) {
         self.item = responseObject;
     }
     else {
@@ -690,6 +708,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             [self addTitle];
         });
         
+        return;
+    }
+    
+    if (self.item == nil) {
         return;
     }
     
@@ -1836,6 +1858,57 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     return _feedbackGenerator;
+}
+
+#pragma mark - State Restoration
+
+NSString * const kArticleData = @"ArticleData";
+NSString * const kScrollViewSize = @"ScrollViewContentSize";
+NSString * const kScrollViewOffset = @"ScrollViewOffset";
+
++ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    
+    FeedItem *item = [coder decodeObjectForKey:kArticleData];
+    
+    if (item != nil) {
+        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+        return vc;
+    }
+    
+    return nil;
+    
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.item forKey:kArticleData];
+    [coder encodeCGSize:self.scrollView.contentSize forKey:kScrollViewSize];
+    [coder encodeCGPoint:self.scrollView.contentOffset forKey:kScrollViewOffset];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+    
+    FeedItem * item = [coder decodeObjectForKey:kArticleData];
+    
+    if (item) {
+        _isRestoring = YES;
+        
+        [self setupArticle:item];
+        
+        weakify(self);
+        
+        CGSize size = [coder decodeCGSizeForKey:kScrollViewSize];
+        CGPoint offset = [coder decodeCGPointForKey:kScrollViewOffset];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            self.scrollView.contentSize = size;
+            [self.scrollView setContentOffset:offset animated:NO];
+        });
+    }
 }
 
 @end

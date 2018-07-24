@@ -19,6 +19,14 @@
 
 @implementation AuthorVC
 
+- (void)setAuthor:(Author *)author {
+    _author = author;
+    
+    if (author) {
+        self.restorationIdentifier = formattedString(@"%@-%@-%@", NSStringFromClass(self.class), self.feed.feedID, author.authorID);
+    }
+}
+
 - (void)setupHeaderView {
     [self ef_hideNavBorder:self.navigationController.transitionCoordinator];
     

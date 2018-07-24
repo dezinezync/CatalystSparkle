@@ -10,6 +10,8 @@
 #import <DZNetworking/DZNetworking.h>
 #import <UICKeyChainStore/UICKeyChainStore.h>
 
+extern NSString *const kAccountID;
+extern NSString *const kUserID;
 extern NSNotificationName const YTUserNotFound;
 
 @protocol YTUserDelegate <NSObject>

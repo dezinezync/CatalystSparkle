@@ -37,6 +37,12 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     return self;
 }
 
+- (void)setUnread:(BOOL)unread {
+    _unread = unread;
+    
+    self.restorationIdentifier = unread ? @"UnreadVC" : @"BookmarksVC";
+}
+
 - (BOOL)ef_hidesNavBorder
 {
     return NO;
