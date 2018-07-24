@@ -735,6 +735,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         strongify(self);
         
+        self.unreadLastUpdate = NSDate.date;
+        
         if (page == 1) {
             @synchronized (self) {
                 self.unread = items;
@@ -2026,6 +2028,7 @@ NSString *const kBookmarksKey = @"key.bookmarks";
 NSString *const kBookmarksCountKey = @"key.bookmarksCount";
 NSString *const ktotalUnreadKey = @"key.totalUnread";
 NSString *const kUnreadKey = @"key.unread";
+NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
 
 - (Class)objectRestorationClass {
     return self.class;
@@ -2048,6 +2051,10 @@ NSString *const kUnreadKey = @"key.unread";
         [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
         [coder encodeObject:self.unread forKey:kUnreadKey];
+        
+        if (self.unreadLastUpdate) {
+            [coder encodeDouble:[self.unreadLastUpdate timeIntervalSince1970] forKey:kUnreadLastUpdateKey];
+        }
     }
     
 }
@@ -2068,6 +2075,12 @@ NSString *const kUnreadKey = @"key.unread";
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
         self.unread = [coder decodeObjectForKey:kUnreadKey];
+        
+        double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
+        if (unreadUpdate) {
+            NSDate *date = [NSDate dateWithTimeIntervalSince1970:unreadUpdate];
+            self.unreadLastUpdate = date;
+        }
     }
     
 }

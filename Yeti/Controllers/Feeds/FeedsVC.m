@@ -184,6 +184,7 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)setupNavigationBar {
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
+    control.attributedTitle = [self lastUpdateAttributedString];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     

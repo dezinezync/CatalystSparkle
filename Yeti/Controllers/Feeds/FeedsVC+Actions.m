@@ -19,8 +19,30 @@
 #import "NewFolderVC.h"
 #import "YTNavigationController.h"
 #import "RecommendationsVC.h"
+#import "YetiThemeKit.h"
 
 @implementation FeedsVC (Actions)
+
+- (NSAttributedString *)lastUpdateAttributedString {
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateStyle = NSDateFormatterShortStyle;
+    formatter.timeStyle = NSDateFormatterShortStyle;
+    
+    NSString *dateString = [formatter stringFromDate:(MyFeedsManager.unreadLastUpdate ?: NSDate.date)];
+    
+    NSString *formatted = formattedString(@"Last update: %@", dateString);
+    
+    Theme *theme = [YTThemeKit theme];
+    
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:11.f],
+                                 NSForegroundColorAttributeName: theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor]
+                                 };
+    
+    NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:formatted attributes:attributes];
+    
+    return attrs;
+}
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
@@ -44,6 +66,7 @@
             
             strongify(self);
             
+            self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
         });
         

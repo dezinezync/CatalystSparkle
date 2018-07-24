@@ -8,7 +8,9 @@
 
 #import "FeedsVC+Search.h"
 
-@interface FeedsVC (Actions) 
+@interface FeedsVC (Actions)
+
+- (NSAttributedString *)lastUpdateAttributedString;
 
 - (void)didTapAdd:(UIBarButtonItem *)add;
 
