@@ -57,6 +57,8 @@
 		F035A22B206181C8005A88EE /* Feed.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3411FBACD2C00912CCF /* Feed.m */; };
 		F035A22C206181C8005A88EE /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33D1FBACD2C00912CCF /* FeedItem.m */; };
 		F035A22D206181C8005A88EE /* Range.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33B1FBACD2C00912CCF /* Range.m */; };
+		F035B4772107479400002576 /* UIImage+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = F035B4762107479400002576 /* UIImage+Sizing.m */; };
+		F035B4782107479400002576 /* UIImage+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = F035B4762107479400002576 /* UIImage+Sizing.m */; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
 		F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F03A5F6020971BAE00CE7D5E /* ThemeVC.m */; };
 		F03A5F6220971BB300CE7D5E /* ThemeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F03A5F6020971BAE00CE7D5E /* ThemeVC.m */; };
@@ -633,6 +635,8 @@
 		F035A21820617EC3005A88EE /* ActionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionViewController.m; sourceTree = "<group>"; };
 		F035A21B20617EC3005A88EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		F035A21D20617EC3005A88EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F035B4752107479400002576 /* UIImage+Sizing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+Sizing.h"; sourceTree = "<group>"; };
+		F035B4762107479400002576 /* UIImage+Sizing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Sizing.m"; sourceTree = "<group>"; };
 		F0362B771FCEDC28009184E2 /* FeedsVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Actions.h"; sourceTree = "<group>"; };
 		F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Actions.m"; sourceTree = "<group>"; };
 		F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThemeVC.h; sourceTree = "<group>"; };
@@ -1221,6 +1225,8 @@
 				F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */,
 				F0695B1E20CE6B7600517AF8 /* UIViewController+Hairline.h */,
 				F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */,
+				F035B4752107479400002576 /* UIImage+Sizing.h */,
+				F035B4762107479400002576 /* UIImage+Sizing.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2211,6 +2217,7 @@
 				F069ABE7206E018F00021ABF /* Heading.m in Sources */,
 				F07DCA4120C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */,
 				F069ABE8206E018F00021ABF /* Content.m in Sources */,
+				F035B4782107479400002576 /* UIImage+Sizing.m in Sources */,
 				F069ABE9206E018F00021ABF /* Paragraph.m in Sources */,
 				F0202BDE20A41A8D00FBC3E1 /* CustomFeedVC.m in Sources */,
 				F069ABEA206E018F00021ABF /* Range.m in Sources */,
@@ -2320,6 +2327,7 @@
 				F0869B622099CFE100A5D723 /* YetiThemeKit.m in Sources */,
 				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
+				F035B4772107479400002576 /* UIImage+Sizing.m in Sources */,
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,
 				F070C3441FBACD2C00912CCF /* Content.m in Sources */,
 				F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */,

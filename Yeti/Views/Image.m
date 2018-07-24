@@ -17,6 +17,8 @@
 #import <DZKit/AlertManager.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
 
+#import "UIImage+Sizing.h"
+
 @interface Image ()
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
@@ -295,7 +297,17 @@
         [(Image *)self.superview setupAnimationControls];
     }
     else {
-        [super setImage:image];
+        CGSize size = [self scaledSizeForImage:image];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+           
+            UIImage * scaled = [UIImage imageWithImage:image scaledToSize:size];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [super setImage:scaled];
+            });
+            
+        });
     }
     
     if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])
@@ -340,9 +352,20 @@
     CGSize size = [super intrinsicContentSize];
     
     if (self.image) {
-        size.width = MIN(self.bounds.size.width, self.image.size.width);
-        size.height = ceilf(self.image.size.height / (self.image.size.width / size.width));
+        size = [self scaledSizeForImage:self.image];
     }
+    
+    return size;
+}
+
+- (CGSize)scaledSizeForImage:(UIImage *)image {
+    CGSize size = image.size;
+    if (size.width < self.bounds.size.width) {
+        return size;
+    }
+    
+    size.width = MIN(self.bounds.size.width, image.size.width);
+    size.height = ceilf(image.size.height / (image.size.width / size.width));
     
     return size;
 }
