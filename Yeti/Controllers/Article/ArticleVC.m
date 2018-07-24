@@ -41,6 +41,7 @@
 #import <AVKit/AVKit.h>
 
 typedef NS_ENUM(NSInteger, ArticleState) {
+    ArticleStateUnknown,
     ArticleStateLoading,
     ArticleStateLoaded,
     ArticleStateError,
@@ -89,7 +90,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {
         self.item = item;
-        self.state = (item.content && item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
         
         self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), item.identifier);
         self.restorationClass = self.class;
@@ -101,6 +101,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    self.state = ArticleStateLoading;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
@@ -146,6 +148,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize:) name:UIContentSizeCategoryDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+    
+    self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
 }
 
@@ -427,6 +431,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)setState:(ArticleState)state {
     
+    if (_state == state) {
+        return;
+    }
+    
     if ([NSThread isMainThread] == NO) {
         weakify(self);
         asyncMain(^{
@@ -467,8 +475,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             self.images = [NSPointerArray weakObjectsPointerArray];
             self.videos = [NSPointerArray strongObjectsPointerArray];
-            
-            [self setupToolbar:self.traitCollection];
         }
             break;
         case ArticleStateLoaded:
@@ -501,6 +507,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 self.loader.alpha = 1.f;
                 
                 [self setupHelperViewActions];
+                [self setupToolbar:self.traitCollection];
                 
             }];
             
@@ -570,8 +577,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
     
-    self.state = ArticleStateLoading;
-    
     self.item = article;
     
     NSDate *start = NSDate.date;
@@ -587,6 +592,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.state = ArticleStateError;
         return;
     }
+    
+    self.state = ArticleStateLoading;
     
     weakify(self);
     

@@ -115,35 +115,47 @@ NSString * const kFeedsManager = @"FeedsManager";
     
     [super encodeRestorableStateWithCoder:coder];
     
-    BOOL isShowingDetail = [self.viewControllers count] == 2;
+//    BOOL isShowingDetail = [self.viewControllers count] == 2;
+//
+//    if (isShowingDetail) {
+//        // ensure it's not the empty VC
+//        UINavigationController *lastNav = [self.viewControllers lastObject];
+//        UIViewController *vc = [[lastNav viewControllers] firstObject];
+//
+//        if ([vc isKindOfClass:EmptyVC.class]) {
+//            isShowingDetail = NO;
+//        }
+//    }
     
-    [coder encodeBool:isShowingDetail forKey:kShowingDetail];
+//    [coder encodeBool:isShowingDetail forKey:kShowingDetail];
     [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
     
-    if (isShowingDetail) {
-        // get article ID
-        UINavigationController *vc = [self.viewControllers lastObject];
-        if ([[[vc viewControllers] firstObject] isKindOfClass:ArticleVC.class]) {
-            NSNumber *articleID = [(FeedItem *)[[vc viewControllers] firstObject] identifier];
-            
-            [coder encodeInteger:articleID.integerValue forKey:kArticleID];
-        }
-    }
+//    if (isShowingDetail) {
+//        // get article ID
+//        UINavigationController *vc = [self.viewControllers lastObject];
+//        if ([[[vc viewControllers] firstObject] isKindOfClass:ArticleVC.class]) {
+//            NSNumber *articleID = [(FeedItem *)[[[vc viewControllers] firstObject] item] identifier];
+//
+//            [coder encodeInteger:articleID.integerValue forKey:kArticleID];
+//        }
+//    }
     
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    BOOL isShowingDetail = [coder decodeBoolForKey:kShowingDetail];
-
-    if (isShowingDetail) {
-        NSInteger articleID = [coder decodeIntegerForKey:kArticleID];
-        NSNumber *identifer = @(articleID);
-        FeedItem *item = [FeedItem new];
-        item.identifier = identifer;
-        
-        DDLogDebug(@"Show article: %@", item);
-    }
+    [super decodeRestorableStateWithCoder:coder];
+    
+//    BOOL isShowingDetail = [coder decodeBoolForKey:kShowingDetail];
+//
+//    if (isShowingDetail) {
+//        NSInteger articleID = [coder decodeIntegerForKey:kArticleID];
+//        NSNumber *identifer = @(articleID);
+//        FeedItem *item = [FeedItem new];
+//        item.identifier = identifer;
+//
+//        DDLogDebug(@"Show article: %@", item);
+//    }
 }
 
 @end
