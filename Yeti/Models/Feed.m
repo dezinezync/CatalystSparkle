@@ -11,74 +11,6 @@
 
 @implementation Feed
 
-- (NSString *)faviconURI
-{
-    NSString *url = nil;
-    
-    if (self.extra) {
-        
-        if ([self.extra valueForKey:@"apple-touch-icon"] && [self.extra[@"apple-touch-icon"] count]) {
-            
-            NSMutableArray *availableKeys = [[[self.extra valueForKey:@"apple-touch-icon"] allKeys] mutableCopy];
-            NSInteger baseIndex = [availableKeys indexOfObject:@"base"];
-            
-            if (baseIndex != NSNotFound) {
-                [availableKeys removeObjectAtIndex:baseIndex];
-            }
-            
-            availableKeys = [[availableKeys rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
-                return @(obj.integerValue);
-            }] sortedArrayUsingSelector:@selector(compare:)].mutableCopy;
-            
-            url = [self.extra valueForKey:@"apple-touch-icon"][[[availableKeys lastObject] stringValue]];
-            
-            if (!url && baseIndex != NSNotFound) {
-                url = [self.extra[@"apple-touch-icon"] valueForKey:@"base"];
-            }
-        }
-        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
-            url = [self.extra[@"opengraph"] valueForKey:@"image:secure_url"];
-        }
-        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image"]) {
-            url = [self.extra[@"opengraph"] valueForKey:@"image"];
-        }
-        else if ([self.extra valueForKey:@"favicon"] && ![[self.extra valueForKey:@"favicon"] isBlank]) {
-            url = [self.extra valueForKey:@"favicon"];
-            
-            if ([[url pathExtension] isEqualToString:@"ico"]) {
-                NSURLComponents *components = [NSURLComponents componentsWithString:[self.extra valueForKey:@"favicon"]];
-                url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
-            }
-        }
-    }
-    
-    if (!url && (self.favicon && ![self.favicon isBlank])) {
-        url = self.favicon;
-    }
-    
-    if (!url)
-        return url;
-    
-    // ensure this is not an absolute URL
-    NSURLComponents *components = [NSURLComponents componentsWithString:url];
-    
-    if (components.host == nil) {
-        // this is a relative string
-        components = [NSURLComponents componentsWithString:self.url];
-        components.path = url;
-        
-        url = [components URL].absoluteString;
-    }
-    
-    if (components.scheme && [components.scheme isEqualToString:@"http"]) {
-        components.scheme = @"https";
-        
-        url = [components URL].absoluteString;
-    }
-    
-    return url;
-}
-
 #pragma mark -
 
 - (NSString *)compareID
@@ -93,7 +25,7 @@
     [encoder encodeObject:self.etag forKey:@"etag"];
     [encoder encodeObject:self.favicon forKey:@"favicon"];
     [encoder encodeObject:self.feedID forKey:@"feedID"];
-    [encoder encodeObject:self.folder forKey:@"folder"];
+    [encoder encodeObject:self.folderID forKey:@"folderID"];
     [encoder encodeObject:self.articles forKey:@"articles"];
     [encoder encodeObject:self.summary forKey:@"summary"];
     [encoder encodeObject:self.title forKey:@"title"];
@@ -112,7 +44,7 @@
         self.etag = [decoder decodeObjectForKey:@"etag"];
         self.favicon = [decoder decodeObjectForKey:@"favicon"];
         self.feedID = [decoder decodeObjectForKey:@"feedID"];
-        self.folder = [decoder decodeObjectForKey:@"folder"];
+        self.folderID = [decoder decodeObjectForKey:@"folderID"];
         self.articles = [decoder decodeObjectForKey:@"articles"];
         self.summary = [decoder decodeObjectForKey:@"summary"];
         self.title = [decoder decodeObjectForKey:@"title"];
@@ -297,6 +229,10 @@
         [dictionary setObject:self.unread forKey:@"unread"];
     }
     
+    if (self.folderID != nil) {
+        [dictionary setObject:self.folderID forKey:@"folderID"];
+    }
+    
     [dictionary setObject:@(self.hubSubscribed) forKey:@"hubSubscribed"];
     [dictionary setObject:@(self.subscribed) forKey:@"subscribed"];
 
@@ -304,5 +240,72 @@
 
 }
 
+- (NSString *)faviconURI
+{
+    NSString *url = nil;
+    
+    if (self.extra) {
+        
+        if ([self.extra valueForKey:@"apple-touch-icon"] && [self.extra[@"apple-touch-icon"] count]) {
+            
+            NSMutableArray *availableKeys = [[[self.extra valueForKey:@"apple-touch-icon"] allKeys] mutableCopy];
+            NSInteger baseIndex = [availableKeys indexOfObject:@"base"];
+            
+            if (baseIndex != NSNotFound) {
+                [availableKeys removeObjectAtIndex:baseIndex];
+            }
+            
+            availableKeys = [[availableKeys rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
+                return @(obj.integerValue);
+            }] sortedArrayUsingSelector:@selector(compare:)].mutableCopy;
+            
+            url = [self.extra valueForKey:@"apple-touch-icon"][[[availableKeys lastObject] stringValue]];
+            
+            if (!url && baseIndex != NSNotFound) {
+                url = [self.extra[@"apple-touch-icon"] valueForKey:@"base"];
+            }
+        }
+        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
+            url = [self.extra[@"opengraph"] valueForKey:@"image:secure_url"];
+        }
+        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image"]) {
+            url = [self.extra[@"opengraph"] valueForKey:@"image"];
+        }
+        else if ([self.extra valueForKey:@"favicon"] && ![[self.extra valueForKey:@"favicon"] isBlank]) {
+            url = [self.extra valueForKey:@"favicon"];
+            
+            if ([[url pathExtension] isEqualToString:@"ico"]) {
+                NSURLComponents *components = [NSURLComponents componentsWithString:[self.extra valueForKey:@"favicon"]];
+                url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
+            }
+        }
+    }
+    
+    if (!url && (self.favicon && ![self.favicon isBlank])) {
+        url = self.favicon;
+    }
+    
+    if (!url)
+        return url;
+    
+    // ensure this is not an absolute URL
+    NSURLComponents *components = [NSURLComponents componentsWithString:url];
+    
+    if (components.host == nil) {
+        // this is a relative string
+        components = [NSURLComponents componentsWithString:self.url];
+        components.path = url;
+        
+        url = [components URL].absoluteString;
+    }
+    
+    if (components.scheme && [components.scheme isEqualToString:@"http"]) {
+        components.scheme = @"https";
+        
+        url = [components URL].absoluteString;
+    }
+    
+    return url;
+}
 
 @end

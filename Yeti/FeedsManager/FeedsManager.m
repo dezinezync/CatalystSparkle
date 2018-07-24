@@ -33,7 +33,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 #ifdef SHARE_EXTENSION
 @interface FeedsManager ()
 #else
-@interface FeedsManager () <YTUserDelegate>
+@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration>
 #endif
 {
 //    NSString *_feedsCachePath;
@@ -152,72 +152,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     __block NSError *error = nil;
     
-//    if ([NSFileManager.defaultManager fileExistsAtPath:_feedsCachePath]) {
-//
-//        weakify(self);
-//
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//
-//            strongify(self);
-//
-//            NSData *data = [NSData dataWithContentsOfFile:self->_feedsCachePath];
-//
-//            if (data) {
-//                NSArray *responseObject;
-//
-//                @try {
-//                    responseObject = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-//                }
-//                @catch (NSException *exc) {
-//                    responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-//                }
-//                // non-json error.
-//                if (error && error.code == 3840) {
-//                    responseObject = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-//                    error = nil;
-//                }
-//
-//                if (error) {
-//                    DDLogError(@"%@", error);
-//                    if (errorCB)
-//                        errorCB(error, nil, nil);
-//                }
-//                else if (successCB) {
-//                    DDLogDebug(@"Responding to successCB from disk cache");
-//                    NSArray <Feed *> * feeds = [responseObject isKindOfClass:NSArray.class] ? responseObject : [self parseFeedResponse:responseObject];
-//
-//                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5  * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                        MyFeedsManager->_feeds = feeds;
-//
-//                        asyncMain(^{
-//                            successCB(@1, nil, nil);
-//                        });
-//                    });
-//                }
-//            }
-//
-//            data = nil;
-//
-//        });
-//    }
-    
     NSDictionary *params = @{@"userID": MyFeedsManager.userID};
-    
-    // only consider this param when we have feeds
-//    if (since && MyFeedsManager.feeds.count) {
-//
-//        if ([NSDate.date timeIntervalSinceDate:since] < 3600) {
-//
-//            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//            formatter.dateFormat = @"YYYY/MM/dd HH:mm:ss";
-//
-//            params = @{
-//                       @"userID": MyFeedsManager.userID,
-//                       @"since": [formatter stringFromDate:since]
-//                       };
-//
-//        }
-//    }
     
     [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
@@ -229,23 +164,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             @synchronized (MyFeedsManager) {
                 MyFeedsManager.feeds = feeds;
             }
-                
-            // cache it
-//            weakify(self);
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-//                strongify(self);
-//                NSError *error = nil;
-//                NSData *data = [NSJSONSerialization dataWithJSONObject:responseObject options:kNilOptions error:&error];
-//
-//                if (error) {
-//                    DDLogError(@"Error caching feeds: %@", error);
-//                }
-//                else {
-//                    if (![data writeToFile:self->_feedsCachePath atomically:YES]) {
-//                        DDLogError(@"Writing feeds cache to %@ failed.", self->_feedsCachePath);
-//                    }
-//                }
-//            });
         }
         else {
 
@@ -2097,5 +2015,63 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
     }];
 }
+
+#ifndef SHARE_EXTENSION
+#pragma mark - State Restoration
+
+NSString *const kFoldersKey = @"key.folders";
+NSString *const kFeedsKey = @"key.feeds";
+NSString *const kSubscriptionKey = @"key.subscription";
+NSString *const kBookmarksKey = @"key.bookmarks";
+NSString *const kBookmarksCountKey = @"key.bookmarksCount";
+NSString *const ktotalUnreadKey = @"key.totalUnread";
+NSString *const kUnreadKey = @"key.unread";
+
+- (Class)objectRestorationClass {
+    return self.class;
+}
+
++ (id <UIStateRestoring>)objectWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
+    return MyFeedsManager;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    if (self.userIDManager.userID && self.userIDManager.UUID) {
+        [coder encodeInteger:self.userIDManager.userID.integerValue forKey:kUserID];
+        [coder encodeObject:self.userIDManager.UUIDString forKey:kAccountID];
+        
+        [coder encodeObject:self.folders forKey:kFoldersKey];
+        [coder encodeObject:self.feeds forKey:kFeedsKey];
+        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
+        [coder encodeObject:self.bookmarks forKey:kBookmarksKey];
+        [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
+        [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
+        [coder encodeObject:self.unread forKey:kUnreadKey];
+    }
+    
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    NSString * UUIDString = [coder decodeObjectForKey:kAccountID];
+    NSInteger userID = [coder decodeIntegerForKey:kUserID];
+    
+    if (UUIDString != nil && userID > 0) {
+        self.userIDManager.userID = @(userID);
+        self.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
+        
+        self.folders = [coder decodeObjectForKey:kFoldersKey];
+        self.feeds = [coder decodeObjectForKey:kFeedsKey];
+        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
+        self.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
+        self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
+        self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
+        self.unread = [coder decodeObjectForKey:kUnreadKey];
+    }
+    
+}
+
+#endif
 
 @end

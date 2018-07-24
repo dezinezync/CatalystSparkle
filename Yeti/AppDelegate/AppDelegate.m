@@ -63,6 +63,8 @@ AppDelegate *MyAppDelegate = nil;
     }
     
     [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
+    
+    [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
 
     // To test push notifications
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -110,11 +112,6 @@ AppDelegate *MyAppDelegate = nil;
 #pragma mark - State Restoration
 
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
-    
-    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
-    
-    DDLogDebug(@"Will save application state for version: %@", version);
-    [coder encodeObject:version forKey:@"version"];
     return YES;
 }
 
@@ -127,7 +124,7 @@ AppDelegate *MyAppDelegate = nil;
         return NO;
     }
     
-    NSString *oldVersion = [coder decodeObjectForKey:@"version"];
+    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
     
     if (oldVersion) {
         NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];

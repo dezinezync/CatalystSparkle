@@ -7,6 +7,7 @@
 //
 
 #import "Subscription.h"
+#import <DZKit/DZCloudObject.h>
 
 @implementation Subscription
 
@@ -28,6 +29,18 @@
     
     return self;
     
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder {
+    if (self = [super init]) {
+        self.identifer = [decoder decodeObjectForKey:propSel(identifer)];
+        self.environment = [decoder decodeObjectForKey:propSel(environment)];
+        self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
+        self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
+        self.status = [decoder decodeBoolForKey:propSel(status)];
+    }
+    
+    return self;
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key {
@@ -62,6 +75,14 @@
     else {
         
     }
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
+    [encoder encodeObject:self.identifer forKey:propSel(identifier)];
+    [encoder encodeObject:self.environment forKey:propSel(environment)];
+    [encoder encodeDouble:@([self.expiry timeIntervalSince1970]).doubleValue forKey:propSel(expiry)];
+    [encoder encodeDouble:@([self.created timeIntervalSince1970]).doubleValue forKey:propSel(created)];
+    [encoder encodeBool:self.status forKey:propSel(status)];
 }
 
 #pragma mark -

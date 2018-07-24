@@ -114,6 +114,7 @@
 
 NSString * const kShowingDetail = @"isShowingDetail";
 NSString * const kArticleID = @"articleID";
+NSString * const kFeedsManager = @"FeedsManager";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
@@ -122,6 +123,7 @@ NSString * const kArticleID = @"articleID";
     BOOL isShowingDetail = [self.viewControllers count] == 2;
     
     [coder encodeBool:isShowingDetail forKey:kShowingDetail];
+    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
     
     if (isShowingDetail) {
         // get article ID

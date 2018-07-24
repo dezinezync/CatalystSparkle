@@ -461,21 +461,10 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
-    
-    NSArray *data = self.DS2.data;
-    
-    [coder encodeObject:data forKey:kDS2Data];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
-    
-    NSArray *data = [coder decodeObjectForKey:kDS2Data];
-    
-    if (data) {
-        self.DS2.data = data;
-    }
-    
 }
 
 #pragma mark - Data
@@ -495,21 +484,21 @@ NSString * const kDS2Data = @"DS2Data";
     return view;
 }
 
-- (UITableViewCell *)rowForEmptySection:(NSInteger)section {
-    
-    if (section == 1) {
-        EmptyCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kEmptyCell forIndexPath:[NSIndexPath indexPathForRow:0 inSection:section]];
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        cell.backgroundColor = theme.cellColor;
-        cell.activityIndicator.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
-        
-        return cell;
-    }
-    
-    return nil;
-    
-}
+//- (UITableViewCell *)rowForEmptySection:(NSInteger)section {
+//    
+//    if (section == 1) {
+//        EmptyCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kEmptyCell forIndexPath:[NSIndexPath indexPathForRow:0 inSection:section]];
+//        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//        
+//        cell.backgroundColor = theme.cellColor;
+//        cell.activityIndicator.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+//        
+//        return cell;
+//    }
+//    
+//    return nil;
+//    
+//}
 
 - (void)setupData:(NSArray <Feed *> *)feeds
 {
@@ -564,7 +553,13 @@ NSString * const kDS2Data = @"DS2Data";
         
         CGPoint contentOffset = self.tableView.contentOffset;
         
-        [self.DS setData:data section:1];
+        @try {
+            [self.DS setData:data section:1];
+        }
+        @catch (NSException *exc) {
+            DDLogWarn(@"Set FeedsVC Data: %@", exc);
+        }
+        
         [self.tableView.layer removeAllAnimations];
         [self.tableView setContentOffset:contentOffset animated:NO];
         
