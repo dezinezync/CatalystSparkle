@@ -39,6 +39,8 @@ AppDelegate *MyAppDelegate = nil;
         MyAppDelegate = self;
     });
     
+    [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
+    
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     
     __unused BOOL unused = [super application:application willFinishLaunchingWithOptions:launchOptions];
@@ -263,6 +265,45 @@ AppDelegate *MyAppDelegate = nil;
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     return [JLRoutes routeURL:url];
+}
+
+- (void)application:(UIApplication *)app performFetchWithCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
+    
+    BOOL backgroundRefresh = [NSUserDefaults.standardUserDefaults boolForKey:@"backgroundRefresh"];
+    
+    if (backgroundRefresh == NO) {
+        completionHandler(UIBackgroundFetchResultNoData);
+        return;
+    }
+    
+    NSInteger currentCount = (MyFeedsManager.unread ?: @[]).count;
+    
+    [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSInteger newCount = [[responseObject valueForKey:@"total"] integerValue];
+        
+        SplitVC *vc = (SplitVC *)(self.window.rootViewController);
+        UINavigationController *nav = [[vc viewControllers] firstObject];
+        FeedsVC *feeds = [[nav viewControllers] firstObject];
+        
+        if (newCount > currentCount) {
+            completionHandler(UIBackgroundFetchResultNewData);
+            
+            NSIndexSet *set = [NSIndexSet indexSetWithIndex:0];
+            [feeds.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
+        }
+        else {
+            completionHandler(UIBackgroundFetchResultNoData);
+        }
+        
+        [feeds.refreshControl setAttributedTitle:[feeds lastUpdateAttributedString]];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        completionHandler(UIBackgroundFetchResultFailed);
+        
+    }];
+    
 }
 
 @end
