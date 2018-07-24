@@ -1324,8 +1324,25 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         for (Content *item in content.items) { @autoreleasepool {
             NSAttributedString *attrs = [para processText:item.content ranges:item.ranges attributes:item.attributes];
             
+            BOOL rangeAdded = NO;
+            
+            if (item.content) {
+                NSString *ctx = [item content];
+                
+                if ([ctx isEqualToString:@"."] || [ctx isEqualToString:@","])
+                    rangeAdded = YES;
+                else if (ctx.length && ([[ctx substringToIndex:1] isEqualToString:@"."] || [[ctx substringToIndex:1] isEqualToString:@","] || [[ctx substringToIndex:1] isEqualToString:@" "]))
+                    rangeAdded = YES;
+                else if ([[ctx stringByStrippingWhitespace] length] < 6) {
+                    rangeAdded = YES;
+                }
+                else if ([[[ctx stringByStrippingWhitespace] componentsSeparatedByString:@" "] count] == 1) {
+                    rangeAdded = YES;
+                }
+            }
+            
             [mattrs appendAttributedString:attrs];
-            [mattrs appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
+            [mattrs appendAttributedString:[[NSAttributedString alloc] initWithString:rangeAdded ? @" " : @"\n"]];
         } }
         
         para.attributedText = mattrs.copy;
