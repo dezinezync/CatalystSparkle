@@ -70,8 +70,13 @@
             NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
             
             for (id valueMember in value) {
-                Feed *obj = [Feed instanceFromDictionary:valueMember];
-                [myMembers addObject:obj];
+                if ([valueMember isKindOfClass:NSDictionary.class]) {
+                    Feed *obj = [Feed instanceFromDictionary:valueMember];
+                    [myMembers addObject:obj];
+                }
+                else {
+                    [myMembers addObject:valueMember];
+                }
             }
 
             self.feeds = myMembers;
