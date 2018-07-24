@@ -582,6 +582,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSDate *start = NSDate.date;
     
     if (self.item.content && self.item.content.count) {
+        self.state = ArticleStateLoading;
+        
         [self _setupArticle:self.item start:start isChangingArticle:isChangingArticle];
         return;
     }
