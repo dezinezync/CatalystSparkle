@@ -10,6 +10,8 @@
 #import "LayoutConstants.h"
 #import "YetiThemeKit.h"
 
+#import <DZNetworking/ImageLoader.h>
+
 NSString *const kXSwitchCell = @"cell.switch";
 
 @interface ImageLoadingVC ()
@@ -193,6 +195,9 @@ NSString *const kXSwitchCell = @"cell.switch";
             [defaults setValue:ImageLoadingMediumRes forKey:kDefaultsImageLoading];
         else
             [defaults setValue:ImageLoadingHighRes forKey:kDefaultsImageLoading];
+        
+        [[SharedImageLoader cache] removeAllObjects];
+        [[SharedImageLoader cache] removeAllObjectsFromDisk];
     }
     else {
         if (self.bandwidth == 0)

@@ -567,12 +567,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 self.item.content = nil;
             }
         }
-        
-        NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
-        
-        if (cache) {
-            [cache removeAllObjects];
-        }
     }
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
@@ -1251,6 +1245,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.stackView addArrangedSubview:imageView];
     
     if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
+        frame.size.height = frame.size.width * scale;
+        imageView.frame = frame;
         imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
         imageView.aspectRatio.priority = 999;
         imageView.aspectRatio.active = YES;

@@ -11,6 +11,9 @@
 
 @interface SizedImage : UIImageView
 
+@property (nonatomic, copy) NSString *baseURL;
+@property (nonatomic, assign) BOOL settingCached;
+
 - (void)updateAspectRatioWithImage:(UIImage *)image;
 
 @end

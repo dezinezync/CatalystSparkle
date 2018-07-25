@@ -13,6 +13,7 @@
 
 #import "YetiThemeKit.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
+#import <DZNetworking/WebPImageSerialization.h>
 
 #import <DZKit/AlertManager.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
@@ -54,6 +55,13 @@
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
     imageView.backgroundColor = theme.borderColor;
+    
+    if ([self.URL isKindOfClass:NSURL.class]) {
+        imageView.baseURL = self.URL.absoluteString;
+    }
+    else if ([self.URL isKindOfClass:NSString.class]) {
+        imageView.baseURL = (NSString *)[self URL];
+    }
     
     [self addSubview:imageView];
     
@@ -133,10 +141,26 @@
         [self setupGIFLoadingControl];
     }
     else {
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             [self _setupImage];
-            [self.imageView il_setImageWithURL:url];
+            
+            weakify(self);
+            // check if we have the cached the sized image
+            NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
+            
+            [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
+                strongify(self);
+                if (image) {
+                    self.imageView.settingCached = YES;
+                    self.imageView.image = image;
+                }
+                else {
+                    [self.imageView il_setImageWithURL:url];
+                }
+                
+            }];
         });
     }
 }
@@ -297,17 +321,49 @@
         [(Image *)self.superview setupAnimationControls];
     }
     else {
-        CGSize size = [self scaledSizeForImage:image];
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-           
-            UIImage * scaled = [UIImage imageWithImage:image scaledToSize:size];
+        if (image == nil) {
+            [super setImage:image];
+        }
+        else {
+            CGSize size = [self scaledSizeForImage:image];
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [super setImage:scaled];
+            weakify(self);
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                
+                strongify(self);
+                
+                UIImage * scaled = self.settingCached ? image : [UIImage imageWithImage:image scaledToSize:size];
+                
+                // cache the scaled image
+                if (self.baseURL != nil && self.settingCached == NO) {
+                    NSString *key = [self.baseURL stringByAppendingString:@"-sized"];
+                    NSString *extension = [[self.baseURL pathExtension] lowercaseString];
+                    NSData *data = nil;
+                    
+                    if ([extension isEqualToString:@"jpg"] || [extension isEqualToString:@"jpeg"]) {
+                        data = UIImageJPEGRepresentation(scaled, 0.9);
+                    }
+                    else if ([extension isEqualToString:@"png"]) {
+                        data = UIImagePNGRepresentation(image);
+                    }
+                    else if ([extension isEqualToString:@"webp"]) {
+                        data = [image dataWebPLossless];
+                    }
+                    
+                    [SharedImageLoader.cache setObject:scaled data:data forKey:key];
+                }
+                
+                if (self.settingCached == YES) {
+                    self.settingCached = NO;
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [super setImage:scaled];
+                });
+                
             });
-            
-        });
+        }
     }
     
     if ([self isKindOfClass:NSClassFromString(@"GalleryImage")])
