@@ -286,6 +286,8 @@
 		F088089F206B8B9C00ECE1E6 /* Tweet.xib in Resources */ = {isa = PBXBuildFile; fileRef = F088089E206B8B9C00ECE1E6 /* Tweet.xib */; };
 		F08808A3206B967A00ECE1E6 /* TweetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = F08808A1206B967A00ECE1E6 /* TweetImage.m */; };
 		F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = F08808A2206B967A00ECE1E6 /* TweetImage.xib */; };
+		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
+		F08993BF2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466220AD86CB00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
@@ -780,6 +782,9 @@
 		F08808A0206B967A00ECE1E6 /* TweetImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TweetImage.h; sourceTree = "<group>"; };
 		F08808A1206B967A00ECE1E6 /* TweetImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TweetImage.m; sourceTree = "<group>"; };
 		F08808A2206B967A00ECE1E6 /* TweetImage.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TweetImage.xib; sourceTree = "<group>"; };
+		F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+DragDrop.h"; sourceTree = "<group>"; };
+		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
+		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
@@ -1202,6 +1207,7 @@
 				F0869B612099CFE100A5D723 /* YetiThemeKit.m */,
 				F0AD76D320E2217C0003787B /* Reachability.h */,
 				F0AD76D420E2217C0003787B /* Reachability.m */,
+				F08993C1210883E200A9978E /* FolderDrop.h */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1290,6 +1296,8 @@
 				F02459C72058FFF1002906C3 /* FeedsVC+Search.m */,
 				F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */,
 				F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */,
+				F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */,
+				F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */,
 				F02459CC20590F03002906C3 /* FeedsSearchResults.h */,
 				F02459CD20590F03002906C3 /* FeedsSearchResults.m */,
 				F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */,
@@ -2224,6 +2232,7 @@
 				F069ABEB206E018F00021ABF /* UIColor+HEX.m in Sources */,
 				F069ABEC206E018F00021ABF /* Enclosure.m in Sources */,
 				F069ABED206E018F00021ABF /* FeedsCell.m in Sources */,
+				F08993BF2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */,
 				F0202BE120A41AB500FBC3E1 /* AuthorVC.m in Sources */,
 				F0FA473320CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
 				F069ABEE206E018F00021ABF /* FeedVC+Search.m in Sources */,
@@ -2326,6 +2335,7 @@
 				F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F0869B622099CFE100A5D723 /* YetiThemeKit.m in Sources */,
 				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,
+				F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
 				F035B4772107479400002576 /* UIImage+Sizing.m in Sources */,
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,

@@ -150,8 +150,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
-    __block NSError *error = nil;
-    
     NSDictionary *params = @{@"userID": MyFeedsManager.userID};
     
     [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -394,6 +392,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             if (successCB)
                 successCB(feedID, response, task);
 #else
+            strongify(self);
             [self addFeedByID:feedID success:successCB error:errorCB];
 #endif
             

@@ -164,21 +164,19 @@ static void *KVO_Unread = &KVO_Unread;
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(EmptyCell.class) bundle:nil] forCellReuseIdentifier:kEmptyCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
     
-//    FeedsHeaderView *headerView = [[FeedsHeaderView alloc] initWithNib];
-//    headerView.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 88.f);
-//    [headerView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
-    
-//    self.tableView.tableHeaderView = headerView;
-//    _headerView = headerView;
-//    _headerView.tableView.delegate = self;
-    
     self.tableView.tableFooterView = [UIView new];
+    
+//    self.tableView.dragInteractionEnabled = YES;
+    self.tableView.dragDelegate = self;
+    self.tableView.dropDelegate = self;
     
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
-    [self.tableView addGestureRecognizer:longPress];
+    if (self.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
+        [self.tableView addGestureRecognizer:longPress];
+    }
 }
 
 - (void)setupNavigationBar {
@@ -354,7 +352,7 @@ static void *KVO_Unread = &KVO_Unread;
             }
             else {
                 // folder
-                [cell configureFolder:(Folder *)feed];
+                [cell configureFolder:(Folder *)feed dropDelegate:self];
             }
         }
     }

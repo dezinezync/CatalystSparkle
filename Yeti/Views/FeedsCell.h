@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "Feed.h"
-#import "Folder.h"
+#import "FolderDrop.h"
 
 extern NSString *const _Nonnull kFeedsCell;
 
@@ -22,6 +21,8 @@ extern NSString *const _Nonnull kFeedsCell;
 - (void)configure:(Feed * _Nonnull)feed;
 
 - (void)configureFolder:(Folder *_Nonnull)folder;
+
+- (void)configureFolder:(Folder *)folder dropDelegate:(id <FolderDrop>)dropDelegate;
 
 - (void)updateFolderCount;
 
