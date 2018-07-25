@@ -12,15 +12,14 @@
 
 @implementation FeedsVC (DragDrop)
 
-- (NSArray <UIDragItem *> *)tableView:(UITableView *)tableView itemsForBeginningDragSession:(id<UIDragSession>)session atIndexPath:(NSIndexPath *)indexPath {
-    
+- (UIDragItem *)dragItemForIndexPath:(NSIndexPath *)indexPath {
     id obj = [self.DS objectAtIndexPath:indexPath];
     
     if (!obj)
-        return @[];
+        return nil;
     
     if ([obj isKindOfClass:Folder.class]) {
-        return @[];
+        return nil;
     }
     
     Feed *feed = obj;
@@ -30,7 +29,32 @@
     
     UIDragItem *item = [[UIDragItem alloc] initWithItemProvider:itemProvider];
     
-    return @[item];
+    return item;
+}
+
+- (NSArray <UIDragItem *> *)tableView:(UITableView *)tableView itemsForBeginningDragSession:(id<UIDragSession>)session atIndexPath:(NSIndexPath *)indexPath {
+    
+    UIDragItem *item = [self dragItemForIndexPath:indexPath];
+    
+    if (item != nil) {
+        return @[item];
+    }
+    
+    return @[];
+    
+}
+
+- (NSArray<UIDragItem *> *)tableView:(UITableView *)tableView itemsForAddingToDragSession:(id<UIDragSession>)session atIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+    
+    UIDragItem *item = [self dragItemForIndexPath:indexPath];
+    
+    if (item != nil) {
+        DDLogDebug(@"New drag count: %@", @(session.items.count + 1));
+        
+        return @[item];
+    }
+    
+    return @[];
     
 }
 
@@ -38,7 +62,7 @@
     
     if (tableView.hasActiveDrag) {
         
-        if (session.items.count == 1) {
+        if (session.items.count > 0) {
             return [[UITableViewDropProposal alloc] initWithDropOperation:UIDropOperationMove intent:UITableViewDropIntentInsertAtDestinationIndexPath];
         }
         
@@ -50,94 +74,97 @@
 
 - (void)tableView:(UITableView *)tableView performDropWithCoordinator:(id<UITableViewDropCoordinator>)coordinator {
     
-    NSIndexPath *destinationIndexPath = coordinator.destinationIndexPath;
+    NSIndexPath *dropIndexPath = coordinator.destinationIndexPath;
     
-    if (destinationIndexPath == nil) {
+    if (dropIndexPath == nil) {
         // get the last index path in the table
         NSInteger section = tableView.numberOfSections - 1;
         // no -1 here because this is where the row will go
         NSInteger row = [tableView numberOfRowsInSection:section];
-        destinationIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
+        dropIndexPath = [NSIndexPath indexPathForRow:row inSection:section];
     }
     
     weakify(self);
     
     [coordinator.session loadObjectsOfClass:NSString.class completion:^(NSArray<__kindof id<NSItemProviderReading>> * _Nonnull objects) {
-       
-        DDLogDebug(@"Dropping %@ at %@", objects, destinationIndexPath);
         
-        strongify(self);
-        
-        NSString *url = objects.firstObject;
-        
-        __block Feed *feed = nil;
-        __block Folder *source = nil;
-        
-        [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [(NSArray <NSString *> *)objects enumerateObjectsUsingBlock:^(NSString * _Nonnull url, NSUInteger urlIdx, BOOL * _Nonnull urlStop) {
             
-            if ([obj isKindOfClass:Folder.class]) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(dropIndexPath.row + urlIdx) inSection:dropIndexPath.section];
+            
+            strongify(self);
+            
+            DDLogDebug(@"Dropping %@ at %@", url, indexPath);
+            
+            __block Feed *feed = nil;
+            __block Folder *source = nil;
+            
+            [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 
-                [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                if ([obj isKindOfClass:Folder.class]) {
                     
-                    if ([objx.url isEqualToString:url]) {
-                        feed = objx;
-                        source = obj;
-                        *stopx = YES;
+                    [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                        
+                        if ([objx.url isEqualToString:url]) {
+                            feed = objx;
+                            source = obj;
+                            *stopx = YES;
+                            *stop = YES;
+                        }
+                        
+                    }];
+                    
+                }
+                else if ([obj isKindOfClass:Feed.class]) {
+                    if ([[(Feed *)obj url] isEqualToString:url]) {
+                        feed = obj;
+                        *stop = YES;
+                    }
+                }
+                
+            }];
+            
+            // check for preceeding open folder
+            __block Folder *intoFolder = nil;
+            
+            NSArray *data = [self.DS2.data subarrayWithRange:NSMakeRange(0, indexPath.row)];
+            
+            [data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                if ([obj isKindOfClass:Folder.class]
+                    && [(Folder *)obj isExpanded]
+                    && [feed.folderID isEqualToNumber:[(Folder *)obj folderID]]) {
+                    
+                    /*
+                     * our destination path must be within the range for the folder to be considered
+                     * 1. folder's indexPath    (S1, R1)
+                     * 2. last feed's indexPath (S1, R2)
+                     * 3. destination indexpath (S1, R3)
+                     *
+                     * R3 > R1 && R3 < R2
+                     */
+                    
+                    NSInteger R1 = idx;
+                    NSInteger R2 = idx + [(Folder *)obj feeds].count;
+                    NSInteger R3 = indexPath.row;
+                    
+                    if (R3 > R1 && R3 < R2) {
+                        intoFolder = obj;
                         *stop = YES;
                     }
                     
-                }];
+                }
                 
-            }
-            else if ([obj isKindOfClass:Feed.class]) {
-                if ([[(Feed *)obj url] isEqualToString:url]) {
-                    feed = obj;
-                    *stop = YES;
+            }];
+            
+            if (intoFolder == nil) {
+                if (indexPath.row == data.count && (indexPath.row != self.DS2.data.count)) {
+                    intoFolder = [data lastObject];
                 }
             }
             
+            [self moveFeed:url toFolder:intoFolder];
         }];
-        
-        // check for preceeding open folder
-        __block Folder *intoFolder = nil;
-        
-        NSArray *data = [self.DS2.data subarrayWithRange:NSMakeRange(0, destinationIndexPath.row)];
-        
-        [data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-           
-            if ([obj isKindOfClass:Folder.class]
-                && [(Folder *)obj isExpanded]
-                && [feed.folderID isEqualToNumber:[(Folder *)obj folderID]]) {
-                
-                /*
-                 * our destination path must be within the range for the folder to be considered
-                 * 1. folder's indexPath    (S1, R1)
-                 * 2. last feed's indexPath (S1, R2)
-                 * 3. destination indexpath (S1, R3)
-                 *
-                 * R3 > R1 && R3 < R2
-                 */
-                
-                NSInteger R1 = idx;
-                NSInteger R2 = idx + [(Folder *)obj feeds].count;
-                NSInteger R3 = destinationIndexPath.row;
-                
-                if (R3 > R1 && R3 < R2) {
-                    intoFolder = obj;
-                    *stop = YES;
-                }
-                
-            }
-            
-        }];
-        
-        if (intoFolder == nil) {
-            if (destinationIndexPath.row == data.count) {
-                intoFolder = [data lastObject];
-            }
-        }
-        
-        [self moveFeed:url toFolder:intoFolder];
         
     }];
     

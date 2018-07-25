@@ -427,6 +427,18 @@ static void *KVO_Unread = &KVO_Unread;
             // add these feeds to the datasource after the above index
             NSMutableArray * data = [self.DS2.data mutableCopy];
             
+            // data shouldn't contain any object with this folder ID
+            data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+                if ([obj isKindOfClass:Feed.class]) {
+                    Feed *feed = obj;
+                    if ([feed.folderID isEqualToNumber:folder.folderID]) {
+                        return NO;
+                    }
+                }
+                
+                return YES;
+            }].mutableCopy;
+            
             NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.count)];
             
             [data insertObjects:folder.feeds atIndexes:set];

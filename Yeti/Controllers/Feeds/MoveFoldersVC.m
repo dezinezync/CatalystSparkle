@@ -33,6 +33,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     vc.feed = feed;
     
     YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:vc];
+    navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     return navVC;
 }
@@ -205,9 +206,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                
-                asyncMain(^{
-                    [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-                });
+                [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
                 
                 strongify(self);
                 
@@ -224,29 +223,30 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         
         [MyFeedsManager updateFolder:self.originalFolderID add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [MyFeedsManager updateFolder:newFolderID add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                strongify(self);
-                
-                [self didTapCancel];
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                asyncMain(^{
+            if (newFolderID != nil) {
+                [MyFeedsManager updateFolder:newFolderID add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    strongify(self);
+                    
+                    [self didTapCancel];
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
                     [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-                });
-                
-                strongify(self);
-                
-                [self enableButtons:YES];
-                
-            }];
+                    
+                    strongify(self);
+                    
+                    [self enableButtons:YES];
+                    
+                }];
+            }
+            else {
+                [self didTapCancel];
+            }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            asyncMain(^{
-                [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
-            });
+            [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
             
             strongify(self);
             

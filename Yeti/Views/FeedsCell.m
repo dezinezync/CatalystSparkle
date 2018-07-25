@@ -323,9 +323,11 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     [session loadObjectsOfClass:NSString.class completion:^(NSArray<__kindof id<NSItemProviderReading>> * _Nonnull objects) {
         
-        strongify(self);
-        
-        [self.dropDelegate moveFeed:objects.firstObject toFolder:(Folder *)[self object]];
+        [objects enumerateObjectsUsingBlock:^(__kindof id<NSItemProviderReading>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            strongify(self);
+            
+            [self.dropDelegate moveFeed:obj toFolder:(Folder *)[self object]];
+        }];
         
     }];
     
