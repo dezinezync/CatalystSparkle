@@ -166,16 +166,17 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.tableView.tableFooterView = [UIView new];
     
-//    self.tableView.dragInteractionEnabled = YES;
-    self.tableView.dragDelegate = self;
-    self.tableView.dropDelegate = self;
-    
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
-    if (self.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
         [self.tableView addGestureRecognizer:longPress];
+    }
+    else {
+        // enable drag and drop on iPad
+        self.tableView.dragDelegate = self;
+        self.tableView.dropDelegate = self;
     }
 }
 

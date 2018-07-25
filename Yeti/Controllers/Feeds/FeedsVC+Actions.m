@@ -147,6 +147,10 @@
 
 - (void)didLongTapOnCell:(UITapGestureRecognizer *)sender
 {
+    if (sender.state != UIGestureRecognizerStateBegan) {
+        return;
+    }
+    
     CGPoint location = [sender locationInView:sender.view];
     
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:location];
