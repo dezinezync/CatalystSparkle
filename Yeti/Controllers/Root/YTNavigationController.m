@@ -27,6 +27,18 @@
     return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
 }
 
+- (UIViewController *)childViewControllerForStatusBarStyle {
+    if (self.presentedViewController) {
+        return self.presentedViewController;
+    }
+    
+    return [self topViewController];
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden {
+    return [self childViewControllerForStatusBarStyle];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     

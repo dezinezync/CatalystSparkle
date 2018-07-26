@@ -36,7 +36,6 @@
         YTNavigationController *nav1 = [[YTNavigationController alloc] initWithRootViewController:vc];
         nav1.restorationIdentifier = @"mainNav";
         
-        
         self.viewControllers = @[nav1];
         
     }
@@ -86,6 +85,39 @@
     
     return [theme isEqualToString:LightTheme] ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
     
+}
+
+- (UIViewController *)childViewControllerForStatusBarStyle {
+    if (self.presentedViewController) {
+        return self.presentedViewController;
+    }
+    
+    return [self.viewControllers lastObject];
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden {
+    return [self childViewControllerForStatusBarStyle];
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    weakify(self);
+    [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+        strongify(self);
+        
+        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            
+            if (self.viewControllers.count == 1) {
+                UINavigationController *nav = [self emptyVC];
+                
+                self.viewControllers = @[self.viewControllers.firstObject, nav];
+            }
+            
+        }
+        
+    }];
 }
 
 #pragma mark -

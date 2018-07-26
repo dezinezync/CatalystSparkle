@@ -30,7 +30,13 @@
     Feed *feed = obj;
     
     // only feeds are draggble
-    NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithObject:feed.url];
+    NSString *url = feed.url;
+    
+    if (feed.extra && [feed.extra valueForKey:@"url"]) {
+        url = [feed.extra valueForKey:@"url"];
+    }
+    
+    NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithObject:url];
     
     UIDragItem *item = [[UIDragItem alloc] initWithItemProvider:itemProvider];
     
@@ -110,7 +116,8 @@
                     
                     [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
                         
-                        if ([objx.url isEqualToString:url]) {
+                        if ([objx.url isEqualToString:url]
+                            || [[objx.extra valueForKey:@"url"] isEqualToString:url]) {
                             feed = objx;
                             source = obj;
                             *stopx = YES;
@@ -121,7 +128,8 @@
                     
                 }
                 else if ([obj isKindOfClass:Feed.class]) {
-                    if ([[(Feed *)obj url] isEqualToString:url]) {
+                    if ([[(Feed *)obj url] isEqualToString:url]
+                        || [[((Feed *)obj).extra valueForKey:@"url"] isEqualToString:url]) {
                         feed = obj;
                         *stop = YES;
                     }
@@ -189,7 +197,7 @@
             
             [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
                 
-                if ([objx.url isEqualToString:url]) {
+                if ([objx.url isEqualToString:url] || [[objx.extra valueForKey:@"url"] isEqualToString:url]) {
                     feed = objx;
                     source = obj;
                     *stopx = YES;
@@ -200,7 +208,7 @@
             
         }
         else if ([obj isKindOfClass:Feed.class]) {
-            if ([[(Feed *)obj url] isEqualToString:url]) {
+            if ([[(Feed *)obj url] isEqualToString:url]|| [[((Feed *)obj).extra valueForKey:@"url"] isEqualToString:url]) {
                 feed = obj;
                 *stop = YES;
             }
