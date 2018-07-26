@@ -143,6 +143,10 @@
         else {
             self.item.bookmarked = !self.item.bookmarked;
         }
+        
+        if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:bookmarked:)]) {
+            [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
+        }
      
         button.enabled = YES;
         

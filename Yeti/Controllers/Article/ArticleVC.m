@@ -676,8 +676,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.state = ArticleStateLoaded;
     
-    if (self.item && !self.item.isRead) {
+    if (self.item && self.item.isRead == NO) {
         [MyFeedsManager article:self.item markAsRead:YES];
+        
+        if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
+            [self.providerDelegate userMarkedArticle:self.item read:YES];
+        }
     }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

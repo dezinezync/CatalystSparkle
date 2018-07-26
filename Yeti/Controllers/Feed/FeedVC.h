@@ -38,6 +38,8 @@
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read;
 
+- (void)userMarkedArticle:(FeedItem *)article bookmarked:(BOOL)bookmarked;
+
 - (void)didChangeToArticle:(FeedItem *)item;
 
 - (void)_didFinishAllReadActionSuccessfully;

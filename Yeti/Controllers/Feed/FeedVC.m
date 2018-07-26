@@ -870,9 +870,9 @@
             
             if (isVisible) {
                 ArticleCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-                
-                if (cell != nil && articleInDS.isBookmarked == NO) {
-                    if (read) {
+                // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
+                if (cell != nil && article.isBookmarked == NO) {
+                    if (read == YES) {
                         cell.markerView.image = nil;
                     }
                     else {
@@ -882,6 +882,61 @@
             }
         }
     });
+}
+
+- (void)userMarkedArticle:(FeedItem *)article bookmarked:(BOOL)bookmarked {
+    
+    if (!article)
+        return;
+    
+    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
+    
+    if (index == NSNotFound)
+        return;
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        FeedItem *articleInFeed = [self.feed.articles safeObjectAtIndex:index];
+        if (articleInFeed) {
+            articleInFeed.bookmarked = bookmarked;
+        }
+        
+        FeedItem *articleInDS = [(NSArray <FeedItem *> *)self.DS.data safeObjectAtIndex:index];
+        
+        if (articleInDS) {
+            articleInDS.bookmarked = bookmarked;
+            // if the article exists in the datasource,
+            // we can expect a cell for it and therefore
+            // reload it.
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+            
+            NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
+            BOOL isVisible = NO;
+            for (NSIndexPath *ip in visible) {
+                if (ip.row == index) {
+                    isVisible = YES;
+                    break;
+                }
+            }
+            
+            if (isVisible) {
+                ArticleCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if (cell != nil) {
+                    if (bookmarked == NO) {
+                        cell.markerView.image = nil;
+                    }
+                    else {
+                        cell.markerView.image = [UIImage imageNamed:@"mbookmark"];
+                    }
+                }
+            }
+        }
+    });
+    
 }
 
 - (void)didChangeToArticle:(FeedItem *)item

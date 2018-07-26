@@ -25,6 +25,8 @@
 
 - (void)userMarkedArticle:(FeedItem * _Nonnull)article read:(BOOL)read;
 
+- (void)userMarkedArticle:(FeedItem * _Nonnull)article bookmarked:(BOOL)bookmarked;
+
 @end
 
 #endif /* ArticleProvider_h */
