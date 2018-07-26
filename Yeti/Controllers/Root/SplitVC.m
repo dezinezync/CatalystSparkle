@@ -87,18 +87,6 @@
     
 }
 
-- (UIViewController *)childViewControllerForStatusBarStyle {
-    if (self.presentedViewController) {
-        return self.presentedViewController;
-    }
-    
-    return [self.viewControllers lastObject];
-}
-
-- (UIViewController *)childViewControllerForStatusBarHidden {
-    return [self childViewControllerForStatusBarStyle];
-}
-
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     

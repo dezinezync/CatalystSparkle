@@ -1163,11 +1163,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
     if (content.identifier && ![content.identifier isBlank]) {
+        
+        // content identifiers should only be URL safe chars
+        NSString *identifier = [content.identifier stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+        
         heading.identifier = content.identifier;
         
         NSAttributedString *attrs = heading.attributedText;
         
-        NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, content.identifier);
+        NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, identifier);
         
         NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)],
                                      NSLinkAttributeName: url
