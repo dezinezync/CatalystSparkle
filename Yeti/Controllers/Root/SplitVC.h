@@ -18,4 +18,6 @@
 
 - (void)userNotFound;
 
+- (UINavigationController *)emptyVC;
+
 @end

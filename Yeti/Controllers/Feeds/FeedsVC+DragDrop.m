@@ -13,6 +13,11 @@
 @implementation FeedsVC (DragDrop)
 
 - (UIDragItem *)dragItemForIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.section == 0) {
+        return nil;
+    }
+    
     id obj = [self.DS objectAtIndexPath:indexPath];
     
     if (!obj)

@@ -17,6 +17,7 @@
 #import "FeedsManager.h"
 
 #import "EmptyVC.h"
+#import "SplitVC.h"
 
 @implementation ArticleVC (Toolbar)
 
@@ -54,17 +55,22 @@
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
         
+        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.sharedApplication.keyWindow rootViewController] displayModeButtonItem];
+        
         if (self.navigationItem.leftBarButtonItem) {
-            if (self.navigationItem.leftBarButtonItem == self.splitViewController.displayModeButtonItem) {
+            if (self.navigationItem.leftBarButtonItem == displayButton) {
                 self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
             }
             else {
-                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, self.splitViewController.displayModeButtonItem, close];
+                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, displayButton, close];
             }
         }
         else {
-            self.navigationItem.leftBarButtonItems = @[self.splitViewController.displayModeButtonItem, close];
+            self.navigationItem.leftBarButtonItems = @[displayButton, close];
         }
+    }
+    else {
+        self.navigationItem.leftBarButtonItems = nil;
     }
 }
 
@@ -84,16 +90,10 @@
 
 - (void)didTapClose {
     
-    NSMutableArray <UIViewController *> *controllers = self.navigationController.viewControllers.mutableCopy;
+    SplitVC *vc = (SplitVC *)[self splitViewController];
     
-    EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-    vc2.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
-    __unused ArticleVC *vc = (ArticleVC *)[controllers lastObject];
-    
-    controllers = @[vc2].mutableCopy;
-    
-    self.navigationController.viewControllers = controllers.copy;
-    vc = nil;
+    UINavigationController *emptyVC = [vc emptyVC];
+    [vc showDetailController:emptyVC sender:self];
     
 }
 

@@ -363,9 +363,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if ([self userID] != nil) {
         params = @{@"URL": url, @"userID": [self userID]};
     }
-    
+#ifndef SHARE_EXTENSION
     weakify(self);
-    
+#endif
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
@@ -459,9 +459,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if ([MyFeedsManager userID] != nil) {
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
-    
+#ifndef SHARE_EXTENSION
     weakify(self);
-    
+#endif
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 #ifndef SHARE_EXTENSION
         strongify(self);

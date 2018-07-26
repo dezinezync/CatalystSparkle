@@ -18,7 +18,7 @@
 
 #import "AppDelegate.h"
 
-@interface SplitVC ()
+@interface SplitVC () <UISplitViewControllerDelegate>
 
 @end
 
@@ -29,21 +29,15 @@
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = SplitVC.class;
         
+        self.delegate = self;
+        
         FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
         
         YTNavigationController *nav1 = [[YTNavigationController alloc] initWithRootViewController:vc];
         nav1.restorationIdentifier = @"mainNav";
         
-        if ([MyAppDelegate window].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-            YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
-            nav2.restorationIdentifier = @"emptyNav";
-            vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
-            self.viewControllers = @[nav1, nav2];
-        }
-        else {
-            self.viewControllers = @[nav1];
-        }
+        
+        self.viewControllers = @[nav1];
         
     }
     
@@ -54,6 +48,11 @@
     [super viewDidLoad];
     
     [YetiThemeKit loadThemeKit];
+    
+    if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        UINavigationController *nav2 = [self emptyVC];
+        self.viewControllers = @[self.viewControllers.firstObject, nav2];
+    }
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
 }
@@ -100,62 +99,82 @@
     [self presentViewController:nav animated:NO completion:nil];
 }
 
+- (UINavigationController *)emptyVC {
+    EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
+    YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
+    nav2.restorationIdentifier = @"emptyNav";
+    vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
+    
+    return nav2;
+}
+
 #pragma mark - <UIViewControllerRestoration>
 
-//+ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-//    SplitVC *splitVC = [[SplitVC alloc] init];
-//    return splitVC;
-//}
-
-NSString * const kShowingDetail = @"isShowingDetail";
-NSString * const kArticleID = @"articleID";
 NSString * const kFeedsManager = @"FeedsManager";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
     [super encodeRestorableStateWithCoder:coder];
     
-//    BOOL isShowingDetail = [self.viewControllers count] == 2;
-//
-//    if (isShowingDetail) {
-//        // ensure it's not the empty VC
-//        UINavigationController *lastNav = [self.viewControllers lastObject];
-//        UIViewController *vc = [[lastNav viewControllers] firstObject];
-//
-//        if ([vc isKindOfClass:EmptyVC.class]) {
-//            isShowingDetail = NO;
-//        }
-//    }
-    
-//    [coder encodeBool:isShowingDetail forKey:kShowingDetail];
     [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
-    
-//    if (isShowingDetail) {
-//        // get article ID
-//        UINavigationController *vc = [self.viewControllers lastObject];
-//        if ([[[vc viewControllers] firstObject] isKindOfClass:ArticleVC.class]) {
-//            NSNumber *articleID = [(FeedItem *)[[[vc viewControllers] firstObject] item] identifier];
-//
-//            [coder encodeInteger:articleID.integerValue forKey:kArticleID];
-//        }
-//    }
-    
+
 }
 
-- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+#pragma mark - <UISplitViewControllerDelegate>
+
+- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
+    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
     
-    [super decodeRestorableStateWithCoder:coder];
+    return nav;
+}
+
+- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
     
-//    BOOL isShowingDetail = [coder decodeBoolForKey:kShowingDetail];
-//
-//    if (isShowingDetail) {
-//        NSInteger articleID = [coder decodeIntegerForKey:kArticleID];
-//        NSNumber *identifer = @(articleID);
-//        FeedItem *item = [FeedItem new];
-//        item.identifier = identifer;
-//
-//        DDLogDebug(@"Show article: %@", item);
-//    }
+    return splitViewController.viewControllers.firstObject;
+}
+
+- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
+   
+    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class] && [primaryViewController isKindOfClass:YTNavigationController.class]) {
+        
+        UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
+        UIViewController *topVC = [secondaryNav topViewController];
+        
+        if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
+            [(UINavigationController *)primaryViewController pushViewController:secondaryViewController animated:NO];
+            return YES;
+        }
+        else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
+            return YES;
+        }
+    }
+    else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
+        [(UINavigationController *)primaryViewController pushViewController:secondaryViewController animated:NO];
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UIViewController *)primaryViewController {
+    
+    YTNavigationController *primaryVC = (YTNavigationController *)primaryViewController;
+    
+    if([[primaryVC topViewController] isKindOfClass:UINavigationController.class]) {
+        return [primaryVC popViewControllerAnimated:NO];
+    }
+    else if ([[primaryVC topViewController] isKindOfClass:ArticleVC.class]) {
+        
+        ArticleVC *vc = (ArticleVC *)[primaryVC popViewControllerAnimated:NO];
+        
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.restorationIdentifier = @"ArticleDetailNav";
+        
+        return nav;
+    }
+    
+    return [self emptyVC];
+    
 }
 
 @end
