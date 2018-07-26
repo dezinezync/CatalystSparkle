@@ -27,7 +27,7 @@
 #import "YetiThemeKit.h"
 #import "TableHeader.h" 
 
-@interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
+@interface FeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UITableViewDragDelegate> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
 }
@@ -60,6 +60,8 @@
     
     self.title = self.feed.title;
     self.tableView.restorationIdentifier = self.restorationIdentifier;
+    
+    self.tableView.dragDelegate = self;
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
@@ -955,6 +957,50 @@ NSString * const kCurrentPage = @"FeedsLoadedPage";
         self.DS.data = self.feed.articles;
         _page = [coder decodeIntegerForKey:kCurrentPage];
     }
+    
+}
+
+#pragma mark - <UITableViewDragDelegate>
+
+- (UIDragItem *)dragItemForIndexPath:(NSIndexPath *)indexPath {
+    FeedItem *article = [self.DS objectAtIndexPath:indexPath];
+    
+    if (article == nil) {
+        return nil;
+    }
+    
+    NSString *url = article.articleURL;
+    
+    NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithObject:url];
+    
+    UIDragItem *item = [[UIDragItem alloc] initWithItemProvider:itemProvider];
+    
+    return item;
+}
+
+- (NSArray<UIDragItem *> *)tableView:(UITableView *)tableView itemsForBeginningDragSession:(id<UIDragSession>)session atIndexPath:(NSIndexPath *)indexPath
+{
+    
+    UIDragItem *item = [self dragItemForIndexPath:indexPath];
+    
+    if (item) {
+        return @[item];
+    }
+    
+    return @[];
+    
+}
+
+- (NSArray<UIDragItem *> *)tableView:(UITableView *)tableView itemsForAddingToDragSession:(id<UIDragSession>)session atIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point
+{
+    
+    UIDragItem *item = [self dragItemForIndexPath:indexPath];
+    
+    if (item) {
+        return @[item];
+    }
+    
+    return @[];
     
 }
 
