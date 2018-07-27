@@ -768,7 +768,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         }
         
         if (successCB)
-            successCB(responseObject, response, task);
+            successCB(items, response, task);
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];

@@ -48,11 +48,6 @@
     
     [YetiThemeKit loadThemeKit];
     
-    if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        UINavigationController *nav2 = [self emptyVC];
-        self.viewControllers = @[self.viewControllers.firstObject, nav2];
-    }
-    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
 }
 
@@ -72,6 +67,12 @@
         NSString *val = [@(YES) stringValue];
         keychain[YTSubscriptionPurchased] = val;
         keychain[YTSubscriptionHasAddedFirstFeed] = val;
+    }
+    
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.viewControllers.count == 1) {
+        UINavigationController *nav = [self emptyVC];
+        
+        self.viewControllers = @[self.viewControllers.firstObject, nav];
     }
     
 //#ifdef DEBUG
@@ -99,10 +100,13 @@
             
             if (self.viewControllers.count == 1) {
                 UINavigationController *nav = [self emptyVC];
-                
+
                 self.viewControllers = @[self.viewControllers.firstObject, nav];
             }
             
+        }
+        else {
+            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
         }
         
     }];
@@ -142,26 +146,31 @@ NSString * const kFeedsManager = @"FeedsManager";
 
 #pragma mark - <UISplitViewControllerDelegate>
 
-- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
-    
-    return nav;
-}
-
-- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
-    
-    return splitViewController.viewControllers.firstObject;
-}
+//- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
+//    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+//
+//    return nav;
+//}
+//
+//- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
+//
+//    return splitViewController.viewControllers.firstObject;
+//}
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
-   
+    
+    if (primaryViewController == secondaryViewController) {
+        return NO;
+    }
+
     if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class] && [primaryViewController isKindOfClass:YTNavigationController.class]) {
-        
+
         UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
         UIViewController *topVC = [secondaryNav topViewController];
-        
+
         if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
-            [(UINavigationController *)primaryViewController pushViewController:secondaryViewController animated:NO];
+//            [(UINavigationController *)primaryViewController pushViewController:secondaryViewController animated:NO];
+            [(UINavigationController *)primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
             return YES;
         }
         else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
@@ -169,32 +178,32 @@ NSString * const kFeedsManager = @"FeedsManager";
         }
     }
     else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
-        [(UINavigationController *)primaryViewController pushViewController:secondaryViewController animated:NO];
+        [(UINavigationController *)primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
         return YES;
     }
-    
+
     return NO;
 }
 
 - (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UIViewController *)primaryViewController {
-    
+
     YTNavigationController *primaryVC = (YTNavigationController *)primaryViewController;
-    
+
     if([[primaryVC topViewController] isKindOfClass:UINavigationController.class]) {
         return [primaryVC popViewControllerAnimated:NO];
     }
     else if ([[primaryVC topViewController] isKindOfClass:ArticleVC.class]) {
-        
+
         ArticleVC *vc = (ArticleVC *)[primaryVC popViewControllerAnimated:NO];
-        
+
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
         nav.restorationIdentifier = @"ArticleDetailNav";
-        
+
         return nav;
     }
-    
+
     return [self emptyVC];
-    
+
 }
 
 @end

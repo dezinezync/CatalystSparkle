@@ -144,23 +144,6 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     return nil;
 }
 
-- (void)didChangeToArticle:(FeedItem *)item
-{
-    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
-    
-    if (index == NSNotFound)
-        return;
-    
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-    
-    if (!item.isRead) {
-        [self userMarkedArticle:item read:YES];
-    }
-    else {
-        [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-    }
-}
-
 - (void)loadNextPage
 {
     
@@ -173,21 +156,21 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     
     if (self.isUnread) {
         NSInteger page = self->_page + 1;
-        [MyFeedsManager getUnreadForPage:page success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [MyFeedsManager getUnreadForPage:page success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);
             
             if (!self)
                 return;
             
-            if (![(NSArray *)[responseObject objectForKey:@"articles"] count]) {
+            if (![responseObject count]) {
                 self->_canLoadNext = NO;
             }
             
             self->_page = page;
             
             @try {
-                self.DS.data = MyFeedsManager.unread;
+                self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
             }
             @catch (NSException *exc) {
                 DDLogWarn(@"Exception setting unread articles: %@", exc);

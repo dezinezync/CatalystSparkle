@@ -95,6 +95,7 @@ AppDelegate *MyAppDelegate = nil;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
@@ -108,7 +109,7 @@ AppDelegate *MyAppDelegate = nil;
         [defaults setBool:NO forKey:kResetAccountSettingsPref];
         [defaults synchronize];
     }
-    
+
 }
 
 #pragma mark - State Restoration
@@ -217,7 +218,7 @@ AppDelegate *MyAppDelegate = nil;
     YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
     [MyCodeParser loadTheme:themeName];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeNeedsUpdateNotification object:nil];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     
     [self refreshViews];
     
@@ -238,13 +239,31 @@ AppDelegate *MyAppDelegate = nil;
         
         return;
     }
-    
-    for (UIWindow *window in UIApplication.sharedApplication.windows) {
-        window.tintColor = YTThemeKit.theme.tintColor;
-    }
+    // the following is handled within YetiTheme model
+//    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+//        window.tintColor = YTThemeKit.theme.tintColor;
+//    }
 
    [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
     
+}
+
+- (void)_checkWindows {
+    
+    for (UIWindow *testWindow in [UIApplication sharedApplication].windows) {
+        DDLogDebug(@"Window: Level: %@; Hidden: %@; Class: %@", @(testWindow.windowLevel), @(testWindow.isHidden), NSStringFromClass(testWindow.class));
+        if (!testWindow.opaque && [NSStringFromClass(testWindow.class) hasPrefix:@"UIText"]) {
+            BOOL wasHidden = testWindow.hidden;
+            testWindow.hidden = YES;
+
+            if (!wasHidden) {
+//                testWindow.hidden = NO;
+            }
+
+            break;
+        }
+    }
+
 }
 
 #pragma mark -

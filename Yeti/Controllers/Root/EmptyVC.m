@@ -68,4 +68,8 @@
     self.label.textColor = theme.captionColor;
 }
 
+- (BOOL)canBecomeFirstResponder {
+    return NO;
+}
+
 @end

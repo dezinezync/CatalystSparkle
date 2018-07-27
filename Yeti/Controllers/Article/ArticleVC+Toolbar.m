@@ -74,11 +74,6 @@
     }
 }
 
-- (BOOL)canBecomeFirstResponder
-{
-    return YES;
-}
-
 - (UIView *)inputAccessoryView
 {
     if (_showSearchBar)

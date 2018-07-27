@@ -954,19 +954,25 @@
         return;
     }
     
-    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
+    __block NSUInteger index = NSNotFound;
+    
+    [self.DS.data enumerateObjectsUsingBlock:^(FeedItem *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj.identifier isEqualToNumber:item.identifier]) {
+            index = idx;
+            *stop = YES;
+        }
+    }];
     
     if (index == NSNotFound)
         return;
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
     
-    if (!item.isRead) {
+    if (self.class != NSClassFromString(@"CustomFeedVC") && !item.isRead) {
         [self userMarkedArticle:item read:YES];
     }
-    else {
-        [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-    }
+    
+    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
 }
 
 #pragma mark - <FeedHeaderViewDelegate>
