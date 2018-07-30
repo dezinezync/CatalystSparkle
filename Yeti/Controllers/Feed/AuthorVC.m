@@ -58,19 +58,22 @@
     
     weakify(self);
     
-    _page++;
-    [MyFeedsManager articlesByAuthor:self.author.authorID feedID:self.feed.feedID page:_page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSInteger page = _page + 1;
+    
+    [MyFeedsManager articlesByAuthor:self.author.authorID feedID:self.feed.feedID page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
         if (!self)
             return;
         
+        self->_page = page;
+        
         if (![responseObject count]) {
             self->_canLoadNext = NO;
         }
         
-        if (self->_page == 1 && self.DS.data.count) {
+        if (page == 1 && self.DS.data.count) {
             self.DS.data = @[];
         }
         
@@ -82,7 +85,6 @@
         DDLogError(@"%@", error);
         
         strongify(self);
-        self->_page--;
         
         self.loadingNext = NO;
     }];

@@ -443,7 +443,12 @@ static void *KVO_Unread = &KVO_Unread;
             
             [data insertObjects:folder.feeds atIndexes:set];
             
-            [self.DS setData:data section:1];
+            @try {
+                [self.DS setData:data section:1];
+            }
+            @catch (NSException *exc) {
+                DDLogWarn(@"Exception updating feeds: %@", exc);
+            }
             
         }
         

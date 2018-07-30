@@ -299,11 +299,38 @@ AppDelegate *MyAppDelegate = nil;
     
     [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
+        if (responseObject == nil) {
+            completionHandler(UIBackgroundFetchResultNoData);
+            return;
+        }
+        
+        if ([responseObject isKindOfClass:NSDictionary.class] == NO) {
+            completionHandler(UIBackgroundFetchResultNoData);
+            return;
+        }
+        
         NSInteger newCount = [[responseObject valueForKey:@"total"] integerValue];
         
         SplitVC *vc = (SplitVC *)(self.window.rootViewController);
+        
+        if (!vc) {
+            completionHandler(UIBackgroundFetchResultNewData);
+            return;
+        }
+        
         UINavigationController *nav = [[vc viewControllers] firstObject];
+        
+        if (!nav) {
+            completionHandler(UIBackgroundFetchResultNewData);
+            return;
+        }
+        
         FeedsVC *feeds = [[nav viewControllers] firstObject];
+        
+        if (!feeds) {
+            completionHandler(UIBackgroundFetchResultNewData);
+            return;
+        }
         
         if (newCount > currentCount) {
             completionHandler(UIBackgroundFetchResultNewData);
