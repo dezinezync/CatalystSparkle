@@ -49,7 +49,7 @@ static NSDateFormatter *_formatter = nil;
     [encoder encodeObject:self.mediaDescription forKey:@"mediaDescription"];
     [encoder encodeObject:self.mediaRating forKey:@"mediaRating"];
     [encoder encodeObject:self.itunesImage forKey:@"itunesImage"];
-    [encoder encodeObject:self.enclosures forKey:@"enclosures"];
+//    [encoder encodeObject:self.enclosures forKey:@"enclosures"];
     
     [encoder encodeObject:self.feedID forKey:@"feedID"];
     [encoder encodeObject:self.summary forKey:@"summary"];
@@ -76,7 +76,7 @@ static NSDateFormatter *_formatter = nil;
         self.mediaDescription = [decoder decodeObjectForKey:@"mediaDescription"];
         self.mediaRating = [decoder decodeObjectForKey:@"mediaRating"];
         self.itunesImage = [decoder decodeObjectForKey:@"itunesImage"];
-        self.enclosures = [decoder decodeObjectForKey:@"enclosures"];
+//        self.enclosures = [decoder decodeObjectForKey:@"enclosures"];
         
         self.feedID = [decoder decodeObjectForKey:@"feedID"];
         self.summary = [decoder decodeObjectForKey:@"summary"];
@@ -144,22 +144,22 @@ static NSDateFormatter *_formatter = nil;
         self.timestamp = value;
     }
     
-    else if ([key isEqualToString:@"enclosures"]) {
-        
-        if ([value isKindOfClass:[NSArray class]])
-        {
-            
-            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
-            for (id valueMember in value) {
-                Enclosure *populatedMember = [Enclosure instanceFromDictionary:valueMember];
-                [myMembers addObject:populatedMember];
-            }
-            
-            self.enclosures = myMembers;
-            
-        }
-        
-    }
+//    else if ([key isEqualToString:@"enclosures"]) {
+//
+//        if ([value isKindOfClass:[NSArray class]])
+//        {
+//
+//            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
+//            for (id valueMember in value) {
+//                Enclosure *populatedMember = [Enclosure instanceFromDictionary:valueMember];
+//                [myMembers addObject:populatedMember];
+//            }
+//
+//            self.enclosures = myMembers;
+//
+//        }
+//
+//    }
     else if ([key isEqualToString:@"summary"]) {
         if (value && ![value isBlank]) {
             @try {
@@ -199,8 +199,9 @@ static NSDateFormatter *_formatter = nil;
     else if ([key isEqualToString:@"title"]) {
         self.articleTitle = value;
     }
-    else
-        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+    else {
+//        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+    }
 }
 
 - (NSDictionary *)dictionaryRepresentation
@@ -281,12 +282,12 @@ static NSDateFormatter *_formatter = nil;
         [dictionary setObject:self.mediaRating forKey:@"mediaRating"];
     }
     
-    if (self.enclosures) {
-        NSArray <NSDictionary *> *enclosures = [self.enclosures rz_map:^id(Enclosure *obj, NSUInteger idx, NSArray *array) {
-            return obj.dictionaryRepresentation;
-        }];
-        [dictionary setObject:enclosures forKey:@"enclosures"];
-    }
+//    if (self.enclosures) {
+//        NSArray <NSDictionary *> *enclosures = [self.enclosures rz_map:^id(Enclosure *obj, NSUInteger idx, NSArray *array) {
+//            return obj.dictionaryRepresentation;
+//        }];
+//        [dictionary setObject:enclosures forKey:@"enclosures"];
+//    }
     
     if (self.feedID != nil) {
         [dictionary setObject:self.feedID forKey:@"feedID"];

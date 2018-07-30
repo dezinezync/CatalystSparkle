@@ -20,8 +20,6 @@
 
 @interface UITableViewController (ScrollLoad)
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView;
-
-- (void)yt_scrollViewDidScroll:(UIScrollView *)scrollView;
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 
 @end

@@ -635,20 +635,20 @@
 
 #pragma mark - <ScrollLoading>
 
-- (void)yt_scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if (self.headerView) {
-        CGFloat yPoint = floor(scrollView.contentOffset.y);
-        
-//        DDLogDebug(@"%@", @(yPoint));
-        if (yPoint >= 0.f && _barImageView.isHidden) {
-            _barImageView.hidden = NO;
-        }
-        else if (yPoint < 0.f && !_barImageView.isHidden) {
-            _barImageView.hidden = YES;
-        }
-    }
-}
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
+//    if (self.headerView) {
+//        CGFloat yPoint = floor(scrollView.contentOffset.y);
+//        
+////        DDLogDebug(@"%@", @(yPoint));
+//        if (yPoint >= 0.f && _barImageView.isHidden) {
+//            _barImageView.hidden = NO;
+//        }
+//        else if (yPoint < 0.f && !_barImageView.isHidden) {
+//            _barImageView.hidden = YES;
+//        }
+//    }
+//}
 
 - (void)loadNextPage
 {

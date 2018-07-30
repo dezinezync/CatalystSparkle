@@ -10,11 +10,8 @@
 
 @implementation UITableViewController (ScrollLoad)
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if ([self respondsToSelector:@selector(yt_scrollViewDidScroll:)]) {
-        [self yt_scrollViewDidScroll:scrollView];
-    }
     
     if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")])
         return;
@@ -34,7 +31,5 @@
         }
     }
 }
-
-- (void)yt_scrollViewDidScroll:(UIScrollView *)scrollView {}
 
 @end
