@@ -55,6 +55,8 @@
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
     imageView.backgroundColor = theme.borderColor;
+    imageView.cacheImage = YES;
+    imageView.cachedSuffix = @"-sized";
     
     if ([self.URL isKindOfClass:NSURL.class]) {
         imageView.baseURL = self.URL.absoluteString;
@@ -324,6 +326,9 @@
         if (image == nil) {
             [super setImage:image];
         }
+        else if (self.cacheImage == NO) {
+            [super setImage:image];
+        }
         else {
             CGSize size = [self scaledSizeForImage:image];
             
@@ -337,7 +342,7 @@
                 
                 // cache the scaled image
                 if (self.baseURL != nil && self.settingCached == NO) {
-                    NSString *key = [self.baseURL stringByAppendingString:@"-sized"];
+                    NSString *key = [self.baseURL stringByAppendingString:(self.cachedSuffix ?: @"-sized")];
                     NSString *extension = [[self.baseURL pathExtension] lowercaseString];
                     NSData *data = nil;
                     

@@ -14,6 +14,9 @@
 @property (nonatomic, copy) NSString *baseURL;
 @property (nonatomic, assign) BOOL settingCached;
 
+@property (nonatomic, assign) BOOL cacheImage;
+@property (nonatomic, copy) NSString *cachedSuffix;
+
 - (void)updateAspectRatioWithImage:(UIImage *)image;
 
 @end
