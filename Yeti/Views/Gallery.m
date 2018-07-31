@@ -243,7 +243,11 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath
 {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     GalleryCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kGalleryCell forIndexPath:indexPath];
+    cell.backgroundColor = theme.unreadBadgeColor;
     
     Content *content = [self.images objectAtIndex:indexPath.row];
     
@@ -257,6 +261,8 @@
         
         if (!self)
             return;
+        
+        cell.backgroundColor = theme.articleBackgroundColor;
         
         if (!self->_unbounded)
             return;
