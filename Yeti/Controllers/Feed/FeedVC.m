@@ -973,6 +973,14 @@
     }
     
     [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        [self scrollViewDidEndDecelerating:self.tableView];
+    });
 }
 
 #pragma mark - <FeedHeaderViewDelegate>
