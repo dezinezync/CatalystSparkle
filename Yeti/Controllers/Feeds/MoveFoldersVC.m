@@ -88,6 +88,10 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     }
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
+}
+
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
