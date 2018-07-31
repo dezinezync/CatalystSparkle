@@ -170,6 +170,13 @@
     
     self.addFeedDialog = alert;
     
+    weakify(self);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        [self _dismissAddingFeedDialog];
+    });
+    
 }
 
 - (void)_dismissAddingFeedDialog {
@@ -188,10 +195,38 @@
         return;
     }
     
-    [self.addFeedDialog dismissViewControllerAnimated:YES completion:nil];
+    weakify(self);
     
-    self.addFeedDialog = nil;
+    [self.addFeedDialog dismissViewControllerAnimated:YES completion:^{
+        strongify(self);
+        self.addFeedDialog = nil;
+    }];
     
+}
+
+- (NSTimeInterval)popRootToRoot {
+    NSTimeInterval delay = 0;
+    
+    UISplitViewController *splitVC = (UISplitViewController *)[self.window rootViewController];
+    
+    if ([splitVC presentedViewController] != nil) {
+        [[splitVC presentedViewController] dismissViewControllerAnimated:YES completion:nil];
+        delay += 0.75;
+    }
+    
+    UINavigationController *nav = splitVC.viewControllers.firstObject;
+    
+    if ([nav presentedViewController] != nil) {
+        [[nav presentedViewController] dismissViewControllerAnimated:YES completion:nil];
+        delay += 0.25;
+    }
+    
+    if ([[nav topViewController] isKindOfClass:FeedsVC.class] == NO) {
+        [nav popViewControllerAnimated:YES];
+        delay += 0.25;
+    }
+    
+    return delay;
 }
 
 - (BOOL)addFeed:(NSURL *)url {
@@ -211,9 +246,12 @@
         return YES;
     }
     
-    [self _showAddingFeedDialog];
-    
+    NSTimeInterval delay = [self popRootToRoot];
     weakify(self);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self _showAddingFeedDialog];
+    });
     
     [MyFeedsManager addFeed:url success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -281,9 +319,12 @@
 - (BOOL)addFeedByID:(NSNumber *)feedID
 {
     
-    [self _showAddingFeedDialog];
-    
+    NSTimeInterval delay = [self popRootToRoot];
     weakify(self);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self _showAddingFeedDialog];
+    });
     
     [MyFeedsManager addFeedByID:feedID success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
