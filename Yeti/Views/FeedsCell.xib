@@ -21,7 +21,7 @@
                     <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alignment="center" spacing="8" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vgv-JX-KbB">
                         <rect key="frame" x="8" y="12" width="304" height="46.5"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" image="nofavicon" translatesAutoresizingMaskIntoConstraints="NO" id="eZn-Vc-iG8">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" image="nofavicon" translatesAutoresizingMaskIntoConstraints="NO" id="eZn-Vc-iG8" customClass="SizedImage">
                                 <rect key="frame" x="0.0" y="11.5" width="24" height="24"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -71,6 +71,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="nofavicon" width="18" height="19"/>
+        <image name="nofavicon" width="14" height="15"/>
     </resources>
 </document>

@@ -37,6 +37,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     [super awakeFromNib];
     // Initialization code
     
+    self.faviconView.contentMode = UIViewContentModeCenter;
     self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
@@ -75,6 +76,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     [self.faviconView il_cancelImageLoading];
     
     self.faviconView.layer.cornerRadius = 4.f;
+    self.faviconView.cacheImage = NO;
+    self.faviconView.cachedSuffix = nil;
     self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
@@ -195,6 +198,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         registers = NO;
     }
     
+    self.faviconView.cacheImage = YES;
+    self.faviconView.cachedSuffix = @"-feedFavicon";
     self.object = feed;
     
     self.titleLabel.text = feed.title;
@@ -203,16 +208,15 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     NSString *url = [feed faviconURI];
     
     if (url && [url isKindOfClass:NSString.class] && ![url isBlank]) {
+        
+        self.faviconView.baseURL = url;
+        
         weakify(self);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
             strongify(self);
             [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
         });
     }
-    
-//    if (registers) {
-//        [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:(NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew) context:KVO_UNREAD];
-//    }
 }
 
 - (void)configureFolder:(Folder *)folder {
