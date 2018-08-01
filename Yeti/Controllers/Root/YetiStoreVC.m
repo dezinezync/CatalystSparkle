@@ -90,10 +90,6 @@ static void *KVO_Subscription = &KVO_Subscription;
     
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-}
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
@@ -227,6 +223,7 @@ static void *KVO_Subscription = &KVO_Subscription;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         textView.attributedText = attrs.copy;
+        [textView sizeToFit];
         attrs = nil;
     });
 }

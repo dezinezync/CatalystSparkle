@@ -84,6 +84,10 @@
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
+}
+
 #pragma mark - Actions
 
 - (void)didTapDone {

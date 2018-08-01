@@ -32,7 +32,11 @@
         return self.presentedViewController;
     }
     
-    return [self topViewController];
+    if (!self.viewControllers.count) {
+        return nil;
+    }
+    
+    return [[self viewControllers] firstObject];
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden {
