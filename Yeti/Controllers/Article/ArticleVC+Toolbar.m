@@ -18,6 +18,7 @@
 
 #import "EmptyVC.h"
 #import "SplitVC.h"
+#import "FeedVC.h"
 
 @implementation ArticleVC (Toolbar)
 
@@ -90,6 +91,16 @@
     UINavigationController *emptyVC = [vc emptyVC];
     [vc showDetailController:emptyVC sender:self];
     
+    UINavigationController *nav = vc.viewControllers.firstObject;
+    FeedVC *top = (FeedVC *)[nav topViewController];
+    
+    if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
+        NSIndexPath *selected = [top.tableView indexPathForSelectedRow];
+        
+        if (selected != nil) {
+            [top.tableView deselectRowAtIndexPath:selected animated:YES];
+        }
+    }
 }
 
 - (void)didTapShare:(UIBarButtonItem *)sender {
