@@ -70,9 +70,13 @@
     }
     
     if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.viewControllers.count == 1) {
-        UINavigationController *nav = [self emptyVC];
         
-        self.viewControllers = @[self.viewControllers.firstObject, nav];
+        if (self.presentedViewController == nil) {
+        
+            UINavigationController *nav = [self emptyVC];
+            
+            self.viewControllers = @[self.viewControllers.firstObject, nav];
+        }
     }
     
 //#ifdef DEBUG
