@@ -95,7 +95,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     if (indexPath.section == 0) {
         // THEME
         cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
-        cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+        cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         
         YetiThemeType theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
         

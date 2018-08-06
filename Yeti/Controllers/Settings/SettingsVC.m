@@ -17,6 +17,7 @@
 #import "FiltersVC.h"
 #import "ThemeVC.h"
 #import "OPMLVC.h"
+#import "MiscVC.h"
 
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
@@ -125,6 +126,10 @@
     switch (section) {
         case 0:
             return 2;
+            break;
+        case 1:
+            return 6;
+            break;
         case 2:
             return 3;
             break;
@@ -191,11 +196,14 @@
                 case 4:
                     cell.textLabel.text = @"Import/Export OPML";
                     break;
+                case 5:
+                    cell.textLabel.text = @"Miscellaneous";
+                    break;
                 default:
                     break;
             }
             
-            if (indexPath.row != 1 && indexPath.row != 5) {
+            if (indexPath.row != 1) {
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             else {
@@ -284,6 +292,9 @@
                     break;
                 case 4:
                     vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                    break;
+                case 5:
+                    vc = [[MiscVC alloc] initWithStyle:UITableViewStyleGrouped];
                     break;
                 default:
                     break;

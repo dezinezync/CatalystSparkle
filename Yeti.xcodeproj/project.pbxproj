@@ -421,6 +421,14 @@
 		F0D0085C2081C72300EAFE3B /* Author.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D0085B2081C72300EAFE3B /* Author.m */; };
 		F0D0085D2081C8FE00EAFE3B /* Author.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D0085B2081C72300EAFE3B /* Author.m */; };
 		F0D0085E2081C90100EAFE3B /* Author.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D0085B2081C72300EAFE3B /* Author.m */; };
+		F0D01CC32118681C003A01DD /* dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC02118681B003A01DD /* dark@3x.png */; };
+		F0D01CC42118681C003A01DD /* dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC02118681B003A01DD /* dark@3x.png */; };
+		F0D01CC52118681C003A01DD /* dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC12118681C003A01DD /* dark.png */; };
+		F0D01CC62118681C003A01DD /* dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC12118681C003A01DD /* dark.png */; };
+		F0D01CC72118681C003A01DD /* dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC22118681C003A01DD /* dark@2x.png */; };
+		F0D01CC82118681C003A01DD /* dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0D01CC22118681C003A01DD /* dark@2x.png */; };
+		F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D01CCA2118683B003A01DD /* MiscVC.m */; };
+		F0D01CCC2118683B003A01DD /* MiscVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D01CCA2118683B003A01DD /* MiscVC.m */; };
 		F0D030A3205FBEF400D46B34 /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F0D071EF205E75D700A042CD /* AccountVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071ED205E75D700A042CD /* AccountVC.m */; };
 		F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071EE205E75D700A042CD /* AccountVC.xib */; };
@@ -870,6 +878,11 @@
 		F0D008582081C33400EAFE3B /* FeedHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedHeaderView.xib; sourceTree = "<group>"; };
 		F0D0085A2081C72300EAFE3B /* Author.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Author.h; sourceTree = "<group>"; };
 		F0D0085B2081C72300EAFE3B /* Author.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Author.m; sourceTree = "<group>"; };
+		F0D01CC02118681B003A01DD /* dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@3x.png"; sourceTree = "<group>"; };
+		F0D01CC12118681C003A01DD /* dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dark.png; sourceTree = "<group>"; };
+		F0D01CC22118681C003A01DD /* dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@2x.png"; sourceTree = "<group>"; };
+		F0D01CC92118683B003A01DD /* MiscVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MiscVC.h; sourceTree = "<group>"; };
+		F0D01CCA2118683B003A01DD /* MiscVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MiscVC.m; sourceTree = "<group>"; };
 		F0D030A4205FC4DD00D46B34 /* ArticleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleProvider.h; sourceTree = "<group>"; };
 		F0D071EC205E75D700A042CD /* AccountVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountVC.h; sourceTree = "<group>"; };
 		F0D071ED205E75D700A042CD /* AccountVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountVC.m; sourceTree = "<group>"; };
@@ -1033,6 +1046,8 @@
 				F0673AFE20C6A1EB00C42062 /* OPMLVC.h */,
 				F0673AFF20C6A1EB00C42062 /* OPMLVC.m */,
 				F0673B0020C6A1EB00C42062 /* OPMLVC.xib */,
+				F0D01CC92118683B003A01DD /* MiscVC.h */,
+				F0D01CCA2118683B003A01DD /* MiscVC.m */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1318,6 +1333,7 @@
 		F070C31E1FBAC0B200912CCF /* SupportingFiles */ = {
 			isa = PBXGroup;
 			children = (
+				F0D01CBD211867E9003A01DD /* Icons */,
 				F0A5AE5920C197BF00CFA1D2 /* Fonts */,
 				F09E96412055340C00E61681 /* HLJS */,
 				F070C3211FBAC0EE00912CCF /* Frameworks */,
@@ -1565,6 +1581,24 @@
 				F0A5AE8120C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf */,
 			);
 			path = PlexSerif;
+			sourceTree = "<group>";
+		};
+		F0D01CBD211867E9003A01DD /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				F0D01CBF211867F0003A01DD /* dark */,
+			);
+			path = Icons;
+			sourceTree = "<group>";
+		};
+		F0D01CBF211867F0003A01DD /* dark */ = {
+			isa = PBXGroup;
+			children = (
+				F0D01CC12118681C003A01DD /* dark.png */,
+				F0D01CC22118681C003A01DD /* dark@2x.png */,
+				F0D01CC02118681B003A01DD /* dark@3x.png */,
+			);
+			path = dark;
 			sourceTree = "<group>";
 		};
 		F0D3002D1FE263330040D10D /* Vendors */ = {
@@ -1829,6 +1863,7 @@
 				F047F4E720C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
 				F0A5AE6520C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */,
 				F069ABFE206E018F00021ABF /* LaunchScreen.storyboard in Resources */,
+				F0D01CC82118681C003A01DD /* dark@2x.png in Resources */,
 				F0A5AEBF20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F069ABFF206E018F00021ABF /* ArticleVC.xib in Resources */,
 				F05DC077208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
@@ -1856,6 +1891,7 @@
 				F069AC03206E018F00021ABF /* ArticleHelperView.xib in Resources */,
 				F0A5AEAD20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
 				F047F4F520C25FB900626968 /* Spectral-Medium.ttf in Resources */,
+				F0D01CC42118681C003A01DD /* dark@3x.png in Resources */,
 				F0A5AEC320C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
 				F069AC04206E018F00021ABF /* FeedsCell.xib in Resources */,
 				F0A5AEBD20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
@@ -1898,6 +1934,7 @@
 				F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */,
 				F0673B0420C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
+				F0D01CC62118681C003A01DD /* dark.png in Resources */,
 				F0202BE020A41A9A00FBC3E1 /* FeedHeaderView.xib in Resources */,
 				F047F4F120C25FB900626968 /* Spectral-Light.ttf in Resources */,
 			);
@@ -1937,8 +1974,10 @@
 				F0A5AE9820C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
 				F0A5AEAC20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
 				F0A5AE7020C197EF00CFA1D2 /* Merriweather-Italic.ttf in Resources */,
+				F0D01CC32118681C003A01DD /* dark@3x.png in Resources */,
 				F0A5AEB820C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
 				F09E96482055342000E61681 /* styleHTML.js in Resources */,
+				F0D01CC52118681C003A01DD /* dark.png in Resources */,
 				F088089F206B8B9C00ECE1E6 /* Tweet.xib in Resources */,
 				F0A5AE9620C19CB400CFA1D2 /* IBMPlexSerif-Regular.ttf in Resources */,
 				F0AF314020D287E600E074D6 /* IntroViewDefault.xib in Resources */,
@@ -1957,6 +1996,7 @@
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
+				F0D01CC72118681C003A01DD /* dark@2x.png in Resources */,
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
 				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
@@ -2230,6 +2270,7 @@
 				F0202BDE20A41A8D00FBC3E1 /* CustomFeedVC.m in Sources */,
 				F069ABEA206E018F00021ABF /* Range.m in Sources */,
 				F069ABEB206E018F00021ABF /* UIColor+HEX.m in Sources */,
+				F0D01CCC2118683B003A01DD /* MiscVC.m in Sources */,
 				F069ABEC206E018F00021ABF /* Enclosure.m in Sources */,
 				F069ABED206E018F00021ABF /* FeedsCell.m in Sources */,
 				F08993BF2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */,
@@ -2304,6 +2345,7 @@
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
+				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
