@@ -70,7 +70,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong, readonly) Reachability *reachability;
 
-#pragma mark -
+#pragma mark - Feeds
 
 - (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -85,6 +85,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
+- (void)markFeedRead:(Feed * _Nonnull)feed success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
 #ifndef SHARE_EXTENSION
 

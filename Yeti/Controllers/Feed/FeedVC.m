@@ -77,7 +77,7 @@
     
     self.tableView.tableFooterView = [UIView new];
     
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:event:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     
     if (self.isExploring) {
@@ -303,13 +303,44 @@
     
 }
 
-- (void)didTapAllRead:(UIBarButtonItem *)sender {
+- (void)_markVisibleRowsRead {
+    
+    if ([self.class isKindOfClass:NSClassFromString(@"CustomFeedVC")] == YES) {
+        return;
+    }
+    
+    NSArray <NSIndexPath *> *indices = [self.tableView indexPathsForVisibleRows];
+    
+    for (NSIndexPath *indexPath in indices) { @autoreleasepool {
+       
+        ArticleCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        
+        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        
+        if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
+            cell.markerView.image = nil;
+        }
+        
+    } }
+    
+}
+
+- (void)didTapAllRead:(UIBarButtonItem *)sender event:(UIEvent *)event {
+    
+    UITouch *touch = event.allTouches.anyObject;
+    
+    if (touch) {
+        if (touch.tapCount == 0) {
+            [self didLongPressOnAllRead:sender];
+            return;
+        }
+    }
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     weakify(self);
     
-    [avc addAction:[UIAlertAction actionWithTitle:@"Mark All Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         strongify(self);
         
@@ -324,7 +355,7 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             strongify(self);
             if (self && [self tableView]) {
-                [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationNone];
+                [self _markVisibleRowsRead];
                 [self _didFinishAllReadActionSuccessfully];
             }
         });
@@ -343,6 +374,48 @@
     [self presentViewController:avc animated:YES completion:nil];
     
     
+}
+
+- (void)didLongPressOnAllRead:(UIBarButtonItem *)sender {
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including articles not currently loaded?" preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    weakify(self);
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        strongify(self);
+        
+        weakify(self);
+        
+        [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                if (self && [self tableView]) {
+                    [self _markVisibleRowsRead];
+                    [self _didFinishAllReadActionSuccessfully];
+                }
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
+            
+        }];
+        
+        
+    }]];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.barButtonItem = sender;
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
