@@ -329,7 +329,7 @@
     
     UITouch *touch = event.allTouches.anyObject;
     
-    if (touch) {
+    if (touch && self.feed) {
         if (touch.tapCount == 0) {
             [self didLongPressOnAllRead:sender];
             return;
