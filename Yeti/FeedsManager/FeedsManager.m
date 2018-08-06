@@ -82,7 +82,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
         NSString *docsDir;
         NSArray *dirPaths;
-        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+//        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
         
 //        if (!_feedsCachePath) {
 //            dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
@@ -1407,7 +1407,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
@@ -1870,8 +1870,15 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     NSDictionary *errorData = [userInfo valueForKey:DZErrorResponse];
     NSString *errorString;
     
-    if (errorData) {
+    if (errorData != nil && errorData.allKeys.count > 0) {
         errorString = [errorData valueForKey:@"error"] ?: [errorData valueForKey:@"err"];
+    }
+    else if ([userInfo valueForKey:DZErrorData]) {
+        NSError *err;
+        id obj = [NSJSONSerialization JSONObjectWithData:[userInfo valueForKey:DZErrorData] options:kNilOptions error:&err];
+        if (err == nil && obj != nil && [obj isKindOfClass:NSDictionary.class]) {
+            errorString = [obj valueForKey:@"error"];
+        }
     }
     
     if (errorString) {

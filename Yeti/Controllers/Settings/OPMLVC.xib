@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -32,7 +32,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HgH-Zt-EPD">
-                    <rect key="frame" x="16" y="357.33333333333326" width="343" height="420.66666666666674"/>
+                    <rect key="frame" x="16" y="340.33333333333326" width="343" height="425.66666666666674"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OPML" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eS7-Y6-80B">
                             <rect key="frame" x="8" y="7.9999999999999982" width="327" height="31.333333333333329"/>
@@ -41,21 +41,21 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bb0-NQ-QA5">
-                            <rect key="frame" x="8" y="47.333333333333364" width="327" height="81.333333333333314"/>
+                            <rect key="frame" x="8" y="47.333333333333364" width="327" height="86.333333333333314"/>
                             <string key="text">Import your RSS Subscriptions, Folders and other meta data from another service. Alternatively, export your Subscriptions and Folders from Elytra to an OPML file.</string>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.53534881160000003" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="opml" translatesAutoresizingMaskIntoConstraints="NO" id="ddF-G2-bFb">
-                            <rect key="frame" x="51" y="136.66666666666669" width="240" height="180"/>
+                            <rect key="frame" x="51.666666666666686" y="141.66666666666669" width="240" height="180"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="240" id="Qtc-qi-FTA"/>
                                 <constraint firstAttribute="width" secondItem="ddF-G2-bFb" secondAttribute="height" multiplier="4:3" id="jcN-tD-ePi"/>
                             </constraints>
                         </imageView>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="9UE-VV-tvz">
-                            <rect key="frame" x="48" y="332.66666666666669" width="247" height="30"/>
+                            <rect key="frame" x="48" y="337.66666666666669" width="247" height="30"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4YE-eg-wal">
                                     <rect key="frame" x="0.0" y="0.0" width="119.66666666666667" height="30"/>
@@ -88,7 +88,7 @@
                             </subviews>
                         </stackView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ufd-vS-T2U">
-                            <rect key="frame" x="147" y="378.66666666666669" width="48" height="30"/>
+                            <rect key="frame" x="147.66666666666666" y="383.66666666666669" width="48" height="30"/>
                             <state key="normal" title="Cancel"/>
                             <connections>
                                 <action selector="didTapCancel:" destination="-1" eventType="touchUpInside" id="ZuW-T0-lXP"/>
@@ -119,7 +119,7 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mNA-Mi-OFC">
-                    <rect key="frame" x="16" y="620.66666666666663" width="343" height="157.33333333333337"/>
+                    <rect key="frame" x="16" y="608.66666666666663" width="343" height="157.33333333333337"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Importing your OPML" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t0d-Bj-zBP">
                             <rect key="frame" x="8" y="7.9999999999999982" width="327" height="31.333333333333329"/>
@@ -128,7 +128,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="acc-pq-fzN">
-                            <rect key="frame" x="152.33333333333334" y="115.33333333333337" width="38" height="30"/>
+                            <rect key="frame" x="152.66666666666666" y="115.33333333333337" width="38" height="30"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                             <state key="normal" title="Done"/>
                         </button>
@@ -169,8 +169,8 @@
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.12373459507042253" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="HgH-Zt-EPD" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="DoO-fD-Yjg"/>
-                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="mNA-Mi-OFC" secondAttribute="bottom" id="gfx-H0-kmR"/>
-                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="HgH-Zt-EPD" secondAttribute="bottom" id="mQ1-JH-PIP"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="mNA-Mi-OFC" secondAttribute="bottom" constant="12" id="gfx-H0-kmR"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="HgH-Zt-EPD" secondAttribute="bottom" constant="12" id="mQ1-JH-PIP"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="mNA-Mi-OFC" secondAttribute="trailing" constant="16" id="sye-BE-7pJ"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="HgH-Zt-EPD" secondAttribute="trailing" constant="16" id="vwZ-Dl-PRh"/>
                 <constraint firstItem="mNA-Mi-OFC" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="wuK-tm-V2d"/>

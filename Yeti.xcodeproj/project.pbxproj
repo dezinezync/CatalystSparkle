@@ -471,6 +471,10 @@
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
+		F0F193A02118B670003B61CC /* XMLConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F1939F2118B670003B61CC /* XMLConvertor.m */; };
+		F0F193A12118B670003B61CC /* XMLConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F1939F2118B670003B61CC /* XMLConvertor.m */; };
+		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
+		F0F193A62118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA472A20CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
@@ -946,6 +950,10 @@
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
+		F0F1939E2118B670003B61CC /* XMLConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XMLConvertor.h; sourceTree = "<group>"; };
+		F0F1939F2118B670003B61CC /* XMLConvertor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLConvertor.m; sourceTree = "<group>"; };
+		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
+		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
 		F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFooterView.h; sourceTree = "<group>"; };
 		F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFooterView.m; sourceTree = "<group>"; };
@@ -1048,6 +1056,8 @@
 				F0673B0020C6A1EB00C42062 /* OPMLVC.xib */,
 				F0D01CC92118683B003A01DD /* MiscVC.h */,
 				F0D01CCA2118683B003A01DD /* MiscVC.m */,
+				F0F193A32118BE9D003B61CC /* ImportVC.h */,
+				F0F193A42118BE9D003B61CC /* ImportVC.m */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1223,6 +1233,8 @@
 				F0AD76D320E2217C0003787B /* Reachability.h */,
 				F0AD76D420E2217C0003787B /* Reachability.m */,
 				F08993C1210883E200A9978E /* FolderDrop.h */,
+				F0F1939E2118B670003B61CC /* XMLConvertor.h */,
+				F0F1939F2118B670003B61CC /* XMLConvertor.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2211,6 +2223,7 @@
 				F0A7B8F520FA21C00056A2C0 /* YetiStoreVC.m in Sources */,
 				F069ABC7206E018F00021ABF /* Gallery.m in Sources */,
 				F022B0E020DC30DE00030185 /* AccentButton.m in Sources */,
+				F0F193A62118BE9D003B61CC /* ImportVC.m in Sources */,
 				F0673B0220C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F069ABC8206E018F00021ABF /* FeedsManager+KVS.m in Sources */,
 				F069ABC9206E018F00021ABF /* Tweet.m in Sources */,
@@ -2244,6 +2257,7 @@
 				F069ABD8206E018F00021ABF /* Blockquote.m in Sources */,
 				F069ABD9206E018F00021ABF /* YTUserID.m in Sources */,
 				F05DC07C20832DB5009029E1 /* AuthorBioVC.m in Sources */,
+				F0F193A12118B670003B61CC /* XMLConvertor.m in Sources */,
 				F069ABDA206E018F00021ABF /* NSString+Levenshtein.m in Sources */,
 				F05DC074208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F069ABDB206E018F00021ABF /* Image.m in Sources */,
@@ -2305,6 +2319,7 @@
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
+				F0F193A02118B670003B61CC /* XMLConvertor.m in Sources */,
 				F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
@@ -2348,6 +2363,7 @@
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
+				F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,

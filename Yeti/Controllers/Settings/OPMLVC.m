@@ -9,6 +9,10 @@
 #import "OPMLVC.h"
 #import "FeedsManager.h"
 #import "YetiThemeKit.h"
+#import "XMLConvertor.h"
+#import "YTNavigationController.h"
+
+#import "ImportVC.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZNetworking/DZUploadSession.h>
@@ -309,50 +313,111 @@
     
     self.ioDoneButton.enabled = NO;
     
+    weakify(self);
+    
+//    [XMLConverter convertXMLURL:self.importURL completion:^(BOOL success, NSMutableDictionary * _Nonnull dictionary, NSError * _Nonnull error) {
+//
+//        strongify(self);
+//
+//        if (success == NO) {
+//            if (error) {
+//                [AlertManager showGenericAlertWithTitle:@"Invalid OPML File" message:error.localizedDescription fromVC:self];
+//            }
+//            else {
+//                [AlertManager showGenericAlertWithTitle:@"Invalid OPML File" message:@"An unknown error occurred reading the OPML file." fromVC:self];
+//            }
+//
+//            return;
+//        }
+//
+//        DDLogDebug(@"%@ - %@", self, dictionary);
+//
+//    }];
+    
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
 //    url = @"https://api.elytra.app/user/opml";
 #ifndef DEBUG
     url = @"https://api.elytra.app/user/opml";
 #endif
-    
+
     url = [url stringByAppendingFormat:@"?userID=%@", MyFeedsManager.userID];
-    
-    weakify(self);
     
     __unused NSURLSessionTask *task = [[DZUploadSession shared] UPLOAD:self.importURL.path fieldName:@"file" URL:url parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            self.ioSubtitleLabel.text = @"Uploaded. Please refresh your feeds to update your subscriptions on this device.";
-            [self.ioSubtitleLabel sizeToFit];
-            
-            self.ioDoneButton.enabled = YES;
-            self.ioProgressView.progress = 1.f;
-        });
-        
+        strongify(self);
+
+        [self handleOPMLData:responseObject];
+
     } progress:^(double completed, NSProgress *progress) {
-        
+
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             self.ioProgressView.progress = completed;
         });
-        
+
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
+
         strongify(self);
         
+        error = [MyFeedsManager errorFromResponse:error.userInfo];
+
         [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription fromVC:self];
-        
+
         weakify(self);
-        
+
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             self.ioDoneButton.enabled = YES;
         });
-        
+
     }];
     
+}
+
+- (void)handleOPMLData:(NSData *)response {
+    NSError *error = nil;
+    
+    id obj = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        [AlertManager showGenericAlertWithTitle:@"Error Parsing OPML" message:error.localizedDescription fromVC:self];
+        return;
+    }
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        self.ioSubtitleLabel.text = @"Uploaded. The import process will begin shortly.";
+        [self.ioSubtitleLabel sizeToFit];
+        
+        self.ioDoneButton.enabled = YES;
+        self.ioProgressView.progress = 1.f;
+    });
+    
+    NSArray *feeds = [obj valueForKey:@"feeds"];
+    NSArray <NSString *> *folders = [obj valueForKey:@"folders"];
+    
+    ImportVC *importVC = [[ImportVC alloc] init];
+    importVC.unmappedFeeds = feeds;
+    importVC.unmappedFolders = folders;
+    
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:importVC];
+    
+    UIViewController *presenting = self.presentingViewController;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+
+        [self didTapCancel:self.ioDoneButton];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [presenting presentViewController:nav animated:YES completion:nil];
+        });
+
+    });
 }
 
 @end
