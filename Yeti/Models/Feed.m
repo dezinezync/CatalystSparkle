@@ -285,7 +285,7 @@
         url = self.favicon;
     }
     
-    if (!url)
+    if (!url || (url && [url isKindOfClass:NSString.class] && [url isBlank]))
         return url;
     
     // ensure this is not an absolute URL

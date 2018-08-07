@@ -152,16 +152,18 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         if (feed) {
             NSString *url = [feed faviconURI];
             
-            if (url) {
-                weakify(self);
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                    strongify(self);
-                    [self.markerView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-                        
-                    } error:^(NSError * _Nonnull error) {
-                        DDLogError(@"Error loading favicon:%@", error.localizedDescription);
-                    }];
-                });
+            if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+                @try {
+                    weakify(self);
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        strongify(self);
+                        [self.markerView il_setImageWithURL:formattedURL(@"%@", url)];
+                    });
+                }
+                @catch (NSException *exc) {
+                    // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
+                    DDLogWarn(@"ArticleCell setImage: %@", exc);
+                }
             }
         }
     }

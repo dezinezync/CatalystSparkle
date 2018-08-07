@@ -207,15 +207,18 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     NSString *url = [feed faviconURI];
     
-    if (url && [url isKindOfClass:NSString.class] && ![url isBlank]) {
-        
-        self.faviconView.baseURL = url;
-        
-        weakify(self);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-            strongify(self);
-            [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
-        });
+    if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+        @try {
+            weakify(self);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                strongify(self);
+                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
+            });
+        }
+        @catch (NSException *exc) {
+            // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
+            DDLogWarn(@"ArticleCell setImage: %@", exc);
+        }
     }
 }
 

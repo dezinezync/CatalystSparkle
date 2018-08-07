@@ -40,15 +40,20 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
     self.imageView.layer.cornerRadius = 8.f;
     self.imageView.clipsToBounds = YES;
     
-    NSString *imageURI = [feed faviconURI];
+    NSString *url = [feed faviconURI];
     
-    if (imageURI && [imageURI isKindOfClass:NSString.class] && ![imageURI isBlank]) {
-        weakify(self);
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            strongify(self);
-            
-            [self.imageView il_setImageWithURL:imageURI];
-        });
+    if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+        @try {
+            weakify(self);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                strongify(self);
+                [self.imageView il_setImageWithURL:formattedURL(@"%@", url)];
+            });
+        }
+        @catch (NSException *exc) {
+            // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
+            DDLogWarn(@"ArticleCell setImage: %@", exc);
+        }
     }
     
     self.feed = feed;
