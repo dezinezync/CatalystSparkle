@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSArray <Feed *> *feeds;
 @property (nonatomic, strong) NSArray <Folder *> *folders;
 
+@property (nonatomic, strong) NSArray <Folder *> *existingFolders;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -398,10 +398,12 @@
     
     NSArray *feeds = [obj valueForKey:@"feeds"];
     NSArray <NSString *> *folders = [obj valueForKey:@"folders"];
+    NSArray <Folder *> *existingFolders = [obj valueForKey:@"userFolders"];
     
     ImportVC *importVC = [[ImportVC alloc] init];
     importVC.unmappedFeeds = feeds;
     importVC.unmappedFolders = folders;
+    importVC.existingFolders = (existingFolders != nil && [existingFolders isKindOfClass:NSDictionary.class]) ? [existingFolders valueForKey:@"folders"] : @[];
     
     YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:importVC];
     

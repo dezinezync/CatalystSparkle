@@ -7,8 +7,8 @@
 //
 
 #import "ImportVC.h"
-#import <DZKit/DZBasicDatasource.h>
 #import "YetiThemeKit.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 NSString *const kImportCell = @"importCell";
 
@@ -20,7 +20,7 @@ NSString *const kImportCell = @"importCell";
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier]) {
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.selectedBackgroundView = [UIView new];
         
         self.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         self.detailTextLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
@@ -51,7 +51,7 @@ NSString *const kImportCell = @"importCell";
 @property (nonatomic, strong) DZBasicDatasource *DS;
 
 @property (nonatomic, assign) NSInteger lastImported;
-@property (nonatomic, copy) NSArray *currentSet;
+@property (nonatomic, assign) NSInteger total;
 
 @end
 
@@ -68,9 +68,9 @@ NSString *const kImportCell = @"importCell";
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
-#ifndef DEBUG
+//#ifndef DEBUG
     done.enabled = NO;
-#endif
+//#endif
     self.navigationItem.rightBarButtonItem = done;
 }
 
@@ -95,10 +95,20 @@ NSString *const kImportCell = @"importCell";
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    DDLogInfo(@"%@", self.unmappedFolders);
-    DDLogInfo(@"%@ feeds to import", @(self.DS.data.count));
+    self.total = self.unmappedFeeds.count;
     
-    [self startFeedsImport];
+    DDLogInfo(@"%@", self.unmappedFolders);
+    DDLogInfo(@"%@ feeds to import", @(self.total));
+    
+    [self processImportData];
+}
+
+- (void)dealloc {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[UIApplication sharedApplication] isIdleTimerDisabled] == YES) {
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+        }
+    });
 }
 
 #pragma mark - Setup
@@ -111,6 +121,7 @@ NSString *const kImportCell = @"importCell";
     
     self.tableView.tableFooterView = [UIView new];
     self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.userInteractionEnabled = NO;
     
     [self.tableView registerClass:ImportCell.class forCellReuseIdentifier:kImportCell];
 }
@@ -124,16 +135,43 @@ NSString *const kImportCell = @"importCell";
 #pragma mark - Setters
 
 - (void)setLastImported:(NSInteger)lastImported {
-    _lastImported = lastImported;
+    weakify(self);
     
-    if (_lastImported < (self.DS.data.count - 1)) {
-        NSString *title = formattedString(@"Importing %@ of %@", @(_lastImported + 1), @(self.unmappedFeeds.count));
-        self.title = title;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        self->_lastImported = lastImported;
+        
+        if (self->_lastImported < self.total) {
+            NSString *title = formattedString(@"Importing %@ of %@", @(self->_lastImported + 1), @(self.total));
+            self.title = title;
+        }
+        else {
+            self.title = @"Imported";
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+            
+            [UIApplication sharedApplication].idleTimerDisabled = NO;
+        }
+    });
+}
+
+- (void)setExistingFolders:(NSArray<Folder *> *)existingFolders {
+    
+    if (existingFolders != nil) {
+        existingFolders = [existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+            
+            if ([obj isKindOfClass:NSDictionary.class]) {
+                Folder *instance = [Folder instanceFromDictionary:(NSDictionary *)obj];
+                return instance;
+            }
+            
+            return obj;
+            
+        }];
     }
-    else {
-        self.title = @"Imported";
-        self.navigationItem.rightBarButtonItem.enabled = YES;
-    }
+    
+    _existingFolders = existingFolders;
+    
 }
 
 #pragma mark - Table view data source
@@ -162,24 +200,211 @@ NSString *const kImportCell = @"importCell";
         cell.detailTextLabel.text = folder;
     }
     
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
     return cell;
 }
 
 #pragma mark - Importing
 
+- (void)processImportData {
+    
+    if (self.unmappedFolders != nil && self.unmappedFolders.count > 0) {
+        
+        // filter out exisiting folders
+        if (self.existingFolders != nil && self.existingFolders.count) {
+            
+            NSArray <NSString *> *knownFolders = [self.existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+                return obj.title;
+            }];
+            
+            NSArray *unmapped = [self.unmappedFolders rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                
+                return [knownFolders indexOfObject:obj] == NSNotFound;
+                
+            }];
+            
+            self.unmappedFolders = unmapped;
+            
+            if ([unmapped count] == 0) {
+                // this ensures the next step in folder creation does not occur.
+                // this then skips to importing the feeds.
+                [self processImportData];
+                return;
+            }
+            
+        }
+        
+        self.title = @"Creating Folders";
+        
+        NSInteger lastIndex = self.unmappedFolders.count - 4;
+        
+        weakify(self);
+        
+        [self.unmappedFolders enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            [MyFeedsManager addFolder:obj success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                strongify(self);
+                
+                if (idx == lastIndex) {
+                    self.unmappedFeeds = @[];
+                    [self processImportData];
+                }
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                DDLogError(@"Error creating folder: %@", obj);
+                
+                strongify(self);
+                
+                if (idx == lastIndex) {
+                    self.unmappedFeeds = @[];
+                    [self processImportData];
+                }
+                
+            }];
+            
+        }];
+        
+    }
+    else {
+        // directly start importing feeds since no folders exist.
+        [self startFeedsImport];
+    }
+    
+}
+
 - (void)startFeedsImport {
     
     NSInteger imported = self.lastImported;
-    NSArray *nextBatch = [self.unmappedFeeds subarrayWithRange:NSMakeRange(imported, 10)];
+    NSDictionary *nextObj = [self.unmappedFeeds safeObjectAtIndex:imported];
     
-    DDLogInfo(@"Next Batch: %@", nextBatch);
+    if (nextObj == nil) {
+        return;
+    }
+    
+    DDLogInfo(@"Next Feed URL: %@", nextObj);
     
     if (self.lastImported == 0) {
         // triggers the first title update.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIApplication sharedApplication].idleTimerDisabled = YES;
+        });
         self.lastImported = 0;
     }
     
-    self.currentSet = nextBatch;
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        strongify(self);
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.lastImported inSection:0];
+//        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+        [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+        
+    });
+    
+    [self importFeed:nextObj];
+}
+
+- (void)resumeFeedsImport {
+    self.lastImported++;
+    
+    NSTimeInterval delay = 1;
+    
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        strongify(self);
+        [self startFeedsImport];
+    });
+    
+}
+
+- (void)importFeed:(NSDictionary *)obj {
+    
+    if (obj == nil) {
+        [self resumeFeedsImport];
+        return;
+    }
+    
+    NSString *path = [obj valueForKey:@"url"];
+    
+    if (path == nil) {
+        [self resumeFeedsImport];
+        return;
+    }
+    
+    NSString *folderName = [obj valueForKey:@"folder"];
+    NSURL *url = [NSURL URLWithString:path];
+    
+    weakify(self);
+    
+    [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        // if there is a Folder involved, add it to the folder
+        strongify(self);
+        
+        if ([responseObject isKindOfClass:Feed.class] == NO) {
+            
+        }
+        
+        if (folderName != nil && [folderName isBlank] == NO) {
+
+            // find the folder
+            Folder *folder = [MyFeedsManager.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+                if ([current.title isEqualToString:folderName]) {
+                    return current;
+                }
+
+                return prev;
+            }];
+
+            if (folder == nil) {
+                // we dont have this folder. Skip
+                [self resumeFeedsImport];
+                return;
+            }
+            
+            Feed *feed = responseObject;
+
+            weakify(self);
+            
+            // add it  to the folder
+            [MyFeedsManager updateFolder:folder.folderID add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                strongify(self);
+                
+                [self resumeFeedsImport];
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                DDLogError(@"Error adding url to it's folder %@ (%@): %@", url, folderName, error);
+                
+                strongify(self);
+                
+                [self resumeFeedsImport];
+                
+            }];
+
+        }
+        else {
+            // not in a folder. Resume as usual
+            [self resumeFeedsImport];
+        }
+     
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        DDLogError(@"Error importing url %@: %@", url, error);
+        
+        strongify(self);
+        
+        [self resumeFeedsImport];
+        
+    }];
+    
 }
 
 @end
