@@ -238,7 +238,7 @@ NSString *const kImportCell = @"importCell";
         
         self.title = @"Creating Folders";
         
-        NSInteger lastIndex = self.unmappedFolders.count - 4;
+        NSInteger lastIndex = self.unmappedFolders.count - 1;
         
         weakify(self);
         
