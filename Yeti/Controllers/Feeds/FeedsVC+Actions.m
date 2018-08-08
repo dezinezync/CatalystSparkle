@@ -199,11 +199,11 @@
             
         }]];
         
-        if ([[feed extra] valueForKey:@"url"]) {
+        if ([[feed extra] valueForKey:@"link"] || [[feed extra] valueForKey:@"url"]) {
             
             [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 
-                NSString *websiteURL = [[feed extra] valueForKey:@"url"];
+                NSString *websiteURL = [[feed extra] valueForKey:@"link"] ?: [[feed extra] valueForKey:@"url"];
                 NSURL *URL = [NSURL URLWithString:websiteURL];
                 
                 UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
@@ -477,7 +477,7 @@
            
             completionHandler(YES);
             
-            if ([[feed extra] valueForKey:@"url"]) {
+            if ([[feed extra] valueForKey:@"url"] || [[feed extra] valueForKey:@"link"]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     strongify(self);
                     [self showShareOptionsVC:feed];
@@ -518,11 +518,13 @@
         return;
     }
     
-    if ([[feed valueForKey:@"extra"] valueForKey:@"url"] == nil) {
+    if ([[feed extra] valueForKey:@"url"] == nil && [[feed extra] valueForKey:@"link"] == nil) {
         return;
     }
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    weakify(self);
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Feed URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
@@ -532,6 +534,7 @@
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             
             [self presentViewController:activityVC animated:YES completion:nil];
             
@@ -541,12 +544,14 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        NSString *websiteURL = [[feed extra] valueForKey:@"url"];
+        NSString *websiteURL = [[feed extra] valueForKey:@"link"] ?: [[feed extra] valueForKey:@"url"];
         NSURL *URL = [NSURL URLWithString:websiteURL];
         
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            strongify(self);
             
             [self presentViewController:activityVC animated:YES completion:nil];
             
