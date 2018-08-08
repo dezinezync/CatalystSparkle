@@ -210,6 +210,19 @@ NSString *const kImportCell = @"importCell";
 
 - (void)processImportData {
     
+    if ([NSThread isMainThread] == YES) {
+        
+        weakify(self);
+        
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+            strongify(self);
+            
+            [self processImportData];
+        });
+        
+        return;
+    }
+    
     if (self.unmappedFolders != nil && self.unmappedFolders.count > 0) {
         
         // filter out exisiting folders
@@ -236,37 +249,45 @@ NSString *const kImportCell = @"importCell";
             
         }
         
-        self.title = @"Creating Folders";
+        self.title = formattedString(@"Creating %@ Folders", @(self.unmappedFolders.count));
         
         NSInteger lastIndex = self.unmappedFolders.count - 1;
         
         weakify(self);
         
-        [self.unmappedFolders enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
+        NSUInteger idx = 0;
+        
+        for (NSString *obj in self.unmappedFolders) {
             
-            [MyFeedsManager addFolder:obj success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                strongify(self);
-                
-                if (idx == lastIndex) {
-                    self.unmappedFolders = @[];
-                    [self processImportData];
-                }
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                DDLogError(@"Error creating folder: %@", obj);
-                
-                strongify(self);
-                
-                if (idx == lastIndex) {
-                    self.unmappedFolders = @[];
-                    [self processImportData];
-                }
-                
-            }];
+            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
             
-        }];
+            dispatch_async(queue, ^{
+               
+                [MyFeedsManager addFolder:obj success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    dispatch_semaphore_signal(semaphore);
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    DDLogError(@"Error creating folder: %@", obj);
+                    
+                    dispatch_semaphore_signal(semaphore);
+                    
+                }];
+
+                
+            });
+
+            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+            
+            if (idx == lastIndex) {
+                self.unmappedFolders = @[];
+                [self processImportData];
+            }
+            
+            idx++;
+        }
         
     }
     else {

@@ -618,6 +618,10 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)showSubscriptionsInterface {
     
+#ifdef TARGET_OS_SIMULATOR
+    return;
+#endif
+    
     if (NSThread.isMainThread == NO) {
         weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
