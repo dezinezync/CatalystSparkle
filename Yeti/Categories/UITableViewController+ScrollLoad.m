@@ -19,7 +19,7 @@
     CGFloat actualPosition = scrollView.contentOffset.y + (scrollView.adjustedContentInset.top);
     CGFloat contentHeight = scrollView.contentSize.height;
     
-    CGFloat diff = contentHeight - actualPosition;
+    CGFloat diff = contentHeight - actualPosition - scrollView.adjustedContentInset.top;
     CGFloat const threshold = scrollView.bounds.size.height - 120.f;
     
 //    DDLogDebug(@"%@ %@", @(diff), @(actualPosition));

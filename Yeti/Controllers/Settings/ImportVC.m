@@ -8,6 +8,7 @@
 
 #import "ImportVC.h"
 #import "YetiThemeKit.h"
+#import "NSString+GTMNSStringHTMLAdditions.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 NSString *const kImportCell = @"importCell";
@@ -248,7 +249,7 @@ NSString *const kImportCell = @"importCell";
                 strongify(self);
                 
                 if (idx == lastIndex) {
-                    self.unmappedFeeds = @[];
+                    self.unmappedFolders = @[];
                     [self processImportData];
                 }
                 
@@ -259,7 +260,7 @@ NSString *const kImportCell = @"importCell";
                 strongify(self);
                 
                 if (idx == lastIndex) {
-                    self.unmappedFeeds = @[];
+                    self.unmappedFolders = @[];
                     [self processImportData];
                 }
                 
@@ -323,21 +324,23 @@ NSString *const kImportCell = @"importCell";
     
 }
 
-- (void)importFeed:(NSDictionary *)obj {
+- (void)importFeed:(NSDictionary *)data {
     
-    if (obj == nil) {
+    if (data == nil) {
         [self resumeFeedsImport];
         return;
     }
     
-    NSString *path = [obj valueForKey:@"url"];
+    NSString *path = [data valueForKey:@"url"];
     
     if (path == nil) {
         [self resumeFeedsImport];
         return;
     }
     
-    NSString *folderName = [obj valueForKey:@"folder"];
+    path = [path gtm_stringByEscapingForHTML];
+    
+    NSString *folderName = [data valueForKey:@"folder"];
     NSURL *url = [NSURL URLWithString:path];
     
     weakify(self);
@@ -347,8 +350,29 @@ NSString *const kImportCell = @"importCell";
         // if there is a Folder involved, add it to the folder
         strongify(self);
         
-        if ([responseObject isKindOfClass:Feed.class] == NO) {
+        if (response.statusCode == 300) {
+            NSArray *options = responseObject;
             
+            // find the URL in the options array
+            NSString *url = [options rz_reduce:^id(NSString * prev, NSString * current, NSUInteger idx, NSArray *array) {
+                if ([current isEqualToString:path])
+                    return current;
+                return prev;
+            }];
+            
+            if (url) {
+                NSMutableDictionary *newObj = @{@"url": url}.mutableCopy;
+                if (folderName) {
+                    [newObj setValue:folderName forKey:@"folder"];
+                }
+                
+                [self importFeed:newObj];
+            }
+            else {
+                [self importFeed:nil];
+            }
+            
+            return;
         }
         
         if (folderName != nil && [folderName isBlank] == NO) {
