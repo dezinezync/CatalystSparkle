@@ -65,7 +65,6 @@
         // this ensures anyone who has already gone through the setup isn't asked to subscribe again.
         // this value should change for the production app on the App Store
         NSString *val = [@(YES) stringValue];
-        keychain[YTSubscriptionPurchased] = val;
         keychain[YTSubscriptionHasAddedFirstFeed] = val;
     }
     

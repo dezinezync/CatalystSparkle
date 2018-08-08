@@ -128,6 +128,7 @@ static void *KVO_Subscription = &KVO_Subscription;
     if (state == StoreStateRestored || state == StoreStatePurchased) {
         [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTSubscriptionPurchased];
     }
+    
 }
 
 #pragma mark - Actions
@@ -209,7 +210,7 @@ static void *KVO_Subscription = &KVO_Subscription;
         
     }
     else {
-        if (MyFeedsManager.subscription && MyFeedsManager.subscription.error) {
+        if (MyFeedsManager.subscription && MyFeedsManager.subscription.error && [MyFeedsManager.subscription.error.localizedDescription isEqualToString:@"No subscription found for this account."] == NO) {
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
         else {
