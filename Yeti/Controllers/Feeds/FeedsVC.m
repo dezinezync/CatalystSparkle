@@ -58,7 +58,11 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+#if TESTFLIGHT == 0
     self.title = @"Feeds";
+#else
+    self.title = @"Testflight";
+#endif
     
     [self setupTableView];
     [self setupNavigationBar];

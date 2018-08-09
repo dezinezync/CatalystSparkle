@@ -471,8 +471,6 @@
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
-		F0F193A02118B670003B61CC /* XMLConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F1939F2118B670003B61CC /* XMLConvertor.m */; };
-		F0F193A12118B670003B61CC /* XMLConvertor.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F1939F2118B670003B61CC /* XMLConvertor.m */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0F193A62118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
@@ -679,6 +677,7 @@
 		F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBold.ttf"; sourceTree = "<group>"; };
 		F047F4E020C25FB900626968 /* Spectral-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Italic.ttf"; sourceTree = "<group>"; };
 		F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
+		F04D8658211C7E0900A40C54 /* Yeti copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Yeti copy-Info.plist"; path = "/Volumes/Store/Sites/Yeti/Yeti/Yeti copy-Info.plist"; sourceTree = "<absolute>"; };
 		F0519D4920848D4D00EB3FE0 /* FiltersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiltersVC.h; sourceTree = "<group>"; };
 		F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FiltersVC.m; sourceTree = "<group>"; };
 		F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterInputCell.h; sourceTree = "<group>"; };
@@ -950,8 +949,6 @@
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
-		F0F1939E2118B670003B61CC /* XMLConvertor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XMLConvertor.h; sourceTree = "<group>"; };
-		F0F1939F2118B670003B61CC /* XMLConvertor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLConvertor.m; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
@@ -1150,6 +1147,7 @@
 				F035A21620617EC3005A88EE /* YetiShare */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
+				F04D8658211C7E0900A40C54 /* Yeti copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1233,8 +1231,6 @@
 				F0AD76D320E2217C0003787B /* Reachability.h */,
 				F0AD76D420E2217C0003787B /* Reachability.m */,
 				F08993C1210883E200A9978E /* FolderDrop.h */,
-				F0F1939E2118B670003B61CC /* XMLConvertor.h */,
-				F0F1939F2118B670003B61CC /* XMLConvertor.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2257,7 +2253,6 @@
 				F069ABD8206E018F00021ABF /* Blockquote.m in Sources */,
 				F069ABD9206E018F00021ABF /* YTUserID.m in Sources */,
 				F05DC07C20832DB5009029E1 /* AuthorBioVC.m in Sources */,
-				F0F193A12118B670003B61CC /* XMLConvertor.m in Sources */,
 				F069ABDA206E018F00021ABF /* NSString+Levenshtein.m in Sources */,
 				F05DC074208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F069ABDB206E018F00021ABF /* Image.m in Sources */,
@@ -2319,7 +2314,6 @@
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
-				F0F193A02118B670003B61CC /* XMLConvertor.m in Sources */,
 				F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
@@ -2746,6 +2740,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG_LAYOUT=0",
+					"TESTFLIGHT=1",
 				);
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -2777,7 +2772,10 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_LAYOUT=0";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG_LAYOUT=0",
+					"TESTFLIGHT=0",
+				);
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2859,6 +2857,180 @@
 			};
 			name = Release;
 		};
+		F0E40385211C7F1C0029F844 /* Testflight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 131;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Testflight;
+		};
+		F0E40386211C7F1C0029F844 /* Testflight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 131;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
+					"$(PROJECT_DIR)/Carthage/Build/iOS/DZNetworking.framework/Frameworks",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG_LAYOUT=0",
+					"TESTFLIGHT=1",
+				);
+				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Testflight;
+		};
+		F0E40387211C7F1C0029F844 /* Testflight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 131;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_LAYOUT=0";
+				INFOPLIST_FILE = "$(SRCROOT)/Yeti/SupportingFiles/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Testflight;
+		};
+		F0E40388211C7F1C0029F844 /* Testflight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 131;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = YetiTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.YetiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Testflight;
+		};
+		F0E40389211C7F1C0029F844 /* Testflight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 131;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				INFOPLIST_FILE = YetiUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.YetiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Yeti;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Testflight;
+		};
+		F0E4038A211C7F1C0029F844 /* Testflight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = ShareIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 131;
+				DEVELOPMENT_TEAM = 3TLN858B23;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = SHARE_EXTENSION;
+				INFOPLIST_FILE = YetiShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.Yeti.YetiShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Testflight;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2867,6 +3039,7 @@
 			buildConfigurations = (
 				F035A22120617EC3005A88EE /* Debug */,
 				F035A22220617EC3005A88EE /* Release */,
+				F0E4038A211C7F1C0029F844 /* Testflight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2876,6 +3049,7 @@
 			buildConfigurations = (
 				F069AC14206E018F00021ABF /* Debug */,
 				F069AC15206E018F00021ABF /* Release */,
+				F0E40387211C7F1C0029F844 /* Testflight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2885,6 +3059,7 @@
 			buildConfigurations = (
 				F070C3031FBABC3600912CCF /* Debug */,
 				F070C3041FBABC3600912CCF /* Release */,
+				F0E40385211C7F1C0029F844 /* Testflight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2894,6 +3069,7 @@
 			buildConfigurations = (
 				F070C3061FBABC3600912CCF /* Debug */,
 				F070C3071FBABC3600912CCF /* Release */,
+				F0E40386211C7F1C0029F844 /* Testflight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2903,6 +3079,7 @@
 			buildConfigurations = (
 				F070C3091FBABC3600912CCF /* Debug */,
 				F070C30A1FBABC3600912CCF /* Release */,
+				F0E40388211C7F1C0029F844 /* Testflight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2912,6 +3089,7 @@
 			buildConfigurations = (
 				F070C30C1FBABC3600912CCF /* Debug */,
 				F070C30D1FBABC3600912CCF /* Release */,
+				F0E40389211C7F1C0029F844 /* Testflight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

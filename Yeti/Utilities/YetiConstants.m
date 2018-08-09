@@ -66,9 +66,10 @@ NSString *const kSubscriptionType = @"subscriptionType";
 YetiSubscriptionType const YTSubscriptionMonthly = @"com.dezinezync.elytra.pro.1m";
 YetiSubscriptionType const YTSubscriptionYearly = @"com.dezinezync.elytra.pro.12m";
 
-// Use this for BETA
-//NSString * const YTSubscriptionPurchased = @"com.dezinezync.elytra.pro.betaSubscribed";
-
 // Use this for Production
+#if TESTFLIGHT == 0
 NSString * const YTSubscriptionPurchased = @"com.dezinezync.elytra.pro.subscribed";
+#else
+NSString * const YTSubscriptionPurchased = @"com.dezinezync.elytra.pro.betaSubscribed";
+#endif
 NSString * const YTSubscriptionHasAddedFirstFeed = @"com.dezinezync.elytra.pro.hasAddedFirstFeed";

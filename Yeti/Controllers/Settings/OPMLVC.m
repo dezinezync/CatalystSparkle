@@ -9,7 +9,6 @@
 #import "OPMLVC.h"
 #import "FeedsManager.h"
 #import "YetiThemeKit.h"
-#import "XMLConvertor.h"
 #import "YTNavigationController.h"
 
 #import "ImportVC.h"
