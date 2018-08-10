@@ -171,6 +171,15 @@
 					<string>dark</string>
 				</array>
 			</dict>
+            <key>black</key>
+            <dict>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>black</string>
+                </array>
+            </dict>
 		</dict>
 		<key>CFBundlePrimaryIcon</key>
 		<dict>
@@ -204,6 +213,15 @@
                 <key>CFBundleIconFiles</key>
                 <array>
                     <string>dark~ipad</string>
+                </array>
+            </dict>
+            <key>black</key>
+            <dict>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>black~ipad</string>
                 </array>
             </dict>
         </dict>

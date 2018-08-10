@@ -98,6 +98,14 @@
 		F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
+		F0542E36211DBFD700D66878 /* black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E32211DBFD700D66878 /* black@3x.png */; };
+		F0542E37211DBFD700D66878 /* black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E32211DBFD700D66878 /* black@3x.png */; };
+		F0542E38211DBFD700D66878 /* black.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E33211DBFD700D66878 /* black.png */; };
+		F0542E39211DBFD700D66878 /* black.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E33211DBFD700D66878 /* black.png */; };
+		F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E34211DBFD700D66878 /* black~ipad@2x.png */; };
+		F0542E3B211DBFD700D66878 /* black~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E34211DBFD700D66878 /* black~ipad@2x.png */; };
+		F0542E3C211DBFD700D66878 /* black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E35211DBFD700D66878 /* black@2x.png */; };
+		F0542E3D211DBFD700D66878 /* black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E35211DBFD700D66878 /* black@2x.png */; };
 		F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */; };
 		F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
 		F05B93332091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
@@ -685,6 +693,10 @@
 		F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterInputCell.h; sourceTree = "<group>"; };
 		F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FilterInputCell.m; sourceTree = "<group>"; };
 		F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterInputCell.xib; sourceTree = "<group>"; };
+		F0542E32211DBFD700D66878 /* black@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@3x.png"; sourceTree = "<group>"; };
+		F0542E33211DBFD700D66878 /* black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black.png; sourceTree = "<group>"; };
+		F0542E34211DBFD700D66878 /* black~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black~ipad@2x.png"; sourceTree = "<group>"; };
+		F0542E35211DBFD700D66878 /* black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@2x.png"; sourceTree = "<group>"; };
 		F055AC1B1FD2AEF4004B9C29 /* ArticleVC+Toolbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Toolbar.h"; sourceTree = "<group>"; };
 		F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Toolbar.m"; sourceTree = "<group>"; };
 		F05B93302091BA50009BBDDB /* MoveFoldersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveFoldersVC.h; sourceTree = "<group>"; };
@@ -1139,6 +1151,17 @@
 				F047F4D820C25FB900626968 /* Spectral-SemiBoldItalic.ttf */,
 			);
 			path = Spectral;
+			sourceTree = "<group>";
+		};
+		F0542E31211DBFAB00D66878 /* black */ = {
+			isa = PBXGroup;
+			children = (
+				F0542E33211DBFD700D66878 /* black.png */,
+				F0542E35211DBFD700D66878 /* black@2x.png */,
+				F0542E32211DBFD700D66878 /* black@3x.png */,
+				F0542E34211DBFD700D66878 /* black~ipad@2x.png */,
+			);
+			path = black;
 			sourceTree = "<group>";
 		};
 		F070C2D01FBABC3500912CCF = {
@@ -1597,6 +1620,7 @@
 		F0D01CBD211867E9003A01DD /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				F0542E31211DBFAB00D66878 /* black */,
 				F0D01CBF211867F0003A01DD /* dark */,
 			);
 			path = Icons;
@@ -1882,6 +1906,7 @@
 				F0A5AE8D20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0A5AE9320C19CB400CFA1D2 /* IBMPlexSerif-BoldItalic.ttf in Resources */,
 				F0A5AE9120C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
+				F0542E37211DBFD700D66878 /* black@3x.png in Resources */,
 				F0CA458A211DB99400D08E40 /* dark~ipad@2x.png in Resources */,
 				F047F4E320C25FB900626968 /* Spectral-Regular.ttf in Resources */,
 				F0A5AE8B20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
@@ -1905,6 +1930,7 @@
 				F0A5AEAD20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
 				F047F4F520C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0D01CC42118681C003A01DD /* dark@3x.png in Resources */,
+				F0542E39211DBFD700D66878 /* black.png in Resources */,
 				F0A5AEC320C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
 				F069AC04206E018F00021ABF /* FeedsCell.xib in Resources */,
 				F0A5AEBD20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
@@ -1940,10 +1966,12 @@
 				F047F4FB20C25FB900626968 /* Spectral-Italic.ttf in Resources */,
 				F0A5AE9520C19CB400CFA1D2 /* IBMPlexSerif-SemiBold.ttf in Resources */,
 				F0AF313D20D27F7700E074D6 /* IntroVC.xib in Resources */,
+				F0542E3B211DBFD700D66878 /* black~ipad@2x.png in Resources */,
 				F069AC0D206E018F00021ABF /* ExternalAppsVC.xib in Resources */,
 				F069AC0E206E018F00021ABF /* DateTools.bundle in Resources */,
 				F05DC07E20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F0A5AE7120C197EF00CFA1D2 /* Merriweather-Italic.ttf in Resources */,
+				F0542E3D211DBFD700D66878 /* black@2x.png in Resources */,
 				F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */,
 				F0673B0420C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
@@ -1957,6 +1985,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0542E3C211DBFD700D66878 /* black@2x.png in Resources */,
 				F047F4FA20C25FB900626968 /* Spectral-Italic.ttf in Resources */,
 				F0A5AE6A20C197EF00CFA1D2 /* Merriweather-Light.ttf in Resources */,
 				F0A5AE7220C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
@@ -2037,6 +2066,7 @@
 				F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
+				F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
 				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
@@ -2045,6 +2075,8 @@
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
 				F0A5AE6620C197EF00CFA1D2 /* Merriweather-BoldItalic.ttf in Resources */,
+				F0542E36211DBFD700D66878 /* black@3x.png in Resources */,
+				F0542E38211DBFD700D66878 /* black.png in Resources */,
 				F0D3003F1FE2633E0040D10D /* DateTools.bundle in Resources */,
 				F0A5AE6820C197EF00CFA1D2 /* Merriweather-Regular.ttf in Resources */,
 				F047F4EA20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */,
