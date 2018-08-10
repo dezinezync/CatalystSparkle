@@ -14,6 +14,7 @@
 #import <Store/Store.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "FeedsManager.h"
+#import "PaddedLabel.h"
 
 typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateDefault,
@@ -27,7 +28,7 @@ static void * buttonStateContext = &buttonStateContext;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
-@property (weak, nonatomic) IBOutlet UILabel *topLabel;
+@property (weak, nonatomic) IBOutlet PaddedLabel *topLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet UITextView *disclaimerLabel;
@@ -72,6 +73,12 @@ static void * buttonStateContext = &buttonStateContext;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(128.f, 0, 0, 0);
+        self.topLabel.padding = UIEdgeInsetsMake(0, 88.f, 0, 0);
+    }
+    
     [self.navigationController setNavigationBarHidden:YES animated:NO];
     [super viewWillAppear:animated];
 }

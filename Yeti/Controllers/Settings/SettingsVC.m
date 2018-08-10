@@ -128,7 +128,10 @@
             return 2;
             break;
         case 1:
-            return 6;
+            if (UIApplication.sharedApplication.supportsAlternateIcons == YES)
+                return 6;
+            else
+                return 5;
             break;
         case 2:
             return 3;

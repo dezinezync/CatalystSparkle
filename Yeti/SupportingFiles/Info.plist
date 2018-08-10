@@ -160,18 +160,18 @@
 	</array>
 	<key>CFBundleIcons</key>
 	<dict>
-        <key>CFBundleAlternateIcons</key>
-        <dict>
-            <key>dark</key>
-            <dict>
-                <key>UIPrerenderedIcon</key>
-                <false/>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>dark</string>
-                </array>
-            </dict>
-        </dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>dark</key>
+			<dict>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>dark</string>
+				</array>
+			</dict>
+		</dict>
 		<key>CFBundlePrimaryIcon</key>
 		<dict>
 			<key>CFBundleIconFiles</key>
@@ -193,5 +193,40 @@
 			<string>UINewsstandBindingEdgeLeft</string>
 		</dict>
 	</dict>
+    <key>CFBundleIcons~ipad</key>
+    <dict>
+        <key>CFBundleAlternateIcons</key>
+        <dict>
+            <key>dark</key>
+            <dict>
+                <key>UIPrerenderedIcon</key>
+                <false/>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>dark~ipad</string>
+                </array>
+            </dict>
+        </dict>
+        <key>CFBundlePrimaryIcon</key>
+        <dict>
+            <key>CFBundleIconFiles</key>
+            <array>
+                <string></string>
+            </array>
+            <key>UIPrerenderedIcon</key>
+            <false/>
+        </dict>
+        <key>UINewsstandIcon</key>
+        <dict>
+            <key>CFBundleIconFiles</key>
+            <array>
+                <string></string>
+            </array>
+            <key>UINewsstandBindingType</key>
+            <string>UINewsstandBindingTypeMagazine</string>
+            <key>UINewsstandBindingEdge</key>
+            <string>UINewsstandBindingEdgeLeft</string>
+        </dict>
+    </dict>
 </dict>
 </plist>
