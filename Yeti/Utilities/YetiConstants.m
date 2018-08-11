@@ -73,3 +73,5 @@ NSString * const YTSubscriptionPurchased = @"com.dezinezync.elytra.pro.subscribe
 NSString * const YTSubscriptionPurchased = @"com.dezinezync.elytra.pro.betaSubscribed";
 #endif
 NSString * const YTSubscriptionHasAddedFirstFeed = @"com.dezinezync.elytra.pro.hasAddedFirstFeed";
+
+NSString * const YTSubscriptionHasExpiredOrIsInvalid = @"com.dezinezync.elytra.pro.expiredOrInvalid";

@@ -62,6 +62,9 @@
     else if ([key isEqualToString:@"status"]) {
         self.status = [value boolValue];
     }
+    else if ([key isEqualToString:@"preAppstore"]) {
+        self.preAppstore = [value boolValue];
+    }
     else {
         [super setValue:value forKey:key];
     }

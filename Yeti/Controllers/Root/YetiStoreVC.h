@@ -10,4 +10,6 @@
 
 @interface YetiStoreVC : StoreVC
 
+@property (nonatomic, assign) BOOL checkAndShowError;
+
 @end

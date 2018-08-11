@@ -96,6 +96,19 @@ static void *KVO_Subscription = &KVO_Subscription;
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (self.checkAndShowError && MyFeedsManager.subscription != nil) {
+        if (MyFeedsManager.subscription.error != nil) {
+            [AlertManager showGenericAlertWithTitle:@"Subscription Error" message:MyFeedsManager.subscription.error.localizedDescription fromVC:self];
+        }
+        else if ([MyFeedsManager.subscription hasExpired] == YES) {
+            [AlertManager showGenericAlertWithTitle:@"Subscription Expired" message:@"Your subscription has expired. Please resubscribe to continue using Elytra." fromVC:self];
+        }
+    }
+}
+
 #pragma mark -
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

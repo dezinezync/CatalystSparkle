@@ -15,6 +15,7 @@
 @property (nonatomic, copy) NSDate *expiry;
 @property (nonatomic, copy) NSDate *created;
 @property (nonatomic, assign) BOOL status;
+@property (nonatomic, assign) BOOL preAppstore;
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs;
 

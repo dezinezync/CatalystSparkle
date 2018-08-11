@@ -38,6 +38,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
 //    NSString *_feedsCachePath;
     NSString *_receiptLastUpdatePath;
+    Subscription * _subscription;
 }
 
 @property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession, *gifSession;
@@ -1186,30 +1187,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
 }
 
-- (void)getOPMLWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
-    
-    [self.session GET:@"/user/opml" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSString *xmlData = [responseObject valueForKey:@"file"];
-        
-        if (successCB) {
-            successCB(xmlData, response, task);
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
-        }
-        
-    }];
-    
-}
-
 - (void)getSubscriptionWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     
     [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1247,6 +1224,32 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             MyFeedsManager.subscription = sub;
         }
 #endif
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
+#pragma mark - OPML
+
+- (void)getOPMLWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    [self.session GET:@"/user/opml" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSString *xmlData = [responseObject valueForKey:@"file"];
+        
+        if (successCB) {
+            successCB(xmlData, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1324,6 +1327,19 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     }
 }
 
+#ifndef SHARE_EXTENSION
+- (void)setSubscription:(Subscription *)subscription {
+    _subscription = subscription;
+    
+    if (subscription && [subscription hasExpired] && [subscription preAppstore] == NO) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:subscription];
+        });
+    }
+    
+}
+#endif
+
 //- (void)setFeeds:(NSArray<Feed *> *)feeds
 //{
 //    _feeds = feeds ?: @[];
@@ -1351,6 +1367,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 //}
 
 #pragma mark - Getters
+
+- (Subscription *)getSubscription {
+    return _subscription;
+}
 
 - (Reachability *)reachability {
     if (!_reachability) {
@@ -1407,7 +1427,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

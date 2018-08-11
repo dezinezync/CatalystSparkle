@@ -70,6 +70,7 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateReadCount:) name:FeedDidUpReadCount object:MyFeedsManager];
+    [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
@@ -655,13 +656,7 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-    UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
-    
-    weakify(self);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        strongify(self);
-        [self.splitViewController presentViewController:nav animated:YES completion:nil];
-    });
+    [self subscriptionExpired:nil];
     
 }
 
@@ -837,6 +832,20 @@ NSString * const kDS2Data = @"DS2Data";
         NSArray *visibleIndices = [self.tableView indexPathsForVisibleRows];
         [self.tableView reloadRowsAtIndexPaths:visibleIndices withRowAnimation:UITableViewRowAnimationNone];
     });
+}
+
+- (void)subscriptionExpired:(NSNotification *)note {
+    
+    UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
+    YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
+    storeVC.checkAndShowError = YES;
+    
+    weakify(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    });
+    
 }
 
 @end
