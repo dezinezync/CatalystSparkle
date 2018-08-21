@@ -70,4 +70,8 @@ YETI_EXPORT NSString * const YTSubscriptionPurchased;
 YETI_EXPORT NSString * const YTSubscriptionHasAddedFirstFeed;
 YETI_EXPORT NSString * const YTSubscriptionHasExpiredOrIsInvalid;
 
+YETI_EXPORT NSString * const YTLaunchCountOldKey;
+YETI_EXPORT NSString * const YTLaunchCount;
+YETI_EXPORT NSString * const YTRequestedReview;
+
 #endif /* YetiConstants_h */

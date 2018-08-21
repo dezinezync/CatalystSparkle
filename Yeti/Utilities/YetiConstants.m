@@ -75,3 +75,12 @@ NSString * const YTSubscriptionPurchased = @"com.dezinezync.elytra.pro.betaSubsc
 NSString * const YTSubscriptionHasAddedFirstFeed = @"com.dezinezync.elytra.pro.hasAddedFirstFeed";
 
 NSString * const YTSubscriptionHasExpiredOrIsInvalid = @"com.dezinezync.elytra.pro.expiredOrInvalid";
+
+/*
+ * When updating the minor version of the app
+ * 1. Copy the value of LaunchCount into LaunchCountOldKey
+ * 2. Update the value of the LaunchCount key
+ */
+NSString * const YTLaunchCountOldKey = @"";
+NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-0-0";
+NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";

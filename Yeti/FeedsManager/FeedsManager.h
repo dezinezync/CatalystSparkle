@@ -70,6 +70,12 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong, readonly) Reachability *reachability;
 
+#pragma mark - Misc
+@property (nonatomic, assign) BOOL shouldRequestReview;
+
+- (void)checkConstraintsForRequestingReview;
+
+#pragma mark Networking APIs
 #pragma mark - Feeds
 
 - (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;

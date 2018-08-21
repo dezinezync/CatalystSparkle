@@ -113,6 +113,18 @@ static void *KVO_Unread = &KVO_Unread;
     }
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    if (MyFeedsManager.shouldRequestReview == YES) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SKStoreReviewController requestReview];
+            MyFeedsManager.shouldRequestReview = NO;
+            MyFeedsManager.keychain[YTRequestedReview] = [@(YES) stringValue];
+        });
+    }
+}
+
 - (BOOL)definesPresentationContext
 {
     return YES;

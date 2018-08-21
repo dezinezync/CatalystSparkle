@@ -1927,7 +1927,21 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
 }
 
-#pragma mark -
+#pragma mark - Misc
+
+- (void)checkConstraintsForRequestingReview {
+#ifndef SHARE_EXTENSION
+    id countVal = self.keychain[YTLaunchCount];
+    NSInteger count = [(countVal ?: @0) integerValue];
+    // trigger on 7th launch
+    if (count > 6) {
+        id requestedVal = self.keychain[YTRequestedReview];
+        if ([requestedVal boolValue] == NO) {
+            self.shouldRequestReview = YES;
+        }
+    }
+#endif
+}
 
 - (void)updateBookmarksFromServer
 {

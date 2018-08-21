@@ -182,6 +182,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     else {
         self.navigationItem.leftBarButtonItem = nil;
     }
+    
+    [MyFeedsManager checkConstraintsForRequestingReview];
 }
 
 - (void)viewDidLayoutSubviews

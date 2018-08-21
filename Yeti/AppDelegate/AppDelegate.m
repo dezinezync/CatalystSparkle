@@ -91,6 +91,21 @@ AppDelegate *MyAppDelegate = nil;
     });
 #endif
     
+    id countVal = MyFeedsManager.keychain[YTLaunchCount];
+    
+    NSInteger count = [(countVal ?: @0) integerValue];
+    
+    if (count == 0) {
+        // remove the old key's items
+        if ([YTLaunchCountOldKey length] > 0 ) {
+            MyFeedsManager.keychain[YTLaunchCountOldKey] = nil;
+        }
+        
+        MyFeedsManager.keychain[YTRequestedReview] = [@(NO) stringValue];
+    }
+
+    MyFeedsManager.keychain[YTLaunchCount] = [@(count + 1) stringValue];
+    
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
