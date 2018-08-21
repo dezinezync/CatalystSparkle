@@ -217,7 +217,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
-        searchController.searchBar.placeholder = @"Search feeds";
+        searchController.searchBar.placeholder = @"Search Feeds";
         searchController.searchBar.accessibilityHint = @"Search your feeds";
         searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         

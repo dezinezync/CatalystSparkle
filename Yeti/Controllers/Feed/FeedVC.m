@@ -116,7 +116,7 @@
 
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
-        searchController.searchBar.placeholder = @"Search articles";
+        searchController.searchBar.placeholder = @"Search Articles";
         searchController.searchBar.accessibilityValue = @"Search loaded articles";
         searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         searchController.searchBar.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchbar"];
