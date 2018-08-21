@@ -186,6 +186,7 @@
                     [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
                     
                     cell.accessoryView = sw;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
                     break;
                 case 2: {
