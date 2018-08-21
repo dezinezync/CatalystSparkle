@@ -20,7 +20,11 @@ static void *KVO_Subscription = &KVO_Subscription;
 
 @interface YetiStoreVC () {
     BOOL _hasSetup;
+    BOOL _dynamicallySettingState;
 }
+
+@property (nonatomic, assign) StoreState originalStoreState;
+@property (nonatomic, assign) NSInteger subscribedIndex;
 
 @end
 
@@ -37,6 +41,8 @@ static void *KVO_Subscription = &KVO_Subscription;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _subscribedIndex = NSNotFound;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -135,11 +141,64 @@ static void *KVO_Subscription = &KVO_Subscription;
     
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+    
+    if (indexPath.row != self.subscribedIndex && (self.state == StoreStateRestored || self.state == StoreStatePurchased) && self.originalStoreState == -0L) {
+        _dynamicallySettingState = YES;
+        self.originalStoreState = self.state;
+        self.state = StoreStateLoaded;
+    }
+    else if (indexPath.row == self.subscribedIndex && (self.originalStoreState == StoreStateRestored || self.originalStoreState == StoreStatePurchased)) {
+        _dynamicallySettingState = YES;
+        self.state = _originalStoreState;
+        self.originalStoreState = -0L;
+    }
+    
+}
+
 - (void)setState:(StoreState)state {
     [super setState:state];
     
+    // we disable selection on the table view when the state becomes
+    // .purhcased or .restored
+    // re-enable the selection so the user can switch between subscription types
+    if (self.tableView.allowsSelection == NO) {
+        self.tableView.allowsSelection = YES;
+    }
+    
     if (state == StoreStateRestored || state == StoreStatePurchased) {
         [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTSubscriptionPurchased];
+        
+        if (_subscribedIndex != [[self.tableView indexPathForSelectedRow] row]) {
+            _subscribedIndex = [[self.tableView indexPathForSelectedRow] row];
+        }
+    }
+    
+    if (_dynamicallySettingState == YES) {
+        _dynamicallySettingState = NO;
+        return;
+    }
+    
+    if (state == StoreStateLoaded && MyFeedsManager.subscription != nil) {
+        // get the purchased item index
+        NSNumber *identifer = [[MyFeedsManager subscription] identifer];
+        
+        if (identifer == nil) {
+            return;
+        }
+        
+        NSInteger index = MAX(0, [identifer integerValue] - 1);
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.subscribedIndex = index;
+            
+            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+//            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        });
     }
     
 }
