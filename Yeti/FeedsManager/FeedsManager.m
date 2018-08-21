@@ -2095,7 +2095,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         
         [coder encodeObject:self.folders forKey:kFoldersKey];
         [coder encodeObject:self.feeds forKey:kFeedsKey];
-        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
+//        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
         [coder encodeObject:self.bookmarks forKey:kBookmarksKey];
         [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
@@ -2119,7 +2119,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         
         self.folders = [coder decodeObjectForKey:kFoldersKey];
         self.feeds = [coder decodeObjectForKey:kFeedsKey];
-        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
+//        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
         self.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
