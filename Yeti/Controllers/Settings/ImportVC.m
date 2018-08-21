@@ -253,8 +253,6 @@ NSString *const kImportCell = @"importCell";
         
         NSInteger lastIndex = self.unmappedFolders.count - 1;
         
-        weakify(self);
-        
         dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_DEFAULT, 0);
         NSUInteger idx = 0;
         

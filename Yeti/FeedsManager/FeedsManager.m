@@ -1411,7 +1411,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         DZURLSession *session = [[DZURLSession alloc] init];
 
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-        defaultConfig.HTTPMaximumConnectionsPerHost = 5;
+        defaultConfig.HTTPMaximumConnectionsPerHost = 10;
         defaultConfig.URLCache = sharedCache;
         [defaultConfig setHTTPAdditionalHeaders:@{
                                                   @"Accept": @"application/json",
@@ -1421,6 +1421,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         defaultConfig.allowsCellularAccess = YES;
         defaultConfig.HTTPShouldUsePipelining = YES;
         defaultConfig.waitsForConnectivity = NO;
+        defaultConfig.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
+        defaultConfig.timeoutIntervalForRequest = 30;
 
         NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
 

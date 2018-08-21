@@ -157,9 +157,12 @@
                 if (image) {
                     self.imageView.settingCached = YES;
                     self.imageView.image = image;
+                    self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
                 }
                 else {
-                    [self.imageView il_setImageWithURL:url];
+                    [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                        self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
+                    } error:nil];
                 }
                 
             }];
@@ -334,7 +337,7 @@
             
             weakify(self);
             
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
                 
                 strongify(self);
                 

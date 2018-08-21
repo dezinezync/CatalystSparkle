@@ -9,9 +9,9 @@
     "unreadBadgeColor": "#333333",
     "unreadTextColor": "#FFFFFF75",
     "articlesBarColor": "#333333",
-    "cellColor": "#030303",
+    "cellColor": "#000000",
     "subbarColor": "#000000",
     "focusColor": "#45D8E830",
-    "articleBackgroundColor": "#030303",
+    "articleBackgroundColor": "#000000",
     "tintColorIndex": 5
 }

@@ -34,6 +34,7 @@
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
 @property (nonatomic, weak) UIView *hairlineView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
@@ -177,15 +178,10 @@
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
     if (self.DS.data == nil || self.DS.data.count == 0) {
         [self loadNextPage];
     }
+    
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -193,7 +189,7 @@
     [super viewDidDisappear:animated];
     
     @try {
-        [NSNotificationCenter.defaultCenter removeObserver:self name:SubscribedToFeed object:nil];
+        [NSNotificationCenter.defaultCenter removeObserver:self];
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception when unregistering: %@", exc);
     }
@@ -233,6 +229,26 @@
     
     return _feedbackGenerator;
     
+}
+
+- (UIActivityIndicatorView *)activityIndicatorView {
+    if (_activityIndicatorView == nil) {
+        Theme *theme = [YTThemeKit theme];
+        
+        UIActivityIndicatorViewStyle style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+        
+        UIActivityIndicatorView *view = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
+        [view sizeToFit];
+        
+        [view.widthAnchor constraintEqualToConstant:view.bounds.size.width].active = YES;
+        [view.heightAnchor constraintEqualToConstant:view.bounds.size.height].active = YES;
+        
+        view.hidesWhenStopped = YES;
+        
+        _activityIndicatorView = view;
+    }
+    
+    return _activityIndicatorView;
 }
 
 #pragma mark - Setters
@@ -589,6 +605,15 @@
 }
 
 #pragma mark - Table view data source
+
+- (UIView *)viewForEmptyDataset {
+    // since the Datasource is asking for this view
+    // it will be presenting it.
+    self.activityIndicatorView.hidden = NO;
+    [self.activityIndicatorView startAnimating];
+    
+    return self.activityIndicatorView;
+}
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
