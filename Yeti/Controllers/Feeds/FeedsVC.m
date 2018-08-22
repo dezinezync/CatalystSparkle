@@ -848,6 +848,10 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)subscriptionExpired:(NSNotification *)note {
     
+    if (self.presentedViewController != nil) {
+        return;
+    }
+    
     UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
     YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
     storeVC.checkAndShowError = YES;

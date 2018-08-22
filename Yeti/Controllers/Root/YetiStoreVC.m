@@ -42,6 +42,8 @@ static void *KVO_Subscription = &KVO_Subscription;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.originalStoreState = -0L;
+    
     _subscribedIndex = NSNotFound;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -111,6 +113,12 @@ static void *KVO_Subscription = &KVO_Subscription;
         }
         else if ([MyFeedsManager.subscription hasExpired] == YES) {
             [AlertManager showGenericAlertWithTitle:@"Subscription Expired" message:@"Your subscription has expired. Please resubscribe to continue using Elytra." fromVC:self];
+        }
+    }
+    
+    else if (MyFeedsManager.subscription != nil) {
+        if ([MyFeedsManager.subscription hasExpired] == NO) {
+            self.state = StoreStatePurchased;
         }
     }
 }
@@ -310,7 +318,7 @@ static void *KVO_Subscription = &KVO_Subscription;
     NSError *error = [[note userInfo] valueForKey:@"error"];
     
     // no transactions to restore.
-    if (error.code == 9304 || error.code == 2) {
+    if (error.code == 9304 || error.code == SKErrorPaymentCancelled) {
         return;
     }
     

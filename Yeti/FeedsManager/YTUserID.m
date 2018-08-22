@@ -107,7 +107,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     }
     else {
         if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The UserManager was not setup correctly and therefore an account could not be created. Please restart the app to continue."}];
+            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The UsernManager was not able setup correctly and therefore an account could not be created. Please restart the app to continue."}];
             errorCB(error, nil, nil);
         }
     }
