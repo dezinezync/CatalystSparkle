@@ -13,6 +13,7 @@
 #import "DZWebViewController.h"
 #import "UIColor+HEX.h"
 #import "YTNavigationController.h"
+#import "StoreHeaderView.h"
 
 #import <DZKit/AlertManager.h>
 
@@ -42,11 +43,21 @@ static void *KVO_Subscription = &KVO_Subscription;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAutomatic;
+    
     self.originalStoreState = -0L;
     
     _subscribedIndex = NSNotFound;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    StoreHeaderView *header = [[StoreHeaderView alloc] initWithNib];
+    header.backgroundColor = theme.articleBackgroundColor;
+    header.label.backgroundColor = theme.articleBackgroundColor;
+    header.label.textColor = theme.titleColor;
+    
+    self.tableView.tableHeaderView = header;
     
     self.view.backgroundColor = theme.articleBackgroundColor;
     self.tableView.backgroundColor = theme.articleBackgroundColor;
@@ -161,6 +172,10 @@ static void *KVO_Subscription = &KVO_Subscription;
     else if (indexPath.row == self.subscribedIndex && (self.originalStoreState == StoreStateRestored || self.originalStoreState == StoreStatePurchased)) {
         _dynamicallySettingState = YES;
         self.state = _originalStoreState;
+        self.originalStoreState = -0L;
+    }
+    
+    if ((self.state == StoreStatePurchased || self.state == StoreStateRestored) && self.originalStoreState != -0L) {
         self.originalStoreState = -0L;
     }
     
