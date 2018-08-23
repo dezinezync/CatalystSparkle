@@ -59,6 +59,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     if (!self.isUnread) {
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_BOOKMARKS];
         self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        self.navigationItem.rightBarButtonItem = nil;
     }
     else {
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];

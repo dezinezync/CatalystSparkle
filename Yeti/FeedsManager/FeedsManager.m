@@ -158,6 +158,29 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         strongify(self);
         
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
+#ifndef SHARE_EXTENSION
+        id firstFeedObj = self.keychain[YTSubscriptionHasAddedFirstFeed];
+        BOOL hasAddedFirstFeed = firstFeedObj ? [firstFeedObj boolValue] : NO;
+        
+        if (hasAddedFirstFeed == NO) {
+            // check if feeds count is higher than 2
+            if (feeds.count >= 2) {
+                hasAddedFirstFeed = YES;
+            }
+            else if (self.folders.count) {
+                // check count of feeds in folders
+                NSNumber *total = (NSNumber *)[self.folders rz_reduce:^id(NSNumber *prev, Folder *current, NSUInteger idx, NSArray *array) {
+                    return @(prev.integerValue + current.feeds.count);
+                } initialValue:@(0)];
+                
+                if (total.integerValue >= 2) {
+                    hasAddedFirstFeed = YES;
+                }
+            }
+            
+            self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(hasAddedFirstFeed) stringValue];
+        }
+#endif
         
         if (!since || !MyFeedsManager.feeds.count) {
             @synchronized (MyFeedsManager) {

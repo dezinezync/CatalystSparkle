@@ -193,8 +193,19 @@ static void *KVO_Subscription = &KVO_Subscription;
         self.tableView.allowsSelection = YES;
     }
     
+    if (self.navigationItem.rightBarButtonItem != nil) {
+        // if the user had previously subscribed, allow them to close the modal
+        // and continue using the app.
+        id purchasedVal = MyFeedsManager.keychain[YTSubscriptionPurchased];
+        if (purchasedVal != nil && [purchasedVal boolValue] == YES) {
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+        }
+    }
+    
     if (state == StoreStateRestored || state == StoreStatePurchased) {
         [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTSubscriptionPurchased];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:YTUserPurchasedSubscription object:MyFeedsManager.subscription];
         
         if (_subscribedIndex != [[self.tableView indexPathForSelectedRow] row]) {
             _subscribedIndex = [[self.tableView indexPathForSelectedRow] row];
@@ -221,8 +232,9 @@ static void *KVO_Subscription = &KVO_Subscription;
         dispatch_async(dispatch_get_main_queue(), ^{
             self.subscribedIndex = index;
             
-            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
-//            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+            if ([self.tableView numberOfRowsInSection:0] > 0) {
+                [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+            }
         });
     }
     
@@ -289,7 +301,7 @@ static void *KVO_Subscription = &KVO_Subscription;
     
     NSString * const manageURL = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions";
     
-    if (MyFeedsManager.subscription && ![MyFeedsManager.subscription hasExpired]) {
+    if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
         
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateStyle = NSDateFormatterMediumStyle;

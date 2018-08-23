@@ -68,7 +68,8 @@ YETI_EXPORT YetiSubscriptionType const YTSubscriptionYearly;
 
 YETI_EXPORT NSString * const YTSubscriptionPurchased;
 YETI_EXPORT NSString * const YTSubscriptionHasAddedFirstFeed;
-YETI_EXPORT NSString * const YTSubscriptionHasExpiredOrIsInvalid;
+YETI_EXPORT NSNotificationName YTSubscriptionHasExpiredOrIsInvalid;
+YETI_EXPORT NSNotificationName YTUserPurchasedSubscription;
 
 YETI_EXPORT NSString * const YTLaunchCountOldKey;
 YETI_EXPORT NSString * const YTLaunchCount;

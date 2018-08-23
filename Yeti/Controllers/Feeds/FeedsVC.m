@@ -71,6 +71,7 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateReadCount:) name:FeedDidUpReadCount object:MyFeedsManager];
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
+    [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
@@ -382,6 +383,20 @@ static void *KVO_Unread = &KVO_Unread;
     return cell;
 }
 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (MyFeedsManager.subscription != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+        if (indexPath.section == 0 && indexPath.row == 1) {
+            return YES;
+        }
+        
+        return NO;
+    }
+    
+    return YES;
+    
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
@@ -630,8 +645,8 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)showSubscriptionsInterface {
     
-#ifdef TARGET_OS_SIMULATOR
-    return;
+#if TARGET_OS_SIMULATOR
+//    return;
 #endif
     
     if (NSThread.isMainThread == NO) {
@@ -647,13 +662,13 @@ NSString * const kDS2Data = @"DS2Data";
     UICKeyChainStore *keychain = MyFeedsManager.keychain;
     
     // during betas and for testflight builds, this option should be left on.
-    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
-    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
-    
-    if (betaVal == YES) {
-        DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
-        return;
-    }
+//    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
+//    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
+//
+//    if (betaVal == YES) {
+//        DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
+//        return;
+//    }
     
     if (self.presentedViewController != nil) {
         DDLogWarn(@"FeedsVC is already presenting a viewController. Not showing the subscriptions interface.");
@@ -860,11 +875,34 @@ NSString * const kDS2Data = @"DS2Data";
     YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
     storeVC.checkAndShowError = YES;
     
+    [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        obj.enabled = NO;
+        
+    }];
+    
     weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         [self.splitViewController presentViewController:nav animated:YES completion:nil];
     });
+    
+}
+
+- (void)didPurchaseSubscription:(NSNotification *)note {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(didPurchaseSubscription:) withObject:note waitUntilDone:NO];
+        return;
+    }
+    
+    [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if (obj.isEnabled == NO) {
+            obj.enabled = YES;
+        }
+        
+    }];
     
 }
 
