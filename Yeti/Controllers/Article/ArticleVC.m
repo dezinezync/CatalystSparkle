@@ -966,11 +966,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             [self addParagraph:content caption:NO];
         }
         else if (content.items) {
-            for (Content *sub in content.items) { @autoreleasepool {
-                
-                [self processContent:sub];
-                
-            } }
+            // if it's a linked image
+            if (content.items.count == 1) {
+                Content *item = content.items[0];
+                if ([item.type isEqualToString:@"image"]) {
+                    [self addImage:item link:content.url];
+                }
+                else {
+                    [self processContent:content];
+                }
+            }
+            else {
+                for (Content *sub in content.items) { @autoreleasepool {
+                    
+                    [self processContent:sub];
+                    
+                } }
+            }
         }
         
     }
@@ -1233,6 +1245,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)addImage:(Content *)content {
+    [self addImage:content link:nil];
+}
+
+- (void)addImage:(Content *)content link:(NSString *)link {
     
     if (![self showImage])
         return;
@@ -1244,6 +1260,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGFloat scale = content.size.height / content.size.width;
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
+    // make the imageView tappable
+    if (link != nil && [link isBlank] == NO) {
+        imageView.link = [NSURL URLWithString:link];
+    }
     
     _last = imageView;
     

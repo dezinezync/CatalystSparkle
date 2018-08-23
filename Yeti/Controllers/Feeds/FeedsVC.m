@@ -852,6 +852,10 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
+    if (MyFeedsManager.keychain[YTSubscriptionHasAddedFirstFeed] == nil) {
+        return;
+    }
+    
     UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
     YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
     storeVC.checkAndShowError = YES;

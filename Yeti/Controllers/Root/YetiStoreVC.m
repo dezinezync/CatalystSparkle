@@ -119,10 +119,12 @@ static void *KVO_Subscription = &KVO_Subscription;
     [super viewDidAppear:animated];
     
     if (self.checkAndShowError && MyFeedsManager.subscription != nil) {
-        if (MyFeedsManager.subscription.error != nil) {
+        BOOL hasPurchasedBefore = [[[[MyFeedsManager subscription] error] localizedDescription] isEqualToString:@"No subscription found for this account."] == NO;
+        
+        if (MyFeedsManager.subscription.error != nil && hasPurchasedBefore) {
             [AlertManager showGenericAlertWithTitle:@"Subscription Error" message:MyFeedsManager.subscription.error.localizedDescription fromVC:self];
         }
-        else if ([MyFeedsManager.subscription hasExpired] == YES) {
+        else if ([MyFeedsManager.subscription hasExpired] == YES && hasPurchasedBefore == YES) {
             [AlertManager showGenericAlertWithTitle:@"Subscription Expired" message:@"Your subscription has expired. Please resubscribe to continue using Elytra." fromVC:self];
         }
     }

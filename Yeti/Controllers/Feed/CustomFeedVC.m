@@ -166,15 +166,21 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
             if (![responseObject count]) {
                 self->_canLoadNext = NO;
             }
+            else {
+                @try {
+                    if (page == 1) {
+                        self.DS.data = responseObject;
+                    }
+                    else {
+                        self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+                    }
+                }
+                @catch (NSException *exc) {
+                    DDLogWarn(@"Exception setting unread articles: %@", exc);
+                }
+            }
             
             self->_page = page;
-            
-            @try {
-                self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
-            }
-            @catch (NSException *exc) {
-                DDLogWarn(@"Exception setting unread articles: %@", exc);
-            }
             
             self.loadingNext = NO;
             

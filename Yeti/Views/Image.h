@@ -31,6 +31,7 @@
 
 @property (nonatomic, assign) NSInteger idx;
 @property (nonatomic, copy) NSURL *URL;
+@property (nonatomic, copy) NSURL *link;
 
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
 @property (nonatomic, strong) NSLayoutConstraint *aspectRatio, *leading, *trailing;

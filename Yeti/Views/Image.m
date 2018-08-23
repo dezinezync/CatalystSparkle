@@ -23,6 +23,7 @@
 @interface Image ()
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
+@property (nonatomic, weak) UITapGestureRecognizer *tap;
 
 @end
 
@@ -170,6 +171,27 @@
     }
 }
 
+#pragma mark -
+
+- (void)setLink:(NSURL *)link {
+    _link = link;
+    
+    if (link == nil && self.tap != nil) {
+        [self removeGestureRecognizer:self.tap];
+        self.tap = nil;
+    }
+    else if (link != nil && self.tap == nil) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapLink:)];
+        tap.delaysTouchesBegan = YES;
+        tap.numberOfTapsRequired = 1;
+        
+        [self addGestureRecognizer:tap];
+        self.tap = tap;
+    }
+}
+
+#pragma mark -
+
 - (CGSize)intrinsicContentSize
 {
     return self.imageView.intrinsicContentSize;
@@ -249,6 +271,8 @@
     
 }
 
+#pragma mark -
+
 - (void)didTapGIF:(UIButton *)sender {
     
     if (!self.URL)
@@ -301,6 +325,14 @@
     
 }
 
+- (void)didTapLink:(UITapGestureRecognizer *)tap {
+    
+    NSURL *external = formattedURL(@"yeti://external?link=%@", self.link.absoluteString);
+    
+    [[UIApplication sharedApplication] openURL:external options:@{} completionHandler:nil];
+    
+}
+
 @end
 
 @implementation SizedImage
@@ -329,48 +361,63 @@
         if (image == nil) {
             [super setImage:image];
         }
-        else if (self.cacheImage == NO) {
-            [super setImage:image];
-        }
         else {
-            CGSize size = [self scaledSizeForImage:image];
-            
-            weakify(self);
-            
-            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-                
-                strongify(self);
-                
-                UIImage * scaled = self.settingCached ? image : [UIImage imageWithImage:image scaledToSize:size];
-                
-                // cache the scaled image
-                if (self.baseURL != nil && self.settingCached == NO) {
-                    NSString *key = [self.baseURL stringByAppendingString:(self.cachedSuffix ?: @"-sized")];
-                    NSString *extension = [[self.baseURL pathExtension] lowercaseString];
-                    NSData *data = nil;
-                    
-                    if ([extension isEqualToString:@"jpg"] || [extension isEqualToString:@"jpeg"]) {
-                        data = UIImageJPEGRepresentation(scaled, 0.9);
-                    }
-                    else if ([extension isEqualToString:@"png"]) {
-                        data = UIImagePNGRepresentation(image);
-                    }
-                    else if ([extension isEqualToString:@"webp"]) {
-                        data = [image dataWebPLossless];
-                    }
-                    
-                    [SharedImageLoader.cache setObject:scaled data:data forKey:key];
+            // we have an image. Check the base URL to see if it's a (super?)retina image
+            if (self.baseURL != nil) {
+                if ([self.baseURL containsString:@"-2x"] || [self.baseURL containsString:@"@2x"]
+                    || [self.baseURL containsString:@"-3x"] || [self.baseURL containsString:@"@3x"]) {
+                    UIImage *scaledImage = [UIImage imageWithCGImage:[image CGImage] scale:[UIScreen mainScreen].scale orientation:UIImageOrientationUp];
+                    image = scaledImage;
                 }
+            }
+            
+            if (image.size.width < self.bounds.size.width) {
+                self.contentMode = UIViewContentModeCenter;
+            }
+            
+            if (self.cacheImage == NO) {
+                [super setImage:image];
+            }
+            else {
+                CGSize size = [self scaledSizeForImage:image];
                 
-                if (self.settingCached == YES) {
-                    self.settingCached = NO;
-                }
+                weakify(self);
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [super setImage:scaled];
+                dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+                    
+                    strongify(self);
+                    
+                    UIImage * scaled = self.settingCached ? image : [UIImage imageWithImage:image scaledToSize:size];
+                    
+                    // cache the scaled image
+                    if (self.baseURL != nil && self.settingCached == NO) {
+                        NSString *key = [self.baseURL stringByAppendingString:(self.cachedSuffix ?: @"-sized")];
+                        NSString *extension = [[self.baseURL pathExtension] lowercaseString];
+                        NSData *data = nil;
+                        
+                        if ([extension isEqualToString:@"jpg"] || [extension isEqualToString:@"jpeg"]) {
+                            data = UIImageJPEGRepresentation(scaled, 0.9);
+                        }
+                        else if ([extension isEqualToString:@"png"]) {
+                            data = UIImagePNGRepresentation(image);
+                        }
+                        else if ([extension isEqualToString:@"webp"]) {
+                            data = [image dataWebPLossless];
+                        }
+                        
+                        [SharedImageLoader.cache setObject:scaled data:data forKey:key];
+                    }
+                    
+                    if (self.settingCached == YES) {
+                        self.settingCached = NO;
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [super setImage:scaled];
+                    });
+                    
                 });
-                
-            });
+            }
         }
     }
     

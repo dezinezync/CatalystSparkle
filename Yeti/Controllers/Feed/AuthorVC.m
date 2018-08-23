@@ -74,10 +74,11 @@
         }
         
         if (page == 1 && self.DS.data.count) {
-            self.DS.data = @[];
+            self.DS.data = responseObject;
         }
-        
-        self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+        else {
+            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+        }
         
         self.loadingNext = NO;
         

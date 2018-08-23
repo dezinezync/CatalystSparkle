@@ -55,17 +55,12 @@
     [super viewDidAppear:animated];
     
     UICKeyChainStore *keychain = MyFeedsManager.keychain;
+//    [keychain removeAllItems];
     
     NSString *hasShownIntro = [keychain stringForKey:kHasShownOnboarding];
     
     if (!hasShownIntro || [hasShownIntro boolValue] == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
-    }
-    else {
-        // this ensures anyone who has already gone through the setup isn't asked to subscribe again.
-        // this value should change for the production app on the App Store
-        NSString *val = [@(YES) stringValue];
-        keychain[YTSubscriptionHasAddedFirstFeed] = val;
     }
     
     if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.viewControllers.count == 1) {

@@ -85,7 +85,7 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-#ifndef TARGET_OS_SIMULATOR
+#if !(TARGET_IPHONE_SIMULATOR)
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [application registerForRemoteNotifications];
     });
