@@ -863,10 +863,19 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)subscriptionExpired:(NSNotification *)note {
     
+    // dont run when the app is in the background or inactive
+    if (UIApplication.sharedApplication.applicationState != UIApplicationStateActive) {
+        return;
+    }
+    
+    // if we're already presenting a VC, don't run.
+    // this is most likely the onboarding process
     if (self.presentedViewController != nil) {
         return;
     }
     
+    // if the user hasn't added their first feed,
+    // dont run
     if (MyFeedsManager.keychain[YTSubscriptionHasAddedFirstFeed] == nil) {
         return;
     }
