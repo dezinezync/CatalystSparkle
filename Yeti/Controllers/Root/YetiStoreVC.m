@@ -323,9 +323,21 @@ static void *KVO_Subscription = &KVO_Subscription;
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
         else {
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will  automatically renew unless canceled at least  24 hours before the end of the current period. You will not be able to cancel the subscription once activated." attributes:attributes];
+            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will  automatically renew unless canceled at least 24 hours before the end of the current period. You will not be able to cancel the subscription once activated." attributes:attributes];
             
-//            [attrs addAttribute:NSLinkAttributeName value:manageURL range:[attrs.string rangeOfString:@"here"]];
+            weakify(self);
+            
+            [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                strongify(self);
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self didPurchase:nil];
+                });
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                DDLogError(@"Get Subscription error in YetiStoreVC: %@", error);
+            }];
         }
         
         self.state = StoreStateLoaded;
