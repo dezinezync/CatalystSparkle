@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate+Store.h"
-#import <Store/Store.h>
 #import <DZKit/AlertManager.h>
 
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -21,6 +20,7 @@
     
     weakify(self);
     
+    MyStoreManager.delegate = self;
     MyStoreManager.defaultProductIdentifiers = [NSSet setWithObjects:YTSubscriptionMonthly, YTSubscriptionYearly, nil];
     
     [MyStoreManager setPaymentQueueUpdatedTransactionsBlock:^(SKPaymentQueue *queue, NSArray <SKPaymentTransaction *> *transactions) {
@@ -121,9 +121,16 @@
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
-                    [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
-                    
-                    [[NSNotificationCenter defaultCenter] postNotificationName:StoreDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                    // fetch the store values assuming it succeeded on the server
+                    [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:StoreDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                        
+                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        [AlertManager showGenericAlertWithTitle:@"Verification Failed" message:error.localizedDescription];
+                        
+                    }];
                     
                 }];
             }
@@ -143,6 +150,12 @@
     }
 }
 
-#pragma mark - <SKRequestDelegate>
+#pragma mark - <StoreManagerDelegate>
+
+- (BOOL)paymentQueue:(SKPaymentQueue *)queue shouldAddStorePayment:(SKPayment *)payment forProduct:(SKProduct *)product {
+    
+    return MyFeedsManager.userID != nil && [MyFeedsManager.userID integerValue] > 0;
+    
+}
 
 @end

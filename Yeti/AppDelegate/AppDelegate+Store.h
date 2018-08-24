@@ -7,8 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import <Store/Store.h>
 
-@interface AppDelegate (Store)
+@interface AppDelegate (Store) <StoreManagerDelegate>
 
 - (void)setupStoreManager;
 

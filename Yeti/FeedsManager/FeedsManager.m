@@ -1764,7 +1764,12 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
-    [self getSubscriptionWithSuccess:successCB error:errorCB];
+    weakify(self);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self getSubscriptionWithSuccess:successCB error:errorCB];
+    });
 }
 
 #pragma mark -
