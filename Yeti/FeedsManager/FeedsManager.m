@@ -342,6 +342,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if ([self userID] != nil) {
         params[@"userID"] = MyFeedsManager.userID;
     }
+#ifndef SHARE_EXTENSION
+    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+    }
+#endif
     
     [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -569,10 +574,16 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     if (!page)
         page = 1;
     
-    NSDictionary *params = @{
+    NSMutableDictionary *params = @{
                              @"userID": [self userID],
                              @"page": @(page)
-                             };
+                             }.mutableCopy;
+    
+#ifndef SHARE_EXTENSION
+    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+    }
+#endif
     
     [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -769,9 +780,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return;
     }
     
+    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10}.mutableCopy;
+    
+#ifndef SHARE_EXTENSION
+    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+    }
+#endif
+    
     weakify(self);
     
-    [self.session GET:@"/unread" parameters:@{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
@@ -1452,7 +1471,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

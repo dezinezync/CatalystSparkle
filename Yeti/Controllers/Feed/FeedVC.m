@@ -778,10 +778,11 @@
         
         weakify(self);
         
-        asyncMain(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            NSArray *articles = [(self.feed.articles ?: @[]) arrayByAddingObjectsFromArray:responseObject];
+            NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
+            articles = [articles arrayByAddingObjectsFromArray:responseObject];
             self.feed.articles = articles;
             self->_ignoreLoadScroll = YES;
             
@@ -804,7 +805,9 @@
             });
         }
         
-        asyncMain(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
             if (self->_ignoreLoadScroll) {
                 self->_ignoreLoadScroll = NO;
             }

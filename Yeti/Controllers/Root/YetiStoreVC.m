@@ -164,7 +164,7 @@ static void *KVO_Subscription = &KVO_Subscription;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+//    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
     
     if (indexPath.row != self.subscribedIndex && (self.state == StoreStateRestored || self.state == StoreStatePurchased) && self.originalStoreState == -0L) {
         _dynamicallySettingState = YES;
@@ -186,6 +186,10 @@ static void *KVO_Subscription = &KVO_Subscription;
 - (void)setState:(StoreState)state {
     [super setState:state];
     
+    if (self.navigationItem.rightBarButtonItem != nil) {
+        self.navigationItem.rightBarButtonItem.enabled = YES;
+    }
+    
     // we disable selection on the table view when the state becomes
     // .purhcased or .restored
     // re-enable the selection so the user can switch between subscription types
@@ -193,14 +197,14 @@ static void *KVO_Subscription = &KVO_Subscription;
         self.tableView.allowsSelection = YES;
     }
     
-    if (self.navigationItem.rightBarButtonItem != nil) {
-        // if the user had previously subscribed, allow them to close the modal
-        // and continue using the app.
-        id purchasedVal = MyFeedsManager.keychain[YTSubscriptionPurchased];
-        if (purchasedVal != nil && [purchasedVal boolValue] == YES) {
-            self.navigationItem.rightBarButtonItem.enabled = YES;
-        }
-    }
+//    if (self.navigationItem.rightBarButtonItem != nil) {
+//        // if the user had previously subscribed, allow them to close the modal
+//        // and continue using the app.
+//        id purchasedVal = MyFeedsManager.keychain[YTSubscriptionPurchased];
+//        if (purchasedVal != nil && [purchasedVal boolValue] == YES) {
+//            self.navigationItem.rightBarButtonItem.enabled = YES;
+//        }
+//    }
     
     if (state == StoreStateRestored || state == StoreStatePurchased) {
         [MyFeedsManager.keychain setString:[@(YES) stringValue] forKey:YTSubscriptionPurchased];
@@ -285,6 +289,22 @@ static void *KVO_Subscription = &KVO_Subscription;
 - (void)didPurchase:(NSNotification *)note {
     if (note) {
         [[NSNotificationCenter defaultCenter] removeObserver:self];
+        
+        weakify(self);
+        
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self didPurchase:nil];
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            DDLogError(@"Get Subscription error in YetiStoreVC: %@", error);
+        }];
+        
+        return;
     }
     
     UITextView *textView = self.footer.footerLabel;
@@ -326,18 +346,6 @@ static void *KVO_Subscription = &KVO_Subscription;
             attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will  automatically renew unless canceled at least 24 hours before the end of the current period. You will not be able to cancel the subscription once activated." attributes:attributes];
             
             weakify(self);
-            
-            [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                strongify(self);
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self didPurchase:nil];
-                });
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                DDLogError(@"Get Subscription error in YetiStoreVC: %@", error);
-            }];
         }
         
         self.state = StoreStateLoaded;

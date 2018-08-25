@@ -383,19 +383,19 @@ static void *KVO_Unread = &KVO_Unread;
     return cell;
 }
 
-- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (MyFeedsManager.subscription != nil && [MyFeedsManager.subscription hasExpired] == YES) {
-        if (indexPath.section == 0 && indexPath.row == 1) {
-            return YES;
-        }
-        
-        return NO;
-    }
-    
-    return YES;
-    
-}
+//- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+//    
+//    if (MyFeedsManager.subscription != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+//        if (indexPath.section == 0 && indexPath.row == 1) {
+//            return YES;
+//        }
+//        
+//        return NO;
+//    }
+//    
+//    return YES;
+//    
+//}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
