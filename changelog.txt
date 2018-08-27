@@ -1,0 +1,1 @@
+[NEW] Added Changelog to Fastlane deployments

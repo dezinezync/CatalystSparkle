@@ -25,6 +25,8 @@ platform :ios do
             branch: 'dev'
         )
 
+        changelog = File.read("../changelog.txt")
+
         increment_build_number(
             xcodeproj: "Yeti.xcodeproj"
         )
@@ -35,9 +37,10 @@ platform :ios do
             configuration: 'Testflight'
         )
 
-        pilot(
+        upload_to_testflight(
             skip_submission: true,
-            skip_waiting_for_build_processing: true
+            skip_waiting_for_build_processing: true,
+            changelog: changelog
         )
 
     end
