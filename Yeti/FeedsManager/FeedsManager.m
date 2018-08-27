@@ -1373,6 +1373,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (void)setSubscription:(Subscription *)subscription {
     _subscription = subscription;
     
+#if TESTFLIGHT == 1
+    if (_subscription && _subscription.error == nil) {
+        // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
+        _subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
+    }
+#endif
+    
     if (subscription && [subscription hasExpired] && [subscription preAppstore] == NO) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:subscription];
@@ -1471,7 +1478,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [session setValue:sessionSession forKeyPath:@"session"];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

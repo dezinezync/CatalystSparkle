@@ -659,21 +659,22 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-    UICKeyChainStore *keychain = MyFeedsManager.keychain;
-    
-    // during betas and for testflight builds, this option should be left on.
-//    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
-//    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
-//
-//    if (betaVal == YES) {
-//        DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
-//        return;
-//    }
-    
     if (self.presentedViewController != nil) {
         DDLogWarn(@"FeedsVC is already presenting a viewController. Not showing the subscriptions interface.");
         return;
     }
+    
+    UICKeyChainStore *keychain = MyFeedsManager.keychain;
+#if TESTFLIGHT == 1
+    // during betas and for testflight builds, this option should be left on.
+    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
+    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
+
+    if (betaVal == YES) {
+        DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
+        return;
+    }
+#endif
     
     id addedFirst = [keychain stringForKey:YTSubscriptionHasAddedFirstFeed];
     BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
