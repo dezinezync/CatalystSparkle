@@ -184,6 +184,8 @@ static void *KVO_Subscription = &KVO_Subscription;
 }
 
 - (void)setState:(StoreState)state {
+    BOOL isDifferent = state != self.state;
+    
     [super setState:state];
     
     if (self.navigationItem.rightBarButtonItem != nil) {
@@ -214,6 +216,12 @@ static void *KVO_Subscription = &KVO_Subscription;
         if (_subscribedIndex != [[self.tableView indexPathForSelectedRow] row]) {
             _subscribedIndex = [[self.tableView indexPathForSelectedRow] row];
         }
+        
+        if (isDifferent == YES)
+            [self didPurchase:nil];
+    }
+    else {
+        self.footer.buyButton.enabled = YES;
     }
     
     if (_dynamicallySettingState == YES) {
@@ -335,7 +343,9 @@ static void *KVO_Subscription = &KVO_Subscription;
         
         [attrs addAttribute:NSLinkAttributeName value:manageURL range:[attrs.string rangeOfString:@"here"]];
         
-        self.state = StoreStateRestored;
+        if (note != nil) {
+            self.state = StoreStatePurchased;
+        }
         
     }
     else {
@@ -344,8 +354,6 @@ static void *KVO_Subscription = &KVO_Subscription;
         }
         else {
             attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will  automatically renew unless canceled at least 24 hours before the end of the current period. You will not be able to cancel the subscription once activated." attributes:attributes];
-            
-            weakify(self);
         }
         
         self.state = StoreStateLoaded;
