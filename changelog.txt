@@ -1,1 +1,2 @@
-[NEW] Added Changelog to Fastlane deployments
+[FIX] Blockquotes will now respect paragraph breaks.
+[FIX] New folder minimum length error message
