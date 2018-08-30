@@ -1357,12 +1357,65 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         NSMutableAttributedString *mattrs = [NSMutableAttributedString new];
         
         for (Content *item in content.items) { @autoreleasepool {
+            
+            // remove "\n" from the item's content
+            // daringfireball adds linebreaks manually to it's blockquotes
+            
+            if (item.content != nil && [item.content isBlank] == NO) {
+                item.content = [item.content stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+            }
+            
             NSAttributedString *attrs = [para processText:item.content ranges:item.ranges attributes:item.attributes];
             
             BOOL rangeAdded = NO;
             
-            if (item.content) {
-                NSString *ctx = [item content];
+            // check if attributes has href
+            if (![content.type isEqualToString:@"paragraph"]) {
+                if (content.attributes && [content.attributes valueForKey:@"href"]) {
+                    NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+                    
+                    Range *newRange = [Range new];
+                    newRange.element = @"anchor";
+                    newRange.range = NSMakeRange(0, content.content.length);
+                    newRange.url = [content.attributes valueForKey:@"href"];
+                    
+                    [ranges addObject:newRange];
+                    
+                    content.ranges = ranges.copy;
+                    rangeAdded = YES;
+                }
+                else if (content.url) {
+                    NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+                    
+                    Range *newRange = [Range new];
+                    newRange.element = @"anchor";
+                    newRange.range = NSMakeRange(0, content.content.length);
+                    newRange.url = content.url;
+                    
+                    [ranges addObject:newRange];
+                    
+                    content.ranges = ranges.copy;
+                    rangeAdded = YES;
+                }
+                // this is not applicable for blockquotes
+                // as it adds a quote range to the blockquote
+//                else {
+//                    NSMutableArray <Range *> *ranges = content.ranges.mutableCopy;
+//
+//                    Range *newRange = [Range new];
+//                    newRange.element = content.type;
+//                    newRange.range = NSMakeRange(0, content.content.length);
+//
+//                    [ranges addObject:newRange];
+//
+//                    content.ranges = ranges.copy;
+//                    rangeAdded = YES;
+//                }
+            }
+            
+            // prevents the period from overflowing to the next line.
+            if (content.content) {
+                NSString *ctx = [content content];
                 
                 if ([ctx isEqualToString:@"."] || [ctx isEqualToString:@","])
                     rangeAdded = YES;
@@ -1377,7 +1430,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             }
             
             [mattrs appendAttributedString:attrs];
-            [mattrs appendAttributedString:[[NSAttributedString alloc] initWithString:rangeAdded ? @" " : @"\n"]];
+            [mattrs appendAttributedString:[[NSAttributedString alloc] initWithString:rangeAdded ? @" " : @"\n\n"]];
         } }
         
         para.attributedText = mattrs.copy;
