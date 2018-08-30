@@ -79,7 +79,7 @@
     }
     
     if (title.length < 2 || title.length > 32) {
-        [AlertManager showGenericAlertWithTitle:@"Title Length" message:@"Folder titles should be atleast 3 characters and no longer than 32 characters."];
+        [AlertManager showGenericAlertWithTitle:@"Title Length" message:@"Folder titles should be at least 3 characters and no longer than 32 characters."];
         return NO;
     }
     
