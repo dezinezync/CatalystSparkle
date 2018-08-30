@@ -35,6 +35,8 @@
 
 + (NSLocaleLanguageDirection)languageDirectionForText:(NSString *)text;
 
+- (void)updateStyle:(id)animated;
+
 /**
  Process the given text and ranges and returns an Attributed String. Processes on the thread it is called on. Returns on the same thread.
 

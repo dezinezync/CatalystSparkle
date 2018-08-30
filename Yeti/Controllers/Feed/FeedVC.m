@@ -669,14 +669,18 @@
         [self.navigationController pushViewController:vc animated:YES];
     }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")] == NO) {
+    
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
+                cell.markerView.image = nil;
+            }
+            
+        });
         
-        ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
-            cell.markerView.image = nil;
-        }
-        
-    });
+    }
 }
 
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView leadingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -936,6 +940,10 @@
     if (!article)
         return;
     
+    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
+        return;
+    }
+    
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
     
     if (index == NSNotFound)
@@ -989,6 +997,10 @@
     
     if (!article)
         return;
+    
+    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
+        return;
+    }
     
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
     

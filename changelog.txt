@@ -1,2 +1,4 @@
 [FIX] Blockquotes will now respect paragraph breaks.
-[FIX] New folder minimum length error message
+[FIX] New folder minimum length error message.
+[FIX] Disappearing act of the favicons has been fixed.
+[FIX] Changing the theme now correctly triggers the article to redraw itself.

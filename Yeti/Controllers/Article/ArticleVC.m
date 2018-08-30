@@ -186,22 +186,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
 
-- (void)viewDidLayoutSubviews
-{
-    [super viewDidLayoutSubviews];
-    
-    if (_hasRendered == YES)
-        return;
-    
-    _hasRendered = YES;
-    
-    if (self.item.content == nil || [self.item.content count] == 0) {
-        [self setupArticle:self.item];
-    }
-    else {
-        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
-    }
-}
+//- (void)viewDidLayoutSubviews
+//{
+//    [super viewDidLayoutSubviews];
+//
+//    if (_hasRendered == YES)
+//        return;
+//
+//    _hasRendered = YES;
+//
+//    if (self.item.content == nil || [self.item.content count] == 0) {
+//        [self setupArticle:self.item];
+//    }
+//    else {
+//        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
+//    }
+//}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -306,6 +306,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)didUpdateTheme {
     
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(didUpdateTheme) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.loader.color = theme.captionColor;
@@ -324,7 +329,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.helperView updateShadowPath];
     }
     
-    [self didChangePreferredContentSize:nil];
+    [self setupArticle:self.currentArticle];
     
 }
 
