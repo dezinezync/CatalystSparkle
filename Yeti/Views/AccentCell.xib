@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,14 +13,14 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" focusStyle="custom" rowHeight="56" id="KGk-i7-Jjw" customClass="AccentCell">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="58"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="58"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="57.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="57.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="wUj-av-q3Q">
-                        <rect key="frame" x="12" y="12" width="350" height="24"/>
+                        <rect key="frame" x="12" y="12" width="351" height="24"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x11-CE-J6p" customClass="AccentButton">
                                 <rect key="frame" x="0.0" y="0.0" width="24" height="24"/>
@@ -29,56 +30,56 @@
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="37o-Zu-cdd" customClass="AccentButton">
-                                <rect key="frame" x="40" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="41" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="4Wl-HW-ALg"/>
                                     <constraint firstAttribute="height" constant="24" id="eUt-YS-0cg"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O9t-dy-Uc5" customClass="AccentButton">
-                                <rect key="frame" x="80" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="82" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="NAS-Ze-esT"/>
                                     <constraint firstAttribute="height" constant="24" id="YXp-JA-W1Z"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vqn-x6-KYo" customClass="AccentButton">
-                                <rect key="frame" x="120" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="122.5" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="4QU-mI-RMa"/>
                                     <constraint firstAttribute="width" constant="24" id="wp5-Ii-fuJ"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lPQ-oD-z9A" customClass="AccentButton">
-                                <rect key="frame" x="160" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="163.5" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="Jzw-Mn-2QI"/>
                                     <constraint firstAttribute="height" constant="24" id="riv-bk-n3D"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uEr-iA-xuN" customClass="AccentButton">
-                                <rect key="frame" x="200" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="204.5" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="CFb-bI-qZ7"/>
                                     <constraint firstAttribute="height" constant="24" id="vYj-S2-5RB"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pd5-b4-cMo" customClass="AccentButton">
-                                <rect key="frame" x="240" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="245.5" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="fbB-ab-e7u"/>
                                     <constraint firstAttribute="width" constant="24" id="wJr-Pp-wtB"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="daw-BY-Xz1" customClass="AccentButton">
-                                <rect key="frame" x="280" y="0.0" width="24" height="24"/>
+                                <rect key="frame" x="286" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="33x-gG-Udi"/>
                                     <constraint firstAttribute="height" constant="24" id="Jwq-0P-Sk1"/>
                                 </constraints>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tuu-3f-PvC" customClass="AccentButton">
-                                <rect key="frame" x="320" y="0.0" width="30" height="24"/>
+                                <rect key="frame" x="327" y="0.0" width="24" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="24" id="Okk-ne-6Qp"/>
                                     <constraint firstAttribute="height" constant="24" id="yVp-gm-TiY"/>
@@ -103,7 +104,7 @@
             <connections>
                 <outlet property="stackView" destination="wUj-av-q3Q" id="RIG-LZ-ejD"/>
             </connections>
-            <point key="canvasLocation" x="25" y="59"/>
+            <point key="canvasLocation" x="68" y="58.47076461769116"/>
         </tableViewCell>
     </objects>
 </document>

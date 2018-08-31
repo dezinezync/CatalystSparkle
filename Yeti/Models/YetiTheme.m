@@ -63,10 +63,10 @@
     UIRefreshControl *refresh = [UIRefreshControl appearance];
     refresh.tintColor = self.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
     
-    UITableViewCell *cell = [UITableViewCell appearance];
+    UITableViewCell *cell = [UITableViewCell appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     cell.backgroundColor = self.cellColor;
     
-    UIScrollView *scrollView = [UIScrollView appearance];
+    UIScrollView *scrollView = [UIScrollView appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     scrollView.indicatorStyle = self.isDark ? UIScrollViewIndicatorStyleWhite : UIScrollViewIndicatorStyleDefault;
     
 }

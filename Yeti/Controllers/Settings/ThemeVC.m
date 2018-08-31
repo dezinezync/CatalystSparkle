@@ -25,6 +25,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     BOOL _isPhoneX;
     NSArray <ArticleLayoutPreference> * _fonts;
     NSDictionary <ArticleLayoutPreference, NSString *> *_fontNamesMap;
+    NSIndexPath *_selectedFontIndexPath;
 }
 
 @end
@@ -113,17 +114,22 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         }
         
     }
-    else if (indexPath.section == 1) { // Accent Colour
+    else if (indexPath.section == 1) {
+        // Accent Colour
         cell = [tableView dequeueReusableCellWithIdentifier:kAccentCell forIndexPath:indexPath];
         
         NSArray <UIButton *> *buttons = [[(AccentCell *)cell stackView] arrangedSubviews];
         
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         // get selection for current theme or default value
         YetiThemeType themeType = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
         NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
-        NSInteger colorIndex = [NSUserDefaults.standardUserDefaults integerForKey:defaultsKey] ?: [(YetiTheme *)[YTThemeKit theme] tintColorIndex].integerValue;
+        NSInteger colorIndex = [NSUserDefaults.standardUserDefaults integerForKey:defaultsKey] ?: [theme tintColorIndex].integerValue;
         
         [(AccentCell *)cell didTapButton:buttons[colorIndex]];
+        
+        cell.backgroundColor = theme.cellColor;
         
         [cell addObserver:self forKeyPath:NSStringFromSelector(@selector(selectedButton)) options:NSKeyValueObservingOptionNew context:&KVO_SELECTED_BUTTON];
         
@@ -141,9 +147,12 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
             fontName = [_fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
             UIFont *cellFont = [UIFont fontWithName:fontName size:17.f];
             
-            cellFont = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:cellFont];
+            cellFont = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:cellFont];
             
             cell.textLabel.font = cellFont;
+        }
+        else {
+            cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         }
         
         if (([fontPref isEqualToString:ALPSystem] && indexPath.row == 0)
@@ -155,6 +164,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
             || ([fontPref isEqualToString:ALPSpectral] && indexPath.row == 6)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            
+            if (_selectedFontIndexPath == nil) {
+                _selectedFontIndexPath = indexPath;
+            }
             
         }
         else {
@@ -169,9 +182,13 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         cell.textLabel.textColor = theme.titleColor;
         cell.detailTextLabel.textColor = theme.captionColor;
         
-        UIView *selected = [UIView new];
-        selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
-        cell.selectedBackgroundView = selected;
+        cell.backgroundColor = theme.cellColor;
+        
+        if (cell.selectedBackgroundView == nil) {
+            cell.selectedBackgroundView = [UIView new];
+        }
+        
+        cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
     }
     else {
         cell.selectedBackgroundView = nil;
@@ -200,7 +217,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    NSIndexSet * reloadSections;
+    NSArray <NSIndexPath *> * reloadSections = nil;
     
     if (indexPath.section == 0) {
         
@@ -222,6 +239,8 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
         [MyCodeParser loadTheme:themeName];
         
+        reloadSections = [self.tableView indexPathsForVisibleRows];
+        
     }
     else if (indexPath.section == 1) {
         
@@ -230,15 +249,20 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         [defaults setValue:self->_fonts[indexPath.row] forKey:kDefaultsArticleFont];
         
-        reloadSections = [NSIndexSet indexSetWithIndex:indexPath.section];
+        // remove the checkmark
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:_selectedFontIndexPath];
+        cell.accessoryType = UITableViewCellAccessoryNone;
         
+        // add checkmark
+        cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        
+        _selectedFontIndexPath = indexPath;
     }
     
-    if (!reloadSections) {
-        reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)];
+    if (reloadSections != nil) {
+        [self.tableView reloadRowsAtIndexPaths:reloadSections withRowAnimation:UITableViewRowAnimationFade];
     }
-    
-    [tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];
     
     [defaults synchronize];
     

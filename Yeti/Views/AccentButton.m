@@ -14,6 +14,8 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
         
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        
         Theme *theme = YTThemeKit.theme;
         
         CAShapeLayer *borderLayer = [CAShapeLayer layer];
@@ -21,6 +23,13 @@
         borderLayer.fillColor = theme.isDark ? [UIColor whiteColor].CGColor : [UIColor blackColor].CGColor;
         borderLayer.opacity = 0.25f;
         borderLayer.hidden = YES;
+        
+        CGRect bounds = self.bounds;
+        CGFloat radius = MIN(bounds.size.width, bounds.size.height);
+        
+        bounds.size = CGSizeMake(radius, radius);
+        
+        borderLayer.frame = bounds;
         
         [self.layer addSublayer:borderLayer];
         self.borderLayer = borderLayer;
@@ -52,6 +61,8 @@
     _selected = selected;
     
     self.borderLayer.hidden = !selected;
+    
+    [self.borderLayer setNeedsLayout];
 }
 
 - (BOOL)isSelected {
