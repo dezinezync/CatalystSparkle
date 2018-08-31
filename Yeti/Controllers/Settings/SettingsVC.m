@@ -41,6 +41,11 @@
     
     self.title = @"Settings";
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.tableView.backgroundColor = theme.tableColor;
+    self.view.backgroundColor = theme.tableColor;
+    
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_down"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
     done.accessibilityLabel = @"Close";
     done.accessibilityValue = @"Close settings";
@@ -150,6 +155,17 @@
     
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
+    if (cell.accessoryView != nil) {
+        cell.accessoryView = nil;
+    }
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -361,7 +377,26 @@
 - (void)didUpdateTheme {
     
     _footerView = nil;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.tableView.backgroundColor = theme.tableColor;
+    self.view.backgroundColor = theme.tableColor;
+    
     self.tableView.tableFooterView = self.footerView;
+    
+    NSIndexPath *selected = [self.tableView indexPathForSelectedRow];
+    
+    [self.tableView reloadData];
+    
+    weakify(self);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        [self.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionMiddle];
+        
+    });
     
     _hasAnimatedFooterView = NO;
 }
