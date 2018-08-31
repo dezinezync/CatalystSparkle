@@ -167,6 +167,8 @@
         cell.accessoryView = nil;
     }
     
+    cell.detailTextLabel.text = nil;
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     // Configure the cell...
