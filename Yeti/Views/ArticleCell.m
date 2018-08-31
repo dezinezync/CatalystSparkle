@@ -53,6 +53,8 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         label.backgroundColor = theme.cellColor;
     }
     
+    self.backgroundColor = theme.cellColor;
+    
     UIView *selected = [UIView new];
     selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
     self.selectedBackgroundView = selected;
