@@ -269,6 +269,14 @@
     cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     cell.textLabel.textColor = theme.titleColor;
     
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+    
     return cell;
 }
 
