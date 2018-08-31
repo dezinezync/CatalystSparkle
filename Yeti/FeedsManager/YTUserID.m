@@ -25,24 +25,6 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 @implementation YTUserID
 
-+ (void)load
-{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            // get changes that might have happened while this
-            // instance of our app wasn't running
-            NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-            if (store) {
-                @synchronized (store) {
-                    [store synchronize];
-                }
-            }
-        });
-    });
-}
-
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate {
     if (self = [super init]) {
         self.delegate = delegate;
@@ -134,30 +116,30 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             _userID = @([userID integerValue]);
         }
         
-        // migrate from NSUbiquitousKeyValueStore
-        if (!UUIDString || !self.userID) {
-            NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
-            UUIDString = [defaults stringForKey:kAccountID];
-            
-            if (UUIDString) {
-                self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
-            }
-            
-            NSInteger userID = [defaults longLongForKey:kUserID];
-            if (userID) {
-                self.userID = @(userID);
-            }
-        }
-        
+//        // migrate from NSUbiquitousKeyValueStore
+//        if (!UUIDString || !self.userID) {
+//            NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
+//            UUIDString = [defaults stringForKey:kAccountID];
+//
+//            if (UUIDString) {
+//                self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
+//            }
+//
+//            NSInteger userID = [defaults longLongForKey:kUserID];
+//            if (userID) {
+//                self.userID = @(userID);
+//            }
+//        }
+//
         // migrate from NSUserDefaults
         if (!UUIDString || !self.userID) {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             UUIDString = [defaults stringForKey:kAccountID];
-            
+
             if (UUIDString) {
                 self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
             }
-            
+
             NSInteger userID = [[defaults valueForKey:kUserID] integerValue];
             if (userID) {
                 self.userID = @(userID);
@@ -210,9 +192,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     if (_UUID != nil) {
         [self.delegate.keychain setString:UUID.UUIDString forKey:kAccountID];
         
-        NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {
-            [defaults setString:UUID.UUIDString forKey:kAccountID];
+            [defaults setValue:UUID.UUIDString forKey:kAccountID];
             [defaults synchronize];
         }
     }
@@ -229,9 +211,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     if (_userID != nil) {
         [self.delegate.keychain setString:userID.stringValue forKey:kUserID];
         
-        NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {
-            [defaults setLongLong:userID.longLongValue forKey:kUserID];
+            [defaults setValue:userID forKey:kUserID];
             [defaults synchronize];
         }
     }

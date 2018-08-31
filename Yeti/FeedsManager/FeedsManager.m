@@ -70,7 +70,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
-        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
+//        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
@@ -2184,6 +2184,8 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
     if (UUIDString != nil && userID > 0) {
         self.userIDManager.userID = @(userID);
         self.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
         self.folders = [coder decodeObjectForKey:kFoldersKey];
         self.feeds = [coder decodeObjectForKey:kFeedsKey];

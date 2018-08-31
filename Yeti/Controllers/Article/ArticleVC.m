@@ -681,8 +681,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
     DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
     
-    self.state = ArticleStateLoaded;
-    
     if (self.item && self.item.isRead == NO) {
         [MyFeedsManager article:self.item markAsRead:YES];
         
@@ -691,7 +689,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         
         [self.stackView layoutIfNeeded];
@@ -704,6 +702,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.scrollView.contentSize = contentSize;
         
         DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
+        
+        self.state = ArticleStateLoaded;
     });
     
     if (isChangingArticle && self.providerDelegate) {
