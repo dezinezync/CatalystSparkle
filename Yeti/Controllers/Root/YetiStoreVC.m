@@ -329,34 +329,53 @@ static void *KVO_Subscription = &KVO_Subscription;
     
     NSString * const manageURL = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions";
     
-    if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
-        
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateStyle = NSDateFormatterMediumStyle;
-        formatter.timeStyle = NSDateFormatterShortStyle;
-        formatter.locale = [NSLocale currentLocale];
-        formatter.timeZone = [NSTimeZone systemTimeZone];
-        
-        NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You’ll have to first unsubscribe and then deactivate.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
-        
-        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
-        
-        [attrs addAttribute:NSLinkAttributeName value:manageURL range:[attrs.string rangeOfString:@"here"]];
-        
-        if (note != nil) {
-            self.state = StoreStatePurchased;
-        }
-        
-    }
-    else {
+//    if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
+//
+//        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//        formatter.dateStyle = NSDateFormatterMediumStyle;
+//        formatter.timeStyle = NSDateFormatterShortStyle;
+//        formatter.locale = [NSLocale currentLocale];
+//        formatter.timeZone = [NSTimeZone systemTimeZone];
+//
+//        NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You will have to first unsubscribe and then deactivate.\n\nYou can read our Terms of Service and Privacy Policy.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
+//
+//        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
+//
+//        [attrs addAttribute:NSLinkAttributeName value:manageURL range:[attrs.string rangeOfString:@"here"]];
+//
+//        if (note != nil) {
+//            self.state = StoreStatePurchased;
+//        }
+//
+//    }
+//    else {
         if (MyFeedsManager.subscription && MyFeedsManager.subscription.error && [MyFeedsManager.subscription.error.localizedDescription isEqualToString:@"No subscription found for this account."] == NO) {
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
         else {
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will  automatically renew unless canceled at least 24 hours before the end of the current period. You will not be able to cancel the subscription once activated." attributes:attributes];
+            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will automatically renew unless canceled at least 24 hours before the end of the current period. You will not be able to cancel the subscription once activated.\n\nYou can read our Terms of Service and Privacy Policy." attributes:attributes];
         }
         
         self.state = StoreStateLoaded;
+//    }
+    
+    {
+        NSRange range = [attrs.string rangeOfString:@"Terms of Service"];
+        if (range.location != NSNotFound) {
+            
+            NSURL *url = [NSURL URLWithString:@"https://elytra.app/terms/"];
+            [attrs addAttribute:NSLinkAttributeName value:url range:range];
+            
+        }
+        
+        range = [attrs.string rangeOfString:@"Privacy Policy"];
+        
+        if (range.location != NSNotFound) {
+            
+            NSURL *url = [NSURL URLWithString:@"https://elytra.app/privacy/"];
+            [attrs addAttribute:NSLinkAttributeName value:url range:range];
+            
+        }
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
