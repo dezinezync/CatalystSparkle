@@ -10,6 +10,8 @@
 #import "FeedsManager.h"
 #import "YetiThemeKit.h"
 #import "YTNavigationController.h"
+#import "FeedsManager.h"
+#import "YetiStoreVC.h"
 
 #import "ImportVC.h"
 
@@ -183,10 +185,48 @@
 
 - (IBAction)didTapImport:(UIButton *)sender {
     
+    if (MyFeedsManager.subscription == nil || [MyFeedsManager.subscription hasExpired]) {
+        // A subscription is required to import Feeds from an OPML file.
+        if (MyFeedsManager.subscription == nil) {
+            [MyFeedsManager setValue:[Subscription new] forKey:@"subscription"];
+        }
+        
+        NSString * const error = @"An active subscription is required to import OPML files in to Elytra.";
+        
+        MyFeedsManager.subscription.error = [NSError errorWithDomain:@"Yeti" code:402 userInfo:@{NSLocalizedDescriptionKey: error}];
+        
+        UIViewController *presenting = self.presentingViewController;
+        
+        YetiStoreVC *storeVC = [[YetiStoreVC alloc] initWithStyle:UITableViewStylePlain];
+        storeVC.checkAndShowError = YES;
+        
+        weakify(presenting);
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+           
+            strongify(presenting);
+            
+            if ([presenting isKindOfClass:UINavigationController.class] == NO) {
+                presenting = presenting.navigationController;
+            }
+            
+            if (presenting == nil) {
+                [AlertManager showGenericAlertWithTitle:@"No Subscription" message:error];
+            }
+            else {
+                [(UINavigationController *)presenting pushViewController:storeVC animated:YES];
+            }
+            
+        }];
+        return;
+    }
+    
     // get the UTI for an extension
     NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
     
-    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[(__bridge NSString *)kUTTypeXML, typeForExt] inMode:UIDocumentPickerModeImport];
+    NSArray <NSString *> *documentTypes = @[(__bridge NSString *)kUTTypeXML, typeForExt];
+    
+    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
     
     importVC.delegate = self;
     

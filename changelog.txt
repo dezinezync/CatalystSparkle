@@ -2,3 +2,4 @@
 [FIX] New folder minimum length error message.
 [FIX] Disappearing act of the favicons has been fixed.
 [FIX] Changing the theme now correctly triggers the article to redraw itself.
+[FIX] Appearance Tint selection no longer has the wrong frame set for it's selected state.
