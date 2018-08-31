@@ -329,26 +329,26 @@ static void *KVO_Subscription = &KVO_Subscription;
     
     NSString * const manageURL = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/manageSubscriptions";
     
-//    if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
-//
-//        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-//        formatter.dateStyle = NSDateFormatterMediumStyle;
-//        formatter.timeStyle = NSDateFormatterShortStyle;
-//        formatter.locale = [NSLocale currentLocale];
-//        formatter.timeZone = [NSTimeZone systemTimeZone];
-//
-//        NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You will have to first unsubscribe and then deactivate.\n\nYou can read our Terms of Service and Privacy Policy.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
-//
-//        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
-//
-//        [attrs addAttribute:NSLinkAttributeName value:manageURL range:[attrs.string rangeOfString:@"here"]];
-//
-//        if (note != nil) {
-//            self.state = StoreStatePurchased;
-//        }
-//
-//    }
-//    else {
+    if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
+
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateStyle = NSDateFormatterMediumStyle;
+        formatter.timeStyle = NSDateFormatterShortStyle;
+        formatter.locale = [NSLocale currentLocale];
+        formatter.timeZone = [NSTimeZone systemTimeZone];
+
+        NSString *formatted = formattedString(@"Your subscription is active and Apple will automatically renew it on %@. You can manage your subscription here.\n\nDeactivating your account does not cancel your subscription. You will have to first unsubscribe and then deactivate.\n\nYou can read our Terms of Service and Privacy Policy.", [formatter stringFromDate:MyFeedsManager.subscription.expiry]);
+
+        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
+
+        [attrs addAttribute:NSLinkAttributeName value:manageURL range:[attrs.string rangeOfString:@"here"]];
+
+        if (note != nil) {
+            self.state = StoreStatePurchased;
+        }
+
+    }
+    else {
         if (MyFeedsManager.subscription && MyFeedsManager.subscription.error && [MyFeedsManager.subscription.error.localizedDescription isEqualToString:@"No subscription found for this account."] == NO) {
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
@@ -357,7 +357,7 @@ static void *KVO_Subscription = &KVO_Subscription;
         }
         
         self.state = StoreStateLoaded;
-//    }
+    }
     
     {
         NSRange range = [attrs.string rangeOfString:@"Terms of Service"];

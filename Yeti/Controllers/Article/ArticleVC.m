@@ -1357,7 +1357,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (content.content) {
         [para setText:content.content ranges:content.ranges attributes:content.attributes];
     }
-    else if (content.items) {
+    else if (content.items && content.items.count > 0) {
         
         NSMutableAttributedString *mattrs = [NSMutableAttributedString new];
         
@@ -1371,6 +1371,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             }
             
             NSAttributedString *attrs = [para processText:item.content ranges:item.ranges attributes:item.attributes];
+            
+            if ([item.type isEqualToString:@"ol"] || [item.type isEqualToString:@"ul"] || [item.type containsString:@"ordered"]) {
+                List *list = [List new];
+                attrs = [list processContent:item];
+                
+                list = nil;
+            }
             
             BOOL rangeAdded = NO;
             
