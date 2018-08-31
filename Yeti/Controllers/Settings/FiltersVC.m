@@ -94,6 +94,8 @@ NSString *const kFiltersCell = @"filterCell";
         cell.textLabel.textColor = theme.titleColor;
         cell.detailTextLabel.textColor = theme.captionColor;
         
+        cell.backgroundColor = theme.cellColor;
+        
         return cell;
     }
     

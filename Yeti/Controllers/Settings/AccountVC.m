@@ -100,6 +100,14 @@
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
     switch (indexPath.section) {
         case 0:
             {

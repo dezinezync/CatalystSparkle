@@ -47,6 +47,14 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     cell.textLabel.textColor = theme.titleColor;
     
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
     NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
     NSInteger selected = selectedIcon == nil ? 0 : ([selectedIcon isEqualToString:@"dark"] ? 1 : 2);
     

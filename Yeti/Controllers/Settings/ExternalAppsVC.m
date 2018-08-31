@@ -135,6 +135,14 @@
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
     NSArray <NSString *> * appsArray = nil;
     NSString *sectionKey;
     
@@ -166,10 +174,6 @@
     
     cell.textLabel.text = title;
     cell.imageView.image = image;
-    
-    UIView *selected = [UIView new];
-    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
-    cell.selectedBackgroundView = selected;
     
     return cell;
 }
