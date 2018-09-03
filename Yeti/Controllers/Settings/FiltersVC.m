@@ -112,6 +112,8 @@ NSString *const kFiltersCell = @"filterCell";
     cell.textField.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
     [(UILabel *)[cell.textField valueForKeyPath:@"_placeholderLabel"] setTextColor:theme.captionColor];
     
+    cell.backgroundColor = theme.cellColor;
+    
     UIView *selected = [UIView new];
     selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
     cell.selectedBackgroundView = selected;

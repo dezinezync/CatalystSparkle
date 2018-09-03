@@ -1,15 +1,4 @@
 
-[FIX] Incorrect background colour in the Feed Interface when using any of the dark themes.
+[FIX] Incorrect background colour for the Filter input when using a dark theme.
 
--- 143 --
-
-[NEW] Added links to Elytra's Terms and Privacy Policy to the Subscription's interface.
-
-[FIX] Blockquotes will now respect paragraph breaks.
-[FIX] New folder minimum length error message.
-[FIX] Disappearing act of the favicons has been fixed.
-[FIX] Changing the theme now correctly triggers the article to redraw itself.
-[FIX] Appearance Tint selection no longer has the wrong frame set for it's selected state.
-[FIX] Quotes correctly render Ordered and Unordered Lists.
-[FIX] Fixes a regression where a newly setup device would not sync bookmarks with the server when the app is being restored from a previous state.
 
