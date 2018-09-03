@@ -341,7 +341,7 @@
                 vc = webVC;
             }
             else if (indexPath.row == 1) {
-                NSURL *URL = formattedURL(@"https://itunes.apple.com/app/id1173774272?action=write-review");
+                NSURL *URL = formattedURL(@"https://itunes.apple.com/app/id1433266971?action=write-review");
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
