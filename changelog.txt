@@ -1,4 +1,5 @@
-
+[FIX] Uses the correct URL for "Rate Elytra"
+[FIX] Incorrect background colour for the Images Interface.
 [FIX] Incorrect background colour for the Filter input when using a dark theme.
 
 
