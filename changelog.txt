@@ -1,5 +1,6 @@
+[NEW] added info to subscriptions.html (Accessed by tapping Learn More in the Subscriptions Interface) regarding expired subscriptions.
+
+-- 147 --
 [FIX] Uses the correct URL for "Rate Elytra"
 [FIX] Incorrect background colour for the Images Interface.
 [FIX] Incorrect background colour for the Filter input when using a dark theme.
-
-
