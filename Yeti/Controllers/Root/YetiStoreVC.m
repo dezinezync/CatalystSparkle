@@ -243,9 +243,15 @@ static void *KVO_Subscription = &KVO_Subscription;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.subscribedIndex = index;
+            NSInteger totalRows = [self.tableView numberOfRowsInSection:0];
             
-            if ([self.tableView numberOfRowsInSection:0] > 0) {
-                [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+            if (totalRows > 0 && index <= totalRows) {
+                
+                @try {
+                    [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+                }
+                @catch (NSException *exc) {}
+                
             }
         });
     }

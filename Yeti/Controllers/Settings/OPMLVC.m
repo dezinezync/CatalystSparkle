@@ -185,6 +185,7 @@
 
 - (IBAction)didTapImport:(UIButton *)sender {
     
+#if TESTFLIGHT == 0
     if (MyFeedsManager.subscription == nil || [MyFeedsManager.subscription hasExpired]) {
         // A subscription is required to import Feeds from an OPML file.
         if (MyFeedsManager.subscription == nil) {
@@ -220,7 +221,7 @@
         }];
         return;
     }
-    
+#endif
     // get the UTI for an extension
     NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
     

@@ -683,9 +683,9 @@ NSString * const kDS2Data = @"DS2Data";
         DDLogWarn(@"User hasn't added their first feed yet. Ignoring.");
         return;
     }
-    
+#if TESTFLIGHT == 0
     [self subscriptionExpired:nil];
-    
+#endif
 }
 
 #pragma mark - Notifications
@@ -880,7 +880,7 @@ NSString * const kDS2Data = @"DS2Data";
     if (MyFeedsManager.keychain[YTSubscriptionHasAddedFirstFeed] == nil) {
         return;
     }
-    
+#if TESTFLIGHT == 0
     UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
     YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
     storeVC.checkAndShowError = YES;
@@ -896,7 +896,7 @@ NSString * const kDS2Data = @"DS2Data";
         strongify(self);
         [self.splitViewController presentViewController:nav animated:YES completion:nil];
     });
-    
+#endif
 }
 
 - (void)didPurchaseSubscription:(NSNotification *)note {
