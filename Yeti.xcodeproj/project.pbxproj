@@ -397,8 +397,10 @@
 		F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */; };
 		F0AF314C20D28F0800E074D6 /* IntroViewUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */; };
 		F0B05E4E21400C61001FD00B /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F0B05E5A21401177001FD00B /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; };
 		F0B05E6B21401350001FD00B /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; };
+		F0B05E7421401425001FD00B /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; };
+		F0B05E762140142A001FD00B /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0B05E7721401454001FD00B /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; };
 		F0B08C8520F62E3E007AA283 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F0869B582099CE6600A5D723 /* YetiTheme.m */; };
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
@@ -575,6 +577,13 @@
 			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
 			remoteInfo = DZNetworking;
 		};
+		F0B05E7821401459001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
+			remoteInfo = DZNetworking;
+		};
 		F0E8A29720ACAA2300FE06E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
@@ -647,6 +656,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F0FA474620CBB3960035B1F5 /* Store.framework in Embed Frameworks */,
+				F0B05E762140142A001FD00B /* DZNetworking.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1027,7 +1037,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0B05E5A21401177001FD00B /* DZNetworking.framework in Frameworks */,
+				F0B05E7721401454001FD00B /* DZNetworking.framework in Frameworks */,
 				F0E8A81220998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */,
 				F0C2E47620D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
@@ -1051,6 +1061,7 @@
 				F0FA474520CBB3960035B1F5 /* Store.framework in Frameworks */,
 				F069ABF7206E018F00021ABF /* CocoaLumberjack.framework in Frameworks */,
 				F069ABF8206E018F00021ABF /* OMGHTTPURLRQ.framework in Frameworks */,
+				F0B05E7421401425001FD00B /* DZNetworking.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1755,6 +1766,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0B05E7921401459001FD00B /* PBXTargetDependency */,
 			);
 			name = YetiShare;
 			productName = YetiShare;
@@ -2614,6 +2626,11 @@
 			name = DZNetworking;
 			targetProxy = F0B05E4C21400C45001FD00B /* PBXContainerItemProxy */;
 		};
+		F0B05E7921401459001FD00B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZNetworking;
+			targetProxy = F0B05E7821401459001FD00B /* PBXContainerItemProxy */;
+		};
 		F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Store;
@@ -2658,6 +2675,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../DZNetworking/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -2686,6 +2704,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../DZNetworking/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = SHARE_EXTENSION;
 				INFOPLIST_FILE = YetiShare/Info.plist;
@@ -2885,7 +2904,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS/DZNetworking.framework/Frameworks",
+					"$(PROJECT_DIR)/../DZNetworking/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -2919,7 +2938,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS/DZNetworking.framework/Frameworks",
+					"$(PROJECT_DIR)/../DZNetworking/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -3076,7 +3095,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS/DZNetworking.framework/Frameworks",
+					"$(PROJECT_DIR)/../DZNetworking/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -3171,6 +3190,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/../DZNetworking/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = SHARE_EXTENSION;
 				INFOPLIST_FILE = YetiShare/Info.plist;
