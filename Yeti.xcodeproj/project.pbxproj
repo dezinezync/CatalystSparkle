@@ -201,7 +201,6 @@
 		F069ABED206E018F00021ABF /* FeedsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C34A1FBADF8D00912CCF /* FeedsCell.m */; };
 		F069ABEE206E018F00021ABF /* FeedVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459D32059135E002906C3 /* FeedVC+Search.m */; };
 		F069ABEF206E018F00021ABF /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3003A1FE2633E0040D10D /* DTTimePeriodCollection.m */; };
-		F069ABF1206E018F00021ABF /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */; };
 		F069ABF2206E018F00021ABF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F069ABF3206E018F00021ABF /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3261FBAC10600912CCF /* DZAppdelegate.framework */; };
 		F069ABF5206E018F00021ABF /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3231FBAC10600912CCF /* JLRoutes.framework */; };
@@ -397,6 +396,7 @@
 		F0AF314820D28EFD00E074D6 /* IntroViewUUID.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */; };
 		F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */; };
 		F0AF314C20D28F0800E074D6 /* IntroViewUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */; };
+		F0B05E4E21400C61001FD00B /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B05E4221400C2F001FD00B /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0B08C8520F62E3E007AA283 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F0869B582099CE6600A5D723 /* YetiTheme.m */; };
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
@@ -417,8 +417,6 @@
 		F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
 		F0C2E47520D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
 		F0C2E47620D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
-		F0C34EFB206BD1BE0065BCE1 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */; };
-		F0C34EFC206BD1BE0065BCE1 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */; };
 		F0C7D79D212D3D2400F4DB9B /* StoreHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7D79C212D3D2400F4DB9B /* StoreHeaderView.m */; };
 		F0C7D79E212D3D2400F4DB9B /* StoreHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7D79C212D3D2400F4DB9B /* StoreHeaderView.m */; };
 		F0C7D7A0212D3D3000F4DB9B /* StoreHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7D79F212D3D3000F4DB9B /* StoreHeaderView.xib */; };
@@ -533,6 +531,48 @@
 			remoteGlobalIDString = F0E8A27720ACA9F000FE06E6;
 			remoteInfo = Store;
 		};
+		F0B05E4121400C2F001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0FC8E501B4FB1D300FDA46C;
+			remoteInfo = DZNetworking;
+		};
+		F0B05E4321400C2F001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0FC8E5B1B4FB1D300FDA46C;
+			remoteInfo = DZNetworkingTests;
+		};
+		F0B05E4521400C2F001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0B2C6811D10024C00944F5D;
+			remoteInfo = DZNetworkingMacOS;
+		};
+		F0B05E4721400C2F001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F031962A2075FDC400A50D17;
+			remoteInfo = DZNetworkingWatchOS;
+		};
+		F0B05E4A21400C3F001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
+			remoteInfo = DZNetworking;
+		};
+		F0B05E4C21400C45001FD00B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
+			remoteInfo = DZNetworking;
+		};
 		F0E8A29720ACAA2300FE06E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
@@ -592,6 +632,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F0B05E4E21400C61001FD00B /* DZNetworking.framework in Embed Frameworks */,
 				F0711EB320CBB459009F413A /* Store.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -877,6 +918,7 @@
 		F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntroViewUUID.xib; sourceTree = "<group>"; };
 		F0AF314920D28F0800E074D6 /* IntroViewUUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroViewUUID.h; sourceTree = "<group>"; };
 		F0AF314A20D28F0800E074D6 /* IntroViewUUID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroViewUUID.m; sourceTree = "<group>"; };
+		F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZNetworking.xcodeproj; path = ../../DZNetworking/DZNetworking.xcodeproj; sourceTree = "<group>"; };
 		F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderVC.h; sourceTree = "<group>"; };
 		F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderVC.m; sourceTree = "<group>"; };
 		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
@@ -886,7 +928,6 @@
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
 		F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UICKeyChainStore.framework; path = Carthage/Build/iOS/UICKeyChainStore.framework; sourceTree = SOURCE_ROOT; };
-		F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZNetworking.framework; path = Carthage/Build/iOS/DZNetworking.framework; sourceTree = SOURCE_ROOT; };
 		F0C7D79B212D3D2400F4DB9B /* StoreHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreHeaderView.h; sourceTree = "<group>"; };
 		F0C7D79C212D3D2400F4DB9B /* StoreHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreHeaderView.m; sourceTree = "<group>"; };
 		F0C7D79F212D3D3000F4DB9B /* StoreHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StoreHeaderView.xib; sourceTree = "<group>"; };
@@ -984,7 +1025,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0C34EFC206BD1BE0065BCE1 /* DZNetworking.framework in Frameworks */,
 				F0E8A81220998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */,
 				F0C2E47620D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
@@ -999,7 +1039,6 @@
 				F0AC8FE720E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F099466220AD86CB00E5520F /* StoreKit.framework in Frameworks */,
 				F0C2E47520D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
-				F069ABF1206E018F00021ABF /* DZNetworking.framework in Frameworks */,
 				F0E8A81120998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F069ABF2206E018F00021ABF /* MobileCoreServices.framework in Frameworks */,
 				F069ABF3206E018F00021ABF /* DZAppdelegate.framework in Frameworks */,
@@ -1021,7 +1060,6 @@
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
-				F0C34EFB206BD1BE0065BCE1 /* DZNetworking.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
 				F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
@@ -1413,7 +1451,6 @@
 				F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */,
 				F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
-				F0C34EFA206BD1BD0065BCE1 /* DZNetworking.framework */,
 				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
 				F070C3261FBAC10600912CCF /* DZAppdelegate.framework */,
 				F070C3221FBAC10600912CCF /* DZKit.framework */,
@@ -1543,6 +1580,7 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */,
 				F099465F20AD86BE00E5520F /* StoreKit.framework */,
 				F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */,
 				F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */,
@@ -1625,6 +1663,17 @@
 				F0A5AE8120C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf */,
 			);
 			path = PlexSerif;
+			sourceTree = "<group>";
+		};
+		F0B05E3B21400C2F001FD00B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0B05E4221400C2F001FD00B /* DZNetworking.framework */,
+				F0B05E4421400C2F001FD00B /* DZNetworkingTests.xctest */,
+				F0B05E4621400C2F001FD00B /* DZNetworking.framework */,
+				F0B05E4821400C2F001FD00B /* DZNetworking.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F0D01CBD211867E9003A01DD /* Icons */ = {
@@ -1722,6 +1771,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0B05E4D21400C45001FD00B /* PBXTargetDependency */,
 				F069ABAA206E018F00021ABF /* PBXTargetDependency */,
 				F0FA474820CBB3960035B1F5 /* PBXTargetDependency */,
 			);
@@ -1744,6 +1794,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0B05E4B21400C3F001FD00B /* PBXTargetDependency */,
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 				F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */,
 				F0711EB520CBB459009F413A /* PBXTargetDependency */,
@@ -1848,6 +1899,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F0B05E3B21400C2F001FD00B /* Products */;
+					ProjectRef = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
+				},
+				{
 					ProductGroup = F0E8A29320ACAA2300FE06E6 /* Products */;
 					ProjectRef = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
 				},
@@ -1864,6 +1919,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F0B05E4221400C2F001FD00B /* DZNetworking.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZNetworking.framework;
+			remoteRef = F0B05E4121400C2F001FD00B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B05E4421400C2F001FD00B /* DZNetworkingTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZNetworkingTests.xctest;
+			remoteRef = F0B05E4321400C2F001FD00B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B05E4621400C2F001FD00B /* DZNetworking.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZNetworking.framework;
+			remoteRef = F0B05E4521400C2F001FD00B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B05E4821400C2F001FD00B /* DZNetworking.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZNetworking.framework;
+			remoteRef = F0B05E4721400C2F001FD00B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F0E8A29820ACAA2300FE06E6 /* Store.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2159,7 +2242,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/DZKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/DZAppdelegate.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/DZNetworking.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/JLRoutes.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OMGHTTPURLRQ.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/DZThemeKit.framework",
@@ -2171,7 +2253,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZKit.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZAppdelegate.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZNetworking.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JLRoutes.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OMGHTTPURLRQ.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZThemeKit.framework",
@@ -2518,6 +2599,16 @@
 			isa = PBXTargetDependency;
 			name = Store;
 			targetProxy = F0711EB420CBB459009F413A /* PBXContainerItemProxy */;
+		};
+		F0B05E4B21400C3F001FD00B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZNetworking;
+			targetProxy = F0B05E4A21400C3F001FD00B /* PBXContainerItemProxy */;
+		};
+		F0B05E4D21400C45001FD00B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZNetworking;
+			targetProxy = F0B05E4C21400C45001FD00B /* PBXContainerItemProxy */;
 		};
 		F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
