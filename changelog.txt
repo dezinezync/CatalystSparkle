@@ -1,3 +1,6 @@
+[FIX] Fixes a crash when opening folders or the Unread feed when the Feed provides an invalid favicon URL.
+
+-- 148 --
 [NEW] Removed Subscription requirement for this and subsequent Test Flight builds.
 [NEW] Added info to subscriptions.html (Accessed by tapping Learn More in the Subscriptions Interface) regarding expired subscriptions.
 [FIX] Fixes a crash when opening the Subscriptions Interface when you're subscribed to one of the two plans.
