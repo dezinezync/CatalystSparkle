@@ -343,9 +343,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         params[@"userID"] = MyFeedsManager.userID;
     }
 #ifndef SHARE_EXTENSION
+#if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
+#endif
 #endif
     
     [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -580,9 +582,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                              }.mutableCopy;
     
 #ifndef SHARE_EXTENSION
+#if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
+#endif
 #endif
     
     [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -783,9 +787,11 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10}.mutableCopy;
     
 #ifndef SHARE_EXTENSION
+#if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
+#endif
 #endif
     
     weakify(self);
