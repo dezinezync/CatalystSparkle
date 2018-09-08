@@ -12,7 +12,7 @@
 
 @interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
 
-@property (weak, nonatomic) IBOutlet UINavigationItem *navitem;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -28,7 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navitem.title = @"Add to Elytra";
+    self.title = @"Add to Elytra";
     
     self.selected = NSNotFound;
     self.data = @[];
@@ -93,7 +93,7 @@
 
 - (void)setupTableRows:(NSArray <NSString *> *)data
 {
-    self.navitem.title = @"Select a feed";
+    self.title = @"Select a feed";
     
     _selected = NSNotFound;
     self.data = data;
@@ -209,6 +209,10 @@
             }];
         }
     }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.extensionContext completeRequestReturningItems:nil completionHandler:nil];
+    });
 }
 
 @end
