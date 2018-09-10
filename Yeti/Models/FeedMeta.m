@@ -5,9 +5,9 @@
 {
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.icons forKey:@"icons"];
-    [encoder encodeObject:self.precomposed forKey:@"precomposed"];
     [encoder encodeObject:self.descriptionText forKey:@"descriptionText"];
     [encoder encodeObject:self.feedlinks forKey:@"feedlinks"];
+    [encoder encodeObject:self.feeds forKey:@"feeds"];
     [encoder encodeObject:self.icon forKey:@"icon"];
     [encoder encodeObject:self.keywords forKey:@"keywords"];
     [encoder encodeObject:self.opengraph forKey:@"opengraph"];
@@ -19,9 +19,9 @@
 {
     if ((self = [super initWithCoder:decoder])) {
         self.icons = [decoder decodeObjectForKey:@"icons"];
-        self.precomposed = [decoder decodeObjectForKey:@"precomposed"];
         self.descriptionText = [decoder decodeObjectForKey:@"descriptionText"];
         self.feedlinks = [decoder decodeObjectForKey:@"feedlinks"];
+        self.feeds = [decoder decodeObjectForKey:@"feeds"];
         self.icon = [decoder decodeObjectForKey:@"icon"];
         self.keywords = [decoder decodeObjectForKey:@"keywords"];
         self.opengraph = [decoder decodeObjectForKey:@"opengraph"];
@@ -54,37 +54,24 @@
 - (void)setValue:(id)value forKey:(NSString *)key
 {
 
-    if ([key isEqualToString:@"apple-touch-icon"] || [key isEqualToString:@"appleTouch"]) {
+    if ([key isEqualToString:@"apple-touch-icon"]) {
 
         if ([value isKindOfClass:[NSDictionary class]]) {
             self.icons = value;
         }
 
-    } else if ([key isEqualToString:@"feedlinks"]) {
+    } else if ([key isEqualToString:@"feeds"]) {
 
         if ([value isKindOfClass:[NSArray class]])
         {
 
             NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
             for (id valueMember in value) {
-                [myMembers addObject:valueMember];
+                NSDictionary *populatedMember = valueMember;
+                [myMembers addObject:populatedMember];
             }
 
-            self.feedlinks = myMembers;
-
-        }
-
-    } else if ([key isEqualToString:@"keywords"]) {
-
-        if ([value isKindOfClass:[NSArray class]])
-        {
-
-            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
-            for (id valueMember in value) {
-                [myMembers addObject:valueMember];
-            }
-
-            self.keywords = myMembers;
+            self.feeds = myMembers;
 
         }
 
@@ -106,8 +93,6 @@
 
     if ([key isEqualToString:@"apple-touch-icon"]) {
         [self setValue:value forKey:@"icons"];
-    } else if ([key isEqualToString:@"apple-touch-icon-precomposed"]) {
-        [self setValue:value forKey:@"precomposed"];
     } else if ([key isEqualToString:@"description"]) {
         [self setValue:value forKey:@"descriptionText"];
     } else {
@@ -126,16 +111,16 @@
         [dictionary setObject:self.icons forKey:@"icons"];
     }
 
-    if (self.precomposed) {
-        [dictionary setObject:self.precomposed forKey:@"precomposed"];
-    }
-
     if (self.descriptionText) {
         [dictionary setObject:self.descriptionText forKey:@"descriptionText"];
     }
 
     if (self.feedlinks) {
         [dictionary setObject:self.feedlinks forKey:@"feedlinks"];
+    }
+
+    if (self.feeds) {
+        [dictionary setObject:self.feeds forKey:@"feeds"];
     }
 
     if (self.icon) {
@@ -147,7 +132,8 @@
     }
 
     if (self.opengraph) {
-        [dictionary setObject:self.opengraph forKey:@"opengraph"];
+        NSDictionary *dict = self.opengraph ? [self.opengraph dictionaryRepresentation] : @{};
+        [dictionary setObject:dict forKey:@"opengraph"];
     }
 
     if (self.title) {

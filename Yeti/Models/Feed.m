@@ -259,11 +259,21 @@
             
             NSMutableArray *availableKeys = [[[self.extra icons] allKeys] mutableCopy];
             
+            NSInteger baseIndex = [availableKeys indexOfObject:@"base"];
+            
+            if (baseIndex != NSNotFound) {
+                [availableKeys removeObjectAtIndex:baseIndex];
+            }
+            
             availableKeys = [[availableKeys rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
                 return @(obj.integerValue);
             }] sortedArrayUsingSelector:@selector(compare:)].mutableCopy;
             
             url = [self.extra icons][[[availableKeys lastObject] stringValue]];
+            
+            if (!url && baseIndex != NSNotFound) {
+                url = [self.extra.icons valueForKey:@"base"];
+            }
 
         }
         else if (self.extra.opengraph && [self.extra.opengraph image]) {
@@ -272,13 +282,14 @@
         else if (self.extra.opengraph && self.extra.opengraph.image) {
             url = self.extra.opengraph.image;
         }
-        else if (self.favicon != nil && [self.favicon isBlank] == NO) {
-            url = self.favicon;
-            
-            if ([[url pathExtension] isEqualToString:@"ico"]) {
-                NSURLComponents *components = [NSURLComponents componentsWithString:self.favicon];
-                url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
-            }
+    }
+    
+    if (url == nil && self.favicon != nil && [self.favicon isBlank] == NO) {
+        url = self.favicon;
+        
+        if ([[url pathExtension] isEqualToString:@"ico"]) {
+            NSURLComponents *components = [NSURLComponents componentsWithString:self.favicon];
+            url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
         }
     }
     

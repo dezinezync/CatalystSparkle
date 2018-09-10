@@ -50,11 +50,7 @@
 
     if ([key isEqualToString:@"description"]) {
         [self setValue:value forKey:@"descriptionText"];
-    }
-    else if ([key isEqualToString:@"image:secure_url"]) {
-        [self setValue:value forKey:@"image"];
-    }
-    else {
+    } else {
 //        [super setValue:value forUndefinedKey:key];
     }
 
