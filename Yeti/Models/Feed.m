@@ -284,6 +284,15 @@
         }
     }
     
+    if (url == nil && self.extra.icon != nil && [self.extra.icon isBlank] == NO) {
+        url = self.extra.icon;
+        
+        if ([[url pathExtension] isEqualToString:@"ico"]) {
+            NSURLComponents *components = [NSURLComponents componentsWithString:self.extra.icon];
+            url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
+        }
+    }
+    
     if (url == nil && self.favicon != nil && [self.favicon isBlank] == NO) {
         url = self.favicon;
         
