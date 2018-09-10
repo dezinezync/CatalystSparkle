@@ -7,7 +7,7 @@
 #import <DZKit/DZDatasourceModel.h>
 
 @interface Feed : DZCloudObject <NSCoding, DZDatasourceModel, NSCopying> {
-
+    
 }
 
 @property (nonatomic, copy) NSString *etag;
@@ -34,6 +34,6 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
-- (NSString *)faviconURI;
+@property (nonatomic, copy) NSString *faviconURI;
 
 @end
