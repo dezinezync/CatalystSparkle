@@ -60,9 +60,9 @@
 
 #pragma mark - Getters
 
-- (NSString *)accessibilityLabel {
-    return formattedString(@"Heading level %@", @(self.level));
-}
+//- (NSString *)accessibilityLabel {
+//    return self.attributedText.string;
+//}
 
 - (UIAccessibilityTraits)accessibilityTraits {
     return UIAccessibilityTraitStaticText|UIAccessibilityTraitHeader;

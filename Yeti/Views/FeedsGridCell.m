@@ -27,6 +27,7 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
     [super awakeFromNib];
     // Initialization code
     self.selectedBackgroundView = [UIView new];
+    self.imageView.image = [UIImage imageNamed:@"nofavicon"];
 }
 
 - (void)configure:(Feed *)feed {
@@ -69,7 +70,7 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
     [super prepareForReuse];
     
     self.titleLabel.text = nil;
-    self.imageView.image = nil;
+    self.imageView.image = [UIImage imageNamed:@"nofavicon"];;
     self.feed = nil;
 }
 

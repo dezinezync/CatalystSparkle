@@ -368,9 +368,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        if ([obj isKindOfClass:Paragraph.class] && [(Paragraph *)obj isBigContainer]) {
+        if ([obj isKindOfClass:Paragraph.class]) {
+            Paragraph *para = obj;
             
-            [(Paragraph *)obj setAccessibileElements:nil];
+            if (para.isCaption == NO && para.isAccessibilityElement == NO) {
+                para.accessibileElements = nil;
+            }
             
         }
         
@@ -1666,6 +1669,24 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             if ([subview isKindOfClass:Paragraph.class] && [(Paragraph *)subview isAppearing]) {
                 [(Paragraph *)subview viewDidDisappear];
             }
+        }
+    }
+    else {
+        // for lazy-loading, the viewDidDisappear method of Paragraph nils out accesssibilityElements
+        NSArray <UIView *> *visibleViews = [self visibleViews];
+        
+        NSArray <Paragraph *> *paragraphs = (NSArray <Paragraph *> *)[visibleViews rz_filter:^BOOL(UIView *obj, NSUInteger idx, NSArray *array) {
+            return [obj isKindOfClass:Paragraph.class];
+        }];
+        
+        // we only need paragraphs that assign custom UIAccessibilityElements
+        NSArray <Paragraph *> *overridingParagraphs = (NSArray <Paragraph *> *)[paragraphs rz_filter:^BOOL(Paragraph *obj, NSUInteger idx, NSArray *array) {
+            return obj.isCaption == NO && [obj isAccessibilityElement] == NO;
+        }];
+        
+        for (Paragraph *obj in overridingParagraphs) {
+            // force these to be recalculated
+            obj.accessibileElements = nil;
         }
     }
     

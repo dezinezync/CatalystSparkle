@@ -113,6 +113,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.attributedText = nil;
     }
     
+    if (self.isCaption == NO && self.isAccessibilityElement == NO) {
+        self.accessibileElements = nil;
+    }
+    
 }
 
 #pragma mark - Instance methods
@@ -546,6 +550,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
 #pragma mark - <UIAccessibilityContainer>
 
 - (BOOL)isAccessibilityElement {
+    if (self.isCaption) {
+        return NO;
+    }
+    
     return !self.isBigContainer;
 }
 
@@ -561,6 +569,15 @@ static NSParagraphStyle * _paragraphStyle = nil;
 }
 
 - (NSMutableArray *)accessibileElements {
+    
+    if (self.isCaption) {
+        if (_accessibileElements == nil) {
+            _accessibileElements = [NSMutableArray new];
+        }
+        
+        return _accessibileElements;
+    }
+    
     if (_accessibileElements == nil) {
         _accessibileElements = [NSMutableArray new];
         
@@ -575,13 +592,17 @@ static NSParagraphStyle * _paragraphStyle = nil;
             NSAttributedString *substr = [attrs attributedSubstringFromRange:range];
             
             UIAccessibilityElement *elem = [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
-            elem.accessibilityLabel = @"Paragraph";
+            elem.accessibilityLabel = @"";
             elem.accessibilityValue = substr.string;
             elem.accessibilityAttributedValue = substr;
             elem.accessibilityTraits = UIAccessibilityTraitStaticText;
             
             CGRect frame = [Paragraph boundingRectIn:self forCharacterRange:range];
-            frame = [self convertRect:frame toView:nil];
+            CGRect convertedFrame = UIAccessibilityConvertFrameToScreenCoordinates(frame, self);
+
+            frame = CGRectIntegral(convertedFrame);
+            // correctly sets the Y offset to center the accessibility frame
+            frame.origin.y += 6.f;
             
             elem.accessibilityFrame = frame;
             

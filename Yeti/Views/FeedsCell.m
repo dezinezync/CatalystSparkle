@@ -251,23 +251,36 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     }
 }
 
-- (NSString *)accessibilityValue {
-    if ([self.object isKindOfClass:Folder.class]) {
-        return @"Folder";
+#pragma mark - a11y
+
+- (NSString *)accessibilityLabel {
+    NSInteger count = [self.countLabel.text integerValue];
+    NSString *title = self.titleLabel.text;
+    
+    if ([title isEqualToString:@"Bookmarks"]) {
+        return formattedString(@"%@. %@ article%@", title, @(count), count == 1 ? @"" : @"s");
     }
     
-    return [super accessibilityValue];
+    return formattedString(@"%@. %@ unread article%@", title, @(count), count == 1 ? @"" : @"s");
 }
+
+//- (NSString *)accessibilityValue {
+//    if ([self.object isKindOfClass:Folder.class]) {
+//        return @"Folder";
+//    }
+//
+//    return [super accessibilityValue];
+//}
 
 - (NSString *)accessibilityHint {
     if ([self.object isKindOfClass:Folder.class]) {
         Folder *folder = (Folder *)[self object];
         
         if ([folder isExpanded]) {
-            return @"Close Folder";
+            return @"Tap to Close Folder";
         }
         
-        return @"Open Folder";
+        return @"Tap to Open Folder";
     }
     
     return [super accessibilityValue];

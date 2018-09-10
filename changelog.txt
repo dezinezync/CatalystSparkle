@@ -1,7 +1,12 @@
 [IMPROVEMENTS]
 - The Share Extension will now dismiss itself once it has completed it's work.
 - The Navigation Bar for the Share Extension now extends all the way to the top edge.
+- Paragraphs that are drawn lazily on screen now have the correct attributes that Voice Over can recognize them instantly.
+- Improved text for Voice Over for feeds and folders on the main interface.
+- Improved text for Voice Over for article lists. The old behavior where the Voice Over engine said "2d" instead of "2 days" is also changed in this build.
+- Headings no longer call out the level when Voice Over reads it. It will now only read the content. 
 
 [FIXES]
 - Scrollbars now use the correct dark or light tinting based on your active theme.
 - Fixes a crash that would occur when the App tried to load an article with an invalid ID.
+- Rotating the device no longer causes Voice Over to stop recognizing on-screen elements.
