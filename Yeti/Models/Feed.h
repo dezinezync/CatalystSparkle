@@ -2,6 +2,7 @@
 
 #import "FeedItem.h"
 #import "Author.h"
+#import "FeedMeta.h"
 
 #import <DZKit/DZDatasourceModel.h>
 
@@ -17,7 +18,7 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, copy) NSString *favicon;
-@property (nonatomic, strong) NSDictionary *extra;
+@property (nonatomic, strong) FeedMeta *extra;
 @property (nonatomic, copy) NSNumber *unread;
 
 @property (nonatomic, strong) NSArray <Author *> *authors;

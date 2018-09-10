@@ -142,6 +142,14 @@
         }
         
     }
+    else if ([key isEqualToString:@"extra"]) {
+        
+        if ([value isKindOfClass:FeedMeta.class] == NO && [value isKindOfClass:NSDictionary.class]) {
+            FeedMeta *instance = [FeedMeta instanceFromDictionary:value];
+            self.extra = instance;
+        }
+        
+    }
     else {
         [super setValue:value forKey:key];
     }
@@ -218,7 +226,8 @@
     }
     
     if (self.extra) {
-        [dictionary setObject:self.extra forKey:@"extra"];
+        NSDictionary *extra = [self.extra isKindOfClass:FeedMeta.class] ? [self.extra dictionaryRepresentation] : (NSDictionary *)[self extra];
+        [dictionary setObject:extra forKey:@"extra"];
     }
     
     if (self.hub) {
@@ -246,46 +255,34 @@
     
     if (self.extra) {
         
-        if ([self.extra valueForKey:@"apple-touch-icon"] && [self.extra[@"apple-touch-icon"] count]) {
+        if (self.extra.icons && [self.extra.icons count]) {
             
-            NSMutableArray *availableKeys = [[[self.extra valueForKey:@"apple-touch-icon"] allKeys] mutableCopy];
-            NSInteger baseIndex = [availableKeys indexOfObject:@"base"];
-            
-            if (baseIndex != NSNotFound) {
-                [availableKeys removeObjectAtIndex:baseIndex];
-            }
+            NSMutableArray *availableKeys = [[[self.extra icons] allKeys] mutableCopy];
             
             availableKeys = [[availableKeys rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
                 return @(obj.integerValue);
             }] sortedArrayUsingSelector:@selector(compare:)].mutableCopy;
             
-            url = [self.extra valueForKey:@"apple-touch-icon"][[[availableKeys lastObject] stringValue]];
-            
-            if (!url && baseIndex != NSNotFound) {
-                url = [self.extra[@"apple-touch-icon"] valueForKey:@"base"];
-            }
+            url = [self.extra icons][[[availableKeys lastObject] stringValue]];
+
         }
-        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image:secure_url"]) {
-            url = [self.extra[@"opengraph"] valueForKey:@"image:secure_url"];
+        else if (self.extra.opengraph && [self.extra.opengraph image]) {
+            url = self.extra.opengraph.image;
         }
-        else if ([self.extra valueForKey:@"opengraph"] && [self.extra[@"opengraph"] valueForKey:@"image"]) {
-            url = [self.extra[@"opengraph"] valueForKey:@"image"];
+        else if (self.extra.opengraph && self.extra.opengraph.image) {
+            url = self.extra.opengraph.image;
         }
-        else if ([self.extra valueForKey:@"favicon"] && ![[self.extra valueForKey:@"favicon"] isBlank]) {
-            url = [self.extra valueForKey:@"favicon"];
+        else if (self.favicon != nil && [self.favicon isBlank] == NO) {
+            url = self.favicon;
             
             if ([[url pathExtension] isEqualToString:@"ico"]) {
-                NSURLComponents *components = [NSURLComponents componentsWithString:[self.extra valueForKey:@"favicon"]];
+                NSURLComponents *components = [NSURLComponents componentsWithString:self.favicon];
                 url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
             }
         }
     }
     
-    if (!url && (self.favicon && ![self.favicon isBlank])) {
-        url = self.favicon;
-    }
-    
-    if (!url || (url && [url isKindOfClass:NSString.class] && [url isBlank]))
+   if (!url || (url && [url isKindOfClass:NSString.class] && [url isBlank]))
         return url;
     
     // ensure this is not an absolute URL

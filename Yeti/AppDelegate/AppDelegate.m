@@ -69,11 +69,13 @@ AppDelegate *MyAppDelegate = nil;
     [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
 
     // To test push notifications
+#ifdef DEBUG
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //        strongify(self);
 //
 //        [self openFeed:@(18) article:@(97012)];
 //    });
+#endif
     
     //    [self yt_log_fontnames];
     

@@ -1,3 +1,7 @@
 [IMPROVEMENTS]
 - The Share Extension will now dismiss itself once it has completed it's work.
-- The Navigation Bar for the Share Extension now extends all the way to the top edge. 
+- The Navigation Bar for the Share Extension now extends all the way to the top edge.
+
+[FIXES]
+- Scrollbars now use the correct dark or light tinting based on your active theme.
+- Fixes a crash that would occur when the App tried to load an article with an invalid ID.

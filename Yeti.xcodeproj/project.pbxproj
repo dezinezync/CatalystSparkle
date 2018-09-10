@@ -421,6 +421,12 @@
 		F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
 		F0C2E47520D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
 		F0C2E47620D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
+		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
+		F0C6CA6C2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
+		F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
+		F0C6CA6E2143A17B00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
+		F0C6CA712143A37E00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
+		F0C6CA722143A38100577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
 		F0C7D79D212D3D2400F4DB9B /* StoreHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7D79C212D3D2400F4DB9B /* StoreHeaderView.m */; };
 		F0C7D79E212D3D2400F4DB9B /* StoreHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7D79C212D3D2400F4DB9B /* StoreHeaderView.m */; };
 		F0C7D7A0212D3D3000F4DB9B /* StoreHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7D79F212D3D3000F4DB9B /* StoreHeaderView.xib */; };
@@ -940,6 +946,10 @@
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
 		F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UICKeyChainStore.framework; path = Carthage/Build/iOS/UICKeyChainStore.framework; sourceTree = SOURCE_ROOT; };
+		F0C6CA662143A17B00577D16 /* MetaOpenGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaOpenGraph.h; sourceTree = "<group>"; };
+		F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaOpenGraph.m; sourceTree = "<group>"; };
+		F0C6CA682143A17B00577D16 /* FeedMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedMeta.h; sourceTree = "<group>"; };
+		F0C6CA692143A17B00577D16 /* FeedMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedMeta.m; sourceTree = "<group>"; };
 		F0C7D79B212D3D2400F4DB9B /* StoreHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreHeaderView.h; sourceTree = "<group>"; };
 		F0C7D79C212D3D2400F4DB9B /* StoreHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreHeaderView.m; sourceTree = "<group>"; };
 		F0C7D79F212D3D3000F4DB9B /* StoreHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StoreHeaderView.xib; sourceTree = "<group>"; };
@@ -1367,6 +1377,10 @@
 				F0869B582099CE6600A5D723 /* YetiTheme.m */,
 				F0315DBA20CA59FB00F5674A /* Subscription.h */,
 				F0315DBB20CA59FB00F5674A /* Subscription.m */,
+				F0C6CA682143A17B00577D16 /* FeedMeta.h */,
+				F0C6CA692143A17B00577D16 /* FeedMeta.m */,
+				F0C6CA662143A17B00577D16 /* MetaOpenGraph.h */,
+				F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2310,10 +2324,12 @@
 				F035A21920617EC3005A88EE /* ActionViewController.m in Sources */,
 				F035A2252061812F005A88EE /* FeedsManager.m in Sources */,
 				F035A22D206181C8005A88EE /* Range.m in Sources */,
+				F0C6CA712143A37E00577D16 /* FeedMeta.m in Sources */,
 				F035A229206181C8005A88EE /* Enclosure.m in Sources */,
 				F0D1C5E020DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F035A22C206181C8005A88EE /* FeedItem.m in Sources */,
 				F0D0085E2081C90100EAFE3B /* Author.m in Sources */,
+				F0C6CA722143A38100577D16 /* MetaOpenGraph.m in Sources */,
 				F0B08C8520F62E3E007AA283 /* YetiTheme.m in Sources */,
 				F0B21BC3208C82C7007E5A3B /* Folder.m in Sources */,
 				F035A22A206181C8005A88EE /* Content.m in Sources */,
@@ -2345,6 +2361,7 @@
 				F069ABB8206E018F00021ABF /* Youtube.m in Sources */,
 				F0202BE220A41AC400FBC3E1 /* FiltersVC.m in Sources */,
 				F03BC4EA20C9016A007B574F /* EmptyView.m in Sources */,
+				F0C6CA6C2143A17B00577D16 /* MetaOpenGraph.m in Sources */,
 				F069ABB9206E018F00021ABF /* NSDate+DateTools.m in Sources */,
 				F04416E820E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F069ABBA206E018F00021ABF /* EmptyVC.m in Sources */,
@@ -2367,6 +2384,7 @@
 				F069ABC5206E018F00021ABF /* HTMLUtils.m in Sources */,
 				F069ABC6206E018F00021ABF /* NSString+HTML.m in Sources */,
 				F0315DBD20CA59FB00F5674A /* Subscription.m in Sources */,
+				F0C6CA6E2143A17B00577D16 /* FeedMeta.m in Sources */,
 				F0A7B8F520FA21C00056A2C0 /* YetiStoreVC.m in Sources */,
 				F069ABC7206E018F00021ABF /* Gallery.m in Sources */,
 				F022B0E020DC30DE00030185 /* AccentButton.m in Sources */,
@@ -2501,7 +2519,9 @@
 				F0D300421FE2633E0040D10D /* DTTimePeriod.m in Sources */,
 				F03BC4E920C9016A007B574F /* EmptyView.m in Sources */,
 				F0D300431FE2633E0040D10D /* DTTimePeriodChain.m in Sources */,
+				F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */,
 				F0D0085C2081C72300EAFE3B /* Author.m in Sources */,
+				F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
