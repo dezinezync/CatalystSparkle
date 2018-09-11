@@ -18,5 +18,7 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, weak) UIAlertController *addFeedDialog;
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
 
+@property (nonatomic, assign) BOOL processingTransactions;
+
 @end
 
