@@ -8,7 +8,7 @@
 - Improved text for Voice Over for feeds and folders on the main interface.
 - Improved text for Voice Over for article lists. The old behavior where the Voice Over engine said "2d" instead of "2 days" is also changed in this build.
 - Headings no longer call out the level when Voice Over reads it. It will now only read the content.
-- When you purchase a subscription (non-testable directly in Test Flight builds), the receipt is immediately verified and the status is updated. 
+- When you purchase a subscription (non-testable directly in Test Flight builds), the receipt is immediately verified and the status is updated. #GH-19
 
 [FIXES]
 - Scrollbars now use the correct dark or light tinting based on your active theme. GH-24
