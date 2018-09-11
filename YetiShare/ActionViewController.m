@@ -178,18 +178,34 @@
                 // feed has been received directly
             }
             else {
+                strongify(self);
                 
+                asyncMain(^{
+                    [self.activityIndicator stopAnimating];
+                    self.activityIndicator.hidden = YES;
+                });
+                
+                asyncMain(^{
+                    self.activityLabel.text = @"There are no known RSS Feeds found on this web page.";
+                    [self.activityLabel sizeToFit];
+                });
             }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [self.activityIndicator stopAnimating];
-            self.activityIndicator.hidden = YES;
-            
             strongify(self);
             
             asyncMain(^{
-                self.activityLabel.text = error.localizedDescription;
+                [self.activityIndicator stopAnimating];
+                self.activityIndicator.hidden = YES;
+            });
+            
+            asyncMain(^{
+                NSString *err = error.localizedDescription;
+                if ([err containsString:@"Unknown Error"]) {
+                    err = @"There are no known RSS Feeds found on this web page.";
+                }
+                self.activityLabel.text = err;
                 [self.activityLabel sizeToFit];
             });
             
