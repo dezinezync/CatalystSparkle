@@ -537,7 +537,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSString *path = formattedString(@"/article/%@", articleID);
     
-    [self.session GET:path parameters:@{@"userID" : MyFeedsManager.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSMutableDictionary *params = @{}.mutableCopy;
+    
+    if (MyFeedsManager.userID) {
+        params[@"userID"] = MyFeedsManager.userID;
+    }
+    
+    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             

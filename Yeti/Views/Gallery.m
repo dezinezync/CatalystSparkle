@@ -41,7 +41,7 @@
 
 @end
 
-@interface Gallery () <UICollectionViewDelegate, UICollectionViewDataSource> {
+@interface Gallery () <UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching> {
     // if the gallery is unbounded, this means there was no height information present
     // in the images. So we keep it unbounded and reconfig ourseleves based on the
     // first successful image load.
@@ -73,7 +73,9 @@
         self.collectionView.dataSource = self;
         self.collectionView.delegate = self;
         self.collectionView.backgroundColor = theme.articleBackgroundColor;
-        self.collectionView.prefetchingEnabled = NO;
+        
+        self.collectionView.prefetchDataSource = self;
+        self.collectionView.prefetchingEnabled = YES;
         
         [self.pageControl addTarget:self action:@selector(didChangePage:) forControlEvents:UIControlEventValueChanged];
         self.pageControl.currentPageIndicatorTintColor = theme.tintColor;
@@ -118,14 +120,7 @@
         asyncMain(^{
             strongify(self);
             [self setNeedsLayout];
-        })
-        
-        // we use a smaller timeout here since this can be the first item or comes in later.
-        // it get's it initial message from it's VC.
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            strongify(self);
-//            [self scrollViewDidScroll:self.collectionView];
-//        });
+        });
     }
 }
 
@@ -190,12 +185,6 @@
     
     weakify(self);
     
-//    asyncMain(^{
-//        strongify(self);
-//        [self setNeedsUpdateConstraints];
-//        [self layoutIfNeeded];
-//    });
-    
     asyncMain(^{
         strongify(self);
         [self.collectionView reloadData];
@@ -249,7 +238,7 @@
     GalleryCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kGalleryCell forIndexPath:indexPath];
     cell.backgroundColor = theme.unreadBadgeColor;
     
-    Content *content = [self.images objectAtIndex:indexPath.row];
+    Content *content = [self.images objectAtIndex:indexPath.item];
     
     NSString *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
     
@@ -298,6 +287,43 @@
     }
     else {
         self.pageControl.currentPage = ceil(point.x / scrollView.bounds.size.width);
+    }
+    
+}
+
+#pragma mark - <UICollectionViewDataSourcePrefetching>
+
+- (void)collectionView:(UICollectionView *)collectionView prefetchItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    
+    for (NSIndexPath *indexPath in indexPaths) {
+        Content *content = [self.images objectAtIndex:indexPath.item];
+        
+        if (content.task == nil) {
+            NSString *url = [content urlCompliantWithUsersPreferenceForWidth:collectionView.bounds.size.width];
+            
+            content.task = [SharedImageLoader downloadImageForURL:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                content.task = nil;
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                content.task = nil;
+                
+            }];
+        }
+    }
+    
+}
+
+- (void)collectionView:(UICollectionView *)collectionView cancelPrefetchingForItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    
+    for (NSIndexPath *indexPath in indexPaths) {
+        Content *content = [self.images objectAtIndex:indexPath.item];
+        
+        if (content.task != nil) {
+            [content.task cancel];
+            content.task = nil;
+        }
     }
     
 }

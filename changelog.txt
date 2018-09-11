@@ -1,3 +1,6 @@
+[NEW]
+- As and when the OS determines, images in galleries will now be prefetched so they are ready when you're about to view them (exception: doesn't work very well for large images or slow connections)
+
 [IMPROVEMENTS]
 - The Share Extension will now dismiss itself once it has completed it's work.
 - The Navigation Bar for the Share Extension now extends all the way to the top edge.
@@ -10,3 +13,4 @@
 - Scrollbars now use the correct dark or light tinting based on your active theme.
 - Fixes a crash that would occur when the App tried to load an article with an invalid ID.
 - Rotating the device no longer causes Voice Over to stop recognizing on-screen elements.
+- Prevents the app from crashing when it's restoring it's state back to an article.
