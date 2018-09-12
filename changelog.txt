@@ -1,3 +1,10 @@
+-- BUILD 157 --
+
+[FIX] Fixes regression for share extension introduced in build 152
+[FIX] Multiple memory leaks causing the app to receive memory warnings early on.
+
+-- BUILD 155 --
+
 [NEW]
 - As and when the OS determines, images in galleries will now be prefetched so they are ready when you're about to view them (exception: doesn't work very well for large images or slow connections) #GH-28
 
