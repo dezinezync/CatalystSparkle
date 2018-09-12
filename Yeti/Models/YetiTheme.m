@@ -66,7 +66,7 @@
     UITableViewCell *cell = [UITableViewCell appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     cell.backgroundColor = self.cellColor;
     
-    UIScrollView *scrollView = [UIScrollView appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
+    UIScrollView *scrollView = [UIScrollView appearance];
     scrollView.indicatorStyle = self.isDark ? UIScrollViewIndicatorStyleWhite : UIScrollViewIndicatorStyleDefault;
     
 }

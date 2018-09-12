@@ -134,7 +134,7 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     }
     
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
-    self.timeLabel.accessibilityValue = [item.timestamp timeAgoSinceNow];
+    self.timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
     
     if (!isCustomFeed) {
         if (!item.isRead)
@@ -232,6 +232,16 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     }
     
     return YES;
+}
+
+- (NSString *)accessibilityLabel {
+    
+    NSString *title = self.titleLabel.text;
+    NSString *summary = self.summaryLabel.text ?: @"";
+    NSString *author = self.authorLabel.text;
+    NSString *timeAgo = self.timeLabel.accessibilityLabel;
+    
+    return formattedString(@"%@, by %@. %@. %@", title, author, timeAgo, summary);
 }
 
 @end

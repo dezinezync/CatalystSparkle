@@ -2,11 +2,12 @@
 
 #import "FeedItem.h"
 #import "Author.h"
+#import "FeedMeta.h"
 
 #import <DZKit/DZDatasourceModel.h>
 
 @interface Feed : DZCloudObject <NSCoding, DZDatasourceModel, NSCopying> {
-
+    
 }
 
 @property (nonatomic, copy) NSString *etag;
@@ -17,7 +18,7 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, copy) NSString *favicon;
-@property (nonatomic, strong) NSDictionary *extra;
+@property (nonatomic, strong) FeedMeta *extra;
 @property (nonatomic, copy) NSNumber *unread;
 
 @property (nonatomic, strong) NSArray <Author *> *authors;
@@ -33,6 +34,6 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
-- (NSString *)faviconURI;
+@property (nonatomic, copy) NSString *faviconURI;
 
 @end

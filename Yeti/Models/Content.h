@@ -28,6 +28,8 @@
 @property (nonatomic, strong) NSDictionary *srcset;
 
 @property (nonatomic, strong) NSArray <Content *> *images;
+// this property is used during <UICollectionViewDataSourcePrefetching> tasks inside the gallery
+@property (nonatomic, weak) NSURLSessionTask *task;
 
 + (Content *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

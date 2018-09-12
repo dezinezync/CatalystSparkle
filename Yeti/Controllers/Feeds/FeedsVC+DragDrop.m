@@ -32,8 +32,8 @@
     // only feeds are draggble
     NSString *url = feed.url;
     
-    if (feed.extra && ([[feed extra] valueForKey:@"link"] || [feed.extra valueForKey:@"url"])) {
-        url = [[feed extra] valueForKey:@"link"] ?: [feed.extra valueForKey:@"url"];
+    if (feed.extra && feed.extra.url) {
+        url = feed.extra.url;
     }
     
     NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithObject:url];
@@ -199,7 +199,7 @@
             
             [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
                 
-                if ([objx.url isEqualToString:url] || [[objx.extra valueForKey:@"url"] isEqualToString:url] || [[[feed extra] valueForKey:@"link"] isEqualToString:url]) {
+                if ([objx.url isEqualToString:url] || [(objx.extra.url ?: @"") isEqualToString:url]) {
                     feed = objx;
                     source = obj;
                     *stopx = YES;

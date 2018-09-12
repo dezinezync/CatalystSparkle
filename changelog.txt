@@ -1,11 +1,18 @@
-[FIX] Fixes a crash when opening folders or the Unread feed when the Feed provides an invalid favicon URL.
+[NEW]
+- As and when the OS determines, images in galleries will now be prefetched so they are ready when you're about to view them (exception: doesn't work very well for large images or slow connections) #GH-28
 
--- 148 --
-[NEW] Removed Subscription requirement for this and subsequent Test Flight builds.
-[NEW] Added info to subscriptions.html (Accessed by tapping Learn More in the Subscriptions Interface) regarding expired subscriptions.
-[FIX] Fixes a crash when opening the Subscriptions Interface when you're subscribed to one of the two plans.
+[IMPROVEMENTS]
+- The Share Extension will now dismiss itself once it has completed it's work.
+- The Navigation Bar for the Share Extension now extends all the way to the top edge.
+- Paragraphs that are drawn lazily on screen now have the correct attributes that Voice Over can recognize them instantly.
+- Improved text for Voice Over for feeds and folders on the main interface.
+- Improved text for Voice Over for article lists. The old behavior where the Voice Over engine said "2d" instead of "2 days" is also changed in this build.
+- Headings no longer call out the level when Voice Over reads it. It will now only read the content.
+- When you purchase a subscription (non-testable directly in Test Flight builds), the receipt is immediately verified and the status is updated. #GH-19
 
--- 147 --
-[FIX] Uses the correct URL for "Rate Elytra"
-[FIX] Incorrect background colour for the Images Interface.
-[FIX] Incorrect background colour for the Filter input when using a dark theme.
+[FIXES]
+- Scrollbars now use the correct dark or light tinting based on your active theme. GH-24
+- Fixes a crash that would occur when the App tried to load an article with an invalid ID.
+- Rotating the device no longer causes Voice Over to stop recognizing on-screen elements.
+- Prevents the app from crashing when it's restoring it's state back to an article.
+- Mark All Unread (including articles not currently loaded in the app) from the Unread Interface now works as expected. #GH-18-TF

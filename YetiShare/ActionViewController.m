@@ -12,7 +12,7 @@
 
 @interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
 
-@property (weak, nonatomic) IBOutlet UINavigationItem *navitem;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
@@ -28,7 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navitem.title = @"Add to Elytra";
+    self.title = @"Add to Elytra";
     
     self.selected = NSNotFound;
     self.data = @[];
@@ -93,7 +93,7 @@
 
 - (void)setupTableRows:(NSArray <NSString *> *)data
 {
-    self.navitem.title = @"Select a feed";
+    self.title = @"Select a feed";
     
     _selected = NSNotFound;
     self.data = data;
@@ -178,18 +178,34 @@
                 // feed has been received directly
             }
             else {
+                strongify(self);
                 
+                asyncMain(^{
+                    [self.activityIndicator stopAnimating];
+                    self.activityIndicator.hidden = YES;
+                });
+                
+                asyncMain(^{
+                    self.activityLabel.text = @"There are no known RSS Feeds found on this web page.";
+                    [self.activityLabel sizeToFit];
+                });
             }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [self.activityIndicator stopAnimating];
-            self.activityIndicator.hidden = YES;
-            
             strongify(self);
             
             asyncMain(^{
-                self.activityLabel.text = error.localizedDescription;
+                [self.activityIndicator stopAnimating];
+                self.activityIndicator.hidden = YES;
+            });
+            
+            asyncMain(^{
+                NSString *err = error.localizedDescription;
+                if ([err containsString:@"Unknown Error"]) {
+                    err = @"There are no known RSS Feeds found on this web page.";
+                }
+                self.activityLabel.text = err;
                 [self.activityLabel sizeToFit];
             });
             
@@ -209,6 +225,10 @@
             }];
         }
     }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.extensionContext completeRequestReturningItems:nil completionHandler:nil];
+    });
 }
 
 @end

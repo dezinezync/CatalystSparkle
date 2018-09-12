@@ -345,7 +345,9 @@
     
     UITouch *touch = event.allTouches.anyObject;
     
-    if (touch && self.feed) {
+    if (touch
+        && (self.feed != nil
+            || ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
         if (touch.tapCount == 0) {
             [self didLongPressOnAllRead:sender];
             return;
@@ -408,8 +410,13 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 strongify(self);
                 if (self && [self tableView]) {
-                    [self _markVisibleRowsRead];
-                    [self _didFinishAllReadActionSuccessfully];
+                    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
+                        self.DS.data = @[];
+                    }
+                    else {
+                        [self _markVisibleRowsRead];
+                        [self _didFinishAllReadActionSuccessfully];
+                    }
                 }
             });
             

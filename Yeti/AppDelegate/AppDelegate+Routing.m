@@ -528,11 +528,18 @@
     if (articleID == nil)
         return;
     
-    YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    FeedVC *feedVC = nil;
     
-    FeedVC *feedVC = (FeedVC *)[nav topViewController];
+    @try {
+        YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+        
+        feedVC = (FeedVC *)[nav topViewController];
+    }
+    @catch (NSException *exc) {}
     
-    feedVC.loadOnReady = articleID;
+    if (feedVC != nil && [feedVC isKindOfClass:FeedVC.class]) {
+        feedVC.loadOnReady = articleID;
+    }
 }
 
 #pragma mark - External

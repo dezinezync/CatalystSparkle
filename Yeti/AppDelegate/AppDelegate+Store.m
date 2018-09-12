@@ -66,9 +66,18 @@
 }
 
 - (void)processTransactions:(NSArray <SKPaymentTransaction *> *)transactions {
+    
+    if (self.processingTransactions == YES) {
+        return;
+    }
+    
+    self.processingTransactions = YES;
+    
     // get the completed transactions
     NSArray <SKPaymentTransaction *> *processed = [transactions rz_filter:^BOOL(SKPaymentTransaction *obj, NSUInteger idx, NSArray *array) {
-        return obj.transactionState != SKPaymentTransactionStatePurchasing;
+    
+        return obj.transactionState == SKPaymentTransactionStatePurchased || obj.transactionState == SKPaymentTransactionStateRestored;
+    
     }];
     
     if (processed && processed.count) {
@@ -83,6 +92,7 @@
         if (transaction.transactionState == SKPaymentTransactionStateFailed) {
             
             if (transaction.error.code == SKErrorPaymentCancelled) {
+                self.processingTransactions = NO;
                 return;
             }
             
@@ -90,12 +100,14 @@
             // the user is interactively purchasing or restoring
             // otherwise this is happening during app launch
             if ([[UIApplication.sharedApplication.keyWindow rootViewController] presentedViewController] == nil) {
+                self.processingTransactions = NO;
                 return;
             }
             
             NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"Your purchase failed because the transaction was cancelled or failed before being added to the Apple server queue."}];
             
             [NSNotificationCenter.defaultCenter postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
+            self.processingTransactions = NO;
             return;
         }
         
@@ -117,7 +129,18 @@
                         [[NSUserDefaults standardUserDefaults] synchronize];
                     }
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:StoreDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                    // fetch the store values assuming it succeeded on the server
+                    [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:StoreDidPurchaseProduct object:nil userInfo:@{@"transactions": transactions}];
+                        
+                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        [AlertManager showGenericAlertWithTitle:@"Verification Succeeded" message:@"There was an error when retriving your Subscription. Your purchase/restore action however was successful."];
+                        
+                    }];
+                    
+                    self.processingTransactions = NO;
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
@@ -132,12 +155,16 @@
                         
                     }];
                     
+                    self.processingTransactions = NO;
+                    
                 }];
             }
             else {
                 NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"The App Store did not provide receipt data for this transaction"}];
                 
                 [NSNotificationCenter.defaultCenter postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
+                
+                self.processingTransactions = NO;
             }
 
         }
@@ -145,6 +172,8 @@
             NSError *error = [NSError errorWithDomain:@"Elytra" code:1500 userInfo:@{NSLocalizedDescriptionKey: @"The App Store did not provide a receipt for this transaction"}];
             
             [NSNotificationCenter.defaultCenter postNotificationName:StorePurchaseProductFailed object:nil userInfo:@{@"error": error}];
+            
+            self.processingTransactions = NO;
         }
         
     }

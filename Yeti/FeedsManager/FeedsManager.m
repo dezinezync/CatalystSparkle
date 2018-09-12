@@ -537,7 +537,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSString *path = formattedString(@"/article/%@", articleID);
     
-    [self.session GET:path parameters:@{@"userID" : MyFeedsManager.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSMutableDictionary *params = @{}.mutableCopy;
+    
+    if (MyFeedsManager.userID) {
+        params[@"userID"] = MyFeedsManager.userID;
+    }
+    
+    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successCB) {
             
@@ -618,22 +624,41 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (void)markFeedRead:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    NSNumber *feedID = feed.feedID;
+    NSString *path;
     NSNumber *userID = [self userID] ?: @(0);
     
-    NSString *path = formattedString(@"/feeds/%@/allread", feedID);
-    
-    [self.session GET:path parameters:@{@"userID": userID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-    
-        error = [self errorFromResponse:error.userInfo];
+    if (feed) {
+        NSNumber *feedID = feed.feedID;
         
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
-        }
+        path = formattedString(@"/feeds/%@/allread", feedID);
         
-    }];
+        [self.session GET:path parameters:@{@"userID": userID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            error = [self errorFromResponse:error.userInfo];
+            
+            if (errorCB)
+                errorCB(error, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
+            
+        }];
+    }
+    else {
+        path = formattedString(@"/unread/markall?userID=%@", userID);
+        
+        [self.session POST:path parameters:nil success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            error = [self errorFromResponse:error.userInfo];
+            
+            if (errorCB)
+                errorCB(error, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
+            
+        }];
+    }
     
 }
 
