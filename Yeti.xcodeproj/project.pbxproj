@@ -51,7 +51,6 @@
 		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F035A2252061812F005A88EE /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
 		F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
-		F035A2282061815B005A88EE /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F035A229206181C8005A88EE /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3471FBAD4B200912CCF /* Enclosure.m */; };
 		F035A22A206181C8005A88EE /* Content.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33F1FBACD2C00912CCF /* Content.m */; };
 		F035A22B206181C8005A88EE /* Feed.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3411FBACD2C00912CCF /* Feed.m */; };
@@ -204,7 +203,6 @@
 		F069ABF2206E018F00021ABF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F069ABF3206E018F00021ABF /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3261FBAC10600912CCF /* DZAppdelegate.framework */; };
 		F069ABF5206E018F00021ABF /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3231FBAC10600912CCF /* JLRoutes.framework */; };
-		F069ABF6206E018F00021ABF /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F069ABF7206E018F00021ABF /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
 		F069ABF8206E018F00021ABF /* OMGHTTPURLRQ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */; };
 		F069ABFA206E018F00021ABF /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
@@ -246,7 +244,6 @@
 		F070C2EC1FBABC3600912CCF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2EB1FBABC3600912CCF /* main.m */; };
 		F070C2F61FBABC3600912CCF /* YetiTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2F51FBABC3600912CCF /* YetiTests.m */; };
 		F070C3011FBABC3600912CCF /* YetiUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3001FBABC3600912CCF /* YetiUITests.m */; };
-		F070C3291FBAC10600912CCF /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3231FBAC10600912CCF /* JLRoutes.framework */; };
 		F070C32B1FBAC10600912CCF /* OMGHTTPURLRQ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */; };
 		F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3261FBAC10600912CCF /* DZAppdelegate.framework */; };
@@ -309,7 +306,6 @@
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
-		F0A589F1205A566700488015 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3221FBAC10600912CCF /* DZKit.framework */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AE5C20C197EE00CFA1D2 /* Merriweather-Bold.ttf */; };
@@ -433,6 +429,8 @@
 		F0C7D7A1212D3D3000F4DB9B /* StoreHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7D79F212D3D3000F4DB9B /* StoreHeaderView.xib */; };
 		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
 		F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */; };
+		F0C9F3DA2149151A007EF1E8 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
+		F0C9F3DB2149151A007EF1E8 /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */; };
 		F0CA458A211DB99400D08E40 /* dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */; };
 		F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
@@ -590,6 +588,41 @@
 			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
 			remoteInfo = DZNetworking;
 		};
+		F0C9F3CF214914CB007EF1E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F056B9B21F04F55D0041BB0C;
+			remoteInfo = DZKit;
+		};
+		F0C9F3D1214914CB007EF1E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F056B9BB1F04F55D0041BB0C;
+			remoteInfo = DZKitTests;
+		};
+		F0C9F3D3214914CB007EF1E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0A18EDC1F0504F300DC5E8B;
+			remoteInfo = DZKitTestApp;
+		};
+		F0C9F3D5214914CB007EF1E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0E7CC3E1F0B7C6D00A6ECBC;
+			remoteInfo = ColumnApp;
+		};
+		F0C9F3DC2149151A007EF1E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
+			remoteInfo = DZKit;
+		};
 		F0E8A29720ACAA2300FE06E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */;
@@ -650,6 +683,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F0B05E4E21400C61001FD00B /* DZNetworking.framework in Embed Frameworks */,
+				F0C9F3DB2149151A007EF1E8 /* DZKit.framework in Embed Frameworks */,
 				F0711EB320CBB459009F413A /* Store.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -810,7 +844,6 @@
 		F070C3001FBABC3600912CCF /* YetiUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiUITests.m; sourceTree = "<group>"; };
 		F070C3021FBABC3600912CCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F070C3201FBAC0E100912CCF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		F070C3221FBAC10600912CCF /* DZKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZKit.framework; path = Carthage/Build/iOS/DZKit.framework; sourceTree = SOURCE_ROOT; };
 		F070C3231FBAC10600912CCF /* JLRoutes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JLRoutes.framework; path = Carthage/Build/iOS/JLRoutes.framework; sourceTree = SOURCE_ROOT; };
 		F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Carthage/Build/iOS/OMGHTTPURLRQ.framework; sourceTree = SOURCE_ROOT; };
 		F070C3251FBAC10600912CCF /* YapDatabase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YapDatabase.framework; path = Carthage/Build/iOS/YapDatabase.framework; sourceTree = SOURCE_ROOT; };
@@ -956,6 +989,7 @@
 		F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedVC.h; sourceTree = "<group>"; };
 		F0C7E3D020627809001E4BE4 /* NewFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedVC.m; sourceTree = "<group>"; };
 		F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFeedVC.xib; sourceTree = "<group>"; };
+		F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = ../../DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
 		F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark~ipad@2x.png"; sourceTree = "<group>"; };
 		F0CCD2172098923A00920AE4 /* SplitVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitVC.h; sourceTree = "<group>"; };
 		F0CCD2182098923A00920AE4 /* SplitVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitVC.m; sourceTree = "<group>"; };
@@ -1051,7 +1085,6 @@
 				F0E8A81220998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */,
 				F0C2E47620D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
-				F035A2282061815B005A88EE /* DZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,7 +1099,6 @@
 				F069ABF2206E018F00021ABF /* MobileCoreServices.framework in Frameworks */,
 				F069ABF3206E018F00021ABF /* DZAppdelegate.framework in Frameworks */,
 				F069ABF5206E018F00021ABF /* JLRoutes.framework in Frameworks */,
-				F069ABF6206E018F00021ABF /* DZKit.framework in Frameworks */,
 				F074D804208DC2B4002F22CB /* WebP.framework in Frameworks */,
 				F0FA474520CBB3960035B1F5 /* Store.framework in Frameworks */,
 				F069ABF7206E018F00021ABF /* CocoaLumberjack.framework in Frameworks */,
@@ -1086,8 +1118,8 @@
 				F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
 				F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */,
+				F0C9F3DA2149151A007EF1E8 /* DZKit.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
-				F070C3291FBAC10600912CCF /* DZKit.framework in Frameworks */,
 				F0711EB220CBB459009F413A /* Store.framework in Frameworks */,
 				F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */,
 				F070C32B1FBAC10600912CCF /* OMGHTTPURLRQ.framework in Frameworks */,
@@ -1099,7 +1131,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0A589F1205A566700488015 /* DZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1482,7 +1513,6 @@
 				F074D802208DC2B4002F22CB /* WebP.framework */,
 				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
 				F070C3261FBAC10600912CCF /* DZAppdelegate.framework */,
-				F070C3221FBAC10600912CCF /* DZKit.framework */,
 				F070C3231FBAC10600912CCF /* JLRoutes.framework */,
 				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
 				F070C3251FBAC10600912CCF /* YapDatabase.framework */,
@@ -1609,6 +1639,7 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */,
 				F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */,
 				F099465F20AD86BE00E5520F /* StoreKit.framework */,
 				F0E8A29220ACAA2300FE06E6 /* Store.xcodeproj */,
@@ -1701,6 +1732,17 @@
 				F0B05E4421400C2F001FD00B /* DZNetworkingTests.xctest */,
 				F0B05E4621400C2F001FD00B /* DZNetworking.framework */,
 				F0B05E4821400C2F001FD00B /* DZNetworking.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0C9F3C9214914CA007EF1E8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0C9F3D0214914CB007EF1E8 /* DZKit.framework */,
+				F0C9F3D2214914CB007EF1E8 /* DZKitTests.xctest */,
+				F0C9F3D4214914CB007EF1E8 /* DZKitTestApp.app */,
+				F0C9F3D6214914CB007EF1E8 /* ColumnApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1828,6 +1870,7 @@
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 				F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */,
 				F0711EB520CBB459009F413A /* PBXTargetDependency */,
+				F0C9F3DD2149151A007EF1E8 /* PBXTargetDependency */,
 			);
 			name = Yeti;
 			productName = Yeti;
@@ -1929,6 +1972,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F0C9F3C9214914CA007EF1E8 /* Products */;
+					ProjectRef = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+				},
+				{
 					ProductGroup = F0B05E3B21400C2F001FD00B /* Products */;
 					ProjectRef = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
 				},
@@ -1975,6 +2022,34 @@
 			fileType = wrapper.framework;
 			path = DZNetworking.framework;
 			remoteRef = F0B05E4721400C2F001FD00B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0C9F3D0214914CB007EF1E8 /* DZKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZKit.framework;
+			remoteRef = F0C9F3CF214914CB007EF1E8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0C9F3D2214914CB007EF1E8 /* DZKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZKitTests.xctest;
+			remoteRef = F0C9F3D1214914CB007EF1E8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0C9F3D4214914CB007EF1E8 /* DZKitTestApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DZKitTestApp.app;
+			remoteRef = F0C9F3D3214914CB007EF1E8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0C9F3D6214914CB007EF1E8 /* ColumnApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ColumnApp.app;
+			remoteRef = F0C9F3D5214914CB007EF1E8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F0E8A29820ACAA2300FE06E6 /* Store.framework */ = {
@@ -2269,7 +2344,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/DZKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/DZAppdelegate.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/JLRoutes.framework",
@@ -2280,7 +2354,6 @@
 			);
 			name = Carthage;
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZKit.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZAppdelegate.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JLRoutes.framework",
@@ -2650,6 +2723,11 @@
 			isa = PBXTargetDependency;
 			name = DZNetworking;
 			targetProxy = F0B05E7821401459001FD00B /* PBXContainerItemProxy */;
+		};
+		F0C9F3DD2149151A007EF1E8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZKit;
+			targetProxy = F0C9F3DC2149151A007EF1E8 /* PBXContainerItemProxy */;
 		};
 		F0FA474320CBB38B0035B1F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

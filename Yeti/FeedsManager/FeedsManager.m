@@ -107,7 +107,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 docsDir = [dirPaths objectAtIndex:0];
             }
             
-            NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+            NSBundle *bundle = [NSBundle mainBundle];
+            
+            NSDictionary *infoDict = [bundle infoDictionary];
             NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
             NSString *filename = formattedString(@"receiptDate-%@.json", buildNumber);
             
@@ -116,6 +118,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 #ifdef DEBUG
             path = [path stringByAppendingString:@".debug"];
 #endif
+            
+            infoDict = nil;
+            buildNumber = nil;
+            filename = nil;
             
             _receiptLastUpdatePath = path;
         }
@@ -1487,32 +1493,24 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 - (DZURLSession *)session
 {
     if (_session == nil) {
-        
-        // Set app-wide shared cache (first number is megabyte value)
-        NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
-        NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
-        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
-        [NSURLCache setSharedURLCache:sharedCache];
-        sleep(1);
-//
+
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
         defaultConfig.HTTPMaximumConnectionsPerHost = 10;
-        defaultConfig.URLCache = sharedCache;
-        
+
         NSDictionary *const additionalHTTPHeaders = @{
                                                       @"Accept": @"application/json",
                                                       @"Content-Type": @"application/json"
                                                       };
-        
+
         [defaultConfig setHTTPAdditionalHeaders:additionalHTTPHeaders];
-        
+
         defaultConfig.allowsCellularAccess = YES;
         defaultConfig.HTTPShouldUsePipelining = YES;
         defaultConfig.waitsForConnectivity = NO;
         defaultConfig.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
         defaultConfig.timeoutIntervalForRequest = 30;
 
-        DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
+        DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
         session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];

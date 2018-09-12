@@ -34,6 +34,12 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
+    // Set app-wide shared cache (first number is megabyte value)
+    NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
+    NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
+    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
+    [NSURLCache setSharedURLCache:sharedCache];
+    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         MyAppDelegate = self;

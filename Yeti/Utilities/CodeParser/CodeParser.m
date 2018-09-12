@@ -14,10 +14,10 @@ CodeParser *MyCodeParser;
 
 @interface CodeParser ()
 
-@property (nonatomic, strong) JSContext *context;
 @property (nonatomic, strong) NSBundle *bundle;
 @property (nonatomic, strong) CodeTheme *theme;
 @property (nonatomic, strong) NSRegularExpression *htmlEscape;
+@property (nonatomic, copy) NSString *script;
 
 @end
 
@@ -37,16 +37,11 @@ CodeParser *MyCodeParser;
 {
     if (self = [super init])
     {
-        _context = [[JSContext alloc] init];
         _bundle = [NSBundle bundleForClass:[self class]];
         
         NSString *hlpath = [self.bundle pathForResource:@"hljs" ofType:@"js"];
         
         [self loadTheme:@"light"];
-        
-        [_context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
-            DDLogDebug(@"%@", aVal);
-        }];
         
         NSError *error = nil;
         
@@ -55,10 +50,9 @@ CodeParser *MyCodeParser;
         if (error) {
             DDLogError(@"%@", error);
         }
-        
-        __unused JSValue *winVal = [self.context evaluateScript:@"var window = {};"];
-        __unused JSValue *value = [self.context evaluateScript:script];
-        __unused JSValue *styleVal = [self.context evaluateScript:@"%@.configure({tabReplace: '    ', useBr: true})"];
+        else {
+            _script = script;
+        }
         
         _htmlEscape = [NSRegularExpression regularExpressionWithPattern:@"&#?[a-zA-Z0-9]+?;" options:NSRegularExpressionCaseInsensitive error:nil];
         
@@ -84,8 +78,21 @@ static NSString *const hljs = @"window.hljs";
         return [self parse:code];
     
     NSString *command = formattedString(@"%@.fixMarkup(%@.highlight(\"%@\",\`%@\`).value);", hljs, hljs, language, code);
-    JSValue *retval = [self.context evaluateScript:command];
+    
+    JSContext *context = [[JSContext alloc] init];
+    [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
+        DDLogDebug(@"%@", aVal);
+    }];
+    
+    __unused JSValue *winVal = [context evaluateScript:@"var window = {};"];
+    __unused JSValue *value = [context evaluateScript:self.script];
+    __unused JSValue *styleVal = [context evaluateScript:@"%@.configure({tabReplace: '    ', useBr: true})"];
+    
+    JSValue *retval = [context evaluateScript:command];
     NSString *parsed = [retval toString];
+    
+    context = nil;
+    retval = nil;
     
     if (!parsed)
         parsed = code;
@@ -99,8 +106,20 @@ static NSString *const hljs = @"window.hljs";
     code = [self neatifyCode:code];
     
     NSString *command = formattedString(@"%@.fixMarkup(%@.highlightAuto(\`%@\`).value);", hljs, hljs, code);
-    JSValue *retval = [self.context evaluateScript:command];
+    JSContext *context = [[JSContext alloc] init];
+    [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
+        DDLogDebug(@"%@", aVal);
+    }];
+    
+    __unused JSValue *winVal = [context evaluateScript:@"var window = {};"];
+    __unused JSValue *value = [context evaluateScript:self.script];
+    __unused JSValue *styleVal = [context evaluateScript:@"%@.configure({tabReplace: '    ', useBr: true})"];
+    
+    JSValue *retval = [context evaluateScript:command];
     NSString *parsed = [retval toString];
+    
+    context = nil;
+    retval = nil;
     
     if (!parsed)
         parsed = code;
