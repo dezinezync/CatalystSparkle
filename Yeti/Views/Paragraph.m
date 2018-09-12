@@ -263,15 +263,31 @@ static NSParagraphStyle * _paragraphStyle = nil;
 //                __block UIColor *background;
                 
                 if (NSThread.isMainThread) {
-                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Menlo" size:16.f] maximumPointSize:_bodyFont.pointSize];
-                    textcolor = theme.tintColor;
+                    UIFont *baseMonoFont = [UIFont fontWithName:@"Menlo" size:monoFont.pointSize];
+                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:baseMonoFont maximumPointSize:_bodyFont.pointSize];
+                    
+                    if ([self isKindOfClass:NSClassFromString(@"Heading")]) {
+                        textcolor = theme.titleColor;
+                    }
+                    else {
+                        textcolor = theme.tintColor;
+                    }
+                    
                 }
                 else {
                     weakify(self);
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         strongify(self);
-                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:@"Menlo" size:16.f] maximumPointSize:self->_bodyFont.pointSize];
-                        textcolor = theme.tintColor;
+                        UIFont *baseMonoFont = [UIFont fontWithName:@"Menlo" size:monoFont.pointSize];
+                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:baseMonoFont maximumPointSize:self->_bodyFont.pointSize];
+                        
+                        if ([self isKindOfClass:NSClassFromString(@"Heading")]) {
+                            textcolor = theme.titleColor;
+                        }
+                        else {
+                            textcolor = theme.tintColor;
+                        }
+                        
                     });
                 }
                 
