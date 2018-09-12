@@ -23,18 +23,18 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </tableView>
-                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="biK-f0-qE4">
-                                <rect key="frame" x="0.0" y="309.5" width="375" height="48.5"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" layoutMarginsFollowReadableWidth="YES" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="biK-f0-qE4">
+                                <rect key="frame" x="12" y="309.5" width="351" height="48.5"/>
                                 <subviews>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Hxw-Np-ZgW">
-                                        <rect key="frame" x="177.5" y="0.0" width="20" height="20"/>
+                                        <rect key="frame" x="165.5" y="0.0" width="20" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="foi-AZ-Qfr"/>
                                             <constraint firstAttribute="height" constant="20" id="rSv-r2-VlI"/>
                                         </constraints>
                                     </activityIndicatorView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PLd-SI-Wd1">
-                                        <rect key="frame" x="166.5" y="28" width="42" height="20.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PLd-SI-Wd1">
+                                        <rect key="frame" x="154.5" y="28" width="42" height="20.5"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -46,10 +46,10 @@
                         <constraints>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="leading" secondItem="VVe-Uw-JpX" secondAttribute="leading" id="BJO-27-c6P"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="trailing" secondItem="VVe-Uw-JpX" secondAttribute="trailing" id="CbM-EV-qWY"/>
-                            <constraint firstItem="biK-f0-qE4" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leading" id="FUO-PW-VdB"/>
+                            <constraint firstItem="VVe-Uw-JpX" firstAttribute="trailing" secondItem="biK-f0-qE4" secondAttribute="trailing" constant="12" id="ItK-8Y-zi4"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="bottom" secondItem="VVe-Uw-JpX" secondAttribute="bottom" id="L1E-sW-27T"/>
                             <constraint firstItem="biK-f0-qE4" firstAttribute="centerY" secondItem="zMn-AG-sqS" secondAttribute="centerY" id="cfV-a8-sE8"/>
-                            <constraint firstItem="VVe-Uw-JpX" firstAttribute="trailing" secondItem="biK-f0-qE4" secondAttribute="trailing" id="omt-Lc-Dg9"/>
+                            <constraint firstItem="biK-f0-qE4" firstAttribute="leading" secondItem="VVe-Uw-JpX" secondAttribute="leading" constant="12" id="dvi-en-JAI"/>
                             <constraint firstItem="odi-1z-kqM" firstAttribute="bottom" secondItem="VVe-Uw-JpX" secondAttribute="bottom" id="wzI-cB-z5A"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="VVe-Uw-JpX"/>
