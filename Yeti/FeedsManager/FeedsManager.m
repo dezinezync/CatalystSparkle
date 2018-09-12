@@ -1550,6 +1550,18 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             
         };
         
+        session.redirectModifier = ^NSURLRequest *(NSURLSessionTask *task, NSURLRequest *request, NSHTTPURLResponse *redirectResponse) {
+            NSURLRequest *retval = request;
+#ifdef SHARE_EXTENSION
+            if ([[retval.URL absoluteString] containsString:@"/feed/"]) {
+                // we're being redirected to add a new feed. The share extension handles this internally in it's success block.
+                // therefore we deny the request from here.
+                retval = nil;
+            }
+#endif
+            return retval;
+        };
+        
         _session = session;
     }
     
