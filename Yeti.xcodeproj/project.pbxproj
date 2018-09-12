@@ -484,6 +484,7 @@
 		F0E656872063EF0D00450959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
+		F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
 		F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */; };
 		F0E8A81120998E570032CEE7 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */; };
 		F0E8A81220998E570032CEE7 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */; };
@@ -1081,6 +1082,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */,
 				F0B05E7721401454001FD00B /* DZNetworking.framework in Frameworks */,
 				F0E8A81220998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */,
