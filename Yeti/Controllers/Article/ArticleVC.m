@@ -1545,7 +1545,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     Code *code = [[Code alloc] initWithFrame:frame];
     
     if (content.content) {
-        code.attributedText = [MyCodeParser parse:content.content];
+        code.attributedText = [CodeParser.sharedCodeParser parse:content.content];
     }
     else {
         for (Content *item in content.items) { @autoreleasepool {

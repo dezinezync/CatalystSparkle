@@ -315,7 +315,7 @@
         
         if (components.host == nil) {
             // this is a relative string
-            components = [NSURLComponents componentsWithString:self.extra.url];
+            components = [NSURLComponents componentsWithString:self.extra.url ?: self.url];
             components.path = url;
             
             url = [components URL].absoluteString;

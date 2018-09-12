@@ -16,3 +16,5 @@
 - Rotating the device no longer causes Voice Over to stop recognizing on-screen elements.
 - Prevents the app from crashing when it's restoring it's state back to an article.
 - Mark All Unread (including articles not currently loaded in the app) from the Unread Interface now works as expected. #GH-18-TF
+- Code formatting in Headers now uses the same font size as the heading itself.
+- Fixed a bunch of memory leaks that would occur when the app launches.

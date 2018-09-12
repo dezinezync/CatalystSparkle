@@ -23,14 +23,14 @@ CodeParser *MyCodeParser;
 
 @implementation CodeParser
 
-+ (void)load
++ (instancetype)sharedCodeParser
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            MyCodeParser = [[CodeParser alloc] init];
-        });
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MyCodeParser = [[CodeParser alloc] init];
     });
+    
+    return MyCodeParser;
 }
 
 - (instancetype)init

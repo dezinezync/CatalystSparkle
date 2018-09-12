@@ -233,7 +233,7 @@ AppDelegate *MyAppDelegate = nil;
     }
     
     YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-    [MyCodeParser loadTheme:themeName];
+    [CodeParser.sharedCodeParser loadTheme:themeName];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     

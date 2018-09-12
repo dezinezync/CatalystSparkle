@@ -1261,23 +1261,28 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 }
 
 - (void)getSubscriptionWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+#ifndef SHARE_EXTENSION
+    weakify(self);
+#endif
     
     [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
 #ifndef SHARE_EXTENSION
+        strongify(self);
+        
         if ([[responseObject valueForKey:@"status"] boolValue]) {
             Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
             
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager.subscription = sub;
+            @synchronized (self) {
+                self.subscription = sub;
             }
         }
         else {
             Subscription *sub = [Subscription new];
             sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
             
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager.subscription = sub;
+            @synchronized (self) {
+                self.subscription = sub;
             }
         }
 #endif
@@ -1293,8 +1298,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         Subscription *sub = [Subscription new];
         sub.error = error;
         
-        @synchronized (MyFeedsManager) {
-            MyFeedsManager.subscription = sub;
+        strongify(self);
+        
+        @synchronized (self) {
+            self.subscription = sub;
         }
 #endif
         
@@ -1479,7 +1486,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 
 - (DZURLSession *)session
 {
-    if (!_session) {
+    if (_session == nil) {
         
         // Set app-wide shared cache (first number is megabyte value)
         NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
@@ -1488,15 +1495,16 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         [NSURLCache setSharedURLCache:sharedCache];
         sleep(1);
 //
-        DZURLSession *session = [[DZURLSession alloc] init];
-
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
         defaultConfig.HTTPMaximumConnectionsPerHost = 10;
         defaultConfig.URLCache = sharedCache;
-        [defaultConfig setHTTPAdditionalHeaders:@{
-                                                  @"Accept": @"application/json",
-                                                  @"Content-Type": @"application/json"
-                                                  }];
+        
+        NSDictionary *const additionalHTTPHeaders = @{
+                                                      @"Accept": @"application/json",
+                                                      @"Content-Type": @"application/json"
+                                                      };
+        
+        [defaultConfig setHTTPAdditionalHeaders:additionalHTTPHeaders];
         
         defaultConfig.allowsCellularAccess = YES;
         defaultConfig.HTTPShouldUsePipelining = YES;
@@ -1504,9 +1512,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         defaultConfig.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
         defaultConfig.timeoutIntervalForRequest = 30;
 
-        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
-
-        [session setValue:sessionSession forKeyPath:@"session"];
+        DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
         session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
@@ -1556,8 +1562,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     if (!_backgroundSession) {
         
-        DZURLSession *session = [[DZURLSession alloc] init];
-        
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
         // one for unread and the other for bookmarks
         defaultConfig.HTTPMaximumConnectionsPerHost = 2;
@@ -1575,9 +1579,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                                                   @"Content-Type": @"application/json"
                                                   }];
         
-        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
-        
-        [session setValue:sessionSession forKeyPath:@"session"];
+        DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = self.session.baseURL;
         session.useOMGUserAgent = YES;
@@ -1596,8 +1598,6 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 {
     if (!_gifSession) {
         
-        DZURLSession *session = [[DZURLSession alloc] init];
-        
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
         defaultConfig.HTTPMaximumConnectionsPerHost = 5;
         
@@ -1605,9 +1605,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         defaultConfig.HTTPShouldUsePipelining = YES;
         defaultConfig.waitsForConnectivity = NO;
         
-        NSURLSession *sessionSession = [NSURLSession sessionWithConfiguration:defaultConfig delegate:(id<NSURLSessionDelegate>)session delegateQueue:[NSOperationQueue currentQueue]];
-        
-        [session setValue:sessionSession forKeyPath:@"session"];
+        DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
     
         session.useOMGUserAgent = YES;
         session.useActivityManager = NO;
@@ -2151,8 +2149,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                 
             }
             else {
-                @synchronized (MyFeedsManager) {
-                    MyFeedsManager.bookmarks = bookmarks;
+                @synchronized (self) {
+                    self.bookmarks = bookmarks;
                 }
             }
             

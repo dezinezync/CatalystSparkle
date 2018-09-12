@@ -237,7 +237,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         }
         
         YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-        [MyCodeParser loadTheme:themeName];
+        [CodeParser.sharedCodeParser loadTheme:themeName];
         
         reloadSections = [self.tableView indexPathsForVisibleRows];
         
