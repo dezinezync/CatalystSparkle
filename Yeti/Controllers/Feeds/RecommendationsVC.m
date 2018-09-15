@@ -197,6 +197,8 @@ static NSString * const reuseIdentifier = @"Cell";
 #pragma mark -
 
 - (void)_updateMetrics {
+    [self.collectionView layoutIfNeeded];
+    
     CGFloat width = MIN(self.collectionView.bounds.size.width, self.collectionView.contentSize.width);
     CGFloat columnWidth = floor((width - 2.f) / 3.f);
     
