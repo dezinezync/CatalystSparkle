@@ -8,6 +8,8 @@
 
 #import "Subscription.h"
 #import <DZKit/DZCloudObject.h>
+#import "FeedsManager.h"
+#import "YetiConstants.h"
 
 @implementation Subscription
 
@@ -92,8 +94,24 @@
 
 - (BOOL)hasExpired {
     
-    if (self.error)
+    if (self.error) {
+        
+        if ([self.error.localizedDescription isEqualToString:@"No subscription found for this account."]) {
+            
+            // check if they have added their first feed
+            id addedFirst = [MyFeedsManager.keychain stringForKey:YTSubscriptionHasAddedFirstFeed];
+            BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
+            
+            // they have added their first feed but haven't purchased a subscription.
+            if (addedVal == YES) {
+                return YES;
+            }
+            
+            return NO;
+        }
+        
         return YES;
+    }
     
     if (self.expiry == nil)
         return YES;
