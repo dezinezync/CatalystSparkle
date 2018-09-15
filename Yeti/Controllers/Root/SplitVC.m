@@ -24,6 +24,12 @@
 
 @implementation SplitVC
 
+- (UISplitViewControllerDisplayMode)preferredDisplayMode {
+    return UISplitViewControllerDisplayModeAllVisible;
+}
+
+#pragma mark -
+
 - (instancetype)init {
     if (self = [super init]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
@@ -160,11 +166,13 @@ NSString * const kFeedsManager = @"FeedsManager";
 //
 //- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
 //
-//    return splitViewController.viewControllers.firstObject;
+//    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+//
+//    return nav;
 //}
 
 - (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
-    
+
     if (primaryViewController == secondaryViewController) {
         return NO;
     }
@@ -175,7 +183,6 @@ NSString * const kFeedsManager = @"FeedsManager";
         UIViewController *topVC = [secondaryNav topViewController];
 
         if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
-//            [(UINavigationController *)primaryViewController pushViewController:secondaryViewController animated:NO];
             [(UINavigationController *)primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
             return YES;
         }
@@ -201,6 +208,7 @@ NSString * const kFeedsManager = @"FeedsManager";
     else if ([[primaryVC topViewController] isKindOfClass:ArticleVC.class]) {
 
         ArticleVC *vc = (ArticleVC *)[primaryVC popViewControllerAnimated:NO];
+        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
         nav.restorationIdentifier = @"ArticleDetailNav";

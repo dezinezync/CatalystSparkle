@@ -83,7 +83,7 @@ static NSString * const reuseIdentifier = @"Cell";
         }
         else {
             for (NSIndexPath *indexPath in indices) {
-                [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+                [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
             }
         }
     }

@@ -350,13 +350,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     weakify(self);
     
     if (coordinator) {
-        [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-            
+        [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
             strongify(self);
             
             [self setupToolbar:newCollection];
-            
-        } completion:nil];
+        }];
     }
     else
         [self setupToolbar:newCollection];

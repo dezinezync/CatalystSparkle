@@ -54,21 +54,21 @@
     self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read, browser];
     
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
+//        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
         
         UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.sharedApplication.keyWindow rootViewController] displayModeButtonItem];
-        
-        if (self.navigationItem.leftBarButtonItem) {
-            if (self.navigationItem.leftBarButtonItem == displayButton) {
-                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
-            }
-            else {
-                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, displayButton, close];
-            }
-        }
-        else {
-            self.navigationItem.leftBarButtonItems = @[displayButton, close];
-        }
+        self.navigationItem.leftBarButtonItem = displayButton;
+//        if (self.navigationItem.leftBarButtonItem) {
+//            if (self.navigationItem.leftBarButtonItem == displayButton) {
+//                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
+//            }
+//            else {
+//                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, displayButton, close];
+//            }
+//        }
+//        else {
+//            self.navigationItem.leftBarButtonItems = @[displayButton, close];
+//        }
     }
     else {
         self.navigationItem.leftBarButtonItems = nil;
