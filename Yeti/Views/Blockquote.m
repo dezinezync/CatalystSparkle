@@ -55,26 +55,6 @@
     return @"Quote";
 }
 
-- (UIEdgeInsets)textContainerInset {
-    UIEdgeInsets insets = [super textContainerInset];
-    insets.top = 0.f;
-    insets.bottom = 0.f;
-    insets.left += 50.f;
-    
-    return insets;
-}
-
-- (CGSize)contentSize
-{
-    CGSize size = [super contentSize];
-    
-    size.height -= (self.bodyFont.pointSize * self.class.paragraphStyle.lineHeightMultiple) * 3.f;
-    
-    self.textContainer.size = size;
-    
-    return size;
-}
-
 - (UIFont *)bodyFont {
     
     if (!_bodyFont) {
