@@ -49,7 +49,9 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
                       ALPSpectral : @"Spectral"
                       };
     
-    _isPhoneX = [[self modelIdentifier] isEqualToString:@"iPhone10,3"];
+    NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone11,4", @"iPhone11,2", nil];
+    
+    _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]];
     
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
