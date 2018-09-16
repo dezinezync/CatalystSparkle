@@ -3012,7 +3012,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG_LAYOUT=0",
-					"TESTFLIGHT=0",
+					"TESTFLIGHT=1",
 				);
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
