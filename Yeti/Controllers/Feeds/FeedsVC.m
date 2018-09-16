@@ -882,6 +882,7 @@ NSString * const kDS2Data = @"DS2Data";
     }
 #if TESTFLIGHT == 0
     UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
     YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
     storeVC.checkAndShowError = YES;
     
