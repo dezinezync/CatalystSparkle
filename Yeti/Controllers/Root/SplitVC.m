@@ -24,25 +24,22 @@
 
 @implementation SplitVC
 
-- (UISplitViewControllerDisplayMode)preferredDisplayMode {
-    return UISplitViewControllerDisplayModeAllVisible;
-}
-
-#pragma mark -
-
 - (instancetype)init {
     if (self = [super init]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
-//        self.restorationClass = SplitVC.class;
-        
         self.delegate = self;
         
-        FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+        });
         
+        FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
         YTNavigationController *nav1 = [[YTNavigationController alloc] initWithRootViewController:vc];
         nav1.restorationIdentifier = @"mainNav";
         
-        self.viewControllers = @[nav1];
+        UINavigationController *nav2 = [self emptyVC];
+
+        self.viewControllers = @[nav1, nav2];
         
     }
     
@@ -53,12 +50,6 @@
     [super viewDidLoad];
     
     [YetiThemeKit loadThemeKit];
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
     
     UICKeyChainStore *keychain = MyFeedsManager.keychain;
 //    [keychain removeAllItems];
@@ -77,15 +68,11 @@
     }
 #endif
     
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.viewControllers.count == 1) {
-        
-        if (self.presentedViewController == nil) {
-        
-            UINavigationController *nav = [self emptyVC];
-            
-            self.viewControllers = @[self.viewControllers.firstObject, nav];
-        }
-    }
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
 //#ifdef DEBUG
 //    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
@@ -102,25 +89,33 @@
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
+
     weakify(self);
     [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-        
-        strongify(self);
-        
-        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            
-            if (self.viewControllers.count == 1) {
-                UINavigationController *nav = [self emptyVC];
 
-                self.viewControllers = @[self.viewControllers.firstObject, nav];
-            }
+        // Why set the display mode in dispatch?
+        // It's a workaround: http://stackoverflow.com/a/28440974/242682
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            strongify(self);
             
-        }
-        else {
-            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
-        }
-        
+            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+            
+        });
+
+//        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//
+//            if (self.viewControllers.count == 1) {
+//                UINavigationController *nav = [self emptyVC];
+//
+//                self.viewControllers = @[self.viewControllers.firstObject, nav];
+//            }
+//
+//        }
+//        else {
+//            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
+//        }
+
     }];
 }
 
@@ -158,32 +153,32 @@ NSString * const kFeedsManager = @"FeedsManager";
 
 #pragma mark - <UISplitViewControllerDelegate>
 
-//- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-//    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
-//
-//    return nav;
-//}
-//
-//- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
-//
-//    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
-//
-//    return nav;
-//}
+- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
+    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
 
-- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
+    return nav;
+}
+
+- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
+
+    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+
+    return nav;
+}
+
+- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(YTNavigationController *)primaryViewController {
 
     if (primaryViewController == secondaryViewController) {
         return NO;
     }
 
-    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class] && [primaryViewController isKindOfClass:YTNavigationController.class]) {
+    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class]) {
 
         UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
         UIViewController *topVC = [secondaryNav topViewController];
 
         if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
-            [(UINavigationController *)primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
+            [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
             return YES;
         }
         else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
@@ -191,23 +186,24 @@ NSString * const kFeedsManager = @"FeedsManager";
         }
     }
     else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
-        [(UINavigationController *)primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
+        [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
         return YES;
     }
 
     return NO;
 }
 
-- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UIViewController *)primaryViewController {
-
-    YTNavigationController *primaryVC = (YTNavigationController *)primaryViewController;
-
-    if([[primaryVC topViewController] isKindOfClass:UINavigationController.class]) {
-        return [primaryVC popViewControllerAnimated:NO];
+- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
+    
+    // collapseSecondaryViewController:forSplitViewController causes the
+    // UINavigationController to be pushed on the the stack of the primary
+    // navgiation controller.
+    if([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
+        return [primaryViewController popViewControllerAnimated:NO];
     }
-    else if ([[primaryVC topViewController] isKindOfClass:ArticleVC.class]) {
+    else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
 
-        ArticleVC *vc = (ArticleVC *)[primaryVC popViewControllerAnimated:NO];
+        ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
         vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
