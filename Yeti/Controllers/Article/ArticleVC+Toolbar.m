@@ -19,6 +19,7 @@
 #import "EmptyVC.h"
 #import "SplitVC.h"
 #import "FeedVC.h"
+#import "YetiConstants.h"
 
 @implementation ArticleVC (Toolbar)
 

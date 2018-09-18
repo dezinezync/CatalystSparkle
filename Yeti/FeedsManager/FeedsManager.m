@@ -24,12 +24,6 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
-FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
-FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
-FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
-FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidUpdate";
-FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFeed";
-
 #ifdef SHARE_EXTENSION
 @interface FeedsManager ()
 #else
@@ -70,6 +64,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
+        
+        self.unreadManager = [[UnreadManager alloc] init];
+        
 //        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
@@ -141,7 +138,7 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 }
 
 #pragma mark - Feeds
-
+#ifndef SHARE_EXTENSION
 - (void)getFeedsSince:(NSDate *)since success:(successBlock)successCB error:(errorBlock)errorCB
 {
     weakify(self);
@@ -162,9 +159,9 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         strongify(self);
-        
+
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
-#ifndef SHARE_EXTENSION
+        
         id firstFeedObj = self.keychain[YTSubscriptionHasAddedFirstFeed];
         BOOL hasAddedFirstFeed = firstFeedObj ? [firstFeedObj boolValue] : NO;
         
@@ -186,11 +183,10 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
             
             self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(hasAddedFirstFeed) stringValue];
         }
-#endif
         
         if (!since || !MyFeedsManager.feeds.count) {
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager.feeds = feeds;
+            @synchronized (self.unreadManager) {
+                self.unreadManager.feeds = feeds;
             }
         }
         else {
@@ -229,15 +225,19 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
                     }
                 }
 
-                @synchronized(self) {
-                    MyFeedsManager.feeds = feeds;
+                @synchronized (self.unreadManager) {
+                    self.unreadManager.feeds = feeds;
                 }
             }
             else {
-                MyFeedsManager.feeds = feeds;
+                @synchronized (self.unreadManager) {
+                    self.unreadManager.feeds = feeds;
+                }
             }
 
         }
+        
+        [self.unreadManager finishedUpdating];
         
         if (successCB) {
             DDLogDebug(@"Responding to successCB from network");
@@ -262,6 +262,8 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
         return [Feed instanceFromDictionary:obj];
     }] mutableCopy];
     
+    self.unreadManager.feeds = feeds;
+    
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
     
     // these feeds are inside folders
@@ -269,43 +271,38 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
     
     NSMutableArray <Feed *> *feedsInFolders = [NSMutableArray arrayWithCapacity:feedIDsInFolders.count];
     
-    feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-       
-        if ([feedIDsInFolders indexOfObject:obj.feedID] != NSNotFound) {
-            [feedsInFolders addObject:obj.copy];
-            
-            return NO;
-        }
-        
-        return YES;
-        
-    }].mutableCopy;
-    
     // create the folders map
-    NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+    NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
        
         Folder *folder = [Folder instanceFromDictionary:obj];
         
-        NSArray *feedIDs = [folder feeds];
+        NSArray <NSNumber *> * feedIDs = [obj valueForKey:@"feeds"];
         
-        folder.feeds = [feedsInFolders rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-            BOOL inside = [feedIDs indexOfObject:obj.feedID] != NSNotFound;
+        folder.feeds = [NSPointerArray weakObjectsPointerArray];
+        
+        [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
             
-            if (inside) {
-                obj.folderID = folder.folderID;
-            }
+            [feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                
+                if ([feed.feedID isEqualToNumber:objx]) {
+                    feed.folderID = folder.folderID;
+                    [folder.feeds addPointer:(__bridge void *)feed];
+                }
+                
+            }];
             
-            return inside;
         }];
         
         return folder;
         
     }];
     
-    _folders = folders;
+    self.unreadManager.folders = folders;
     
     return feeds;
 }
+
+#endif
 
 - (Feed *)feedForID:(NSNumber *)feedID
 {
@@ -1363,13 +1360,13 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 //    }
 //}
 
-- (void)setFeeds:(NSArray<Feed *> *)feeds {
-    
-    _feeds = feeds;
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self];
-    
-}
+//- (void)setFeeds:(NSArray<Feed *> *)feeds {
+//
+//    _feeds = feeds;
+//    
+//    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self];
+//
+//}
 
 - (void)setPushToken:(NSString *)pushToken
 {
@@ -1460,6 +1457,17 @@ FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFee
 //}
 
 #pragma mark - Getters
+
+#ifndef SHARE_EXTENSION
+- (NSArray <Feed *> *)feeds {
+    return self.unreadManager.feedsWithoutFolders;
+}
+
+- (NSArray <Folder *> *)folders {
+    return self.unreadManager.folders;
+}
+
+#endif
 
 - (Subscription *)getSubscription {
     return _subscription;

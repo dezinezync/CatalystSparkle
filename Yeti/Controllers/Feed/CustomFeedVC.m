@@ -15,6 +15,8 @@
 #import "EmptyView.h"
 #import "YetiThemeKit.h"
 
+#import "YetiConstants.h"
+
 static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 
 @interface CustomFeedVC () {

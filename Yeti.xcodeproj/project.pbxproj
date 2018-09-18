@@ -49,7 +49,6 @@
 		F035A21920617EC3005A88EE /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F035A21820617EC3005A88EE /* ActionViewController.m */; };
 		F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F035A21A20617EC3005A88EE /* MainInterface.storyboard */; };
 		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F035A2252061812F005A88EE /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
 		F035A22720618151005A88EE /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
 		F035A229206181C8005A88EE /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3471FBAD4B200912CCF /* Enclosure.m */; };
 		F035A22A206181C8005A88EE /* Content.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C33F1FBACD2C00912CCF /* Content.m */; };
@@ -496,6 +495,11 @@
 		F0F193A62118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0F8DBA2215162DD0076156D /* UnreadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBA1215162DD0076156D /* UnreadManager.m */; };
 		F0F8DBA3215162DD0076156D /* UnreadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBA1215162DD0076156D /* UnreadManager.m */; };
+		F0F8DBB821516DEB0076156D /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
+		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
+		F0F8DBBC21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
+		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
+		F0F8DBBE215170B70076156D /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F6205E877A00A042CD /* YetiConstants.m */; };
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA472A20CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
@@ -1075,6 +1079,8 @@
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0F8DBA0215162DD0076156D /* UnreadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadManager.h; sourceTree = "<group>"; };
 		F0F8DBA1215162DD0076156D /* UnreadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnreadManager.m; sourceTree = "<group>"; };
+		F0F8DBB921516EE80076156D /* NSPointerArray+AbstractionHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPointerArray+AbstractionHelpers.h"; sourceTree = "<group>"; };
+		F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPointerArray+AbstractionHelpers.m"; sourceTree = "<group>"; };
 		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
 		F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFooterView.h; sourceTree = "<group>"; };
 		F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFooterView.m; sourceTree = "<group>"; };
@@ -1389,6 +1395,8 @@
 				F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */,
 				F035B4752107479400002576 /* UIImage+Sizing.h */,
 				F035B4762107479400002576 /* UIImage+Sizing.m */,
+				F0F8DBB921516EE80076156D /* NSPointerArray+AbstractionHelpers.h */,
+				F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2403,17 +2411,19 @@
 				F0869B642099CFE100A5D723 /* YetiThemeKit.m in Sources */,
 				F035A22B206181C8005A88EE /* Feed.m in Sources */,
 				F035A21920617EC3005A88EE /* ActionViewController.m in Sources */,
-				F035A2252061812F005A88EE /* FeedsManager.m in Sources */,
 				F035A22D206181C8005A88EE /* Range.m in Sources */,
+				F0F8DBBE215170B70076156D /* YetiConstants.m in Sources */,
 				F0C6CA712143A37E00577D16 /* FeedMeta.m in Sources */,
 				F035A229206181C8005A88EE /* Enclosure.m in Sources */,
 				F0D1C5E020DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F035A22C206181C8005A88EE /* FeedItem.m in Sources */,
+				F0F8DBB821516DEB0076156D /* FeedsManager.m in Sources */,
 				F0D0085E2081C90100EAFE3B /* Author.m in Sources */,
 				F0C6CA722143A38100577D16 /* MetaOpenGraph.m in Sources */,
 				F0B08C8520F62E3E007AA283 /* YetiTheme.m in Sources */,
 				F0B21BC3208C82C7007E5A3B /* Folder.m in Sources */,
 				F035A22A206181C8005A88EE /* Content.m in Sources */,
+				F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2440,6 +2450,7 @@
 				F069ABB6206E018F00021ABF /* SettingsVC.m in Sources */,
 				F069ABB7206E018F00021ABF /* PaddedTextField.m in Sources */,
 				F069ABB8206E018F00021ABF /* Youtube.m in Sources */,
+				F0F8DBBC21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F0202BE220A41AC400FBC3E1 /* FiltersVC.m in Sources */,
 				F03BC4EA20C9016A007B574F /* EmptyView.m in Sources */,
 				F0C6CA6C2143A17B00577D16 /* MetaOpenGraph.m in Sources */,
@@ -2653,6 +2664,7 @@
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
+				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F06F914120D3E55A00A358B0 /* SubscriptionView.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,

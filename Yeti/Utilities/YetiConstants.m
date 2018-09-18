@@ -8,6 +8,12 @@
 
 #import "YetiConstants.h"
 
+FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
+FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
+FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
+FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidUpdate";
+FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFeed";
+
 NSString * const kResetAccountSettingsPref = @"reset_account_preference";
 NSString * const kHasShownOnboarding = @"com.yeti.onboarding.main";
 NSString * const kIsSubscribingToPushNotifications = @"com.yeti.internal.isSubscribingToPushNotifications";

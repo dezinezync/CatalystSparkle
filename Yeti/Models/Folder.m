@@ -64,9 +64,9 @@
 
     if ([key isEqualToString:@"feeds"]) {
 
-//        if ([value isKindOfClass:[NSArray class]])
-//        {
-//
+        if ([value isKindOfClass:[NSPointerArray class]])
+        {
+            self.feeds = value;
 //            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
 //
 //            for (id valueMember in value) {
@@ -78,10 +78,8 @@
 //                    [myMembers addObject:valueMember];
 //                }
 //            }
-//
-//            self.feeds = myMembers;
-//
-//        }
+
+        }
 
     } else {
         [super setValue:value forKey:key];
@@ -101,6 +99,21 @@
 
 }
 
+#pragma mark -
+
+- (NSNumber *)unreadCount {
+    
+    NSInteger count = 0;
+    
+    for (Feed *feed in self.feeds) {
+        count += [feed.unread integerValue];
+    }
+    
+    return @(count);
+    
+}
+
+#pragma mark -
 
 - (NSDictionary *)dictionaryRepresentation
 {
@@ -116,12 +129,14 @@
         NSMutableArray *feedMembers = [NSMutableArray arrayWithCapacity:self.feeds.count];
         
         for (Feed *feed in self.feeds) {
-            if (feed.folderID == nil) {
-                feed.folderID = self.folderID;
+            if (feed) {
+                if (feed.folderID == nil) {
+                    feed.folderID = self.folderID;
+                }
+                
+                NSDictionary *dict = [feed dictionaryRepresentation];
+                [feedMembers addObject:dict];
             }
-            
-            NSDictionary *dict = [feed dictionaryRepresentation];
-            [feedMembers addObject:dict];
         }
         
         [dictionary setObject:feedMembers forKey:@"feeds"];

@@ -13,6 +13,14 @@
 
 #define YETI_EXPORT FOUNDATION_EXPORT
 
+typedef NSString * FMNotification;
+
+extern FMNotification _Nonnull const FeedDidUpReadCount;
+extern FMNotification _Nonnull const FeedsDidUpdate;
+extern FMNotification _Nonnull const UserDidUpdate;
+extern FMNotification _Nonnull const BookmarksDidUpdate;
+extern FMNotification _Nonnull const SubscribedToFeed;
+
 YETI_EXPORT NSString * const kResetAccountSettingsPref;
 YETI_EXPORT NSString * const kHasShownOnboarding;
 YETI_EXPORT NSString * const kIsSubscribingToPushNotifications;

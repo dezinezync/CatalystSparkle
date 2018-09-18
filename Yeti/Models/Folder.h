@@ -1,5 +1,6 @@
 
 #import <DZKit/DZCloudObject.h>
+#import "NSPointerArray+AbstractionHelpers.h"
 
 @class Feed;
 
@@ -9,7 +10,7 @@
 
 @property (nonatomic, copy) NSString *created;
 // weakly references Feed objects
-@property (nonatomic, weak) NSPointerArray *feeds;
+@property (nonatomic, strong) NSPointerArray *feeds;
 @property (nonatomic, copy) NSNumber *folderID;
 @property (nonatomic, copy) NSString *modified;
 @property (nonatomic, copy) NSNumber *status;
@@ -22,5 +23,7 @@
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 
 - (NSDictionary *)dictionaryRepresentation;
+
+@property (nonatomic, readonly) NSNumber *unreadCount;
 
 @end

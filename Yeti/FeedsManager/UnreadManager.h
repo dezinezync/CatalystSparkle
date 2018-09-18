@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSArray <Feed *> *feedsWithoutFolders;
 
+// dispatches relevant notifications after the above sources have been updated.
+- (void)finishedUpdating;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -66,7 +66,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
     
-    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
+    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager.unreadManager];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateReadCount:) name:FeedDidUpReadCount object:MyFeedsManager];
@@ -468,7 +468,7 @@ static void *KVO_Unread = &KVO_Unread;
             
             NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.count)];
             
-            [data insertObjects:folder.feeds atIndexes:set];
+            [data insertObjects:folder.feeds.allObjects atIndexes:set];
             
             @try {
                 [self.DS setData:data section:1];
@@ -586,7 +586,7 @@ NSString * const kDS2Data = @"DS2Data";
             [data addObject:obj];
             
             if (obj.isExpanded) {
-                [data addObjectsFromArray:obj.feeds];
+                [data addObjectsFromArray:obj.feeds.allObjects];
             }
             
         }];
@@ -597,12 +597,7 @@ NSString * const kDS2Data = @"DS2Data";
         
         CGPoint contentOffset = self.tableView.contentOffset;
         
-        @try {
-            [self.DS setData:data section:1];
-        }
-        @catch (NSException *exc) {
-            DDLogWarn(@"Set FeedsVC Data: %@", exc);
-        }
+        [self.DS setData:data section:1];
         
         [self.tableView.layer removeAllAnimations];
         [self.tableView setContentOffset:contentOffset animated:NO];

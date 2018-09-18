@@ -301,12 +301,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         return;
     }
     
-    NSArray <Feed *> *feeds = [(Folder *)self.object feeds];
-    NSNumber *totalUnread = (NSNumber *)[feeds rz_reduce:^id(NSNumber *prev, Feed *current, NSUInteger idx, NSArray *array) {
-        
-        return @([prev integerValue] + (current.unread ?: @0).integerValue);
-        
-    } initialValue:@(0)];
+    NSNumber *totalUnread = [(Folder *)self.object unreadCount];
     
     self.countLabel.text = [(totalUnread ?: @0) stringValue];
 }

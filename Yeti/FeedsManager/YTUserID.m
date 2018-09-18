@@ -10,6 +10,8 @@
 #import "FeedsManager.h"
 #import <DZKit/AlertManager.h>
 
+#import "YetiConstants.h"
+
 NSString *const kAccountID = @"YTUserID";
 NSString *const kUserID = @"userID";
 NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
@@ -76,9 +78,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
                 DDLogDebug(@"created new user");
                 NSDictionary *user = [responseObject valueForKey:@"user"];
                 self.userID = @([[user valueForKey:@"id"] integerValue]);
-                
+#ifndef SHARE_EXTENSION
                 [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                
+#endif
                 if (successCB) {
                     successCB(self, response, task);
                 }

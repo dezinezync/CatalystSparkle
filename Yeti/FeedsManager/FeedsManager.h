@@ -21,14 +21,6 @@
 #import "UnreadManager.h"
 #endif
 
-typedef NSString * FMNotification;
-
-extern FMNotification _Nonnull const FeedDidUpReadCount;
-extern FMNotification _Nonnull const FeedsDidUpdate;
-extern FMNotification _Nonnull const UserDidUpdate;
-extern FMNotification _Nonnull const BookmarksDidUpdate;
-extern FMNotification _Nonnull const SubscribedToFeed;
-
 @class FeedsManager;
 
 extern FeedsManager * _Nonnull MyFeedsManager;
@@ -66,6 +58,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
 @property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
+
+#ifndef SHARE_EXTENSION
+@property (nonatomic, strong) UnreadManager *unreadManager;
+#endif
 
 #pragma mark - Networking
 

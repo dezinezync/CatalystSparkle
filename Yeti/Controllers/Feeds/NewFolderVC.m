@@ -14,6 +14,8 @@
 #import "FeedsManager.h"
 #import "YTNavigationController.h"
 
+#import "YetiConstants.h"
+
 @interface NewFolderVC ()
 
 @property (nonatomic, weak, readwrite) Folder *folder;
