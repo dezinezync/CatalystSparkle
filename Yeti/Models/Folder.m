@@ -64,24 +64,24 @@
 
     if ([key isEqualToString:@"feeds"]) {
 
-        if ([value isKindOfClass:[NSArray class]])
-        {
-
-            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
-            
-            for (id valueMember in value) {
-                if ([valueMember isKindOfClass:NSDictionary.class]) {
-                    Feed *obj = [Feed instanceFromDictionary:valueMember];
-                    [myMembers addObject:obj];
-                }
-                else {
-                    [myMembers addObject:valueMember];
-                }
-            }
-
-            self.feeds = myMembers;
-
-        }
+//        if ([value isKindOfClass:[NSArray class]])
+//        {
+//
+//            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
+//
+//            for (id valueMember in value) {
+//                if ([valueMember isKindOfClass:NSDictionary.class]) {
+//                    Feed *obj = [Feed instanceFromDictionary:valueMember];
+//                    [myMembers addObject:obj];
+//                }
+//                else {
+//                    [myMembers addObject:valueMember];
+//                }
+//            }
+//
+//            self.feeds = myMembers;
+//
+//        }
 
     } else {
         [super setValue:value forKey:key];

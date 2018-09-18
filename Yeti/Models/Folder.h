@@ -8,7 +8,8 @@
 }
 
 @property (nonatomic, copy) NSString *created;
-@property (nonatomic, copy) NSArray <Feed *> *feeds;
+// weakly references Feed objects
+@property (nonatomic, weak) NSPointerArray *feeds;
 @property (nonatomic, copy) NSNumber *folderID;
 @property (nonatomic, copy) NSString *modified;
 @property (nonatomic, copy) NSNumber *status;

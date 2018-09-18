@@ -39,22 +39,22 @@
     
     [data enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        if ([obj isKindOfClass:Folder.class]) {
-            
-            [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
-                
-                BOOL title = [objx.title containsString:text] || ([objx.title compareStringWithString:text] <= 2);
-                BOOL desc = (objx.summary && ![objx.summary isBlank]) && ([objx.summary containsString:text] || ([objx.summary compareStringWithString:text] <= 2));
-                
-                if (title || desc) {
-                    [filtered addObject:objx];
-                }
-                
-            }];
-            
-            return;
-            
-        }
+//        if ([obj isKindOfClass:Folder.class]) {
+//            
+//            [[(Folder *)obj feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
+//                
+//                BOOL title = [objx.title containsString:text] || ([objx.title compareStringWithString:text] <= 2);
+//                BOOL desc = (objx.summary && ![objx.summary isBlank]) && ([objx.summary containsString:text] || ([objx.summary compareStringWithString:text] <= 2));
+//                
+//                if (title || desc) {
+//                    [filtered addObject:objx];
+//                }
+//                
+//            }];
+//            
+//            return;
+//            
+//        }
         
         BOOL title = [obj.title containsString:text] || ([obj.title compareStringWithString:text] <= 2);
         BOOL desc = (obj.summary && ![obj.summary isBlank]) && ([obj.summary containsString:text] || ([obj.summary compareStringWithString:text] <= 2));

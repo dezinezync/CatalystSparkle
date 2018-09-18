@@ -18,6 +18,7 @@
 
 #ifndef SHARE_EXTENSION
 #import <UICKeyChainStore/UICKeyChainStore.h>
+#import "UnreadManager.h"
 #endif
 
 typedef NSString * FMNotification;

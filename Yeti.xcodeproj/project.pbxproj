@@ -494,6 +494,8 @@
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0F193A62118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
+		F0F8DBA2215162DD0076156D /* UnreadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBA1215162DD0076156D /* UnreadManager.m */; };
+		F0F8DBA3215162DD0076156D /* UnreadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBA1215162DD0076156D /* UnreadManager.m */; };
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA472A20CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
@@ -1071,6 +1073,8 @@
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
+		F0F8DBA0215162DD0076156D /* UnreadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadManager.h; sourceTree = "<group>"; };
+		F0F8DBA1215162DD0076156D /* UnreadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnreadManager.m; sourceTree = "<group>"; };
 		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
 		F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFooterView.h; sourceTree = "<group>"; };
 		F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFooterView.m; sourceTree = "<group>"; };
@@ -1634,6 +1638,8 @@
 				F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */,
 				F05D21841FF2222F003DE813 /* YTUserID.h */,
 				F05D21851FF2222F003DE813 /* YTUserID.m */,
+				F0F8DBA0215162DD0076156D /* UnreadManager.h */,
+				F0F8DBA1215162DD0076156D /* UnreadManager.m */,
 			);
 			path = FeedsManager;
 			sourceTree = "<group>";
@@ -2449,6 +2455,7 @@
 				F00B0FA120F487090012EB03 /* EmptyCell.m in Sources */,
 				F0869B5A2099CE9000A5D723 /* YetiTheme.m in Sources */,
 				F069ABBF206E018F00021ABF /* DTTimePeriodGroup.m in Sources */,
+				F0F8DBA3215162DD0076156D /* UnreadManager.m in Sources */,
 				F069ABC0206E018F00021ABF /* FeedVC.m in Sources */,
 				F069ABC1206E018F00021ABF /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
 				F0B21BC2208C82C7007E5A3B /* Folder.m in Sources */,
@@ -2554,6 +2561,7 @@
 				F0D300401FE2633E0040D10D /* DTConstants.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,
+				F0F8DBA2215162DD0076156D /* UnreadManager.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F0D300461FE2633E0040D10D /* NSDate+DateTools.m in Sources */,
