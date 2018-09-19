@@ -29,8 +29,6 @@ static NSDateFormatter *_formatter = nil;
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];
-    
-    [encoder encodeObject:self.primedContent forKey:@"primedContent"];
     [encoder encodeObject:self.identifier forKey:@"identifier"];
     
     [encoder encodeObject:self.articleTitle forKey:@"articleTitle"];
@@ -59,7 +57,6 @@ static NSDateFormatter *_formatter = nil;
 {
     if ((self = [super initWithCoder:decoder])) {
         self.identifier = [decoder decodeObjectForKey:@"identifier"];
-        self.primedContent = [decoder decodeObjectForKey:@"primedContent"];
         self.articleTitle = [decoder decodeObjectForKey:@"articleTitle"];
         self.articleURL = [decoder decodeObjectForKey:@"articleURL"];
         self.author = [decoder decodeObjectForKey:@"author"];
@@ -211,10 +208,6 @@ static NSDateFormatter *_formatter = nil;
     
     if (self.identifier != nil) {
         [dictionary setObject:self.identifier forKey:@"id"];
-    }
-    
-    if (self.primedContent) {
-        [dictionary setObject:self.primedContent forKey:@"primedContent"];
     }
 
     if (self.articleTitle) {

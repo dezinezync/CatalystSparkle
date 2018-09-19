@@ -8,8 +8,9 @@
 
 #import "ActionViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import "FeedsManager.h"
 #import <DZKit/DZUtilities.h>
+
+#import "FeedCell.h"
 
 @interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -18,7 +19,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
-@property (nonatomic, copy) NSArray <NSString *> *data;
+@property (nonatomic, copy) NSArray <NSDictionary *> *data;
 @property (nonatomic, assign) NSUInteger selected;
 @property (weak, nonatomic) IBOutlet UILabel *activityLabel;
 
@@ -39,15 +40,17 @@
     
     self.tableView.tableFooterView = [UIView new];
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
+    [self.tableView registerClass:[FeedCell class] forCellReuseIdentifier:@"cell"];
     
     // Get the item[s] we're handling from the extension context.
     
     // For example, look for an image and place it into an image view.
     // Replace this with something appropriate for the type[s] your extension supports.
-    BOOL imageFound = NO;
+    __block BOOL imageFound = NO;
+    
     for (NSExtensionItem *item in self.extensionContext.inputItems) {
         for (NSItemProvider *itemProvider in item.attachments) {
+            
             if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeURL]) {
                 // This is an URL.
 
@@ -58,7 +61,7 @@
                         }];
                     }
                 }];
-                
+
                 imageFound = YES;
                 break;
             }
@@ -83,7 +86,8 @@
     NSURL *selectedURL = nil;
     
     if (self.selected != NSNotFound) {
-        NSString *feedURL = self.data[self.selected];
+        NSDictionary  *feed = self.data[self.selected];
+        NSString *feedURL = feed[@"link"];
         selectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?URL=%@", feedURL]];
     }
     
@@ -92,12 +96,13 @@
     [self.extensionContext completeRequestReturningItems:nil completionHandler:nil];
 }
 
-- (void)setupTableRows:(NSArray <NSString *> *)data
+- (void)setupTableRows
 {
-    self.title = @"Select a feed";
+    self.title = @"Select a Feed";
+    
+    self.tableView.hidden = NO;
     
     _selected = NSNotFound;
-    self.data = data;
     [self.tableView reloadData];
 }
 
@@ -115,10 +120,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
+    FeedCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     
-    cell.textLabel.text = self.data[indexPath.row];
-    cell.textLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    NSDictionary *data = self.data[indexPath.row];
+    
+    cell.textLabel.text = data[@"title"] ?: @"";
+    
+    cell.detailTextLabel.text = data[@"link"];
+    cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingHead;
     
     cell.accessoryType = indexPath.row == self.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     
@@ -137,6 +146,26 @@
 
 #pragma mark -
 
+- (void)showError:(NSString *)error {
+    
+    if ([NSThread isMainThread] == NO) {
+        [self performSelectorOnMainThread:@selector(showError:) withObject:error waitUntilDone:NO];
+        return;
+    }
+    
+    if ([self.activityIndicator isAnimating]) {
+        [self.activityIndicator stopAnimating];
+        self.activityIndicator.hidden = YES;
+    }
+    
+    self.activityLabel.text = error;
+    [self.activityLabel sizeToFit];
+    
+    if (self.activityLabel.isHidden) {
+        self.activityLabel.hidden = NO;
+    }
+}
+
 - (void)handleURL:(NSURL *)url {
     
     if (!url)
@@ -146,76 +175,124 @@
     self.activityIndicator.superview.hidden = NO;
     [self.activityIndicator startAnimating];
     
-//    NSURLComponents *URLComponents = [[NSURLComponents alloc] initWithString:url.absoluteString];
-    // yeti://addFeed?URL=
-//    NSURL *host = [NSURL URLWithString:[[NSString alloc] initWithFormat:@"%@://%@", URLComponents.scheme, URLComponents.host]];
-    
     weakify(self);
     
-    // dispatch after 2 seconds to allow FeedsManager to be set up
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+       
+        NSError *error = nil;
+        NSData *htmlData = [NSData dataWithContentsOfURL:url options:kNilOptions error:&error];
         
-        [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
+        if (error) {
             strongify(self);
             
-            asyncMain(^{
-                [self.activityIndicator stopAnimating];
-                self.activityIndicator.superview.hidden = YES;
-            });
+            [self showError:error.localizedDescription];
+
+            return;
+        }
+        
+        NSString *html = [[NSString alloc] initWithData:htmlData encoding:NSUTF8StringEncoding];
+        
+        if (html == nil) {
+            [self showError:@"Elytra failed to load contents of this page"];
+            return;
+        }
+        
+        NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:@"\<link[^rel]+rel\=\"alternate\"[^\>]+\>" options:kNilOptions error:&error];
+        NSRegularExpression *titleExpression = [NSRegularExpression regularExpressionWithPattern:@"(title\=\"([^\"]+))\"" options:kNilOptions error:&error];
+        NSRegularExpression *hrefExpression = [NSRegularExpression regularExpressionWithPattern:@"(href\=\"([^\"]+))\"" options:kNilOptions error:&error];
+        
+        if (error) {
+            [self showError:@"Elytra failed to process contents of this page"];
+            return;
+        }
+        
+        NSArray <NSTextCheckingResult *> *matches = [regexp matchesInString:html options:kNilOptions range:NSMakeRange(0, html.length)];
+        
+        NSMutableArray *feeds = [NSMutableArray arrayWithCapacity:matches.count];
+        
+        for (NSTextCheckingResult *match in matches) {
+            NSString *tag = [html substringWithRange:[match range]];
             
-            if ([responseObject isKindOfClass:NSNumber.class]) {
-                // feed already exists.
-                
-                NSURL *openURL = [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?feedID=%@", responseObject]];
-                [self finalizeURL:openURL];
-                
+            NSRange titleRange = [titleExpression rangeOfFirstMatchInString:tag options:kNilOptions range:NSMakeRange(0, tag.length)];
+            NSRange hrefRange = [hrefExpression rangeOfFirstMatchInString:tag options:kNilOptions range:NSMakeRange(0, tag.length)];
+            
+            NSString *title, *link;
+            
+            if (titleRange.location != NSNotFound) {
+                titleRange.location += 7;
+                titleRange.length -= 7 + 1;
+                title = [tag substringWithRange:titleRange];
+                title = [self decodeString:title];
             }
-            else if ([responseObject isKindOfClass:NSArray.class]) {
-                // multiple choices
-                [self setupTableRows:responseObject];
-            }
-            else if ([responseObject isKindOfClass:Feed.class]) {
-                // feed has been received directly
-            }
-            else {
-                strongify(self);
-                
-                asyncMain(^{
-                    [self.activityIndicator stopAnimating];
-                    self.activityIndicator.hidden = YES;
-                });
-                
-                asyncMain(^{
-                    self.activityLabel.text = @"There are no known RSS Feeds found on this web page.";
-                    [self.activityLabel sizeToFit];
-                });
+            
+            if (hrefRange.location != NSNotFound) {
+                hrefRange.location += 6;
+                hrefRange.length -= 6 + 1;
+                link = [tag substringWithRange:hrefRange];
             }
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            asyncMain(^{
-                [self.activityIndicator stopAnimating];
-                self.activityIndicator.hidden = YES;
-            });
-            
-            asyncMain(^{
-                NSString *err = error.localizedDescription;
-                if ([err containsString:@"Unknown Error"]) {
-                    err = @"There are no known RSS Feeds found on this web page.";
+            if (link != nil && [link containsString:@"/comment"] == NO) {
+                if ([[link substringToIndex:1] isEqualToString:@"/"]) {
+                    // relative URL.
+                    NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
+                    components.path = link;
+                    
+                    link = [[components URL] absoluteString];
                 }
-                self.activityLabel.text = err;
-                [self.activityLabel sizeToFit];
-            });
+                
+                NSMutableDictionary *feed = @{@"link": link}.mutableCopy;
+                if (title) {
+                    feed[@"title"] = title;
+                }
+                
+                [feeds addObject:feed];
+            }
+        }
+        
+        if (feeds.count == 0) {
+            [self showError:@"No RSS Feeds found on this web page."];
+            return;
+        }
+        
+        if (feeds.count == 1) {
+            NSDictionary *feed = [feeds firstObject];
+            NSString *link = [feed valueForKey:@"link"];
             
-        }];
+            NSURL *URL = [NSURL URLWithString:link];
+            [self finalizeURL:URL];
+            
+            return;
+        }
+        
+        asyncMain(^{
+            [self.activityIndicator stopAnimating];
+            self.activityIndicator.superview.hidden = YES;
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.data = feeds;
+            [self setupTableRows];
+        });
+        
     });
     
 }
 
+- (NSString *)decodeString:(NSString *)htmlString {
+    NSData* stringData = [htmlString dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary* options = @{NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType};
+    NSAttributedString* decodedAttributedString = [[NSAttributedString alloc] initWithData:stringData options:options documentAttributes:NULL error:NULL];
+    NSString* decodedString = [decodedAttributedString string];
+    
+    return decodedString;
+}
+
 - (void)finalizeURL:(NSURL *)host {
+    if ([NSThread isMainThread] == NO) {
+        [self performSelectorOnMainThread:@selector(finalizeURL:) withObject:host waitUntilDone:NO];
+        return;
+    }
+    
     if (host) {
         // Get "UIApplication" class name through ASCII Character codes.
         NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];

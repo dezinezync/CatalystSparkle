@@ -10,8 +10,6 @@
 
 }
 
-@property (nonatomic, strong) NSArray <UIView *> *primedContent;
-
 #pragma mark - Properties from server or DB
 
 @property (nonatomic, copy) NSNumber *identifier;
