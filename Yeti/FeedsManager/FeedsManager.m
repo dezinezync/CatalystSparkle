@@ -1016,11 +1016,15 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 obj.folderID = nil;
             }];
             
+            NSArray *feeds = [folder.feeds allObjects];
+            
             [folder.feeds removeAllObjects];
 
-            [folder.feeds addObjectsFromArray:[folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return [del indexOfObject:obj.feedID] == NSNotFound;
-            }]];
+            }];
+            
+            [folder.feeds addObjectsFromArray:feeds];
         }
         
         // now run add ops
