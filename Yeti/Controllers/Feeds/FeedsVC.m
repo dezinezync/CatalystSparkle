@@ -66,7 +66,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
     
-    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager.unreadManager];
+    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateReadCount:) name:FeedDidUpReadCount object:MyFeedsManager];
@@ -591,9 +591,7 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
         
-        if (MyFeedsManager.feeds.count) {
-            [data addObjectsFromArray:MyFeedsManager.feeds];
-        }
+        [data addObjectsFromArray:MyFeedsManager.feedsWithoutFolders];
         
         CGPoint contentOffset = self.tableView.contentOffset;
         

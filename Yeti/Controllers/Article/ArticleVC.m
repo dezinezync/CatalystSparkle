@@ -105,11 +105,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     self.state = ArticleStateLoading;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
+    
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         || self.splitViewController.view.bounds.size.height < 814.f) {
+        
         self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
         
         self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
+        
+    }
+    else if (self.splitViewController.view.bounds.size.height > 814.f
+             && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
+        
     }
     
     self.scrollView.restorationIdentifier = self.restorationIdentifier;

@@ -22,7 +22,8 @@ NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 }
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackLeading;
-@property (weak, nonatomic) NSObject * object;
+@property (weak, nonatomic) Feed * feed;
+@property (weak, nonatomic) Folder * folder;
 @property (weak, nonatomic) UIDropInteraction *dropInteraction;
 
 @property (weak, nonatomic) id <FolderDrop> dropDelegate;
@@ -71,7 +72,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     [super prepareForReuse];
     
-    self.object = nil;
+    self.feed = nil;
+    self.folder = nil;
     
     [self.faviconView il_cancelImageLoading];
     
@@ -101,23 +103,6 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     }
     
     [super willMoveToSuperview:newSuperview];
-}
-
-- (void)removeObservorInfo {
-    
-    if (MyFeedsManager.observationInfo != nil) {
-        
-        NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
-        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [obj valueForKeyPath:@"observer"];
-        }];
-        
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(unread)];
-            } @catch (NSException *exc) {}
-        }
-    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
@@ -170,15 +155,6 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     }
 }
 
-- (void)setObject:(id)object {
-    
-    if (object == nil) {
-        [self removeObservorInfo];
-    }
-    
-    _object = object;
-}
-
 #pragma mark -
 
 - (void)configure:(Feed *)feed
@@ -200,7 +176,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.faviconView.cacheImage = YES;
     self.faviconView.cachedSuffix = @"-feedFavicon";
-    self.object = feed;
+    
+    self.feed = feed;
     
     self.titleLabel.text = feed.title;
     self.countLabel.text = (feed.unread ?: @0).stringValue;
@@ -220,6 +197,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             DDLogWarn(@"ArticleCell setImage: %@", exc);
         }
     }
+    
+    [self setupObservors];
 }
 
 - (void)configureFolder:(Folder *)folder {
@@ -232,7 +211,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     _configuredForFolder = YES;
     
-    self.object = folder;
+    self.folder = folder;
     
     self.titleLabel.text = folder.title;
     self.faviconView.layer.cornerRadius = 0.f;
@@ -249,6 +228,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         
         _dropInteraction = dropInteraction;
     }
+    
+    [self setupObservors];
 }
 
 #pragma mark - a11y
@@ -273,10 +254,9 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 //}
 
 - (NSString *)accessibilityHint {
-    if ([self.object isKindOfClass:Folder.class]) {
-        Folder *folder = (Folder *)[self object];
+    if (self.folder) {
         
-        if ([folder isExpanded]) {
+        if ([self.folder isExpanded]) {
             return @"Tap to Close Folder";
         }
         
@@ -287,6 +267,60 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 }
 
 #pragma mark - KVO
+
+- (void)setupObservors {
+    
+    if (self.feed) {
+        [self.feed addObserver:self forKeyPath:propSel(unread) options:NSKeyValueObservingOptionNew context:KVO_UNREAD];
+    }
+    else if (self.folder) {
+        [self.folder addObserver:self forKeyPath:propSel(unreadCount) options:NSKeyValueObservingOptionNew context:KVO_UNREAD];
+    }
+    
+}
+
+- (void)removeObservorInfo {
+    
+    if (self.folder && self.folder.observationInfo != nil) {
+        
+        NSArray *observingObjects = [(id)(self.folder.observationInfo) valueForKeyPath:@"_observances"];
+        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [obj valueForKeyPath:@"observer"];
+        }];
+        
+        if ([observingObjects indexOfObject:self] != NSNotFound) {
+            @try {
+                [self.folder removeObserver:self forKeyPath:propSel(unreadCount)];
+            } @catch (NSException *exc) {}
+        }
+    }
+    else {
+        if (self.feed && self.feed.observationInfo != nil) {
+            
+            NSArray *observingObjects = [(id)(self.feed.observationInfo) valueForKeyPath:@"_observances"];
+            observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [obj valueForKeyPath:@"observer"];
+            }];
+            
+            if ([observingObjects indexOfObject:self] != NSNotFound) {
+                @try {
+                    [self.feed removeObserver:self forKeyPath:propSel(unread)];
+                } @catch (NSException *exc) {}
+            }
+        }
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if (context == KVO_UNREAD) {
+        [self updateFolderCount];
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+    
+}
 
 - (void)updateFolderCount {
     
@@ -301,7 +335,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         return;
     }
     
-    NSNumber *totalUnread = [(Folder *)self.object unreadCount];
+    NSNumber *totalUnread = self.feed ? self.feed.unread : (self.folder ? self.folder.unreadCount : @(0));
     
     self.countLabel.text = [(totalUnread ?: @0) stringValue];
 }
@@ -341,7 +375,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         [objects enumerateObjectsUsingBlock:^(__kindof id<NSItemProviderReading>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             strongify(self);
             
-            [self.dropDelegate moveFeed:obj toFolder:(Folder *)[self object]];
+            [self.dropDelegate moveFeed:obj toFolder:self.folder];
         }];
         
     }];

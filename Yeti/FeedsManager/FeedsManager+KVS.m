@@ -25,48 +25,23 @@
 
 - (void)articles:(NSArray<FeedItem *> *)items markAsRead:(BOOL)read
 {
-    NSMutableDictionary *folders = @{}.mutableCopy;
-    NSMutableDictionary *feeds = @{}.mutableCopy;
+    NSArray *articles = [items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        return obj.identifier;
+    }];
     
-    NSMutableArray *articles = [NSMutableArray arrayWithCapacity:items.count];
-
-    for (FeedItem *item in items) {
-        [articles addObject:item.identifier];
+    NSArray *feeds = [[items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         
-        Feed *feed = [self feedForID:item.feedID];
-        if (feed != nil) {
-            if (feed.folderID != nil) {
-                // get the existing count, if one is available.
-                NSString *key = feed.folderID.stringValue;
-                NSNumber *count = folders[key];
-                
-                if (!count) {
-                    count = @1;
-                }
-                else {
-                    count = @(count.integerValue + 1);
-                }
-                
-                // update the count against the folder ID
-                folders[key] = count;
-            }
-            
-            // get the existing count, if one is available.
-            NSString *key = feed.feedID.stringValue;
-            NSNumber *count = feeds[key];
-            
-            if (!count) {
-                count = @1;
-            }
-            else {
-                count = @(count.integerValue + 1);
-            }
-            
-            // update the count against the feed ID
-            feeds[key] = count;
-            
+        Feed *feed = [self feedForID:obj.feedID];
+        
+        if (feed) {
+            return feed;
         }
-    }
+        
+        return [NSNull null];
+        
+    }] rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+        return [obj isKindOfClass:Feed.class];
+    }];
 
     NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
     
@@ -109,8 +84,23 @@
         
         // only post the notification if it's affecting a feed or folder
         // this avoids reducing or incrementing the count for unsubscribed feeds
-        if ([[folders allKeys] count] || [[feeds allKeys] count]) {
-            [NSNotificationCenter.defaultCenter postNotificationName:FeedDidUpReadCount object:self userInfo:@{@"folders": folders, @"feeds": feeds, @"read": @(read)}];
+        if (feeds.count > 0) {
+            for (Feed *feed in feeds) {
+                NSInteger current = [feed.unread integerValue];
+                NSInteger updated = current + (read ? -1 : 1);
+                
+                feed.unread = @(updated);
+                
+                if (feed.folderID != nil) {
+                    Folder *folder = [self folderForID:feed.folderID];
+                    if (folder != nil) {
+                        [folder willChangeValueForKey:propSel(unreadCount)];
+                        // simply tell the unreadCount property that it has been updated.
+                        // KVO should handle the rest for us
+                        [folder didChangeValueForKey:propSel(unreadCount)];
+                    }
+                }
+            }
         }
 
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

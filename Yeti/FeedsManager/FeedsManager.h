@@ -54,14 +54,12 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
 
+@property (nonatomic, readonly) NSArray <Feed *> * _Nullable feedsWithoutFolders;
+
 @property (nonatomic, assign) NSInteger totalUnread;
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
 @property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
-
-#ifndef SHARE_EXTENSION
-@property (nonatomic, strong) UnreadManager *unreadManager;
-#endif
 
 #pragma mark - Networking
 
@@ -108,6 +106,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Folders
+
+- (Folder * _Nullable)folderForID:(NSNumber * _Nonnull)folderID;
 
 - (void)addFolder:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

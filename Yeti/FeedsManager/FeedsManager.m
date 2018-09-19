@@ -65,8 +65,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 #ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         
-        self.unreadManager = [[UnreadManager alloc] init];
-        
 //        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
@@ -185,8 +183,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         }
         
         if (!since || !MyFeedsManager.feeds.count) {
-            @synchronized (self.unreadManager) {
-                self.unreadManager.feeds = feeds;
+            @synchronized (self) {
+                self.feeds = feeds;
             }
         }
         else {
@@ -225,19 +223,17 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                     }
                 }
 
-                @synchronized (self.unreadManager) {
-                    self.unreadManager.feeds = feeds;
+                @synchronized (self) {
+                    self.feeds = feeds;
                 }
             }
             else {
-                @synchronized (self.unreadManager) {
-                    self.unreadManager.feeds = feeds;
+                @synchronized (self) {
+                    self.feeds = feeds;
                 }
             }
 
         }
-        
-        [self.unreadManager finishedUpdating];
         
         if (successCB) {
             DDLogDebug(@"Responding to successCB from network");
@@ -262,14 +258,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return [Feed instanceFromDictionary:obj];
     }] mutableCopy];
     
-    self.unreadManager.feeds = feeds;
-    
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
     
     // these feeds are inside folders
     NSArray <NSNumber *> *feedIDsInFolders = [foldersStruct valueForKey:@"feeds"];
-    
-    NSMutableArray <Feed *> *feedsInFolders = [NSMutableArray arrayWithCapacity:feedIDsInFolders.count];
     
     // create the folders map
     NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
@@ -297,43 +289,39 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
     }];
     
-    self.unreadManager.folders = folders;
+    self.folders = folders;
+    self.feeds = feeds;
     
     return feeds;
 }
 
-#endif
-
 - (Feed *)feedForID:(NSNumber *)feedID
 {
     
-    __block Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+    Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
         if ([current.feedID isEqualToNumber:feedID])
             return current;
         return prev;
     }];
     
-//    if (!feed) {
-//        // check in folders
-//        
-//        [MyFeedsManager.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//           
-//            [obj.feeds enumerateObjectsUsingBlock:^(Feed *  _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
-//               
-//                if (objx && objx.feedID != nil && [objx.feedID isEqualToNumber:feedID]) {
-//                    feed = objx;
-//                    *stopx = YES;
-//                    *stop = YES;
-//                }
-//                
-//            }];
-//            
-//        }];
-//        
-//    }
-    
     return feed;
 }
+
+- (Folder *)folderForID:(NSNumber *)folderID {
+    
+    Folder *folder = [self.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+        if ([current.folderID isEqualToNumber:folderID]) {
+            return current;
+        }
+        
+        return prev;
+    }];
+    
+    return folder;
+    
+}
+
+#endif
 
 - (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
@@ -1430,13 +1418,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 #endif
 
-//- (void)setFeeds:(NSArray<Feed *> *)feeds
-//{
-//    _feeds = feeds ?: @[];
-//    
-//    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
-//}
-//
+- (void)setFeeds:(NSArray<Feed *> *)feeds
+{
+    _feeds = feeds ?: @[];
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
+}
+
 //- (void)setFolders:(NSArray<Folder *> *)folders
 //{
 //    _folders = folders ?: @[];
@@ -1458,16 +1446,14 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 #pragma mark - Getters
 
-#ifndef SHARE_EXTENSION
-- (NSArray <Feed *> *)feeds {
-    return self.unreadManager.feedsWithoutFolders;
+- (NSArray <Feed *> *)feedsWithoutFolders {
+    
+   NSArray <Feed *> * feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+        return obj.folderID == nil;
+    }];
+    
+    return feeds;
 }
-
-- (NSArray <Folder *> *)folders {
-    return self.unreadManager.folders;
-}
-
-#endif
 
 - (Subscription *)getSubscription {
     return _subscription;
