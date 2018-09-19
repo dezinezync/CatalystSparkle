@@ -16,9 +16,7 @@
 #import "Subscription.h"
 #import "FeedsManagerErrors.h"
 
-#ifndef SHARE_EXTENSION
 #import <UICKeyChainStore/UICKeyChainStore.h>
-#endif
 
 @class FeedsManager;
 
@@ -28,13 +26,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     NSString *_pushToken;
 }
 
-#ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readonly) Subscription *subscription;
-#endif
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession, * _Nonnull gifSession;
 
-#ifndef SHARE_EXTENSION
 @property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;
 
 @property (nonatomic) NSNumber * _Nullable userID;
@@ -44,7 +39,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
 
 @property (nonatomic, strong) UICKeyChainStore *keychain;
-#endif
 
 @property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
@@ -88,8 +82,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)markFeedRead:(Feed * _Nonnull)feed success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
-#ifndef SHARE_EXTENSION
-
 - (void)getRecommendationsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
@@ -116,8 +108,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)removeFolder:(NSNumber *)folderID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-#endif
-
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
@@ -142,9 +132,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getOPMLWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-#pragma mark - 
-
-#ifndef SHARE_EXTENSION
+#pragma mark -
 
 - (void)resetAccount;
 
@@ -155,8 +143,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
 
 - (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock)successCB error:(errorBlock)errorCB;
-
-#endif
 
 #pragma mark - Error formatting
 

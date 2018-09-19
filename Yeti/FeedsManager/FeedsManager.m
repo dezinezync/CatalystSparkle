@@ -11,9 +11,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#ifndef SHARE_EXTENSION
 #import <CommonCrypto/CommonHMAC.h>
-#endif
 
 #import <DZKit/AlertManager.h>
 
@@ -26,23 +24,18 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
-#ifdef SHARE_EXTENSION
-@interface FeedsManager ()
-#else
 @interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration>
-#endif
 {
-//    NSString *_feedsCachePath;
     NSString *_receiptLastUpdatePath;
     Subscription * _subscription;
 }
 
 @property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession, *gifSession;
 @property (nonatomic, strong, readwrite) Reachability *reachability;
-#ifndef SHARE_EXTENSION
+
 @property (nonatomic, strong, readwrite) YTUserID *userIDManager;
 @property (nonatomic, strong, readwrite) Subscription *subscription;
-#endif
+
 @end
 
 @implementation FeedsManager
@@ -64,7 +57,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 {
     if (self = [super init]) {
         
-#ifndef SHARE_EXTENSION
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         
 //        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
@@ -122,7 +114,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
             _receiptLastUpdatePath = path;
         }
-#endif
     }
     
     return self;
@@ -130,15 +121,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (NSNumber *)userID
 {
-#ifndef SHARE_EXTENSION
     return self.userIDManager.userID;
-#else
-    return nil;
-#endif
 }
 
 #pragma mark - Feeds
-#ifndef SHARE_EXTENSION
+
 - (void)getFeedsSince:(NSDate *)since success:(successBlock)successCB error:(errorBlock)errorCB
 {
     weakify(self);
@@ -323,8 +310,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-#endif
-
 - (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
     if (!page)
@@ -335,12 +320,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if ([self userID] != nil) {
         params[@"userID"] = MyFeedsManager.userID;
     }
-#ifndef SHARE_EXTENSION
 #if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
-#endif
 #endif
     
     [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -387,9 +370,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if ([self userID] != nil) {
         params = @{@"URL": url, @"userID": [self userID]};
     }
-#ifndef SHARE_EXTENSION
+
     weakify(self);
-#endif
+
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
@@ -412,13 +395,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
             NSNumber *feedID = @([[reroute lastPathComponent] integerValue]);
             
-#ifdef SHARE_EXTENSION
-            if (successCB)
-                successCB(feedID, response, task);
-#else
             strongify(self);
             [self addFeedByID:feedID success:successCB error:errorCB];
-#endif
             
             return;
             
@@ -435,11 +413,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return;
         }
 
-#ifndef SHARE_EXTENSION
         strongify(self);
 
         self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
-#endif
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
@@ -483,15 +459,15 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if ([MyFeedsManager userID] != nil) {
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
-#ifndef SHARE_EXTENSION
+
     weakify(self);
-#endif
+
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-#ifndef SHARE_EXTENSION
+
         strongify(self);
         
         self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
-#endif
+
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         
@@ -580,12 +556,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                              @"page": @(page)
                              }.mutableCopy;
     
-#ifndef SHARE_EXTENSION
 #if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
-#endif
 #endif
     
     [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -654,8 +628,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
     
 }
-
-#ifndef SHARE_EXTENSION
 
 - (void)getRecommendationsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB {
     
@@ -804,12 +776,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10}.mutableCopy;
     
-#ifndef SHARE_EXTENSION
 #if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
     }
-#endif
 #endif
     
     weakify(self);
@@ -1090,8 +1060,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-#endif
-
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
@@ -1250,13 +1218,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (void)getSubscriptionWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
-#ifndef SHARE_EXTENSION
+
     weakify(self);
-#endif
+
     
     [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
-#ifndef SHARE_EXTENSION
         strongify(self);
         
         if ([[responseObject valueForKey:@"status"] boolValue]) {
@@ -1274,7 +1241,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 self.subscription = sub;
             }
         }
-#endif
         
         if (successCB) {
             successCB(responseObject, response, task);
@@ -1283,7 +1249,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         DDLogError(@"Subscription Error: %@", error.localizedDescription);
-#ifndef SHARE_EXTENSION
+
         Subscription *sub = [Subscription new];
         sub.error = error;
         
@@ -1292,7 +1258,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         @synchronized (self) {
             self.subscription = sub;
         }
-#endif
         
         error = [self errorFromResponse:error.userInfo];
         
@@ -1359,7 +1324,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     _pushToken = pushToken;
     
     if (_pushToken) {
-#ifndef SHARE_EXTENSION
+
         if (MyFeedsManager.subsribeAfterPushEnabled) {
             
             [self subsribe:MyFeedsManager.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1392,11 +1357,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
            
             DDLogError(@"Add push token error: %@", error);
         }];
-#endif
     }
 }
 
-#ifndef SHARE_EXTENSION
 - (void)setSubscription:(Subscription *)subscription {
     _subscription = subscription;
     
@@ -1414,7 +1377,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
     
 }
-#endif
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
 {
@@ -1465,7 +1427,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return _reachability;
 }
 
-#ifndef SHARE_EXTENSION
 - (UICKeyChainStore *)keychain {
     
     if (!_keychain) {
@@ -1480,7 +1441,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     return _keychain;
 }
-#endif
 
 - (DZURLSession *)session
 {
@@ -1513,14 +1473,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         session.useActivityManager = YES;
         session.responseParser = [DZJSONResponseParser new];
 
-#ifndef SHARE_EXTENSION
         weakify(self);
-#endif
         session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
           
             NSMutableURLRequest *mutableReq = request.mutableCopy;
             [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-#ifndef SHARE_EXTENSION
+
             // compute Authorization
             strongify(self);
             
@@ -1537,20 +1495,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             [mutableReq setValue:signature forHTTPHeaderField:@"Authorization"];
             [mutableReq setValue:userID.stringValue forHTTPHeaderField:@"x-userID"];
             [mutableReq setValue:timecode forHTTPHeaderField:@"x-timestamp"];
-#endif
             return mutableReq;
             
         };
         
         session.redirectModifier = ^NSURLRequest *(NSURLSessionTask *task, NSURLRequest *request, NSHTTPURLResponse *redirectResponse) {
             NSURLRequest *retval = request;
-#ifdef SHARE_EXTENSION
-            if ([[retval.URL absoluteString] containsString:@"/feed/"]) {
-                // we're being redirected to add a new feed. The share extension handles this internally in it's success block.
-                // therefore we deny the request from here.
-                retval = nil;
-            }
-#endif
             return retval;
         };
         
@@ -1618,7 +1568,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return _gifSession;
 }
 
-#ifndef SHARE_EXTENSION
+
 - (NSString *)hmac:(NSString *)plaintext withKey:(NSString *)key
 {
     const char *cKey  = [key cStringUsingEncoding:NSASCIIStringEncoding];
@@ -1634,8 +1584,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     return HMAC;
 }
-#endif
-//#ifndef SHARE_EXTENSION
 
 - (NSNumber *)bookmarksCount {
     
@@ -1830,7 +1778,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 #pragma mark -
-#ifndef SHARE_EXTENSION
+
 - (void)resetAccount {
     self.folders = nil;
     self.feeds = nil;
@@ -1864,7 +1812,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     self.userIDManager.UUID = nil;
     self.userIDManager.userID = nil;
 }
-#endif
 
 #pragma mark - <YTUserDelegate>
 
@@ -1877,16 +1824,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (MyFeedsManager.userID != nil) {
         params = @{@"userID": MyFeedsManager.userID};
     }
-#ifndef SHARE_EXTENSION
+
     else if ([MyFeedsManager userIDManager]->_UUID) {
         params = @{@"userID" : [MyFeedsManager.userIDManager UUIDString]};
     }
-#else
-    if (errorCB) {
-        errorCB(nil, nil, nil);
-    }
-    return;
-#endif
+
     [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
         if (successCB) {
@@ -1907,8 +1849,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
     
 }
-
-#ifndef SHARE_EXTENSION
 
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
 {
@@ -1968,8 +1908,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
-#endif
-
 #pragma mark - Error Handler
 
 - (NSError *)errorFromResponse:(NSDictionary *)userInfo {
@@ -2015,7 +1953,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 #pragma mark - Misc
 
 - (void)checkConstraintsForRequestingReview {
-#ifndef SHARE_EXTENSION
+
     id countVal = self.keychain[YTLaunchCount];
     NSInteger count = [(countVal ?: @0) integerValue];
     // trigger on 7th launch
@@ -2025,7 +1963,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             self.shouldRequestReview = YES;
         }
     }
-#endif
+
 }
 
 - (void)updateBookmarksFromServer
@@ -2166,7 +2104,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
-#ifndef SHARE_EXTENSION
 #pragma mark - State Restoration
 
 NSString *const kFoldersKey = @"key.folders";
@@ -2234,7 +2171,5 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
     }
     
 }
-
-#endif
 
 @end

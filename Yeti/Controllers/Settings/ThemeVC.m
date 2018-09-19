@@ -311,13 +311,9 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         [(YetiTheme *)[YTThemeKit theme] setTintColor:selectedColor];
         
-#ifndef SHARE_EXTENSION
-        
         for (UIWindow *window in [UIApplication.sharedApplication windows]) {
             window.tintColor = selectedColor;
         };
-        
-#endif
         
         [NSNotificationCenter.defaultCenter postNotificationName:ThemeDidUpdate object:nil];
         

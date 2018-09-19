@@ -3,11 +3,6 @@
 
 #import <DZKit/DZDatasourceModel.h>
 
-#ifdef SHARE_EXTENSION
-#import <CoreGraphics/CoreGraphics.h>
-#import <UIKit/UIKit.h>
-#endif
-
 @interface Content : DZObject <NSCoding, NSCopying> {
 
 }

@@ -2,10 +2,6 @@
 #import "Enclosure.h"
 #import <DZKit/DZDatasourceModel.h>
 
-#ifdef SHARE_EXTENSION
-#import <UIKit/UIKit.h>
-#endif
-
 @interface FeedItem : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
 
 }
