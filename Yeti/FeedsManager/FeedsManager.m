@@ -986,6 +986,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [dict setObject:toDel forKey:@"del"];
     }
     
+    weakify(self);
+    
     [self updateFolder:folderID properties:dict.copy success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [[responseObject valueForKey:@"status"] boolValue];
@@ -998,46 +1000,44 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return;
         }
         
-        NSArray <Folder *> *folders = MyFeedsManager.folders;
+        strongify(self);
         
-        Folder *folder = [folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
-            if ([current.folderID isEqualToNumber:folderID])
-                return current;
-            return prev;
-        }];
+        Folder *folder = [self folderForID:folderID];
         
-        // check delete ops first
-        if (del && del.count) {
-            NSArray <Feed *> * removedFeeds = [folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                return [del indexOfObject:obj.feedID] != NSNotFound;
-            }];
-
-            [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.folderID = nil;
-            }];
+        if (folder) {
+            // check delete ops first
+            if (del && del.count) {
+                NSArray <Feed *> * removedFeeds = [folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                    return [del indexOfObject:obj.feedID] != NSNotFound;
+                }];
+                
+                [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.folderID = nil;
+                }];
+                
+                NSArray *feeds = [folder.feeds allObjects];
+                
+                [folder.feeds removeAllObjects];
+                
+                feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                    return [del indexOfObject:obj.feedID] == NSNotFound;
+                }];
+                
+                [folder.feeds addObjectsFromArray:feeds];
+            }
             
-            NSArray *feeds = [folder.feeds allObjects];
-            
-            [folder.feeds removeAllObjects];
-
-            feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                return [del indexOfObject:obj.feedID] == NSNotFound;
-            }];
-            
-            [folder.feeds addObjectsFromArray:feeds];
-        }
-        
-        // now run add ops
-        if (add && add.count) {
-            NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                return [add indexOfObject:obj.feedID] != NSNotFound;
-            }];
-            
-            [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.folderID = folderID;
-            }];
-            
-            [folder.feeds addObjectsFromArray:addedFeeds];
+            // now run add ops
+            if (add && add.count) {
+                NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                    return [add indexOfObject:obj.feedID] != NSNotFound;
+                }];
+                
+                [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.folderID = folderID;
+                }];
+                
+                [folder.feeds addObjectsFromArray:addedFeeds];
+            }
         }
         
         // this pushes the update to FeedsVC
