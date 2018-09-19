@@ -406,6 +406,10 @@
 		F0B21BC3208C82C7007E5A3B /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BC0208C82C6007E5A3B /* Folder.m */; };
 		F0B4FC22209C55A900C7941A /* black.json in Resources */ = {isa = PBXBuildFile; fileRef = F0B4FC21209C55A900C7941A /* black.json */; };
 		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
+		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
+		F0BAE4DB21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
+		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
+		F0BAE4DD21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
 		F0BCE1F5205A733500DD27D8 /* DTConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300321FE2633E0040D10D /* DTConstants.m */; };
 		F0BCE1F6205A733500DD27D8 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300341FE2633E0040D10D /* DTError.m */; };
 		F0BCE1F7205A733500DD27D8 /* DTTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D300361FE2633E0040D10D /* DTTimePeriod.m */; };
@@ -983,6 +987,9 @@
 		F0B4FC21209C55A900C7941A /* black.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = black.json; sourceTree = "<group>"; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
+		F0BAE4D721523C7B00249A5E /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
+		F0BAE4D821523C7B00249A5E /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
+		F0BAE4D921523C7B00249A5E /* FolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderCell.xib; sourceTree = "<group>"; };
 		F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UICKeyChainStore.framework; path = Carthage/Build/iOS/UICKeyChainStore.framework; sourceTree = SOURCE_ROOT; };
 		F0C6CA662143A17B00577D16 /* MetaOpenGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaOpenGraph.h; sourceTree = "<group>"; };
 		F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaOpenGraph.m; sourceTree = "<group>"; };
@@ -1536,6 +1543,9 @@
 				F070C3491FBADF8D00912CCF /* FeedsCell.h */,
 				F070C34A1FBADF8D00912CCF /* FeedsCell.m */,
 				F070C34B1FBADF8D00912CCF /* FeedsCell.xib */,
+				F0BAE4D721523C7B00249A5E /* FolderCell.h */,
+				F0BAE4D821523C7B00249A5E /* FolderCell.m */,
+				F0BAE4D921523C7B00249A5E /* FolderCell.xib */,
 				F070C34E1FBAE2F200912CCF /* ArticleCell.h */,
 				F070C34F1FBAE2F200912CCF /* ArticleCell.m */,
 				F070C3501FBAE2F200912CCF /* ArticleCell.xib */,
@@ -2185,6 +2195,7 @@
 				F0A5AE7120C197EF00CFA1D2 /* Merriweather-Italic.ttf in Resources */,
 				F0542E3D211DBFD700D66878 /* black@2x.png in Resources */,
 				F0AC4ED020A5936E0017E881 /* FeedsHeaderView.xib in Resources */,
+				F0BAE4DD21523C7B00249A5E /* FolderCell.xib in Resources */,
 				F0673B0420C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F069AC0F206E018F00021ABF /* light.css in Resources */,
 				F0D01CC62118681C003A01DD /* dark.png in Resources */,
@@ -2212,6 +2223,7 @@
 				F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F0A5AE9020C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
+				F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */,
 				F0A5AE9A20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
 				F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */,
 				F0A5AEAE20C19DA200CFA1D2 /* IBMPlexSans-Bold.ttf in Resources */,
@@ -2524,6 +2536,7 @@
 				F069ABE2206E018F00021ABF /* AccountVC.m in Sources */,
 				F069ABE3206E018F00021ABF /* ExternalAppsVC.m in Sources */,
 				F069ABE4206E018F00021ABF /* PaddedLabel.m in Sources */,
+				F0BAE4DB21523C7B00249A5E /* FolderCell.m in Sources */,
 				F069ABE5206E018F00021ABF /* SettingsCell.m in Sources */,
 				F069ABE6206E018F00021ABF /* Feed.m in Sources */,
 				F069ABE7206E018F00021ABF /* Heading.m in Sources */,
@@ -2601,6 +2614,7 @@
 				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
 				F0D300411FE2633E0040D10D /* DTError.m in Sources */,
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
+				F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */,
 				F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */,
 				F0D300421FE2633E0040D10D /* DTTimePeriod.m in Sources */,
 				F03BC4E920C9016A007B574F /* EmptyView.m in Sources */,

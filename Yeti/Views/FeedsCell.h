@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Image.h"
-#import "FolderDrop.h"
+#import "Feed.h"
 
 extern NSString *const _Nonnull kFeedsCell;
 
@@ -19,11 +19,5 @@ extern NSString *const _Nonnull kFeedsCell;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable countLabel;
 
 - (void)configure:(Feed * _Nonnull)feed;
-
-- (void)configureFolder:(Folder *_Nonnull)folder;
-
-- (void)configureFolder:(Folder *)folder dropDelegate:(id <FolderDrop>)dropDelegate;
-
-- (void)updateFolderCount;
 
 @end

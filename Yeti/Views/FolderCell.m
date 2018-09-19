@@ -1,33 +1,37 @@
 //
-//  FeedsCell.m
+//  FolderCell.m
 //  Yeti
 //
-//  Created by Nikhil Nigade on 14/11/17.
-//  Copyright © 2017 Dezine Zync Studios. All rights reserved.
+//  Created by Nikhil Nigade on 19/09/18.
+//  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedsCell.h"
+#import "FolderCell.h"
+#import "YetiThemeKit.h"
+#import "FolderDrop.h"
+
 #import <DZKit/NSString+Extras.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
-#import "YetiThemeKit.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-NSString *const kFeedsCell = @"com.yeti.cells.feeds";
+static void *KVO_UNREAD = &KVO_UNREAD;
 
-@interface FeedsCell ()
+NSString *const kFolderCell = @"com.yeti.cells.folder";
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *stackLeading;
-@property (weak, nonatomic) Feed * feed;
+@interface FolderCell () <UIDropInteractionDelegate>
+
+@property (weak, nonatomic) Folder * folder;
+@property (weak, nonatomic) UIDropInteraction *dropInteraction;
+
+@property (weak, nonatomic) id <FolderDrop> dropDelegate;
 
 @end
 
-static void *KVO_UNREAD = &KVO_UNREAD;
-
-@implementation FeedsCell
+@implementation FolderCell
 
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -50,7 +54,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.backgroundColor = theme.cellColor;
-
+    
     self.titleLabel.textColor = theme.titleColor;
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
@@ -67,7 +71,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     [super prepareForReuse];
     
-    self.feed = nil;
+    self.folder = nil;
     
     [self.faviconView il_cancelImageLoading];
     
@@ -80,10 +84,14 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     self.indentationLevel = 0;
-    self.stackLeading.constant = 8.f;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+    
+    if (self.dropInteraction) {
+        [self removeInteraction:self.dropInteraction];
+        self.dropInteraction = nil;
+    }
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
@@ -146,45 +154,30 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 
 #pragma mark -
 
-- (void)configure:(Feed *)feed
-{
+- (void)configureFolder:(Folder *)folder {
+    [self configureFolder:folder dropDelegate:nil];
+}
+
+- (void)configureFolder:(Folder *)folder dropDelegate:(id <FolderDrop>)dropDelegate {
     
     [self removeObservorInfo];
     
-    BOOL registers = YES;
+    self.folder = folder;
     
-    if (feed.folderID != nil) {
-        self.indentationLevel = 1;
-        self.stackLeading.constant = 8.f + (self.indentationWidth * self.indentationLevel);
+    self.titleLabel.text = folder.title;
+    self.faviconView.layer.cornerRadius = 0.f;
+    [self updateFolderCount];
+    
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    self.faviconView.image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    if (dropDelegate != nil) {
+        UIDropInteraction * dropInteraction = [[UIDropInteraction alloc] initWithDelegate:self];
+        self.dropDelegate = dropDelegate;
+        [self addInteraction:dropInteraction];
         
-        [self setNeedsUpdateConstraints];
-        [self layoutIfNeeded];
-        
-        registers = NO;
-    }
-    
-    self.faviconView.cacheImage = YES;
-    self.faviconView.cachedSuffix = @"-feedFavicon";
-    
-    self.feed = feed;
-    
-    self.titleLabel.text = feed.title;
-    self.countLabel.text = (feed.unread ?: @0).stringValue;
-    
-    NSString *url = [feed faviconURI];
-    
-    if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
-        @try {
-            weakify(self);
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                strongify(self);
-                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
-            });
-        }
-        @catch (NSException *exc) {
-            // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            DDLogWarn(@"ArticleCell setImage: %@", exc);
-        }
+        _dropInteraction = dropInteraction;
     }
     
     [self setupObservors];
@@ -203,28 +196,49 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     return formattedString(@"%@. %@ unread article%@", title, @(count), count == 1 ? @"" : @"s");
 }
 
+//- (NSString *)accessibilityValue {
+//    if ([self.object isKindOfClass:Folder.class]) {
+//        return @"Folder";
+//    }
+//
+//    return [super accessibilityValue];
+//}
+
+- (NSString *)accessibilityHint {
+    if (self.folder) {
+        
+        if ([self.folder isExpanded]) {
+            return @"Tap to Close Folder";
+        }
+        
+        return @"Tap to Open Folder";
+    }
+    
+    return [super accessibilityValue];
+}
+
 #pragma mark - KVO
 
 - (void)setupObservors {
     
-    if (self.feed) {
-        [self.feed addObserver:self forKeyPath:propSel(unread) options:NSKeyValueObservingOptionNew context:KVO_UNREAD];
+    if (self.folder) {
+        [self.folder addObserver:self forKeyPath:propSel(unreadCount) options:NSKeyValueObservingOptionNew context:KVO_UNREAD];
     }
     
 }
 
 - (void)removeObservorInfo {
     
-    if (self.feed && self.feed.observationInfo != nil) {
+    if (self.folder && self.folder.observationInfo != nil) {
         
-        NSArray *observingObjects = [(id)(self.feed.observationInfo) valueForKeyPath:@"_observances"];
+        NSArray *observingObjects = [(id)(self.folder.observationInfo) valueForKeyPath:@"_observances"];
         observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [obj valueForKeyPath:@"observer"];
         }];
         
         if ([observingObjects indexOfObject:self] != NSNotFound) {
             @try {
-                [self.feed removeObserver:self forKeyPath:propSel(unread)];
+                [self.folder removeObserver:self forKeyPath:propSel(unreadCount)];
             } @catch (NSException *exc) {}
         }
     }
@@ -254,9 +268,51 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         return;
     }
     
-    NSNumber *totalUnread = self.feed ? self.feed.unread : @(0);
+    NSNumber *totalUnread = self.folder ? self.folder.unreadCount : @(0);
     
     self.countLabel.text = [(totalUnread ?: @0) stringValue];
+}
+
+#pragma mark - Drop
+
+- (BOOL)dropInteraction:(UIDropInteraction *)interaction canHandleSession:(id<UIDropSession>)session {
+    NSArray *typeIdentifiers = @[(__bridge NSString *)kUTTypeUTF8PlainText];
+    
+    return ([[session items] count]
+            && [session hasItemsConformingToTypeIdentifiers:typeIdentifiers]);
+}
+
+- (UIDropProposal *)dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(nonnull id<UIDropSession>)session {
+    
+    CGPoint dropLocation = [session locationInView:self];
+    
+    UIDropProposal *proposal = nil;
+    
+    if (CGRectContainsPoint(self.bounds, dropLocation) && self.dropDelegate != nil) {
+        proposal = [[UIDropProposal alloc] initWithDropOperation:UIDropOperationMove];
+    }
+    else {
+        proposal = [[UIDropProposal alloc] initWithDropOperation:UIDropOperationForbidden];
+    }
+    
+    return proposal;
+    
+}
+
+- (void)dropInteraction:(UIDropInteraction *)interaction performDrop:(id<UIDropSession>)session {
+    
+    weakify(self);
+    
+    [session loadObjectsOfClass:NSString.class completion:^(NSArray<__kindof id<NSItemProviderReading>> * _Nonnull objects) {
+        
+        [objects enumerateObjectsUsingBlock:^(__kindof id<NSItemProviderReading>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            strongify(self);
+            
+            [self.dropDelegate moveFeed:obj toFolder:self.folder];
+        }];
+        
+    }];
+    
 }
 
 @end

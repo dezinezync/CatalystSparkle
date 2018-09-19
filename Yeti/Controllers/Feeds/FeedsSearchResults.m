@@ -8,6 +8,7 @@
 
 #import "FeedsSearchResults.h"
 #import "FeedsCell.h"
+#import "FolderCell.h"
 #import "FeedVC.h"
 
 @interface FeedsSearchResults ()
@@ -20,18 +21,21 @@
     [super viewDidLoad];
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FolderCell.class) bundle:nil] forCellReuseIdentifier:kFolderCell];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
     
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+    UITableViewCell *cell;
+    id obj = [self.DS objectAtIndexPath:indexPath];
     
-    if ([feed isKindOfClass:Folder.class]) {
-        [cell configureFolder:(Folder *)feed];
+    if ([obj isKindOfClass:Folder.class]) {
+        cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
+        [(FolderCell *)cell configureFolder:(Folder *)obj];
     }
     else {
-        [cell configure:feed];
+        cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+        [(FeedsCell *)cell configure:(Feed *)obj];
     }
     
     return cell;

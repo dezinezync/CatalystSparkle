@@ -9,6 +9,7 @@
 #import "FeedsVC+Actions.h"
 #import "FeedsManager.h"
 #import "FeedsCell.h"
+#import "FolderCell.h"
 #import "FeedVC.h"
 #import <DZKit/DZBasicDatasource.h>
 
@@ -175,6 +176,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(EmptyCell.class) bundle:nil] forCellReuseIdentifier:kEmptyCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FolderCell.class) bundle:nil] forCellReuseIdentifier:kFolderCell];
     
     self.tableView.tableFooterView = [UIView new];
     
@@ -335,9 +337,11 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+    FeedsCell *ocell = nil;
     
     if (indexPath.section == 0) {
+        FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+        
         cell.titleLabel.text = [self.DS objectAtIndexPath:indexPath];
         
         NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
@@ -350,6 +354,8 @@ static void *KVO_Unread = &KVO_Unread;
             cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
         }
         
+        ocell = cell;
+        
     }
     else {
         
@@ -358,28 +364,34 @@ static void *KVO_Unread = &KVO_Unread;
         }
         
         // Configure the cell...
-        Feed *feed = [self.DS objectAtIndexPath:indexPath];
-        if (feed) {
-            if ([feed isKindOfClass:Feed.class]) {
-                [cell configure:feed];
+        id obj = [self.DS objectAtIndexPath:indexPath];
+        if (obj) {
+            if ([obj isKindOfClass:Feed.class]) {
+                FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+                [cell configure:obj];
+                
+                ocell = cell;
             }
             else {
                 // folder
-                [cell configureFolder:(Folder *)feed dropDelegate:self];
+                FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
+                [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
+                
+                ocell = (FeedsCell *)cell;
             }
         }
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    cell.faviconView.backgroundColor = theme.cellColor;
-    cell.titleLabel.backgroundColor = theme.cellColor;
-    cell.titleLabel.textColor = theme.titleColor;
+    ocell.faviconView.backgroundColor = theme.cellColor;
+    ocell.titleLabel.backgroundColor = theme.cellColor;
+    ocell.titleLabel.textColor = theme.titleColor;
     
-    cell.countLabel.backgroundColor = theme.unreadBadgeColor;
-    cell.countLabel.textColor = theme.unreadTextColor;
+    ocell.countLabel.backgroundColor = theme.unreadBadgeColor;
+    ocell.countLabel.textColor = theme.unreadTextColor;
     
-    return cell;
+    return ocell;
 }
 
 //- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -421,8 +433,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         CGPoint contentOffset = self.tableView.contentOffset;
         
-        FeedsCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        [cell updateFolderCount];
+        FolderCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         
         if (folder.isExpanded) {
             
