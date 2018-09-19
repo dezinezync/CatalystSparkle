@@ -616,10 +616,41 @@
 - (UIView *)viewForEmptyDataset {
     // since the Datasource is asking for this view
     // it will be presenting it.
-    self.activityIndicatorView.hidden = NO;
-    [self.activityIndicatorView startAnimating];
+    if ((_canLoadNext == YES || _loadingNext == YES) && _page == 0) {
+        self.activityIndicatorView.hidden = NO;
+        [self.activityIndicatorView startAnimating];
+        
+        return self.activityIndicatorView;
+    }
     
-    return self.activityIndicatorView;
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.numberOfLines = 0;
+    label.backgroundColor = theme.tableColor;
+    label.opaque = YES;
+    
+    NSString *title = @"No Articles";
+    NSString *subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+    
+    NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+                                 NSForegroundColorAttributeName: theme.subtitleColor};
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
+    
+    attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+                   NSForegroundColorAttributeName: theme.titleColor};
+    
+    NSRange range = [formatted rangeOfString:title];
+    if (range.location != NSNotFound) {
+        [attrs addAttributes:attributes range:range];
+    }
+    
+    label.attributedText = attrs;
+    [label sizeToFit];
+    
+    return label;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
