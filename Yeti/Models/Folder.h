@@ -1,10 +1,11 @@
 
-#import <DZKit/DZCloudObject.h>
+#import <DZKit/DZObject.h>
+#import <DZKit/DZDatasourceModel.h>
 #import "NSPointerArray+AbstractionHelpers.h"
 
 @class Feed;
 
-@interface Folder : DZCloudObject <NSCoding, NSCopying> {
+@interface Folder : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
 
 }
 

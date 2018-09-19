@@ -3,6 +3,10 @@
 
 @implementation Folder
 
+- (NSString *)compareID {
+    return [self.folderID stringValue];
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];
@@ -59,33 +63,21 @@
 
 }
 
-- (void)setValue:(id)value forKey:(NSString *)key
-{
-
-    if ([key isEqualToString:@"feeds"]) {
-
-        if ([value isKindOfClass:[NSPointerArray class]])
-        {
-            self.feeds = value;
-//            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
+//- (void)setValue:(id)value forKey:(NSString *)key
+//{
 //
-//            for (id valueMember in value) {
-//                if ([valueMember isKindOfClass:NSDictionary.class]) {
-//                    Feed *obj = [Feed instanceFromDictionary:valueMember];
-//                    [myMembers addObject:obj];
-//                }
-//                else {
-//                    [myMembers addObject:valueMember];
-//                }
-//            }
-
-        }
-
-    } else {
-        [super setValue:value forKey:key];
-    }
-
-}
+//    if ([key isEqualToString:@"feeds"]) {
+//
+//        if ([value isKindOfClass:[NSPointerArray class]])
+//        {
+//            self.feeds = value;
+//        }
+//
+//    } else {
+//        
+//    }
+//
+//}
 
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key

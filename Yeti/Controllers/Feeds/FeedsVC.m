@@ -69,7 +69,6 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
-    [center addObserver:self selector:@selector(didUpdateReadCount:) name:FeedDidUpReadCount object:MyFeedsManager];
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
     [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
     
@@ -760,99 +759,6 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
     }
-}
-
-- (void)didUpdateReadCount:(NSNotification *)note {
-    
-//    if (note == nil || note.userInfo == nil)
-//        return;
-//    
-//    NSDictionary *folders = [note.userInfo valueForKey:@"folders"];
-//    NSArray <NSString *> *allFolders = [folders allKeys];
-//    
-//    NSDictionary *feeds = [note.userInfo valueForKey:@"feeds"];
-//    NSArray <NSString *> * allFeeds = [feeds allKeys];
-//    
-//    BOOL read = [[note.userInfo valueForKey:@"read"] boolValue];
-//    
-//    DDLogInfo(@"%@\n%@\n%@", folders, feeds, @(read));
-//    
-//    /*
-//     * we need to check DS2 first
-//     * the total of feeds count should be added or subtracted from the unread count
-//     */
-//    
-//    NSArray *data = [self.DS2 data];
-//    
-//    [data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//    
-//        if ([obj isKindOfClass:Folder.class]) {
-//            Folder *folder = (Folder *)obj;
-//            
-//            // check if the folder was affected by this change
-//            if ([allFolders indexOfObject:folder.folderID.stringValue] != NSNotFound) {
-//                
-//                // update the feeds inside this folder affected by the change
-//                [[folder feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
-//                    
-//                    if ([allFeeds indexOfObject:objx.feedID.stringValue] != NSNotFound) {
-//                        NSNumber *count = feeds[objx.feedID.stringValue];
-//                        NSInteger marked = count.integerValue;
-//                        
-//                        if (read) {
-//                            NSInteger current = objx.unread.integerValue;
-//                            NSInteger new = MAX(0, current - marked);
-//                            
-//                            objx.unread = @(new);
-//                        }
-//                        else {
-//                            NSInteger current = objx.unread.integerValue;
-//                            NSInteger new = current + marked;
-//                            
-//                            objx.unread = @(new);
-//                        }
-//                    }
-//                    
-//                }];
-//                
-//            }
-//        }
-//        else if ([obj isKindOfClass:Feed.class]) {
-//            // check if the Feed is affected by the change
-//            Feed *feed = (Feed *)obj;
-//            NSString *key = feed.feedID.stringValue;
-//            
-//            if ([allFeeds indexOfObject:key]) {
-//                NSNumber *count = feeds[key];
-//                NSInteger marked = count.integerValue;
-//                
-//                if (read) {
-//                    NSInteger current = feed.unread.integerValue;
-//                    NSInteger new = MAX(0, current - marked);
-//                    
-//                    feed.unread = @(new);
-//                }
-//                else {
-//                    NSInteger current = feed.unread.integerValue;
-//                    NSInteger new = current + marked;
-//                    
-//                    feed.unread = @(new);
-//                }
-//            }
-//        }
-//        else {
-//            DDLogWarn(@"Unknown object type when updating read counts: %@", obj);
-//        }
-//        
-//    }];
-//    
-//    weakify(self);
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        strongify(self);
-//        
-//        NSArray *visibleIndices = [self.tableView indexPathsForVisibleRows];
-//        [self.tableView reloadRowsAtIndexPaths:visibleIndices withRowAnimation:UITableViewRowAnimationNone];
-//    });
 }
 
 - (void)subscriptionExpired:(NSNotification *)note {

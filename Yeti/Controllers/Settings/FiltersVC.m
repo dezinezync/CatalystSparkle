@@ -13,6 +13,9 @@
 #import "FeedsManager.h"
 #import "YetiThemeKit.h"
 
+#import <DZKit/AlertManager.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
+
 NSString *const kFiltersCell = @"filterCell";
 
 @interface FiltersVC () <DZSDatasource, UITextFieldDelegate> {

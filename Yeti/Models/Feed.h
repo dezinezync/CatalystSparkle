@@ -1,4 +1,4 @@
-#import <DZKit/DZCloudObject.h>
+#import <DZKit/DZObject.h>
 
 #import "FeedItem.h"
 #import "Author.h"
@@ -6,7 +6,7 @@
 
 #import <DZKit/DZDatasourceModel.h>
 
-@interface Feed : DZCloudObject <NSCoding, DZDatasourceModel, NSCopying> {
+@interface Feed : DZObject <NSCoding, DZDatasourceModel, NSCopying> {
     
 }
 

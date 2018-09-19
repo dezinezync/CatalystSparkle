@@ -10,6 +10,7 @@
 #import "YetiThemeKit.h"
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
+#import <DZKit/NSString+Extras.h>
 
 NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
 

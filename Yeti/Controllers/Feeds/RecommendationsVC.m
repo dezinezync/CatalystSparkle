@@ -16,6 +16,8 @@
 #import "FeedsVC.h"
 #import "FeedVC.h"
 
+#import <DZKit/NSArray+Safe.h>
+
 typedef NS_ENUM(NSInteger, ReccoState) {
     ReccoStateLoading,
     ReccoStateLoaded,

@@ -15,6 +15,8 @@
 #import <CommonCrypto/CommonHMAC.h>
 #endif
 
+#import <DZKit/AlertManager.h>
+
 #ifndef DDLogError
 #import <DZKit/DZLogger.h>
 #import <CocoaLumberjack/CocoaLumberjack.h>
@@ -1006,45 +1008,37 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         // check delete ops first
         if (del && del.count) {
-//            NSArray <Feed *> * removedFeeds = [folder.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-//                return [del indexOfObject:obj.feedID] != NSNotFound;
-//            }];
-//
-//            [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//                obj.folderID = nil;
-//            }];
-//
-//            folder.feeds = [folder.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-//                return [del indexOfObject:obj.feedID] == NSNotFound;
-//            }];
-//
-//            NSArray <Feed *> *feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:removedFeeds];
-//
-//            @synchronized (MyFeedsManager) {
-//                MyFeedsManager.feeds = feeds;
-//            }
+            NSArray <Feed *> * removedFeeds = [folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [del indexOfObject:obj.feedID] != NSNotFound;
+            }];
+
+            [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.folderID = nil;
+            }];
+            
+            [folder.feeds removeAllObjects];
+
+            [folder.feeds addObjectsFromArray:[folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [del indexOfObject:obj.feedID] == NSNotFound;
+            }]];
         }
         
         // now run add ops
         if (add && add.count) {
-//            NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-//                return [add indexOfObject:obj.feedID] != NSNotFound;
-//            }];
-//            
-//            [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//                obj.folderID = folderID;
-//            }];
-//            
-//            @synchronized (MyFeedsManager) {
-//                NSArray *feeds = MyFeedsManager.feeds;
-//                feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-//                    return [add indexOfObject:obj.feedID] == NSNotFound;
-//                }];
-//                
-//                MyFeedsManager.feeds = feeds;
-//            }
-//            
-//            folder.feeds = [folder.feeds arrayByAddingObjectsFromArray:addedFeeds];
+            NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [add indexOfObject:obj.feedID] != NSNotFound;
+            }];
+            
+            [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.folderID = folderID;
+            }];
+            
+            [folder.feeds addObjectsFromArray:addedFeeds];
+        }
+        
+        // this pushes the update to FeedsVC
+        @synchronized (self) {
+            self.feeds = [self feeds];
         }
         
         if (successCB) {

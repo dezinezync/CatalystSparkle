@@ -1,7 +1,6 @@
 #import <DZKit/DZObject.h>
-#import <DZKit/DZDatasourceModel.h>
 
-@interface Range : DZObject <NSCoding, DZDatasourceModel> {
+@interface Range : DZObject <NSCoding> {
 
 }
 

@@ -12,6 +12,8 @@
 #import <DZKit/AlertManager.h>
 #import "YetiConstants.h"
 
+#import <DZKit/DZUtilities.h>
+
 @implementation FeedsManager (KVS)
 
 - (void)article:(FeedItem *)item markAsRead:(BOOL)read

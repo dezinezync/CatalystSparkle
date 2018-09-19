@@ -14,6 +14,7 @@
 #import "YetiThemeKit.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 

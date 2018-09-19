@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 #endif
 
-@interface Content : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
+@interface Content : DZObject <NSCoding, NSCopying> {
 
 }
 

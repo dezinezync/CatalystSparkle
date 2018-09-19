@@ -7,6 +7,7 @@
 //
 
 #import "Author.h"
+#import <DZKit/DZLogger.h>
 
 @implementation Author
 

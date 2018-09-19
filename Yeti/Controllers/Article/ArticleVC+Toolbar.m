@@ -90,7 +90,7 @@
     SplitVC *vc = (SplitVC *)[self splitViewController];
     
     UINavigationController *emptyVC = [vc emptyVC];
-    [vc showDetailController:emptyVC sender:self];
+    [vc showDetailViewController:emptyVC sender:self];
     
     UINavigationController *nav = vc.viewControllers.firstObject;
     FeedVC *top = (FeedVC *)[nav topViewController];

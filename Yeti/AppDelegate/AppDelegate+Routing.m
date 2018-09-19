@@ -19,6 +19,8 @@
 #import <SafariServices/SafariServices.h>
 
 #import <DZKit/UIAlertController+Extended.h>
+#import <DZKit/DZSectionedDatasource.h>
+#import <DZKit/NSString+Extras.h>
 
 @implementation AppDelegate (Routing)
 
@@ -470,22 +472,22 @@
         }
         else {
             // folder
-//            Folder *folder = obj;
-//            
-//            [folder.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idxx, BOOL * _Nonnull stopx) {
-//
-//                if ([obj.feedID isEqualToNumber:feedID]) {
-//                    index = idx;
-//                    folderIndex = idxx;
-//
-//                    isFolder = YES;
-//                    isFolderExpanded = folder.isExpanded;
-//
-//                    *stop = YES;
-//                    *stopx = YES;
-//                }
-//
-//            }];
+            Folder *folder = obj;
+            
+            [folder.feeds.allObjects enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idxx, BOOL * _Nonnull stopx) {
+
+                if ([obj.feedID isEqualToNumber:feedID]) {
+                    index = idx;
+                    folderIndex = idxx;
+
+                    isFolder = YES;
+                    isFolderExpanded = folder.isExpanded;
+
+                    *stop = YES;
+                    *stopx = YES;
+                }
+
+            }];
         }
         
     }];

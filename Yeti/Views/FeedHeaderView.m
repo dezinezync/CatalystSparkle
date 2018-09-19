@@ -12,6 +12,8 @@
 #import "NSString+HTML.h"
 #import "YetiThemeKit.h"
 
+#import <DZKit/NSArray+RZArrayCandy.h>
+
 @interface FeedHeaderView () <UIScrollViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
