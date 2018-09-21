@@ -11,7 +11,6 @@
 #import "IntroViewUUID.h"
 #import "SubscriptionView.h"
 
-#import <Store/Store.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "FeedsManager.h"
 #import "PaddedLabel.h"

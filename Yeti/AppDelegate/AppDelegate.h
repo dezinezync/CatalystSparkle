@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <DZAppdelegate/DZAppdelegate.h>
 
+#import "RMStore.h"
+@class RMStoreKeychainPersistence;
+
 @class AppDelegate;
 
 extern AppDelegate * MyAppDelegate;
@@ -19,6 +22,9 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
 
 @property (nonatomic, assign) BOOL processingTransactions;
+
+@property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
+@property (nonatomic, strong) RMStoreKeychainPersistence * persistence;
 
 @end
 

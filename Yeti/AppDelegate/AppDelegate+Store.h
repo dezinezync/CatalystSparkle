@@ -7,9 +7,9 @@
 //
 
 #import "AppDelegate.h"
-#import <Store/Store.h>
+#import "RMStore.h"
 
-@interface AppDelegate (Store) <StoreManagerDelegate>
+@interface AppDelegate (Store) <RMStoreObserver>
 
 - (void)setupStoreManager;
 

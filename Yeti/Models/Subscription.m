@@ -39,7 +39,7 @@
         self.environment = [decoder decodeObjectForKey:propSel(environment)];
         self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
         self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
-        self.status = [decoder decodeBoolForKey:propSel(status)];
+        self.status = [decoder decodeObjectForKey:propSel(status)];
     }
     
     return self;
@@ -60,9 +60,6 @@
             [super setValue:date forKey:key];
         }
         
-    }
-    else if ([key isEqualToString:@"status"]) {
-        self.status = [value boolValue];
     }
     else if ([key isEqualToString:@"preAppstore"]) {
         self.preAppstore = [value boolValue];

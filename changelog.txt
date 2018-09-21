@@ -1,6 +1,7 @@
 
 [NEW]
 - The Black theme is now supported on additional OLED Display based devices.
+- Auto-renewing subscriptions are gone. The app now implements Non-Renewing Subscriptions instead. 
 
 [IMPROVE]
 - Split View behaves better on phones which support the mode in landscape orientation.

@@ -18,10 +18,9 @@
 #import "DZWebViewController.h"
 #import <DZKit/DZMessagingController.h>
 
-#import <Store/Store.h>
 #import "SplitVC.h"
 
-#import "YetiStoreVC.h"
+#import "StoreVC.h"
 
 @interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate> {
     UITextField *_textField;
@@ -205,8 +204,8 @@
     }
    else {
        
-       YetiStoreVC *vc = [[YetiStoreVC alloc] initWithStyle:UITableViewStylePlain];
-       vc.inStack = YES;
+       StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+//       vc.inStack = YES;
        [self.navigationController pushViewController:vc animated:YES];
        
    }

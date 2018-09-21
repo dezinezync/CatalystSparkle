@@ -126,6 +126,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Store
 
+- (void)updateExpiryTo:(NSDate *)date isTrial:(BOOL)isTrial success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getSubscriptionWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;

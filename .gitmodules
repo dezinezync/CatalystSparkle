@@ -1,0 +1,3 @@
+[submodule "Yeti/Vendors/RMStore"]
+	path = Yeti/Vendors/RMStore
+	url = https://github.com/robotmedia/RMStore.git

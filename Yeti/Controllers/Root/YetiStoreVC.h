@@ -6,10 +6,10 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import <Store/Store.h>
-
-@interface YetiStoreVC : StoreVC
-
-@property (nonatomic, assign) BOOL checkAndShowError;
-
-@end
+//#import <Store/Store.h>
+//
+//@interface YetiStoreVC : StoreVC
+//
+//@property (nonatomic, assign) BOOL checkAndShowError;
+//
+//@end

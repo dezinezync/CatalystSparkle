@@ -64,6 +64,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:<#(nonnull SEL)#> name:<#(nullable NSNotificationName)#> object:<#(nullable id)#>]
+        
         NSError *error = nil;
         
         if (error) {
@@ -1182,6 +1184,62 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 #pragma mark - Store
 
+- (void)updateExpiryTo:(NSDate *)date isTrial:(BOOL)isTrial success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (!self.userID)
+        return;
+    
+    weakify(self);
+    
+    NSDictionary *body = @{@"date": @([date timeIntervalSince1970]),
+                           @"isTrial": @(isTrial)
+                           };
+    
+    [self.session POST:@"/store/legacy" parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            if ([[responseObject valueForKey:@"status"] boolValue]) {
+                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                
+                self.subscription = sub;
+                
+                if (successCB) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        successCB(responseObject, response, task);
+                    });
+                }
+            }
+            else {
+                Subscription *sub = [Subscription new];
+                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
+                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
+                
+                self.subscription = sub;
+                
+                if (errorCB) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        errorCB(sub.error, response, task);
+                    });
+                }
+            }
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 - (void)postAppReceipt:(NSData *)receipt success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (!self.userID)
@@ -1223,49 +1281,58 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
     
     [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-     
-        strongify(self);
         
-        if ([[responseObject valueForKey:@"status"] boolValue]) {
-            Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             
-            @synchronized (self) {
+            if ([[responseObject valueForKey:@"status"] boolValue]) {
+                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                
                 self.subscription = sub;
+                
+                if (successCB) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        successCB(responseObject, response, task);
+                    });
+                }
             }
-        }
-        else {
-            Subscription *sub = [Subscription new];
-            sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: [responseObject valueForKey:@"message"]}];
-            
-            @synchronized (self) {
-                self.subscription = sub;
+            else {
+                Subscription *sub = [Subscription new];
+                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
+                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
+                
+                 self.subscription = sub;
+                
+                if (errorCB) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        errorCB(sub.error, response, task);
+                    });
+                }
             }
-        }
-        
-        if (successCB) {
-            successCB(responseObject, response, task);
-        }
+        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        DDLogError(@"Subscription Error: %@", error.localizedDescription);
-
-        Subscription *sub = [Subscription new];
-        sub.error = error;
-        
-        strongify(self);
-        
-        @synchronized (self) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            DDLogError(@"Subscription Error: %@", error.localizedDescription);
+            
+            Subscription *sub = [Subscription new];
+            sub.error = error;
+            
+            strongify(self);
+            
             self.subscription = sub;
-        }
-        
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
-        }
+            
+            NSError * err = [self errorFromResponse:error.userInfo];
+            
+            if (errorCB)
+                errorCB(err, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
+            
+        });
         
     }];
     
@@ -1363,12 +1430,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)setSubscription:(Subscription *)subscription {
     _subscription = subscription;
     
-#if TESTFLIGHT == 1
-    if (_subscription && _subscription.error == nil) {
-        // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
-        _subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
-    }
-#endif
+//#if TESTFLIGHT == 1
+//    if (_subscription && _subscription.error == nil) {
+//        // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
+//        _subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
+//    }
+//#endif
     
     if (subscription && [subscription hasExpired] && [subscription preAppstore] == NO) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1493,7 +1560,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             NSString *signature = [self hmac:stringToSign withKey:encoded];
             
             [mutableReq setValue:signature forHTTPHeaderField:@"Authorization"];
-            [mutableReq setValue:userID.stringValue forHTTPHeaderField:@"x-userID"];
+            [mutableReq setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
             [mutableReq setValue:timecode forHTTPHeaderField:@"x-timestamp"];
             return mutableReq;
             

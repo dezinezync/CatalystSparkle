@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="StoreFooter">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="312"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" axis="vertical" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="DEc-6P-8tU">
+                    <rect key="frame" x="16" y="24" width="343" height="288"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hcP-6x-F1O">
+                            <rect key="frame" x="115" y="0.0" width="113" height="38"/>
+                            <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="38" id="xWZ-Lg-Njt"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="113" id="zfK-az-ASO"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                            <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
+                            <state key="normal" title="BUY NOW">
+                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                        </button>
+                        <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="999" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="vGR-fT-x7E">
+                            <rect key="frame" x="145" y="62" width="53" height="24"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iEh-XN-sSJ">
+                                    <rect key="frame" x="0.0" y="0.0" width="53" height="24"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="24" id="BVb-aA-bcG"/>
+                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="53" id="slf-Uy-uhb"/>
+                                    </constraints>
+                                    <state key="normal" title="Restore"/>
+                                </button>
+                            </subviews>
+                        </stackView>
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" editable="NO" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xBx-OF-CRf">
+                            <rect key="frame" x="0.0" y="110" width="343" height="178"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                        </textView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="xBx-OF-CRf" firstAttribute="width" secondItem="DEc-6P-8tU" secondAttribute="width" id="q5Z-05-liM"/>
+                    </constraints>
+                </stackView>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ouJ-ng-5dH">
+                    <rect key="frame" x="177.5" y="12" width="20" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="4nc-DJ-vlz"/>
+                        <constraint firstAttribute="width" constant="20" id="Dwb-jD-vby"/>
+                    </constraints>
+                </activityIndicatorView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="DEc-6P-8tU" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="24" id="AHV-kk-fKd"/>
+                <constraint firstItem="DEc-6P-8tU" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="NkI-uT-o6h"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="ouJ-ng-5dH" secondAttribute="bottom" priority="999" constant="12" id="YiI-Ar-mtf"/>
+                <constraint firstItem="ouJ-ng-5dH" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="hbT-1J-dCQ"/>
+                <constraint firstItem="ouJ-ng-5dH" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="12" id="lbE-pn-nvg"/>
+                <constraint firstItem="DEc-6P-8tU" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="ugt-hJ-SQr"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="DEc-6P-8tU" secondAttribute="trailing" constant="16" id="zgh-Ny-ZNW"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="activityIndicator" destination="ouJ-ng-5dH" id="wzQ-yR-F4u"/>
+                <outlet property="buyButton" destination="hcP-6x-F1O" id="piw-pd-Oi1"/>
+                <outlet property="footerLabel" destination="xBx-OF-CRf" id="luj-oY-fby"/>
+                <outlet property="restoreButton" destination="iEh-XN-sSJ" id="slJ-gV-8qp"/>
+                <outlet property="stackView" destination="DEc-6P-8tU" id="xKX-3C-6gg"/>
+            </connections>
+            <point key="canvasLocation" x="28" y="-37.781109445277366"/>
+        </view>
+    </objects>
+</document>

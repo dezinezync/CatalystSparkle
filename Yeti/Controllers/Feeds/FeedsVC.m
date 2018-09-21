@@ -29,6 +29,8 @@
 #import "YetiStoreVC.h"
 #import "YetiConstants.h"
 
+#import <StoreKit/SKStoreReviewController.h>
+
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
