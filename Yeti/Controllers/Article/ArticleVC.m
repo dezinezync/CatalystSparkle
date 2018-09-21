@@ -1275,6 +1275,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGFloat scale = content.size.height / content.size.width;
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
+    
+    if ([link isKindOfClass:NSArray.class]) {
+        link = [(NSArray *)link rz_reduce:^id(id prev, id current, NSUInteger idx, NSArray *array) {
+            if (!prev && [current isBlank] == NO) {
+                return current;
+            }
+            
+            return prev;
+        }];
+    }
+    
     // make the imageView tappable
     if (link != nil && [link isBlank] == NO) {
         imageView.link = [NSURL URLWithString:link];
