@@ -64,7 +64,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:<#(nonnull SEL)#> name:<#(nullable NSNotificationName)#> object:<#(nullable id)#>]
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
         
         NSError *error = nil;
         
@@ -124,6 +124,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (NSNumber *)userID
 {
     return self.userIDManager.userID;
+}
+
+- (void)didReceiveMemoryWarning {
+    self.bookmarks = nil;
+    self.folders = nil;
+    self.unread = nil;
+    self.feeds = nil;
 }
 
 #pragma mark - Feeds
