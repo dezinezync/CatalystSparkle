@@ -11,7 +11,7 @@
 #import "YetiThemeKit.h"
 #import "YTNavigationController.h"
 #import "FeedsManager.h"
-#import "YetiStoreVC.h"
+#import "StoreVC.h"
 
 #import "ImportVC.h"
 
@@ -199,8 +199,9 @@
         
         UIViewController *presenting = self.presentingViewController;
         
-        YetiStoreVC *storeVC = [[YetiStoreVC alloc] initWithStyle:UITableViewStylePlain];
-        storeVC.checkAndShowError = YES;
+        StoreVC *storeVC = [[StoreVC alloc] initWithStyle:UITableViewStylePlain];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:storeVC];
+//        storeVC.checkAndShowError = YES;
         
         weakify(presenting);
         
@@ -216,7 +217,7 @@
                 [AlertManager showGenericAlertWithTitle:@"No Subscription" message:error];
             }
             else {
-                [(UINavigationController *)presenting pushViewController:storeVC animated:YES];
+                [(UINavigationController *)presenting pushViewController:nav animated:YES];
             }
             
         }];

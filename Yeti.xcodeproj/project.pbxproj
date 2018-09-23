@@ -759,8 +759,8 @@
 		F0A5AEA920C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
 		F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-ThinItalic.ttf"; sourceTree = "<group>"; };
 		F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-MediumItalic.ttf"; sourceTree = "<group>"; };
-		F0A7B8F220FA21C00056A2C0 /* YetiStoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YetiStoreVC.h; sourceTree = "<group>"; };
-		F0A7B8F320FA21C00056A2C0 /* YetiStoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiStoreVC.m; sourceTree = "<group>"; };
+		F0A7B8F220FA21C00056A2C0 /* _YetiStoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _YetiStoreVC.h; sourceTree = "<group>"; };
+		F0A7B8F320FA21C00056A2C0 /* _YetiStoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _YetiStoreVC.m; sourceTree = "<group>"; };
 		F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = SOURCE_ROOT; };
 		F0AD76D320E2217C0003787B /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		F0AD76D420E2217C0003787B /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -1383,8 +1383,8 @@
 				F078B637206637B40048DBEA /* EmptyVC.xib */,
 				F06B766220C27CD000FBCDE7 /* YTNavigationController.h */,
 				F06B766320C27CD000FBCDE7 /* YTNavigationController.m */,
-				F0A7B8F220FA21C00056A2C0 /* YetiStoreVC.h */,
-				F0A7B8F320FA21C00056A2C0 /* YetiStoreVC.m */,
+				F0A7B8F220FA21C00056A2C0 /* _YetiStoreVC.h */,
+				F0A7B8F320FA21C00056A2C0 /* _YetiStoreVC.m */,
 				F04CFAC42154B57B00AA7B5E /* StoreVC.h */,
 				F04CFAC52154B57B00AA7B5E /* StoreVC.m */,
 			);

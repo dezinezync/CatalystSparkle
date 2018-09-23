@@ -26,7 +26,7 @@
 #import "TableHeader.h"
 
 #import "EmptyCell.h"
-#import "YetiStoreVC.h"
+#import "StoreVC.h"
 #import "YetiConstants.h"
 
 #import <StoreKit/SKStoreReviewController.h>
@@ -793,10 +793,11 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
 #if TESTFLIGHT == 0
-    UINavigationController *nav = [YetiStoreVC instanceInNavigationController];
+    StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
-    YetiStoreVC *storeVC = [[nav viewControllers] firstObject];
-    storeVC.checkAndShowError = YES;
+    
+//    storeVC.checkAndShowError = YES;
     
     [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
