@@ -89,6 +89,40 @@
 
 #pragma mark -
 
+- (NSString *)description {
+    return formattedString(@"%@\n%@", [super description], [self dictionaryRepresentation]);
+}
+
+- (NSDictionary *)dictionaryRepresentation {
+    
+    NSMutableDictionary *dict = @{}.mutableCopy;
+    
+    if (self.identifer) {
+        [dict setValue:self.identifer forKey:propSel(identifer)];
+    }
+    
+    if (self.environment) {
+        [dict setValue:self.environment forKey:propSel(environment)];
+    }
+    
+    if (self.identifer) {
+        [dict setValue:self.expiry forKey:propSel(expiry)];
+    }
+    
+    if (self.identifer) {
+        [dict setValue:self.created forKey:propSel(created)];
+    }
+    
+    if (self.status) {
+        [dict setValue:self.status forKey:propSel(status)];
+    }
+    
+    return dict;
+    
+}
+
+#pragma mark -
+
 - (BOOL)hasExpired {
     
     if (self.error) {

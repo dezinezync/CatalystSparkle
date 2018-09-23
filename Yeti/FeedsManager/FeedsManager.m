@@ -20,6 +20,8 @@
 #import <CocoaLumberjack/CocoaLumberjack.h>
 #endif
 
+@import UserNotifications;
+
 #import "YetiConstants.h"
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
@@ -1437,11 +1439,17 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)setSubscription:(Subscription *)subscription {
     _subscription = subscription;
     
-//#if TESTFLIGHT == 1
-//    if (_subscription && _subscription.error == nil) {
-//        // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
-//        _subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
-//    }
+#ifndef DEBUG
+#if TESTFLIGHT == 1
+    if (_subscription && _subscription.error == nil) {
+        // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
+        _subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
+    }
+#endif
+#endif
+    
+//#if TESTFLIGHT == 0
+    [self setupSubscriptionNotification];
 //#endif
     
     if (subscription && [subscription hasExpired] && [subscription preAppstore] == NO) {
@@ -1852,6 +1860,84 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 #pragma mark -
+
+- (void)setupSubscriptionNotification {
+    
+    // clear all existing notifications
+    [self clearExistingNotifications];
+    
+    // now based on the current subscription expiry setup the new Notification
+    if ([self.subscription hasExpired] == NO) {
+        
+        NSDate *expiry = self.subscription.expiry;
+        BOOL isTrial = [[self.subscription status] integerValue] == 2 ? YES : NO;
+        
+        NSString *text;
+        
+        if (isTrial) {
+            text = @"Your Trail period ends tomorrow. Subscribe today to keep reading your RSS Feeds.";
+        }
+        else {
+            text = @"Your Elytra Subscription expires tomorrow. Subscribe today to keep reading your RSS Feeds.";
+        }
+        
+        NSDateComponents *triggerDate = [[NSCalendar currentCalendar]
+                                         components:NSCalendarUnitYear +
+                                         NSCalendarUnitMonth + NSCalendarUnitDay +
+                                         NSCalendarUnitHour + NSCalendarUnitMinute +
+                                         NSCalendarUnitSecond fromDate:expiry];
+        
+        // we need this to fire one day early
+        triggerDate.day -= 1;
+        
+        UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:triggerDate repeats:NO];
+        
+        UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+        content.title = isTrial ? @"Elytra Trial" : @"Your Pro Subscription";
+        content.subtitle = text;
+        content.sound = [UNNotificationSound defaultSound];
+        
+        UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:YTSubscriptionNotification content:content trigger:trigger];
+        
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        
+        [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+           
+            if (error) {
+                DDLogError(@"Error scheduling notification: %@", error);
+            }
+            
+        }];
+        
+    }
+    
+}
+
+- (void)clearExistingNotifications {
+    
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    
+    [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+        
+        if (requests.count) {
+            NSMutableArray *pending = [NSMutableArray arrayWithCapacity:requests.count];
+            
+            for (UNNotificationRequest *request in requests) { @autoreleasepool {
+                
+                if ([request.identifier containsString:YTSubscriptionNotification]) {
+                    [pending addObject:request.identifier];
+                }
+                
+            } }
+            
+            if (pending.count) {
+                [center removePendingNotificationRequestsWithIdentifiers:pending];
+            }
+        }
+        
+    }];
+    
+}
 
 - (void)resetAccount {
     self.folders = nil;
