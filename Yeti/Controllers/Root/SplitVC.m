@@ -124,10 +124,11 @@
 - (void)userNotFound {
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-    IntroVC *vc = [[IntroVC alloc] initWithNibName:NSStringFromClass(IntroVC.class) bundle:nil];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    IntroVC *vc = [[IntroVC alloc] init];
     
-    [self presentViewController:nav animated:NO completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self presentViewController:vc animated:YES completion:nil];
+    });
 }
 
 - (UINavigationController *)emptyVC {

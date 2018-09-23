@@ -17,6 +17,8 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "UIImage+Color.h"
+
 @interface StoreVC () <RMStoreObserver>
 
 @property (nonatomic, weak) RMStoreKeychainPersistence *persistence;
@@ -109,15 +111,15 @@
     footer.backgroundColor = theme.articleBackgroundColor;
     // affects normal state
     footer.buyButton.backgroundColor = theme.tintColor;
-    [footer.buyButton setBackgroundImage:[self.class imageWithColor:theme.tintColor] forState:UIControlStateNormal];
+    [footer.buyButton setBackgroundImage:[UIImage imageWithColor:theme.tintColor] forState:UIControlStateNormal];
     
     footer.buyButton.layer.cornerRadius = 8.f;
     footer.buyButton.clipsToBounds = YES;
     
     UIColor *tint = theme.tintColor;
     
-    [footer.buyButton setBackgroundImage:[StoreVC imageWithColor:tint] forState:UIControlStateNormal];
-    [footer.buyButton setBackgroundImage:[StoreVC imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
+    [footer.buyButton setBackgroundImage:[UIImage imageWithColor:tint] forState:UIControlStateNormal];
+    [footer.buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
     
     footer.buyButton.enabled = NO;
     
@@ -454,22 +456,6 @@
 {
     self.purhcasedProductIdentifiers = _persistence.purchasedProductIdentifiers.allObjects;
     [self.tableView reloadData];
-}
-
-#pragma mark - Helpers
-
-+ (UIImage *)imageWithColor:(UIColor *)color {
-    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
-    UIGraphicsBeginImageContext(rect.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextSetFillColorWithColor(context, [color CGColor]);
-    CGContextFillRect(context, rect);
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    return image;
 }
 
 @end

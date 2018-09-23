@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IdentityVC">
+            <connections>
+                <outlet property="button" destination="inJ-Lu-PoU" id="KLH-rT-MgU"/>
+                <outlet property="doubleTap" destination="BPc-y8-kSd" id="74E-La-bFZ"/>
+                <outlet property="input" destination="5Mh-jj-RFy" id="pKi-YZ-7GB"/>
+                <outlet property="singleTap" destination="uWS-jg-Mc9" id="Jrt-dc-lC8"/>
+                <outlet property="titleLabel" destination="Bfg-Nw-jMa" id="4Rg-0A-IUF"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="UwS-H4-Lfq">
+                    <rect key="frame" x="16" y="195.5" width="343" height="276.5"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bfg-Nw-jMa">
+                            <rect key="frame" x="58.5" y="0.0" width="226" height="93.5"/>
+                            <attributedString key="attributedText">
+                                <fragment content="Your Private Account">
+                                    <attributes>
+                                        <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <font key="NSFont" size="40" name="SFProDisplay-Heavy"/>
+                                        <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                    </attributes>
+                                </fragment>
+                            </attributedString>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To keep your information private and anonymous, Elytra has automatically created an account for you." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Nt-5D-V9P" userLabel="I">
+                            <rect key="frame" x="0.0" y="109.5" width="343" height="64.5"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                            <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="5Mh-jj-RFy">
+                            <rect key="frame" x="0.0" y="190" width="343" height="40"/>
+                            <gestureRecognizers/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="pqA-lN-bpe"/>
+                            </constraints>
+                            <color key="textColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outletCollection property="gestureRecognizers" destination="uWS-jg-Mc9" appends="YES" id="sn6-bI-Edr"/>
+                                <outletCollection property="gestureRecognizers" destination="BPc-y8-kSd" appends="YES" id="tbn-yy-8aM"/>
+                            </connections>
+                        </textField>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You can always access this ID inside the App’s settings. You can tap on the ID to copy it." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="azl-12-wAn" userLabel="I">
+                            <rect key="frame" x="0.5" y="246" width="342" height="30.5"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="5Mh-jj-RFy" firstAttribute="leading" secondItem="UwS-H4-Lfq" secondAttribute="leading" id="Isi-zH-6HR"/>
+                        <constraint firstAttribute="trailing" secondItem="5Mh-jj-RFy" secondAttribute="trailing" id="cfG-0L-eyu"/>
+                    </constraints>
+                </stackView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="inJ-Lu-PoU">
+                    <rect key="frame" x="38" y="583" width="299" height="46"/>
+                    <color key="backgroundColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="46" id="bd0-v5-ghl"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
+                    <state key="normal" title="Continue">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="12"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="didTapButton:" destination="-1" eventType="touchUpInside" id="Wdq-eS-OWg"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="UwS-H4-Lfq" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="3me-dI-pRZ"/>
+                <constraint firstAttribute="trailing" secondItem="UwS-H4-Lfq" secondAttribute="trailing" constant="16" id="JPz-9u-jXr"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="inJ-Lu-PoU" secondAttribute="bottom" constant="38" id="NXg-vv-3bZ"/>
+                <constraint firstItem="inJ-Lu-PoU" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="38" id="WNg-1N-M7X"/>
+                <constraint firstItem="UwS-H4-Lfq" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="cc8-jv-dbD"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="inJ-Lu-PoU" secondAttribute="trailing" constant="38" id="hOH-ZN-zcU"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
+        </view>
+        <tapGestureRecognizer id="uWS-jg-Mc9">
+            <connections>
+                <action selector="didTap:" destination="-1" id="hn1-8R-X4I"/>
+            </connections>
+        </tapGestureRecognizer>
+        <tapGestureRecognizer numberOfTapsRequired="2" id="BPc-y8-kSd">
+            <connections>
+                <action selector="didDoubleTap:" destination="-1" id="bzk-3y-RHL"/>
+            </connections>
+        </tapGestureRecognizer>
+    </objects>
+</document>
