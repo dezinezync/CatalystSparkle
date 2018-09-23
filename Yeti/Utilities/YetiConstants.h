@@ -83,4 +83,6 @@ YETI_EXPORT NSString * const YTLaunchCountOldKey;
 YETI_EXPORT NSString * const YTLaunchCount;
 YETI_EXPORT NSString * const YTRequestedReview;
 
+YETI_EXPORT NSString * const YTSubscriptionNotification;
+
 #endif /* YetiConstants_h */
