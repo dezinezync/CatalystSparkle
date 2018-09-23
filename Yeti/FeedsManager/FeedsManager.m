@@ -1464,7 +1464,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 {
     _feeds = feeds ?: @[];
     
-    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
+    if (_feeds) {
+        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : _feeds, @"folders": self.folders ?: @[]}];
+    }
 }
 
 //- (void)setFolders:(NSArray<Folder *> *)folders
@@ -1968,6 +1970,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     UICKeyChainStore *keychain = [self keychain];
     keychain[kAccountID] = nil;
     keychain[kUserID] = nil;
+    keychain[kHasShownOnboarding] = nil;
     
     self.userIDManager.UUID = nil;
     self.userIDManager.userID = nil;

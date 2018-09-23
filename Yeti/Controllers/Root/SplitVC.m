@@ -53,11 +53,11 @@
     
     UICKeyChainStore *keychain = MyFeedsManager.keychain;
 //    [keychain removeAllItems];
-    
+//    [keychain removeItemForKey:kHasShownOnboarding];
     NSString *hasShownIntro = [keychain stringForKey:kHasShownOnboarding];
     
     if (!hasShownIntro || [hasShownIntro boolValue] == NO) {
-        [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
+        [self userNotFound];
     }
 #if TESTFLIGHT == 1
     else {

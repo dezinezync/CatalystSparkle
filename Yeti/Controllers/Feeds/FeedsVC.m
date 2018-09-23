@@ -726,8 +726,9 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 - (void)userDidUpdate {
-    // we only need this once.
-    [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
+    
+    // this function can be called multiple times
+    // beginning 1.0.2
     
     if (MyFeedsManager.userID == nil || [MyFeedsManager.userID isEqualToNumber:@(0)]) {
         return;

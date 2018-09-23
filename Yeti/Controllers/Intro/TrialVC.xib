@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
+    <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -20,15 +20,15 @@
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="WLd-iM-EEY">
-                    <rect key="frame" x="16" y="184.5" width="343" height="328.5"/>
+                    <rect key="frame" x="48" y="360" width="672" height="304"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MOV-9M-8H7">
-                            <rect key="frame" x="18.5" y="0.0" width="306.5" height="49"/>
+                            <rect key="frame" x="183" y="0.0" width="306.5" height="49"/>
                             <attributedString key="attributedText">
                                 <fragment content="Unlock Free Trial">
                                     <attributes>
@@ -42,7 +42,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bI6-UJ-LNg" userLabel="I">
-                            <rect key="frame" x="16.5" y="65" width="310" height="41"/>
+                            <rect key="frame" x="38" y="65" width="596" height="20.5"/>
                             <attributedString key="attributedText">
                                 <fragment content="Start your ">
                                     <attributes>
@@ -70,27 +70,42 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="opml" translatesAutoresizingMaskIntoConstraints="NO" id="Ohn-qe-s9X">
-                            <rect key="frame" x="99.5" y="122" width="144" height="144"/>
+                            <rect key="frame" x="264" y="101.5" width="144" height="144"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="144" id="3fM-b3-eEh"/>
                                 <constraint firstAttribute="height" constant="144" id="42X-qa-YnP"/>
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l78-gl-VU5" userLabel="I">
-                            <rect key="frame" x="6" y="282" width="331" height="46.5"/>
+                            <rect key="frame" x="51" y="261.5" width="570" height="42.5"/>
+                            <constraints>
+                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="600" id="SxP-x4-nW3"/>
+                            </constraints>
                             <string key="text">14-Day Free Trial, then %@/month. The subscription does not auto-renew. Your credit card will not be charged when your trial finishes.</string>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                             <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
+                            <variation key="default">
+                                <mask key="constraints">
+                                    <exclude reference="SxP-x4-nW3"/>
+                                </mask>
+                            </variation>
+                            <variation key="heightClass=regular-widthClass=regular">
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <mask key="constraints">
+                                    <include reference="SxP-x4-nW3"/>
+                                </mask>
+                            </variation>
                         </label>
                     </subviews>
                     <viewLayoutGuide key="safeArea" id="xGu-ME-b2h"/>
                 </stackView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TOb-Jk-S0d">
-                    <rect key="frame" x="38" y="537" width="299" height="46"/>
+                    <rect key="frame" x="224" y="683.5" width="320" height="46"/>
                     <color key="backgroundColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="46" id="2Fk-S4-WBn"/>
+                        <constraint firstAttribute="width" priority="999" constant="320" id="GOH-8W-Wym"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
                     <state key="normal" title="Unlock">
@@ -101,15 +116,29 @@
                             <integer key="value" value="12"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="GOH-8W-Wym"/>
+                        </mask>
+                    </variation>
+                    <variation key="heightClass=regular-widthClass=regular">
+                        <mask key="constraints">
+                            <include reference="GOH-8W-Wym"/>
+                        </mask>
+                    </variation>
                     <connections>
                         <action selector="didTapBuy:" destination="-1" eventType="touchUpInside" id="U1E-0s-2Tt"/>
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ol8-Qq-DAl">
-                    <rect key="frame" x="161" y="599" width="53" height="30"/>
+                    <rect key="frame" x="354.5" y="745.5" width="59" height="33"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                     <state key="normal" title="Restore">
                         <color key="titleColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </state>
+                    <variation key="heightClass=regular-widthClass=regular">
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                    </variation>
                     <connections>
                         <action selector="didTapRestore:" destination="-1" eventType="touchUpInside" id="4JI-W2-IQF"/>
                     </connections>
@@ -117,20 +146,41 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="WLd-iM-EEY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="2I9-5M-pi7"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="ol8-Qq-DAl" secondAttribute="bottom" constant="38" id="2Q6-hS-p4X"/>
-                <constraint firstItem="WLd-iM-EEY" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="6fp-WM-vB7"/>
+                <constraint firstItem="TOb-Jk-S0d" firstAttribute="top" secondItem="l78-gl-VU5" secondAttribute="baseline" constant="24" id="5hY-xk-TVE"/>
+                <constraint firstItem="WLd-iM-EEY" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="6fp-WM-vB7">
+                    <variation key="heightClass=regular-widthClass=regular" constant="48"/>
+                </constraint>
                 <constraint firstItem="TOb-Jk-S0d" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="38" id="7qX-7E-kIu"/>
                 <constraint firstItem="ol8-Qq-DAl" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="8nL-Ey-2Wi"/>
                 <constraint firstItem="TOb-Jk-S0d" firstAttribute="top" secondItem="WLd-iM-EEY" secondAttribute="bottom" constant="24" id="NGi-NR-P69"/>
                 <constraint firstItem="WLd-iM-EEY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" constant="22" id="cqV-90-w4m"/>
-                <constraint firstAttribute="trailing" secondItem="WLd-iM-EEY" secondAttribute="trailing" constant="16" id="ea0-th-biL"/>
+                <constraint firstItem="TOb-Jk-S0d" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="dqv-az-gJW"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="WLd-iM-EEY" secondAttribute="trailing" constant="16" id="ea0-th-biL">
+                    <variation key="heightClass=regular-widthClass=regular" constant="48"/>
+                </constraint>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="TOb-Jk-S0d" secondAttribute="trailing" constant="38" id="tW8-mH-Vln"/>
                 <constraint firstItem="ol8-Qq-DAl" firstAttribute="top" secondItem="TOb-Jk-S0d" secondAttribute="bottom" constant="16" id="v14-eI-wC4"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
             <variation key="default">
                 <mask key="constraints">
+                    <exclude reference="2I9-5M-pi7"/>
                     <exclude reference="cqV-90-w4m"/>
+                    <exclude reference="5hY-xk-TVE"/>
+                    <exclude reference="dqv-az-gJW"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=regular-widthClass=regular">
+                <mask key="constraints">
+                    <exclude reference="2Q6-hS-p4X"/>
+                    <exclude reference="tW8-mH-Vln"/>
+                    <include reference="2I9-5M-pi7"/>
+                    <include reference="5hY-xk-TVE"/>
+                    <exclude reference="7qX-7E-kIu"/>
+                    <exclude reference="NGi-NR-P69"/>
+                    <include reference="dqv-az-gJW"/>
                 </mask>
             </variation>
         </view>
