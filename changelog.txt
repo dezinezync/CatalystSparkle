@@ -1,7 +1,9 @@
 
 [NEW]
 - The Black theme is now supported on additional OLED Display based devices.
-- Auto-renewing subscriptions are gone. The app now implements Non-Renewing Subscriptions instead. 
+- Auto-renewing subscriptions are gone. The app now implements Non-Renewing Subscriptions instead.
+- An Overhauled Onboarding Screen.
+- From this build onwards, Elytra will use Non-Renewing Subscriptions and a separate iAP for the 14-day Free Trial.
 
 [IMPROVE]
 - Split View behaves better on phones which support the mode in landscape orientation.
