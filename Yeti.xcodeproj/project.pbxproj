@@ -2560,9 +2560,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/../DZNetworking/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/../DZKit/**",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2570,11 +2567,7 @@
 					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=1",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/Yeti/Vendors/RMStore/RMStore/Optional/openssl-1.0.1e/include/**",
-					"$(PROJECT_DIR)/../DZKit/**",
-					"$(PROJECT_DIR)/../DZNetworking/**",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2604,9 +2597,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/../DZNetworking/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/../DZKit/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -2614,11 +2604,7 @@
 					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=0",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/Yeti/Vendors/RMStore/RMStore/Optional/openssl-1.0.1e/include/**",
-					"$(PROJECT_DIR)/../DZKit/**",
-					"$(PROJECT_DIR)/../DZNetworking/**",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2771,9 +2757,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/../DZNetworking/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/../DZKit/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -2781,11 +2764,7 @@
 					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=1",
 				);
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/Yeti/Vendors/RMStore/RMStore/Optional/openssl-1.0.1e/include/**",
-					"$(PROJECT_DIR)/../DZKit/**",
-					"$(PROJECT_DIR)/../DZNetworking/**",
-				);
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
