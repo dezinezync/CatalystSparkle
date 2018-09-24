@@ -1,18 +1,9 @@
 
 [NEW]
-- The Black theme is now supported on additional OLED Display based devices.
-- Auto-renewing subscriptions are gone. The app now implements Non-Renewing Subscriptions instead.
-- An Overhauled Onboarding Screen.
-- From this build onwards, Elytra will use Non-Renewing Subscriptions and a separate iAP for the 14-day Free Trial.
 
 [IMPROVE]
-- Split View behaves better on phones which support the mode in landscape orientation.
-- Unread counts should now behave more consistently. 
 
 [FIX]
-- Quotes and citations used to get clipped when rotating the device. This no longer occurs.
-- Feeds with no recent articles now show an appropriate message. The loading indicator should no longer be spinning into perpetuity.
 
 [NOTE]
-- The close button has been temporarily removed from Wider layouts until I can come up with a better experience to replace it or improve it.
 
