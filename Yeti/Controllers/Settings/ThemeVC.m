@@ -49,7 +49,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
                       ALPSpectral : @"Spectral"
                       };
     
-    NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone11,4", @"iPhone11,2", nil];
+    NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];
     
     _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]];
     
