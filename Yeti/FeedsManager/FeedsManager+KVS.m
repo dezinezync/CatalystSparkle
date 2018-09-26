@@ -89,7 +89,7 @@
         if (feeds.count > 0) {
             for (Feed *feed in feeds) {
                 NSInteger current = [feed.unread integerValue];
-                NSInteger updated = current + (read ? -1 : 1);
+                NSInteger updated = MAX(0, current + (read ? -1 : 1));
                 
                 feed.unread = @(updated);
                 
