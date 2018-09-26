@@ -2,8 +2,10 @@
 [NEW]
 
 [IMPROVE]
+- Minor optimizations for Image Galleries.
 
 [FIX]
+- Unread counts on folders in some cases went below 0!
 
 [NOTE]
 
