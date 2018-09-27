@@ -138,13 +138,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    if (!(self.item != nil && self.item.content != nil && self.item.isBookmarked == YES)) {
         
-        strongify(self);
-        [self.stackView removeArrangedSubview:obj];
-        [obj removeFromSuperview];
+        // this ensures that bookmarked articles render the title.
+        // when this runs, the title has already been added to the view
+        // the following lines would remove it.
         
-    }];
+        [[self.stackView arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            strongify(self);
+            [self.stackView removeArrangedSubview:obj];
+            [obj removeFromSuperview];
+            
+        }];
+    }
     
     [self.scrollView setNeedsUpdateConstraints];
     [self.scrollView layoutIfNeeded];
@@ -632,7 +639,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item == nil) {
         self.item = responseObject;
     }
-    else {
+    else if ([self.item.content isEqualToArray:[responseObject content]] == NO) {
         self.item.content = [responseObject content];
     }
     
@@ -687,20 +694,21 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }];
     
-    self->_last = nil;
-
-    DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
-    
-    if (self.item && self.item.isRead == NO) {
-        [MyFeedsManager article:self.item markAsRead:YES];
-        
-        if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
-            [self.providerDelegate userMarkedArticle:self.item read:YES];
-        }
-    }
-    
     dispatch_async(dispatch_get_main_queue(), ^{
+        
         strongify(self);
+        
+        self->_last = nil;
+        
+        DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
+        
+        if (self.item && self.item.isRead == NO) {
+            [MyFeedsManager article:self.item markAsRead:YES];
+            
+            if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
+                [self.providerDelegate userMarkedArticle:self.item read:YES];
+            }
+        }
         
         [self.stackView layoutIfNeeded];
         
@@ -1049,7 +1057,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         && !caption) {
         // check if we have a duplicate
         Paragraph *lastPara = (Paragraph *)_last;
-        if(lastPara.isCaption && [lastPara.text isEqualToString:content.content])
+        if(lastPara.isCaption && ([lastPara.text isEqualToString:content.content] || [lastPara.attributedText.string isEqualToString:content.content]))
             return;
     }
     

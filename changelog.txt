@@ -3,9 +3,11 @@
 
 [IMPROVE]
 - Minor optimizations for Image Galleries.
+- Support for missing OLED Devices for the Black Theme.
 
 [FIX]
 - Unread counts on folders in some cases went below 0!
+- Titles now render correctly for bookmarked articles.
 
 [NOTE]
 

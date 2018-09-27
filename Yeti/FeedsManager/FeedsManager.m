@@ -1813,33 +1813,33 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [self updateBookmarksFromServer];
     });
     
-    if (MyFeedsManager.userID) {
-        
-        NSDate *lastUpdate = [NSKeyedUnarchiver unarchiveObjectWithFile:_receiptLastUpdatePath];
-        
-        if (lastUpdate != nil) {
-            // check every 3 days
-            NSTimeInterval threeDays = 86400 * 3;
-            if ([NSDate.date timeIntervalSinceDate:lastUpdate] < threeDays) {
-                return;
-            }
-        }
-        
-        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-        
-        NSData *data = [[NSData alloc] initWithContentsOfURL:receiptURL];
-        
-        if (data) {
-            [self postAppReceipt:data success:nil error:nil];
-        }
-        
-        lastUpdate = NSDate.date;
-        
-        if (![NSKeyedArchiver archiveRootObject:lastUpdate toFile:_receiptLastUpdatePath]) {
-            DDLogError(@"Failed to archive receipt update date");
-        }
-        
-    }
+//    if (MyFeedsManager.userID) {
+//        
+//        NSDate *lastUpdate = [NSKeyedUnarchiver unarchiveObjectWithFile:_receiptLastUpdatePath];
+//        
+//        if (lastUpdate != nil) {
+//            // check every 3 days
+//            NSTimeInterval threeDays = 86400 * 3;
+//            if ([NSDate.date timeIntervalSinceDate:lastUpdate] < threeDays) {
+//                return;
+//            }
+//        }
+//        
+//        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+//        
+//        NSData *data = [[NSData alloc] initWithContentsOfURL:receiptURL];
+//        
+//        if (data) {
+//            [self postAppReceipt:data success:nil error:nil];
+//        }
+//        
+//        lastUpdate = NSDate.date;
+//        
+//        if (![NSKeyedArchiver archiveRootObject:lastUpdate toFile:_receiptLastUpdatePath]) {
+//            DDLogError(@"Failed to archive receipt update date");
+//        }
+//        
+//    }
     
 }
 
