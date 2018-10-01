@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NewFeedVC">
             <connections>
-                <outlet property="cancelButton" destination="6cU-uu-5VW" id="l30-99-EDz"/>
-                <outlet property="input" destination="d6v-2A-s3o" id="v6H-JZ-dcZ"/>
+                <outlet property="cancelButton" destination="spf-xk-Byb" id="HxX-uh-j4N"/>
+                <outlet property="input" destination="EWV-Fr-td8" id="wcY-2o-hFB"/>
                 <outlet property="tableView" destination="Vfe-xT-WmG" id="dOE-Qt-KIn"/>
                 <outlet property="toolbar" destination="wFx-si-DLw" id="hw1-Wn-1OC"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -33,11 +34,11 @@
                         <constraint firstAttribute="height" constant="48" id="HWr-We-LjC"/>
                     </constraints>
                     <items>
-                        <barButtonItem style="plain" id="N0W-Pj-eup">
-                            <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Feed or Website URL" textAlignment="natural" minimumFontSize="17" id="d6v-2A-s3o" customClass="PaddedTextField">
-                                <rect key="frame" x="16" y="9" width="272" height="30"/>
+                        <barButtonItem style="plain" id="8yF-uX-e8T">
+                            <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Feed or Website URL" textAlignment="natural" minimumFontSize="17" id="EWV-Fr-td8" customClass="PaddedTextField">
+                                <rect key="frame" x="16" y="9" width="295" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.86274509803921573" green="0.86274509803921573" blue="0.8666666666666667" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="0.86274509799999999" green="0.86274509799999999" blue="0.86666666670000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" returnKeyType="continue" enablesReturnKeyAutomatically="YES" textContentType="url"/>
@@ -54,23 +55,28 @@
                                 </userDefinedRuntimeAttributes>
                             </textField>
                         </barButtonItem>
-                        <barButtonItem width="16" style="plain" systemItem="fixedSpace" id="Fn5-zJ-dRd"/>
-                        <barButtonItem title="Cancel" id="6cU-uu-5VW">
-                            <connections>
-                                <action selector="didTapCancel" destination="-1" id="mzW-HU-cFP"/>
-                            </connections>
+                        <barButtonItem width="16" style="plain" systemItem="fixedSpace" id="Ulu-kG-cWt"/>
+                        <barButtonItem width="80" style="plain" id="u1p-Mf-E6a">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="spf-xk-Byb">
+                                <rect key="frame" x="311" y="9" width="48" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Cancel"/>
+                                <connections>
+                                    <action selector="didTapCancel" destination="-1" eventType="touchUpInside" id="01N-Te-hTH"/>
+                                </connections>
+                            </button>
                         </barButtonItem>
                     </items>
                 </toolbar>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.30135893485915494" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="Vfe-xT-WmG" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="6O0-0I-bpL"/>
-                <constraint firstItem="wFx-si-DLw" firstAttribute="trailing" secondItem="Q5M-cg-NOt" secondAttribute="trailing" id="Fu4-ay-iEG"/>
+                <constraint firstItem="Vfe-xT-WmG" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" constant="-20" id="6O0-0I-bpL"/>
+                <constraint firstItem="wFx-si-DLw" firstAttribute="trailing" secondItem="i5M-Pr-FkT" secondAttribute="trailing" id="Fu4-ay-iEG"/>
                 <constraint firstItem="Vfe-xT-WmG" firstAttribute="trailing" secondItem="Q5M-cg-NOt" secondAttribute="trailing" id="SYL-LD-CZS"/>
                 <constraint firstItem="Vfe-xT-WmG" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="gXf-vK-5L2"/>
-                <constraint firstItem="Vfe-xT-WmG" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="hFz-b7-ACt"/>
-                <constraint firstItem="wFx-si-DLw" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="rBt-ud-qyv"/>
+                <constraint firstItem="Vfe-xT-WmG" firstAttribute="bottom" secondItem="Q5M-cg-NOt" secondAttribute="bottom" id="hFz-b7-ACt"/>
+                <constraint firstItem="wFx-si-DLw" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="rBt-ud-qyv"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="top" secondItem="wFx-si-DLw" secondAttribute="top" id="wys-7g-JmN"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>

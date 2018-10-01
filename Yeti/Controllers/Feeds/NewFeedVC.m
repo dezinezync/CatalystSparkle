@@ -111,6 +111,11 @@
     self.input.backgroundColor = theme.cellColor;
     self.input.textColor = theme.titleColor;
     
+    self.input.translatesAutoresizingMaskIntoConstraints = NO;
+    self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.cancelButton.widthAnchor constraintEqualToConstant:80.f].active = YES;
+    
     UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
     if (label) {
         label.textColor = theme.captionColor;
@@ -118,13 +123,10 @@
 
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    CGFloat maxWidth = UIApplication.sharedApplication.keyWindow.rootViewController.view.bounds.size.width - 104.f;
-    
-    [self.input.widthAnchor constraintEqualToConstant:maxWidth].active = YES;
+    [self repositionInput:self.view.bounds.size];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -139,7 +141,45 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    weakify(self);
+    
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+        strongify(self);
+        
+        [self repositionInput:size];
+        
+    } completion:nil];
+    
+}
+
 #pragma mark -
+
+- (void)repositionInput:(CGSize)size {
+    NSString *const widthIdentifier = @"toolbar-W = input-W - (80 + 16)";
+    
+    for (NSLayoutConstraint *existing in [self.input constraints]) {
+        if ([existing.identifier isEqualToString:widthIdentifier]) {
+            existing.active = NO;
+            [self.input removeConstraint:existing];
+        }
+    }
+    
+    UIEdgeInsets safeArea = self.view.safeAreaInsets;
+    CGFloat safeHorizontal = safeArea.left + safeArea.right;
+    CGFloat const buttonAndPadding = 80.f + 16.f;
+    
+    CGFloat width = size.width;
+    width -= (safeHorizontal + buttonAndPadding);
+    
+    NSLayoutConstraint *inputWidth = [self.input.widthAnchor constraintEqualToConstant:width];
+    inputWidth.identifier = widthIdentifier;
+    inputWidth.active = YES;
+}
 
 - (IBAction)didTapCancel {
     
@@ -327,10 +367,10 @@
     _selected = selected;
     
     if (_selected == NSNotFound) {
-        [self.cancelButton setTitle:@"Cancel"];
+        [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
     }
     else {
-        [self.cancelButton setTitle:@"Done"];
+        [self.cancelButton setTitle:@"Done" forState:UIControlStateNormal];
     }
 }
 
