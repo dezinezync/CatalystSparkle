@@ -12,7 +12,9 @@
 
 #import "FeedCell.h"
 
-@interface ActionViewController () <UITableViewDelegate, UITableViewDataSource>
+@interface ActionViewController () <UITableViewDelegate, UITableViewDataSource> {
+    BOOL _hasJSONFeed;
+}
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
@@ -44,34 +46,7 @@
     
     // Get the item[s] we're handling from the extension context.
     
-    // For example, look for an image and place it into an image view.
-    // Replace this with something appropriate for the type[s] your extension supports.
-    __block BOOL imageFound = NO;
-    
-    for (NSExtensionItem *item in self.extensionContext.inputItems) {
-        for (NSItemProvider *itemProvider in item.attachments) {
-            
-            if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeURL]) {
-                // This is an URL.
-
-                [itemProvider loadItemForTypeIdentifier:(NSString *)kUTTypeURL options:nil completionHandler:^(NSURL *url, NSError *error) {
-                    if(url) {
-                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                            [self handleURL:url];
-                        }];
-                    }
-                }];
-
-                imageFound = YES;
-                break;
-            }
-        }
-        
-        if (imageFound) {
-            // We only handle one image, so stop looking for more.
-            break;
-        }
-    }
+    [self checkForInputItems];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -87,7 +62,7 @@
     
     if (self.selected != NSNotFound) {
         NSDictionary  *feed = self.data[self.selected];
-        NSString *feedURL = feed[@"link"];
+        NSString *feedURL = feed[@"url"];
         selectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?URL=%@", feedURL]];
     }
     
@@ -101,6 +76,13 @@
     self.title = @"Select a Feed";
     
     self.tableView.hidden = NO;
+    
+    for (NSDictionary *obj in self.data) {
+        if ([(NSString *)[obj valueForKey:@"title"] containsString:@"JSON"]
+            || [(NSString *)[obj valueForKey:@"url"] containsString:@"/json"]) {
+            self->_hasJSONFeed = YES;
+        }
+    }
     
     _selected = NSNotFound;
     [self.tableView reloadData];
@@ -126,8 +108,19 @@
     
     cell.textLabel.text = data[@"title"] ?: @"";
     
-    cell.detailTextLabel.text = data[@"link"];
+    cell.detailTextLabel.text = data[@"url"];
     cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    
+    if (self->_hasJSONFeed) {
+        
+        if ([data[@"title"] containsString:@"JSON"] || [data[@"url"] containsString:@"/json"]) {
+            cell.detailTextLabel.textColor = self.view.tintColor;
+        }
+        else {
+            cell.detailTextLabel.textColor = [UIColor darkGrayColor];
+        }
+        
+    }
     
     cell.accessoryType = indexPath.row == self.selected ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     
@@ -164,6 +157,72 @@
     if (self.activityLabel.isHidden) {
         self.activityLabel.hidden = NO;
     }
+}
+
+- (void)checkForInputItems {
+    
+    self.activityLabel.text = @"Checking webpage for RSS Feed links.";
+    [self.activityIndicator startAnimating];
+    
+    __block BOOL foundItems = NO;
+    
+    for (NSExtensionItem *item in self.extensionContext.inputItems) {
+        
+        for (NSItemProvider *itemProvider in item.attachments) {
+            
+            if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypePropertyList]) {
+                
+                foundItems = YES;
+                
+                [itemProvider loadItemForTypeIdentifier:(NSString *)kUTTypePropertyList options:nil completionHandler:^(NSDictionary * responseObject, NSError *error) {
+                    
+                    if (error) {
+                        [self showError:error.localizedDescription];
+                        return;
+                    }
+                    
+                    NSDictionary *results = [responseObject objectForKey:NSExtensionJavaScriptPreprocessingResultsKey];
+                    NSArray <NSDictionary *> *items = [results objectForKey:@"items"];
+                    
+                    NSLog(@"Items: %@", items);
+                    
+                    [self handleInputFeeds:items];
+                    
+                }];
+                
+            }
+            else if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeURL]) {
+                // This is an URL.
+                
+                [itemProvider loadItemForTypeIdentifier:(NSString *)kUTTypeURL options:nil completionHandler:^(NSURL *url, NSError *error) {
+                    
+                    if (error) {
+                        [self showError:error.localizedDescription];
+                        return;
+                    }
+                    
+                    if(url) {
+                        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                            [self handleURL:url];
+                        }];
+                    }
+                }];
+                
+                foundItems = YES;
+            }
+
+            
+            if (foundItems) {
+                break;
+            }
+            
+        }
+        
+        if (foundItems) {
+            break;
+        }
+    }
+    
 }
 
 - (void)handleURL:(NSURL *)url {
@@ -240,7 +299,7 @@
                     link = [[components URL] absoluteString];
                 }
                 
-                NSMutableDictionary *feed = @{@"link": link}.mutableCopy;
+                NSMutableDictionary *feed = @{@"url": link}.mutableCopy;
                 if (title) {
                     feed[@"title"] = title;
                 }
@@ -249,33 +308,38 @@
             }
         }
         
-        if (feeds.count == 0) {
-            [self showError:@"No RSS Feeds found on this web page."];
-            return;
-        }
-        
-        if (feeds.count == 1) {
-            NSDictionary *feed = [feeds firstObject];
-            NSString *link = [feed valueForKey:@"link"];
-            
-            NSURL *URL = [NSURL URLWithString:link];
-            [self finalizeURL:URL];
-            
-            return;
-        }
-        
-        asyncMain(^{
-            [self.activityIndicator stopAnimating];
-            self.activityIndicator.superview.hidden = YES;
-        });
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.data = feeds;
-            [self setupTableRows];
-        });
+        [self handleInputFeeds:feeds];
         
     });
     
+}
+
+- (void)handleInputFeeds:(NSArray <NSDictionary *> *)feeds {
+    
+    if (feeds == nil || feeds.count == 0) {
+        [self showError:@"No RSS Feeds found on this webpage."];
+        return;
+    }
+    
+    if (feeds.count == 1) {
+        NSDictionary *feed = [feeds firstObject];
+        NSString *link = [feed valueForKey:@"url"];
+        
+        NSURL *URL = [NSURL URLWithString:link];
+        [self finalizeURL:URL];
+        
+        return;
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.activityIndicator stopAnimating];
+        self.activityIndicator.superview.hidden = YES;
+    });
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.data = feeds;
+        [self setupTableRows];
+    });
 }
 
 - (NSString *)decodeString:(NSString *)htmlString {
