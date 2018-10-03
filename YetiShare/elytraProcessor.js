@@ -1,20 +1,88 @@
 var MyExtensionJavaScriptClass = function() {};
 
+const ANDROID_PREFIX = "android-app:";
+
 MyExtensionJavaScriptClass.prototype = {
     run: function(arguments) {
         const origin = window.location.origin;
         let result = [];
-        const elements = document.querySelectorAll("link[rel='alternate']");
-
-        for (let elem of elements) {
-            const url = new URL(elem.href, origin);
-            result.push({
-                url: url.href,
-                title: elem.title || ""
-            });
+        
+        if (origin.includes("medium.com")) {
+            
+            let elements = document.querySelectorAll("link[rel='alternate']");
+            
+            // we dont want the android universal links
+            elements = [...elements].filter(i => i.href.includes(ANDROID_PREFIX) == false);
+            
+            if (elements.length == 0) {
+                
+                let authorLink = document.querySelectorAll("link[rel='author']");
+                if (authorLink.length) {
+                    authorLink = authorLink[0].href;
+                    let url = new URL(authorLink);
+                    
+                    // format is provided here: https://help.medium.com/hc/en-us/articles/214874118-RSS-feeds
+                    let required = `https://medium.com/feed${url.pathname}`;
+                    
+                    // now fetch the author's name
+                    let authorName = document.querySelector(`meta[property="author"]`).content;
+                    
+                    result.push({
+                                url: required,
+                                title: authorName
+                                });
+                }
+                
+            }
+            else {
+                for (let elem of elements) {
+                    const url = new URL(elem.href, origin);
+                    result.push({
+                                url: url.href,
+                                title: elem.title || ""
+                                });
+                }
+            }
         }
+        else if (origin.includes("micro.blog")) {
+            // documentation for feeds: http://help.micro.blog/2017/api-feeds/
+            
+            let title = document.title;
+            let username = window.location.pathname.replace("/", "");
+            let xmlFeed = `https://${username}.micro.blog/feed.xml`;
+            let jsonFeed = `https://${username}.micro.blog/feed.json`;
+            
+            result.push({
+                        title,
+                        url: xmlFeed
+                        });
+            
+            result.push({
+                        title,
+                        url: jsonFeed
+                        });
+            
+        }
+        else {
+            // standard processing
+            
+            let elements = document.querySelectorAll("link[rel='alternate']");
+            
+            for (let elem of elements) {
+                const url = new URL(elem.href, origin);
+                result.push({
+                            url: url.href,
+                            title: elem.title || ""
+                            });
+            }
 
+        }
+        
+        // remove the comment feed since we dont support it
         result = result.filter(i => i.url.includes("/comment") == false);
+        
+        // remove android-app:// urls since, well, we're not on Android, YET!
+        result = result.filter(i => i.url.includes(ANDROID_PREFIX) == false);
 
         // Pass the baseURI of the webpage to the extension.
         arguments.completionFunction({"baseURI": document.baseURI, "items": result});

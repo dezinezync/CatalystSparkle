@@ -55,20 +55,18 @@
 }
 
 - (IBAction)done {
-    // Return any edited content to the host app.
-    // This template doesn't do anything, so we just echo the passed in items.
-    
-    NSURL *selectedURL = nil;
-    
-    if (self.selected != NSNotFound) {
-        NSDictionary  *feed = self.data[self.selected];
-        NSString *feedURL = feed[@"url"];
-        selectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?URL=%@", feedURL]];
+    if (self.selected == NSNotFound) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.extensionContext completeRequestReturningItems:nil completionHandler:nil];
+        });
+        
+        return;
     }
     
-    [self finalizeURL:selectedURL];
+    NSDictionary  *feed = self.data[self.selected];
+    NSString *feedURL = feed[@"url"];
     
-    [self.extensionContext completeRequestReturningItems:nil completionHandler:nil];
+    [self finalizeURL:[NSURL URLWithString:feedURL]];
 }
 
 - (void)setupTableRows
@@ -79,7 +77,8 @@
     
     for (NSDictionary *obj in self.data) {
         if ([(NSString *)[obj valueForKey:@"title"] containsString:@"JSON"]
-            || [(NSString *)[obj valueForKey:@"url"] containsString:@"/json"]) {
+            || [(NSString *)[obj valueForKey:@"url"] containsString:@"/json"]
+            || [(NSString *)[obj valueForKey:@"url"] containsString:@".json"]) {
             self->_hasJSONFeed = YES;
         }
     }
@@ -113,7 +112,7 @@
     
     if (self->_hasJSONFeed) {
         
-        if ([data[@"title"] containsString:@"JSON"] || [data[@"url"] containsString:@"/json"]) {
+        if ([data[@"title"] containsString:@"JSON"] || [data[@"url"] containsString:@"/json"] || [data[@"url"] containsString:@".json"]) {
             cell.detailTextLabel.textColor = self.view.tintColor;
         }
         else {
@@ -358,12 +357,15 @@
     }
     
     if (host) {
+        
+        NSURL *selectedURL = [host.absoluteString containsString:@"yeti://"] ? host : [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?URL=%@", host]];
+        
         // Get "UIApplication" class name through ASCII Character codes.
         NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
         if (NSClassFromString(className)) {
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
-                [object performSelector:@selector(openURL:) withObject:host];
+                [object performSelector:@selector(openURL:) withObject:selectedURL];
             }];
         }
     }
