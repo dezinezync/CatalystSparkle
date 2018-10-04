@@ -282,25 +282,34 @@
         [sender setEnabled:NO];
     }
     
-    [MyFeedsManager.gifSession GET:self.URL.absoluteString parameters:@{} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+       
+        NSError *error = nil;
+        
+        NSData *data = [[NSData alloc] initWithContentsOfURL:self.URL options:kNilOptions error:&error];
+        
+        if (error != nil || data == nil || data.length == 0) {
+            
+            DDLogError(@"Error loading GIF from: %@\n%@", self.URL, error);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [sender setTitle:@"  Failed. Tap to retry." forState:UIControlStateNormal];
+            });
+            
+            return;
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [sender removeFromSuperview];
         });
-
-        FLAnimatedImage *image = [[FLAnimatedImage alloc] initWithAnimatedGIFData:responseObject];
+        
+        FLAnimatedImage *image = [[FLAnimatedImage alloc] initWithAnimatedGIFData:data];
         
         [(SizedAnimatedImage *)[self imageView] setAnimatedImage:image];
         
         [self setupAnimationControls];
         
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [sender setTitle:@"  Failed. Tap to retry." forState:UIControlStateNormal];
-        });
-        
-    }];
+    });
     
 }
 

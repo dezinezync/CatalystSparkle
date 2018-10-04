@@ -32,7 +32,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     Subscription * _subscription;
 }
 
-@property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession, *gifSession;
+@property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession;
 @property (nonatomic, strong, readwrite) Reachability *reachability;
 
 @property (nonatomic, strong, readwrite) YTUserID *userIDManager;
@@ -1629,29 +1629,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     return _backgroundSession;
 }
-
-- (DZURLSession *)gifSession
-{
-    if (!_gifSession) {
-        
-        NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-        defaultConfig.HTTPMaximumConnectionsPerHost = 5;
-        
-        defaultConfig.allowsCellularAccess = YES;
-        defaultConfig.HTTPShouldUsePipelining = YES;
-        defaultConfig.waitsForConnectivity = NO;
-        
-        DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
-    
-        session.useOMGUserAgent = YES;
-        session.useActivityManager = NO;
-        
-        _gifSession = session;
-    }
-    
-    return _gifSession;
-}
-
 
 - (NSString *)hmac:(NSString *)plaintext withKey:(NSString *)key
 {
