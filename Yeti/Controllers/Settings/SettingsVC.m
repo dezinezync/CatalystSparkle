@@ -229,7 +229,7 @@
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
             else {
-                // set the toggle
+                cell.accessoryType = UITableViewCellAccessoryNone;
             }
             
             break;
@@ -254,6 +254,15 @@
                     cell.textLabel.text = @"Rate";
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
+            
+            
+            if (indexPath.row != 0) {
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            }
+            else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+            
             break;
     }
     

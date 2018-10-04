@@ -236,7 +236,7 @@
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Rename Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
-            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder];
+            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
             
             strongify(self);
             
@@ -446,19 +446,21 @@
     if (folder) {
         UIContextualAction *rename = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Rename" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
            
-            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder];
-            
             strongify(self);
             
-            [self presentViewController:nav animated:YES completion:^{
-                completionHandler(YES);
-            }];
+            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self presentViewController:nav animated:YES completion:^{
+                    completionHandler(YES);
+                }];
+            });
             
         }];
         
         rename.backgroundColor = self.view.tintColor;
         
-         configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, rename]];
+        configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, rename]];
     }
     else {
         

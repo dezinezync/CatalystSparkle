@@ -16,7 +16,9 @@
 
 #import "YetiConstants.h"
 
-@interface NewFolderVC ()
+@interface NewFolderVC () {
+    BOOL _isUpdating;
+}
 
 @property (nonatomic, weak, readwrite) Folder *folder;
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
@@ -36,10 +38,12 @@
     return nav;
 }
 
-+ (UINavigationController *)instanceWithFolder:(Folder *)folder
++ (UINavigationController *)instanceWithFolder:(Folder *)folder feedsVC:(FeedsVC * _Nonnull)feedsVC indexPath:(NSIndexPath *)indexPath
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     vc.folder = folder;
+    vc.feedsVC = feedsVC;
+    vc.folderIndexPath = indexPath;
     
     YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
     nav.transitioningDelegate = vc.newVCTD;
@@ -73,6 +77,10 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    if (self->_isUpdating) {
+        return NO;
+    }
+    
     NSString *title = [textField text];
     
     if ([title isBlank]) {
@@ -90,17 +98,19 @@
     
     weakify(self);
     
+    self->_isUpdating = YES;
+    
     if (self.folder) {
         // editing the title
         [MyFeedsManager renameFolder:self.folder.folderID to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            strongify(self);
-            
-            self.cancelButton.enabled = YES;
-            
-            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
                 strongify(self);
+                
+                self->_isUpdating = NO;
+                
+                [self.feedsVC.tableView reloadRowsAtIndexPaths:@[self.folderIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                self.cancelButton.enabled = YES;
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
@@ -113,7 +123,10 @@
             [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
                 strongify(self);
+                
+                self->_isUpdating = NO;
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
                 [self.notificationGenerator prepare];
@@ -131,8 +144,9 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 strongify(self);
                 
-                self.cancelButton.enabled = YES;
+                self->_isUpdating = NO;
                 
+                self.cancelButton.enabled = YES;
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
@@ -147,6 +161,8 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 strongify(self);
+                
+                self->_isUpdating = NO;
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
                 [self.notificationGenerator prepare];

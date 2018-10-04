@@ -172,25 +172,30 @@ NSString *const kFiltersCell = @"filterCell";
     
     weakify(self);
     
-    [MyFeedsManager addFilter:_keywordInput success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSString *keyword = [self->_keywordInput copy];
+    
+    // Immediately add the filter
+    NSArray *data = [@[keyword] arrayByAddingObjectsFromArray:self.DS2.data];
+    self.DS2.data = data;
+    self->_keywordInput = nil;
+    
+    asyncMain(^{
+        textField.text = nil;
+        [textField becomeFirstResponder];
+    });
+    
+    [MyFeedsManager addFilter:keyword success:nil error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
         
         strongify(self);
         
-        if ([responseObject boolValue]) {
-            NSArray *data = [@[self->_keywordInput] arrayByAddingObjectsFromArray:self.DS2.data];
-            self.DS2.data = data;
-            self->_keywordInput = nil;
-            
-            asyncMain(^{
-                textField.text = nil;
-                [textField becomeFirstResponder];
-            });
-            
-        }
+        NSArray *keywords = self.DS2.data;
+        keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+            return [obj isEqualToString:keyword] == NO;
+        }];
         
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Failed to add Filter" message:error.localizedDescription];
+        self.DS2.data = keywords;
         
     }];
     

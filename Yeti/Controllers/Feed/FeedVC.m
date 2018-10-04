@@ -725,15 +725,17 @@
     
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
     
-    NSString *title = item.isRead ? @"Mark as Unread" : @"Mark as read";
+    NSString *title = item.isRead ? @"Mark as Unread" : @"Mark as Read";
     
     UIContextualAction *action = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:title handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
         
-        [MyFeedsManager article:item markAsRead:!NO];
-        
-        item.read = !item.isRead;
-        
-        completionHandler(YES);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MyFeedsManager article:item markAsRead:!NO];
+            
+            item.read = !item.isRead;
+            
+            completionHandler(YES);
+        });
         
     }];
     
