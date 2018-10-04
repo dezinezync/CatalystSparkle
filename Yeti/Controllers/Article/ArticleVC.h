@@ -13,10 +13,7 @@
 #import "FeedItem.h"
 
 @interface ArticleVC : UIViewController <ArticleHandler> {
-    UISearchBar *_searchBar;
-    UIInputView *_searchView;
     BOOL _showSearchBar;
-    UIButton *_searchPrevButton, *_searchNextButton;
     
     UIView *_searchHighlightingRect;
     NSArray <NSValue *> *_searchingRects;
@@ -38,6 +35,9 @@
 
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
+
+@property (nonatomic, weak) UISearchBar *searchBar;
+@property (nonatomic, weak) UIButton *searchPrevButton, *searchNextButton;
 
 #pragma mark - Private
 

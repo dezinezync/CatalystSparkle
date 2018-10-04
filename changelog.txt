@@ -2,12 +2,9 @@
 [NEW]
 
 [IMPROVE]
-- Minor optimizations for Image Galleries.
-- Support for missing OLED Devices for the Black Theme.
+- Elytra's Action Extension is now much much faster. It interacts directly with a webpage if one is available to find the RSS Feeds advertisted by that web page.
 
 [FIX]
-- Unread counts on folders in some cases went below 0!
-- Titles now render correctly for bookmarked articles.
-
-[NOTE]
-
+- Renaming a Folder is now an instant action and no longer requires a refresh.
+- Deleting a renamed folder no longer crashes the app.
+- Changing the theme followed by opening an article and then tapping on search now correctly presents the search bar and associated buttons. Previously, the search bar did not appear at all showing just the keyboard. 

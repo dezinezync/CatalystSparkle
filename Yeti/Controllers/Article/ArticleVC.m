@@ -2024,6 +2024,123 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return _feedbackGenerator;
 }
 
+- (UIView *)inputAccessoryView
+{
+    if (_showSearchBar == YES) {
+        return self.searchView;
+    }
+    return nil;
+}
+
+- (UIInputView *)searchView
+{
+    if (!_searchView) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
+        
+        UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
+        [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
+        searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
+        searchBar.placeholder = @"Search article";
+        searchBar.keyboardType = UIKeyboardTypeDefault;
+        searchBar.returnKeyType = UIReturnKeySearch;
+        searchBar.delegate = self;
+        searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
+        if (searchField) {
+            searchField.textColor = theme.titleColor;
+        }
+        
+        searchBar.backgroundColor = UIColor.clearColor;
+        searchBar.backgroundImage = nil;
+        searchBar.scopeBarBackgroundImage = nil;
+        searchBar.searchBarStyle = UISearchBarStyleMinimal;
+        searchBar.translucent = NO;
+        searchBar.accessibilityHint = @"Search for keywords in the article";
+        
+        [searchView addSubview:searchBar];
+        self.searchBar = searchBar;
+        
+        [searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
+        
+        UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
+        [prev setImage:[UIImage imageNamed:@"arrow_up"] forState:UIControlStateNormal];
+        prev.bounds = CGRectMake(0, 0, 24.f, 24.f);
+        prev.translatesAutoresizingMaskIntoConstraints = NO;
+        [prev addTarget:self action:@selector(didTapSearchPrevious) forControlEvents:UIControlEventTouchUpInside];
+        prev.accessibilityHint = @"Previous search result";
+        
+        frame = prev.bounds;
+        
+        [searchView addSubview:prev];
+        
+        [prev.widthAnchor constraintEqualToConstant:frame.size.width].active = YES;
+        [prev.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
+        [prev.leadingAnchor constraintEqualToAnchor:searchView.leadingAnchor constant:8.f].active = YES;
+        [prev.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
+        
+        UIButton *next = [UIButton buttonWithType:UIButtonTypeSystem];
+        [next setImage:[UIImage imageNamed:@"arrow_down"] forState:UIControlStateNormal];
+        next.bounds = CGRectMake(0, 0, 24.f, 24.f);
+        next.translatesAutoresizingMaskIntoConstraints = NO;
+        [next addTarget:self action:@selector(didTapSearchNext) forControlEvents:UIControlEventTouchUpInside];
+        next.accessibilityHint = @"Next search result";
+        
+        frame = next.bounds;
+        
+        [searchView addSubview:next];
+        
+        [next.widthAnchor constraintEqualToConstant:frame.size.width].active = YES;
+        [next.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
+        [next.leadingAnchor constraintEqualToAnchor:prev.trailingAnchor constant:8.f].active = YES;
+        [next.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
+        
+        prev.tintColor = UIColor.blackColor;
+        next.tintColor = UIColor.blackColor;
+        
+        UIButton *done = [UIButton buttonWithType:UIButtonTypeSystem];
+        done.translatesAutoresizingMaskIntoConstraints = NO;
+        done.titleLabel.font = [UIFont systemFontOfSize:16.f weight:UIFontWeightSemibold];
+        [done setTitle:@"Done" forState:UIControlStateNormal];
+        [done setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+        [done sizeToFit];
+        
+        done.accessibilityHint = @"Dismiss search";
+        
+        [done addTarget:self action:@selector(didTapSearchDone) forControlEvents:UIControlEventTouchUpInside];
+        
+        frame = done.bounds;
+        
+        [searchView addSubview:done];
+//        [done.widthAnchor constraintEqualToConstant:frame.size.width].active = YES;
+        [done.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
+        [done.trailingAnchor constraintEqualToAnchor:searchView.trailingAnchor constant:-8.f].active = YES;
+        [done.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
+        
+        self.searchPrevButton = prev;
+        self.searchNextButton = next;
+        
+        UIColor *tint = theme.tintColor;
+        prev.tintColor = tint;
+        next.tintColor = tint;
+        [done setTitleColor:tint forState:UIControlStateNormal];
+        
+        self.searchPrevButton.enabled = NO;
+        self.searchNextButton.enabled = NO;
+        
+        self.searchView = searchView;
+    }
+    
+    return _searchView;
+}
+
 #pragma mark - State Restoration
 
 NSString * const kArticleData = @"ArticleData";

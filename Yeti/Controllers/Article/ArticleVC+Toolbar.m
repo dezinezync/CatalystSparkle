@@ -76,13 +76,6 @@
     }
 }
 
-- (UIView *)inputAccessoryView
-{
-    if (_showSearchBar)
-        return self.searchView;
-    return nil;
-}
-
 #pragma mark - Actions
 
 - (void)didTapClose {
@@ -234,15 +227,23 @@
     }
     
     _showSearchBar = YES;
-    [self reloadInputViews];
-    [_searchBar becomeFirstResponder];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self reloadInputViews];
+    });
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.searchBar becomeFirstResponder];
+    });
 }
 
 - (void)didTapSearchDone
 {
     _showSearchBar = NO;
-    [_searchBar resignFirstResponder];
-    [_searchBar setText:nil];
+    [self.searchBar resignFirstResponder];
+    [self.searchBar setText:nil];
+    
+    [self.searchView removeFromSuperview];
+    
     [self reloadInputViews];
 }
 
@@ -255,7 +256,7 @@
     
     if (_searchCurrentIndex == 0) {
         // we are on the first possible result. This shouldn't be possible.
-        _searchPrevButton.enabled = NO;
+        self.searchPrevButton.enabled = NO;
         return;
     }
     
@@ -275,11 +276,11 @@
     }
     
     if (_searchCurrentIndex == 0)
-        _searchPrevButton.enabled = NO;
+        self.searchPrevButton.enabled = NO;
     
     // if previous was tappable, next should be tappable now
-    if (!_searchNextButton.isEnabled)
-        _searchNextButton.enabled = YES;
+    if (!self.searchNextButton.isEnabled)
+        self.searchNextButton.enabled = YES;
     
     [self.feedbackGenerator selectionChanged];
     [self.feedbackGenerator prepare];
@@ -293,7 +294,7 @@
     
     if (_searchCurrentIndex == (_searchingRects.count-1)) {
         // we are on the last result. This shouldn't be possible.
-        _searchNextButton.enabled = NO;
+        self.searchNextButton.enabled = NO;
         return;
     }
     
@@ -305,11 +306,11 @@
     }
     
     if (_searchCurrentIndex == (_searchingRects.count - 1))
-        _searchNextButton.enabled = NO;
+        self.searchNextButton.enabled = NO;
     
     // if next was tappable, previous should be tappable now
-    if (!_searchPrevButton.isEnabled)
-        _searchPrevButton.enabled = YES;
+    if (!self.searchPrevButton.isEnabled)
+        self.searchPrevButton.enabled = YES;
     
     [self.feedbackGenerator selectionChanged];
     [self.feedbackGenerator prepare];
@@ -385,111 +386,6 @@
 
 #pragma mark - Getters
 
-- (UIInputView *)searchView
-{
-    if (!_searchView) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
-        
-        _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
-        _searchBar.placeholder = @"Search article";
-        _searchBar.keyboardType = UIKeyboardTypeDefault;
-        _searchBar.returnKeyType = UIReturnKeySearch;
-        _searchBar.delegate = self;
-        _searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        _searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-        _searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-        _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        
-        UITextField *searchField = [_searchBar valueForKeyPath:@"searchField"];
-        if (searchField) {
-            searchField.textColor = theme.titleColor;
-        }
-        
-        _searchBar.backgroundColor = UIColor.clearColor;
-        _searchBar.backgroundImage = nil;
-        _searchBar.scopeBarBackgroundImage = nil;
-        _searchBar.searchBarStyle = UISearchBarStyleMinimal;
-        _searchBar.translucent = NO;
-        _searchBar.accessibilityHint = @"Search for keywords in the article";
-        
-        _searchView = [[UIInputView alloc] initWithFrame:frame];
-        [_searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
-        
-        [_searchView addSubview:_searchBar];
-        
-        [_searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
-        
-        UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
-        [prev setImage:[UIImage imageNamed:@"arrow_up"] forState:UIControlStateNormal];
-        prev.bounds = CGRectMake(0, 0, 24.f, 24.f);
-        prev.translatesAutoresizingMaskIntoConstraints = NO;
-        [prev addTarget:self action:@selector(didTapSearchPrevious) forControlEvents:UIControlEventTouchUpInside];
-        prev.accessibilityHint = @"Previous search result";
-        
-        frame = prev.bounds;
-        
-        [_searchView addSubview:prev];
-        
-        [prev.widthAnchor constraintEqualToConstant:frame.size.width].active = YES;
-        [prev.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
-        [prev.leadingAnchor constraintEqualToAnchor:_searchView.leadingAnchor constant:8.f].active = YES;
-        [prev.centerYAnchor constraintEqualToAnchor:_searchView.centerYAnchor].active = YES;
-        
-        UIButton *next = [UIButton buttonWithType:UIButtonTypeSystem];
-        [next setImage:[UIImage imageNamed:@"arrow_down"] forState:UIControlStateNormal];
-        next.bounds = CGRectMake(0, 0, 24.f, 24.f);
-        next.translatesAutoresizingMaskIntoConstraints = NO;
-        [next addTarget:self action:@selector(didTapSearchNext) forControlEvents:UIControlEventTouchUpInside];
-        next.accessibilityHint = @"Next search result";
-        
-        frame = next.bounds;
-        
-        [_searchView addSubview:next];
-        
-        [next.widthAnchor constraintEqualToConstant:frame.size.width].active = YES;
-        [next.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
-        [next.leadingAnchor constraintEqualToAnchor:prev.trailingAnchor constant:8.f].active = YES;
-        [next.centerYAnchor constraintEqualToAnchor:_searchView.centerYAnchor].active = YES;
-        
-        prev.tintColor = UIColor.blackColor;
-        next.tintColor = UIColor.blackColor;
-        
-        UIButton *done = [UIButton buttonWithType:UIButtonTypeSystem];
-        done.translatesAutoresizingMaskIntoConstraints = NO;
-        done.titleLabel.font = [UIFont systemFontOfSize:16.f weight:UIFontWeightSemibold];
-        [done setTitle:@"Done" forState:UIControlStateNormal];
-        [done setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
-        [done sizeToFit];
-        
-        done.accessibilityHint = @"Dismiss search";
-        
-        [done addTarget:self action:@selector(didTapSearchDone) forControlEvents:UIControlEventTouchUpInside];
-        
-        frame = done.bounds;
-        
-        [_searchView addSubview:done];
-//        [done.widthAnchor constraintEqualToConstant:frame.size.width].active = YES;
-        [done.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
-        [done.trailingAnchor constraintEqualToAnchor:_searchView.trailingAnchor constant:-8.f].active = YES;
-        [done.centerYAnchor constraintEqualToAnchor:_searchView.centerYAnchor].active = YES;
-        
-        _searchPrevButton = prev;
-        _searchNextButton = next;
-        
-        UIColor *tint = theme.tintColor;
-        prev.tintColor = tint;
-        next.tintColor = tint;
-        [done setTitleColor:tint forState:UIControlStateNormal];
-        
-        _searchPrevButton.enabled = NO;
-        _searchNextButton.enabled = NO;
-    }
-    
-    return _searchView;
-}
-
 - (void)removeSearchResultViewFromSuperview {
     if (_searchHighlightingRect) {
         [_searchHighlightingRect removeFromSuperview];
@@ -518,8 +414,8 @@
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     if (!searchText || [searchText isBlank]) {
-        _searchPrevButton.enabled = NO;
-        _searchNextButton.enabled = NO;
+        self.searchPrevButton.enabled = NO;
+        self.searchNextButton.enabled = NO;
         [self removeSearchResultViewFromSuperview];
         return;
     }
@@ -543,8 +439,8 @@
     }];
     
     if (![foundInViews count]) {
-        _searchPrevButton.enabled = NO;
-        _searchNextButton.enabled = NO;
+        self.searchPrevButton.enabled = NO;
+        self.searchNextButton.enabled = NO;
         
         [self removeSearchResultViewFromSuperview];
         return;
@@ -557,11 +453,11 @@
         NSInteger occurrances = [self occurancesOfSubstring:searchText inString:text];
         
         if (occurrances <= 1)
-            _searchNextButton.enabled = NO;
+            self.searchNextButton.enabled = NO;
         else
-            _searchNextButton.enabled = YES;
+            self.searchNextButton.enabled = YES;
         
-        _searchPrevButton.enabled = YES;
+        self.searchPrevButton.enabled = YES;
     }
     
     /* actual search ops */
@@ -608,8 +504,8 @@
     });
     
     if (_searchingRects.count > 1) {
-        _searchNextButton.enabled = YES;
-        _searchPrevButton.enabled = YES;
+        self.searchNextButton.enabled = YES;
+        self.searchPrevButton.enabled = YES;
     }
     
     if (!_searchHighlightingRect) {

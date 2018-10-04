@@ -15,6 +15,8 @@
 		F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
+		F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; };
+		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
@@ -266,7 +268,6 @@
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
 		F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
-		F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
@@ -281,6 +282,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F017F5FF216677AA00C514BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6F861FB0698900D3A819;
+			remoteInfo = DZThemeKit;
+		};
+		F017F601216677AA00C514BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6F8F1FB0698900D3A819;
+			remoteInfo = DZThemeKitTests;
+		};
+		F017F603216677AA00C514BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
+			remoteInfo = ThemeKitTestApp;
+		};
+		F017F605216677B100C514BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F06A6F851FB0698900D3A819;
+			remoteInfo = DZThemeKit;
+		};
+		F017F609216677C700C514BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F06A6F851FB0698900D3A819;
+			remoteInfo = DZThemeKit;
+		};
 		F035A21E20617EC3005A88EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
@@ -393,6 +429,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F0B05E4E21400C61001FD00B /* DZNetworking.framework in Embed Frameworks */,
+				F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */,
 				F0C9F3DB2149151A007EF1E8 /* DZKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -414,6 +451,7 @@
 		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
+		F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = ../../DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
@@ -869,7 +907,6 @@
 		F0E71E701FD6F72200408CFF /* PaddedLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
 		F0E71E711FD6F72200408CFF /* PaddedLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedLabel.m; sourceTree = "<group>"; };
 		F0E71E731FD6FF7100408CFF /* Yeti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yeti.entitlements; sourceTree = "<group>"; };
-		F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZThemeKit.framework; path = Carthage/Build/iOS/DZThemeKit.framework; sourceTree = SOURCE_ROOT; };
 		F0EBC7DC1FBAF8A5004A5605 /* Paragraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Paragraph.h; sourceTree = "<group>"; };
 		F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Paragraph.m; sourceTree = "<group>"; };
 		F0EBC7DF1FBB2181004A5605 /* Heading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Heading.h; sourceTree = "<group>"; };
@@ -903,9 +940,9 @@
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
 				F0D7E224215B72F100CB64E9 /* libssl.a in Frameworks */,
+				F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
-				F0E8A81020998E570032CEE7 /* DZThemeKit.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
 				F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */,
 				F0C9F3DA2149151A007EF1E8 /* DZKit.framework in Frameworks */,
@@ -934,6 +971,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F017F5FA216677AA00C514BB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F017F600216677AA00C514BB /* DZThemeKit.framework */,
+				F017F602216677AA00C514BB /* DZThemeKitTests.xctest */,
+				F017F604216677AA00C514BB /* ThemeKitTestApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F018A2CB205D0EF9001E682B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1324,7 +1371,6 @@
 				F0D7E1BE215B72F100CB64E9 /* RMStore */,
 				F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */,
 				F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */,
-				F0E8A80F20998E570032CEE7 /* DZThemeKit.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
 				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
 				F070C3261FBAC10600912CCF /* DZAppdelegate.framework */,
@@ -1460,6 +1506,7 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */,
 				F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */,
 				F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */,
 				F099465F20AD86BE00E5520F /* StoreKit.framework */,
@@ -1794,9 +1841,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				F017F606216677B100C514BB /* PBXTargetDependency */,
 				F0B05E4B21400C3F001FD00B /* PBXTargetDependency */,
-				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 				F0C9F3DD2149151A007EF1E8 /* PBXTargetDependency */,
+				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
+				F017F60A216677C700C514BB /* PBXTargetDependency */,
 			);
 			name = Yeti;
 			productName = Yeti;
@@ -1902,6 +1951,10 @@
 					ProductGroup = F0B05E3B21400C2F001FD00B /* Products */;
 					ProjectRef = F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */;
 				},
+				{
+					ProductGroup = F017F5FA216677AA00C514BB /* Products */;
+					ProjectRef = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1914,6 +1967,27 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F017F600216677AA00C514BB /* DZThemeKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZThemeKit.framework;
+			remoteRef = F017F5FF216677AA00C514BB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F017F602216677AA00C514BB /* DZThemeKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZThemeKitTests.xctest;
+			remoteRef = F017F601216677AA00C514BB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F017F604216677AA00C514BB /* ThemeKitTestApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ThemeKitTestApp.app;
+			remoteRef = F017F603216677AA00C514BB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F0B05E4221400C2F001FD00B /* DZNetworking.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2122,7 +2196,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/JLRoutes.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OMGHTTPURLRQ.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/DZThemeKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/UICKeyChainStore.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FLAnimatedImage.framework",
 			);
@@ -2132,7 +2205,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JLRoutes.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OMGHTTPURLRQ.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZThemeKit.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/UICKeyChainStore.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/FLAnimatedImage.framework",
 			);
@@ -2337,6 +2409,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F017F606216677B100C514BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZThemeKit;
+			targetProxy = F017F605216677B100C514BB /* PBXContainerItemProxy */;
+		};
+		F017F60A216677C700C514BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZThemeKit;
+			targetProxy = F017F609216677C700C514BB /* PBXContainerItemProxy */;
+		};
 		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F035A21420617EC3005A88EE /* YetiShare */;
