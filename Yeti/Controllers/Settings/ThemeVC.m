@@ -18,8 +18,7 @@
 
 static void * KVO_SELECTED_BUTTON = &KVO_SELECTED_BUTTON;
 
-NSString *const kSwitchCell = @"cell.switch";
-NSString *const kCheckmarkCell = @"cell.checkmark";
+NSString *const kBasicCell = @"cell.theme";
 
 @interface ThemeVC () {
     BOOL _isPhoneX;
@@ -56,8 +55,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kSwitchCell];
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCheckmarkCell];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kBasicCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AccentCell.class) bundle:nil] forCellReuseIdentifier:kAccentCell];
 }
 
@@ -97,7 +95,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     
     if (indexPath.section == 0) {
         // THEME
-        cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
         cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         
         YetiThemeType theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
@@ -138,7 +136,7 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     else {
         // ARTICLE FONT
-        cell = [tableView dequeueReusableCellWithIdentifier:kCheckmarkCell forIndexPath:indexPath];
+        cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
@@ -157,13 +155,13 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
             cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         }
         
-        if (([fontPref isEqualToString:ALPSystem] && indexPath.row == 0)
-            || ([fontPref isEqualToString:ALPSerif] && indexPath.row == 1)
-            || ([fontPref isEqualToString:ALPHelvetica] && indexPath.row == 2)
+        if (([fontPref isEqualToString:ALPSystem]          && indexPath.row == 0)
+            || ([fontPref isEqualToString:ALPSerif]        && indexPath.row == 1)
+            || ([fontPref isEqualToString:ALPHelvetica]    && indexPath.row == 2)
             || ([fontPref isEqualToString:ALPMerriweather] && indexPath.row == 3)
-            || ([fontPref isEqualToString:ALPPlexSerif] && indexPath.row == 4)
-            || ([fontPref isEqualToString:ALPPlexSans] && indexPath.row == 5)
-            || ([fontPref isEqualToString:ALPSpectral] && indexPath.row == 6)) {
+            || ([fontPref isEqualToString:ALPPlexSerif]    && indexPath.row == 4)
+            || ([fontPref isEqualToString:ALPPlexSans]     && indexPath.row == 5)
+            || ([fontPref isEqualToString:ALPSpectral]     && indexPath.row == 6)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -178,7 +176,10 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
     }
     
     // Configure the cell...
-    if (indexPath.section != 1) {
+    if (indexPath.section == 1) {
+        cell.selectedBackgroundView = nil;
+    }
+    else {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         cell.textLabel.textColor = theme.titleColor;
@@ -186,14 +187,9 @@ NSString *const kCheckmarkCell = @"cell.checkmark";
         
         cell.backgroundColor = theme.cellColor;
         
-        if (cell.selectedBackgroundView == nil) {
-            cell.selectedBackgroundView = [UIView new];
-        }
+        cell.selectedBackgroundView = [UIView new];
         
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
-    }
-    else {
-        cell.selectedBackgroundView = nil;
     }
     
     return cell;

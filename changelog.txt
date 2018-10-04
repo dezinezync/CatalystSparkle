@@ -7,4 +7,5 @@
 [FIX]
 - Renaming a Folder is now an instant action and no longer requires a refresh.
 - Deleting a renamed folder no longer crashes the app.
-- Changing the theme followed by opening an article and then tapping on search now correctly presents the search bar and associated buttons. Previously, the search bar did not appear at all showing just the keyboard. 
+- Changing the theme followed by opening an article and then tapping on search now correctly presents the search bar and associated buttons. Previously, the search bar did not appear at all showing just the keyboard.
+- The Appearance Interface now uses the current Accent colour when tapping on cells.
