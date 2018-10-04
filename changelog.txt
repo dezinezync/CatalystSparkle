@@ -3,6 +3,7 @@
 
 [IMPROVE]
 - Elytra's Action Extension is now much much faster. It interacts directly with a webpage if one is available to find the RSS Feeds advertisted by that web page.
+- Improved Voice Over text for Settings, Recommendations, New Folder and New Feed buttons on the Feeds Interface.
 
 [FIX]
 - Renaming a Folder is now an instant action and no longer requires a refresh.

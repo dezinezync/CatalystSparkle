@@ -213,9 +213,20 @@ static void *KVO_Unread = &KVO_Unread;
     self.refreshControl = control;
     
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    add.accessibilityLabel = @"New Feed";
+    add.accessibilityHint = @"Add a new RSS Feed";
+    
     UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    folder.accessibilityLabel = @"New Folder";
+    folder.accessibilityHint = @"Create a new folder";
+    
     UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"whatshot"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
+    recommendations.accessibilityLabel = @"Recommendations";
+    recommendations.accessibilityHint = @"View RSS Feed Recommendations";
+    
     UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
+    settings.accessibilityLabel = @"Settings";
+    settings.accessibilityHint = @"Elytra's App Settings";
     
     self.navigationItem.rightBarButtonItems = @[add, folder, recommendations];
     self.navigationItem.leftBarButtonItem = settings;
