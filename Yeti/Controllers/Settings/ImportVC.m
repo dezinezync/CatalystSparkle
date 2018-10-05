@@ -65,7 +65,13 @@ NSString *const kImportCell = @"importCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.layer.cornerRadius = 20.f;
+    self.view.layer.masksToBounds = YES;
+    self.navigationController.navigationBarHidden = YES;
     self.title = @"Importing";
+    
+    self.navigationController.view.layer.cornerRadius = 20.f;
+    self.navigationController.view.layer.masksToBounds = YES;
     
     [self setupTable];
     
@@ -377,9 +383,9 @@ NSString *const kImportCell = @"importCell";
             NSArray *options = responseObject;
             
             // find the URL in the options array
-            NSString *url = [options rz_reduce:^id(NSString * prev, NSString * current, NSUInteger idx, NSArray *array) {
-                if ([current isEqualToString:path])
-                    return current;
+            NSString *url = [options rz_reduce:^id(NSString * prev, NSDictionary * current, NSUInteger idx, NSArray *array) {
+                if ([[current valueForKey:@"url"] isEqualToString:path])
+                    return [current valueForKey:@"url"];
                 return prev;
             }];
             
