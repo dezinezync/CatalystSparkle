@@ -102,7 +102,7 @@
     
     if (self.folder) {
         // editing the title
-        [MyFeedsManager renameFolder:self.folder.folderID to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [MyFeedsManager renameFolder:self.folder to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 strongify(self);

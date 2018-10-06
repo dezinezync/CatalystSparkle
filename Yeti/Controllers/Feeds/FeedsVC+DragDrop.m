@@ -238,9 +238,9 @@
     
     if (source != nil && folder != nil) {
         
-        [MyFeedsManager updateFolder:source.folderID add:@[] remove:@[feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [MyFeedsManager updateFolder:source add:@[] remove:@[feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [MyFeedsManager updateFolder:folder.folderID add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [MyFeedsManager updateFolder:folder add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 
                 
@@ -259,7 +259,7 @@
     }
     else if (folder != nil) {
         
-        [MyFeedsManager updateFolder:folder.folderID add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [MyFeedsManager updateFolder:folder add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             
             
@@ -272,7 +272,7 @@
     }
     else if (source != nil) {
         
-        [MyFeedsManager updateFolder:source.folderID add:@[] remove:@[feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [MyFeedsManager updateFolder:source add:@[] remove:@[feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             
             

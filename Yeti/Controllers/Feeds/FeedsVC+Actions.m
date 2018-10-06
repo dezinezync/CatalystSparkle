@@ -358,17 +358,7 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        [MyFeedsManager removeFolder:folder.folderID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            MyFeedsManager.folders = [MyFeedsManager.folders rz_filter:^BOOL(Folder *obj, NSUInteger idx, NSArray *array) {
-                return ![obj.folderID isEqualToNumber:folder.folderID];
-            }];
-            
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:folder.feeds];
-            
-            strongify(self);
-            
-            [self setupData:MyFeedsManager.feeds];
+        [MyFeedsManager removeFolder:folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             if (completionHandler) {
                 asyncMain(^{

@@ -426,7 +426,7 @@ NSString *const kImportCell = @"importCell";
             weakify(self);
             
             // add it  to the folder
-            [MyFeedsManager updateFolder:folder.folderID add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [MyFeedsManager updateFolder:folder add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 strongify(self);
                 
