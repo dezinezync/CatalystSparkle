@@ -4,9 +4,12 @@
 [IMPROVE]
 - Elytra's Action Extension is now much much faster. It interacts directly with a webpage if one is available to find the RSS Feeds advertisted by that web page.
 - Improved Voice Over text for Settings, Recommendations, New Folder and New Feed buttons on the Feeds Interface.
+- OPML view improvements. This is still Work-In-Progress.
 
 [FIX]
 - Renaming a Folder is now an instant action and no longer requires a refresh.
 - Deleting a renamed folder no longer crashes the app.
 - Changing the theme followed by opening an article and then tapping on search now correctly presents the search bar and associated buttons. Previously, the search bar did not appear at all showing just the keyboard.
 - The Appearance Interface now uses the current Accent colour when tapping on cells.
+- Fixes glitches for folder updates including deletion.
+- Fixes folder move bug using drag and drop on iPads.
