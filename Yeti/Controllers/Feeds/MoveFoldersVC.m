@@ -210,7 +210,9 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         
         // it has been removed from this folder only
         if (self.feed.folderID != nil) {
-            [MyFeedsManager updateFolder:self.originalFolderID add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
+            
+            [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 strongify(self);
                 
@@ -233,10 +235,14 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         // and added to a new folder
         NSNumber *newFolderID = self.feed.folderID;
         
-        [MyFeedsManager updateFolder:self.originalFolderID add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
+        
+        [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             if (newFolderID != nil) {
-                [MyFeedsManager updateFolder:newFolderID add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                Folder *newFolder = [MyFeedsManager folderForID:newFolderID];
+                
+                [MyFeedsManager updateFolder:newFolder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     strongify(self);
                     
@@ -270,7 +276,8 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     else {
         
         // it didn't belong to a folder but now it does
-        [MyFeedsManager updateFolder:self.feed.folderID add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        Folder *folder = [MyFeedsManager folderForID:self.feed.folderID];
+        [MyFeedsManager updateFolder:folder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);
             

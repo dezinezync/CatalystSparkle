@@ -2041,10 +2041,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
-        searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        CGFloat borderHeight = 1/[[UIScreen mainScreen] scale];
+        UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, borderHeight)];
+        border.backgroundColor = theme.borderColor;
+        border.translatesAutoresizingMaskIntoConstraints = NO;
+        [border.heightAnchor constraintEqualToConstant:borderHeight].active = YES;
+        
+        [searchView addSubview:border];
+        [border.topAnchor constraintEqualToAnchor:searchView.topAnchor].active = YES;
+        [border.heightAnchor constraintEqualToAnchor:searchView.heightAnchor].active = YES;
         
         UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
-        searchBar.placeholder = @"Search article";
+        searchBar.placeholder = @"Search Article";
         searchBar.keyboardType = UIKeyboardTypeDefault;
         searchBar.returnKeyType = UIReturnKeySearch;
         searchBar.delegate = self;

@@ -35,8 +35,6 @@
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         self.state = OPMLStateNone;
-        self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     }
     
     return self;
@@ -44,6 +42,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.view.layer.cornerRadius = 20.f;
+    
+    self.navigationController.navigationBarHidden = YES;
     
     // Do any additional setup after loading the view from its nib.
     self.detailsView.layer.cornerRadius = 18.f;
@@ -99,7 +101,7 @@
         UIView *view = self.detailsView.isHidden ? self.ioView : self.detailsView;
         
         [UIView animateWithDuration:(duration/2) animations:^{
-            view.transform = CGAffineTransformMakeTranslation(0, view.bounds.size.height + 32.f);
+            view.alpha = 0;
         }];
         
     }
@@ -109,14 +111,8 @@
             button.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
         }
         
-//        self.detailsTitleLabel.textColor = theme.titleColor;
-//        self.detailsSubtitleLabel.textColor = theme.captionColor;
-        
-        CGAffineTransform base = self.detailsView.transform;
-        
-        self.detailsView.transform = CGAffineTransformTranslate(base, 0, self.detailsView.bounds.size.height);
+        self.detailsView.alpha = 0.f;
         self.detailsView.hidden = NO;
-//        self.detailsView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
         
         weakify(self);
         
@@ -124,19 +120,16 @@
             
             strongify(self);
             
-            self.detailsView.transform = base;
+            self.detailsView.alpha = 1.f;
             
         } completion:nil];
     }
     else {
         // Import/Export State
         self.ioProgressView.progress = 0.0f;
-        
-        CGAffineTransform base = self.ioView.transform;
-        self.ioView.transform = CGAffineTransformTranslate(base, 0, self.ioView.bounds.size.height + 32.f);
+
+        self.ioView.alpha = 0.f;
         self.ioView.hidden = NO;
-        
-//        self.ioView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
         
         if (state == OPMLStateImport) {
             self.ioTitleLabel.text = @"Importing OPML";
@@ -147,9 +140,6 @@
             self.ioSubtitleLabel.text = @"Preparing your file";
         }
         
-//        self.ioTitleLabel.textColor = theme.titleColor;
-//        self.ioSubtitleLabel.textColor = theme.captionColor;
-        
         if (current == OPMLStateDefault) {
             
             weakify(self);
@@ -158,23 +148,14 @@
                 
                 strongify(self);
                 
-                self.detailsView.transform = CGAffineTransformMakeTranslation(0, self.detailsView.bounds.size.height + 32.f);
+                self.detailsView.alpha = 0.f;
+                self.ioView.alpha = 1.f;
                 
             } completion:^(BOOL finished) { if (finished) {
                 
                 strongify(self);
                 
                 self.detailsView.hidden = YES;
-                
-                weakify(self);
-                
-                [UIView animateWithDuration:(duration/2) delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0.5 options:UIViewAnimationOptionAllowUserInteraction animations:^{
-                    
-                    strongify(self);
-                    
-                    self.ioView.transform = base;
-                    
-                } completion:nil];
                 
             } }];
             
@@ -252,7 +233,7 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     });
 }
 
@@ -447,19 +428,11 @@
     importVC.unmappedFolders = folders;
     importVC.existingFolders = (existingFolders != nil && [existingFolders isKindOfClass:NSDictionary.class]) ? [existingFolders valueForKey:@"folders"] : @[];
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:importVC];
-    
-    UIViewController *presenting = self.presentingViewController;
-    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         strongify(self);
 
-        [self didTapCancel:self.ioDoneButton];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [presenting presentViewController:nav animated:YES completion:nil];
-        });
+        [self.navigationController setViewControllers:@[importVC]];
 
     });
 }

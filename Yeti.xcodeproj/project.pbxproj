@@ -130,6 +130,7 @@
 		F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */; };
 		F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */; };
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
+		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F0869B592099CE6600A5D723 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F0869B582099CE6600A5D723 /* YetiTheme.m */; };
 		F0869B5D2099CF0000A5D723 /* light.json in Resources */ = {isa = PBXBuildFile; fileRef = F0869B5C2099CF0000A5D723 /* light.json */; };
 		F0869B5F2099CF0000A5D723 /* light.json in Resources */ = {isa = PBXBuildFile; fileRef = F0869B5C2099CF0000A5D723 /* light.json */; };
@@ -642,6 +643,8 @@
 		F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Keyboard.m"; sourceTree = "<group>"; };
 		F07DCA4220C51B550068ED51 /* ArticleVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Keyboard.h"; sourceTree = "<group>"; };
 		F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Keyboard.m"; sourceTree = "<group>"; };
+		F08011E22167345300F0CE81 /* OPMLDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLDeckController.h; sourceTree = "<group>"; };
+		F08011E32167345300F0CE81 /* OPMLDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLDeckController.m; sourceTree = "<group>"; };
 		F0869B572099CE6600A5D723 /* YetiTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YetiTheme.h; sourceTree = "<group>"; };
 		F0869B582099CE6600A5D723 /* YetiTheme.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiTheme.m; sourceTree = "<group>"; };
 		F0869B5C2099CF0000A5D723 /* light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = light.json; sourceTree = "<group>"; };
@@ -1001,6 +1004,8 @@
 				F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */,
 				F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */,
 				F03A5F6020971BAE00CE7D5E /* ThemeVC.m */,
+				F08011E22167345300F0CE81 /* OPMLDeckController.h */,
+				F08011E32167345300F0CE81 /* OPMLDeckController.m */,
 				F0673AFE20C6A1EB00C42062 /* OPMLVC.h */,
 				F0673AFF20C6A1EB00C42062 /* OPMLVC.m */,
 				F0673B0020C6A1EB00C42062 /* OPMLVC.xib */,
@@ -2293,6 +2298,7 @@
 				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
 				F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */,
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
+				F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F088089D206B8B9300ECE1E6 /* Tweet.m in Sources */,
 				F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */,

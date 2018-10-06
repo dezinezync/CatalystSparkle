@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <DZKit/DeckController.h>
 
 typedef NS_ENUM(NSInteger, OPMLState) {
     OPMLStateNone = -1,
