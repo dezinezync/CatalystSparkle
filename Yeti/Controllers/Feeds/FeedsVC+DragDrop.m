@@ -119,8 +119,7 @@
                     [[[(Folder *)obj feeds] allObjects] enumerateObjectsUsingBlock:^(Feed * _Nonnull objx, NSUInteger idxx, BOOL * _Nonnull stopx) {
                         
                         if ([objx.url isEqualToString:url]
-                            || [[[objx extra] valueForKey:@"link"] isEqualToString:url]
-                            || [[objx.extra valueForKey:@"url"] isEqualToString:url]) {
+                            || [objx.extra.url isEqualToString:url]) {
                             feed = objx;
                             source = obj;
                             *stopx = YES;
@@ -132,8 +131,7 @@
                 }
                 else if ([obj isKindOfClass:Feed.class]) {
                     if ([[(Feed *)obj url] isEqualToString:url]
-                        || [[[(Feed *)obj extra] valueForKey:@"link"] isEqualToString:@"url"]
-                        || [[((Feed *)obj).extra valueForKey:@"url"] isEqualToString:url]) {
+                        || [[(Feed *)obj extra].url isEqualToString:url]) {
                         feed = obj;
                         *stop = YES;
                     }
@@ -212,7 +210,10 @@
             
         }
         else if ([obj isKindOfClass:Feed.class]) {
-            if ([[(Feed *)obj url] isEqualToString:url]|| [[((Feed *)obj).extra valueForKey:@"url"] isEqualToString:url] || [[[(Feed *)obj extra] valueForKey:@"link"] isEqualToString:url]) {
+            
+            Feed *checking = obj;
+            
+            if ([checking.url isEqualToString:url] || [checking.extra.url isEqualToString:url]) {
                 feed = obj;
                 *stop = YES;
             }
