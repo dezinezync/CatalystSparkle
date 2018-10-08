@@ -131,6 +131,7 @@ NSString *const kImportCell = @"importCell";
     self.tableView.tableFooterView = [UIView new];
     self.tableView.backgroundColor = theme.tableColor;
     self.tableView.userInteractionEnabled = NO;
+    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
     
     [self.tableView registerClass:ImportCell.class forCellReuseIdentifier:kImportCell];
 }
