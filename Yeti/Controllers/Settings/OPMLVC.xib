@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="ipad12_9" orientation="portrait">
+    <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -28,37 +28,37 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
+            <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HgH-Zt-EPD">
-                    <rect key="frame" x="16" y="914" width="992" height="414"/>
+                    <rect key="frame" x="16" y="294" width="736" height="436"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OPML" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eS7-Y6-80B">
-                            <rect key="frame" x="8" y="8" width="976" height="31.5"/>
+                            <rect key="frame" x="8" y="8" width="720" height="31.5"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="26"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bb0-NQ-QA5">
-                            <rect key="frame" x="64" y="55.5" width="864" height="42.5"/>
+                            <rect key="frame" x="64" y="55.5" width="608" height="64.5"/>
                             <string key="text">Import your RSS Subscriptions, Folders and other meta data from another service. Alternatively, export your Subscriptions and Folders from Elytra to an OPML file.</string>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.53534881160000003" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="opml" translatesAutoresizingMaskIntoConstraints="NO" id="ddF-G2-bFb">
-                            <rect key="frame" x="376" y="114" width="240" height="180"/>
+                            <rect key="frame" x="248" y="136" width="240" height="180"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="240" id="Qtc-qi-FTA"/>
                                 <constraint firstAttribute="width" secondItem="ddF-G2-bFb" secondAttribute="height" multiplier="4:3" id="jcN-tD-ePi"/>
                             </constraints>
                         </imageView>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="9UE-VV-tvz">
-                            <rect key="frame" x="160" y="318" width="672" height="30"/>
+                            <rect key="frame" x="160" y="340" width="416" height="30"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4YE-eg-wal">
-                                    <rect key="frame" x="0.0" y="0.0" width="324" height="30"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="196" height="30"/>
                                     <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="0.39860255280000001" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                     <state key="normal" title="Import"/>
@@ -72,7 +72,7 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EPR-Je-OVi">
-                                    <rect key="frame" x="348" y="0.0" width="324" height="30"/>
+                                    <rect key="frame" x="220" y="0.0" width="196" height="30"/>
                                     <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="0.40451694539999999" colorSpace="calibratedRGB"/>
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                     <state key="normal" title="Export"/>
@@ -88,7 +88,7 @@
                             </subviews>
                         </stackView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ufd-vS-T2U">
-                            <rect key="frame" x="472" y="372" width="48" height="30"/>
+                            <rect key="frame" x="344" y="394" width="48" height="30"/>
                             <state key="normal" title="Cancel"/>
                             <connections>
                                 <action selector="didTapCancel:" destination="-1" eventType="touchUpInside" id="ZuW-T0-lXP"/>
@@ -111,12 +111,16 @@
                         <constraint firstItem="ddF-G2-bFb" firstAttribute="top" secondItem="Bb0-NQ-QA5" secondAttribute="bottom" constant="16" id="CuO-oC-LXv"/>
                         <constraint firstItem="9UE-VV-tvz" firstAttribute="top" secondItem="ddF-G2-bFb" secondAttribute="bottom" constant="24" id="Mun-Cc-fob"/>
                         <constraint firstItem="eS7-Y6-80B" firstAttribute="leading" secondItem="HgH-Zt-EPD" secondAttribute="leading" constant="8" id="U7e-f4-nvh"/>
-                        <constraint firstAttribute="trailing" secondItem="9UE-VV-tvz" secondAttribute="trailing" constant="160" id="dFV-qW-6zS"/>
+                        <constraint firstAttribute="trailing" secondItem="9UE-VV-tvz" secondAttribute="trailing" constant="160" id="dFV-qW-6zS">
+                            <variation key="heightClass=regular-widthClass=compact" constant="16"/>
+                        </constraint>
                         <constraint firstAttribute="trailing" secondItem="eS7-Y6-80B" secondAttribute="trailing" constant="8" id="fnI-G8-u0b"/>
                         <constraint firstItem="Bb0-NQ-QA5" firstAttribute="top" secondItem="eS7-Y6-80B" secondAttribute="bottom" constant="16" id="kEZ-4f-KRA"/>
                         <constraint firstItem="ddF-G2-bFb" firstAttribute="centerX" secondItem="HgH-Zt-EPD" secondAttribute="centerX" id="qZf-qX-sGE"/>
                         <constraint firstItem="eS7-Y6-80B" firstAttribute="top" secondItem="HgH-Zt-EPD" secondAttribute="top" constant="8" id="rpb-hF-Mkj"/>
-                        <constraint firstItem="9UE-VV-tvz" firstAttribute="leading" secondItem="HgH-Zt-EPD" secondAttribute="leading" constant="160" id="wz3-dU-qlg"/>
+                        <constraint firstItem="9UE-VV-tvz" firstAttribute="leading" secondItem="HgH-Zt-EPD" secondAttribute="leading" constant="160" id="wz3-dU-qlg">
+                            <variation key="heightClass=regular-widthClass=compact" constant="16"/>
+                        </constraint>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -125,27 +129,27 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mNA-Mi-OFC">
-                    <rect key="frame" x="16" y="1170.5" width="992" height="157.5"/>
+                    <rect key="frame" x="16" y="433.5" width="736" height="157.5"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Importing your OPML" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t0d-Bj-zBP">
-                            <rect key="frame" x="8" y="8" width="976" height="31.5"/>
+                            <rect key="frame" x="8" y="8" width="720" height="31.5"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="26"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="acc-pq-fzN">
-                            <rect key="frame" x="477" y="115.5" width="38" height="30"/>
+                            <rect key="frame" x="349" y="115.5" width="38" height="30"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                             <state key="normal" title="Done"/>
                         </button>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="wfx-PW-AcJ">
-                            <rect key="frame" x="160" y="63.5" width="672" height="28"/>
+                            <rect key="frame" x="160" y="63.5" width="416" height="28"/>
                             <subviews>
                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.20000000298023224" translatesAutoresizingMaskIntoConstraints="NO" id="AQr-hr-Lfp">
-                                    <rect key="frame" x="0.0" y="0.0" width="672" height="2"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="416" height="2"/>
                                 </progressView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Uploading your file" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aWc-TP-zmS">
-                                    <rect key="frame" x="271.5" y="10" width="129" height="18"/>
+                                    <rect key="frame" x="143.5" y="10" width="129" height="18"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.54000000000000004" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
@@ -183,12 +187,26 @@
             <constraints>
                 <constraint firstItem="HgH-Zt-EPD" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="DoO-fD-Yjg"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="mNA-Mi-OFC" secondAttribute="bottom" constant="38" id="gfx-H0-kmR"/>
+                <constraint firstItem="HgH-Zt-EPD" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="lcP-7N-b60"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="HgH-Zt-EPD" secondAttribute="bottom" constant="38" id="mQ1-JH-PIP"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="mNA-Mi-OFC" secondAttribute="trailing" constant="16" id="sye-BE-7pJ"/>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="HgH-Zt-EPD" secondAttribute="trailing" constant="16" id="vwZ-Dl-PRh"/>
                 <constraint firstItem="mNA-Mi-OFC" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="16" id="wuK-tm-V2d"/>
+                <constraint firstItem="mNA-Mi-OFC" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="wvm-dA-B5o"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
+            <variation key="heightClass=regular-widthClass=compact">
+                <mask key="constraints">
+                    <exclude reference="lcP-7N-b60"/>
+                    <exclude reference="wvm-dA-B5o"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=regular-widthClass=regular">
+                <mask key="constraints">
+                    <exclude reference="gfx-H0-kmR"/>
+                    <exclude reference="mQ1-JH-PIP"/>
+                </mask>
+            </variation>
             <point key="canvasLocation" x="24.5" y="51"/>
         </view>
     </objects>
