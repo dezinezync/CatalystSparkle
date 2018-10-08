@@ -1,5 +1,10 @@
 
-[NEW]
+[IMPROVE]
+- Completes implementation of OPML interfaces.
+
+[FIX]
+
+-- 172 --
 
 [IMPROVE]
 - Elytra's Action Extension is now much much faster. It interacts directly with a webpage if one is available to find the RSS Feeds advertisted by that web page.
