@@ -22,17 +22,24 @@
     
     if (self = [super initWithRootViewController:vc1]) {
         self.view.backgroundColor = [[YTThemeKit theme] backgroundColor];
-        self.view.layer.cornerRadius = 20.f;
-        self.view.layer.masksToBounds = YES;
     }
     
     return self;
     
 }
+
+- (BOOL)shouldShowDropShadow {
+    return YES;
+}
+
 #pragma mark - <DeckPresentation>
 
 - (BOOL)dp_shouldPushPresentingView {
     return NO;
+}
+
+- (BOOL)dp_shouldDimPresentingView {
+    return YES;
 }
 
 - (UIEdgeInsets)dp_additionalInsets {

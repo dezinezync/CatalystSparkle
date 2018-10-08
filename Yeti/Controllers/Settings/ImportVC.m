@@ -65,13 +65,10 @@ NSString *const kImportCell = @"importCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.layer.cornerRadius = 20.f;
-    self.view.layer.masksToBounds = YES;
-    self.navigationController.navigationBarHidden = YES;
     self.title = @"Importing";
     
-    self.navigationController.view.layer.cornerRadius = 20.f;
-    self.navigationController.view.layer.masksToBounds = YES;
+    self.navigationController.navigationBarHidden = NO;
+    [self.navigationItem setHidesBackButton:YES animated:NO];
     
     [self setupTable];
     
@@ -102,6 +99,7 @@ NSString *const kImportCell = @"importCell";
         self.hairlineView = hairline;
     }
 }
+
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -219,6 +217,8 @@ NSString *const kImportCell = @"importCell";
 #pragma mark - Importing
 
 - (void)processImportData {
+    
+    return;
     
     if ([NSThread isMainThread] == YES) {
         
@@ -384,7 +384,9 @@ NSString *const kImportCell = @"importCell";
             
             // find the URL in the options array
             NSString *url = [options rz_reduce:^id(NSString * prev, NSDictionary * current, NSUInteger idx, NSArray *array) {
-                if ([[current valueForKey:@"url"] isEqualToString:path])
+                NSString *compare = [current valueForKey:@"url"] ?: current;
+                
+                if (compare && [compare isKindOfClass:NSString.class] && [compare isEqualToString:path])
                     return [current valueForKey:@"url"];
                 return prev;
             }];

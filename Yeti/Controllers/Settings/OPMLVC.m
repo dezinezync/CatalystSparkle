@@ -21,6 +21,12 @@
 
 @interface OPMLVC () <UIDocumentPickerDelegate> {
     BOOL _hasSetup;
+    
+    // When we present the document picker, the view of the navigation controller
+    // is removed from the window
+    // when it is added back, it is assigned the frame of the presenting view
+    // and therefore breaks the deck transition.
+    CGRect _navigationControllerFrame;
 }
 
 @property (weak, nonatomic) IBOutlet UIButton *importButton;
@@ -43,17 +49,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.layer.cornerRadius = 20.f;
-    
     self.navigationController.navigationBarHidden = YES;
     
     // Do any additional setup after loading the view from its nib.
-    self.detailsView.layer.cornerRadius = 18.f;
-    self.detailsView.clipsToBounds = YES;
-    self.detailsView.hidden = YES;
     
-    self.ioView.layer.cornerRadius = 18.f;
-    self.ioView.clipsToBounds = YES;
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.view.backgroundColor = theme.backgroundColor;
+    
+    self.detailsTitleLabel.textColor = theme.titleColor;
+    self.detailsSubtitleLabel.textColor = theme.subtitleColor;
+    
+    self.detailsView.backgroundColor = theme.backgroundColor;
+    self.detailsView.hidden = YES;
+
+    self.ioTitleLabel.textColor = theme.titleColor;
+    self.ioSubtitleLabel.textColor = theme.subtitleColor;
+    
+    self.ioView.backgroundColor = theme.backgroundColor;
     self.ioView.hidden = YES;
     
     [self.ioDoneButton addTarget:self action:@selector(didTapCancel:) forControlEvents:UIControlEventTouchUpInside];
@@ -92,7 +104,7 @@
     if (state == current)
         return;
     
-    NSTimeInterval duration = 0.6;
+    NSTimeInterval duration = 0.35;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -214,7 +226,9 @@
     
     importVC.delegate = self;
     
-    [self presentViewController:importVC animated:YES completion:nil];
+    _navigationControllerFrame = self.navigationController.view.frame;
+    
+    [self.navigationController presentViewController:importVC animated:YES completion:nil];
     
 }
 
@@ -227,19 +241,16 @@
 }
 
 - (IBAction)didTapCancel:(UIButton *)sender {
-    self.state = OPMLStateNone;
     
-    weakify(self);
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        strongify(self);
-        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    });
 }
 
 #pragma mark - <UIDocumentPickerDelegate>
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+    
+    self.navigationController.view.frame = _navigationControllerFrame;
     
     if (!urls.count) {
         self.state = OPMLStateDefault;
@@ -258,6 +269,8 @@
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    
+    self.navigationController.view.frame = _navigationControllerFrame;
     
     if (!self.ioView.isHidden) {
         self.ioDoneButton.enabled = YES;
@@ -304,6 +317,8 @@
             
             self.ioProgressView.progress = 1.f;
             
+            self->_navigationControllerFrame = self.navigationController.view.frame;
+            
             UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initWithURLs:@[fileURL] inMode:UIDocumentPickerModeMoveToService];
             
             [self presentViewController:exportVC animated:YES completion:nil];
@@ -337,25 +352,6 @@
     self.ioDoneButton.enabled = NO;
     
     weakify(self);
-    
-//    [XMLConverter convertXMLURL:self.importURL completion:^(BOOL success, NSMutableDictionary * _Nonnull dictionary, NSError * _Nonnull error) {
-//
-//        strongify(self);
-//
-//        if (success == NO) {
-//            if (error) {
-//                [AlertManager showGenericAlertWithTitle:@"Invalid OPML File" message:error.localizedDescription fromVC:self];
-//            }
-//            else {
-//                [AlertManager showGenericAlertWithTitle:@"Invalid OPML File" message:@"An unknown error occurred reading the OPML file." fromVC:self];
-//            }
-//
-//            return;
-//        }
-//
-//        DDLogDebug(@"%@ - %@", self, dictionary);
-//
-//    }];
     
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
 //    url = @"https://api.elytra.app/user/opml";
@@ -432,7 +428,7 @@
         
         strongify(self);
 
-        [self.navigationController setViewControllers:@[importVC]];
+        [self.navigationController pushViewController:importVC animated:YES];
 
     });
 }
