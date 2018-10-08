@@ -218,8 +218,6 @@ NSString *const kImportCell = @"importCell";
 
 - (void)processImportData {
     
-    return;
-    
     if ([NSThread isMainThread] == YES) {
         
         weakify(self);
