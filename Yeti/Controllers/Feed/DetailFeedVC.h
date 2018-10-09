@@ -1,9 +1,9 @@
 //
-//  FeedVC.h
+//  DetailFeedVC.h
 //  Yeti
 //
-//  Created by Nikhil Nigade on 14/11/17.
-//  Copyright © 2017 Dezine Zync Studios. All rights reserved.
+//  Created by Nikhil Nigade on 09/10/18.
+//  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -12,13 +12,21 @@
 #import "UIViewController+ScrollLoad.h"
 #import <DZKit/DZBasicDatasource.h>
 
-@interface FeedVC : UITableViewController <ScrollLoading> {
+NS_ASSUME_NONNULL_BEGIN
+
+@interface DetailFeedVC : UICollectionViewController <ScrollLoading> {
     NSOperation *_searchOperation;
     NSInteger _page;
     BOOL _canLoadNext;
     
     NSIndexPath *_highlightedRow;
 }
+
++ (UINavigationController *)instanceWithFeed:(Feed *)feed;
+
+- (instancetype _Nonnull)initWithFeed:(Feed * _Nonnull)feed;
+
+@property (nonatomic, assign, getter=isCustomFeed) BOOL customFeed;
 
 @property (nonatomic, assign) NSNumber *loadOnReady;
 
@@ -27,8 +35,6 @@
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 
 @property (nonatomic, assign, getter=isExploring) BOOL exploring;
-
-- (instancetype _Nonnull)initWithFeed:(Feed * _Nonnull)feed;
 
 @property (nonatomic, strong) Feed * _Nullable feed;
 
@@ -42,6 +48,6 @@
 
 - (void)didChangeToArticle:(FeedItem *)item;
 
-- (void)_didFinishAllReadActionSuccessfully;
-
 @end
+
+NS_ASSUME_NONNULL_END

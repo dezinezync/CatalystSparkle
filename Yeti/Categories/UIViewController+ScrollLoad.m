@@ -6,12 +6,22 @@
 //  Copyright © 2017 Dezine Zync Studios. All rights reserved.
 //
 
-#import "UITableViewController+ScrollLoad.h"
+#import "UIViewController+ScrollLoad.h"
 
-@implementation UITableViewController (ScrollLoad)
+@implementation UIViewController (ScrollLoad)
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    
+    @try {
+        if ([self valueForKeyPath:@"scrollView"] == nil) {
+            return;
+        }
+    }
+    @catch (NSException *exc) {
+        // not supported
+        return;
+    }
     
     if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")])
         return;

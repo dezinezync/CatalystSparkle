@@ -11,6 +11,7 @@
 #import "FeedsCell.h"
 #import "FolderCell.h"
 #import "FeedVC.h"
+#import "DetailFeedVC.h"
 #import <DZKit/DZBasicDatasource.h>
 
 #import <DZKit/EFNavController.h>
@@ -436,8 +437,16 @@ static void *KVO_Unread = &KVO_Unread;
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     if ([feed isKindOfClass:Feed.class]) {
-        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-        [self.navigationController pushViewController:vc animated:YES];
+        UIViewController *vc;
+        
+        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            vc = [DetailFeedVC instanceWithFeed:feed];
+            [self.splitViewController showDetailViewController:vc sender:self];
+        }
+        else {
+            vc = [[FeedVC alloc] initWithFeed:feed];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
     }
     else {
         // it's a folder

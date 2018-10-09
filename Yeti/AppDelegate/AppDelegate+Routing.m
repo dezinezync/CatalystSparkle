@@ -49,7 +49,7 @@
         
         [self popToRoot];
         
-        NSURL *url = [NSURL URLWithString:[[[parameters valueForKey:kJLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"feed:" withString:@""]];
+        NSURL *url = [NSURL URLWithString:[[[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"feed:" withString:@""]];
         
         return [self addFeed:url];
         

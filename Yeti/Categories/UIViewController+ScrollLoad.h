@@ -18,7 +18,7 @@
 
 @end
 
-@interface UITableViewController (ScrollLoad)
+@interface UIViewController (ScrollLoad)
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 
