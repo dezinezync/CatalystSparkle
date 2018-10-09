@@ -103,6 +103,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // Do any additional setup after loading the view from its nib.
     
     self.state = ArticleStateLoading;
+    self.navigationItem.leftItemsSupplementBackButton = YES;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -190,13 +191,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [navbar addSubview:hairline];
         self.hairlineView = hairline;
-    }
-    
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
-    }
-    else {
-        self.navigationItem.leftBarButtonItem = nil;
     }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
@@ -1276,10 +1270,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+    // ignores tracking images
+    if (content && CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
+        return;
+    }
+    
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
+    
+    if ([content valueForKey:@"size"] && CGSizeEqualToSize(content.size, CGSizeZero) == NO) {
+        frame.size = content.size;
+    }
+    
     CGFloat scale = content.size.height / content.size.width;
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
@@ -1301,17 +1305,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     _last = imageView;
     
-    // hides tracking images
-    if (CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
-        imageView.hidden = YES;
-    }
-    
     [self.stackView addArrangedSubview:imageView];
     
     if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
+        frame.size.width = content.size.width;
         frame.size.height = frame.size.width * scale;
         imageView.frame = frame;
-        imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
+        
+        if (content.size.width > content.size.height) {
+            imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
+        }
+        else {
+            imageView.aspectRatio = [imageView.widthAnchor constraintEqualToAnchor:imageView.heightAnchor multiplier:scale];
+        }
+        
         imageView.aspectRatio.priority = 999;
         imageView.aspectRatio.active = YES;
     }
