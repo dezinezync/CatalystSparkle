@@ -223,7 +223,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         cellWidth = floor(usableWidth / 2.f);
     }
     else {
-        cellWidth = width - padding;
+        cellWidth = width - (padding * 2.f);
     }
     
     [self.contentView layoutIfNeeded];

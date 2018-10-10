@@ -657,6 +657,92 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         });
     }
     
+    if (self.item.enclosures && self.item.enclosures.count) {
+        
+        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
+        NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
+        
+        // check for images
+        NSArray <Enclosure *> *enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
+           
+            return obj.type && [IMAGE_TYPES containsObject:obj.type];
+            
+        }];
+        
+        if (enclosures.count) {
+            
+            if (enclosures.count == 1) {
+                Enclosure *enc = [enclosures firstObject];
+                
+                if (enc.url && enc.url.absoluteString) {
+                    // single image, add as cover
+                    Content *content = [Content new];
+                    content.type = @"image";
+                    content.url = [[[enclosures firstObject] url] absoluteString];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self addImage:content];
+                    });
+                }
+            }
+            else {
+                // Add as a gallery
+                
+                Content *content = [Content new];
+                content.type = @"gallery";
+                
+                NSMutableArray *images = [NSMutableArray arrayWithCapacity:enclosures.count];
+                
+                for (Enclosure *enc in enclosures) {
+                    
+                    if (enc.url && enc.url.absoluteString) {
+                        // single image, add as cover
+                        Content *subcontent = [Content new];
+                        subcontent.type = @"image";
+                        subcontent.url = [[enc url] absoluteString];
+                        
+                        [images addObject:subcontent];
+                    }
+                    
+                }
+                
+                content.items = images;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self addGallery:content];
+                });
+                
+            }
+            
+        }
+        
+        enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
+           
+            return obj.type && [VIDEO_TYPES containsObject:obj.type];
+            
+        }];
+        
+        if (enclosures.count) {
+            
+            for (Enclosure *enc in enclosures) { @autoreleasepool {
+                
+                if (enc.url && enc.url.absoluteString) {
+                    // single image, add as cover
+                    Content *subcontent = [Content new];
+                    subcontent.type = @"video";
+                    subcontent.url = [[enc url] absoluteString];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self addVideo:subcontent];
+                    });
+                }
+                
+            } }
+            
+        }
+        
+    }
+    
     [self.item.content enumerateObjectsUsingBlock:^(Content *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         strongify(self);
