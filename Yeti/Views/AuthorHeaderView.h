@@ -17,4 +17,6 @@
 
 @property (weak, nonatomic) Author *author;
 
+- (void)setupAppearance;
+
 @end

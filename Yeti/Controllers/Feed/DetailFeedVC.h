@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSOperation * _Nullable searchOperation;
 
+@property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
+
 - (void)setupHeaderView;
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read;

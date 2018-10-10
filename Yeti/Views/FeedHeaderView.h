@@ -21,6 +21,8 @@
 
 - (void)configure:(Feed * _Nonnull)feed;
 
+- (void)setupAppearance;
+
 @property (nonatomic, weak) UIImageView * _Nullable shadowImage;
 
 @property (nonatomic, weak, nullable) id <FeedHeaderViewDelegate> delegate;

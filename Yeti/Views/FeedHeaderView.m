@@ -55,6 +55,10 @@
     
     [self setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
     
+    [self setupAppearance];
+}
+
+- (void)setupAppearance {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.backgroundColor = theme.cellColor;
     
@@ -68,6 +72,10 @@
     self.scrollView.backgroundColor = theme.cellColor;
     self.authorLabel.textColor = theme.titleColor;
     self.authorLabel.backgroundColor = theme.cellColor;
+    
+    if (self.feed) {
+        [self configure:self.feed];
+    }
 }
 
 - (void)didMoveToSuperview
@@ -93,12 +101,21 @@
     self.descriptionLabel.text = [feed.summary htmlToPlainText];
     [self.descriptionLabel sizeToFit];
     
+    UIFont *font = nil;
+    
+    if ([[[UIApplication sharedApplication] keyWindow] rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    }
+    else {
+        font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+    }
+    
     for (Author *author in self.feed.authors) { @autoreleasepool {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
         [button setTitle:author.name forState:UIControlStateNormal];
         [button addTarget:self action:@selector(didTapAuthorButton:) forControlEvents:UIControlEventTouchUpInside];
         
-        button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+        button.titleLabel.font = font;
         button.titleLabel.adjustsFontForContentSizeCategory = YES;
         
         [button sizeToFit];

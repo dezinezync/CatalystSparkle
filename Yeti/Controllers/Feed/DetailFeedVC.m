@@ -9,6 +9,8 @@
 #import "DetailFeedVC+Actions.h"
 #import "ArticleCellB.h"
 #import "ArticleVC.h"
+#import "DetailAuthorVC.h"
+#import "DetailFeedHeaderView.h"
 
 #import "FeedsManager.h"
 
@@ -24,19 +26,21 @@
 
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
-@interface DetailFeedVC () <DZDatasource, ArticleProvider> {
+@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
+    BOOL _shouldShowHeader;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
+
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
-@property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
-
 @property (nonatomic, strong) NSMutableDictionary *sizeCache;
+
+@property (nonatomic, weak) FeedHeaderView *headerView;
 
 @end
 
@@ -80,7 +84,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.collectionView];
     self.DS.delegate = self;
-    self.DS.data = self.feed.articles;
+    self.DS.data = @[];
     
     self.DS.addAnimation = UITableViewRowAnimationLeft;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
@@ -92,48 +96,21 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCellB.class) bundle:nil] forCellWithReuseIdentifier:kiPadArticleCell];
+    [self.collectionView registerClass:DetailFeedHeaderView.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView];
     
     // Do any additional setup after loading the view.
+    if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
+        self->_shouldShowHeader = YES;
+    }
+    
     [self setupLayout];
     
-    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    [self setupNavigationBar];
     
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:event:)];
-    allRead.accessibilityValue = @"Mark all articles as read";
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
-    if (self.isExploring) {
-        // check if the user is subscribed to this feed
-        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
-        if (!existing) {
-            // allow subscription
-            UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
-            subscribe.accessibilityValue = @"Subscribe to this feed";
-            self.navigationItem.rightBarButtonItem = subscribe;
-        }
-    }
-    else if (!(self.feed.hubSubscribed && self.feed.hub)) {
-        self.navigationItem.rightBarButtonItem = allRead;
-    }
-    else {
-        // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
-        
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
-        
-        self.navigationItem.rightBarButtonItems = @[allRead, notifications];
-    }
-    
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
-    
-    self.navigationItem.hidesSearchBarWhenScrolling = NO;
-    self.navigationController.navigationBar.translucent = NO;
-    
-    if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
-        [self setupHeaderView];
-    }
+    [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(didChangeTheme) name:kDidUpdateTheme object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -155,6 +132,11 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (self.feed) {
         self.feed.articles = @[];
     }
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    
+    [notificationCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [notificationCenter removeObserver:self name:kDidUpdateTheme object:nil];
 }
 
 #pragma mark - Appearance
@@ -162,6 +144,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [self didChangeTheme];
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -186,9 +170,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     
-    // flush cache
-    self.sizeCache = @{}.mutableCopy;
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+    
+        [self setupLayout];
+        
+        [self didChangeContentCategory];
+    
+    } completion:nil];
     
 }
 
@@ -268,10 +258,28 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         [cell configure:item customFeed:self.isCustomFeed sizeCache:self.sizeCache];
     }
     
-    cell.backgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
-    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+    [cell setupAppearance];
     
     return cell;
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    
+    if (self->_shouldShowHeader && [kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        
+        DetailFeedHeaderView *view = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView forIndexPath:indexPath];
+        
+        [view setupAppearance];
+        
+        self.headerView = view.headerContent;
+        [self setupHeaderView];
+        
+        return view;
+        
+    }
+    
+    return nil;
+    
 }
 
 #pragma mark <UICollectionViewDelegate>
@@ -366,6 +374,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 self->_ignoreLoadScroll = NO;
             }
         });
+        
+        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            [self loadNextPage];
+        }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
@@ -684,42 +696,141 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
 
 #pragma mark - Layout
 
+- (void)setupNavigationBar {
+    
+    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    self.navigationItem.leftItemsSupplementBackButton = YES;
+    
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:event:)];
+    allRead.accessibilityValue = @"Mark all articles as read";
+    
+    if (self.isExploring) {
+        // check if the user is subscribed to this feed
+        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
+        if (!existing) {
+            // allow subscription
+            UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
+            subscribe.accessibilityValue = @"Subscribe to this feed";
+            self.navigationItem.rightBarButtonItem = subscribe;
+        }
+    }
+    else if (!(self.feed.hubSubscribed && self.feed.hub)) {
+        self.navigationItem.rightBarButtonItem = allRead;
+    }
+    else {
+        // push notifications are possible
+        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+        
+        self.navigationItem.rightBarButtonItems = @[allRead, notifications];
+    }
+    
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    self.navigationController.navigationBar.translucent = NO;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    CGFloat height = 1.f/[[UIScreen mainScreen] scale];
+    UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.navigationController.navigationBar.bounds.size.width, height)];
+    hairline.backgroundColor = theme.cellColor;
+    hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+    
+    [self.navigationController.navigationBar addSubview:hairline];
+    self.hairlineView = hairline;
+    
+}
+
 - (void)setupLayout {
     
-//    [self.collectionView layoutIfNeeded];
-//
-//    CGSize contentSize = self.collectionView.contentSize;
-//    CGFloat width = contentSize.width;
-////
-////    /*
-////     |- 16 - (cell) - 16 - (cell) - 16 -|
-////     */
-////
-////    // get actual values from the layout
     CGFloat padding = self.flowLayout.minimumInteritemSpacing;
-//    CGFloat totalPadding = padding * 3.f;
-//
-//    CGFloat usableWidth = width - totalPadding;
-//
-//    // the remainder will be absorbed by the interimSpacing
-//    CGFloat cellWidth = floor(usableWidth / 2.f);
-//
-    self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
+    
+    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding/2.f, padding, padding/2.f);
+    }
+    else {
+        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
+    }
+    
     self.flowLayout.estimatedItemSize = UICollectionViewFlowLayoutAutomaticSize;
+    
+    if (self->_shouldShowHeader) {
+        self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 80.f);
+    }
     
 }
 
 - (void)setupHeaderView {
     
+    if (_headerView == nil)
+        return;
+    
+    if (_headerView.delegate && _headerView.delegate == self) {
+        return;
+    }
+    
+    [self.headerView configure:self.feed];
+    self.headerView.delegate = self;
+    
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+}
+
+#pragma mark - <FeedHeaderViewDelegate>
+
+- (void)didTapAuthor:(Author *)author
+{
+    DetailAuthorVC *vc = [[DetailAuthorVC alloc] initWithFeed:self.feed];
+    vc.author = author;
+    
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - KVO
+
+- (void)didChangeTheme {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.view.backgroundColor = theme.backgroundColor;
+    self.collectionView.backgroundColor = theme.backgroundColor;
+    
+    [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+    
+    self.hairlineView.backgroundColor = theme.cellColor;
+    
+    [self reloadHeaderView];
+    
+}
+
+- (void)reloadHeaderView {
+    
+    [(DetailFeedHeaderView *)[self.headerView superview] setupAppearance];
+    
+}
+
+- (void)didChangeContentCategory {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.sizeCache = @{}.mutableCopy;
+    });
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+    });
+    
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     
     if ([keyPath isEqualToString:propSel(frame)] && context == KVO_DetailFeedFrame) {
         
-        self.sizeCache = @{}.mutableCopy;
+        [self didChangeContentCategory];
         
     }
     else {

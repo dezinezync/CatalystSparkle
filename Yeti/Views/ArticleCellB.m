@@ -36,26 +36,12 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     // Initialization code
     self.contentView.frame = self.bounds;
     self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
-//    [@[self, self.contentView, self.titleLabel, self.authorLabel, self.timeLabel] enumerateObjectsUsingBlock:^(UIView *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//        obj.backgroundColor = theme.cellColor;
-//        obj.opaque = YES;
-//
-//    }];
-    
     CALayer *iconLayer = self.faviconView.layer;
     iconLayer.borderWidth = 1/[UIScreen mainScreen].scale;
-    iconLayer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
-    
-    self.titleLabel.textColor = theme.titleColor;
-    self.timeLabel.textColor = theme.subtitleColor;
-    self.authorLabel.textColor = theme.subtitleColor;
     
     if (self.selectedBackgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
@@ -70,6 +56,25 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         view.alpha = 0.f;
         self.backgroundView = view;
     }
+    
+    [self setupAppearance];
+}
+
+- (void)setupAppearance {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
+    
+    self.titleLabel.textColor = theme.titleColor;
+    self.timeLabel.textColor = theme.subtitleColor;
+    self.authorLabel.textColor = theme.subtitleColor;
+    
+    self.backgroundColor = theme.cellColor;
+    
+    self.backgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    self.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
 }
 
 - (void)prepareForReuse {
@@ -216,6 +221,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     if (usableWidth > 601.f) {
         // the remainder will be absorbed by the interimSpacing
         cellWidth = floor(usableWidth / 2.f);
+    }
+    else {
+        cellWidth = width - padding;
     }
     
     [self.contentView layoutIfNeeded];

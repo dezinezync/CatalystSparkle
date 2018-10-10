@@ -234,8 +234,16 @@ NSString *const kBasicCell = @"cell.theme";
             themeName = @"dark";
         }
         
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+        });
+        
         YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
         [CodeParser.sharedCodeParser loadTheme:themeName];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+        });
         
         reloadSections = [self.tableView indexPathsForVisibleRows];
         

@@ -25,6 +25,8 @@ extern NSString *const kiPadArticleCell;
 @property (weak, nonatomic) NSMutableDictionary *sizeCache;
 @property (weak, nonatomic) FeedItem *item;
 
+- (void)setupAppearance;
+
 @end
 
 NS_ASSUME_NONNULL_END

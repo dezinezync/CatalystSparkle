@@ -39,7 +39,8 @@
     CGFloat height = [[UIApplication sharedApplication].keyWindow.rootViewController view].bounds.size.height;
     
     width = MIN(375, width);
-    height = MIN(375, MIN(height, self.para.contentSize.height + self.para.bodyFont.pointSize));
+    
+    height = MIN(375, MIN(height, self.para.contentSize.height + (self.para.bodyFont.pointSize * [Paragraph paragraphStyle].lineHeightMultiple * 0.75)));
     
     CGSize size = CGSizeMake(width, height + 32.f);
     

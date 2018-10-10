@@ -30,12 +30,22 @@
 {
     [super awakeFromNib];
     
+    self.textview.delegate = self;
+    
+    [self setupAppearance];
+    
+}
+
+- (void)setupAppearance {
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    self.backgroundColor = theme.subbarColor;
-    self.textview.backgroundColor = theme.subbarColor;
+    self.backgroundColor = theme.cellColor;
+    self.textview.backgroundColor = theme.cellColor;
     
-    self.textview.delegate = self;
+    if (self.author) {
+        self.author = [self author];
+    }
     
 }
 
@@ -102,7 +112,7 @@
         // Compose the string
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        UIFont *baseFont = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+        UIFont *baseFont = self.textview.font;
         
         NSString *formatted = formattedString(@"All articles by %@ ⦿", _author.name);
         NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:@{NSFontAttributeName : baseFont, NSForegroundColorAttributeName: theme.subtitleColor}];
@@ -141,7 +151,13 @@
 {
     if (textView ==  self.textview && [URL.absoluteString containsString:@"author"]) {
         
-        UIViewController *presenting = [[self superview] valueForKeyPath:@"delegate"];
+        UIView *collectionView = nil;
+        
+        while ([collectionView isKindOfClass:UIScrollView.class] == NO) {
+            collectionView = [(collectionView ? collectionView : self) superview];
+        }
+        
+        UIViewController *presenting = [collectionView valueForKeyPath:@"delegate"];
         
         AuthorBioVC *vc = [[AuthorBioVC alloc] initWithNibName:NSStringFromClass(AuthorBioVC.class) bundle:nil];
         UIPopoverPresentationController *ppc = vc.popoverPresentationController;
