@@ -22,9 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSIndexPath *_highlightedRow;
 }
 
-+ (UINavigationController *)instanceWithFeed:(Feed *)feed;
++ (UINavigationController *)instanceWithFeed:(Feed * _Nullable)feed;
 
-- (instancetype _Nonnull)initWithFeed:(Feed * _Nonnull)feed;
+- (instancetype _Nonnull)initWithFeed:(Feed * _Nullable)feed;
 
 @property (nonatomic, assign, getter=isCustomFeed) BOOL customFeed;
 

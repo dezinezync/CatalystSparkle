@@ -12,6 +12,7 @@
 #import "FolderCell.h"
 #import "FeedVC.h"
 #import "DetailFeedVC.h"
+#import "DetailCustomVC.h"
 #import <DZKit/DZBasicDatasource.h>
 
 #import <DZKit/EFNavController.h>
@@ -426,10 +427,25 @@ static void *KVO_Unread = &KVO_Unread;
 {
     
     if (indexPath.section == 0) {
-        CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
-        vc.unread = indexPath.row == 0;
         
-        [self.navigationController pushViewController:vc animated:YES];
+        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
+            vc.customFeed = YES;
+            vc.unread = indexPath.row == 0;
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
+            
+            [self.splitViewController showDetailViewController:nav sender:self];
+        }
+        else {
+            
+            CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
+            vc.unread = indexPath.row == 0;
+            
+            [self.navigationController pushViewController:vc animated:YES];
+            
+        }
         
         return;
     }
@@ -441,6 +457,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             vc = [DetailFeedVC instanceWithFeed:feed];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [self.splitViewController showDetailViewController:vc sender:self];
         }
         else {

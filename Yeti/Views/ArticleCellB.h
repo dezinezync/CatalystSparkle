@@ -19,6 +19,7 @@ extern NSString *const kiPadArticleCell;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *markerView;
 
 - (void)configure:(FeedItem * _Nonnull)item customFeed:(BOOL)isCustomFeed sizeCache:(NSMutableDictionary *)sizeCache;
 

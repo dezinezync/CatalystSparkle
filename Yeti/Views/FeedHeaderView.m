@@ -110,6 +110,17 @@
         font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
     }
     
+    if ([self.stackView arrangedSubviews].count) {
+        
+        for (UIView *subview in self.stackView.arrangedSubviews) {
+            if ([subview isKindOfClass:UIButton.class]) {
+                [self.stackView removeArrangedSubview:subview];
+                [subview removeFromSuperview];
+            }
+        }
+        
+    }
+    
     for (Author *author in self.feed.authors) { @autoreleasepool {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
         [button setTitle:author.name forState:UIControlStateNormal];

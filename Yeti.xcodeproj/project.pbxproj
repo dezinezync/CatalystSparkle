@@ -50,6 +50,7 @@
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
+		F046DF57216E30AC00FFDBD7 /* DetailCustomVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */; };
 		F047F4E220C25FB900626968 /* Spectral-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D420C25FB800626968 /* Spectral-Regular.ttf */; };
 		F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */; };
 		F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4D720C25FB900626968 /* Spectral-Bold.ttf */; };
@@ -515,6 +516,8 @@
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
 		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
 		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
+		F046DF55216E30AC00FFDBD7 /* DetailCustomVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailCustomVC.h; sourceTree = "<group>"; };
+		F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailCustomVC.m; sourceTree = "<group>"; };
 		F047F4D420C25FB800626968 /* Spectral-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Regular.ttf"; sourceTree = "<group>"; };
 		F047F4D620C25FB800626968 /* Spectral-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-MediumItalic.ttf"; sourceTree = "<group>"; };
 		F047F4D720C25FB900626968 /* Spectral-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Bold.ttf"; sourceTree = "<group>"; };
@@ -1062,6 +1065,8 @@
 				F0AFAC1C216C8AEA00AB7057 /* DetailFeedVC+Actions.m */,
 				F0D1E979216DECAC009A8614 /* DetailAuthorVC.h */,
 				F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */,
+				F046DF55216E30AC00FFDBD7 /* DetailCustomVC.h */,
+				F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -2368,6 +2373,7 @@
 				F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
+				F046DF57216E30AC00FFDBD7 /* DetailCustomVC.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,

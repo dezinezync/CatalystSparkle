@@ -84,6 +84,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.authorLabel.text = nil;
     self.timeLabel.text = nil;
     self.faviconView.image = nil;
+    self.markerView.image = nil;
+    
+    self.faviconView.hidden = NO;
+    self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleTitle2];
     
     self.backgroundView.alpha = 0.f;
     
@@ -131,7 +135,61 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     Feed *feed = [MyFeedsManager feedForID:item.feedID];
     
-    if (feed) {
+    if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
+        // find the first paragraph
+        Content *content = [item.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
+            
+            if (prev && [prev.type isEqualToString:@"paragraph"]) {
+                return prev;
+            }
+            
+            return current;
+        }];
+        
+        if (content) {
+            self.titleLabel.text = content.content;
+            self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+            self.titleLabel.textColor = [[YTThemeKit theme] titleColor];
+        }
+    }
+    
+    self.titleLabel.accessibilityValue = [self.titleLabel.text stringByReplacingOccurrencesOfString:@" | " withString:@" by "];
+    
+    if (([Paragraph languageDirectionForText:item.articleTitle] == NSLocaleLanguageDirectionRightToLeft)
+        || (item.summary && [Paragraph languageDirectionForText:item.summary] == NSLocaleLanguageDirectionRightToLeft)) {
+        
+        self.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        self.titleLabel.textAlignment = NSTextAlignmentRight;
+        self.authorLabel.textAlignment = NSTextAlignmentRight;
+        
+    }
+    
+    UIStackView *stackView = (UIStackView *)[self.markerView superview];
+    
+    if (isCustomFeed == NO) {
+        if (!item.isRead)
+            self.markerView.image = [UIImage imageNamed:@"munread"];
+        else if (item.isBookmarked)
+            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+        else
+            self.markerView.image = nil;
+        
+        self.faviconView.hidden = YES;
+        
+        UIEdgeInsets margins = [stackView layoutMargins];
+        margins.top = 4.f;
+        
+        stackView.layoutMargins = margins;
+        stackView.layoutMarginsRelativeArrangement = YES;
+        
+    }
+    else {
+        if (item.isBookmarked)
+            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+        
+        stackView.layoutMargins = UIEdgeInsetsZero;
+        stackView.layoutMarginsRelativeArrangement = NO;
+        
         NSString *url = [feed faviconURI];
         
         if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
@@ -147,17 +205,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                 DDLogWarn(@"ArticleCell setImage: %@", exc);
             }
         }
-    }
-    
-    self.titleLabel.accessibilityValue = [self.titleLabel.text stringByReplacingOccurrencesOfString:@" | " withString:@" by "];
-    
-    if (([Paragraph languageDirectionForText:item.articleTitle] == NSLocaleLanguageDirectionRightToLeft)
-        || (item.summary && [Paragraph languageDirectionForText:item.summary] == NSLocaleLanguageDirectionRightToLeft)) {
-        
-        self.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-        self.titleLabel.textAlignment = NSTextAlignmentRight;
-        self.authorLabel.textAlignment = NSTextAlignmentRight;
-        
     }
     
 }

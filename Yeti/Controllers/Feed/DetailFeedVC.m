@@ -137,6 +137,11 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [notificationCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
     [notificationCenter removeObserver:self name:kDidUpdateTheme object:nil];
+    
+    @try {
+        [self.collectionView removeObserver:self forKeyPath:propSel(frame) context:KVO_DetailFeedFrame];
+    }
+    @catch (NSException *exc) {}
 }
 
 #pragma mark - Appearance
@@ -297,10 +302,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-//            ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-//            if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
-//                cell.markerView.image = nil;
-//            }
+            ArticleCellB *cell = (ArticleCellB *)[collectionView cellForItemAtIndexPath:indexPath];
+            if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
+                cell.markerView.image = nil;
+            }
             
         });
         
@@ -543,12 +548,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
                 // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
                 if (cell != nil && article.isBookmarked == NO) {
-//                    if (read == YES) {
-//                        cell.markerView.image = nil;
-//                    }
-//                    else {
-//                        cell.markerView.image = [UIImage imageNamed:@"munread"];
-//                    }
+                    if (read == YES) {
+                        cell.markerView.image = nil;
+                    }
+                    else {
+                        cell.markerView.image = [UIImage imageNamed:@"munread"];
+                    }
                 }
             }
         }
@@ -601,12 +606,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
                 
                 if (cell != nil) {
-//                    if (bookmarked == NO) {
-//                        cell.markerView.image = nil;
-//                    }
-//                    else {
-//                        cell.markerView.image = [UIImage imageNamed:@"mbookmark"];
-//                    }
+                    if (bookmarked == NO) {
+                        cell.markerView.image = nil;
+                    }
+                    else {
+                        cell.markerView.image = [UIImage imageNamed:@"mbookmark"];
+                    }
                 }
             }
         }
@@ -787,6 +792,7 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
 {
     DetailAuthorVC *vc = [[DetailAuthorVC alloc] initWithFeed:self.feed];
     vc.author = author;
+    vc.customFeed = self.customFeed;
     
     [self.navigationController pushViewController:vc animated:YES];
 }

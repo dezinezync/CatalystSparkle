@@ -1,3 +1,8 @@
+Version 1.1.0 Update Notes
+
+[NEW]
+- Image and Video enclosures are now displayed in the Article when available. These are attachments published by blogs and websites as separate attachments. These aren't included in Post's body so they were never surfaced until now. Image enclosures do not come with captions so captions are skipped for such images. Audio enclosures are not supported at the moment.
+- Extended layout on iPads. The new layout uses the right (left for RTL languages) section on iPads to display articles.
 
 [IMPROVE]
 - Completes implementation of OPML interfaces.
