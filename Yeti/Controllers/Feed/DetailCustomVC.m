@@ -58,6 +58,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         self.collectionView.refreshControl = refresh;
         
         self.DS.data = [MyFeedsManager unread];
+        if (self.DS.data.count > 0) {
+            _page = floor([self.DS.data count]/10.f);
+        }
+        
+        [self loadNextPage];
+        
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     }
 }

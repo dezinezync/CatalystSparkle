@@ -35,6 +35,8 @@
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
+#import "TypeFactory.h"
+
 #import <SafariServices/SafariServices.h>
 
 #import "YetiThemeKit.h"
@@ -163,7 +165,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
-    [center addObserver:self selector:@selector(didChangePreferredContentSize:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
@@ -343,11 +345,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
-- (void)didChangePreferredContentSize:(NSNotification *)note {
+- (void)didChangePreferredContentSize {
     
-    if (self.state != ArticleStateLoading) {
+    if (self.state == ArticleStateLoading) {
         return;
     }
+    
+    Paragraph.paragraphStyle = nil;
     
     [self setupArticle:self.currentArticle];
     
@@ -628,6 +632,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
+    
+    if (self == nil) {
+        return;
+    }
+    
     weakify(self);
     
     if (self.item == nil) {
@@ -777,6 +786,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     dispatch_async(dispatch_get_main_queue(), ^{
         
         strongify(self);
+        
+        if (self == nil) {
+            return;
+        }
         
         self->_last = nil;
         

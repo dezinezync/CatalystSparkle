@@ -16,6 +16,8 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "TypeFactory.h"
+
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
 @interface FeedsCell ()
@@ -41,7 +43,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.clipsToBounds = YES;
     
-    self.countLabel.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+    self.countLabel.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont monospacedDigitSystemFontOfSize:14.f weight:UIFontWeightMedium]];
     self.countLabel.layer.cornerRadius = ceil(self.countLabel.bounds.size.height / 2.f);
     self.countLabel.layer.masksToBounds = YES;
     
@@ -52,6 +54,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.backgroundColor = theme.cellColor;
 
     self.titleLabel.textColor = theme.titleColor;
+    self.titleLabel.font = [TypeFactory.shared titleFont];
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
     self.countLabel.textColor = theme.unreadTextColor;

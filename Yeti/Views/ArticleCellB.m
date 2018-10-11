@@ -14,6 +14,7 @@
 
 #import "YetiConstants.h"
 #import "FeedsManager.h"
+#import "TypeFactory.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -66,6 +67,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
     
+    self.titleLabel.font = [TypeFactory.shared titleFont];
+    
     self.titleLabel.textColor = theme.titleColor;
     self.timeLabel.textColor = theme.subtitleColor;
     self.authorLabel.textColor = theme.subtitleColor;
@@ -87,7 +90,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.markerView.image = nil;
     
     self.faviconView.hidden = NO;
-    self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleTitle2];
+    self.titleLabel.font = [TypeFactory.shared titleFont];
     
     self.backgroundView.alpha = 0.f;
     
@@ -104,7 +107,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.selectedBackgroundView.alpha = selected ? 1.f : 0.f;
     
 }
-
 
 #pragma mark - Config
 
@@ -184,9 +186,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
     }
     else {
-        if (item.isBookmarked)
-            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
-        
         stackView.layoutMargins = UIEdgeInsetsZero;
         stackView.layoutMarginsRelativeArrangement = NO;
         

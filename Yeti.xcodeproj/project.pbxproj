@@ -46,6 +46,7 @@
 		F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
 		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
 		F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03CECE7216DD0FA00A25BE8 /* DetailFeedHeaderView.m */; };
+		F03FA5CE216F47E6009C5D96 /* TypeFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA5CD216F47E6009C5D96 /* TypeFactory.m */; };
 		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
@@ -511,6 +512,8 @@
 		F03BC4E820C9016A007B574F /* EmptyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyView.m; sourceTree = "<group>"; };
 		F03CECE6216DD0FA00A25BE8 /* DetailFeedHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailFeedHeaderView.h; sourceTree = "<group>"; };
 		F03CECE7216DD0FA00A25BE8 /* DetailFeedHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailFeedHeaderView.m; sourceTree = "<group>"; };
+		F03FA5CC216F47E6009C5D96 /* TypeFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeFactory.h; sourceTree = "<group>"; };
+		F03FA5CD216F47E6009C5D96 /* TypeFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TypeFactory.m; sourceTree = "<group>"; };
 		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
 		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
@@ -1253,6 +1256,8 @@
 				F0AD76D320E2217C0003787B /* Reachability.h */,
 				F0AD76D420E2217C0003787B /* Reachability.m */,
 				F08993C1210883E200A9978E /* FolderDrop.h */,
+				F03FA5CC216F47E6009C5D96 /* TypeFactory.h */,
+				F03FA5CD216F47E6009C5D96 /* TypeFactory.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2396,6 +2401,7 @@
 				F0AFAC19216C7A5200AB7057 /* DetailFeedVC.m in Sources */,
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
+				F03FA5CE216F47E6009C5D96 /* TypeFactory.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */,

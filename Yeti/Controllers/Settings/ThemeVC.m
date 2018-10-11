@@ -264,6 +264,8 @@ NSString *const kBasicCell = @"cell.theme";
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         
         _selectedFontIndexPath = indexPath;
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:UIContentSizeCategoryDidChangeNotification object:nil];
     }
     
     if (reloadSections != nil) {
@@ -275,6 +277,12 @@ NSString *const kBasicCell = @"cell.theme";
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
         [self.settingsDelegate didChangeSettings];
     }
+}
+
+- (void)dealloc {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+    
 }
 
 #pragma mark - Helpers

@@ -136,4 +136,26 @@
     self.font = baseFont;
 }
 
+- (CGSize)contentSize {
+    
+    [self setNeedsUpdateConstraints];
+    [self layoutIfNeeded];
+    
+    CGSize size = [super contentSize];
+    
+    if (self.attributedText) {
+        size.height = [self.attributedText boundingRectWithSize:size options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size.height;
+    }
+    else if (self.text && [self.text isBlank] == NO) {
+        size.height = [self.text boundingRectWithSize:size options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading attributes:@{NSFontAttributeName: self.font,
+                                                                                                                                                     NSParagraphStyleAttributeName: self.paragraphStyle
+                                                                                                                                                     } context:nil].size.height;
+    }
+    
+    size.height = floor(size.height) + 2.f;
+    
+    return size;
+    
+}
+
 @end
