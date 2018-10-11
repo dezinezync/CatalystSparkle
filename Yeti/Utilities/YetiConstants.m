@@ -94,3 +94,5 @@ NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-0-0";
 NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";
 
 NSString * const YTSubscriptionNotification = @"com.dezinezync.elytra.subscription";
+
+NSString * const kUseExtendedFeedLayout = @"com.dezinezync.elytra.extendedFeedLayout";

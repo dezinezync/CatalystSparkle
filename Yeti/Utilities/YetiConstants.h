@@ -85,4 +85,6 @@ YETI_EXPORT NSString * const YTRequestedReview;
 
 YETI_EXPORT NSString * const YTSubscriptionNotification;
 
+YETI_EXPORT NSString * const kUseExtendedFeedLayout;
+
 #endif /* YetiConstants_h */

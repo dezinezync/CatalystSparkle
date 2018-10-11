@@ -426,17 +426,29 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
+    BOOL useExtendedLayout = NO;
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+    if (isPhone) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        useExtendedLayout = [defaults boolForKey:kUseExtendedFeedLayout];
+    }
+    
     if (indexPath.section == 0) {
         
-        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
             vc.customFeed = YES;
             vc.unread = indexPath.row == 0;
             
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-            nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
-            
-            [self.splitViewController showDetailViewController:nav sender:self];
+            if (isPhone) {
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+                nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
+                
+                [self.splitViewController showDetailViewController:nav sender:self];
+            }
         }
         else {
             
@@ -455,10 +467,16 @@ static void *KVO_Unread = &KVO_Unread;
     if ([feed isKindOfClass:Feed.class]) {
         UIViewController *vc;
         
-        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            vc = [DetailFeedVC instanceWithFeed:feed];
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-            [self.splitViewController showDetailViewController:vc sender:self];
+        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            if (isPhone) {
+                vc = [[DetailFeedVC alloc] initWithFeed:feed];
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                vc = [DetailFeedVC instanceWithFeed:feed];
+                [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
+                [self.splitViewController showDetailViewController:vc sender:self];
+            }
         }
         else {
             vc = [[FeedVC alloc] initWithFeed:feed];

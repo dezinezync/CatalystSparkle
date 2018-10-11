@@ -102,7 +102,7 @@
 
 - (void)didChangeBackgroundRefreshPreference:(UISwitch *)sw {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sw.isOn forKey:@"backgroundRefresh"];
+    [defaults setBool:sw.isOn forKey:kDefaultsBackgroundRefresh];
     [defaults synchronize];
 }
 

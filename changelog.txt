@@ -3,9 +3,13 @@ Version 1.1.0 Update Notes
 [NEW]
 - Image and Video enclosures are now displayed in the Article when available. These are attachments published by blogs and websites as separate attachments. These aren't included in Post's body so they were never surfaced until now. Image enclosures do not come with captions so captions are skipped for such images. Audio enclosures are not supported at the moment.
 - Extended layout on iPads. The new layout uses the right (left for RTL languages) section on iPads to display articles.
+- The Bold Type Accessibility is now correctly respected in the Article Viewer for all Font options provided in the app. Note that Georgia and Merriweather fonts do not come with the appropriate Semi-Bold font weight used for this setting so their respective Bold weights are used.
+- Opt-in Support for the new Extended Layout from the iPad on the iPhone. To turn this on, go to the App's Settings > Miscellaneous > Use Extended Layout.
 
 [IMPROVE]
 - Completes implementation of OPML interfaces.
+- Type rendering for the Feeds Interface: The unread counter now uses a dynamic font too which respects the Bold Type Accessibility setting as well as the Dynamic Type size settings.
+
 
 [FIX]
 

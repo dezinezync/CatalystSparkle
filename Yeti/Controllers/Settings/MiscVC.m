@@ -8,6 +8,8 @@
 
 #import "MiscVC.h"
 #import "YetiThemeKit.h"
+#import "SettingsCell.h"
+#import "YetiConstants.h"
 
 NSString *const kMiscSettingsCell = @"settingsCell";
 
@@ -23,71 +25,116 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     self.title = @"Miscellaneous";
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
+    [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        return 2;
+    }
+    
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    if (section == 1) {
+        return 1;
+    }
+    
     return 3;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (section == 1) {
+        return nil;
+    }
+    
     return @"App Icon";
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    if (section == 1) {
+        return @"Extended Feed Layout was introduced in version 1.1 of the app and brings a the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
+    }
+    
+    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMiscSettingsCell forIndexPath:indexPath];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    cell.textLabel.textColor = theme.titleColor;
-    
-    cell.backgroundColor = theme.cellColor;
-    
-    if (cell.selectedBackgroundView == nil) {
+    if (indexPath.section == 0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMiscSettingsCell forIndexPath:indexPath];
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        cell.textLabel.textColor = theme.titleColor;
+        
+        cell.backgroundColor = theme.cellColor;
+        
+        if (cell.selectedBackgroundView == nil) {
+            cell.selectedBackgroundView = [UIView new];
+        }
+        
+        cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+        
+        NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
+        NSInteger selected = selectedIcon == nil ? 0 : ([selectedIcon isEqualToString:@"dark"] ? 1 : 2);
+        
+        // Configure the cell...
+        switch (indexPath.row) {
+            case 0:
+                cell.textLabel.text = @"Light";
+                break;
+            case 1:
+                cell.textLabel.text = @"Dark";
+                break;
+            default:
+                cell.textLabel.text = @"Black";
+                break;
+        }
+        
+        cell.imageView.image = [UIImage imageNamed:cell.textLabel.text.lowercaseString];
+        cell.imageView.contentMode = UIViewContentModeCenter;
+        
+        if (selected == indexPath.row) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        else {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        
         cell.selectedBackgroundView = [UIView new];
+        cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+        
+        return cell;
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    SettingsCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
     
-    NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
-    NSInteger selected = selectedIcon == nil ? 0 : ([selectedIcon isEqualToString:@"dark"] ? 1 : 2);
+    cell.textLabel.text = @"Extended Feed Layout";
     
-    // Configure the cell...
-    switch (indexPath.row) {
-        case 0:
-            cell.textLabel.text = @"Light";
-            break;
-        case 1:
-            cell.textLabel.text = @"Dark";
-            break;
-        default:
-            cell.textLabel.text = @"Black";
-            break;
-    }
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    cell.imageView.image = [UIImage imageNamed:cell.textLabel.text.lowercaseString];
-    cell.imageView.contentMode = UIViewContentModeCenter;
+    UISwitch *sw = [[UISwitch alloc] init];
+    [sw setOn:[defaults boolForKey:kUseExtendedFeedLayout]];
+    [sw addTarget:self action:@selector(didChangeExtendedLayoutPreference:) forControlEvents:UIControlEventValueChanged];
     
-    if (selected == indexPath.row) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    }
-    else {
-        cell.accessoryType = UITableViewCellAccessoryNone;
-    }
-    
-    cell.selectedBackgroundView = [UIView new];
-    cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+    cell.accessoryView = sw;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
+        
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.section == 1) {
+        return;
+    }
     
     NSString *name = nil;
     
@@ -132,6 +179,16 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         });
         
     }];
+    
+}
+
+#pragma mark - Actions
+
+- (void)didChangeExtendedLayoutPreference:(UISwitch *)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sender.isOn forKey:kUseExtendedFeedLayout];
+    [defaults synchronize];
     
 }
 

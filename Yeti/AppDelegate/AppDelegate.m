@@ -209,7 +209,8 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsImageBandwidth: ImageLoadingAlways,
              kDefaultsArticleFont: ALPSystem,
              kSubscriptionType: @"None",
-             kShowArticleCoverImages: @NO
+             kShowArticleCoverImages: @NO,
+             kUseExtendedFeedLayout: @NO
              };
 }
 
