@@ -265,6 +265,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [cell setupAppearance];
     
+    BOOL showSeparator = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    
+    [cell showSeparator:showSeparator];
+    
     return cell;
 }
 
@@ -753,16 +757,49 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
 
 - (void)setupLayout {
     
-    CGFloat padding = self.flowLayout.minimumInteritemSpacing;
+    BOOL isCompact = [[[self.collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
+    
+    CGFloat padding = isCompact ? 0 : [self.flowLayout minimumInteritemSpacing];
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding/2.f, padding, padding/2.f);
+        self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
+        self.flowLayout.minimumLineSpacing = 0;
+        self.flowLayout.minimumInteritemSpacing = 0;
     }
     else {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
     }
     
-    self.flowLayout.estimatedItemSize = UICollectionViewFlowLayoutAutomaticSize;
+    CGSize contentSize = self.collectionView.contentSize;
+    
+    CGFloat width = contentSize.width;
+    
+    /*
+     On iPads (Regular)
+     |- 16 - (cell) - 16 - (cell) - 16 -|
+     */
+    
+    /*
+     On iPhones (Compact)
+     |- 0 - (cell) - 0 -|
+     */
+    
+    CGFloat totalPadding =  padding * 3.f;
+    
+    CGFloat usableWidth = width - totalPadding;
+    
+    CGFloat cellWidth = usableWidth;
+    
+    if (usableWidth > 601.f) {
+        // the remainder will be absorbed by the interimSpacing
+        cellWidth = floor(usableWidth / 2.f);
+    }
+    else {
+        cellWidth = width - (padding * 2.f);
+    }
+    
+    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
+    self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
     
     if (self->_shouldShowHeader) {
         self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 80.f);

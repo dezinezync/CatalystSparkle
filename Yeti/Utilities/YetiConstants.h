@@ -87,4 +87,7 @@ YETI_EXPORT NSString * const YTSubscriptionNotification;
 
 YETI_EXPORT NSString * const kUseExtendedFeedLayout;
 
+YETI_EXPORT NSString * const kShowUnreadCounts;
+YETI_EXPORT NSNotificationName const ShowUnreadCountsPreferenceChanged;
+
 #endif /* YetiConstants_h */

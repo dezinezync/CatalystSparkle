@@ -76,6 +76,7 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
     [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
+    [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
@@ -354,6 +355,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     FeedsCell *ocell = nil;
     
+    BOOL showUnreadCounter = [[NSUserDefaults standardUserDefaults] boolForKey:kShowUnreadCounts];
+    
     if (indexPath.section == 0) {
         FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
         
@@ -405,6 +408,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     ocell.countLabel.backgroundColor = theme.unreadBadgeColor;
     ocell.countLabel.textColor = theme.unreadTextColor;
+    
+    ocell.countLabel.hidden = !showUnreadCounter;
     
     return ocell;
 }
@@ -749,6 +754,14 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 #pragma mark - Notifications
+
+- (void)unreadCountPreferenceChanged {
+    
+    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
+    
+    [self.tableView reloadRowsAtIndexPaths:visible withRowAnimation:UITableViewRowAnimationFade];
+    
+}
 
 - (void)didUpdateTheme {
     

@@ -25,6 +25,8 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
+- (BOOL)isEqualToFolder:(Folder *)folder;
+
 @property (nonatomic, readonly) NSNumber *unreadCount;
 
 @end

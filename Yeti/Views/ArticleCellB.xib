@@ -20,8 +20,8 @@
                 <rect key="frame" x="0.0" y="0.0" width="333" height="100"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" ambiguous="YES" alignment="top" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="rIp-T3-RLf">
-                        <rect key="frame" x="12" y="12" width="309" height="76"/>
+                    <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" alignment="top" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="rIp-T3-RLf">
+                        <rect key="frame" x="8" y="12" width="313" height="76"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" axis="vertical" distribution="equalSpacing" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="K7S-pm-6mb">
                                 <rect key="frame" x="0.0" y="0.0" width="32" height="52"/>
@@ -100,12 +100,22 @@
                             </stackView>
                         </subviews>
                     </stackView>
+                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QVo-Kf-nSK">
+                        <rect key="frame" x="0.0" y="99" width="333" height="1"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="999" constant="1" id="1wO-Jl-HpN"/>
+                        </constraints>
+                    </view>
                 </subviews>
             </view>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
+                <constraint firstAttribute="bottom" secondItem="QVo-Kf-nSK" secondAttribute="bottom" id="0BX-NP-fOT"/>
                 <constraint firstItem="rIp-T3-RLf" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="12" id="6v2-Bk-VXW"/>
+                <constraint firstAttribute="trailing" secondItem="QVo-Kf-nSK" secondAttribute="trailing" id="Eey-4t-hYO"/>
                 <constraint firstAttribute="trailing" secondItem="rIp-T3-RLf" secondAttribute="trailing" constant="12" id="ZBZ-s7-dU2"/>
+                <constraint firstItem="QVo-Kf-nSK" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="a2Q-Vm-PKr"/>
                 <constraint firstAttribute="bottom" secondItem="rIp-T3-RLf" secondAttribute="bottom" constant="12" id="fwr-7B-mAu"/>
                 <constraint firstItem="rIp-T3-RLf" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="za7-GM-G4a"/>
             </constraints>
@@ -122,6 +132,8 @@
                 <outlet property="faviconView" destination="sha-6y-kQB" id="dPM-63-Cbs"/>
                 <outlet property="mainStackView" destination="rIp-T3-RLf" id="UTf-oN-UPf"/>
                 <outlet property="markerView" destination="t3E-ie-o1G" id="efz-qq-54x"/>
+                <outlet property="separatorHeight" destination="1wO-Jl-HpN" id="Ssu-Fi-ItZ"/>
+                <outlet property="separatorView" destination="QVo-Kf-nSK" id="j2G-h3-l7S"/>
                 <outlet property="timeLabel" destination="UJA-KP-eoc" id="oJm-i5-03w"/>
                 <outlet property="titleLabel" destination="XwD-Dj-prt" id="TTG-o8-FlH"/>
             </connections>

@@ -33,6 +33,21 @@
     return self;
 }
 
+- (BOOL)isEqualToFolder:(Folder *)object {
+    return ([[object folderID] isEqualToNumber:self.folderID]
+            && [[object title] isEqualToString:self.title]);
+}
+
+- (BOOL)isEqual:(id)object {
+    
+    if ([object isKindOfClass:Folder.class]) {
+        return [self isEqualToFolder:object];
+    }
+    
+    return NO;
+    
+}
+
 - (instancetype)copy {
     Folder *instance = [Folder instanceFromDictionary:self.dictionaryRepresentation];
     

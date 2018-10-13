@@ -210,7 +210,8 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsArticleFont: ALPSystem,
              kSubscriptionType: @"None",
              kShowArticleCoverImages: @NO,
-             kUseExtendedFeedLayout: @NO
+             kUseExtendedFeedLayout: @NO,
+             kShowUnreadCounts: @YES
              };
 }
 

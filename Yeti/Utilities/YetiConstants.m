@@ -96,3 +96,6 @@ NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";
 NSString * const YTSubscriptionNotification = @"com.dezinezync.elytra.subscription";
 
 NSString * const kUseExtendedFeedLayout = @"com.dezinezync.elytra.extendedFeedLayout";
+
+NSString * const kShowUnreadCounts = @"com.dezinezync.elytra.showUnreadCounts";
+NSNotificationName const ShowUnreadCountsPreferenceChanged = @"com.dezinezync.elytra.note.unreadCountPreferenceChanged";

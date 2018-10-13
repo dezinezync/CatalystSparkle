@@ -71,6 +71,22 @@
     return [self copy];
 }
 
+- (BOOL)isEqualToFolder:(Feed *)object {
+    return ([[object feedID] isEqualToNumber:self.feedID]
+            && [[object title] isEqualToString:self.title]
+            && [[object folderID] isEqualToNumber:self.folderID]);
+}
+
+- (BOOL)isEqual:(id)object {
+    
+    if ([object isKindOfClass:Feed.class]) {
+        return [self isEqualToFeed:object];
+    }
+    
+    return NO;
+    
+}
+
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary
 {
 
@@ -254,7 +270,11 @@
     if (_faviconURI == nil) {
         NSString *url = nil;
         
-        if (self.extra) {
+        if (self.favicon && [self.favicon containsString:@".twimg"]) {
+            url = self.favicon;
+        }
+        
+        else if (self.extra) {
             
             if (self.extra.icons && [self.extra.icons count]) {
                 

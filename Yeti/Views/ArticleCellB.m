@@ -30,6 +30,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 @property (nonatomic, readonly) CGSize estimatedSize;
 @property (weak, nonatomic) IBOutlet UIStackView *contentStackView;
 
+@property (weak, nonatomic) IBOutlet UIView *separatorView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *separatorHeight;
+
 @end
 
 @implementation ArticleCellB
@@ -58,6 +61,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.backgroundView = view;
     }
     
+    self.separatorHeight.constant = 1.f/[UIScreen mainScreen].scale;
+    
     [self setupAppearance];
 }
 
@@ -78,6 +83,22 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.backgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
     self.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
     
+    self.separatorView.backgroundColor = theme.borderColor;
+    
+}
+
+- (void)showSeparator:(BOOL)showSeparator {
+    self.separatorView.hidden = !showSeparator;
+    
+    // if we're showing the separator,
+    // we are in a compact state
+    if (showSeparator) {
+        self.layer.cornerRadius = 0.f;
+    }
+    else {
+        self.layer.cornerRadius = 12.f;
+    }
+    
 }
 
 - (void)prepareForReuse {
@@ -93,6 +114,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.titleLabel.font = [TypeFactory.shared titleFont];
     
     self.backgroundView.alpha = 0.f;
+    self.separatorView.hidden = YES;
     
 }
 
@@ -115,21 +137,38 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.sizeCache = sizeCache;
     self.item = item;
     self.titleLabel.text = item.articleTitle;
+    self.authorLabel.text = @"";
+    
+    NSString *appendFormat = @" - %@";
     
     if (item.author) {
         if ([item.author isKindOfClass:NSString.class]) {
-            self.authorLabel.text = [(item.author ?: @"") stringByStrippingHTML];
+            
+            if ([item.author isBlank] == NO) {
+                self.authorLabel.text = [(item.author ?: @"") stringByStrippingHTML];
+            }
+            else {
+                appendFormat = @"%@";
+            }
+            
         }
         else {
             self.authorLabel.text = [([item.author valueForKey:@"name"] ?: @"") stringByStrippingHTML];
         }
     }
     else {
-        self.authorLabel.text = @"Unknown";
+        self.authorLabel.text = @"";
+        appendFormat = @"%@";
     }
     
     if (item.blogTitle) {
-        self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:@" - %@", item.blogTitle];
+        self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, item.blogTitle];
+    }
+    else {
+        Feed *feed = [MyFeedsManager feedForID:item.feedID];
+        if (feed) {
+            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feed.title];
+        }
     }
     
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
@@ -253,12 +292,20 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     CGFloat width = contentSize.width;
     
     /*
+     On iPads (Regular)
      |- 16 - (cell) - 16 - (cell) - 16 -|
      */
     
+    /*
+     On iPhones (Compact)
+     |- 0 - (cell) - 0 -|
+     */
+    
     // get actual values from the layout
-    CGFloat padding = [(UICollectionViewFlowLayout *)[collectionView collectionViewLayout] minimumInteritemSpacing];
-    CGFloat totalPadding = padding * 3.f;
+    BOOL isCompact = [[[collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
+    
+    CGFloat padding = isCompact ? 0 :[(UICollectionViewFlowLayout *)[collectionView collectionViewLayout] minimumInteritemSpacing];
+    CGFloat totalPadding =  padding * 3.f;
     
     CGFloat usableWidth = width - totalPadding;
     

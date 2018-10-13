@@ -33,15 +33,15 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        return 2;
+        return 3;
     }
     
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    if (section == 1) {
+    if (section != 0) {
         return 1;
     }
     
@@ -49,7 +49,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 1) {
+    if (section != 0) {
         return nil;
     }
     
@@ -57,7 +57,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == 1) {
+    if (section == 1 && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         return @"Extended Feed Layout was introduced in version 1.1 of the app and brings a the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
     }
     
@@ -66,10 +66,10 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMiscSettingsCell forIndexPath:indexPath];
-        
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         cell.textLabel.textColor = theme.titleColor;
         
@@ -115,13 +115,33 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     SettingsCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
     
-    cell.textLabel.text = @"Extended Feed Layout";
+    cell.textLabel.textColor = theme.titleColor;
+    
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
+    UISwitch *sw = [[UISwitch alloc] init];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    UISwitch *sw = [[UISwitch alloc] init];
-    [sw setOn:[defaults boolForKey:kUseExtendedFeedLayout]];
-    [sw addTarget:self action:@selector(didChangeExtendedLayoutPreference:) forControlEvents:UIControlEventValueChanged];
+    // on iPhones and iPod touches, we show an additional row
+    if (indexPath.section == 1 && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        cell.textLabel.text = @"Extended Feed Layout";
+        
+        [sw setOn:[defaults boolForKey:kUseExtendedFeedLayout]];
+        [sw addTarget:self action:@selector(didChangeExtendedLayoutPreference:) forControlEvents:UIControlEventValueChanged];
+    }
+    else {
+        cell.textLabel.text = @"Unread Counters";
+        
+        [sw setOn:[defaults boolForKey:kShowUnreadCounts]];
+        [sw addTarget:self action:@selector(didChangeUnreadCountsPreference:) forControlEvents:UIControlEventValueChanged];
+    }
     
     cell.accessoryView = sw;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -189,6 +209,18 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setBool:sender.isOn forKey:kUseExtendedFeedLayout];
     [defaults synchronize];
+    
+}
+
+- (void)didChangeUnreadCountsPreference:(UISwitch *)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sender.isOn forKey:kShowUnreadCounts];
+    [defaults synchronize];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
+    });
     
 }
 

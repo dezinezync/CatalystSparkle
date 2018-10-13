@@ -87,7 +87,7 @@
     
     if (touch
         && (self.feed != nil
-            || ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
+            || ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
             if (touch.tapCount == 0) {
                 [self didLongPressOnAllRead:sender];
                 return;

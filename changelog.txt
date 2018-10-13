@@ -5,6 +5,7 @@ Version 1.1.0 Update Notes
 - Extended layout on iPads. The new layout uses the right (left for RTL languages) section on iPads to display articles.
 - The Bold Type Accessibility is now correctly respected in the Article Viewer for all Font options provided in the app. Note that Georgia and Merriweather fonts do not come with the appropriate Semi-Bold font weight used for this setting so their respective Bold weights are used.
 - Opt-in Support for the new Extended Layout from the iPad on the iPhone. To turn this on, go to the App's Settings > Miscellaneous > Use Extended Layout.
+- Added option to show or hide the unread counts on the Feeds Interface. This is an opt-in and the default is set to show the unread counts.
 
 [IMPROVE]
 - Completes implementation of OPML interfaces.
