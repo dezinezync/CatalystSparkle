@@ -1078,6 +1078,44 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+- (void)folderFeedFor:(Folder *)folder page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSString *path = formattedString(@"/1.1/folder/%@/feed", folder.folderID);
+    
+    NSMutableDictionary *params = @{@"page": @(page)}.mutableCopy;
+    
+    if ([self userID] != nil) {
+        params[@"userID"] = MyFeedsManager.userID;
+    }
+#if TESTFLIGHT == 0
+    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+    }
+#endif
+    
+    [self.session GET:path parameters:params success:^(NSArray <NSDictionary *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSArray <FeedItem *> *items = [responseObject rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        if (successCB)
+            successCB(items, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
@@ -2302,8 +2340,8 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
-        self.folders = [coder decodeObjectForKey:kFoldersKey];
         self.feeds = [coder decodeObjectForKey:kFeedsKey];
+        self.folders = [coder decodeObjectForKey:kFoldersKey];
 //        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
         self.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];

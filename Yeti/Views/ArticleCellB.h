@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "FeedItem.h"
+#import "YetiConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +22,7 @@ extern NSString *const kiPadArticleCell;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *markerView;
 
-- (void)configure:(FeedItem * _Nonnull)item customFeed:(BOOL)isCustomFeed sizeCache:(NSMutableDictionary *)sizeCache;
+- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableDictionary *)sizeCache;
 
 @property (weak, nonatomic) NSMutableDictionary *sizeCache;
 @property (weak, nonatomic) FeedItem *item;

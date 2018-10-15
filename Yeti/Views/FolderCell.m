@@ -65,6 +65,9 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     UIView *selected = [UIView new];
     selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
     self.selectedBackgroundView = selected;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapIcon:)];
+    [self.faviconView addGestureRecognizer:tap];
 }
 
 - (void)prepareForReuse
@@ -183,6 +186,14 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     }
     
     [self setupObservors];
+}
+
+- (void)didTapIcon:(id)sender {
+    
+    if (self.interactionDelegate) {
+        [self.interactionDelegate didTapFolderIcon:self.folder cell:self];
+    }
+    
 }
 
 #pragma mark - a11y

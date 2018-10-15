@@ -26,10 +26,9 @@
 
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
-@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate> {
+@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
-    BOOL _shouldShowHeader;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
@@ -37,8 +36,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
-
-@property (nonatomic, strong) NSMutableDictionary *sizeCache;
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
 
@@ -652,7 +649,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
     
-    if (self.class != NSClassFromString(@"CustomFeedVC") && !item.isRead) {
+    if ((self.class != NSClassFromString(@"CustomFeedVC")
+         || self.class != NSClassFromString(@"CustomFolderVC")
+         || self.class != NSClassFromString(@"CustomAuthorVC"))
+        && !item.isRead) {
         [self userMarkedArticle:item read:YES];
     }
     

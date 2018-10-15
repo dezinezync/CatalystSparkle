@@ -1,0 +1,152 @@
+//
+//  DetailFolderVC.m
+//  Yeti
+//
+//  Created by Nikhil Nigade on 15/10/18.
+//  Copyright © 2018 Dezine Zync Studios. All rights reserved.
+//
+
+#import "DetailFolderVC.h"
+#import "FeedsManager.h"
+
+@interface DetailFolderVC ()
+
+@end
+
+@implementation DetailFolderVC
+
++ (UINavigationController *)instanceWithFolder:(Folder *)folder {
+    
+    DetailFolderVC *instance = [[DetailFolderVC alloc] initWithFolder:folder];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
+    nav.restorationIdentifier = @"DetailFolderNavVC";
+    
+    return nav;
+    
+}
+
+- (instancetype)initWithFolder:(Folder *)folder {
+    
+    if (self = [super initWithNibName:NSStringFromClass(DetailFeedVC.class) bundle:nil]) {
+        self.folder = folder;
+        _canLoadNext = YES;
+        _page = 0;
+        
+        self.customFeed = FeedTypeFolder;
+        
+        self.sizeCache = @{}.mutableCopy;
+        
+        self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), folder.folderID);
+        self.restorationClass = self.class;
+    }
+    
+    return self;
+    
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
+
+- (void)setupHeaderView { }
+
+- (void)reloadHeaderView { }
+
+- (void)setupLayout {
+    
+    self->_shouldShowHeader = NO;
+    
+    [super setupLayout];
+    
+}
+
+- (void)loadNextPage
+{
+    
+    if (self.loadingNext)
+        return;
+    
+    self.loadingNext = YES;
+    
+    weakify(self);
+    
+    NSInteger page = _page + 1;
+    
+    [MyFeedsManager folderFeedFor:self.folder page:page success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        if (!self)
+            return;
+        
+        self->_page = page;
+        
+        if (![responseObject count]) {
+            self->_canLoadNext = NO;
+        }
+        
+        if (page == 1 && self.DS.data.count) {
+            self.DS.data = responseObject;
+        }
+        else {
+            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+        }
+        
+        self.loadingNext = NO;
+        
+        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            [self loadNextPage];
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        DDLogError(@"%@", error);
+        
+        strongify(self);
+        
+        self.loadingNext = NO;
+    }];
+}
+
+#pragma mark - State Restoration
+
+NSString * const kBFolderData = @"FolderData";
+NSString * const kBFolderPageNumber = @"FolderPageNumber";
+
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBFolderData];
+    
+    if (items) {
+        DetailFolderVC *vc = [[DetailFolderVC alloc] init];
+        vc.DS.data = items;
+        vc.customFeed = FeedTypeFolder;
+        
+        vc->_page = [coder decodeIntegerForKey:kBFolderPageNumber];
+        
+        return vc;
+    }
+    
+    return nil;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.DS.data forKey:kBFolderData];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+    
+    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBFolderData];
+    
+    if (items) {
+        self.DS.data = items;
+        self.customFeed = FeedTypeFolder;
+        self->_page = [coder decodeIntegerForKey:kBFolderPageNumber];
+    }
+    
+}
+
+
+@end

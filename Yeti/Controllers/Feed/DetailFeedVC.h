@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "Feed.h"
 
+#import "YetiConstants.h"
+
 #import "UIViewController+ScrollLoad.h"
 #import <DZKit/DZBasicDatasource.h>
 
@@ -20,13 +22,14 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _canLoadNext;
     
     NSIndexPath *_highlightedRow;
+    BOOL _shouldShowHeader;
 }
 
 + (UINavigationController *)instanceWithFeed:(Feed * _Nullable)feed;
 
 - (instancetype _Nonnull)initWithFeed:(Feed * _Nullable)feed;
 
-@property (nonatomic, assign, getter=isCustomFeed) BOOL customFeed;
+@property (nonatomic, assign, getter=isCustomFeed) FeedType customFeed;
 
 @property (nonatomic, assign) NSNumber *loadOnReady;
 
@@ -49,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)userMarkedArticle:(FeedItem *)article bookmarked:(BOOL)bookmarked;
 
 - (void)didChangeToArticle:(FeedItem *)item;
+
+@property (nonatomic, strong) NSMutableDictionary *sizeCache;
+
+- (void)setupLayout;
 
 @end
 

@@ -90,4 +90,10 @@ YETI_EXPORT NSString * const kUseExtendedFeedLayout;
 YETI_EXPORT NSString * const kShowUnreadCounts;
 YETI_EXPORT NSNotificationName const ShowUnreadCountsPreferenceChanged;
 
+typedef NS_ENUM(NSInteger, FeedType) {
+    FeedTypeFeed,
+    FeedTypeCustom,
+    FeedTypeFolder
+};
+
 #endif /* YetiConstants_h */

@@ -132,7 +132,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 
 #pragma mark - Config
 
-- (void)configure:(FeedItem *)item customFeed:(BOOL)isCustomFeed sizeCache:(nonnull NSMutableDictionary *)sizeCache {
+- (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
     
     self.sizeCache = sizeCache;
     self.item = item;
@@ -207,7 +207,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     UIStackView *stackView = (UIStackView *)[self.markerView superview];
     
-    if (isCustomFeed == NO) {
+    if (feedType != FeedTypeCustom) {
         if (!item.isRead)
             self.markerView.image = [UIImage imageNamed:@"munread"];
         else if (item.isBookmarked)
@@ -224,11 +224,14 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMarginsRelativeArrangement = YES;
         
     }
-    else {
+    
+    if (feedType != FeedTypeFeed) {
         stackView.layoutMargins = UIEdgeInsetsZero;
         stackView.layoutMarginsRelativeArrangement = NO;
         
         NSString *url = [feed faviconURI];
+        
+        self.faviconView.hidden = NO;
         
         if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
             @try {

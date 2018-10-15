@@ -13,6 +13,8 @@
 #import "FeedVC.h"
 #import "DetailFeedVC.h"
 #import "DetailCustomVC.h"
+#import "DetailFolderVC.h"
+
 #import <DZKit/DZBasicDatasource.h>
 
 #import <DZKit/EFNavController.h>
@@ -36,7 +38,7 @@
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
-@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration>
+@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate>
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
@@ -394,7 +396,7 @@ static void *KVO_Unread = &KVO_Unread;
                 // folder
                 FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
                 [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
-                
+                cell.interactionDelegate = self;
                 ocell = (FeedsCell *)cell;
             }
         }
@@ -442,7 +444,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
-            vc.customFeed = YES;
+            vc.customFeed = FeedTypeCustom;
             vc.unread = indexPath.row == 0;
             
             if (isPhone) {
@@ -491,78 +493,18 @@ static void *KVO_Unread = &KVO_Unread;
     else {
         // it's a folder
         Folder *folder = (Folder *)feed;
-        NSUInteger index = [self.DS2.data indexOfObject:folder];
         
-        CGPoint contentOffset = self.tableView.contentOffset;
+        UIViewController *vc;
         
-        FolderCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        
-        if (folder.isExpanded) {
-            
-            DDLogDebug(@"Closing index: %@", @(index));
-            folder.expanded = NO;
-            
-            // remove these feeds from the datasource
-            NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                
-                if ([obj isKindOfClass:Folder.class])
-                    return YES;
-                
-                if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:folder.folderID]) {
-                    return NO;
-                }
-                
-                return YES;
-                
-            }];
-            
-            [self.DS setData:data section:1];
-            
+        if (isPhone) {
+            vc = [[DetailFolderVC alloc] initWithFolder:folder];
+            [self.navigationController pushViewController:vc animated:YES];
         }
         else {
-            folder.expanded = YES;
-            DDLogDebug(@"Opening index: %@", @(index));
-            
-            // add these feeds to the datasource after the above index
-            NSMutableArray * data = [self.DS2.data mutableCopy];
-            
-            // data shouldn't contain any object with this folder ID
-            data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                if ([obj isKindOfClass:Feed.class]) {
-                    Feed *feed = obj;
-                    if ([feed.folderID isEqualToNumber:folder.folderID]) {
-                        return NO;
-                    }
-                }
-                
-                return YES;
-            }].mutableCopy;
-            
-            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.count)];
-            
-            [data insertObjects:folder.feeds.allObjects atIndexes:set];
-            
-            @try {
-                [self.DS setData:data section:1];
-            }
-            @catch (NSException *exc) {
-                DDLogWarn(@"Exception updating feeds: %@", exc);
-            }
-            
+            vc = [DetailFolderVC instanceWithFeed:feed];
+            [self.splitViewController showDetailViewController:vc sender:self];
         }
         
-        [self.feedbackGenerator selectionChanged];
-        [self.feedbackGenerator prepare];
-        
-        cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-        
-        weakify(self);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            [self.tableView.layer removeAllAnimations];
-            [self.tableView setContentOffset:contentOffset animated:NO];
-        });
     }
     
 }
@@ -896,6 +838,83 @@ NSString * const kDS2Data = @"DS2Data";
         }
         
     }];
+    
+}
+
+#pragma mark - <FolderInteractionDelegate>
+
+- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
+ 
+    NSUInteger index = [self.DS2.data indexOfObject:folder];
+    
+    CGPoint contentOffset = self.tableView.contentOffset;
+    
+    if (folder.isExpanded) {
+        
+        DDLogDebug(@"Closing index: %@", @(index));
+        folder.expanded = NO;
+        
+        // remove these feeds from the datasource
+        NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            
+            if ([obj isKindOfClass:Folder.class])
+                return YES;
+            
+            if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:folder.folderID]) {
+                return NO;
+            }
+            
+            return YES;
+            
+        }];
+        
+        [self.DS setData:data section:1];
+        
+    }
+    else {
+        folder.expanded = YES;
+        DDLogDebug(@"Opening index: %@", @(index));
+        
+        // add these feeds to the datasource after the above index
+        NSMutableArray * data = [self.DS2.data mutableCopy];
+        
+        // data shouldn't contain any object with this folder ID
+        data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            if ([obj isKindOfClass:Feed.class]) {
+                Feed *feed = obj;
+                if ([feed.folderID isEqualToNumber:folder.folderID]) {
+                    return NO;
+                }
+            }
+            
+            return YES;
+        }].mutableCopy;
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.allObjects.count)];
+        
+        [data insertObjects:folder.feeds.allObjects atIndexes:set];
+        
+        @try {
+            [self.DS setData:data section:1];
+        }
+        @catch (NSException *exc) {
+            DDLogWarn(@"Exception updating feeds: %@", exc);
+        }
+        
+    }
+    
+    [self.feedbackGenerator selectionChanged];
+    [self.feedbackGenerator prepare];
+    
+    cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self.tableView.layer removeAllAnimations];
+        [self.tableView setContentOffset:contentOffset animated:NO];
+    });
     
 }
 

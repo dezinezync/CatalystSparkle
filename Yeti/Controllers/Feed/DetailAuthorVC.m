@@ -126,4 +126,38 @@
     }];
 }
 
+#pragma mark - State Restoration
+
+NSString * const kBAuthorData = @"AuthorData";
+
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    Author *author = [coder decodeObjectForKey:kBAuthorData];
+    
+    if (author) {
+        DetailAuthorVC *vc = [[DetailAuthorVC alloc] init];
+        vc.author = author;
+        vc.customFeed = FeedTypeFeed;
+        return vc;
+    }
+    
+    return nil;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.author forKey:kBAuthorData];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+    
+    Author *author = [coder decodeObjectForKey:kBAuthorData];
+    
+    if (author) {
+        self.author = author;
+    }
+    
+}
+
 @end

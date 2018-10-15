@@ -235,5 +235,58 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     }
 }
 
+#pragma mark - State Restoration
+
+NSString * const kBUnreadData = @"UnreadData";
+NSString * const kBUnreadPageNumber = @"UnreadPageNumber";
+NSString * const kBIsUnread = @"VCIsUnread";
+
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+    
+    if (items) {
+        DetailCustomVC *vc = [[DetailCustomVC alloc] init];
+        vc.DS.data = items;
+        vc.customFeed = FeedTypeCustom;
+        
+        if ([coder decodeBoolForKey:kBIsUnread]) {
+            vc.unread = YES;
+            vc->_page = [coder decodeIntegerForKey:kBUnreadPageNumber];
+        }
+        
+        return vc;
+    }
+    
+    return nil;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.DS.data forKey:kBUnreadData];
+    [coder encodeBool:self.unread forKey:kBIsUnread];
+    
+    if (self.isUnread) {
+        [coder encodeInteger:_page forKey:kBUnreadPageNumber];
+    }
+    
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    [super decodeRestorableStateWithCoder:coder];
+    
+    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+    
+    if (items) {
+        self.DS.data = items;
+        self.customFeed = FeedTypeCustom;
+        
+        if ([coder decodeBoolForKey:kBIsUnread]) {
+            self.unread = YES;
+            self->_page = [coder decodeIntegerForKey:kBUnreadPageNumber];
+        }
+    }
+    
+}
 
 @end
