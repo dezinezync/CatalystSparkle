@@ -1,3 +1,13 @@
+[FOLDER FEEDS]
+
+- Folder taps now open the Folder's Feed. These custom Feeds include articles from all Feeds inside that folder.
+
+- The original interaction to expand and collapse a folder: tap on the folder icon.
+
+This has been a highly requested Feature and I'm super pumped to finally bring it to Elytra. I look forward to your feedback on this.
+
+-- 173 --
+
 Version 1.1.0 Update Notes
 
 [NEW]
