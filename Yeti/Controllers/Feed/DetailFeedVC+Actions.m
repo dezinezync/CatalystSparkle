@@ -69,30 +69,30 @@
     
     for (NSIndexPath *indexPath in indices) { @autoreleasepool {
         
-        ArticleCellB *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+        ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
         
         FeedItem *item = [self.DS objectAtIndexPath:indexPath];
         
-//        if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
-//            cell.markerView.image = nil;
-//        }
+        if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
+            cell.markerView.image = nil;
+        }
         
     } }
     
 }
 
-- (void)didTapAllRead:(UIBarButtonItem *)sender event:(UIEvent *)event {
+- (void)didTapAllRead:(id)sender {
     
-    UITouch *touch = event.allTouches.anyObject;
-    
-    if (touch
-        && (self.feed != nil
-            || ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
-            if (touch.tapCount == 0) {
-                [self didLongPressOnAllRead:sender];
-                return;
-            }
-        }
+//    UITouch *touch = event.allTouches.anyObject;
+//
+//    if (touch
+//        && (self.feed != nil
+//            || ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
+//            if (touch.tapCount == 0) {
+//                [self didLongPressOnAllRead:sender];
+//                return;
+//            }
+//        }
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
@@ -134,7 +134,13 @@
     
 }
 
-- (void)didLongPressOnAllRead:(UIBarButtonItem *)sender {
+- (void)didLongPressOnAllRead:(id)sender {
+    
+    if (sender && [sender isKindOfClass:UILongPressGestureRecognizer.class]
+        && [(UILongPressGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
+        return;
+    }
+    
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including articles not currently loaded?" preferredStyle:UIAlertControllerStyleActionSheet];
     
     weakify(self);

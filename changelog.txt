@@ -6,6 +6,10 @@
 
 This has been a highly requested Feature and I'm super pumped to finally bring it to Elytra. I look forward to your feedback on this.
 
+[FIX]
+
+- Long pressing on the "Mark All Read" button now behaves as expected. You no longer need to lift your finger for the action to trigger.
+
 -- 173 --
 
 Version 1.1.0 Update Notes

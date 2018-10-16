@@ -45,6 +45,14 @@
     
 }
 
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    
+    self.title = self.folder.title;
+    
+}
+
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     return nil;
 }

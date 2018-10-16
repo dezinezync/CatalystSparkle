@@ -25,7 +25,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
 
 @interface FolderCell () <UIDropInteractionDelegate>
 
-@property (weak, nonatomic) Folder * folder;
+@property (strong, nonatomic) Folder * folder;
 @property (weak, nonatomic) UIDropInteraction *dropInteraction;
 
 @property (weak, nonatomic) id <FolderDrop> dropDelegate;

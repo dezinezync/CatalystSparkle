@@ -250,6 +250,48 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark <UICollectionViewDataSource>
 
+- (UIView *)viewForEmptyDataset {
+    
+    // since the Datasource is asking for this view
+    // it will be presenting it.
+    if ((_canLoadNext == YES || _loadingNext == YES) && _page == 0) {
+        self.activityIndicatorView.hidden = NO;
+        [self.activityIndicatorView startAnimating];
+        
+        return self.activityIndicatorView;
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.numberOfLines = 0;
+    label.backgroundColor = theme.cellColor;
+    label.opaque = YES;
+    
+    NSString *title = @"No Articles";
+    NSString *subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+    
+    NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+                                 NSForegroundColorAttributeName: theme.subtitleColor};
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
+    
+    attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+                   NSForegroundColorAttributeName: theme.titleColor};
+    
+    NSRange range = [formatted rangeOfString:title];
+    if (range.location != NSNotFound) {
+        [attrs addAttributes:attributes range:range];
+    }
+    
+    label.attributedText = attrs;
+    [label sizeToFit];
+    
+    return label;
+    
+}
+
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     ArticleCellB *cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleCell forIndexPath:indexPath];
     
@@ -710,7 +752,19 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:event:)];
+    UIButton *allReadButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [allReadButton setImage:[UIImage imageNamed:@"done_all"] forState:UIControlStateNormal];
+    [allReadButton sizeToFit];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapAllRead:)];
+    [allReadButton addGestureRecognizer:tap];
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressOnAllRead:)];
+    [allReadButton addGestureRecognizer:longPress];
+    
+    [longPress requireGestureRecognizerToFail:tap];
+    
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithCustomView:allReadButton];
     allRead.accessibilityValue = @"Mark all articles as read";
     
     if (self.isExploring) {
@@ -804,6 +858,9 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     if (self->_shouldShowHeader) {
         self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 80.f);
     }
+    else {
+        self.flowLayout.headerReferenceSize = CGSizeZero;
+    }
     
 }
 
@@ -840,8 +897,8 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    self.view.backgroundColor = theme.backgroundColor;
-    self.collectionView.backgroundColor = theme.backgroundColor;
+    self.view.backgroundColor = theme.cellColor;
+    self.collectionView.backgroundColor = theme.cellColor;
     
     [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
     

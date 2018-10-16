@@ -172,7 +172,7 @@ AppDelegate *MyAppDelegate = nil;
     _restoring = YES;
     
     DDLogDebug(@"Will restore application state");
-    return YES;
+    return _restoring;
 }
 
 - (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {

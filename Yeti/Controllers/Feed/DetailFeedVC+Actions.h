@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_markVisibleRowsRead;
 
-- (void)didTapAllRead:(UIBarButtonItem *)sender event:(UIEvent *)event;
+- (void)didTapAllRead:(id)sender;
 
-- (void)didLongPressOnAllRead:(UIBarButtonItem *)sender;
+- (void)didLongPressOnAllRead:(id)sender;
 
 - (void)_didFinishAllReadActionSuccessfully;
 

@@ -849,6 +849,20 @@ NSString * const kDS2Data = @"DS2Data";
     
     CGPoint contentOffset = self.tableView.contentOffset;
     
+    if (folder && (folder.feeds == nil || folder.feeds.count == 0)) {
+        // it is possible that this folder is actually empty
+        // but let's check it anyways
+        
+        [[MyFeedsManager feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            if ([obj.folderID isEqualToNumber:folder.folderID]) {
+                [folder.feeds addPointer:(__bridge void * _Nullable)(obj)];
+            }
+            
+        }];
+        
+    }
+    
     if (folder.isExpanded) {
         
         DDLogDebug(@"Closing index: %@", @(index));

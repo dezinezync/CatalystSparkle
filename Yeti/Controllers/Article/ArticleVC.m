@@ -1387,7 +1387,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
     
-    if ([link isKindOfClass:NSArray.class]) {
+    if (link && [link isKindOfClass:NSArray.class]) {
         link = [(NSArray *)link rz_reduce:^id(id prev, id current, NSUInteger idx, NSArray *array) {
             if (!prev && [current isBlank] == NO) {
                 return current;

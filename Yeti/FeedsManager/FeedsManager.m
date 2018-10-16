@@ -265,7 +265,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
        
         Folder *folder = [Folder instanceFromDictionary:obj];
         
-        NSArray <NSNumber *> * feedIDs = [obj valueForKey:@"feeds"];
+        NSArray <NSNumber *> * feedIDs = [[obj valueForKey:@"feeds"] rz_filter:^BOOL(NSNumber * obj, NSUInteger idx, NSArray *array) {
+            return obj != nil && [obj integerValue] > 0;
+        }];
         
         folder.feeds = [NSPointerArray weakObjectsPointerArray];
         

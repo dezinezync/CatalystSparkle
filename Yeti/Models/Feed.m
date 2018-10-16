@@ -71,7 +71,7 @@
     return [self copy];
 }
 
-- (BOOL)isEqualToFolder:(Feed *)object {
+- (BOOL)isEqualToFeed:(Feed *)object {
     return ([[object feedID] isEqualToNumber:self.feedID]
             && [[object title] isEqualToString:self.title]
             && [[object folderID] isEqualToNumber:self.folderID]);
