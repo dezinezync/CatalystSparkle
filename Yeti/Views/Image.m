@@ -19,6 +19,7 @@
 #import <FLAnimatedImage/FLAnimatedImage.h>
 
 #import "UIImage+Sizing.h"
+#import "YetiConstants.h"
 
 @interface Image ()
 

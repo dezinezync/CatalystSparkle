@@ -96,4 +96,6 @@ typedef NS_ENUM(NSInteger, FeedType) {
     FeedTypeFolder
 };
 
+YETI_EXPORT NSString * const kUseImageProxy;
+
 #endif /* YetiConstants_h */

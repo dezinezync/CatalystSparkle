@@ -72,7 +72,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
     
-    self.titleLabel.font = [TypeFactory.shared titleFont];
+    // if it's a micro blog post, use the normal font
+    self.titleLabel.font = self.item.content && self.item.content.count ? [TypeFactory.shared bodyFont] : [TypeFactory.shared titleFont];
     
     self.titleLabel.textColor = theme.titleColor;
     self.timeLabel.textColor = theme.subtitleColor;
@@ -189,7 +190,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
         if (content) {
             self.titleLabel.text = content.content;
-            self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+            self.titleLabel.font = [TypeFactory.shared bodyFont];
             self.titleLabel.textColor = [[YTThemeKit theme] titleColor];
         }
     }

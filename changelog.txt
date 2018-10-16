@@ -6,6 +6,9 @@
 
 This has been a highly requested Feature and I'm super pumped to finally bring it to Elytra. I look forward to your feedback on this.
 
+[NEW]
+- Added option to use an Image Proxy. The current one that is set is provided by weserv.nl. The Proxy can speed up image downloads (as it uses CloudFlare CDN) and provides multiple sizing options as well as quality options. This works in conjunction with your Image Loading preferences.
+
 [FIX]
 
 - Long pressing on the "Mark All Read" button now behaves as expected. You no longer need to lift your finger for the action to trigger.

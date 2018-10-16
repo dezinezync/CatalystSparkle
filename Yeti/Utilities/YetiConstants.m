@@ -99,3 +99,5 @@ NSString * const kUseExtendedFeedLayout = @"com.dezinezync.elytra.extendedFeedLa
 
 NSString * const kShowUnreadCounts = @"com.dezinezync.elytra.showUnreadCounts";
 NSNotificationName const ShowUnreadCountsPreferenceChanged = @"com.dezinezync.elytra.note.unreadCountPreferenceChanged";
+
+NSString * const kUseImageProxy = @"com.dezinezync.elytra.useImageProxy";

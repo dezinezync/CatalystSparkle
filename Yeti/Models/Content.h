@@ -31,8 +31,6 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
-#ifndef SHARE_EXTENSION
 - (NSString *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width;
-#endif
 
 @end

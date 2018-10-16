@@ -211,7 +211,8 @@ AppDelegate *MyAppDelegate = nil;
              kSubscriptionType: @"None",
              kShowArticleCoverImages: @NO,
              kUseExtendedFeedLayout: @NO,
-             kShowUnreadCounts: @YES
+             kShowUnreadCounts: @YES,
+             kUseImageProxy: @NO
              };
 }
 
