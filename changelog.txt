@@ -13,6 +13,8 @@ This has been a highly requested Feature and I'm super pumped to finally bring i
 
 - Long pressing on the "Mark All Read" button now behaves as expected. You no longer need to lift your finger for the action to trigger.
 
+- Fixes enclosures not loading for articles when changed using the floating bar.
+
 -- 173 --
 
 Version 1.1.0 Update Notes

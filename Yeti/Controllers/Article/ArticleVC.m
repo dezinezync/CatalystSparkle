@@ -639,12 +639,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    if (self.item == nil) {
-        self.item = responseObject;
-    }
-    else if ([self.item.content isEqualToArray:[responseObject content]] == NO) {
-        self.item.content = [responseObject content];
-    }
+    self.item = responseObject;
     
     // add Body
     [self addTitle];

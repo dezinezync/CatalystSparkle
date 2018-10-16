@@ -111,11 +111,23 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 #pragma mark - Overrides
 
+- (NSString *)emptyViewSubtitle {
+    if (self.isUnread) {
+        return @"No Unread Articles are available.";
+    }
+    
+    return @"You dont have any bookmarks. Bookmarks are a great way to save articles for offline reading.";
+}
+
 - (void)loadNextPage
 {
     
     if (self.loadingNext)
         return;
+    
+    if (self->_canLoadNext == NO) {
+        return;
+    }
     
     self.loadingNext = YES;
     
@@ -130,8 +142,11 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             if (!self)
                 return;
             
+            self->_page = page;
+            
             if (![responseObject count]) {
                 self->_canLoadNext = NO;
+                self.DS.data = self.DS.data ?: @[];
             }
             else {
                 @try {

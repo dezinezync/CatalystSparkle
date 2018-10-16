@@ -250,6 +250,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark <UICollectionViewDataSource>
 
+- (NSString *)emptyViewSubtitle {
+    return formattedString(@"No recent articles are available from %@", self.feed.title);
+}
+
 - (UIView *)viewForEmptyDataset {
     
     // since the Datasource is asking for this view
@@ -269,16 +273,25 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     label.opaque = YES;
     
     NSString *title = @"No Articles";
-    NSString *subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+    NSString *subtitle = [self emptyViewSubtitle];
+    
+    NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    para.lineHeightMultiple = 1.4f;
+    para.alignment = self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular ? NSTextAlignmentCenter : NSTextAlignmentNatural;
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
+    
     NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
-                                 NSForegroundColorAttributeName: theme.subtitleColor};
+                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSParagraphStyleAttributeName: para
+                                 };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
-                   NSForegroundColorAttributeName: theme.titleColor};
+                   NSForegroundColorAttributeName: theme.titleColor,
+                   NSParagraphStyleAttributeName: para
+                   };
     
     NSRange range = [formatted rangeOfString:title];
     if (range.location != NSNotFound) {
@@ -367,6 +380,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (self->_ignoreLoadScroll)
         return;
     
+    if (self->_canLoadNext == NO) {
+        return;
+    }
+    
     self.loadingNext = YES;
     
     weakify(self);
@@ -380,6 +397,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         if (!self)
             return;
         
+        self->_page = page;
         self.loadingNext = NO;
         
         if (!responseObject.count) {

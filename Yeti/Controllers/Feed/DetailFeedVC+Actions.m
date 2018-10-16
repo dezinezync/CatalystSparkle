@@ -122,14 +122,7 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
-        
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.barButtonItem = sender;
-        
-    }
-    
-    [self presentViewController:avc animated:YES completion:nil];
+    [self presentAllReadController:avc fromSender:sender];
     
     
 }
@@ -177,14 +170,31 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
+    [self presentAllReadController:avc fromSender:sender];
+}
+
+- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
+    
     if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.barButtonItem = sender;
+        
+        if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+            UIView *view = [(UITapGestureRecognizer *)sender view];
+            pvc.sourceView = self.view;
+            CGRect frame = [view convertRect:view.frame toView:self.view];
+            
+            frame.origin.x -= [avc preferredContentSize].width;
+            pvc.sourceRect = frame;
+        }
+        else {
+            pvc.barButtonItem = sender;
+        }
         
     }
     
     [self presentViewController:avc animated:YES completion:nil];
+    
 }
 
 - (void)_didFinishAllReadActionSuccessfully {

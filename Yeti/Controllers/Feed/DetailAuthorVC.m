@@ -56,6 +56,10 @@
     
 }
 
+- (NSString *)emptyViewSubtitle {
+    return formattedString(@"No recent articles are available from %@", self.author.name);
+}
+
 - (void)setupLayout {
     
     CGFloat padding = self.flowLayout.minimumInteritemSpacing;
@@ -85,6 +89,10 @@
     if (self.loadingNext)
         return;
     
+    if (self->_canLoadNext == NO) {
+        return;
+    }
+    
     self.loadingNext = YES;
     
     weakify(self);
@@ -102,6 +110,7 @@
         
         if (![responseObject count]) {
             self->_canLoadNext = NO;
+            self.DS.data = self.DS.data ?: @[];
         }
         
         if (page == 1 && self.DS.data.count) {

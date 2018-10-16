@@ -53,6 +53,10 @@
     
 }
 
+- (NSString *)emptyViewSubtitle {
+    return formattedString(@"No recent articles are available in %@", self.folder.title);
+}
+
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     return nil;
 }
@@ -75,6 +79,10 @@
     if (self.loadingNext)
         return;
     
+    if (self->_canLoadNext == NO) {
+        return;
+    }
+    
     self.loadingNext = YES;
     
     weakify(self);
@@ -92,6 +100,7 @@
         
         if (![responseObject count]) {
             self->_canLoadNext = NO;
+            self.DS.data = self.DS.data ?: @[];
         }
         
         if (page == 1 && self.DS.data.count) {
@@ -111,6 +120,11 @@
         DDLogError(@"%@", error);
         
         strongify(self);
+        
+        if (self.DS.data == nil || [self.DS.data count] == 0) {
+            // the initial load has failed.
+            self.DS.data = @[];
+        }
         
         self.loadingNext = NO;
     }];

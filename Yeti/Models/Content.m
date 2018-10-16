@@ -335,8 +335,8 @@
     // check if we should be using the proxy
     if ([NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy]) {
         
-        url = [url stringByReplacingOccurrencesOfString:@"http://" withString:@""];
-        url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@""];
+//        url = [url stringByReplacingOccurrencesOfString:@"http://" withString:@""];
+//        url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@""];
         
         url = formattedString(@"https://images.weserv.nl/?url=%@", url);
         

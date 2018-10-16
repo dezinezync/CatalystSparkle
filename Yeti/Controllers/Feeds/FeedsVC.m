@@ -501,7 +501,7 @@ static void *KVO_Unread = &KVO_Unread;
             [self.navigationController pushViewController:vc animated:YES];
         }
         else {
-            vc = [DetailFolderVC instanceWithFeed:feed];
+            vc = [DetailFolderVC instanceWithFolder:folder];
             [self.splitViewController showDetailViewController:vc sender:self];
         }
         
