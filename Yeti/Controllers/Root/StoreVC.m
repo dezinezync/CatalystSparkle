@@ -19,7 +19,9 @@
 
 #import "UIImage+Color.h"
 
-@interface StoreVC () <RMStoreObserver>
+@interface StoreVC () <RMStoreObserver> {
+    BOOL _sendingReceipt;
+}
 
 @property (nonatomic, weak) RMStoreKeychainPersistence *persistence;
 @property (nonatomic) NSArray *purhcasedProductIdentifiers;
@@ -259,6 +261,9 @@
     [self resetSelectedCellState];
 //    [self updateFooterView];
     
+    [self sendReceipt];
+    return;
+    
     NSDate *today = [NSDate date];
     
     // order transactions by date in descending order
@@ -341,6 +346,68 @@
         [self setButtonsState:YES];
         
     }];
+}
+
+- (void)sendReceipt {
+    
+    if (self->_sendingReceipt == YES) {
+        return;
+    }
+    
+    self->_sendingReceipt = YES;
+    
+//    [[RMStore defaultStore] refreshReceiptOnSuccess:^{
+    
+        // get receipt
+        NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
+        
+        if (url != nil) {
+            // get the receipt data
+            NSData *data = [[NSData alloc] initWithContentsOfURL:url];
+            
+            if (data) {
+                [MyFeedsManager postAppReceipt:data success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    self->_sendingReceipt = NO;
+                    
+                    [self updateFooterView];
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    self->_sendingReceipt = NO;
+                   
+                    [AlertManager showGenericAlertWithTitle:@"App Receipt Update Failed" message:error.localizedDescription];
+                    
+                    [self setButtonsState:YES];
+                    
+                }];
+            }
+            else {
+                self->_sendingReceipt = NO;
+                
+                [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was found on this device but it was empty. Please ensure you have an active internet connection."];
+                
+                [self setButtonsState:YES];
+            }
+        }
+        else {
+            self->_sendingReceipt = NO;
+            
+            [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was not found on this device. Please ensure you have an active internet connection."];
+            
+            [self setButtonsState:YES];
+        }
+        
+//    } failure:^(NSError *error) {
+//        
+//        self->_sendingReceipt = NO;
+//       
+//        [AlertManager showGenericAlertWithTitle:@"App Receipt Error" message:error.localizedDescription];
+//        
+//        [self setButtonsState:YES];
+//        
+//    }];
+    
 }
 
 #pragma mark - Setters
