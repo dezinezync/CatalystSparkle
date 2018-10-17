@@ -16,6 +16,8 @@
 #import "Subscription.h"
 #import "FeedsManagerErrors.h"
 
+#import "YetiConstants.h"
+
 #import <UICKeyChainStore/UICKeyChainStore.h>
 
 @class FeedsManager;
@@ -108,7 +110,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)removeFolder:(Folder *)folder success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)folderFeedFor:(Folder *)folder page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Filters
 

@@ -89,7 +89,9 @@
     
     NSInteger page = _page + 1;
     
-    [MyFeedsManager folderFeedFor:self.folder page:page success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    
+    [MyFeedsManager folderFeedFor:self.folder sorting:sorting page:page success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -103,7 +105,7 @@
             self.DS.data = self.DS.data ?: @[];
         }
         
-        if (page == 1 && self.DS.data.count) {
+        if (page == 1 || self.DS.data == nil) {
             self.DS.data = responseObject;
         }
         else {

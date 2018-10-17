@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DetailFeedVC (Actions)
 
+- (void)didTapSortOptions:(UIBarButtonItem *)sender;
+
 - (void)loadArticle;
 
 - (void)_markVisibleRowsRead;

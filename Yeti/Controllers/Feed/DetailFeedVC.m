@@ -277,7 +277,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     para.lineHeightMultiple = 1.4f;
-    para.alignment = self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular ? NSTextAlignmentCenter : NSTextAlignmentNatural;
+    para.alignment = NSTextAlignmentCenter;
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
     
@@ -784,6 +784,7 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithCustomView:allReadButton];
     allRead.accessibilityValue = @"Mark all articles as read";
+    allRead.width = 32.f;
     
     if (self.isExploring) {
         // check if the user is subscribed to this feed
@@ -795,18 +796,27 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
             self.navigationItem.rightBarButtonItem = subscribe;
         }
     }
-    else if (!(self.feed.hubSubscribed && self.feed.hub)) {
-        self.navigationItem.rightBarButtonItem = allRead;
-    }
     else {
-        // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        // sorting button
+        YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
         
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+        UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+        sorting.width = 32.f;
         
-        self.navigationItem.rightBarButtonItems = @[allRead, notifications];
+        if (!(self.feed.hubSubscribed && self.feed.hub)) {
+            self.navigationItem.rightBarButtonItems = @[allRead, sorting];
+        }
+        else {
+            // push notifications are possible
+            NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+            
+            UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+            notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+            notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+            notifications.width = 32.f;
+            
+            self.navigationItem.rightBarButtonItems = @[allRead, notifications, sorting];
+        }
     }
     
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;

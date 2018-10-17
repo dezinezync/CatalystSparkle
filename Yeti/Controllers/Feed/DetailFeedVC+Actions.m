@@ -20,6 +20,63 @@
 
 #pragma mark - Actions
 
+- (void)didTapSortOptions:(UIBarButtonItem *)sender {
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"All - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortAllDesc];
+        
+        [self setSortingOption:YTSortAllDesc];
+        
+    }];
+    
+    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"All - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortAllAsc];
+        
+        [self setSortingOption:YTSortAllAsc];
+        
+    }];
+    
+    UIAlertAction *unreadDesc = [UIAlertAction actionWithTitle:@"Unread - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
+        
+        [self setSortingOption:YTSortUnreadDesc];
+        
+    }];
+    
+    UIAlertAction *unreadAsc = [UIAlertAction actionWithTitle:@"Unread - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
+        
+        [self setSortingOption:YTSortUnreadAsc];
+        
+    }];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    @try {
+        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortAllDesc] forKeyPath:@"image"];
+        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortAllAsc] forKeyPath:@"image"];
+        [unreadDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
+        [unreadAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
+    }
+    @catch (NSException *exc) {
+        
+    }
+    
+    [avc addAction:allDesc];
+    [avc addAction:allAsc];
+    [avc addAction:unreadDesc];
+    [avc addAction:unreadAsc];
+    
+    [self presentAllReadController:avc fromSender:sender];
+    
+}
+
 - (void)loadArticle {
     
     if (self.loadOnReady == nil)
@@ -171,30 +228,6 @@
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     [self presentAllReadController:avc fromSender:sender];
-}
-
-- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
-    
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
-        
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        
-        if ([sender isKindOfClass:UIGestureRecognizer.class]) {
-            UIView *view = [(UITapGestureRecognizer *)sender view];
-            pvc.sourceView = self.view;
-            CGRect frame = [view convertRect:view.frame toView:self.view];
-            
-            frame.origin.x -= [avc preferredContentSize].width;
-            pvc.sourceRect = frame;
-        }
-        else {
-            pvc.barButtonItem = sender;
-        }
-        
-    }
-    
-    [self presentViewController:avc animated:YES completion:nil];
-    
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
@@ -365,6 +398,47 @@
         sender.accessibilityValue = @"Unsubscribe from notifications";
         
     });
+}
+
+#pragma mark -
+
+- (void)setSortingOption:(YetiSortOption)option {
+    
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    [defaults setValue:option forKey:kDetailFeedSorting];
+    [defaults synchronize];
+    
+    self->_canLoadNext = YES;
+    self.loadingNext = NO;
+    
+    self->_page = 0;
+    [self.DS resetData];
+    
+    [self loadNextPage];
+}
+
+- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        
+        if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+            UIView *view = [(UITapGestureRecognizer *)sender view];
+            pvc.sourceView = self.view;
+            CGRect frame = [view convertRect:view.frame toView:self.view];
+            
+            frame.origin.x -= [avc preferredContentSize].width;
+            pvc.sourceRect = frame;
+        }
+        else {
+            pvc.barButtonItem = sender;
+        }
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
 }
 
 @end

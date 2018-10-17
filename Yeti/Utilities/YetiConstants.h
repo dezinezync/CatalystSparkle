@@ -10,7 +10,7 @@
 #define YetiConstants_h
 
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 #define YETI_EXPORT FOUNDATION_EXPORT
 
 typedef NSString * FMNotification;
@@ -97,5 +97,18 @@ typedef NS_ENUM(NSInteger, FeedType) {
 };
 
 YETI_EXPORT NSString * const kUseImageProxy;
+
+YETI_EXPORT NSString * const kDetailFeedSorting;
+typedef NSString * YetiSortOption;
+extern YetiSortOption const YTSortAllDesc;    // 0
+extern YetiSortOption const YTSortAllAsc;     // 1
+extern YetiSortOption const YTSortUnreadDesc; // 2
+extern YetiSortOption const YTSortUnreadAsc;  // 3
+
+@interface SortImageProvider : NSObject
+
++ (UIImage *)imageForSortingOption:(YetiSortOption)option;
+
+@end
 
 #endif /* YetiConstants_h */

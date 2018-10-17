@@ -1080,7 +1080,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)folderFeedFor:(Folder *)folder page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSString *path = formattedString(@"/1.1/folder/%@/feed", folder.folderID);
     
@@ -1089,6 +1089,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if ([self userID] != nil) {
         params[@"userID"] = MyFeedsManager.userID;
     }
+    
+    if (sorting) {
+        params[@"sortType"] = @(sorting.integerValue);
+    }
+    
 #if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
         params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
