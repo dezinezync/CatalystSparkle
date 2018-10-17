@@ -320,7 +320,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getFeed:(Feed *)feed sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
     if (!page)
         page = 1;
@@ -336,6 +336,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
 #endif
     
+    if (sorting) {
+        params[@"sortType"] = @(sorting.integerValue);
+    }
+    
     [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> * articles = [responseObject valueForKey:@"articles"];
@@ -344,8 +348,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return [FeedItem instanceFromDictionary:obj];
         }];
         
-        if (feed)
-            feed.articles = [feed.articles arrayByAddingObjectsFromArray:items];
+        if ([sorting integerValue] > 1) {
+            items = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                return obj.isRead == NO;
+            }];
+        }
+        
+        if (feed) {
+            if (page == 1) {
+                feed.articles = items;
+            }
+            else {
+                feed.articles = [(feed.articles ?: @[]) arrayByAddingObjectsFromArray:items];
+            }
+        }
         
         if (successCB)
             successCB(items, response, task);

@@ -45,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
 
+- (BOOL)showsSortingButton;
+
 - (void)setupHeaderView;
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read;

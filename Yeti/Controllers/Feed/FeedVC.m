@@ -807,7 +807,7 @@
     
     NSInteger page = self->_page + 1;
     
-    [MyFeedsManager getFeed:self.feed page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getFeed:self.feed sorting:nil page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         

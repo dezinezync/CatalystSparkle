@@ -390,7 +390,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSInteger page = self->_page + 1;
     
-    [MyFeedsManager getFeed:self.feed page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    
+    [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -765,6 +767,10 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
 
 #pragma mark - Layout
 
+- (BOOL)showsSortingButton {
+    return YES;
+}
+
 - (void)setupNavigationBar {
     
     self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
@@ -804,7 +810,13 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
         sorting.width = 32.f;
         
         if (!(self.feed.hubSubscribed && self.feed.hub)) {
-            self.navigationItem.rightBarButtonItems = @[allRead, sorting];
+            NSMutableArray *buttons = @[allRead].mutableCopy;
+            
+            if ([self showsSortingButton]) {
+                [buttons addObject:sorting];
+            }
+            
+            self.navigationItem.rightBarButtonItems = buttons;
         }
         else {
             // push notifications are possible
@@ -815,7 +827,13 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
             notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
             notifications.width = 32.f;
             
-            self.navigationItem.rightBarButtonItems = @[allRead, notifications, sorting];
+            NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
+            
+            if ([self showsSortingButton]) {
+                [buttons addObject:sorting];
+            }
+            
+            self.navigationItem.rightBarButtonItems = buttons;
         }
     }
     

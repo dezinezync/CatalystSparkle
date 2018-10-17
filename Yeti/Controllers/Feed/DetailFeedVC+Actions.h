@@ -7,12 +7,11 @@
 //
 
 #import "DetailFeedVC.h"
+#import "YetiConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DetailFeedVC (Actions)
-
-- (void)didTapSortOptions:(UIBarButtonItem *)sender;
 
 - (void)loadArticle;
 
@@ -29,6 +28,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)subscribeToFeed:(UIBarButtonItem *)sender;
 
 - (void)subscribedToFeed:(NSNotification *)note;
+
+#pragma mark - 
+
+- (void)didTapSortOptions:(UIBarButtonItem *)sender;
+
+- (void)setSortingOption:(YetiSortOption)option;
+
+- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender;
 
 @end
 

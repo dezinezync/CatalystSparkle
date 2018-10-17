@@ -14,7 +14,6 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 #import <UserNotifications/UserNotifications.h>
-#import "YetiConstants.h"
 
 @implementation DetailFeedVC (Actions)
 

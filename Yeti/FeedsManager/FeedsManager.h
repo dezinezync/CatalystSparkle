@@ -72,7 +72,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
 
-- (void)getFeed:(Feed * _Nonnull)feed page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getFeed:(Feed * _Nonnull)feed sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
