@@ -1305,27 +1305,61 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     weakify(self);
     
-    [self.session POST:@"/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session POST:@"/1.1/store" queryParams:@{@"userID": [self userID]} parameters:@{@"receipt": receiptString} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         strongify(self);
         
-        [self _updateSubscriptionStateWithSuccess:^(id responseObjectx, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             
-            if (successCB) {
-                successCB(responseObject, response, task);
+            if ([[responseObject valueForKey:@"status"] boolValue]) {
+                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                
+                self.subscription = sub;
+                
+                if (successCB) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        successCB(responseObject, response, task);
+                    });
+                }
             }
-            
-        } error:errorCB];
+            else {
+                Subscription *sub = [Subscription new];
+                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
+                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
+                
+                self.subscription = sub;
+                
+                if (errorCB) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        errorCB(sub.error, response, task);
+                    });
+                }
+            }
+        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        error = [self errorFromResponse:error.userInfo];
         
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            DDLogError(@"Subscription Error: %@", error.localizedDescription);
+            
+            Subscription *sub = [Subscription new];
+            sub.error = error;
+            
+            strongify(self);
+            
+            self.subscription = sub;
+            
+            NSError * err = [self errorFromResponse:error.userInfo];
+            
+            if (errorCB)
+                errorCB(err, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
+            
+        });
         
     }];
     
@@ -1596,7 +1630,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
