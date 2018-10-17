@@ -209,6 +209,16 @@
 - (void)setButtonsState:(BOOL)enabled {
     self.buyButton.enabled = enabled;
     self.restoreButton.enabled = enabled;
+    
+    if (self.navigationItem.rightBarButtonItem) {
+        self.navigationItem.rightBarButtonItem.enabled = enabled;
+    }
+}
+
+- (void)didTapDone:(UIBarButtonItem *)sender {
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 - (void)didTapRestore
@@ -361,57 +371,45 @@
     
     self->_sendingReceipt = YES;
     
-//    [[RMStore defaultStore] refreshReceiptOnSuccess:^{
+    // get receipt
+    NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
     
-        // get receipt
-        NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
+    if (url != nil) {
+        // get the receipt data
+        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
         
-        if (url != nil) {
-            // get the receipt data
-            NSData *data = [[NSData alloc] initWithContentsOfURL:url];
-            
-            if (data) {
-                [MyFeedsManager postAppReceipt:data success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    self->_sendingReceipt = NO;
-                    
-                    [self updateFooterView];
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    self->_sendingReceipt = NO;
-                   
-                    [AlertManager showGenericAlertWithTitle:@"App Receipt Update Failed" message:error.localizedDescription];
-                    
-                    [self setButtonsState:YES];
-                    
-                }];
-            }
-            else {
+        if (data) {
+            [MyFeedsManager postAppReceipt:data success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
                 self->_sendingReceipt = NO;
                 
-                [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was found on this device but it was empty. Please ensure you have an active internet connection."];
+                [self updateFooterView];
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                self->_sendingReceipt = NO;
+               
+                [AlertManager showGenericAlertWithTitle:@"App Receipt Update Failed" message:error.localizedDescription];
                 
                 [self setButtonsState:YES];
-            }
+                
+            }];
         }
         else {
             self->_sendingReceipt = NO;
             
-            [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was not found on this device. Please ensure you have an active internet connection."];
+            [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was found on this device but it was empty. Please ensure you have an active internet connection."];
             
             [self setButtonsState:YES];
         }
+    }
+    else {
+        self->_sendingReceipt = NO;
         
-//    } failure:^(NSError *error) {
-//        
-//        self->_sendingReceipt = NO;
-//       
-//        [AlertManager showGenericAlertWithTitle:@"App Receipt Error" message:error.localizedDescription];
-//        
-//        [self setButtonsState:YES];
-//        
-//    }];
+        [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was not found on this device. Please ensure you have an active internet connection."];
+        
+        [self setButtonsState:YES];
+    }
     
 }
 

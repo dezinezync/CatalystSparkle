@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface StoreVC : UITableViewController
 
+- (void)didTapDone:(UIBarButtonItem *)sender;
+
 @end
 
 NS_ASSUME_NONNULL_END
