@@ -22,6 +22,10 @@
 
 #import "YetiThemeKit.h"
 
+BOOL IsAccessibilityContentCategory(void) {
+    return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
+}
+
 NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 
 @interface ArticleCellB ()
@@ -71,6 +75,36 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
+    
+    BOOL isAccessibilityContentCategory = IsAccessibilityContentCategory();
+    
+    UIStackView *stackView = (UIStackView *)[self.authorLabel superview];
+    if (isAccessibilityContentCategory) {
+        self.faviconView.hidden = YES;
+        
+        stackView.axis = UILayoutConstraintAxisVertical;
+        self.timeLabel.textAlignment = NSTextAlignmentLeft;
+        
+        stackView = (UIStackView *)[self.faviconView superview];
+        UIEdgeInsets insets = stackView.layoutMargins;
+        insets.top = [TypeFactory.shared titleFont].pointSize / 2.f;
+        stackView.layoutMargins = insets;
+        
+        stackView.layoutMarginsRelativeArrangement = YES;
+    }
+    else {
+        self.faviconView.hidden = NO;
+        
+        stackView.axis = UILayoutConstraintAxisHorizontal;
+        self.timeLabel.textAlignment = NSTextAlignmentRight;
+        
+        stackView = (UIStackView *)[self.faviconView superview];
+        UIEdgeInsets insets = stackView.layoutMargins;
+        insets.top = 0;
+        stackView.layoutMargins = insets;
+        
+        stackView.layoutMarginsRelativeArrangement = NO;
+    }
     
     // if it's a micro blog post, use the normal font
     self.titleLabel.font = self.item.content && self.item.content.count ? [TypeFactory.shared bodyFont] : [TypeFactory.shared titleFont];
@@ -219,7 +253,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.faviconView.hidden = YES;
         
         UIEdgeInsets margins = [stackView layoutMargins];
-        margins.top = 4.f;
+        margins.top = [TypeFactory.shared titleFont].pointSize/2.f;
         
         stackView.layoutMargins = margins;
         stackView.layoutMarginsRelativeArrangement = YES;
@@ -227,8 +261,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     if (feedType != FeedTypeFeed) {
-        stackView.layoutMargins = UIEdgeInsetsZero;
-        stackView.layoutMarginsRelativeArrangement = NO;
+        
+        UIEdgeInsets margins = [stackView layoutMargins];
+        margins.top = ceil([TypeFactory.shared titleFont].pointSize/2.f) + 4.f;
+        
+        stackView.layoutMargins = margins;
+        
+        stackView.layoutMarginsRelativeArrangement = YES;
         
         NSString *url = [feed faviconURI];
         

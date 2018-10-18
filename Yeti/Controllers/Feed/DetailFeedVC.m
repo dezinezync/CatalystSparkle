@@ -24,6 +24,12 @@
 
 #import "YetiThemeKit.h"
 
+@interface UICollectionViewController ()
+
+- (UICollectionView *)_newCollectionViewWithFrame:(CGRect)frame collectionViewLayout:(UICollectionViewLayout *)layout;
+
+@end
+
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 @interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
@@ -68,6 +74,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     }
     
     return self;
+    
+}
+
+- (UICollectionView *)_newCollectionViewWithFrame:(CGRect)frame collectionViewLayout:(UICollectionViewLayout *)layout {
+    
+    if (layout == nil) {
+        layout = [[UICollectionViewFlowLayout alloc] init];
+    }
+    
+    return [super _newCollectionViewWithFrame:frame collectionViewLayout:layout];
     
 }
 
@@ -734,7 +750,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 NSString * const kBFeedData = @"FeedData";
 NSString * const kBCurrentPage = @"FeedsLoadedPage";
 
-+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
++ (nullable UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     Feed *feed = [coder decodeObjectForKey:kBFeedData];
     
     if (feed) {
@@ -899,7 +915,7 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
         cellWidth = width - (padding * 2.f);
     }
     
-    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
+    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 100.f);
     self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
     
     if (self->_shouldShowHeader) {

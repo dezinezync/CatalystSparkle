@@ -85,7 +85,7 @@
         return YES;
     }];
     
-    [JLRoutes addRoute:@"/twitter/:type/:identifer" handler:^BOOL(NSDictionary *parameters) {
+    [JLRoutes.globalRoutes addRoute:@"/twitter/:type/:identifer" handler:^BOOL(NSDictionary *parameters) {
        
         NSString *type = [parameters valueForKey:@"type"];
         NSString *identifer = [parameters valueForKey:@"identifer"];
@@ -101,7 +101,7 @@
         
     }];
     
-    [JLRoutes addRoute:@"/feed/:feedID/article/:articleID" handler:^BOOL(NSDictionary *parameters) {
+    [JLRoutes.globalRoutes addRoute:@"/feed/:feedID/article/:articleID" handler:^BOOL(NSDictionary *parameters) {
        
         NSNumber *feedID = @([[parameters valueForKey:@"feedID"] integerValue]);
         NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
@@ -112,9 +112,9 @@
         
     }];
     
-    [JLRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
+    [JLRoutes.globalRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
         
-        NSString *link = [[(NSURL *)[parameters valueForKey:kJLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
+        NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
         
         [self openURL:link];
         
