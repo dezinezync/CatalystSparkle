@@ -262,6 +262,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     if (feedType != FeedTypeFeed) {
         
+        if (IsAccessibilityContentCategory()) {
+            stackView.hidden = YES;
+            return;
+        }
+        
         UIEdgeInsets margins = [stackView layoutMargins];
         margins.top = ceil([TypeFactory.shared titleFont].pointSize/2.f) + 4.f;
         
