@@ -136,6 +136,7 @@
 
 NSString * const kBFolderData = @"FolderData";
 NSString * const kBFolderPageNumber = @"FolderPageNumber";
+NSString * const kBFolderSizCache = @"FeedFolderSizesCache";
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBFolderData];
@@ -147,6 +148,12 @@ NSString * const kBFolderPageNumber = @"FolderPageNumber";
         
         vc->_page = [coder decodeIntegerForKey:kBFolderPageNumber];
         
+        NSDictionary *sizeCache = [coder decodeObjectForKey:kBFolderSizCache];
+        
+        if (sizeCache) {
+            vc.sizeCache = sizeCache.mutableCopy;
+        }
+        
         return vc;
     }
     
@@ -157,6 +164,8 @@ NSString * const kBFolderPageNumber = @"FolderPageNumber";
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.DS.data forKey:kBFolderData];
+    [coder encodeInteger:self->_page forKey:kBFolderPageNumber];
+    [coder encodeObject:self.sizeCache forKey:kBFolderSizCache];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -168,6 +177,12 @@ NSString * const kBFolderPageNumber = @"FolderPageNumber";
         self.DS.data = items;
         self.customFeed = FeedTypeFolder;
         self->_page = [coder decodeIntegerForKey:kBFolderPageNumber];
+        
+        NSDictionary *sizeCache = [coder decodeObjectForKey:kBFolderSizCache];
+        
+        if (sizeCache) {
+            self.sizeCache = sizeCache.mutableCopy;
+        }
     }
     
 }

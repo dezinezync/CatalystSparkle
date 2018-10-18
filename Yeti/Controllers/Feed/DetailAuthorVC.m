@@ -138,6 +138,8 @@
 #pragma mark - State Restoration
 
 NSString * const kBAuthorData = @"AuthorData";
+NSString * const kAuthorSizCache = @"FeedAuthorSizesCache";
+NSString * const kAuthorPageNumber = @"FeedAuthorPage";
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     Author *author = [coder decodeObjectForKey:kBAuthorData];
@@ -146,6 +148,14 @@ NSString * const kBAuthorData = @"AuthorData";
         DetailAuthorVC *vc = [[DetailAuthorVC alloc] init];
         vc.author = author;
         vc.customFeed = FeedTypeFeed;
+        vc->_page = [coder decodeIntegerForKey:kAuthorPageNumber];
+        
+        NSDictionary *sizesCache = [coder decodeObjectForKey:kAuthorSizCache];
+        
+        if (sizesCache) {
+            vc.sizeCache = sizesCache.mutableCopy;
+        }
+        
         return vc;
     }
     
@@ -156,6 +166,8 @@ NSString * const kBAuthorData = @"AuthorData";
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.author forKey:kBAuthorData];
+    [coder encodeInteger:self->_page forKey:kAuthorPageNumber];
+    [coder encodeObject:self.sizeCache forKey:kAuthorSizCache];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -165,6 +177,13 @@ NSString * const kBAuthorData = @"AuthorData";
     
     if (author) {
         self.author = author;
+        self->_page = [coder decodeIntegerForKey:kAuthorPageNumber];
+        
+        NSDictionary *sizeCache = [coder decodeObjectForKey:kAuthorSizCache];
+        if (sizeCache) {
+            self.sizeCache = sizeCache.mutableCopy;
+        }
+        
     }
     
 }

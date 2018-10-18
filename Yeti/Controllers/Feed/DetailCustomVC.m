@@ -92,20 +92,11 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 - (void)dealloc {
     
-    if (MyFeedsManager.observationInfo != nil && self.unread == NO) {
+    if (MyFeedsManager.observationInfo != nil && self.unread == NO) { @try {
         
-        NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
-        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [obj valueForKeyPath:@"observer"];
-        }];
+        [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_DETAIL_BOOKMARKS];
         
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
-            } @catch (NSException *exc) {}
-        }
-        
-    }
+    } @catch (NSException *exc) {} }
     
 }
 
@@ -307,6 +298,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 NSString * const kBUnreadData = @"UnreadData";
 NSString * const kBUnreadPageNumber = @"UnreadPageNumber";
 NSString * const kBIsUnread = @"VCIsUnread";
+NSString * const kBSizCache = @"FeedCustomSizesCache";
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
@@ -315,10 +307,17 @@ NSString * const kBIsUnread = @"VCIsUnread";
         DetailCustomVC *vc = [[DetailCustomVC alloc] init];
         vc.DS.data = items;
         vc.customFeed = FeedTypeCustom;
+        [vc setupLayout];
         
         if ([coder decodeBoolForKey:kBIsUnread]) {
             vc.unread = YES;
             vc->_page = [coder decodeIntegerForKey:kBUnreadPageNumber];
+        }
+        
+        NSDictionary *sizeCache = [coder decodeObjectForKey:kBSizCache];
+        
+        if (sizeCache) {
+            vc.sizeCache = sizeCache.mutableCopy;
         }
         
         return vc;
@@ -337,6 +336,8 @@ NSString * const kBIsUnread = @"VCIsUnread";
         [coder encodeInteger:_page forKey:kBUnreadPageNumber];
     }
     
+    [coder encodeObject:self.sizeCache forKey:kBSizCache];
+    
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -345,12 +346,20 @@ NSString * const kBIsUnread = @"VCIsUnread";
     NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
     
     if (items) {
+        [self.DS resetData];
         self.DS.data = items;
         self.customFeed = FeedTypeCustom;
+        [self setupLayout];
         
         if ([coder decodeBoolForKey:kBIsUnread]) {
             self.unread = YES;
             self->_page = [coder decodeIntegerForKey:kBUnreadPageNumber];
+        }
+        
+        NSDictionary *sizeCache = [coder decodeObjectForKey:kBSizCache];
+        
+        if (sizeCache) {
+            self.sizeCache = sizeCache.mutableCopy;
         }
     }
     

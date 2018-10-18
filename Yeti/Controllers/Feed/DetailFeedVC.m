@@ -83,7 +83,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         layout = [[UICollectionViewFlowLayout alloc] init];
     }
     
-    return [super _newCollectionViewWithFrame:frame collectionViewLayout:layout];
+    UICollectionView *collectionView = [super _newCollectionViewWithFrame:frame collectionViewLayout:layout];
+    
+    return collectionView;
     
 }
 
@@ -146,12 +148,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.feed.articles = @[];
     }
     
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    
-    [notificationCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
-    [notificationCenter removeObserver:self name:kDidUpdateTheme object:nil];
-    
     @try {
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        
+        [notificationCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+        [notificationCenter removeObserver:self name:kDidUpdateTheme object:nil];
+        
         [self.collectionView removeObserver:self forKeyPath:propSel(frame) context:KVO_DetailFeedFrame];
     }
     @catch (NSException *exc) {}
@@ -749,12 +751,20 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 NSString * const kBFeedData = @"FeedData";
 NSString * const kBCurrentPage = @"FeedsLoadedPage";
+NSString * const kSizCache = @"FeedSizesCache";
 
 + (nullable UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     Feed *feed = [coder decodeObjectForKey:kBFeedData];
     
     if (feed) {
         DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+        
+        NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
+        
+        if (sizesCache) {
+            vc.sizeCache = sizesCache.mutableCopy;
+        }
+        
         return vc;
     }
     
@@ -766,6 +776,7 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     
     [coder encodeObject:self.feed forKey:kBFeedData];
     [coder encodeInteger:_page forKey:kBCurrentPage];
+    [coder encodeObject:self.sizeCache forKey:kSizCache];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -776,7 +787,13 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     if (feed) {
         self.feed = feed;
         self.DS.data = self.feed.articles;
+        
         _page = [coder decodeIntegerForKey:kBCurrentPage];
+        NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
+        
+        if (sizesCache) {
+            self.sizeCache = sizesCache.mutableCopy;
+        }
     }
     
 }

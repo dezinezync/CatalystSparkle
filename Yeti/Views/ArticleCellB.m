@@ -339,6 +339,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     CGFloat width = contentSize.width;
     
+    if (width == 0) {
+        width = [UIScreen mainScreen].bounds.size.width;
+    }
+    
     /*
      On iPads (Regular)
      |- 16 - (cell) - 16 - (cell) - 16 -|
