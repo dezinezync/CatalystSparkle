@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "Feed.h"
 
+#import "YetiConstants.h"
+
 #import "UIViewController+ScrollLoad.h"
 #import <DZKit/DZBasicDatasource.h>
 
@@ -34,6 +36,8 @@
 
 @property (nonatomic, strong) NSOperation * _Nullable searchOperation;
 
+- (BOOL)showsSortingButton;
+
 - (void)setupHeaderView;
 
 - (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read;
@@ -43,5 +47,15 @@
 - (void)didChangeToArticle:(FeedItem *)item;
 
 - (void)_didFinishAllReadActionSuccessfully;
+
+#pragma mark -
+
+- (NSString *)emptyViewSubtitle;
+
+- (void)didTapSortOptions:(UIBarButtonItem *)sender;
+
+- (void)setSortingOption:(YetiSortOption)option;
+
+- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender;
 
 @end

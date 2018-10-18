@@ -139,17 +139,6 @@
 
 - (void)didTapAllRead:(id)sender {
     
-//    UITouch *touch = event.allTouches.anyObject;
-//
-//    if (touch
-//        && (self.feed != nil
-//            || ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
-//            if (touch.tapCount == 0) {
-//                [self didLongPressOnAllRead:sender];
-//                return;
-//            }
-//        }
-    
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     weakify(self);

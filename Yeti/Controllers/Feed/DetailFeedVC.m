@@ -248,7 +248,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     }
 }
 
-#pragma mark <UICollectionViewDataSource>
+#pragma mark - <UICollectionViewDataSource>
 
 - (NSString *)emptyViewSubtitle {
     return formattedString(@"No recent articles are available from %@", self.feed.title);
@@ -790,6 +790,7 @@ NSString * const kBCurrentPage = @"FeedsLoadedPage";
     
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithCustomView:allReadButton];
     allRead.accessibilityValue = @"Mark all articles as read";
+    allRead.accessibilityHint = @"Mark all current articles as read. Long Tap to Mark all backdated articles as read.";
     allRead.width = 32.f;
     
     if (self.isExploring) {

@@ -66,7 +66,10 @@
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
-    self.DS.data = self.feed.articles;
+    
+    if (self.feed != nil && self.feed.articles != nil && self.feed.articles.count > 0) {
+        self.DS.data = self.feed.articles;
+    }
     
     self.DS.addAnimation = UITableViewRowAnimationLeft;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
@@ -74,68 +77,15 @@
     
     self.extendedLayoutIncludesOpaqueBars = YES;
     
+    _page = 0;
+    _canLoadNext = YES;
+    _loadingNext = YES;
+    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCell.class) bundle:nil] forCellReuseIdentifier:kArticleCell];
     
     self.tableView.tableFooterView = [UIView new];
     
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:event:)];
-    allRead.accessibilityValue = @"Mark all articles as read";
-    
-    if (self.isExploring) {
-        // check if the user is subscribed to this feed
-        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
-        if (!existing) {
-            // allow subscription
-            UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
-            subscribe.accessibilityValue = @"Subscribe to this feed";
-            self.navigationItem.rightBarButtonItem = subscribe;
-        }
-    }
-    else if (!(self.feed.hubSubscribed && self.feed.hub)) {
-        self.navigationItem.rightBarButtonItem = allRead;
-    }
-    else {
-        // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
-        
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
-        
-        self.navigationItem.rightBarButtonItems = @[allRead, notifications];
-    }
-    
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
-    
-    self.navigationItem.hidesSearchBarWhenScrolling = NO;
-    self.navigationController.navigationBar.translucent = NO;
-    
-    // Search Controller setup
-    {
-
-        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
-        searchController.searchResultsUpdater = self;
-        searchController.searchBar.placeholder = @"Search Articles";
-        searchController.searchBar.accessibilityValue = @"Search loaded articles";
-        searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        searchController.searchBar.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchbar"];
-        searchController.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchController"];
-
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-        
-        self.navigationItem.searchController = searchController;
-        self.navigationItem.hidesSearchBarWhenScrolling = NO;
-        
-        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
-        hairline.backgroundColor = theme.cellColor;
-        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-        
-        [searchController.searchBar addSubview:hairline];
-        self.hairlineView = hairline;
-    }
+    [self setupNavBar];
     
     if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
         [self setupHeaderView];
@@ -178,7 +128,7 @@
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-    if (self.DS.data == nil || self.DS.data.count == 0) {
+    if (_page == 0) {
         [self loadNextPage];
     }
     
@@ -199,7 +149,107 @@
     self.navigationController.toolbarHidden = YES;
 }
 
-#pragma mark -
+#pragma mark - Setups
+
+- (void)setupNavBar {
+    
+    UIButton *allReadButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [allReadButton setImage:[UIImage imageNamed:@"done_all"] forState:UIControlStateNormal];
+    [allReadButton sizeToFit];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapAllRead:)];
+    [allReadButton addGestureRecognizer:tap];
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressOnAllRead:)];
+    [allReadButton addGestureRecognizer:longPress];
+    
+    [longPress requireGestureRecognizerToFail:tap];
+    
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithCustomView:allReadButton];
+    allRead.accessibilityValue = @"Mark Read";
+    allRead.accessibilityHint = @"Mark all current articles as read. Long Tap to Mark all backdated articles as read.";
+    allRead.width = 32.f;
+    
+    if (self.isExploring) {
+        // check if the user is subscribed to this feed
+        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
+        if (!existing) {
+            // allow subscription
+            UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
+            subscribe.accessibilityValue = @"Subscribe to this feed";
+            self.navigationItem.rightBarButtonItem = subscribe;
+        }
+    }
+    else {
+        
+        // sorting button
+        YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
+        
+        UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+        sorting.width = 32.f;
+        
+        if (!(self.feed.hubSubscribed && self.feed.hub)) {
+            NSMutableArray *buttons = @[allRead].mutableCopy;
+            
+            if ([self showsSortingButton]) {
+                [buttons addObject:sorting];
+            }
+            
+            self.navigationItem.rightBarButtonItems = buttons;
+        }
+        else {
+            // push notifications are possible
+            NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+            
+            UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+            notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+            notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+            notifications.width = 32.f;
+            
+            NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
+            
+            if ([self showsSortingButton]) {
+                [buttons addObject:sorting];
+            }
+            
+            self.navigationItem.rightBarButtonItems = buttons;
+        }
+        
+    }
+    
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    self.navigationController.navigationBar.translucent = NO;
+    
+    // Search Controller setup
+    {
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedSearchResults alloc] initWithStyle:UITableViewStylePlain]];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search Articles";
+        searchController.searchBar.accessibilityValue = @"Search loaded articles";
+        searchController.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        searchController.searchBar.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchbar"];
+        searchController.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchController"];
+        
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        
+        self.navigationItem.searchController = searchController;
+        self.navigationItem.hidesSearchBarWhenScrolling = NO;
+        
+        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
+        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
+        hairline.backgroundColor = theme.cellColor;
+        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+        
+        [searchController.searchBar addSubview:hairline];
+        self.hairlineView = hairline;
+    }
+    
+}
 
 - (void)setupHeaderView
 {
@@ -219,6 +269,10 @@
 }
 
 #pragma mark - Getters
+
+- (BOOL)showsSortingButton {
+    return YES;
+}
 
 - (UISelectionFeedbackGenerator *)feedbackGenerator {
     
@@ -341,18 +395,7 @@
     
 }
 
-- (void)didTapAllRead:(UIBarButtonItem *)sender event:(UIEvent *)event {
-    
-    UITouch *touch = event.allTouches.anyObject;
-    
-    if (touch
-        && (self.feed != nil
-            || ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")] && [[self valueForKeyPath:@"unread"] boolValue] == YES))) {
-        if (touch.tapCount == 0) {
-            [self didLongPressOnAllRead:sender];
-            return;
-        }
-    }
+- (void)didTapAllRead:(id)sender {
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
@@ -382,19 +425,12 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
-    
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.barButtonItem = sender;
-        
-    }
-    
-    [self presentViewController:avc animated:YES completion:nil];
+    [self presentAllReadController:avc fromSender:sender];
     
     
 }
 
-- (void)didLongPressOnAllRead:(UIBarButtonItem *)sender {
+- (void)didLongPressOnAllRead:(id)sender {
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including articles not currently loaded?" preferredStyle:UIAlertControllerStyleActionSheet];
     
     weakify(self);
@@ -438,7 +474,7 @@
         
     }
     
-    [self presentViewController:avc animated:YES completion:nil];
+    [self presentAllReadController:avc fromSender:sender];
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
@@ -611,9 +647,112 @@
     });
 }
 
+- (void)didTapSortOptions:(UIBarButtonItem *)sender {
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"All - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortAllDesc];
+        
+        [self setSortingOption:YTSortAllDesc];
+        
+    }];
+    
+    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"All - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortAllAsc];
+        
+        [self setSortingOption:YTSortAllAsc];
+        
+    }];
+    
+    UIAlertAction *unreadDesc = [UIAlertAction actionWithTitle:@"Unread - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
+        
+        [self setSortingOption:YTSortUnreadDesc];
+        
+    }];
+    
+    UIAlertAction *unreadAsc = [UIAlertAction actionWithTitle:@"Unread - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
+        
+        [self setSortingOption:YTSortUnreadAsc];
+        
+    }];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    @try {
+        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortAllDesc] forKeyPath:@"image"];
+        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortAllAsc] forKeyPath:@"image"];
+        [unreadDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
+        [unreadAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
+    }
+    @catch (NSException *exc) {
+        
+    }
+    
+    [avc addAction:allDesc];
+    [avc addAction:allAsc];
+    [avc addAction:unreadDesc];
+    [avc addAction:unreadAsc];
+    
+    [self presentAllReadController:avc fromSender:sender];
+    
+}
+
+#pragma mark -
+
+- (void)setSortingOption:(YetiSortOption)option {
+    
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    [defaults setValue:option forKey:kDetailFeedSorting];
+    [defaults synchronize];
+    
+    self->_canLoadNext = YES;
+    self.loadingNext = NO;
+    
+    self->_page = 0;
+    [self.DS resetData];
+    
+    [self loadNextPage];
+}
+
+- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        
+        if ([sender isKindOfClass:UIGestureRecognizer.class]) {
+            UIView *view = [(UITapGestureRecognizer *)sender view];
+            pvc.sourceView = self.view;
+            CGRect frame = [view convertRect:view.frame toView:self.view];
+            
+            frame.origin.x -= [avc preferredContentSize].width;
+            pvc.sourceRect = frame;
+        }
+        else {
+            pvc.barButtonItem = sender;
+        }
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
+}
+
 #pragma mark - Table view data source
 
+- (NSString *)emptyViewSubtitle {
+    return formattedString(@"No recent articles are available from %@", self.feed.title);
+}
+
 - (UIView *)viewForEmptyDataset {
+    
     // since the Datasource is asking for this view
     // it will be presenting it.
     if ((_canLoadNext == YES || _loadingNext == YES) && _page == 0) {
@@ -627,20 +766,29 @@
     
     UILabel *label = [[UILabel alloc] init];
     label.numberOfLines = 0;
-    label.backgroundColor = theme.tableColor;
+    label.backgroundColor = theme.cellColor;
     label.opaque = YES;
     
     NSString *title = @"No Articles";
-    NSString *subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+    NSString *subtitle = [self emptyViewSubtitle];
+    
+    NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    para.lineHeightMultiple = 1.4f;
+    para.alignment = NSTextAlignmentCenter;
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
+    
     NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
-                                 NSForegroundColorAttributeName: theme.subtitleColor};
+                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSParagraphStyleAttributeName: para
+                                 };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
-                   NSForegroundColorAttributeName: theme.titleColor};
+                   NSForegroundColorAttributeName: theme.titleColor,
+                   NSParagraphStyleAttributeName: para
+                   };
     
     NSRange range = [formatted rangeOfString:title];
     if (range.location != NSNotFound) {
@@ -651,6 +799,7 @@
     [label sizeToFit];
     
     return label;
+    
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -777,25 +926,10 @@
 
 #pragma mark - <ScrollLoading>
 
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-//{
-//    if (self.headerView) {
-//        CGFloat yPoint = floor(scrollView.contentOffset.y);
-//        
-////        DDLogDebug(@"%@", @(yPoint));
-//        if (yPoint >= 0.f && _barImageView.isHidden) {
-//            _barImageView.hidden = NO;
-//        }
-//        else if (yPoint < 0.f && !_barImageView.isHidden) {
-//            _barImageView.hidden = YES;
-//        }
-//    }
-//}
-
 - (void)loadNextPage
 {
     
-    if (self.loadingNext)
+    if (self.loadingNext && _page > 0)
         return;
     
     if (self->_ignoreLoadScroll)
@@ -807,7 +941,9 @@
     
     NSInteger page = self->_page + 1;
     
-    [MyFeedsManager getFeed:self.feed sorting:nil page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    
+    [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
