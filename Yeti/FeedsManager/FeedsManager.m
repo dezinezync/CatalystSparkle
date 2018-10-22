@@ -128,6 +128,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return self.userIDManager.userID;
 }
 
+- (void)dealloc {
+    
+    
+    
+}
+
 - (void)didReceiveMemoryWarning {
     self.bookmarks = nil;
     self.folders = nil;
@@ -808,28 +814,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
 #endif
     
-    weakify(self);
-    
     [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
         }];
         
-        strongify(self);
-        
         self.unreadLastUpdate = NSDate.date;
         
         if (page == 1) {
-            @synchronized (self) {
-                self.unread = items;
-            }
+            self.unread = items;
         }
         else {
-            if (!MyFeedsManager.unread) {
-                @synchronized (self) {
-                    self.unread = items;
-                }
+            if (!self.unread) {
+                self.unread = items;
             }
             else {
                 NSArray *unread = MyFeedsManager.unread;
@@ -839,20 +837,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 
                 @try {
                     prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-                    @synchronized (MyFeedsManager) {
-                        MyFeedsManager.unread = prefiltered;
-                    }
+                     self.unread = prefiltered;
                 }
                 @catch (NSException *exc) {}
             }
         }
         // the conditional takes care of filtered article items.
-        @synchronized (self) {
-            self.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
-        }
+        self.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         
-        if (successCB)
-            successCB(items, response, task);
+        if (successCB) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(items, response, task);
+            });
+        }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
@@ -1651,7 +1648,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

@@ -227,7 +227,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         
         if ([observingObjects indexOfObject:self] != NSNotFound) {
             @try {
-                [self.feed removeObserver:self forKeyPath:propSel(unread)];
+                [self.feed removeObserver:self forKeyPath:propSel(unread) context:KVO_UNREAD];
             } @catch (NSException *exc) {}
         }
     }

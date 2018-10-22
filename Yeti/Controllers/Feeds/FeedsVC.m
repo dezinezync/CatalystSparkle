@@ -38,7 +38,9 @@
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
-@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate>
+@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
+    BOOL _setupObservors;
+}
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
@@ -71,19 +73,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.tableView.estimatedRowHeight = UITableViewAutomaticDimension;
     
-    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
-    
-    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
-    [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
-    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
-    [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
-    [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
-    [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
-    
-    NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
-    
-    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
-    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    [self setupObservors];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -141,7 +131,12 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-    if (MyFeedsManager.observationInfo != nil) {
+    if (_setupObservors == YES && MyFeedsManager.observationInfo != nil) {
+        
+        NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
+        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [obj valueForKeyPath:@"observer"];
+        }];
         
         @try {
             
@@ -152,6 +147,32 @@ static void *KVO_Unread = &KVO_Unread;
         @catch (NSException * exc) {}
         
     }
+}
+
+- (void)setupObservors {
+    
+    if (_setupObservors == YES) {
+        return;
+    }
+    
+    _setupObservors = YES;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+        
+        [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
+        [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+        [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+        [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
+        [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
+        [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
+        
+        NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
+        
+        [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+        [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    });
+    
 }
 
 #pragma mark - Setups

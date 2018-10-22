@@ -151,12 +151,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     @try {
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         
-        [notificationCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
-        [notificationCenter removeObserver:self name:kDidUpdateTheme object:nil];
+        [notificationCenter removeObserver:self];
         
-        [self.collectionView removeObserver:self forKeyPath:propSel(frame) context:KVO_DetailFeedFrame];
+        if (self && self.collectionView && self.collectionView.observationInfo != nil) {
+            [self.collectionView removeObserver:self forKeyPath:propSel(frame) context:KVO_DetailFeedFrame];
+        }
     }
-    @catch (NSException *exc) {}
+    @catch (NSException *exc) {
+        
+    }
 }
 
 #pragma mark - Appearance
@@ -759,12 +762,6 @@ NSString * const kSizCache = @"FeedSizesCache";
     if (feed) {
         DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
         
-        NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
-        
-        if (sizesCache) {
-            vc.sizeCache = sizesCache.mutableCopy;
-        }
-        
         return vc;
     }
     
@@ -782,18 +779,21 @@ NSString * const kSizCache = @"FeedSizesCache";
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
     
-    Feed *feed = [coder decodeObjectForKey:kBFeedData];
-    
-    if (feed) {
-        self.feed = feed;
-        self.DS.data = self.feed.articles;
+    if ([NSStringFromClass(self.class) isEqualToString:NSStringFromClass(DetailFeedVC.class)] == YES) {
+        Feed *feed = [coder decodeObjectForKey:kBFeedData];
         
-        _page = [coder decodeIntegerForKey:kBCurrentPage];
-        NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
-        
-        if (sizesCache) {
-            self.sizeCache = sizesCache.mutableCopy;
+        if (feed) {
+            self.feed = feed;
+            [self.DS resetData];
+            self.DS.data = self.feed.articles;
         }
+    }
+    
+    _page = [coder decodeIntegerForKey:kBCurrentPage];
+    NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
+    
+    if (sizesCache) {
+        self.sizeCache = sizesCache.mutableCopy;
     }
     
 }

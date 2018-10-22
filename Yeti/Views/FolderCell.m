@@ -244,15 +244,10 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     if (self.folder && self.folder.observationInfo != nil) {
         
-        NSArray *observingObjects = [(id)(self.folder.observationInfo) valueForKeyPath:@"_observances"];
-        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [obj valueForKeyPath:@"observer"];
-        }];
-        
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [self.folder removeObserver:self forKeyPath:propSel(unreadCount)];
-            } @catch (NSException *exc) {}
+        @try {
+            [self.folder removeObserver:self forKeyPath:propSel(unreadCount) context:KVO_UNREAD];
+        } @catch (NSException *exc) {
+            
         }
     }
 }

@@ -21,6 +21,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 @interface DetailCustomVC () {
     BOOL _reloadDataset; // used for bookmarks
+    BOOL _hasSetupState;
 }
 
 @end
@@ -31,14 +32,30 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     _unread = unread;
     
     self.restorationIdentifier = unread ? @"UnreadVC" : @"BookmarksVC";
+    self.title = self.isUnread ? @"Unread" : @"Bookmarks";
+    
+    [self setupState];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = self.isUnread ? @"Unread" : @"Bookmarks";
-    
     [self.DS resetData];
+    
+    [self setupState];
+}
+
+- (void)setupState {
+    
+    if (_hasSetupState) {
+        return;
+    }
+    
+    if (self.restorationIdentifier == nil) {
+        return;
+    }
+    
+    _hasSetupState = YES;
     
     if (!self.isUnread) {
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];
@@ -66,6 +83,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     }
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -92,11 +110,16 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 - (void)dealloc {
     
-    if (MyFeedsManager.observationInfo != nil && self.unread == NO) { @try {
+    if (MyFeedsManager.observationInfo != nil && self.unread == NO) {
+        @try {
         
-        [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_DETAIL_BOOKMARKS];
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_DETAIL_BOOKMARKS];
+            
+        } @catch (NSException *exc) {
+            
+        }
         
-    } @catch (NSException *exc) {} }
+    }
     
 }
 
@@ -296,32 +319,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 #pragma mark - State Restoration
 
 NSString * const kBUnreadData = @"UnreadData";
-NSString * const kBUnreadPageNumber = @"UnreadPageNumber";
 NSString * const kBIsUnread = @"VCIsUnread";
-NSString * const kBSizCache = @"FeedCustomSizesCache";
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+    DetailCustomVC *vc = [[DetailCustomVC alloc] init];
     
-    if (items) {
-        DetailCustomVC *vc = [[DetailCustomVC alloc] init];
-        vc.DS.data = items;
-        vc.customFeed = FeedTypeCustom;
-        [vc setupLayout];
-        
-        if ([coder decodeBoolForKey:kBIsUnread]) {
-            vc.unread = YES;
-            vc->_page = [coder decodeIntegerForKey:kBUnreadPageNumber];
-        }
-        
-        NSDictionary *sizeCache = [coder decodeObjectForKey:kBSizCache];
-        
-        if (sizeCache) {
-            vc.sizeCache = sizeCache.mutableCopy;
-        }
-        
-        return vc;
-    }
+    return vc;
     
     return nil;
 }
@@ -331,12 +334,6 @@ NSString * const kBSizCache = @"FeedCustomSizesCache";
     
     [coder encodeObject:self.DS.data forKey:kBUnreadData];
     [coder encodeBool:self.unread forKey:kBIsUnread];
-    
-    if (self.isUnread) {
-        [coder encodeInteger:_page forKey:kBUnreadPageNumber];
-    }
-    
-    [coder encodeObject:self.sizeCache forKey:kBSizCache];
     
 }
 
@@ -353,14 +350,8 @@ NSString * const kBSizCache = @"FeedCustomSizesCache";
         
         if ([coder decodeBoolForKey:kBIsUnread]) {
             self.unread = YES;
-            self->_page = [coder decodeIntegerForKey:kBUnreadPageNumber];
         }
         
-        NSDictionary *sizeCache = [coder decodeObjectForKey:kBSizCache];
-        
-        if (sizeCache) {
-            self.sizeCache = sizeCache.mutableCopy;
-        }
     }
     
 }

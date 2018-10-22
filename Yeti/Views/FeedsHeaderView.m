@@ -72,10 +72,17 @@ static void *KVO_Unread = &KVO_Unread;
 {
     if (MyFeedsManager.observationInfo != nil) {
         
+        NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
+        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [obj valueForKeyPath:@"observer"];
+        }];
+        
         @try {
             [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
             [MyFeedsManager removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
-        } @catch (NSException *exc) {}
+        } @catch (NSException *exc) {
+            
+        }
         
     }
 }
