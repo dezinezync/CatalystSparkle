@@ -577,13 +577,7 @@ NSString * const kDS2Data = @"DS2Data";
 {
     
     if (![NSThread isMainThread]) {
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            
-            [self setupData:feeds];
-        });
+        [self performSelectorOnMainThread:@selector(setupData:) withObject:feeds waitUntilDone:NO];
         return;
     }
     

@@ -358,25 +358,17 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        [MyFeedsManager removeFolder:folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (completionHandler) {
-                asyncMain(^{
-                    completionHandler(YES);
-                });
-            }
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        if (completionHandler) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(YES);
+            });
+        }
+        
+        [MyFeedsManager removeFolder:folder success:nil error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             asyncMain(^{
                 [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
             });
-            
-            if (completionHandler) {
-                asyncMain(^{
-                    completionHandler(NO);
-                });
-            }
             
         }];
         
