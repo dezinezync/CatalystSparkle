@@ -7,6 +7,8 @@
 
 - Fixes a bug when using the extended layout when the articles would retain their unread visual marker even after reading the article.
 
+- Fixes the animation bug when deleting a folder: the "delete" row would be present on screen (and would eventually disappear when scrolled off-screen).
+
 -- 178 --
 
 [FOLDER FEEDS]
