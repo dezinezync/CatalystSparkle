@@ -63,7 +63,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     if (section == (self.sections.count - 1) && self.forPhone) {
-        return @"Extended Feed Layout was introduced in version 1.1 of the app and brings a the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
+        return @"Extended Feed Layout was introduced in version 1.1 of the app and brings the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
     }
     
     return nil;
