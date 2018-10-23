@@ -108,6 +108,8 @@ YetiSortOption const YTSortAllAsc = @"1";     // 1
 YetiSortOption const YTSortUnreadDesc = @"2"; // 2
 YetiSortOption const YTSortUnreadAsc = @"3";  // 3
 
+NSString * const kShowMarkReadPrompt = @"com.dezinezync.elytra.showMarkReadPrompt";
+
 @implementation SortImageProvider
 
 + (UIImage *)imageForSortingOption:(YetiSortOption)option {

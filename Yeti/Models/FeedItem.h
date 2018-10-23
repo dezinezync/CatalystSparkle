@@ -38,6 +38,8 @@
 + (FeedItem *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 
+- (BOOL)isEqualToItem:(FeedItem *)item;
+
 - (NSDictionary *)dictionaryRepresentation;
 
 - (NSComparisonResult)compare:(FeedItem *)item;

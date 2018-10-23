@@ -37,6 +37,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 @property (weak, nonatomic) IBOutlet UIView *separatorView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *separatorHeight;
 
+@property (assign, nonatomic) FeedType feedType;
+
 @end
 
 @implementation ArticleCellB
@@ -93,17 +95,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMarginsRelativeArrangement = YES;
     }
     else {
-        self.faviconView.hidden = NO;
+        self.faviconView.hidden = (self.feedType == FeedTypeFeed);
         
         stackView.axis = UILayoutConstraintAxisHorizontal;
         self.timeLabel.textAlignment = NSTextAlignmentRight;
         
         stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
-        insets.top = 0;
+        insets.top = self.feedType == FeedTypeFeed ? ([TypeFactory.shared titleFont].pointSize / 3.f) : 0;
         stackView.layoutMargins = insets;
         
-        stackView.layoutMarginsRelativeArrangement = NO;
+        stackView.layoutMarginsRelativeArrangement = self.feedType == FeedTypeFeed;
     }
     
     // if it's a micro blog post, use the normal font
@@ -173,6 +175,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.item = item;
     self.titleLabel.text = item.articleTitle;
     self.authorLabel.text = @"";
+    self.feedType = feedType;
     
     NSString *appendFormat = @" - %@";
     

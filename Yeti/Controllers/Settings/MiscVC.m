@@ -15,6 +15,9 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 @interface MiscVC ()
 
+@property (nonatomic, assign) BOOL forPhone;
+@property (nonatomic, strong) NSArray <NSString *> *sections;
+
 @end
 
 @implementation MiscVC
@@ -23,6 +26,13 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     [super viewDidLoad];
     
     self.title = @"Miscellaneous";
+    self.forPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+    
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt"];
+    
+    if (self.forPhone) {
+        self.sections = [self.sections arrayByAddingObject:@"Extended Feed Layout"];
+    }
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
@@ -31,33 +41,28 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        return 3;
-    }
-    
-    return 2;
+    return self.sections.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
-    if (section != 0) {
-        return 1;
+    if (section == 0) {
+        return 3;
     }
     
-    return 3;
+    return 1;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section != 0) {
-        return nil;
+    if (section == 0) {
+        return @"App Icon";
     }
     
-    return @"App Icon";
+    return nil;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == 1 && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    if (section == (self.sections.count - 1) && self.forPhone) {
         return @"Extended Feed Layout was introduced in version 1.1 of the app and brings a the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
     }
     
@@ -129,15 +134,25 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
+    NSString *sectionName = [self.sections objectAtIndex:indexPath.section];
+    
     // on iPhones and iPod touches, we show an additional row
-    if (indexPath.section == 1 && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        cell.textLabel.text = @"Extended Feed Layout";
+    if ([sectionName isEqualToString:@"Extended Feed Layout"]) {
+     
+        cell.textLabel.text = sectionName;
         
         [sw setOn:[defaults boolForKey:kUseExtendedFeedLayout]];
         [sw addTarget:self action:@selector(didChangeExtendedLayoutPreference:) forControlEvents:UIControlEventValueChanged];
+        
     }
-    else {
-        cell.textLabel.text = @"Unread Counters";
+    else if ([sectionName isEqualToString:@"Mark Read Prompt"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:[defaults boolForKey:kShowMarkReadPrompt]];
+        [sw addTarget:self action:@selector(didChangeMarkReadPromptPreference:) forControlEvents:UIControlEventValueChanged];
+    }
+    else if ([sectionName isEqualToString:@"Unread Counters"]) {
+        cell.textLabel.text = sectionName;
         
         [sw setOn:[defaults boolForKey:kShowUnreadCounts]];
         [sw addTarget:self action:@selector(didChangeUnreadCountsPreference:) forControlEvents:UIControlEventValueChanged];
@@ -221,6 +236,14 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     dispatch_async(dispatch_get_main_queue(), ^{
         [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
     });
+    
+}
+
+- (void)didChangeMarkReadPromptPreference:(UISwitch *)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sender.isOn forKey:kShowMarkReadPrompt];
+    [defaults synchronize];
     
 }
 

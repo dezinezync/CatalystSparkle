@@ -41,8 +41,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
-@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
-
 @property (nonatomic, weak) FeedHeaderView *headerView;
 
 @end
@@ -591,7 +589,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (!article)
         return;
     
-    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
+    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == YES) {
         return;
     }
     

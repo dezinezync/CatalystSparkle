@@ -47,6 +47,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
 
+@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
+
 - (BOOL)showsSortingButton;
 
 - (void)setupHeaderView;

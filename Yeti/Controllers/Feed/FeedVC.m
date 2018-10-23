@@ -397,14 +397,9 @@
 
 - (void)didTapAllRead:(id)sender {
     
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
     
-    weakify(self);
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        strongify(self);
-        
+    void(^markReadInline)(void) = ^(void) {
         NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return !obj.isRead;
         }];
@@ -420,31 +415,38 @@
                 [self _didFinishAllReadActionSuccessfully];
             }
         });
+    };
+    
+    if (showPrompt) {
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         
-    }]];
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    [self presentAllReadController:avc fromSender:sender];
-    
+        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            markReadInline();
+            
+        }]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+        [self presentAllReadController:avc fromSender:sender];
+    }
+    else {
+        [self.feedbackGenerator selectionChanged];
+        [self.feedbackGenerator prepare];
+        
+        markReadInline();
+    }
     
 }
 
 - (void)didLongPressOnAllRead:(id)sender {
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including articles not currently loaded?" preferredStyle:UIAlertControllerStyleActionSheet];
     
-    weakify(self);
+    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
     
-    [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        strongify(self);
-        
-        weakify(self);
-        
+    void(^markReadInline)(void) = ^(void) {
         [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
                 if (self && [self tableView]) {
                     if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
                         self.DS.data = @[];
@@ -457,24 +459,37 @@
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
+            
             [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
             
         }];
-        
-        
-    }]];
+    };
     
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+    if (showPrompt) {
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including articles not currently loaded?" preferredStyle:UIAlertControllerStyleActionSheet];
         
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.barButtonItem = sender;
+        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            markReadInline();
+            
+        }]];
         
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+        if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+            
+            UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+            pvc.barButtonItem = sender;
+            
+        }
+        
+        [self presentAllReadController:avc fromSender:sender];
     }
-    
-    [self presentAllReadController:avc fromSender:sender];
+    else {
+        [self.feedbackGenerator selectionChanged];
+        [self.feedbackGenerator prepare];
+        markReadInline();
+    }
 }
 
 - (void)_didFinishAllReadActionSuccessfully {

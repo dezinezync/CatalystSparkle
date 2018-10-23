@@ -105,6 +105,8 @@ extern YetiSortOption const YTSortAllAsc;     // 1
 extern YetiSortOption const YTSortUnreadDesc; // 2
 extern YetiSortOption const YTSortUnreadAsc;  // 3
 
+YETI_EXPORT NSString * const kShowMarkReadPrompt;
+
 @interface SortImageProvider : NSObject
 
 + (UIImage *)imageForSortingOption:(YetiSortOption)option;

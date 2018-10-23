@@ -28,21 +28,18 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 @implementation DetailCustomVC
 
-- (void)setUnread:(BOOL)unread {
-    _unread = unread;
-    
-    self.restorationIdentifier = unread ? @"UnreadVC" : @"BookmarksVC";
-    self.title = self.isUnread ? @"Unread" : @"Bookmarks";
-    
-    [self setupState];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self.DS resetData];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
     
     [self setupState];
+    
 }
 
 - (void)setupState {
@@ -51,11 +48,10 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         return;
     }
     
-    if (self.restorationIdentifier == nil) {
-        return;
-    }
-    
     _hasSetupState = YES;
+    
+    self.restorationIdentifier = self.isUnread ? @"UnreadVC" : @"BookmarksVC";
+    self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     if (!self.isUnread) {
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];

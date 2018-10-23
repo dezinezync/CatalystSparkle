@@ -1,3 +1,14 @@
+
+[NEW]
+- Added option under the Miscellaneous Settings to optionally not display prompts when Marking Articles as Read.
+
+[FIX]
+- Extended layout now correctly ignores the Favicon when viewing articles from a single feed.
+
+- Fixes a bug when using the extended layout when the articles would retain their unread visual marker even after reading the article.
+
+-- 178 --
+
 [FOLDER FEEDS]
 
 - Folder taps now open the Folder's Feed. These custom Feeds include articles from all Feeds inside that folder.

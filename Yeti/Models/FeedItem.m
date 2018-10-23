@@ -16,16 +16,6 @@
 
 static NSDateFormatter *_formatter = nil;
 
-- (NSString *)compareID
-{
-    return self.identifier.stringValue;
-}
-
-- (NSComparisonResult)compare:(FeedItem *)item
-{
-    return [self.identifier.stringValue compare:item.identifier.stringValue options:NSNumericSearch];
-}
-
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];
@@ -324,6 +314,37 @@ static NSDateFormatter *_formatter = nil;
 }
 
 #pragma mark - Getters
+
+- (NSString *)compareID
+{
+    return self.identifier.stringValue;
+}
+
+- (NSComparisonResult)compare:(FeedItem *)item
+{
+    return [self.identifier.stringValue compare:item.identifier.stringValue options:NSNumericSearch];
+}
+
+- (BOOL)isEqualToItem:(FeedItem *)item {
+    
+    return (item != nil
+            && [item.identifier isEqualToNumber:self.identifier]
+            && [item.feedID isEqualToNumber:self.feedID]
+            && (item.content ? item.content.hash == self.content.hash : YES));
+    
+}
+
+- (BOOL)isEqual:(id)object {
+    
+    if (object != nil && [object isKindOfClass:FeedItem.class]) {
+        BOOL retval = [self isEqualToItem:object];
+        
+        return retval;
+    }
+    
+    return NO;
+    
+}
 
 + (NSDateFormatter *)formatter
 {
