@@ -1,4 +1,11 @@
 
+[FIX]
+- Fixes searching of feeds where duplicate feeds were shown.
+
+- Fixes loading of article from push notifications.
+
+-- 179 --
+
 [NEW]
 - Added option under the Miscellaneous Settings to optionally not display prompts when Marking Articles as Read.
 

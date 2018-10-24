@@ -13,6 +13,7 @@
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
+#import "FolderCell.h"
 #import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>
@@ -111,6 +112,16 @@
         return YES;
         
     }];
+    
+//    [JLRoutes.globalRoutes addRoute:@"/article/:articleID" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
+//
+//        NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
+//
+//        [self openFeed:nil article:articleID];
+//
+//        return YES;
+//
+//    }];
     
     [JLRoutes.globalRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
         
@@ -421,6 +432,7 @@
     __block BOOL isFolder = NO;
     __block BOOL isFolderExpanded = NO;
     __block NSUInteger folderIndex = NSNotFound;
+    __block Folder *checkFolder = nil;
     
     // get the primary navigation controller
     YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
@@ -482,6 +494,7 @@
 
                     isFolder = YES;
                     isFolderExpanded = folder.isExpanded;
+                    checkFolder = folder;
 
                     *stop = YES;
                     *stopx = YES;
@@ -502,7 +515,12 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
 //            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-            [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+            FolderCell *cell = (FolderCell *)[feedsVC tableView:feedsVC.tableView cellForRowAtIndexPath:indexPath];
+            
+            if (cell && cell.interactionDelegate
+                && [cell.interactionDelegate respondsToSelector:@selector(didTapFolderIcon:cell:)]) {
+                [cell.interactionDelegate didTapFolderIcon:checkFolder cell:cell];
+            }
         });
     }
     
@@ -517,7 +535,7 @@
     }
     
     if (articleID != nil) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             strongify(self);
             
             [self showArticle:articleID];
@@ -533,13 +551,19 @@
     FeedVC *feedVC = nil;
     
     @try {
-        YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+        UISplitViewController *splitVC = (UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController];
+        YTNavigationController *nav = [[splitVC viewControllers] firstObject];
+        
+        if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            nav = [[splitVC viewControllers] lastObject];
+        }
         
         feedVC = (FeedVC *)[nav topViewController];
     }
     @catch (NSException *exc) {}
     
-    if (feedVC != nil && [feedVC isKindOfClass:FeedVC.class]) {
+    if (feedVC != nil
+        && ([feedVC isKindOfClass:FeedVC.class] || [feedVC isKindOfClass:NSClassFromString(@"DetailFeedVC")])) {
         feedVC.loadOnReady = articleID;
     }
 }
