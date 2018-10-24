@@ -1,4 +1,9 @@
 
+[NEW]
+- The app now handles Twitter.com and Reddit.com links and opens them in the app of your choice.
+
+- Implemented Narwhal under Reddit apps for opening external links.
+
 [FIX]
 - Fixes searching of feeds where duplicate feeds were shown.
 

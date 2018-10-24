@@ -10,6 +10,7 @@
 #import "ArticleCellB.h"
 
 #import "FeedsManager.h"
+#import "ArticleVC.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
@@ -95,8 +96,18 @@
         
     }];
     
-    if (index == NSNotFound)
+    if (index == NSNotFound) {
+        FeedItem *item = [FeedItem new];
+        item.identifier = self.loadOnReady;
+        item.feedID = self.feed.feedID;
+        
+        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+        vc.providerDelegate = (id<ArticleProvider>)self;
+        
+        [self.navigationController pushViewController:vc animated:YES];
+        
         return;
+    }
     
     self.loadOnReady = nil;
     

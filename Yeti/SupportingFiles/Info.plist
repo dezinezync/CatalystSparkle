@@ -110,6 +110,7 @@
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>narwhal</string>
 		<string>tweetbot</string>
 		<string>twitterrific</string>
 		<string>twitter</string>

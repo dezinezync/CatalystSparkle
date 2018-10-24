@@ -127,6 +127,59 @@
         
         NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
         
+        // check and optionally handle twitter URLs
+        if ([link containsString:@"twitter.com"]) {
+            NSError *error = nil;
+            NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"https?\\:\\/\\/w{0,3}\\.?twitter.com\\/([a-zA-Z0-9]*)$" options:NSRegularExpressionCaseInsensitive error:&error];
+            NSArray *matches = nil;
+            
+            if (error == nil && exp) {
+                matches = [exp matchesInString:link options:kNilOptions range:NSMakeRange(0, link.length)];
+                if (matches && matches.count > 0) {
+                    NSString *username = [link lastPathComponent];
+                    [self twitterOpenUser:username];
+                    
+                    return YES;
+                }
+            }
+            
+            exp = [NSRegularExpression regularExpressionWithPattern:@"https?\\:\\/\\/w{0,3}\\.?twitter.com\\/([a-zA-Z0-9]*)\\/status\\/([0-9]*)$" options:NSRegularExpressionCaseInsensitive error:&error];
+            
+            if (error == nil && exp) {
+                matches = [exp matchesInString:link options:kNilOptions range:NSMakeRange(0, link.length)];
+                if (matches && matches.count > 0) {
+                    NSString *status = [link lastPathComponent];
+                    [self twitterOpenStatus:status];
+                    
+                    return YES;
+                }
+            }
+        }
+        
+        if ([link containsString:@"reddit.com"]) {
+            NSString *redditClient = [[NSUserDefaults standardUserDefaults] valueForKey:ExternalRedditAppScheme];
+            
+            if (redditClient != nil) {
+                // Reference: https://www.reddit.com/r/redditmobile/comments/526ede/ios_url_schemes_for_ios_app/
+                NSURLComponents *comp = [NSURLComponents componentsWithString:link];
+                comp.scheme = [redditClient lowercaseString];
+                comp.host = @"";
+                
+                if ([redditClient isEqualToString:@"Narwhal"]) {
+                    NSString *encoded = [link stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+                    comp.path = formattedString(@"/open-url/%@", encoded);
+                }
+                
+                NSURL *prepared = comp.URL;
+                
+                if (prepared) {
+                    [UIApplication.sharedApplication openURL:prepared options:@{} completionHandler:nil];
+                }
+                return YES;
+            }
+            
+        }
+        
         [self openURL:link];
         
         return YES;
