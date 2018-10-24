@@ -302,6 +302,7 @@ static NSString * const reuseIdentifier = @"Cell";
             if (isPhone) {
                 DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
                 vc.exploring = YES;
+                vc.customFeed = FeedTypeFeed;
                 
                 [self.navigationController pushViewController:vc animated:YES];
             }

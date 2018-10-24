@@ -39,13 +39,13 @@ NSString *const kBasicCell = @"cell.theme";
     // update the method -[tableview:cellForRowAtIndexPath:]
     _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral];
     _fontNamesMap = @{
-                      ALPSystem : @"System (San Fransico)",
-                      ALPSerif : @"Georgia",
-                      ALPHelvetica : @"Helvetica Neue",
-                      ALPMerriweather : @"Merriweather",
-                      ALPPlexSerif : @"Plex Serif",
-                      ALPPlexSans : @"Plex Sans",
-                      ALPSpectral : @"Spectral"
+                      ALPSystem         : @"System (San Fransico)",
+                      ALPSerif          : @"Georgia",
+                      ALPHelvetica      : @"Helvetica Neue",
+                      ALPMerriweather   : @"Merriweather",
+                      ALPPlexSerif      : @"Plex Serif",
+                      ALPPlexSans       : @"Plex Sans",
+                      ALPSpectral       : @"Spectral"
                       };
     
     NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];

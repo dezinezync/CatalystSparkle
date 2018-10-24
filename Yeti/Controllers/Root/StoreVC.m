@@ -56,7 +56,8 @@
     
     _products = @[@"com.dezinezync.elytra.non.1m",
                   @"com.dezinezync.elytra.non.3m",
-                  @"com.dezinezync.elytra.non.12m"];
+                  @"com.dezinezync.elytra.non.12m",
+                  @"com.dezinezync.elytra.life"];
     
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
@@ -128,6 +129,8 @@
     footer.footerLabel.backgroundColor = theme.articleBackgroundColor;
     footer.footerLabel.textColor = theme.captionColor;
     footer.footerLabel.textAlignment = NSTextAlignmentCenter;
+    
+    footer.activityIndicator.activityIndicatorViewStyle = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
 }
 
 - (void)updateFooterView {
@@ -193,7 +196,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         textView.attributedText = attrs.copy;
-        [textView sizeToFit];
+        [textView invalidateIntrinsicContentSize];
         attrs = nil;
     });
     

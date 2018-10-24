@@ -45,15 +45,19 @@
                                 </button>
                             </subviews>
                         </stackView>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" editable="NO" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xBx-OF-CRf">
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="760" editable="NO" textAlignment="natural" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xBx-OF-CRf">
                             <rect key="frame" x="0.0" y="110" width="343" height="178"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            <variation key="heightClass=regular-widthClass=regular">
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                            </variation>
                         </textView>
                     </subviews>
                     <constraints>
+                        <constraint firstItem="xBx-OF-CRf" firstAttribute="centerX" secondItem="DEc-6P-8tU" secondAttribute="centerX" id="UIE-bI-4Jy"/>
                         <constraint firstItem="xBx-OF-CRf" firstAttribute="width" secondItem="DEc-6P-8tU" secondAttribute="width" id="q5Z-05-liM"/>
                     </constraints>
                 </stackView>
