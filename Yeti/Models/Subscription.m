@@ -40,6 +40,7 @@
         self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
         self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
         self.status = [decoder decodeObjectForKey:propSel(status)];
+        self.lifetime = [decoder decodeObjectForKey:propSel(lifetime)];
     }
     
     return self;
@@ -85,6 +86,7 @@
     [encoder encodeDouble:@([self.expiry timeIntervalSince1970]).doubleValue forKey:propSel(expiry)];
     [encoder encodeDouble:@([self.created timeIntervalSince1970]).doubleValue forKey:propSel(created)];
     [encoder encodeBool:self.status forKey:propSel(status)];
+    [encoder encodeBool:self.lifetime forKey:propSel(lifetime)];
 }
 
 #pragma mark -
@@ -117,6 +119,10 @@
         [dict setValue:self.status forKey:propSel(status)];
     }
     
+    if (self.lifetime) {
+        [dict setValue:@(self.lifetime) forKey:propSel(lifetime)];
+    }
+    
     return dict;
     
 }
@@ -124,6 +130,10 @@
 #pragma mark -
 
 - (BOOL)hasExpired {
+    
+    if (self.isLifetime) {
+        return NO;
+    }
     
     if (self.error) {
         

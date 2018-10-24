@@ -110,6 +110,11 @@ YetiSortOption const YTSortUnreadAsc = @"3";  // 3
 
 NSString * const kShowMarkReadPrompt = @"com.dezinezync.elytra.showMarkReadPrompt";
 
+NSString * const IAPOneMonth     = @"com.dezinezync.elytra.non.1m";
+NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";
+NSString * const IAPTwelveMonth  = @"com.dezinezync.elytra.non.12m";
+NSString * const IAPLifetime     = @"com.dezinezync.elytra.life";
+
 @implementation SortImageProvider
 
 + (UIImage *)imageForSortingOption:(YetiSortOption)option {

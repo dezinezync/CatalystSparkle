@@ -13,6 +13,7 @@
 #import "YetiThemeKit.h"
 #import "StoreFooter.h"
 #import "FeedsManager.h"
+#import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -54,10 +55,10 @@
     
     [self configureFooterView];
     
-    _products = @[@"com.dezinezync.elytra.non.1m",
-                  @"com.dezinezync.elytra.non.3m",
-                  @"com.dezinezync.elytra.non.12m",
-                  @"com.dezinezync.elytra.life"];
+    _products = @[IAPOneMonth,
+                  IAPThreeMonth,
+                  IAPTwelveMonth,
+                  IAPLifetime];
     
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
@@ -150,13 +151,20 @@
     
     if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
         
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateStyle = NSDateFormatterMediumStyle;
-        formatter.timeStyle = NSDateFormatterShortStyle;
-        formatter.locale = [NSLocale currentLocale];
-        formatter.timeZone = [NSTimeZone systemTimeZone];
+        NSString *upto = @"";
         
-        NSString *upto = [formatter stringFromDate:MyFeedsManager.subscription.expiry];
+        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
+            upto = @"3298 LY (A.K.A. our Lifetime)";
+        }
+        else {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateStyle = NSDateFormatterMediumStyle;
+            formatter.timeStyle = NSDateFormatterShortStyle;
+            formatter.locale = [NSLocale currentLocale];
+            formatter.timeZone = [NSTimeZone systemTimeZone];
+            
+            upto = [formatter stringFromDate:MyFeedsManager.subscription.expiry];
+        }
         
         NSString *formatted = formattedString(@"Your subscription is active up to %@.\n\nYou can read our Terms of Service and Privacy Policy.", upto);
         
@@ -171,7 +179,7 @@
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
         else {
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will not automatically renew You will be reminded when your subscription is about to expire.\n\nYou can read our Terms of Service and Privacy Policy." attributes:attributes];
+            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will not automatically renew. You will be reminded when your subscription is about to expire.\n\nYou can read our Terms of Service and Privacy Policy." attributes:attributes];
         }
     }
     
@@ -464,6 +472,12 @@
     return self.productsRequestFinished ? self.products.count : 0;
 }
 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return [self.purhcasedProductIdentifiers containsObject:IAPLifetime] == NO;
+    
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
@@ -493,8 +507,13 @@
     
     NSString *productID = self.products[indexPath.row];
     SKProduct *product = [[RMStore defaultStore] productForIdentifier:productID];
+    
     cell.textLabel.text = product.localizedTitle;
     cell.detailTextLabel.text = [RMStore localizedPriceOfProduct:product];
+    
+    if ([productID isEqualToString:IAPLifetime] && [self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
     
     return cell;
 }

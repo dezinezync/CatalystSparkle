@@ -8,6 +8,10 @@
 
 #import "FeedsManager+KVS.h"
 #import "FeedItem.h"
+
+#import "RMStore.h"
+#import "RMStoreKeychainPersistence.h"
+
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
@@ -1333,6 +1337,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
+                if ([RMStore defaultStore])
+                
                 self.subscription = sub;
                 
                 if (successCB) {
@@ -1537,6 +1543,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)setSubscription:(Subscription *)subscription {
     _subscription = subscription;
+    
+    if (_subscription && [[(RMStoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
+        _subscription.lifetime = YES;
+    }
     
 #ifndef DEBUG
 #if TESTFLIGHT == 1

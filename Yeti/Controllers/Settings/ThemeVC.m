@@ -50,7 +50,7 @@ NSString *const kBasicCell = @"cell.theme";
     
     NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];
     
-    _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]];
+    _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]] || [[[[UIApplication sharedApplication] keyWindow] traitCollection] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
     
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;

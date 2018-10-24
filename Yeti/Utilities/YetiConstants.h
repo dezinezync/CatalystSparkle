@@ -105,6 +105,11 @@ extern YetiSortOption const YTSortAllAsc;     // 1
 extern YetiSortOption const YTSortUnreadDesc; // 2
 extern YetiSortOption const YTSortUnreadAsc;  // 3
 
+extern NSString * const IAPOneMonth;
+extern NSString * const IAPThreeMonth;
+extern NSString * const IAPTwelveMonth;
+extern NSString * const IAPLifetime;
+
 YETI_EXPORT NSString * const kShowMarkReadPrompt;
 
 @interface SortImageProvider : NSObject
