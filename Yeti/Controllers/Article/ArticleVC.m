@@ -2030,6 +2030,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
 {
+    if (URL.host == nil) {
+        // absolute link in the article. Resovle to fully qualified URL
+        NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item articleURL]];
+        NSURLComponents *urlComp = [NSURLComponents componentsWithString:URL.absoluteString];
+        
+        urlComp.host = articleComp.host;
+        urlComp.scheme = articleComp.scheme;
+        URL = [urlComp URL];
+    }
     
     NSString *absolute = URL.absoluteString;
     

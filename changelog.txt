@@ -4,6 +4,8 @@
 
 - Fixes loading of article from push notifications.
 
+- Fixes opening relative URLs inside articles correctly using your selected browser. Previously, tapping on a relative URL would either crash the app or take no action.
+
 -- 179 --
 
 [NEW]

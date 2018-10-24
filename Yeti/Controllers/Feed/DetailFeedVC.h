@@ -33,7 +33,7 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, assign, getter=isCustomFeed) FeedType customFeed;
 
-@property (nonatomic, assign) NSNumber *loadOnReady;
+@property (nonatomic, assign) NSNumber * _Nullable loadOnReady;
 
 @property (nonatomic, strong) DZBasicDatasource *DS;
 
