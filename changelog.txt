@@ -4,6 +4,10 @@
 
 - Implemented Narwhal under Reddit apps for opening external links.
 
+- Implements Lifetime subscription
+
+- Enables Black Theme on iPads.
+
 [FIX]
 - Fixes searching of feeds where duplicate feeds were shown.
 
