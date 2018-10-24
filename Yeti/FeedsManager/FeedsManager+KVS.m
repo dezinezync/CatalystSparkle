@@ -25,8 +25,12 @@
     
 }
 
-- (void)articles:(NSArray<FeedItem *> *)items markAsRead:(BOOL)read
-{
+- (void)articles:(NSArray<FeedItem *> *)items markAsRead:(BOOL)read {
+    
+    if (!self || !self.userID || [self.userID integerValue] == 0) {
+        return;
+    }
+    
     NSArray *articles = [items rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier;
     }];
@@ -47,9 +51,11 @@
 
     NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
     
+    NSDictionary *params = @{@"articles": articles, @"userID": self.userID};
+    
     weakify(self);
 
-    [self.backgroundSession POST:path parameters:@{@"articles": articles, @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.backgroundSession POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
         for (FeedItem *item in items) {
             item.read = read;
