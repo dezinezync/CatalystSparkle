@@ -28,11 +28,11 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 @implementation DetailCustomVC
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [self.DS resetData];
-}
+//- (void)viewDidLoad {
+//    [super viewDidLoad];
+//    
+//    [self.DS resetData];
+//}
 
 - (void)viewWillAppear:(BOOL)animated {
     
@@ -207,7 +207,11 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             self->_page = page;
             
             if (![responseObject count]) {
-                self->_canLoadNext = NO;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self->_canLoadNext = NO;
+                    self.loadingNext = NO;
+                });
+                
                 self.DS.data = self.DS.data ?: @[];
             }
             else {
@@ -216,7 +220,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                         self.DS.data = responseObject;
                     }
                     else {
-                        self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+                        [self.DS append:responseObject];
                     }
                 }
                 @catch (NSException *exc) {
@@ -237,7 +241,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                     [self.collectionView.refreshControl endRefreshing];
                 }
                 
-                if (page == 1) {
+                if (page == 1 && self->_canLoadNext) {
                     [self loadNextPage];
                 }
             })

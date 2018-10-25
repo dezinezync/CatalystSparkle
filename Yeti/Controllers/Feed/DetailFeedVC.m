@@ -103,7 +103,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
-    [self.collectionView addObserver:self forKeyPath:propSel(frame) options:NSKeyValueObservingOptionNew context:KVO_DetailFeedFrame];
+    [self.collectionView addObserver:self forKeyPath:propSel(frame) options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:KVO_DetailFeedFrame];
     
     self.extendedLayoutIncludesOpaqueBars = YES;
     
@@ -277,7 +277,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    if ((_canLoadNext == YES || _loadingNext == YES) && _page == 0) {
+    if (_loadingNext == YES && _page == 0) {
         self.activityIndicatorView.hidden = NO;
         [self.activityIndicatorView startAnimating];
         
@@ -998,9 +998,11 @@ NSString * const kSizCache = @"FeedSizesCache";
         self.sizeCache = @{}.mutableCopy;
     });
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
-    });
+    if ([[self.collectionView indexPathsForVisibleItems] count]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+        });
+    }
     
 }
 
@@ -1008,7 +1010,14 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     if ([keyPath isEqualToString:propSel(frame)] && context == KVO_DetailFeedFrame) {
         
-        [self didChangeContentCategory];
+        CGRect old = [[change valueForKey:NSKeyValueChangeOldKey] CGRectValue];
+        CGRect new = [[change valueForKey:NSKeyValueChangeNewKey] CGRectValue];
+        
+        if (CGRectEqualToRect(old, new) == NO) {
+        
+            [self didChangeContentCategory];
+            
+        }
         
     }
     else {
