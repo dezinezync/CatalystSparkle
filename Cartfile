@@ -1,8 +1,4 @@
-github "dzns/DZNetworking"
-github "dezinezync/DZKit"
 github "joeldev/JLRoutes"
 github "dzns/DZAppDelegate"
-github "dzns/DZThemeKit"
-github "MatthewYork/DateTools"
 github "kishikawakatsumi/UICKeyChainStore"
 github "Flipboard/FLAnimatedImage"

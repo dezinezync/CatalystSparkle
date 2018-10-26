@@ -79,7 +79,9 @@ AppDelegate *MyAppDelegate = nil;
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //        strongify(self);
 //
-//        [self openFeed:@(18) article:@(97012)];
+////        [self openFeed:@(1) article:@(1293968)];  // twitter user
+////        [self openFeed:@(1) article:@(1273075)];  // twitter status
+//        [self openFeed:@(1) article:@(1149498)];  // reddit
 //    });
 #endif
     
@@ -172,7 +174,7 @@ AppDelegate *MyAppDelegate = nil;
     _restoring = YES;
     
     DDLogDebug(@"Will restore application state");
-    return YES;
+    return _restoring;
 }
 
 - (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -209,7 +211,12 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsImageBandwidth: ImageLoadingAlways,
              kDefaultsArticleFont: ALPSystem,
              kSubscriptionType: @"None",
-             kShowArticleCoverImages: @NO
+             kShowArticleCoverImages: @NO,
+             kUseExtendedFeedLayout: @NO,
+             kShowUnreadCounts: @YES,
+             kUseImageProxy: @NO,
+             kDetailFeedSorting: YTSortAllDesc,
+             kShowMarkReadPrompt: @YES
              };
 }
 

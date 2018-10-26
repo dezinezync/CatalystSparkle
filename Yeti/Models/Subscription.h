@@ -16,6 +16,7 @@
 @property (nonatomic, copy) NSDate *created;
 @property (nonatomic, assign) NSNumber * status; // 1: normal, 2: trial, 0: expired/cancelled.
 @property (nonatomic, assign) BOOL preAppstore;
+@property (nonatomic, assign, getter=isLifetime) BOOL lifetime;
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs;
 

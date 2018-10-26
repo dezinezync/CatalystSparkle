@@ -16,6 +16,8 @@
 #import "Subscription.h"
 #import "FeedsManagerErrors.h"
 
+#import "YetiConstants.h"
+
 #import <UICKeyChainStore/UICKeyChainStore.h>
 
 @class FeedsManager;
@@ -70,7 +72,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
 
-- (void)getFeed:(Feed * _Nonnull)feed page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getFeed:(Feed * _Nonnull)feed sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -102,11 +104,13 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addFolder:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)renameFolder:(NSNumber *)folderID to:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)renameFolder:(Folder *)folder to:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)updateFolder:(NSNumber *)folderID add:(NSArray <NSNumber *> * _Nullable)add remove:(NSArray <NSNumber *> * _Nullable)del  success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)updateFolder:(Folder *)folder add:(NSArray <NSNumber *> * _Nullable)add remove:(NSArray <NSNumber *> * _Nullable)del  success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)removeFolder:(NSNumber *)folderID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)removeFolder:(Folder *)folder success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+- (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Filters
 

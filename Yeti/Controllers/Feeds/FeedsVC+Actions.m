@@ -62,12 +62,13 @@
     
     [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        asyncMain(^{
-            
-            strongify(self);
-            
+        dispatch_async(dispatch_get_main_queue(), ^{
             self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+            
+            NSIndexPath *IPOne = [NSIndexPath indexPathForRow:0 inSection:0];
+            NSIndexPath *IPTwo = [NSIndexPath indexPathForRow:1 inSection:0];
+            
+            [self.DS reloadItemsAtIndices:@[IPOne, IPTwo]];
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -77,19 +78,14 @@
     [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
-#ifndef DEBUG
-        @synchronized(self) {
-            self.sinceDate = NSDate.date;
-        }
-#endif
-        
-        asyncMain(^{
+
+        dispatch_async(dispatch_get_main_queue(), ^{
             if ([responseObject integerValue] == 2) {
                 [sender endRefreshing];
             }
+            
+            self->_refreshing = NO;
         });
-        
-        self->_refreshing = NO;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -358,35 +354,17 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        [MyFeedsManager removeFolder:folder.folderID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            MyFeedsManager.folders = [MyFeedsManager.folders rz_filter:^BOOL(Folder *obj, NSUInteger idx, NSArray *array) {
-                return ![obj.folderID isEqualToNumber:folder.folderID];
-            }];
-            
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObjectsFromArray:folder.feeds];
-            
-            strongify(self);
-            
-            [self setupData:MyFeedsManager.feeds];
-            
-            if (completionHandler) {
-                asyncMain(^{
-                    completionHandler(YES);
-                });
-            }
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        if (completionHandler) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(YES);
+            });
+        }
+        
+        [MyFeedsManager removeFolder:folder success:nil error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             asyncMain(^{
                 [AlertManager showGenericAlertWithTitle:@"Something Went Wrong" message:error.localizedDescription];
             });
-            
-            if (completionHandler) {
-                asyncMain(^{
-                    completionHandler(NO);
-                });
-            }
             
         }];
         

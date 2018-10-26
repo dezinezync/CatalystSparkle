@@ -67,6 +67,9 @@ NSString *const kImportCell = @"importCell";
     
     self.title = @"Importing";
     
+    self.navigationController.navigationBarHidden = NO;
+    [self.navigationItem setHidesBackButton:YES animated:NO];
+    
     [self setupTable];
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
@@ -96,6 +99,7 @@ NSString *const kImportCell = @"importCell";
         self.hairlineView = hairline;
     }
 }
+
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -127,6 +131,7 @@ NSString *const kImportCell = @"importCell";
     self.tableView.tableFooterView = [UIView new];
     self.tableView.backgroundColor = theme.tableColor;
     self.tableView.userInteractionEnabled = NO;
+    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
     
     [self.tableView registerClass:ImportCell.class forCellReuseIdentifier:kImportCell];
 }
@@ -377,9 +382,11 @@ NSString *const kImportCell = @"importCell";
             NSArray *options = responseObject;
             
             // find the URL in the options array
-            NSString *url = [options rz_reduce:^id(NSString * prev, NSString * current, NSUInteger idx, NSArray *array) {
-                if ([current isEqualToString:path])
-                    return current;
+            NSString *url = [options rz_reduce:^id(NSString * prev, NSDictionary * current, NSUInteger idx, NSArray *array) {
+                NSString *compare = [current valueForKey:@"url"] ?: current;
+                
+                if (compare && [compare isKindOfClass:NSString.class] && [compare isEqualToString:path])
+                    return [current valueForKey:@"url"];
                 return prev;
             }];
             
@@ -420,7 +427,7 @@ NSString *const kImportCell = @"importCell";
             weakify(self);
             
             // add it  to the folder
-            [MyFeedsManager updateFolder:folder.folderID add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [MyFeedsManager updateFolder:folder add:@[feed.feedID] remove:@[] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 strongify(self);
                 

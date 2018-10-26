@@ -33,6 +33,21 @@
     return self;
 }
 
+- (BOOL)isEqualToFolder:(Folder *)object {
+    return ([[object folderID] isEqualToNumber:self.folderID]
+            && [[object title] isEqualToString:self.title]);
+}
+
+- (BOOL)isEqual:(id)object {
+    
+    if ([object isKindOfClass:Folder.class]) {
+        return [self isEqualToFolder:object];
+    }
+    
+    return NO;
+    
+}
+
 - (instancetype)copy {
     Folder *instance = [Folder instanceFromDictionary:self.dictionaryRepresentation];
     
@@ -63,22 +78,23 @@
 
 }
 
-//- (void)setValue:(id)value forKey:(NSString *)key
-//{
-//
-//    if ([key isEqualToString:@"feeds"]) {
-//
-//        if ([value isKindOfClass:[NSPointerArray class]])
-//        {
-//            self.feeds = value;
-//        }
-//
-//    } else {
-//        
-//    }
-//
-//}
+- (void)setValue:(id)value forKey:(NSString *)key
+{
 
+    if ([key isEqualToString:propSel(feedIDs)]) {
+
+        if ([value isKindOfClass:[NSArray class]])
+        {
+            value = [NSSet setWithArray:value];
+        }
+        
+        self.feedIDs = value;
+
+    } else {
+        [super setValue:value forKey:key];
+    }
+
+}
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
@@ -133,6 +149,10 @@
         
         [dictionary setObject:feedMembers forKey:@"feeds"];
         
+    }
+    
+    if (self.feedIDs) {
+        [dictionary setObject:self.feedIDs.allObjects forKey:propSel(feedIDs)];
     }
 
     if (self.folderID != nil) {

@@ -18,12 +18,16 @@
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSNumber *userID;
 
+@property (nonatomic, strong) NSSet *feedIDs;
+
 @property (nonatomic, assign, getter=isExpanded) BOOL expanded;
 
 + (Folder *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
 
 - (NSDictionary *)dictionaryRepresentation;
+
+- (BOOL)isEqualToFolder:(Folder *)folder;
 
 @property (nonatomic, readonly) NSNumber *unreadCount;
 

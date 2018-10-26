@@ -27,7 +27,7 @@
     
     NSString *text = searchController.searchBar.text;
     
-    NSArray *data = [[MyFeedsManager folders] arrayByAddingObjectsFromArray:(NSArray *)[MyFeedsManager feeds]];
+    NSArray *data = [[MyFeedsManager folders] arrayByAddingObjectsFromArray:(NSArray *)[MyFeedsManager feedsWithoutFolders]];
     DZBasicDatasource *DS = [(SearchResults *)[searchController searchResultsController] DS];
     
     if ([text isBlank]) {

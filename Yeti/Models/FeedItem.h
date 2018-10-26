@@ -26,8 +26,8 @@
 @property (nonatomic, copy) NSString *mediaRating;
 @property (nonatomic, copy) NSString *mediaCredit;
 
-//@property (nonatomic, strong) NSArray <NSString *> *keywords;
-//@property (nonatomic, strong) NSArray <Enclosure *> *enclosures;
+@property (nonatomic, strong) NSArray <NSString *> *keywords;
+@property (nonatomic, strong) NSArray <Enclosure *> *enclosures;
 
 @property (nonatomic, copy) NSNumber *feedID;
 @property (nonatomic, copy) NSString *summary;
@@ -37,6 +37,8 @@
 
 + (FeedItem *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
+
+- (BOOL)isEqualToItem:(FeedItem *)item;
 
 - (NSDictionary *)dictionaryRepresentation;
 

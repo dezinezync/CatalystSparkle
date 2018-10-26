@@ -14,6 +14,7 @@
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
+#import "TypeFactory.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -24,7 +25,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
 
 @interface FolderCell () <UIDropInteractionDelegate>
 
-@property (weak, nonatomic) Folder * folder;
+@property (strong, nonatomic) Folder * folder;
 @property (weak, nonatomic) UIDropInteraction *dropInteraction;
 
 @property (weak, nonatomic) id <FolderDrop> dropDelegate;
@@ -45,7 +46,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.clipsToBounds = YES;
     
-    self.countLabel.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+    self.countLabel.font = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:[UIFont monospacedDigitSystemFontOfSize:14.f weight:UIFontWeightMedium]];
     self.countLabel.layer.cornerRadius = ceil(self.countLabel.bounds.size.height / 2.f);
     self.countLabel.layer.masksToBounds = YES;
     
@@ -56,6 +57,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     self.backgroundColor = theme.cellColor;
     
     self.titleLabel.textColor = theme.titleColor;
+    self.titleLabel.font = [TypeFactory.shared titleFont];
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
     self.countLabel.textColor = theme.unreadTextColor;
@@ -63,6 +65,9 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     UIView *selected = [UIView new];
     selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
     self.selectedBackgroundView = selected;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapIcon:)];
+    [self.faviconView addGestureRecognizer:tap];
 }
 
 - (void)prepareForReuse
@@ -183,6 +188,14 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     [self setupObservors];
 }
 
+- (void)didTapIcon:(id)sender {
+    
+    if (self.interactionDelegate) {
+        [self.interactionDelegate didTapFolderIcon:self.folder cell:self];
+    }
+    
+}
+
 #pragma mark - a11y
 
 - (NSString *)accessibilityLabel {
@@ -196,14 +209,6 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     return formattedString(@"%@. %@ unread article%@", title, @(count), count == 1 ? @"" : @"s");
 }
 
-//- (NSString *)accessibilityValue {
-//    if ([self.object isKindOfClass:Folder.class]) {
-//        return @"Folder";
-//    }
-//
-//    return [super accessibilityValue];
-//}
-
 - (NSString *)accessibilityHint {
     if (self.folder) {
         
@@ -215,6 +220,21 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     }
     
     return [super accessibilityValue];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    CGFloat radius = 48.f;
+    
+    // For the y-offset, we divide by 2 to prevent the touch from overflowing
+    // to the adjascent rows.
+    CGRect frame = CGRectInset(self.faviconView.bounds, -radius, -radius/2);
+    
+    if (CGRectContainsPoint(frame, point)) {
+        return self.faviconView;
+    }
+    
+    return [super hitTest:point withEvent:event];
 }
 
 #pragma mark - KVO
@@ -231,15 +251,10 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     if (self.folder && self.folder.observationInfo != nil) {
         
-        NSArray *observingObjects = [(id)(self.folder.observationInfo) valueForKeyPath:@"_observances"];
-        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [obj valueForKeyPath:@"observer"];
-        }];
-        
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [self.folder removeObserver:self forKeyPath:propSel(unreadCount)];
-            } @catch (NSException *exc) {}
+        @try {
+            [self.folder removeObserver:self forKeyPath:propSel(unreadCount) context:KVO_UNREAD];
+        } @catch (NSException *exc) {
+            
         }
     }
 }

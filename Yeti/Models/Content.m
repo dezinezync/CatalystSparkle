@@ -277,8 +277,11 @@
 {
     NSString *url = (self.url ?: [self.attributes valueForKey:@"src"]);
     
+    BOOL usedSRCSet = NO;
+    
+    NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
+    
     if (self.srcset && [self.srcset allKeys].count > 1) {
-        NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
         NSArray <NSString *> * sizes = [self.srcset allKeys];
         
         if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
@@ -292,6 +295,7 @@
             
             if (available.count) {
                 url = [self.srcset valueForKey:available.lastObject];
+                usedSRCSet = YES;
             }
         }
         else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
@@ -305,6 +309,7 @@
             
             if (available.count) {
                 url = [self.srcset valueForKey:available.lastObject];
+                usedSRCSet = YES;
             }
         }
         else {
@@ -318,11 +323,39 @@
             
             if (available.count) {
                 url = [self.srcset valueForKey:available.lastObject];
+                usedSRCSet = YES;
             }
             else if ([self.attributes valueForKey:@"data-large-file"]) {
                 url = [self.attributes valueForKey:@"data-large-file"];
+                usedSRCSet = YES;
             }
         }
+    }
+    
+    // check if we should be using the proxy
+    if ([NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy]) {
+        
+//        url = [url stringByReplacingOccurrencesOfString:@"http://" withString:@""];
+//        url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@""];
+        
+        url = formattedString(@"https://images.weserv.nl/?url=%@", url);
+        
+        if (usedSRCSet == NO) {
+            
+            NSInteger quality = 90;
+            
+            if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
+                quality = 60;
+            }
+            else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
+                quality = 75;
+            }
+            
+            url = formattedString(@"%@?w=%@&dpr=%@&output=jpeg&q=%@", url, @([UIScreen mainScreen].bounds.size.width), @(UIScreen.mainScreen.scale), @(quality));
+        }
+        
+        DDLogInfo(@"weserv.nl proxy URL: %@", url);
+        
     }
     
     return url;

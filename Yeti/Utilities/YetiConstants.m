@@ -94,3 +94,44 @@ NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-0-0";
 NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";
 
 NSString * const YTSubscriptionNotification = @"com.dezinezync.elytra.subscription";
+
+NSString * const kUseExtendedFeedLayout = @"com.dezinezync.elytra.extendedFeedLayout";
+
+NSString * const kShowUnreadCounts = @"com.dezinezync.elytra.showUnreadCounts";
+NSNotificationName const ShowUnreadCountsPreferenceChanged = @"com.dezinezync.elytra.note.unreadCountPreferenceChanged";
+
+NSString * const kUseImageProxy = @"com.dezinezync.elytra.useImageProxy";
+
+NSString * const kDetailFeedSorting = @"com.dezinezync.elytra.sortingOption";
+YetiSortOption const YTSortAllDesc = @"0";    // 0
+YetiSortOption const YTSortAllAsc = @"1";     // 1
+YetiSortOption const YTSortUnreadDesc = @"2"; // 2
+YetiSortOption const YTSortUnreadAsc = @"3";  // 3
+
+NSString * const kShowMarkReadPrompt = @"com.dezinezync.elytra.showMarkReadPrompt";
+
+NSString * const IAPOneMonth     = @"com.dezinezync.elytra.non.1m";
+NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";
+NSString * const IAPTwelveMonth  = @"com.dezinezync.elytra.non.12m";
+NSString * const IAPLifetime     = @"com.dezinezync.elytra.life";
+
+@implementation SortImageProvider
+
++ (UIImage *)imageForSortingOption:(YetiSortOption)option {
+    
+    if ([option isEqualToString:YTSortAllDesc]) {
+        return [[UIImage imageNamed:@"sort_all_desc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    else if ([option isEqualToString:YTSortAllAsc]) {
+        return [[UIImage imageNamed:@"sort_all_asc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    else if ([option isEqualToString:YTSortUnreadDesc]) {
+        return [[UIImage imageNamed:@"sort_unread_desc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    else {
+        return [[UIImage imageNamed:@"sort_unread_asc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+    
+}
+
+@end

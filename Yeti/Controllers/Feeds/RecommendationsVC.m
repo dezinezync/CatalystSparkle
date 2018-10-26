@@ -15,8 +15,12 @@
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
+#import "DetailFeedVC.h"
+
+#import "YetiConstants.h"
 
 #import <DZKit/NSArray+Safe.h>
+#import <DZKit/UIViewController+AnimatedDeselect.h>
 
 typedef NS_ENUM(NSInteger, ReccoState) {
     ReccoStateLoading,
@@ -65,30 +69,7 @@ static NSString * const reuseIdentifier = @"Cell";
 {
     [super viewWillAppear:animated];
     
-    if ([self.collectionView.indexPathsForSelectedItems count] > 0) {
-        
-        NSArray <NSIndexPath *> *indices = self.collectionView.indexPathsForSelectedItems;
-        
-        if (self.transitionCoordinator) {
-            
-            weakify(self);
-            
-            [self.transitionCoordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-                
-                strongify(self);
-                
-                for (NSIndexPath *indexPath in indices) {
-                    [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-                }
-                
-            } completion:nil];
-        }
-        else {
-            for (NSIndexPath *indexPath in indices) {
-                [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
-            }
-        }
-    }
+    [self dz_smoothlyDeselectCells:self.collectionView];
     
     [self _updateMetrics];
     
@@ -308,10 +289,36 @@ static NSString * const reuseIdentifier = @"Cell";
             break;
     }
     
+    BOOL useExtendedLayout = NO;
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+    if (isPhone) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        useExtendedLayout = [defaults boolForKey:kUseExtendedFeedLayout];
+    }
+    
     if (feed) {
-        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-        vc.exploring = YES;
-        [self.navigationController pushViewController:vc animated:YES];
+        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            
+            if (isPhone) {
+                DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+                vc.exploring = YES;
+                vc.customFeed = FeedTypeFeed;
+                
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                UINavigationController *nav = [DetailFeedVC instanceWithFeed:feed];
+                [(DetailFeedVC *)[nav topViewController] setCustomFeed:NO];
+                [(DetailFeedVC *)[nav topViewController] setExploring:YES];
+                [self.splitViewController showDetailViewController:nav sender:self];
+            }
+            
+        }
+        else {
+            FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+            vc.exploring = YES;
+            [self.navigationController pushViewController:vc animated:YES];
+        }
     }
     else {
         [collectionView deselectItemAtIndexPath:indexPath animated:YES];

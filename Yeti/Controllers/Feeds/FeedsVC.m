@@ -11,6 +11,10 @@
 #import "FeedsCell.h"
 #import "FolderCell.h"
 #import "FeedVC.h"
+#import "DetailFeedVC.h"
+#import "DetailCustomVC.h"
+#import "DetailFolderVC.h"
+
 #import <DZKit/DZBasicDatasource.h>
 
 #import <DZKit/EFNavController.h>
@@ -34,7 +38,9 @@
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
-@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration>
+@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
+    BOOL _setupObservors;
+}
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
@@ -67,18 +73,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.tableView.estimatedRowHeight = UITableViewAutomaticDimension;
     
-    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
-    
-    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
-    [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
-    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
-    [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
-    [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
-    
-    NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
-    
-    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
-    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    [self setupObservors];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -136,21 +131,46 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-    if (MyFeedsManager.observationInfo != nil) {
+    if (_setupObservors == YES && MyFeedsManager.observationInfo != nil) {
         
         NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
         observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [obj valueForKeyPath:@"observer"];
         }];
         
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(unread)];
-            } @catch (NSException *exc) {}
+        @try {
+            
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
+            
         }
+        @catch (NSException * exc) {}
         
     }
+}
+
+- (void)setupObservors {
+    
+    if (_setupObservors == YES) {
+        return;
+    }
+    
+    _setupObservors = YES;
+    
+    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+    
+    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
+    [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+    [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
+    [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
+    [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
+    
+    NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
+    
+    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    
 }
 
 #pragma mark - Setups
@@ -352,6 +372,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     FeedsCell *ocell = nil;
     
+    BOOL showUnreadCounter = [[NSUserDefaults standardUserDefaults] boolForKey:kShowUnreadCounts];
+    
     if (indexPath.section == 0) {
         FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
         
@@ -389,7 +411,7 @@ static void *KVO_Unread = &KVO_Unread;
                 // folder
                 FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
                 [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
-                
+                cell.interactionDelegate = self;
                 ocell = (FeedsCell *)cell;
             }
         }
@@ -403,6 +425,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     ocell.countLabel.backgroundColor = theme.unreadBadgeColor;
     ocell.countLabel.textColor = theme.unreadTextColor;
+    
+    ocell.countLabel.hidden = !showUnreadCounter;
     
     return ocell;
 }
@@ -424,11 +448,38 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
+    BOOL useExtendedLayout = NO;
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+    if (isPhone) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        useExtendedLayout = [defaults boolForKey:kUseExtendedFeedLayout];
+    }
+    
     if (indexPath.section == 0) {
-        CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
-        vc.unread = indexPath.row == 0;
         
-        [self.navigationController pushViewController:vc animated:YES];
+        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
+            vc.customFeed = FeedTypeCustom;
+            vc.unread = indexPath.row == 0;
+            
+            if (isPhone) {
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+                nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
+                
+                [self.splitViewController showDetailViewController:nav sender:self];
+            }
+        }
+        else {
+            
+            CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
+            vc.unread = indexPath.row == 0;
+            
+            [self.navigationController pushViewController:vc animated:YES];
+            
+        }
         
         return;
     }
@@ -436,84 +487,39 @@ static void *KVO_Unread = &KVO_Unread;
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     if ([feed isKindOfClass:Feed.class]) {
-        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-        [self.navigationController pushViewController:vc animated:YES];
+        UIViewController *vc;
+        
+        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            if (isPhone) {
+                vc = [[DetailFeedVC alloc] initWithFeed:feed];
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                vc = [DetailFeedVC instanceWithFeed:feed];
+                [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
+                [self.splitViewController showDetailViewController:vc sender:self];
+            }
+        }
+        else {
+            vc = [[FeedVC alloc] initWithFeed:feed];
+            [self.navigationController pushViewController:vc animated:YES];
+        }
     }
     else {
         // it's a folder
         Folder *folder = (Folder *)feed;
-        NSUInteger index = [self.DS2.data indexOfObject:folder];
         
-        CGPoint contentOffset = self.tableView.contentOffset;
+        UIViewController *vc;
         
-        FolderCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        
-        if (folder.isExpanded) {
-            
-            DDLogDebug(@"Closing index: %@", @(index));
-            folder.expanded = NO;
-            
-            // remove these feeds from the datasource
-            NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                
-                if ([obj isKindOfClass:Folder.class])
-                    return YES;
-                
-                if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:folder.folderID]) {
-                    return NO;
-                }
-                
-                return YES;
-                
-            }];
-            
-            [self.DS setData:data section:1];
-            
+        if (isPhone) {
+            vc = [[DetailFolderVC alloc] initWithFolder:folder];
+            [self.navigationController pushViewController:vc animated:YES];
         }
         else {
-            folder.expanded = YES;
-            DDLogDebug(@"Opening index: %@", @(index));
-            
-            // add these feeds to the datasource after the above index
-            NSMutableArray * data = [self.DS2.data mutableCopy];
-            
-            // data shouldn't contain any object with this folder ID
-            data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                if ([obj isKindOfClass:Feed.class]) {
-                    Feed *feed = obj;
-                    if ([feed.folderID isEqualToNumber:folder.folderID]) {
-                        return NO;
-                    }
-                }
-                
-                return YES;
-            }].mutableCopy;
-            
-            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.count)];
-            
-            [data insertObjects:folder.feeds.allObjects atIndexes:set];
-            
-            @try {
-                [self.DS setData:data section:1];
-            }
-            @catch (NSException *exc) {
-                DDLogWarn(@"Exception updating feeds: %@", exc);
-            }
-            
+            vc = [DetailFolderVC instanceWithFolder:folder];
+            [self.splitViewController showDetailViewController:vc sender:self];
         }
         
-        [self.feedbackGenerator selectionChanged];
-        [self.feedbackGenerator prepare];
-        
-        cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-        
-        weakify(self);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            [self.tableView.layer removeAllAnimations];
-            [self.tableView setContentOffset:contentOffset animated:NO];
-        });
     }
     
 }
@@ -571,13 +577,7 @@ NSString * const kDS2Data = @"DS2Data";
 {
     
     if (![NSThread isMainThread]) {
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            
-            [self setupData:feeds];
-        });
+        [self performSelectorOnMainThread:@selector(setupData:) withObject:feeds waitUntilDone:NO];
         return;
     }
     
@@ -706,6 +706,14 @@ NSString * const kDS2Data = @"DS2Data";
 
 #pragma mark - Notifications
 
+- (void)unreadCountPreferenceChanged {
+    
+    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
+    
+    [self.tableView reloadRowsAtIndexPaths:visible withRowAnimation:UITableViewRowAnimationFade];
+    
+}
+
 - (void)didUpdateTheme {
     
     weakify(self);
@@ -809,6 +817,10 @@ NSString * const kDS2Data = @"DS2Data";
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
     
+    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:vc action:@selector(didTapDone:)];
+    
+    vc.navigationItem.rightBarButtonItem = done;
+    
 //    storeVC.checkAndShowError = YES;
     
     [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -839,6 +851,99 @@ NSString * const kDS2Data = @"DS2Data";
         }
         
     }];
+    
+}
+
+#pragma mark - <FolderInteractionDelegate>
+
+- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
+ 
+    NSUInteger index = [self.DS2.data indexOfObject:folder];
+    
+    CGPoint contentOffset = self.tableView.contentOffset;
+    
+    if (folder != nil && (folder.feeds == nil || folder.feeds.allObjects.count == 0)) {
+        // it is possible that this folder is actually empty
+        // but let's check it anyways
+        
+        [folder.feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull feedID, BOOL * _Nonnull stop) {
+            
+            Feed *feed = [MyFeedsManager feedForID:feedID];
+            
+            if (feed != nil && [folder.feeds containsObject:feed] == NO) {
+                [folder.feeds addObject:feed];
+            }
+            
+        }];
+        
+    }
+    
+    if (folder.isExpanded) {
+        
+        DDLogDebug(@"Closing index: %@", @(index));
+        folder.expanded = NO;
+        
+        // remove these feeds from the datasource
+        NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            
+            if ([obj isKindOfClass:Folder.class])
+                return YES;
+            
+            if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:folder.folderID]) {
+                return NO;
+            }
+            
+            return YES;
+            
+        }];
+        
+        [self.DS setData:data section:1];
+        
+    }
+    else {
+        folder.expanded = YES;
+        DDLogDebug(@"Opening index: %@", @(index));
+        
+        // add these feeds to the datasource after the above index
+        NSMutableArray * data = [self.DS2.data mutableCopy];
+        
+        // data shouldn't contain any object with this folder ID
+        data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            if ([obj isKindOfClass:Feed.class]) {
+                Feed *feed = obj;
+                if ([feed.folderID isEqualToNumber:folder.folderID]) {
+                    return NO;
+                }
+            }
+            
+            return YES;
+        }].mutableCopy;
+        
+        NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.allObjects.count)];
+        
+        [data insertObjects:folder.feeds.allObjects atIndexes:set];
+        
+        @try {
+            [self.DS setData:data section:1];
+        }
+        @catch (NSException *exc) {
+            DDLogWarn(@"Exception updating feeds: %@", exc);
+        }
+        
+    }
+    
+    [self.feedbackGenerator selectionChanged];
+    [self.feedbackGenerator prepare];
+    
+    cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        [self.tableView.layer removeAllAnimations];
+        [self.tableView setContentOffset:contentOffset animated:NO];
+    });
     
 }
 

@@ -8,6 +8,10 @@
 
 #import "FeedsManager+KVS.h"
 #import "FeedItem.h"
+
+#import "RMStore.h"
+#import "RMStoreKeychainPersistence.h"
+
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
@@ -126,6 +130,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (NSNumber *)userID
 {
     return self.userIDManager.userID;
+}
+
+- (void)dealloc {
+    
+    
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -260,25 +270,30 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
     
-    // these feeds are inside folders
-    NSArray <NSNumber *> *feedIDsInFolders = [foldersStruct valueForKey:@"feeds"];
+    self->_feeds = feeds;
     
     // create the folders map
     NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
        
         Folder *folder = [Folder instanceFromDictionary:obj];
         
-        NSArray <NSNumber *> * feedIDs = [obj valueForKey:@"feeds"];
+        NSArray <NSNumber *> * feedIDs = [[[obj valueForKey:@"feeds"] rz_filter:^BOOL(NSNumber * obj, NSUInteger idx, NSArray *array) {
+            return obj != nil && [obj integerValue] > 0;
+        }] sortedArrayUsingSelector:@selector(compare:)];
+        
+        folder.feedIDs = [NSSet setWithArray:feedIDs];
         
         folder.feeds = [NSPointerArray weakObjectsPointerArray];
         
         [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
             
-            [feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
+            [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
                 
                 if ([feed.feedID isEqualToNumber:objx]) {
                     feed.folderID = folder.folderID;
-                    [folder.feeds addPointer:(__bridge void *)feed];
+                    if ([folder.feeds containsObject:feed] == NO) {
+                        [folder.feeds addObject:feed];
+                    }
                 }
                 
             }];
@@ -289,8 +304,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
     }];
     
-    self.folders = folders;
-    self.feeds = feeds;
+    self->_folders = folders;
     
     return feeds;
 }
@@ -321,7 +335,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)getFeed:(Feed *)feed page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getFeed:(Feed *)feed sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
     if (!page)
         page = 1;
@@ -337,6 +351,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
 #endif
     
+    if (sorting) {
+        params[@"sortType"] = @(sorting.integerValue);
+    }
+    
     [self.session GET:formattedString(@"/feeds/%@", feed.feedID) parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSArray <NSDictionary *> * articles = [responseObject valueForKey:@"articles"];
@@ -345,8 +363,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return [FeedItem instanceFromDictionary:obj];
         }];
         
-        if (feed)
-            feed.articles = [feed.articles arrayByAddingObjectsFromArray:items];
+        if ([sorting integerValue] > 1) {
+            items = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                return obj.isRead == NO;
+            }];
+        }
+        
+        if (feed) {
+            if (page == 1) {
+                feed.articles = items;
+            }
+            else {
+                feed.articles = [(feed.articles ?: @[]) arrayByAddingObjectsFromArray:items];
+            }
+        }
         
         if (successCB)
             successCB(items, response, task);
@@ -793,28 +823,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
 #endif
     
-    weakify(self);
-    
     [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
         NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
             return [FeedItem instanceFromDictionary:obj];
         }];
         
-        strongify(self);
-        
         self.unreadLastUpdate = NSDate.date;
         
         if (page == 1) {
-            @synchronized (self) {
-                self.unread = items;
-            }
+            self.unread = items;
         }
         else {
-            if (!MyFeedsManager.unread) {
-                @synchronized (self) {
-                    self.unread = items;
-                }
+            if (!self.unread) {
+                self.unread = items;
             }
             else {
                 NSArray *unread = MyFeedsManager.unread;
@@ -824,20 +846,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 
                 @try {
                     prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-                    @synchronized (MyFeedsManager) {
-                        MyFeedsManager.unread = prefiltered;
-                    }
+                     self.unread = prefiltered;
                 }
                 @catch (NSException *exc) {}
             }
         }
         // the conditional takes care of filtered article items.
-        @synchronized (self) {
-            self.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
-        }
+        self.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         
-        if (successCB)
-            successCB(items, response, task);
+        if (successCB) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(items, response, task);
+            });
+        }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
@@ -905,10 +926,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
-- (void)renameFolder:(NSNumber *)folderID to:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)renameFolder:(Folder *)folder to:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-    [self updateFolder:folderID properties:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self updateFolder:folder properties:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [[responseObject valueForKey:@"status"] boolValue];
         
@@ -925,7 +946,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         // update our caches
         [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            
-            if ([obj.folderID isEqualToNumber:folderID]) {
+            if ([obj.folderID isEqualToNumber:folder.folderID]) {
                 obj.title = title;
                 *stop = YES;
             }
@@ -933,9 +954,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         }];
         
         // this will fire the notification
-        @synchronized (MyFeedsManager) {
-            MyFeedsManager.folders = folders;
-        }
+        MyFeedsManager.folders = folders;
         
         if (successCB) {
             successCB(responseObject, response, task);
@@ -944,7 +963,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     } error:errorCB];
 }
 
-- (void)updateFolder:(NSNumber *)folderID add:(NSArray<NSNumber *> *)add remove:(NSArray<NSNumber *> *)del success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)updateFolder:(Folder *)folder add:(NSArray<NSNumber *> *)add remove:(NSArray<NSNumber *> *)del success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
     NSMutableDictionary *dict = @{}.mutableCopy;
@@ -969,7 +988,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     weakify(self);
     
-    [self updateFolder:folderID properties:dict.copy success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self updateFolder:folder properties:dict.copy success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [[responseObject valueForKey:@"status"] boolValue];
         
@@ -983,48 +1002,44 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         strongify(self);
         
-        Folder *folder = [self folderForID:folderID];
-        
-        if (folder) {
-            // check delete ops first
-            if (del && del.count) {
-                NSArray <Feed *> * removedFeeds = [folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                    return [del indexOfObject:obj.feedID] != NSNotFound;
-                }];
-                
-                [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    obj.folderID = nil;
-                }];
-                
-                NSArray *feeds = [folder.feeds allObjects];
-                
-                [folder.feeds removeAllObjects];
-                
-                feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                    return [del indexOfObject:obj.feedID] == NSNotFound;
-                }];
-                
-                [folder.feeds addObjectsFromArray:feeds];
-            }
+        // check delete ops first
+        if (del && del.count) {
+            NSArray <Feed *> * removedFeeds = [folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [del indexOfObject:obj.feedID] != NSNotFound;
+            }];
             
-            // now run add ops
-            if (add && add.count) {
-                NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                    return [add indexOfObject:obj.feedID] != NSNotFound;
-                }];
-                
-                [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    obj.folderID = folderID;
-                }];
-                
-                [folder.feeds addObjectsFromArray:addedFeeds];
-            }
+            [removedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.folderID = nil;
+            }];
+            
+            NSArray *feeds = [folder.feeds allObjects];
+            
+            [folder.feeds removeAllObjects];
+            
+            feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [del indexOfObject:obj.feedID] == NSNotFound;
+            }];
+            
+            [folder.feeds addObjectsFromArray:feeds];
+        }
+        
+        // now run add ops
+        if (add && add.count) {
+            NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                return [add indexOfObject:obj.feedID] != NSNotFound;
+            }];
+            
+            [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.folderID = folder.folderID;
+            }];
+            
+            [folder.feeds addObjectsFromArray:addedFeeds];
         }
         
         // this pushes the update to FeedsVC
-        @synchronized (self) {
+        dispatch_async(dispatch_get_main_queue(), ^{
             self.feeds = [self feeds];
-        }
+        });
         
         if (successCB) {
             successCB(responseObject, response, task);
@@ -1033,11 +1048,27 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     } error:errorCB];
 }
 
-- (void)removeFolder:(NSNumber *)folderID success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)removeFolder:(Folder *)folder success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    NSString *path = formattedString(@"/folder?userID=%@&folderID=%@", [self userID], folderID);
+    NSString *path = formattedString(@"/folder?userID=%@&folderID=%@", [self userID], folder.folderID);
     
-    [self.session DELETE:path parameters:nil success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session DELETE:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [[folder.feeds allObjects] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            obj.folderID = nil;
+            
+        }];
+     
+        NSArray <Folder *> *folders = [self.folders rz_filter:^BOOL(Folder *obj, NSUInteger idx, NSArray *array) {
+            return ![obj.folderID isEqualToNumber:folder.folderID];
+        }];
+        
+        self.folders = folders;
+        
+        self.feeds = [self feeds];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
@@ -1049,12 +1080,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)updateFolder:(NSNumber *)folderID properties:(NSDictionary *)props success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)updateFolder:(Folder *)folder properties:(NSDictionary *)props success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (![props valueForKey:@"folderID"]) {
         NSMutableDictionary *temp = props.mutableCopy;
         
-        [temp setValue:folderID forKey:@"folderID"];
+        [temp setValue:folder.folderID forKey:@"folderID"];
         
         props = temp.copy;
     }
@@ -1067,6 +1098,49 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         else {
             DDLogError(@"Unhandled network error: %@", error);
         }
+    }];
+    
+}
+
+- (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSString *path = formattedString(@"/1.1/folder/%@/feed", folder.folderID);
+    
+    NSMutableDictionary *params = @{@"page": @(page)}.mutableCopy;
+    
+    if ([self userID] != nil) {
+        params[@"userID"] = MyFeedsManager.userID;
+    }
+    
+    if (sorting) {
+        params[@"sortType"] = @(sorting.integerValue);
+    }
+    
+#if TESTFLIGHT == 0
+    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+    }
+#endif
+    
+    [self.session GET:path parameters:params success:^(NSArray <NSDictionary *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSArray <FeedItem *> *items = [responseObject rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        if (successCB)
+            successCB(items, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
     }];
     
 }
@@ -1267,6 +1341,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
             if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                
+                if ([RMStore defaultStore])
                 
                 self.subscription = sub;
                 
@@ -1473,6 +1549,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)setSubscription:(Subscription *)subscription {
     _subscription = subscription;
     
+    if (_subscription && [[(RMStoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
+        _subscription.lifetime = YES;
+    }
+    
 #ifndef DEBUG
 #if TESTFLIGHT == 1
     if (_subscription && _subscription.error == nil) {
@@ -1583,7 +1663,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
@@ -2329,8 +2409,8 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
-        self.folders = [coder decodeObjectForKey:kFoldersKey];
         self.feeds = [coder decodeObjectForKey:kFeedsKey];
+        self.folders = [coder decodeObjectForKey:kFoldersKey];
 //        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
         self.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];

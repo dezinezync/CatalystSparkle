@@ -80,6 +80,9 @@
         [reddit addObject:@"Antenna"];
     if ([app canOpenURL:[NSURL URLWithString:@"apollo://"]])
         [reddit addObject:@"Apollo"];
+    if ([app canOpenURL:[NSURL URLWithString:@"narwhal://"]]) {
+        [reddit addObject:@"Narwhal"];
+    }
     if ([app canOpenURL:[NSURL URLWithString:@"reddit://"]])
         [reddit addObject:@"Reddit"];
     

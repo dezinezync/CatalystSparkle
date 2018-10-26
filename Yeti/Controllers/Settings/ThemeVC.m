@@ -39,18 +39,18 @@ NSString *const kBasicCell = @"cell.theme";
     // update the method -[tableview:cellForRowAtIndexPath:]
     _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral];
     _fontNamesMap = @{
-                      ALPSystem : @"System (San Fransico)",
-                      ALPSerif : @"Georgia",
-                      ALPHelvetica : @"Helvetica Neue",
-                      ALPMerriweather : @"Merriweather",
-                      ALPPlexSerif : @"Plex Serif",
-                      ALPPlexSans : @"Plex Sans",
-                      ALPSpectral : @"Spectral"
+                      ALPSystem         : @"System (San Fransico)",
+                      ALPSerif          : @"Georgia",
+                      ALPHelvetica      : @"Helvetica Neue",
+                      ALPMerriweather   : @"Merriweather",
+                      ALPPlexSerif      : @"Plex Serif",
+                      ALPPlexSans       : @"Plex Sans",
+                      ALPSpectral       : @"Spectral"
                       };
     
     NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];
     
-    _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]];
+    _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]] || [[[[UIApplication sharedApplication] keyWindow] traitCollection] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
     
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -234,8 +234,16 @@ NSString *const kBasicCell = @"cell.theme";
             themeName = @"dark";
         }
         
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+        });
+        
         YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
         [CodeParser.sharedCodeParser loadTheme:themeName];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+        });
         
         reloadSections = [self.tableView indexPathsForVisibleRows];
         
@@ -256,6 +264,8 @@ NSString *const kBasicCell = @"cell.theme";
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         
         _selectedFontIndexPath = indexPath;
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:UIContentSizeCategoryDidChangeNotification object:nil];
     }
     
     if (reloadSections != nil) {
@@ -267,6 +277,12 @@ NSString *const kBasicCell = @"cell.theme";
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
         [self.settingsDelegate didChangeSettings];
     }
+}
+
+- (void)dealloc {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+    
 }
 
 #pragma mark - Helpers

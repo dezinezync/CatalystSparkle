@@ -77,11 +77,11 @@ static void *KVO_Unread = &KVO_Unread;
             return [obj valueForKeyPath:@"observer"];
         }];
         
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(unread)];
-            } @catch (NSException *exc) {}
+        @try {
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
+        } @catch (NSException *exc) {
+            
         }
         
     }

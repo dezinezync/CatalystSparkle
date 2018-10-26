@@ -15,6 +15,8 @@
 #import "YetiConstants.h"
 #import "YetiThemeKit.h"
 
+#import "TypeFactory.h"
+
 #import <DZKit/NSArray+Safe.h>
 
 @interface Paragraph ()
@@ -40,7 +42,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        UIFont *font = [[TypeFactory shared] bodyFont];
         
         if (![fontPref isEqualToString:ALPSystem]) {
             font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:18.f]];
@@ -204,6 +206,9 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (self.isCaption) {
         para.alignment = NSTextAlignmentCenter;
+        para.lineHeightMultiple = self.bodyFont.pointSize * 1.4f;
+        para.maximumLineHeight = self.bodyFont.pointSize * 1.55f;
+        para.minimumLineHeight = self.bodyFont.pointSize * 1.3f;
         
         CGFloat offset = 48.f;
         if (UIApplication.sharedApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
@@ -239,12 +244,12 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             else if ([range.element isEqualToString:@"sup"]) {
 //                [dict setObject:@1 forKey:@"NSSuperScript"];
-                [dict setObject:[UIFont systemFontOfSize:self.bodyFont.pointSize-6.f] forKey:NSFontAttributeName];
+                [dict setObject:[[TypeFactory shared] caption1Font] forKey:NSFontAttributeName];
                 [dict setObject:@(6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"sub"]) {
 //                [dict setObject:@-1 forKey:@"NSSuperScript"];
-                [dict setObject:[UIFont systemFontOfSize:self.bodyFont.pointSize-6.f] forKey:NSFontAttributeName];
+                [dict setObject:[[TypeFactory shared] caption1Font] forKey:NSFontAttributeName];
                 [dict setObject:@(-6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
@@ -258,13 +263,13 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             else if ([range.element isEqualToString:@"code"]) {
                 
-                __block UIFont *monoFont = [self bodyFont];
+                __block UIFont *monoFont = [[TypeFactory shared] codeFont];
                 __block UIColor *textcolor;
 //                __block UIColor *background;
                 
                 if (NSThread.isMainThread) {
-                    UIFont *baseMonoFont = [UIFont fontWithName:@"Menlo" size:monoFont.pointSize];
-                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:baseMonoFont maximumPointSize:_bodyFont.pointSize];
+//                    UIFont *baseMonoFont = [UIFont fontWithName:@"Menlo" size:monoFont.pointSize];
+//                    monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:baseMonoFont maximumPointSize:_bodyFont.pointSize];
                     
                     if ([self isKindOfClass:NSClassFromString(@"Heading")]) {
                         textcolor = theme.titleColor;
@@ -278,8 +283,8 @@ static NSParagraphStyle * _paragraphStyle = nil;
                     weakify(self);
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         strongify(self);
-                        UIFont *baseMonoFont = [UIFont fontWithName:@"Menlo" size:monoFont.pointSize];
-                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:baseMonoFont maximumPointSize:self->_bodyFont.pointSize];
+//                        UIFont *baseMonoFont = [UIFont fontWithName:@"Menlo" size:monoFont.pointSize];
+//                        monoFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:baseMonoFont maximumPointSize:self->_bodyFont.pointSize];
                         
                         if ([self isKindOfClass:NSClassFromString(@"Heading")]) {
                             textcolor = theme.titleColor;
@@ -434,7 +439,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (self.attributedText) {
         size.height = [self.attributedText boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:options context:nil].size.height;
     }
-    else if (self.text && ![self.text isBlank]) {
+    else if (self.text && [self.text isBlank] == NO) {
         NSParagraphStyle *style = nil;
         
         if ([self respondsToSelector:@selector(paragraphStyle)]) {
@@ -449,6 +454,12 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         size.height = [self.text boundingRectWithSize:CGSizeMake(size.width, CGFLOAT_MAX) options:options attributes:@{NSFontAttributeName: font, NSParagraphStyleAttributeName: style} context:nil].size.height;
     }
+    
+    if (self.isCaption) {
+        size.height += self.bodyFont.pointSize;
+    }
+    
+    size.height = floor(size.height) + 2.f;
     
     return size;
 }
@@ -473,17 +484,33 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        __block UIFont * bodyFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:18.f] : [UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:18.f];
+        UIFont *defaultBodyFont = [[TypeFactory shared] bodyFont];
+        
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        __block UIFont * bodyFont = isSystemFont ? defaultBodyFont : [UIFont fontWithName:fontName size:defaultBodyFont.pointSize];
+        
+        if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
+            NSString *suffix = @"-Medium";
+            if ([fontName isEqualToString:@"Georgia"] || [fontName isEqualToString:@"Merriweather"]) {
+                suffix = @"-Bold";
+            }
+            
+            bodyFont = [UIFont fontWithName:[fontName stringByAppendingString:suffix] size:bodyFont.pointSize];
+        }
+        
         __block UIFont * baseFont;
         
         if (self.isCaption) {
-            UIFontDescriptor *italicDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute : bodyFont.familyName,
-                                                                                                      UIFontDescriptorFaceAttribute : @"Italic"}];
-            bodyFont = [UIFont fontWithDescriptor:italicDescriptor size:14.f];
+            bodyFont = [[TypeFactory shared] caption1Font];
+            UIFontDescriptor *descriptor = [[bodyFont fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
+            bodyFont = [UIFont fontWithDescriptor:descriptor size:bodyFont.pointSize];
             baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleCaption1] scaledFontForFont:bodyFont];
         }
         else
-            baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:bodyFont];
+            baseFont = bodyFont;
         
         bodyFont = nil;
         
@@ -498,10 +525,21 @@ static NSParagraphStyle * _paragraphStyle = nil;
 - (UIFont *)boldFont {
     
     if (!_boldFont) {
-        UIFontDescriptor *boldDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute : self.bodyFont.familyName,
-                                                                                                UIFontDescriptorFaceAttribute : @"Bold"}];
+        UIFont *bodyFont = [self bodyFont];
         
-        _boldFont = [UIFont fontWithDescriptor:boldDescriptor size:self.bodyFont.pointSize];
+        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
+            bodyFont = [UIFont fontWithName:fontName size:bodyFont.pointSize];
+        }
+        
+        UIFontDescriptor *boldDescriptor = [bodyFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+        
+        _boldFont = [UIFont fontWithDescriptor:boldDescriptor size:bodyFont.pointSize];
     }
     
     return _boldFont;
@@ -511,8 +549,19 @@ static NSParagraphStyle * _paragraphStyle = nil;
 - (UIFont *)italicsFont {
     
     if (!_italicsFont) {
-        UIFontDescriptor *italicDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{UIFontDescriptorFamilyAttribute : self.bodyFont.familyName,
-                                                                                                  UIFontDescriptorFaceAttribute : @"Italic"}];
+        UIFont *bodyFont = [self bodyFont];
+        
+        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
+            bodyFont = [UIFont fontWithName:fontName size:bodyFont.pointSize];
+        }
+        
+        UIFontDescriptor *italicDescriptor = [bodyFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
         
         _italicsFont = [UIFont fontWithDescriptor:italicDescriptor size:self.bodyFont.pointSize];
     }

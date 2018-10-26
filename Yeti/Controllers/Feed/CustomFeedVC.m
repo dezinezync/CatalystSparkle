@@ -54,6 +54,8 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 {
     [super viewDidLoad];
     
+    self.loadingNext = NO;
+    
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     self.tableView.tableFooterView = [UIView new];
@@ -75,6 +77,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
         [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
         self.tableView.refreshControl = refresh;
         
+        [self.DS resetData];
         self.DS.data = [MyFeedsManager unread];
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     }
@@ -106,34 +109,12 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     
     if (MyFeedsManager.observationInfo != nil && self.unread == NO) {
         
-        NSArray *observingObjects = [(id)(MyFeedsManager.observationInfo) valueForKeyPath:@"_observances"];
-        observingObjects = [observingObjects rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [obj valueForKeyPath:@"observer"];
-        }];
-        
-        if ([observingObjects indexOfObject:self] != NSNotFound) {
-            @try {
-                [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks)];
-            } @catch (NSException *exc) {}
-        }
+        @try {
+            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_BOOKMARKS];
+        } @catch (NSException *exc) {}
         
     }
     
-}
-
-- (UIView *)viewForEmptyDataset {
-    
-    EmptyView *view = [[EmptyView alloc] initWithNib];
-    view.imageView.image = [UIImage imageNamed:@"feeds-empty"];
-    view.label.text = self.isUnread ? @"All your unread articles will appear here." : @"All your bookmarked articles will appear here.";
-    [view.label sizeToFit];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    view.label.textColor = theme.captionColor;
-    view.backgroundColor = theme.tableColor;
-    
-    return view;
 }
 
 #pragma mark - Overrides
@@ -145,6 +126,66 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     }
     
     return nil;
+}
+
+- (BOOL)showsSortingButton {
+    return self.isUnread ? NO : YES;
+}
+
+- (void)didTapSortOptions:(UIBarButtonItem *)sender {
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortAllDesc];
+        
+        [self setSortingOption:YTSortAllDesc];
+        
+    }];
+    
+    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortAllAsc];
+        
+        [self setSortingOption:YTSortAllAsc];
+        
+    }];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    @try {
+        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortAllDesc] forKeyPath:@"image"];
+        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortAllAsc] forKeyPath:@"image"];
+    }
+    @catch (NSException *exc) {
+        
+    }
+    
+    [avc addAction:allDesc];
+    [avc addAction:allAsc];
+    
+    [self presentAllReadController:avc fromSender:sender];
+    
+}
+
+- (void)setSortingOption:(YetiSortOption)option {
+    
+    if ([option isEqualToString:YTSortAllDesc]) {
+        self.DS.data = [MyFeedsManager.bookmarks reverseObjectEnumerator].allObjects;
+    }
+    else {
+        self.DS.data = MyFeedsManager.bookmarks;
+    }
+    
+}
+
+- (NSString *)emptyViewSubtitle {
+    if (self.isUnread) {
+        return @"No Unread Articles are available.";
+    }
+    
+    return @"You dont have any bookmarks. Bookmarks are a great way to save articles for offline reading.";
 }
 
 - (void)loadNextPage

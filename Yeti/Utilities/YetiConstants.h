@@ -10,7 +10,7 @@
 #define YetiConstants_h
 
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 #define YETI_EXPORT FOUNDATION_EXPORT
 
 typedef NSString * FMNotification;
@@ -84,5 +84,38 @@ YETI_EXPORT NSString * const YTLaunchCount;
 YETI_EXPORT NSString * const YTRequestedReview;
 
 YETI_EXPORT NSString * const YTSubscriptionNotification;
+
+YETI_EXPORT NSString * const kUseExtendedFeedLayout;
+
+YETI_EXPORT NSString * const kShowUnreadCounts;
+YETI_EXPORT NSNotificationName const ShowUnreadCountsPreferenceChanged;
+
+typedef NS_ENUM(NSInteger, FeedType) {
+    FeedTypeFeed,
+    FeedTypeCustom,
+    FeedTypeFolder
+};
+
+YETI_EXPORT NSString * const kUseImageProxy;
+
+YETI_EXPORT NSString * const kDetailFeedSorting;
+typedef NSString * YetiSortOption;
+extern YetiSortOption const YTSortAllDesc;    // 0
+extern YetiSortOption const YTSortAllAsc;     // 1
+extern YetiSortOption const YTSortUnreadDesc; // 2
+extern YetiSortOption const YTSortUnreadAsc;  // 3
+
+extern NSString * const IAPOneMonth;
+extern NSString * const IAPThreeMonth;
+extern NSString * const IAPTwelveMonth;
+extern NSString * const IAPLifetime;
+
+YETI_EXPORT NSString * const kShowMarkReadPrompt;
+
+@interface SortImageProvider : NSObject
+
++ (UIImage *)imageForSortingOption:(YetiSortOption)option;
+
+@end
 
 #endif /* YetiConstants_h */

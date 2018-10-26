@@ -1,12 +1,93 @@
 
+[IMPROVE]
+
+- Increases tap area for the folder icon so opening and collapsing folders no longer feels like a task!
+
+-- 182 --
+
 [NEW]
+- The app now handles Twitter.com and Reddit.com links and opens them in the app of your choice.
+
+- Implemented Narwhal under Reddit apps for opening external links.
+
+- Implements Lifetime subscription
+
+- Enables Black Theme on iPads.
+
+[FIX]
+- Fixes searching of feeds where duplicate feeds were shown.
+
+- Fixes loading of article from push notifications.
+
+- Fixes opening relative URLs inside articles correctly using your selected browser. Previously, tapping on a relative URL would either crash the app or take no action.
+
+-- 179 --
+
+[NEW]
+- Added option under the Miscellaneous Settings to optionally not display prompts when Marking Articles as Read.
+
+[FIX]
+- Extended layout now correctly ignores the Favicon when viewing articles from a single feed.
+
+- Fixes a bug when using the extended layout when the articles would retain their unread visual marker even after reading the article.
+
+- Fixes the animation bug when deleting a folder: the "delete" row would be present on screen (and would eventually disappear when scrolled off-screen).
+
+-- 178 --
+
+[FOLDER FEEDS]
+
+- Folder taps now open the Folder's Feed. These custom Feeds include articles from all Feeds inside that folder.
+
+- The original interaction to expand and collapse a folder: tap on the folder icon.
+
+This has been a highly requested Feature and I'm super pumped to finally bring it to Elytra. I look forward to your feedback on this.
+
+[NEW]
+- Added option to use an Image Proxy. The current one that is set is provided by weserv.nl. The Proxy can speed up image downloads (as it uses CloudFlare CDN) and provides multiple sizing options as well as quality options. This works in conjunction with your Image Loading preferences.
+
+- Feed Sorting Options. All - Newest First, All - Oldest First, Unread - Newest First, Unread - Oldest First
+
+[FIX]
+
+- Long pressing on the "Mark All Read" button now behaves as expected. You no longer need to lift your finger for the action to trigger.
+
+- Fixes enclosures not loading for articles when changed using the floating bar.
+
+-- 173 --
+
+Version 1.1.0 Update Notes
+
+[NEW]
+- Image and Video enclosures are now displayed in the Article when available. These are attachments published by blogs and websites as separate attachments. These aren't included in Post's body so they were never surfaced until now. Image enclosures do not come with captions so captions are skipped for such images. Audio enclosures are not supported at the moment.
+
+- Extended layout on iPads. The new layout uses the right (left for RTL languages) section on iPads to display articles. This is supported from the base Feeds Interface & Recommendations. 
+
+- The Bold Type Accessibility is now correctly respected in the Article Viewer for all Font options provided in the app. Note that Georgia and Merriweather fonts do not come with the appropriate Semi-Bold font weight used for this setting so their respective Bold weights are used.
+
+- Opt-in Support for the new Extended Layout from the iPad on the iPhone. To turn this on, go to the App's Settings > Miscellaneous > Use Extended Layout.
+
+- Added option to show or hide the unread counts on the Feeds Interface. This is an opt-in and the default is set to show the unread counts.
+
+[IMPROVE]
+- Completes implementation of OPML interfaces.
+
+- Type rendering for the Feeds Interface: The unread counter now uses a dynamic font too which respects the Bold Type Accessibility setting as well as the Dynamic Type size settings.
+
+
+[FIX]
+
+-- 172 --
 
 [IMPROVE]
 - Elytra's Action Extension is now much much faster. It interacts directly with a webpage if one is available to find the RSS Feeds advertisted by that web page.
 - Improved Voice Over text for Settings, Recommendations, New Folder and New Feed buttons on the Feeds Interface.
+- OPML view improvements. This is still Work-In-Progress.
 
 [FIX]
 - Renaming a Folder is now an instant action and no longer requires a refresh.
 - Deleting a renamed folder no longer crashes the app.
 - Changing the theme followed by opening an article and then tapping on search now correctly presents the search bar and associated buttons. Previously, the search bar did not appear at all showing just the keyboard.
 - The Appearance Interface now uses the current Accent colour when tapping on cells.
+- Fixes glitches for folder updates including deletion.
+- Fixes folder move bug using drag and drop on iPads.

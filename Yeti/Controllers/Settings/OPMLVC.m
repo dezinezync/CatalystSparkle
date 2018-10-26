@@ -21,6 +21,12 @@
 
 @interface OPMLVC () <UIDocumentPickerDelegate> {
     BOOL _hasSetup;
+    
+    // When we present the document picker, the view of the navigation controller
+    // is removed from the window
+    // when it is added back, it is assigned the frame of the presenting view
+    // and therefore breaks the deck transition.
+    CGRect _navigationControllerFrame;
 }
 
 @property (weak, nonatomic) IBOutlet UIButton *importButton;
@@ -35,8 +41,6 @@
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         self.state = OPMLStateNone;
-        self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-        self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     }
     
     return self;
@@ -45,13 +49,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Do any additional setup after loading the view from its nib.
-    self.detailsView.layer.cornerRadius = 18.f;
-    self.detailsView.clipsToBounds = YES;
-    self.detailsView.hidden = YES;
+    self.navigationController.navigationBarHidden = YES;
     
-    self.ioView.layer.cornerRadius = 18.f;
-    self.ioView.clipsToBounds = YES;
+    // Do any additional setup after loading the view from its nib.
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.view.backgroundColor = theme.backgroundColor;
+    
+    self.detailsTitleLabel.textColor = theme.titleColor;
+    self.detailsSubtitleLabel.textColor = theme.subtitleColor;
+    
+    self.detailsView.backgroundColor = theme.backgroundColor;
+    self.detailsView.hidden = YES;
+
+    self.ioTitleLabel.textColor = theme.titleColor;
+    self.ioSubtitleLabel.textColor = theme.subtitleColor;
+    
+    self.ioView.backgroundColor = theme.backgroundColor;
     self.ioView.hidden = YES;
     
     [self.ioDoneButton addTarget:self action:@selector(didTapCancel:) forControlEvents:UIControlEventTouchUpInside];
@@ -90,7 +104,7 @@
     if (state == current)
         return;
     
-    NSTimeInterval duration = 0.6;
+    NSTimeInterval duration = 0.35;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -99,7 +113,7 @@
         UIView *view = self.detailsView.isHidden ? self.ioView : self.detailsView;
         
         [UIView animateWithDuration:(duration/2) animations:^{
-            view.transform = CGAffineTransformMakeTranslation(0, view.bounds.size.height + 32.f);
+            view.alpha = 0;
         }];
         
     }
@@ -109,14 +123,8 @@
             button.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
         }
         
-//        self.detailsTitleLabel.textColor = theme.titleColor;
-//        self.detailsSubtitleLabel.textColor = theme.captionColor;
-        
-        CGAffineTransform base = self.detailsView.transform;
-        
-        self.detailsView.transform = CGAffineTransformTranslate(base, 0, self.detailsView.bounds.size.height);
+        self.detailsView.alpha = 0.f;
         self.detailsView.hidden = NO;
-//        self.detailsView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
         
         weakify(self);
         
@@ -124,19 +132,16 @@
             
             strongify(self);
             
-            self.detailsView.transform = base;
+            self.detailsView.alpha = 1.f;
             
         } completion:nil];
     }
     else {
         // Import/Export State
         self.ioProgressView.progress = 0.0f;
-        
-        CGAffineTransform base = self.ioView.transform;
-        self.ioView.transform = CGAffineTransformTranslate(base, 0, self.ioView.bounds.size.height + 32.f);
+
+        self.ioView.alpha = 0.f;
         self.ioView.hidden = NO;
-        
-//        self.ioView.effect = [UIBlurEffect effectWithStyle:(theme.isDark ? UIBlurEffectStyleDark : UIBlurEffectStyleLight)];
         
         if (state == OPMLStateImport) {
             self.ioTitleLabel.text = @"Importing OPML";
@@ -147,9 +152,6 @@
             self.ioSubtitleLabel.text = @"Preparing your file";
         }
         
-//        self.ioTitleLabel.textColor = theme.titleColor;
-//        self.ioSubtitleLabel.textColor = theme.captionColor;
-        
         if (current == OPMLStateDefault) {
             
             weakify(self);
@@ -158,23 +160,14 @@
                 
                 strongify(self);
                 
-                self.detailsView.transform = CGAffineTransformMakeTranslation(0, self.detailsView.bounds.size.height + 32.f);
+                self.detailsView.alpha = 0.f;
+                self.ioView.alpha = 1.f;
                 
             } completion:^(BOOL finished) { if (finished) {
                 
                 strongify(self);
                 
                 self.detailsView.hidden = YES;
-                
-                weakify(self);
-                
-                [UIView animateWithDuration:(duration/2) delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0.5 options:UIViewAnimationOptionAllowUserInteraction animations:^{
-                    
-                    strongify(self);
-                    
-                    self.ioView.transform = base;
-                    
-                } completion:nil];
                 
             } }];
             
@@ -233,7 +226,9 @@
     
     importVC.delegate = self;
     
-    [self presentViewController:importVC animated:YES completion:nil];
+    _navigationControllerFrame = self.navigationController.view.frame;
+    
+    [self.navigationController presentViewController:importVC animated:YES completion:nil];
     
 }
 
@@ -246,19 +241,16 @@
 }
 
 - (IBAction)didTapCancel:(UIButton *)sender {
-    self.state = OPMLStateNone;
     
-    weakify(self);
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        strongify(self);
-        [self dismissViewControllerAnimated:YES completion:nil];
-    });
 }
 
 #pragma mark - <UIDocumentPickerDelegate>
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+    
+    self.navigationController.view.frame = _navigationControllerFrame;
     
     if (!urls.count) {
         self.state = OPMLStateDefault;
@@ -277,6 +269,8 @@
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    
+    self.navigationController.view.frame = _navigationControllerFrame;
     
     if (!self.ioView.isHidden) {
         self.ioDoneButton.enabled = YES;
@@ -323,6 +317,8 @@
             
             self.ioProgressView.progress = 1.f;
             
+            self->_navigationControllerFrame = self.navigationController.view.frame;
+            
             UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initWithURLs:@[fileURL] inMode:UIDocumentPickerModeMoveToService];
             
             [self presentViewController:exportVC animated:YES completion:nil];
@@ -356,25 +352,6 @@
     self.ioDoneButton.enabled = NO;
     
     weakify(self);
-    
-//    [XMLConverter convertXMLURL:self.importURL completion:^(BOOL success, NSMutableDictionary * _Nonnull dictionary, NSError * _Nonnull error) {
-//
-//        strongify(self);
-//
-//        if (success == NO) {
-//            if (error) {
-//                [AlertManager showGenericAlertWithTitle:@"Invalid OPML File" message:error.localizedDescription fromVC:self];
-//            }
-//            else {
-//                [AlertManager showGenericAlertWithTitle:@"Invalid OPML File" message:@"An unknown error occurred reading the OPML file." fromVC:self];
-//            }
-//
-//            return;
-//        }
-//
-//        DDLogDebug(@"%@ - %@", self, dictionary);
-//
-//    }];
     
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
 //    url = @"https://api.elytra.app/user/opml";
@@ -447,19 +424,11 @@
     importVC.unmappedFolders = folders;
     importVC.existingFolders = (existingFolders != nil && [existingFolders isKindOfClass:NSDictionary.class]) ? [existingFolders valueForKey:@"folders"] : @[];
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:importVC];
-    
-    UIViewController *presenting = self.presentingViewController;
-    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         strongify(self);
 
-        [self didTapCancel:self.ioDoneButton];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [presenting presentViewController:nav animated:YES completion:nil];
-        });
+        [self.navigationController pushViewController:importVC animated:YES];
 
     });
 }

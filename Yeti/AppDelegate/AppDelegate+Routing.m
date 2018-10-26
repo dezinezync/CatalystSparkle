@@ -13,6 +13,7 @@
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
+#import "FolderCell.h"
 #import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>
@@ -49,7 +50,7 @@
         
         [self popToRoot];
         
-        NSURL *url = [NSURL URLWithString:[[[parameters valueForKey:kJLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"feed:" withString:@""]];
+        NSURL *url = [NSURL URLWithString:[[[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"feed:" withString:@""]];
         
         return [self addFeed:url];
         
@@ -85,7 +86,7 @@
         return YES;
     }];
     
-    [JLRoutes addRoute:@"/twitter/:type/:identifer" handler:^BOOL(NSDictionary *parameters) {
+    [JLRoutes.globalRoutes addRoute:@"/twitter/:type/:identifer" handler:^BOOL(NSDictionary *parameters) {
        
         NSString *type = [parameters valueForKey:@"type"];
         NSString *identifer = [parameters valueForKey:@"identifer"];
@@ -101,7 +102,7 @@
         
     }];
     
-    [JLRoutes addRoute:@"/feed/:feedID/article/:articleID" handler:^BOOL(NSDictionary *parameters) {
+    [JLRoutes.globalRoutes addRoute:@"/feed/:feedID/article/:articleID" handler:^BOOL(NSDictionary *parameters) {
        
         NSNumber *feedID = @([[parameters valueForKey:@"feedID"] integerValue]);
         NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
@@ -112,9 +113,72 @@
         
     }];
     
-    [JLRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
+//    [JLRoutes.globalRoutes addRoute:@"/article/:articleID" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
+//
+//        NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
+//
+//        [self openFeed:nil article:articleID];
+//
+//        return YES;
+//
+//    }];
+    
+    [JLRoutes.globalRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
         
-        NSString *link = [[(NSURL *)[parameters valueForKey:kJLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
+        NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
+        
+        // check and optionally handle twitter URLs
+        if ([link containsString:@"twitter.com"]) {
+            NSError *error = nil;
+            NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"https?\\:\\/\\/w{0,3}\\.?twitter.com\\/([a-zA-Z0-9]*)$" options:NSRegularExpressionCaseInsensitive error:&error];
+            NSArray *matches = nil;
+            
+            if (error == nil && exp) {
+                matches = [exp matchesInString:link options:kNilOptions range:NSMakeRange(0, link.length)];
+                if (matches && matches.count > 0) {
+                    NSString *username = [link lastPathComponent];
+                    [self twitterOpenUser:username];
+                    
+                    return YES;
+                }
+            }
+            
+            exp = [NSRegularExpression regularExpressionWithPattern:@"https?\\:\\/\\/w{0,3}\\.?twitter.com\\/([a-zA-Z0-9]*)\\/status\\/([0-9]*)$" options:NSRegularExpressionCaseInsensitive error:&error];
+            
+            if (error == nil && exp) {
+                matches = [exp matchesInString:link options:kNilOptions range:NSMakeRange(0, link.length)];
+                if (matches && matches.count > 0) {
+                    NSString *status = [link lastPathComponent];
+                    [self twitterOpenStatus:status];
+                    
+                    return YES;
+                }
+            }
+        }
+        
+        if ([link containsString:@"reddit.com"]) {
+            NSString *redditClient = [[NSUserDefaults standardUserDefaults] valueForKey:ExternalRedditAppScheme];
+            
+            if (redditClient != nil) {
+                // Reference: https://www.reddit.com/r/redditmobile/comments/526ede/ios_url_schemes_for_ios_app/
+                NSURLComponents *comp = [NSURLComponents componentsWithString:link];
+                comp.scheme = [redditClient lowercaseString];
+                comp.host = @"";
+                
+                if ([redditClient isEqualToString:@"Narwhal"]) {
+                    NSString *encoded = [link stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
+                    comp.path = formattedString(@"/open-url/%@", encoded);
+                }
+                
+                NSURL *prepared = comp.URL;
+                
+                if (prepared) {
+                    [UIApplication.sharedApplication openURL:prepared options:@{} completionHandler:nil];
+                }
+                return YES;
+            }
+            
+        }
         
         [self openURL:link];
         
@@ -421,6 +485,7 @@
     __block BOOL isFolder = NO;
     __block BOOL isFolderExpanded = NO;
     __block NSUInteger folderIndex = NSNotFound;
+    __block Folder *checkFolder = nil;
     
     // get the primary navigation controller
     YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
@@ -482,6 +547,7 @@
 
                     isFolder = YES;
                     isFolderExpanded = folder.isExpanded;
+                    checkFolder = folder;
 
                     *stop = YES;
                     *stopx = YES;
@@ -502,7 +568,12 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
 //            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-            [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
+            FolderCell *cell = (FolderCell *)[feedsVC tableView:feedsVC.tableView cellForRowAtIndexPath:indexPath];
+            
+            if (cell && cell.interactionDelegate
+                && [cell.interactionDelegate respondsToSelector:@selector(didTapFolderIcon:cell:)]) {
+                [cell.interactionDelegate didTapFolderIcon:checkFolder cell:cell];
+            }
         });
     }
     
@@ -517,7 +588,7 @@
     }
     
     if (articleID != nil) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             strongify(self);
             
             [self showArticle:articleID];
@@ -533,13 +604,19 @@
     FeedVC *feedVC = nil;
     
     @try {
-        YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+        UISplitViewController *splitVC = (UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController];
+        YTNavigationController *nav = [[splitVC viewControllers] firstObject];
+        
+        if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            nav = [[splitVC viewControllers] lastObject];
+        }
         
         feedVC = (FeedVC *)[nav topViewController];
     }
     @catch (NSException *exc) {}
     
-    if (feedVC != nil && [feedVC isKindOfClass:FeedVC.class]) {
+    if (feedVC != nil
+        && ([feedVC isKindOfClass:FeedVC.class] || [feedVC isKindOfClass:NSClassFromString(@"DetailFeedVC")])) {
         feedVC.loadOnReady = articleID;
     }
 }

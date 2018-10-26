@@ -54,6 +54,7 @@
     // these are assigned in reverse order
     self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read, browser];
     
+    
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
 //        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
         

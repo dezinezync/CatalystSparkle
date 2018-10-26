@@ -35,6 +35,8 @@
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
+#import "TypeFactory.h"
+
 #import <SafariServices/SafariServices.h>
 
 #import "YetiThemeKit.h"
@@ -103,6 +105,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // Do any additional setup after loading the view from its nib.
     
     self.state = ArticleStateLoading;
+    self.navigationItem.leftItemsSupplementBackButton = YES;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -162,7 +165,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
-    [center addObserver:self selector:@selector(didChangePreferredContentSize:) name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
@@ -190,13 +193,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [navbar addSubview:hairline];
         self.hairlineView = hairline;
-    }
-    
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
-    }
-    else {
-        self.navigationItem.leftBarButtonItem = nil;
     }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
@@ -349,11 +345,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
-- (void)didChangePreferredContentSize:(NSNotification *)note {
+- (void)didChangePreferredContentSize {
     
-    if (self.state != ArticleStateLoading) {
+    if (self.state == ArticleStateLoading) {
         return;
     }
+    
+    Paragraph.paragraphStyle = nil;
     
     [self setupArticle:self.currentArticle];
     
@@ -634,14 +632,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
+    
+    if (self == nil) {
+        return;
+    }
+    
     weakify(self);
     
-    if (self.item == nil) {
-        self.item = responseObject;
-    }
-    else if ([self.item.content isEqualToArray:[responseObject content]] == NO) {
-        self.item.content = [responseObject content];
-    }
+    self.item = responseObject;
     
     // add Body
     [self addTitle];
@@ -661,6 +659,92 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             strongify(self);
             [self addImage:content];
         });
+    }
+    
+    if (self.item.enclosures && self.item.enclosures.count) {
+        
+        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
+        NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
+        
+        // check for images
+        NSArray <Enclosure *> *enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
+           
+            return obj.type && [IMAGE_TYPES containsObject:obj.type];
+            
+        }];
+        
+        if (enclosures.count) {
+            
+            if (enclosures.count == 1) {
+                Enclosure *enc = [enclosures firstObject];
+                
+                if (enc.url && enc.url.absoluteString) {
+                    // single image, add as cover
+                    Content *content = [Content new];
+                    content.type = @"image";
+                    content.url = [[[enclosures firstObject] url] absoluteString];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self addImage:content];
+                    });
+                }
+            }
+            else {
+                // Add as a gallery
+                
+                Content *content = [Content new];
+                content.type = @"gallery";
+                
+                NSMutableArray *images = [NSMutableArray arrayWithCapacity:enclosures.count];
+                
+                for (Enclosure *enc in enclosures) {
+                    
+                    if (enc.url && enc.url.absoluteString) {
+                        // single image, add as cover
+                        Content *subcontent = [Content new];
+                        subcontent.type = @"image";
+                        subcontent.url = [[enc url] absoluteString];
+                        
+                        [images addObject:subcontent];
+                    }
+                    
+                }
+                
+                content.items = images;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self addGallery:content];
+                });
+                
+            }
+            
+        }
+        
+        enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
+           
+            return obj.type && [VIDEO_TYPES containsObject:obj.type];
+            
+        }];
+        
+        if (enclosures.count) {
+            
+            for (Enclosure *enc in enclosures) { @autoreleasepool {
+                
+                if (enc.url && enc.url.absoluteString) {
+                    // single image, add as cover
+                    Content *subcontent = [Content new];
+                    subcontent.type = @"video";
+                    subcontent.url = [[enc url] absoluteString];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self addVideo:subcontent];
+                    });
+                }
+                
+            } }
+            
+        }
+        
     }
     
     [self.item.content enumerateObjectsUsingBlock:^(Content *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -697,6 +781,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     dispatch_async(dispatch_get_main_queue(), ^{
         
         strongify(self);
+        
+        if (self == nil) {
+            return;
+        }
         
         self->_last = nil;
         
@@ -1276,15 +1364,25 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+    // ignores tracking images
+    if (content && CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
+        return;
+    }
+    
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
+    
+    if ([content valueForKey:@"size"] && CGSizeEqualToSize(content.size, CGSizeZero) == NO) {
+        frame.size = content.size;
+    }
+    
     CGFloat scale = content.size.height / content.size.width;
     
     Image *imageView = [[Image alloc] initWithFrame:frame];
     
-    if ([link isKindOfClass:NSArray.class]) {
+    if (link && [link isKindOfClass:NSArray.class]) {
         link = [(NSArray *)link rz_reduce:^id(id prev, id current, NSUInteger idx, NSArray *array) {
             if (!prev && [current isBlank] == NO) {
                 return current;
@@ -1301,17 +1399,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     _last = imageView;
     
-    // hides tracking images
-    if (CGSizeEqualToSize(content.size, CGSizeZero) == NO && content.size.width == 1.f && content.size.height == 1.f) {
-        imageView.hidden = YES;
-    }
-    
     [self.stackView addArrangedSubview:imageView];
     
     if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
+        frame.size.width = content.size.width;
         frame.size.height = frame.size.width * scale;
         imageView.frame = frame;
-        imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
+        
+        if (content.size.width > content.size.height) {
+            imageView.aspectRatio = [imageView.heightAnchor constraintEqualToAnchor:imageView.widthAnchor multiplier:scale];
+        }
+        else {
+            imageView.aspectRatio = [imageView.widthAnchor constraintEqualToAnchor:imageView.heightAnchor multiplier:scale];
+        }
+        
         imageView.aspectRatio.priority = 999;
         imageView.aspectRatio.active = YES;
     }
@@ -1929,6 +2030,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
 {
+    if (URL.host == nil) {
+        // absolute link in the article. Resovle to fully qualified URL
+        NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item articleURL]];
+        NSURLComponents *urlComp = [NSURLComponents componentsWithString:URL.absoluteString];
+        
+        urlComp.host = articleComp.host;
+        urlComp.scheme = articleComp.scheme;
+        URL = [urlComp URL];
+    }
     
     NSString *absolute = URL.absoluteString;
     
@@ -2041,10 +2151,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
-        searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        CGFloat borderHeight = 1/[[UIScreen mainScreen] scale];
+        UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, borderHeight)];
+        border.backgroundColor = theme.borderColor;
+        border.translatesAutoresizingMaskIntoConstraints = NO;
+        [border.heightAnchor constraintEqualToConstant:borderHeight].active = YES;
+        
+        [searchView addSubview:border];
+        [border.topAnchor constraintEqualToAnchor:searchView.topAnchor].active = YES;
+        [border.heightAnchor constraintEqualToAnchor:searchView.heightAnchor].active = YES;
         
         UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
-        searchBar.placeholder = @"Search article";
+        searchBar.placeholder = @"Search Article";
         searchBar.keyboardType = UIKeyboardTypeDefault;
         searchBar.returnKeyType = UIReturnKeySearch;
         searchBar.delegate = self;

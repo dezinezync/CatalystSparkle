@@ -8,6 +8,7 @@
 
 #import "ImageLoadingVC.h"
 #import "LayoutConstants.h"
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 
 #import <DZNetworking/ImageLoader.h>
@@ -57,7 +58,7 @@ NSString *const kXSwitchCell = @"cell.switch";
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    return 4;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -66,8 +67,11 @@ NSString *const kXSwitchCell = @"cell.switch";
         return @"Resolution";
     else if (section == 1)
         return @"Bandwidth";
-    else {
+    else if (section == 2) {
         return @"Cover Images";
+    }
+    else {
+        return nil;
     }
 }
 
@@ -77,13 +81,19 @@ NSString *const kXSwitchCell = @"cell.switch";
         return @"The above setting only works when the Article source provides these options. If no such option is provided in the article source, the original image is always loaded.";
     else if (section == 1)
         return @"The above setting is also used for galleries and Youtube video previews.";
-    else {
+    else if (section == 2) {
         return @"Enabling this shows cover images in the feeds list. This setting is also affected by your setting for Bandwidth.";
+    }
+    else {
+        return @"Elytra can optionally use the weserv.nl Image Proxy for loading images optimized to be displayed on this device.";
     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 2) {
+        return 1;
+    }
+    else if (section == 3) {
         return 1;
     }
     return 3;
@@ -125,16 +135,35 @@ NSString *const kXSwitchCell = @"cell.switch";
             
             cell.accessoryType = self.bandwidth == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
             break;
+        case 3:
         default:
         {
             cell = [tableView dequeueReusableCellWithIdentifier:kXSwitchCell forIndexPath:indexPath];
             
             UISwitch *aSwitch = [[UISwitch alloc] init];
-            BOOL pref = [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages];
-            [aSwitch setOn:pref];
-            [aSwitch addTarget:self action:@selector(didChangeCoverImagesPreference:) forControlEvents:UIControlEventValueChanged];
+            BOOL pref;
             
-            cell.textLabel.text = @"Show cover images";
+            switch (indexPath.section) {
+                case 2:
+                {
+                    pref = [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages];
+                    [aSwitch addTarget:self action:@selector(didChangeCoverImagesPreference:) forControlEvents:UIControlEventValueChanged];
+                    
+                    cell.textLabel.text = @"Show cover images";
+                }
+                    break;
+                    
+                default:
+                {
+                    pref = [NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy];
+                    [aSwitch addTarget:self action:@selector(didChangeImageProxyPreference:) forControlEvents:UIControlEventValueChanged];
+                    
+                    cell.textLabel.text = @"Image Proxy";
+                }
+                    break;
+            }
+            
+            [aSwitch setOn:pref];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
             cell.accessoryView = aSwitch;
@@ -148,7 +177,7 @@ NSString *const kXSwitchCell = @"cell.switch";
     cell.detailTextLabel.textColor = theme.captionColor;
     cell.backgroundColor = theme.cellColor;
     
-    if (indexPath.section != 2) {
+    if (indexPath.section != 2 && indexPath.section != 3) {
         UIView *selected = [UIView new];
         selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
         cell.selectedBackgroundView = selected;
@@ -216,6 +245,14 @@ NSString *const kXSwitchCell = @"cell.switch";
         [self.settingsDelegate didChangeSettings];
         
     }
+}
+
+- (void)didChangeImageProxyPreference:(UISwitch *)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sender.isOn forKey:kUseImageProxy];
+    [defaults synchronize];
+    
 }
 
 @end

@@ -12,6 +12,14 @@
 #import "FolderDrop.h"
 #import "PaddedLabel.h"
 
+@class FolderCell;
+
+@protocol FolderInteractionDelegate <NSObject>
+
+- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell;
+
+@end
+
 extern NSString *const _Nonnull kFolderCell;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet SizedImage *faviconView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet PaddedLabel *countLabel;
+
+@property (weak, nonatomic) id <FolderInteractionDelegate> interactionDelegate;
 
 - (void)configureFolder:(Folder *_Nonnull)folder;
 

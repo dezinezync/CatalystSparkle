@@ -13,6 +13,7 @@
 #import "YetiThemeKit.h"
 #import "StoreFooter.h"
 #import "FeedsManager.h"
+#import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -54,9 +55,10 @@
     
     [self configureFooterView];
     
-    _products = @[@"com.dezinezync.elytra.non.1m",
-                  @"com.dezinezync.elytra.non.3m",
-                  @"com.dezinezync.elytra.non.12m"];
+    _products = @[IAPOneMonth,
+                  IAPThreeMonth,
+                  IAPTwelveMonth,
+                  IAPLifetime];
     
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
@@ -128,6 +130,8 @@
     footer.footerLabel.backgroundColor = theme.articleBackgroundColor;
     footer.footerLabel.textColor = theme.captionColor;
     footer.footerLabel.textAlignment = NSTextAlignmentCenter;
+    
+    footer.activityIndicator.activityIndicatorViewStyle = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
 }
 
 - (void)updateFooterView {
@@ -147,13 +151,20 @@
     
     if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
         
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateStyle = NSDateFormatterMediumStyle;
-        formatter.timeStyle = NSDateFormatterShortStyle;
-        formatter.locale = [NSLocale currentLocale];
-        formatter.timeZone = [NSTimeZone systemTimeZone];
+        NSString *upto = @"";
         
-        NSString *upto = [formatter stringFromDate:MyFeedsManager.subscription.expiry];
+        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
+            upto = @"3298 LY (A.K.A. our Lifetime)";
+        }
+        else {
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            formatter.dateStyle = NSDateFormatterMediumStyle;
+            formatter.timeStyle = NSDateFormatterShortStyle;
+            formatter.locale = [NSLocale currentLocale];
+            formatter.timeZone = [NSTimeZone systemTimeZone];
+            
+            upto = [formatter stringFromDate:MyFeedsManager.subscription.expiry];
+        }
         
         NSString *formatted = formattedString(@"Your subscription is active up to %@.\n\nYou can read our Terms of Service and Privacy Policy.", upto);
         
@@ -168,7 +179,7 @@
             attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
         }
         else {
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will not automatically renew You will be reminded when your subscription is about to expire.\n\nYou can read our Terms of Service and Privacy Policy." attributes:attributes];
+            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will not automatically renew. You will be reminded when your subscription is about to expire.\n\nYou can read our Terms of Service and Privacy Policy." attributes:attributes];
         }
     }
     
@@ -193,7 +204,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         textView.attributedText = attrs.copy;
-        [textView sizeToFit];
+        [textView invalidateIntrinsicContentSize];
         attrs = nil;
     });
     
@@ -209,10 +220,25 @@
 - (void)setButtonsState:(BOOL)enabled {
     self.buyButton.enabled = enabled;
     self.restoreButton.enabled = enabled;
+    
+    if (self.navigationItem.rightBarButtonItem) {
+        self.navigationItem.rightBarButtonItem.enabled = enabled;
+    }
+}
+
+- (void)didTapDone:(UIBarButtonItem *)sender {
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 - (void)didTapRestore
 {
+#if TARGET_OS_SIMULATOR
+    [self dismissViewControllerAnimated:YES completion:nil];
+    return;
+#endif
+    
     [self setButtonsState:NO];
     
     [[DZActivityIndicatorManager shared] incrementCount];
@@ -356,57 +382,45 @@
     
     self->_sendingReceipt = YES;
     
-//    [[RMStore defaultStore] refreshReceiptOnSuccess:^{
+    // get receipt
+    NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
     
-        // get receipt
-        NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
+    if (url != nil) {
+        // get the receipt data
+        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
         
-        if (url != nil) {
-            // get the receipt data
-            NSData *data = [[NSData alloc] initWithContentsOfURL:url];
-            
-            if (data) {
-                [MyFeedsManager postAppReceipt:data success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    self->_sendingReceipt = NO;
-                    
-                    [self updateFooterView];
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    self->_sendingReceipt = NO;
-                   
-                    [AlertManager showGenericAlertWithTitle:@"App Receipt Update Failed" message:error.localizedDescription];
-                    
-                    [self setButtonsState:YES];
-                    
-                }];
-            }
-            else {
+        if (data) {
+            [MyFeedsManager postAppReceipt:data success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
                 self->_sendingReceipt = NO;
                 
-                [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was found on this device but it was empty. Please ensure you have an active internet connection."];
+                [self updateFooterView];
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                self->_sendingReceipt = NO;
+               
+                [AlertManager showGenericAlertWithTitle:@"App Receipt Update Failed" message:error.localizedDescription];
                 
                 [self setButtonsState:YES];
-            }
+                
+            }];
         }
         else {
             self->_sendingReceipt = NO;
             
-            [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was not found on this device. Please ensure you have an active internet connection."];
+            [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was found on this device but it was empty. Please ensure you have an active internet connection."];
             
             [self setButtonsState:YES];
         }
+    }
+    else {
+        self->_sendingReceipt = NO;
         
-//    } failure:^(NSError *error) {
-//        
-//        self->_sendingReceipt = NO;
-//       
-//        [AlertManager showGenericAlertWithTitle:@"App Receipt Error" message:error.localizedDescription];
-//        
-//        [self setButtonsState:YES];
-//        
-//    }];
+        [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was not found on this device. Please ensure you have an active internet connection."];
+        
+        [self setButtonsState:YES];
+    }
     
 }
 
@@ -458,6 +472,12 @@
     return self.productsRequestFinished ? self.products.count : 0;
 }
 
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    return [self.purhcasedProductIdentifiers containsObject:IAPLifetime] == NO;
+    
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
@@ -487,8 +507,13 @@
     
     NSString *productID = self.products[indexPath.row];
     SKProduct *product = [[RMStore defaultStore] productForIdentifier:productID];
+    
     cell.textLabel.text = product.localizedTitle;
     cell.detailTextLabel.text = [RMStore localizedPriceOfProduct:product];
+    
+    if ([productID isEqualToString:IAPLifetime] && [self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }
     
     return cell;
 }

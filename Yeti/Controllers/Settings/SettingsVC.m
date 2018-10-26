@@ -16,7 +16,7 @@
 #import "ExternalAppsVC.h"
 #import "FiltersVC.h"
 #import "ThemeVC.h"
-#import "OPMLVC.h"
+#import "OPMLDeckController.h"
 #import "MiscVC.h"
 
 #import <DZKit/DZView.h>
@@ -102,7 +102,7 @@
 
 - (void)didChangeBackgroundRefreshPreference:(UISwitch *)sw {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sw.isOn forKey:@"backgroundRefresh"];
+    [defaults setBool:sw.isOn forKey:kDefaultsBackgroundRefresh];
     [defaults synchronize];
 }
 
@@ -322,7 +322,7 @@
                     vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
                     break;
                 case 4:
-                    vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                    vc = [[OPMLDeckController alloc] init];
                     break;
                 case 5:
                     vc = [[MiscVC alloc] initWithStyle:UITableViewStyleGrouped];
@@ -363,7 +363,7 @@
         [(id<SettingsNotifier>)vc setSettingsDelegate:self];
     }
     
-    if ([vc isKindOfClass:OPMLVC.class]) {
+    if ([vc isKindOfClass:OPMLDeckController.class]) {
         
         [self presentViewController:vc animated:YES completion:nil];
         [tableView deselectRowAtIndexPath:indexPath animated:YES];

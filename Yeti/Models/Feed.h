@@ -34,6 +34,8 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
+- (BOOL)isEqualToFeed:(Feed *)object;
+
 @property (nonatomic, copy) NSString *faviconURI;
 
 @end

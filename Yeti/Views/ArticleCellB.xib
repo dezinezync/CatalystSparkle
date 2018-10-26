@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad10_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="ArticleCellB">
+            <rect key="frame" x="0.0" y="0.0" width="333" height="100"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="333" height="100"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" alignment="top" spacingType="standard" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rIp-T3-RLf">
+                        <rect key="frame" x="8" y="12" width="313" height="76"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="252" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="K7S-pm-6mb">
+                                <rect key="frame" x="0.0" y="0.0" width="32" height="52"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sha-6y-kQB">
+                                        <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" priority="999" constant="32" id="PDf-rj-4sv"/>
+                                            <constraint firstAttribute="height" priority="999" constant="32" id="VrI-A9-hWp"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="4"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="t3E-ie-o1G">
+                                        <rect key="frame" x="10" y="40" width="12" height="12"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" priority="999" constant="12" id="CGS-gB-TCu"/>
+                                            <constraint firstAttribute="height" priority="999" constant="12" id="aqV-aL-kfD"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="t3E-ie-o1G" secondAttribute="trailing" priority="998" id="Ko6-AU-bxp"/>
+                                    <constraint firstAttribute="trailing" secondItem="sha-6y-kQB" secondAttribute="trailing" priority="999" id="OeG-P2-ZC0"/>
+                                    <constraint firstItem="t3E-ie-o1G" firstAttribute="leading" secondItem="K7S-pm-6mb" secondAttribute="leading" priority="998" id="iHu-Qk-xOb"/>
+                                    <constraint firstItem="sha-6y-kQB" firstAttribute="leading" secondItem="K7S-pm-6mb" secondAttribute="leading" priority="999" id="ror-f0-TlL"/>
+                                </constraints>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="x6o-Pz-Kvv">
+                                <rect key="frame" x="40" y="0.0" width="273" height="76"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" verticalCompressionResistancePriority="755" text="Apple is great on Privacy but what about App Developers?" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XwD-Dj-prt">
+                                        <rect key="frame" x="0.0" y="0.0" width="273" height="42.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="gbd-pd-cIa">
+                                        <rect key="frame" x="0.0" y="50.5" width="273" height="17.5"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rene Ritchie - iMore" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qwq-Rg-e5P">
+                                                <rect key="frame" x="0.0" y="0.0" width="204" height="17.5"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                                <variation key="heightClass=regular-widthClass=regular">
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                </variation>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="755" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UJA-KP-eoc">
+                                                <rect key="frame" x="212" y="0.0" width="61" height="17.5"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <nil key="highlightedColor"/>
+                                                <variation key="heightClass=regular-widthClass=regular">
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                </variation>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="wMY-pI-1T9">
+                                        <rect key="frame" x="0.0" y="76" width="273" height="0.0"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="12" minimumInteritemSpacing="12" id="jBN-s4-oWm">
+                                            <size key="itemSize" width="50" height="50"/>
+                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        </collectionViewFlowLayout>
+                                    </collectionView>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                    </stackView>
+                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QVo-Kf-nSK">
+                        <rect key="frame" x="0.0" y="99" width="333" height="1"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="999" constant="1" id="1wO-Jl-HpN"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="QVo-Kf-nSK" secondAttribute="bottom" id="0BX-NP-fOT"/>
+                <constraint firstItem="rIp-T3-RLf" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="12" id="6v2-Bk-VXW"/>
+                <constraint firstAttribute="trailing" secondItem="QVo-Kf-nSK" secondAttribute="trailing" id="Eey-4t-hYO"/>
+                <constraint firstAttribute="trailing" secondItem="rIp-T3-RLf" secondAttribute="trailing" constant="12" id="ZBZ-s7-dU2"/>
+                <constraint firstItem="QVo-Kf-nSK" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="a2Q-Vm-PKr"/>
+                <constraint firstAttribute="bottom" secondItem="rIp-T3-RLf" secondAttribute="bottom" constant="12" id="fwr-7B-mAu"/>
+                <constraint firstItem="rIp-T3-RLf" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="za7-GM-G4a"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="SEy-5g-ep8"/>
+            <size key="customSize" width="333" height="100"/>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                    <integer key="value" value="12"/>
+                </userDefinedRuntimeAttribute>
+            </userDefinedRuntimeAttributes>
+            <connections>
+                <outlet property="authorLabel" destination="Qwq-Rg-e5P" id="4lR-vb-RnK"/>
+                <outlet property="contentStackView" destination="x6o-Pz-Kvv" id="yes-0v-KDI"/>
+                <outlet property="faviconView" destination="sha-6y-kQB" id="dPM-63-Cbs"/>
+                <outlet property="mainStackView" destination="rIp-T3-RLf" id="UTf-oN-UPf"/>
+                <outlet property="markerView" destination="t3E-ie-o1G" id="efz-qq-54x"/>
+                <outlet property="separatorHeight" destination="1wO-Jl-HpN" id="Ssu-Fi-ItZ"/>
+                <outlet property="separatorView" destination="QVo-Kf-nSK" id="j2G-h3-l7S"/>
+                <outlet property="timeLabel" destination="UJA-KP-eoc" id="oJm-i5-03w"/>
+                <outlet property="titleLabel" destination="XwD-Dj-prt" id="TTG-o8-FlH"/>
+            </connections>
+            <point key="canvasLocation" x="-405.60000000000002" y="66.566716641679164"/>
+        </collectionViewCell>
+    </objects>
+</document>
