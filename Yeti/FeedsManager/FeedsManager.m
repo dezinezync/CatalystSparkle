@@ -270,24 +270,30 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
     
+    self->_feeds = feeds;
+    
     // create the folders map
     NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
        
         Folder *folder = [Folder instanceFromDictionary:obj];
         
-        NSArray <NSNumber *> * feedIDs = [[obj valueForKey:@"feeds"] rz_filter:^BOOL(NSNumber * obj, NSUInteger idx, NSArray *array) {
+        NSArray <NSNumber *> * feedIDs = [[[obj valueForKey:@"feeds"] rz_filter:^BOOL(NSNumber * obj, NSUInteger idx, NSArray *array) {
             return obj != nil && [obj integerValue] > 0;
-        }];
+        }] sortedArrayUsingSelector:@selector(compare:)];
+        
+        folder.feedIDs = [NSSet setWithArray:feedIDs];
         
         folder.feeds = [NSPointerArray weakObjectsPointerArray];
         
         [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
             
-            [feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
+            [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
                 
                 if ([feed.feedID isEqualToNumber:objx]) {
                     feed.folderID = folder.folderID;
-                    [folder.feeds addPointer:(__bridge void *)feed];
+                    if ([folder.feeds containsObject:feed] == NO) {
+                        [folder.feeds addObject:feed];
+                    }
                 }
                 
             }];
@@ -298,8 +304,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
     }];
     
-    self.folders = folders;
-    self.feeds = feeds;
+    self->_folders = folders;
     
     return feeds;
 }

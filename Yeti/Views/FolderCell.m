@@ -209,14 +209,6 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     return formattedString(@"%@. %@ unread article%@", title, @(count), count == 1 ? @"" : @"s");
 }
 
-//- (NSString *)accessibilityValue {
-//    if ([self.object isKindOfClass:Folder.class]) {
-//        return @"Folder";
-//    }
-//
-//    return [super accessibilityValue];
-//}
-
 - (NSString *)accessibilityHint {
     if (self.folder) {
         
@@ -228,6 +220,21 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     }
     
     return [super accessibilityValue];
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    CGFloat radius = 48.f;
+    
+    // For the y-offset, we divide by 2 to prevent the touch from overflowing
+    // to the adjascent rows.
+    CGRect frame = CGRectInset(self.faviconView.bounds, -radius, -radius/2);
+    
+    if (CGRectContainsPoint(frame, point)) {
+        return self.faviconView;
+    }
+    
+    return [super hitTest:point withEvent:event];
 }
 
 #pragma mark - KVO

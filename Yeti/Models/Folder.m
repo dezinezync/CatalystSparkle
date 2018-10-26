@@ -78,22 +78,23 @@
 
 }
 
-//- (void)setValue:(id)value forKey:(NSString *)key
-//{
-//
-//    if ([key isEqualToString:@"feeds"]) {
-//
-//        if ([value isKindOfClass:[NSPointerArray class]])
-//        {
-//            self.feeds = value;
-//        }
-//
-//    } else {
-//        
-//    }
-//
-//}
+- (void)setValue:(id)value forKey:(NSString *)key
+{
 
+    if ([key isEqualToString:propSel(feedIDs)]) {
+
+        if ([value isKindOfClass:[NSArray class]])
+        {
+            value = [NSSet setWithArray:value];
+        }
+        
+        self.feedIDs = value;
+
+    } else {
+        [super setValue:value forKey:key];
+    }
+
+}
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
@@ -148,6 +149,10 @@
         
         [dictionary setObject:feedMembers forKey:@"feeds"];
         
+    }
+    
+    if (self.feedIDs) {
+        [dictionary setObject:self.feedIDs.allObjects forKey:propSel(feedIDs)];
     }
 
     if (self.folderID != nil) {

@@ -862,14 +862,16 @@ NSString * const kDS2Data = @"DS2Data";
     
     CGPoint contentOffset = self.tableView.contentOffset;
     
-    if (folder && (folder.feeds == nil || folder.feeds.count == 0)) {
+    if (folder != nil && (folder.feeds == nil || folder.feeds.allObjects.count == 0)) {
         // it is possible that this folder is actually empty
         // but let's check it anyways
         
-        [[MyFeedsManager feeds] enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [folder.feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull feedID, BOOL * _Nonnull stop) {
             
-            if ([obj.folderID isEqualToNumber:folder.folderID]) {
-                [folder.feeds addPointer:(__bridge void * _Nullable)(obj)];
+            Feed *feed = [MyFeedsManager feedForID:feedID];
+            
+            if (feed != nil && [folder.feeds containsObject:feed] == NO) {
+                [folder.feeds addObject:feed];
             }
             
         }];
