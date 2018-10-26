@@ -1,4 +1,10 @@
 
+[IMPROVE]
+
+- Increases tap area for the folder icon so opening and collapsing folders no longer feels like a task!
+
+-- 182 --
+
 [NEW]
 - The app now handles Twitter.com and Reddit.com links and opens them in the app of your choice.
 
