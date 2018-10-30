@@ -1342,8 +1342,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
-                if ([RMStore defaultStore])
-                
                 self.subscription = sub;
                 
                 if (successCB) {
