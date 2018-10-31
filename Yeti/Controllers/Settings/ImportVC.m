@@ -383,10 +383,18 @@ NSString *const kImportCell = @"importCell";
             
             // find the URL in the options array
             NSString *url = [options rz_reduce:^id(NSString * prev, NSDictionary * current, NSUInteger idx, NSArray *array) {
-                NSString *compare = [current valueForKey:@"url"] ?: current;
+                NSString *compare = (NSString *)current;
                 
-                if (compare && [compare isKindOfClass:NSString.class] && [compare isEqualToString:path])
-                    return [current valueForKey:@"url"];
+                @try {
+                    compare = [current valueForKey:@"url"];
+                }
+                @catch (NSException *exc) {
+                    
+                }
+                
+                if (compare != nil && [compare isKindOfClass:NSString.class] && [compare isEqualToString:path])
+                    return current;
+                
                 return prev;
             }];
             
