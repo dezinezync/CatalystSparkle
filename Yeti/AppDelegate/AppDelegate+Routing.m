@@ -323,10 +323,12 @@
         
         // check again if we have the feed
         BOOL haveItem = NO;
-        for (Feed *item in MyFeedsManager.feeds) {
-            if ([item.title isEqualToString:responseObject.title]) {
-                haveItem = YES;
-                break;
+        if (responseObject != nil && [responseObject isKindOfClass:Feed.class]) {
+            for (Feed *item in MyFeedsManager.feeds) {
+                if ([item.title isEqualToString:responseObject.title]) {
+                    haveItem = YES;
+                    break;
+                }
             }
         }
         
