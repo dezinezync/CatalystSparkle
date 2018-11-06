@@ -1961,6 +1961,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if ([self.subscription hasExpired] == NO) {
         
         NSDate *expiry = self.subscription.expiry;
+        
+        if (expiry == nil) {
+            return;
+        }
+        
         BOOL isTrial = [[self.subscription status] integerValue] == 2 ? YES : NO;
         
         NSString *text;

@@ -54,18 +54,18 @@
     // Do any additional setup after loading the view from its nib.
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.view.backgroundColor = theme.backgroundColor;
+    self.view.backgroundColor = theme.tableColor;
     
     self.detailsTitleLabel.textColor = theme.titleColor;
     self.detailsSubtitleLabel.textColor = theme.subtitleColor;
     
-    self.detailsView.backgroundColor = theme.backgroundColor;
+    self.detailsView.backgroundColor = theme.tableColor;
     self.detailsView.hidden = YES;
 
     self.ioTitleLabel.textColor = theme.titleColor;
     self.ioSubtitleLabel.textColor = theme.subtitleColor;
     
-    self.ioView.backgroundColor = theme.backgroundColor;
+    self.ioView.backgroundColor = theme.tableColor;
     self.ioView.hidden = YES;
     
     [self.ioDoneButton addTarget:self action:@selector(didTapCancel:) forControlEvents:UIControlEventTouchUpInside];
@@ -354,7 +354,7 @@
     weakify(self);
     
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
-//    url = @"https://api.elytra.app/user/opml";
+    url = @"https://api.elytra.app/user/opml";
 #ifndef DEBUG
     url = @"https://api.elytra.app/user/opml";
 #endif
