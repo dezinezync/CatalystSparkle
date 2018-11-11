@@ -172,6 +172,10 @@
     }
 }
 
+- (void)il_cancelImageLoading {
+    [self.imageView il_cancelImageLoading];
+}
+
 #pragma mark -
 
 - (void)setLink:(NSURL *)link {
@@ -474,6 +478,14 @@
     
     if (self.image) {
         size = [self scaledSizeForImage:self.image];
+    }
+    else {
+        // resolve with the cached constraints to prevent the content
+        // from jumping when the user scrolls the content
+        CGRect frame = [[self layoutMarginsGuide] layoutFrame];
+        size = frame.size;
+        size.width += frame.origin.x * 2.f;
+        size.height += frame.origin.y * 2.f;
     }
     
     return size;

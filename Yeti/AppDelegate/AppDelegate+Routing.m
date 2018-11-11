@@ -13,6 +13,7 @@
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
+#import "ArticleVC.h"
 #import "FolderCell.h"
 #import "YTNavigationController.h"
 
@@ -113,15 +114,15 @@
         
     }];
     
-//    [JLRoutes.globalRoutes addRoute:@"/article/:articleID" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
-//
-//        NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
-//
-//        [self openFeed:nil article:articleID];
-//
-//        return YES;
-//
-//    }];
+    [JLRoutes.globalRoutes addRoute:@"/article/:articleID" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
+
+        NSNumber *articleID = @([[parameters valueForKey:@"articleID"] integerValue]);
+
+        [self showArticle:articleID];
+
+        return YES;
+
+    }];
     
     [JLRoutes.globalRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
         
@@ -605,12 +606,17 @@
     
     FeedVC *feedVC = nil;
     
+    UISplitViewController *splitVC;
+    UINavigationController *nav;
+    
     @try {
-        UISplitViewController *splitVC = (UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController];
-        YTNavigationController *nav = [[splitVC viewControllers] firstObject];
+        splitVC = (UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController];
         
         if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             nav = [[splitVC viewControllers] lastObject];
+        }
+        else {
+            nav = [[splitVC viewControllers] firstObject];
         }
         
         feedVC = (FeedVC *)[nav topViewController];
@@ -620,6 +626,23 @@
     if (feedVC != nil
         && ([feedVC isKindOfClass:FeedVC.class] || [feedVC isKindOfClass:NSClassFromString(@"DetailFeedVC")])) {
         feedVC.loadOnReady = articleID;
+    }
+    else {
+        FeedItem *item = [FeedItem new];
+        item.identifier = articleID;
+        
+        ArticleVC *instance = [[ArticleVC alloc] initWithItem:item];
+        
+        @try {
+            if (splitVC.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+                [nav pushViewController:instance animated:YES];
+            }
+            else {
+                nav = [[UINavigationController alloc] initWithRootViewController:instance];
+                [splitVC showDetailViewController:nav sender:nil];
+            }
+        }
+        @catch (NSException *exc) {}
     }
 }
 

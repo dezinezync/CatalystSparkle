@@ -40,6 +40,8 @@
 
 - (void)il_setImageWithURL:(id)url;
 
+- (void)il_cancelImageLoading;
+
 @property (nonatomic, assign, getter=isAnimatable, readonly) BOOL animatable;
 @property (nonatomic, assign, getter=isAnimating, readonly) BOOL animating;
 

@@ -18,4 +18,6 @@
 
 - (void)openFeed:(NSNumber *)feedID article:(NSNumber *)articleID;
 
+- (void)showArticle:(NSNumber *)articleID;
+
 @end

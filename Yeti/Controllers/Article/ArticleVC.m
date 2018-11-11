@@ -773,7 +773,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            [self processContent:obj];
+            @autoreleasepool {
+                [self processContent:obj];
+            }
         });
         
     }];
@@ -1052,7 +1054,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     else if ([content.type isEqualToString:@"blockquote"]) {
         [self addQuote:content];
     }
-    else if ([content.type containsString:@"list"]) {
+    else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]) {
         [self addList:content];
     }
     else if ([content.type isEqualToString:@"anchor"]) {
@@ -1084,7 +1086,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     [self addImage:item link:content.url];
                 }
                 else {
-                    [self processContent:content];
+                    [self processContent:item];
                 }
             }
             else {
@@ -1846,9 +1848,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 }
             });
         }
-        else if (imageview.imageView.image && !contains && imageview.isLoading) {
+        else if (imageview.imageView.image && !contains) {
+            
+            if (imageview.isLoading) {
+                [imageview il_cancelImageLoading];
+                imageview.loading = NO;
+            }
+            
             if ([imageview isAnimatable] && imageview.isAnimating) {
                 [imageview didTapStartStop:imageview.startStopButton];
+            }
+            else {
+                // remove the image from the buffer so we release the RAM occupied by it
+                if (imageview.imageView.image != nil) {
+                    imageview.imageView.image = nil;
+                }
+                
             }
         }
     } }
