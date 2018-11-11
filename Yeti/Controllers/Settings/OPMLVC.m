@@ -210,7 +210,7 @@
                 [AlertManager showGenericAlertWithTitle:@"No Subscription" message:error];
             }
             else {
-                [(UINavigationController *)presenting pushViewController:nav animated:YES];
+                [(UINavigationController *)presenting pushViewController:storeVC animated:YES];
             }
             
         }];

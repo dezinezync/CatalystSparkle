@@ -51,7 +51,7 @@
 
     NSString *path = formattedString(@"/article/%@", read ? @"true" : @"false");
     
-    NSDictionary *params = @{@"articles": articles, @"userID": self.userID};
+    NSDictionary *params = @{@"articles": articles ?: @[], @"userID": self.userID};
     
     weakify(self);
 
