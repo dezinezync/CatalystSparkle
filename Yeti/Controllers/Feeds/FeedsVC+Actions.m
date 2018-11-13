@@ -60,7 +60,7 @@
     
     weakify(self);
     
-    [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.refreshControl.attributedTitle = [self lastUpdateAttributedString];

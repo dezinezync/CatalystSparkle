@@ -328,7 +328,7 @@ AppDelegate *MyAppDelegate = nil;
     
     NSInteger currentCount = (MyFeedsManager.unread ?: @[]).count;
     
-    [MyFeedsManager getUnreadForPage:1 success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (responseObject == nil) {
             completionHandler(UIBackgroundFetchResultNoData);

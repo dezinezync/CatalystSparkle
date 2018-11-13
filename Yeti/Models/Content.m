@@ -2,6 +2,8 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "YetiConstants.h"
 
+#import "NSString+ImageProxy.h"
+
 @implementation Content
 
 - (NSString *)compareID
@@ -332,31 +334,7 @@
         }
     }
     
-    // check if we should be using the proxy
-    if ([NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy]) {
-        
-//        url = [url stringByReplacingOccurrencesOfString:@"http://" withString:@""];
-//        url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@""];
-        
-        url = formattedString(@"https://images.weserv.nl/?url=%@", url);
-        
-        if (usedSRCSet == NO) {
-            
-            NSInteger quality = 90;
-            
-            if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
-                quality = 60;
-            }
-            else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
-                quality = 75;
-            }
-            
-            url = formattedString(@"%@?w=%@&dpr=%@&output=jpeg&q=%@", url, @([UIScreen mainScreen].bounds.size.width), @(UIScreen.mainScreen.scale), @(quality));
-        }
-        
-        DDLogInfo(@"weserv.nl proxy URL: %@", url);
-        
-    }
+    url = [url pathForImageProxy:usedSRCSet maxWidth:0.f quality:0.f];
     
     return url;
 }

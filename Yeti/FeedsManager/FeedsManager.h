@@ -94,7 +94,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, copy) NSDate *unreadLastUpdate;
 
-- (void)getUnreadForPage:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

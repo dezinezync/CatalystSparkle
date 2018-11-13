@@ -805,7 +805,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }}
 }
 
-- (void)getUnreadForPage:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
     if ([self userID] == nil) {
@@ -815,7 +815,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return;
     }
     
-    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10}.mutableCopy;
+    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10, @"sortType":  @(sorting.integerValue)}.mutableCopy;
     
 #if TESTFLIGHT == 0
     if ([self subscription] != nil && [self.subscription hasExpired] == YES) {

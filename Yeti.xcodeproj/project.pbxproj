@@ -222,6 +222,9 @@
 		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
 		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
 		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
+		F0BF8337219AE02F0047352A /* ArticleImageCellB.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BF8336219AE02F0047352A /* ArticleImageCellB.xib */; };
+		F0BF8342219AE0590047352A /* ArticleImageCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BF8341219AE0590047352A /* ArticleImageCellB.m */; };
+		F0BF8345219AE3820047352A /* NSString+ImageProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BF8344219AE3820047352A /* NSString+ImageProxy.m */; };
 		F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
 		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
 		F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
@@ -775,6 +778,11 @@
 		F0BAE4D721523C7B00249A5E /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
 		F0BAE4D821523C7B00249A5E /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
 		F0BAE4D921523C7B00249A5E /* FolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderCell.xib; sourceTree = "<group>"; };
+		F0BF8336219AE02F0047352A /* ArticleImageCellB.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArticleImageCellB.xib; sourceTree = "<group>"; };
+		F0BF8340219AE04B0047352A /* ArticleImageCellB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArticleImageCellB.h; sourceTree = "<group>"; };
+		F0BF8341219AE0590047352A /* ArticleImageCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArticleImageCellB.m; sourceTree = "<group>"; };
+		F0BF8343219AE3820047352A /* NSString+ImageProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+ImageProxy.h"; sourceTree = "<group>"; };
+		F0BF8344219AE3820047352A /* NSString+ImageProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+ImageProxy.m"; sourceTree = "<group>"; };
 		F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UICKeyChainStore.framework; path = Carthage/Build/iOS/UICKeyChainStore.framework; sourceTree = SOURCE_ROOT; };
 		F0C6CA662143A17B00577D16 /* MetaOpenGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaOpenGraph.h; sourceTree = "<group>"; };
 		F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaOpenGraph.m; sourceTree = "<group>"; };
@@ -1292,6 +1300,8 @@
 				F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */,
 				F064A53921576E7200A385AD /* UIImage+Color.h */,
 				F064A53A21576E7200A385AD /* UIImage+Color.m */,
+				F0BF8343219AE3820047352A /* NSString+ImageProxy.h */,
+				F0BF8344219AE3820047352A /* NSString+ImageProxy.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1534,6 +1544,9 @@
 				F0AFAC04216C76B400AB7057 /* ArticleCellB.h */,
 				F0AFAC05216C76B400AB7057 /* ArticleCellB.m */,
 				F0AFAC06216C76B400AB7057 /* ArticleCellB.xib */,
+				F0BF8340219AE04B0047352A /* ArticleImageCellB.h */,
+				F0BF8341219AE0590047352A /* ArticleImageCellB.m */,
+				F0BF8336219AE02F0047352A /* ArticleImageCellB.xib */,
 				F0AFAC11216C78D400AB7057 /* TagCell.h */,
 				F0AFAC12216C78D400AB7057 /* TagCell.m */,
 				F0AFAC13216C78D400AB7057 /* TagCell.xib */,
@@ -2173,6 +2186,7 @@
 				F0A5AE9C20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
 				F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
+				F0BF8337219AE02F0047352A /* ArticleImageCellB.xib in Resources */,
 				F0AFAC1A216C7A5200AB7057 /* DetailFeedVC.xib in Resources */,
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
@@ -2363,6 +2377,7 @@
 				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
 				F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */,
 				F0026F2E1FED2B4800F3AB85 /* Gallery.m in Sources */,
+				F0BF8345219AE3820047352A /* NSString+ImageProxy.m in Sources */,
 				F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */,
 				F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */,
 				F0AA8C8F216B4A5500C65DAE /* DTConstants.m in Sources */,
@@ -2449,6 +2464,7 @@
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
+				F0BF8342219AE0590047352A /* ArticleImageCellB.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */,

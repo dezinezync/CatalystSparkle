@@ -129,7 +129,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 }
 
 - (BOOL)showsSortingButton {
-    return self.isUnread ? NO : YES;
+    return YES;
 }
 
 - (void)didTapSortOptions:(UIBarButtonItem *)sender {
@@ -171,11 +171,15 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 
 - (void)setSortingOption:(YetiSortOption)option {
     
-    if ([option isEqualToString:YTSortAllDesc]) {
-        self.DS.data = [MyFeedsManager.bookmarks reverseObjectEnumerator].allObjects;
-    }
-    else {
-        self.DS.data = MyFeedsManager.bookmarks;
+    [super setSortingOption:option];
+    
+    if (self.isUnread == NO) {
+        if ([option isEqualToString:YTSortAllDesc]) {
+            self.DS.data = [MyFeedsManager.bookmarks reverseObjectEnumerator].allObjects;
+        }
+        else {
+            self.DS.data = MyFeedsManager.bookmarks;
+        }
     }
     
 }
@@ -191,6 +195,10 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
 - (void)loadNextPage
 {
     
+    if (self.isUnread == NO) {
+        return;
+    }
+    
     if (self.loadingNext)
         return;
     
@@ -200,7 +208,10 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     
     if (self.isUnread) {
         NSInteger page = self->_page + 1;
-        [MyFeedsManager getUnreadForPage:page success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+        
+        [MyFeedsManager getUnreadForPage:page sorting:sorting success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);
             
