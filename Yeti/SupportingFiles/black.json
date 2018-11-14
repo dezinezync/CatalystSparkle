@@ -1,8 +1,8 @@
 {
     "backgroundColor": "#000000",
-    "subtitleColor": "#FFFFFF90",
-    "captionColor": "#FFFFFF60",
-    "titleColor": "#FFFFFF",
+    "subtitleColor": "#FFFFFF75",
+    "captionColor": "#FFFFFF45",
+    "titleColor": "#FFFFFF90",
     "borderColor": "#333333",
     "tableColor": "#0A0A0A",
     "tintColor": "#45D8E8",

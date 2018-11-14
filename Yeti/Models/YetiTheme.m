@@ -51,6 +51,9 @@
 //        textView.keyboardAppearance = UIKeyboardAppearanceLight;
     }
     
+    [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+    [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+    
 //    textField.keyboardAppearance = textView.keyboardAppearance;
     
     Class splitVCClass = NSClassFromString(@"SplitVC");
