@@ -354,6 +354,8 @@ NSString *const kImportCell = @"importCell";
 
 - (void)importFeed:(NSDictionary *)data {
     
+    return;
+    
     if (data == nil) {
         [self resumeFeedsImport];
         return;

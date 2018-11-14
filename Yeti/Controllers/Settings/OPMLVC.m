@@ -54,18 +54,18 @@
     // Do any additional setup after loading the view from its nib.
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.view.backgroundColor = theme.tableColor;
+    self.view.backgroundColor = theme.opmlViewColor;
     
     self.detailsTitleLabel.textColor = theme.titleColor;
     self.detailsSubtitleLabel.textColor = theme.subtitleColor;
     
-    self.detailsView.backgroundColor = theme.tableColor;
+    self.detailsView.backgroundColor = theme.opmlViewColor;
     self.detailsView.hidden = YES;
 
     self.ioTitleLabel.textColor = theme.titleColor;
     self.ioSubtitleLabel.textColor = theme.subtitleColor;
     
-    self.ioView.backgroundColor = theme.tableColor;
+    self.ioView.backgroundColor = theme.opmlViewColor;
     self.ioView.hidden = YES;
     
     [self.ioDoneButton addTarget:self action:@selector(didTapCancel:) forControlEvents:UIControlEventTouchUpInside];

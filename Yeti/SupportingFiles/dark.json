@@ -13,6 +13,7 @@
     "subbarColor": "#1C1C1C",
     "focusColor": "#EF6C0030",
     "articleBackgroundColor": "#222222",
-    "tintColorIndex": 2
+    "opmlViewColor": "#4C4C4C",
+    "tintColorIndex": 5
 }
 

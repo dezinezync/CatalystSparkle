@@ -24,6 +24,8 @@
 
 @property (nonatomic, copy) UIColor *articleBackgroundColor;
 
+@property (nonatomic, copy) UIColor *opmlViewColor;
+
 @property (nonatomic, copy) NSNumber *tintColorIndex;
 
 @end
