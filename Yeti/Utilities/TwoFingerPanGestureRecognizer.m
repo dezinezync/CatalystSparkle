@@ -118,11 +118,11 @@
     
     if ([self twoFingersMoveUp]) {
         self.direction = TwoFingerPanUp;
-        self.state = UIGestureRecognizerStateEnded;
+        self.state = UIGestureRecognizerStateRecognized;
     }
     else if ([self twoFingersMoveDown]) {
         self.direction = TwoFingerPanDown;
-        self.state = UIGestureRecognizerStateEnded;
+        self.state = UIGestureRecognizerStateRecognized;
     }
     else {
         self.state = UIGestureRecognizerStateFailed;

@@ -83,7 +83,7 @@ NSArray <UIColor *> * _colours;
         dispatch_once(&onceToken, ^{
             _colours = @[
                          [UIColor colorFromHexString:@"007AFF"],
-                         [UIColor colorFromHexString:@"DF4D4A"],
+                         [UIColor colorFromHexString:@"ED4A5A"],
                          [UIColor colorFromHexString:@"E8883A"],
                          [UIColor colorFromHexString:@"F2BB4B"],
                          [UIColor colorFromHexString:@"78B856"],

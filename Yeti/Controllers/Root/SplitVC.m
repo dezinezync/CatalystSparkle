@@ -55,11 +55,18 @@
     
     [YetiThemeKit loadThemeKit];
     
-    TwoFingerPanGestureRecognizer *twoFingerPan = [[TwoFingerPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
-    twoFingerPan.delegate = self;
-    [self.view addGestureRecognizer:twoFingerPan];
+    UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
+    twoFingerPanUp.numberOfTouchesRequired = 2;
+    twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
+    twoFingerPanUp.delegate = self;
     
-    self.twoFingerPan = twoFingerPan;
+    UISwipeGestureRecognizer *twoFingerPanDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
+    twoFingerPanDown.numberOfTouchesRequired = 2;
+    twoFingerPanDown.direction = UISwipeGestureRecognizerDirectionDown;
+    twoFingerPanDown.delegate = self;
+    
+    [self.view addGestureRecognizer:twoFingerPanUp];
+    [self.view addGestureRecognizer:twoFingerPanDown];
     
     UICKeyChainStore *keychain = MyFeedsManager.keychain;
 //    [keychain removeAllItems];
@@ -152,22 +159,22 @@
 
 #pragma mark - Gestures
 
-- (void)didPanWithTwoFingers:(TwoFingerPanGestureRecognizer *)sender {
+- (void)didPanWithTwoFingers:(UISwipeGestureRecognizer *)sender {
     
     DDLogDebug(@"State: %@", @(sender.state));
     
-    if (sender.state == UIGestureRecognizerStateChanged && sender.direction != TwoFingerPanUnknown) {
+    if (sender.state == UIGestureRecognizerStateEnded && ((sender.direction | UISwipeGestureRecognizerDirectionUp) || (sender.direction | UISwipeGestureRecognizerDirectionDown))) {
         
         DDLogDebug(@"Direction: %@", @(sender.direction));
         
         NSString *themeName = nil;
         
-        if (sender.direction == TwoFingerPanUp && [[YTThemeKit theme] isDark] == YES) {
+        if (sender.direction == UISwipeGestureRecognizerDirectionUp && [[YTThemeKit theme] isDark] == YES) {
             // change to light theme.
             themeName = @"light";
         }
         
-        if (sender.direction == TwoFingerPanDown && [[YTThemeKit theme] isDark] == NO) {
+        if (sender.direction == UISwipeGestureRecognizerDirectionDown && [[YTThemeKit theme] isDark] == NO) {
             
             if (canSupportOLED()) {
                 themeName = @"black";
@@ -212,7 +219,7 @@
             CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
             animation.fromValue = (id)[path CGPath];
             animation.toValue = (id)[revealPath CGPath];
-            animation.duration = 0.3;
+            animation.duration = 0.22;
 //#if DEBUG
 //            animation.duration = 3;
 //#endif
