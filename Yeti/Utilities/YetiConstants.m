@@ -8,6 +8,9 @@
 
 #import "YetiConstants.h"
 
+#import <UIKit/UIKit.h>
+#import <sys/utsname.h>
+
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
@@ -114,6 +117,34 @@ NSString * const IAPOneMonth     = @"com.dezinezync.elytra.non.1m";
 NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";
 NSString * const IAPTwelveMonth  = @"com.dezinezync.elytra.non.12m";
 NSString * const IAPLifetime     = @"com.dezinezync.elytra.life";
+
+#pragma mark -
+
+NSString * modelIdentifier (void) {
+    NSString *simulatorModelIdentifier = [NSProcessInfo processInfo].environment[@"SIMULATOR_MODEL_IDENTIFIER"];
+    NSLog(@"%@",simulatorModelIdentifier);
+    
+    if (simulatorModelIdentifier) {
+        return simulatorModelIdentifier;
+    }
+    
+    struct utsname sysInfo;
+    uname(&sysInfo);
+    
+    return [NSString stringWithCString:sysInfo.machine encoding:NSUTF8StringEncoding];
+}
+
+BOOL canSupportOLED (void) {
+    NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];
+    
+    NSString *model = modelIdentifier();
+    
+#ifdef TARGET_IS_EXTENSION
+    return [OLEDiPhones containsObject:model];
+#else
+    return [OLEDiPhones containsObject:model] || [[[[UIApplication sharedApplication] keyWindow] traitCollection] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
+#endif
+}
 
 @implementation SortImageProvider
 

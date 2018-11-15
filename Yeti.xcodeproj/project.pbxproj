@@ -19,6 +19,7 @@
 		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
+		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
 		F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D714E1FBC11F100DF84B9 /* Blockquote.m */; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01D71551FBC232200DF84B9 /* List.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71541FBC232200DF84B9 /* List.m */; };
@@ -465,6 +466,8 @@
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
+		F01A34BA219C556C00D020F3 /* TwoFingerPanGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoFingerPanGestureRecognizer.h; sourceTree = "<group>"; };
+		F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TwoFingerPanGestureRecognizer.m; sourceTree = "<group>"; };
 		F01D714D1FBC11F100DF84B9 /* Blockquote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blockquote.h; sourceTree = "<group>"; };
 		F01D714E1FBC11F100DF84B9 /* Blockquote.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Blockquote.m; sourceTree = "<group>"; };
 		F01D71501FBC1A2500DF84B9 /* NSAttributedString+Trimming.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+Trimming.h"; sourceTree = "<group>"; };
@@ -1271,6 +1274,8 @@
 				F08993C1210883E200A9978E /* FolderDrop.h */,
 				F03FA5CC216F47E6009C5D96 /* TypeFactory.h */,
 				F03FA5CD216F47E6009C5D96 /* TypeFactory.m */,
+				F01A34BA219C556C00D020F3 /* TwoFingerPanGestureRecognizer.h */,
+				F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2398,6 +2403,7 @@
 				F0D0085C2081C72300EAFE3B /* Author.m in Sources */,
 				F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
+				F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F046DF57216E30AC00FFDBD7 /* DetailCustomVC.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
@@ -2568,7 +2574,10 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/../DZNetworking/**",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"TARGET_IS_EXTENSION=1",
+				);
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2594,7 +2603,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/../DZNetworking/**",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -3006,7 +3015,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/../DZNetworking/**",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";

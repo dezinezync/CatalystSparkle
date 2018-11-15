@@ -14,8 +14,6 @@
 #import "CodeParser.h"
 #import "AccentCell.h"
 
-#import <sys/utsname.h>
-
 static void * KVO_SELECTED_BUTTON = &KVO_SELECTED_BUTTON;
 
 NSString *const kBasicCell = @"cell.theme";
@@ -48,9 +46,7 @@ NSString *const kBasicCell = @"cell.theme";
                       ALPSpectral       : @"Spectral"
                       };
     
-    NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];
-    
-    _isPhoneX = [OLEDiPhones containsObject:[self modelIdentifier]] || [[[[UIApplication sharedApplication] keyWindow] traitCollection] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
+        _isPhoneX = canSupportOLED();
     
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -283,23 +279,6 @@ NSString *const kBasicCell = @"cell.theme";
     
     [NSNotificationCenter.defaultCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
     
-}
-
-#pragma mark - Helpers
-
-- (NSString *)modelIdentifier {
-    
-    NSString *simulatorModelIdentifier = [NSProcessInfo processInfo].environment[@"SIMULATOR_MODEL_IDENTIFIER"];
-    NSLog(@"%@",simulatorModelIdentifier);
-    
-    if (simulatorModelIdentifier) {
-        return simulatorModelIdentifier;
-    }
-    
-    struct utsname sysInfo;
-    uname(&sysInfo);
-    
-    return [NSString stringWithCString:sysInfo.machine encoding:NSUTF8StringEncoding];
 }
 
 #pragma mark -

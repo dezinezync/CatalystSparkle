@@ -10,6 +10,7 @@
 #import "YetiConstants.h"
 
 #import "YetiThemeKit.h"
+#import "CodeParser.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 #import "YTUserID.h"
@@ -17,8 +18,11 @@
 #import "FeedsManager.h"
 
 #import "AppDelegate.h"
+#import "TwoFingerPanGestureRecognizer.h"
 
-@interface SplitVC () <UISplitViewControllerDelegate>
+@interface SplitVC () <UISplitViewControllerDelegate, UIGestureRecognizerDelegate>
+
+@property (nonatomic, weak) TwoFingerPanGestureRecognizer *twoFingerPan;
 
 @end
 
@@ -50,6 +54,12 @@
     [super viewDidLoad];
     
     [YetiThemeKit loadThemeKit];
+    
+    TwoFingerPanGestureRecognizer *twoFingerPan = [[TwoFingerPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
+    twoFingerPan.delegate = self;
+    [self.view addGestureRecognizer:twoFingerPan];
+    
+    self.twoFingerPan = twoFingerPan;
     
     UICKeyChainStore *keychain = MyFeedsManager.keychain;
 //    [keychain removeAllItems];
@@ -140,6 +150,101 @@
     return nav2;
 }
 
+#pragma mark - Gestures
+
+- (void)didPanWithTwoFingers:(TwoFingerPanGestureRecognizer *)sender {
+    
+    DDLogDebug(@"State: %@", @(sender.state));
+    
+    if (sender.state == UIGestureRecognizerStateChanged && sender.direction != TwoFingerPanUnknown) {
+        
+        DDLogDebug(@"Direction: %@", @(sender.direction));
+        
+        NSString *themeName = nil;
+        
+        if (sender.direction == TwoFingerPanUp && [[YTThemeKit theme] isDark] == YES) {
+            // change to light theme.
+            themeName = @"light";
+        }
+        
+        if (sender.direction == TwoFingerPanDown && [[YTThemeKit theme] isDark] == NO) {
+            
+            if (canSupportOLED()) {
+                themeName = @"black";
+            }
+            else {
+                themeName = @"dark";
+            }
+            
+        }
+        
+        if (themeName != nil) {
+            
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            [defaults setValue:themeName forKey:kDefaultsTheme];
+            [defaults synchronize];
+            
+            UIGraphicsBeginImageContext(self.view.bounds.size);
+            
+            [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+            
+            __block UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            // insert this image into the view
+            __block UIImageView *snapshot = [[UIImageView alloc] initWithImage:viewImage];
+            snapshot.frame = self.view.bounds;
+            
+            UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, viewImage.size.width, viewImage.size.height)];
+            UIBezierPath *revealPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, viewImage.size.height, viewImage.size.width, viewImage.size.height)];
+            
+            if ([themeName isEqualToString:@"light"]) {
+                path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, viewImage.size.width, viewImage.size.height)];
+                revealPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, viewImage.size.width, 0)];
+            }
+            
+            CAShapeLayer *mask = [CAShapeLayer layer];
+            mask.path = path.CGPath;
+            
+            snapshot.layer.mask = mask;
+            snapshot.clipsToBounds = YES;
+            
+            CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
+            animation.fromValue = (id)[path CGPath];
+            animation.toValue = (id)[revealPath CGPath];
+            animation.duration = 0.3;
+//#if DEBUG
+//            animation.duration = 3;
+//#endif
+            animation.fillMode = kCAFillModeForwards;
+            animation.removedOnCompletion = NO;
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+            
+            [self.view addSubview:snapshot];
+            [self.view bringSubviewToFront:snapshot];
+            
+            YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+            [CodeParser.sharedCodeParser loadTheme:themeName];
+            
+            [self setNeedsStatusBarAppearanceUpdate];
+            [snapshot.layer.mask addAnimation:animation forKey:@"anim"];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(animation.duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [snapshot removeFromSuperview];
+                viewImage = nil;
+                snapshot = nil;
+                
+            });
+        }
+        
+    }
+    
+}
+
 #pragma mark - <UIViewControllerRestoration>
 
 NSString * const kFeedsManager = @"FeedsManager";
@@ -215,6 +320,14 @@ NSString * const kFeedsManager = @"FeedsManager";
 
     return [self emptyVC];
 
+}
+
+#pragma mark - <UIGestureRecognizerDelegate>
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    
+    return YES;
+    
 }
 
 @end

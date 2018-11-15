@@ -1,3 +1,12 @@
+[NEW]
+- Swipe up with two fingers to change to the light theme.
+- Swipe down with two fingers to change to the dark theme.
+
+[IMPROVE]
+- Adjsuted gamma for dark themes.
+- Improved contrast for the OPML Import/Export Interface.
+
+-- 189 --
 
 [FIXES]
 - Fixed a crash when loading some specific articles which could cause the app to continously build up RAM usage and eventually crash.

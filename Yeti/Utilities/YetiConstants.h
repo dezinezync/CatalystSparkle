@@ -112,6 +112,8 @@ extern NSString * const IAPLifetime;
 
 YETI_EXPORT NSString * const kShowMarkReadPrompt;
 
+extern BOOL canSupportOLED (void);
+
 @interface SortImageProvider : NSObject
 
 + (UIImage *)imageForSortingOption:(YetiSortOption)option;
