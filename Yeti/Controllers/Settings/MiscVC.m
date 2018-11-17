@@ -171,49 +171,51 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         return;
     }
     
-    NSString *name = nil;
-    
-    switch (indexPath.row) {
-        case 1:
-            name = @"dark";
-            break;
-        case 2:
-            name = @"black";
-            break;
-        default:
-            break;
-    }
-    
-    [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
+    if (indexPath.section == 0) {
+        NSString *name = nil;
         
-        if (error != nil) {
-            DDLogError(@"Set alternate icon error: %@", error);
+        switch (indexPath.row) {
+            case 1:
+                name = @"dark";
+                break;
+            case 2:
+                name = @"black";
+                break;
+            default:
+                break;
         }
-        else {
+        
+        [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
+            
+            if (error != nil) {
+                DDLogError(@"Set alternate icon error: %@", error);
+            }
+            else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+                    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                    
+                    for (NSUInteger idx = 0, rows = [self.tableView numberOfRowsInSection:0]; idx < rows; idx++) { @autoreleasepool {
+                        if (idx == indexPath.row) {
+                            continue;
+                        }
+                        
+                        NSIndexPath *otherIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+                        cell = [tableView cellForRowAtIndexPath:otherIndexPath];
+                        
+                        cell.accessoryType = UITableViewCellAccessoryNone;
+                    } }
+                    
+                });
+            }
+            
             dispatch_async(dispatch_get_main_queue(), ^{
-               
-                UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-                
-                for (NSUInteger idx = 0, rows = [self.tableView numberOfRowsInSection:0]; idx < rows; idx++) { @autoreleasepool {
-                    if (idx == indexPath.row) {
-                        continue;
-                    }
-                    
-                    NSIndexPath *otherIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];
-                    cell = [tableView cellForRowAtIndexPath:otherIndexPath];
-                    
-                    cell.accessoryType = UITableViewCellAccessoryNone;
-                } }
-                
+                [tableView deselectRowAtIndexPath:indexPath animated:YES];
             });
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        });
-        
-    }];
+            
+        }];
+    }
     
 }
 
