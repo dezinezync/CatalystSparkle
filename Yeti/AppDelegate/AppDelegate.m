@@ -28,96 +28,122 @@ AppDelegate *MyAppDelegate = nil;
     BOOL _restoring;
 }
 
+- (BOOL)commonInit:(UIApplication *)application;
+
 @end
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
-    // Set app-wide shared cache (first number is megabyte value)
-    NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
-    NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
-    NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
-    [NSURLCache setSharedURLCache:sharedCache];
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        MyAppDelegate = self;
-    });
-    
-    [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
-    
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    BOOL using = [self commonInit:application];
     
     __unused BOOL unused = [super application:application willFinishLaunchingWithOptions:launchOptions];
     
-    weakify(self);
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-        strongify(self);
+    return using;
     
-        [ADZLogger initialize];
-        
-        [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
-        
-        [self setupStoreManager];
-    });
-    
-    if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications]) {
-        asyncMain(^{
-            [application registerForRemoteNotifications];
-        });
-    }
-    
-    [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
-    
-    [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
-
-    // To test push notifications
-//#ifdef DEBUG
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        strongify(self);
-//
-////        [self openFeed:@(1) article:@(1293968)];  // twitter user
-////        [self openFeed:@(1) article:@(1273075)];  // twitter status
-////        [self openFeed:@(1) article:@(1149498)];  // reddit
-//        [self showArticle:@(1831527)]; // crashing article
-//    });
-//#endif
-    
-    //    [self yt_log_fontnames];
-    
-    //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
-    //    DDLogDebug(@"EX:%@", data);
-
-    return YES;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-#if !(TARGET_IPHONE_SIMULATOR)
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [application registerForRemoteNotifications];
-    });
-#endif
+    BOOL using = [self commonInit:application];
     
-    id countVal = MyFeedsManager.keychain[YTLaunchCount];
+    __unused BOOL unused = [super application:application didFinishLaunchingWithOptions:launchOptions];
     
-    NSInteger count = [(countVal ?: @0) integerValue];
+    return using;
     
-    if (count == 0) {
-        // remove the old key's items
-        if ([YTLaunchCountOldKey length] > 0 ) {
-            MyFeedsManager.keychain[YTLaunchCountOldKey] = nil;
+}
+
+- (BOOL)commonInit:(UIApplication *)application {
+    
+    __block BOOL retval;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        
+        // Set app-wide shared cache (first number is megabyte value)
+        NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
+        NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
+        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
+        [NSURLCache setSharedURLCache:sharedCache];
+        
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            MyAppDelegate = self;
+        });
+        
+        [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
+        
+        self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+        
+        weakify(self);
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            strongify(self);
+            
+            [ADZLogger initialize];
+            
+            [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
+            
+            [self setupStoreManager];
+        });
+        
+        if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications]) {
+            asyncMain(^{
+                [application registerForRemoteNotifications];
+            });
         }
         
-        MyFeedsManager.keychain[YTRequestedReview] = [@(NO) stringValue];
-    }
+        [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
+        
+        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
+        
+        // To test push notifications
+        //#ifdef DEBUG
+        //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //        strongify(self);
+        //
+        ////        [self openFeed:@(1) article:@(1293968)];  // twitter user
+        ////        [self openFeed:@(1) article:@(1273075)];  // twitter status
+        ////        [self openFeed:@(1) article:@(1149498)];  // reddit
+        //        [self showArticle:@(1831527)]; // crashing article
+        //    });
+        //#endif
+        
+        //    [self yt_log_fontnames];
+        
+        //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
+        //    DDLogDebug(@"EX:%@", data);
+        
+        // did finish launching
+#if !(TARGET_IPHONE_SIMULATOR)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [application registerForRemoteNotifications];
+        });
+#endif
 
-    MyFeedsManager.keychain[YTLaunchCount] = [@(count + 1) stringValue];
+        id countVal = MyFeedsManager.keychain[YTLaunchCount];
+        
+        NSInteger count = [(countVal ?: @0) integerValue];
+        
+        if (count == 0) {
+            // remove the old key's items
+            if ([YTLaunchCountOldKey length] > 0 ) {
+                MyFeedsManager.keychain[YTLaunchCountOldKey] = nil;
+            }
+            
+            MyFeedsManager.keychain[YTRequestedReview] = [@(NO) stringValue];
+        }
+        
+        MyFeedsManager.keychain[YTLaunchCount] = [@(count + 1) stringValue];
+        
+        retval = YES;
+        
+    });
     
-    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+    return retval;
+    
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {

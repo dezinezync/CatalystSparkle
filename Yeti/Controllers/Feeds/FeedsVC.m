@@ -534,10 +534,45 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.DS2.data forKey:kDS2Data];
+    
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
+    
+    NSArray *feedsAndFolders = [coder decodeObjectForKey:kDS2Data];
+    
+    if (feedsAndFolders != nil) {
+        
+        // for the folders, the feeds will be empty.
+        // we need to remap these.
+        NSArray <Folder *> *folders = [feedsAndFolders rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+            return [obj isKindOfClass:Folder.class];
+        }];
+        
+        NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:propSel(feedID) ascending:YES];
+        
+        NSArray <NSSortDescriptor *> *sortDescriptors = @[descriptor];
+        
+        [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            // find all feeds belonging to this folder.
+            NSArray <Feed *> *feeds = [[MyFeedsManager feeds] rz_filter:^BOOL(Feed *objx, NSUInteger idxx, NSArray *arrayx) {
+                return [objx.folderID isEqualToNumber:obj.folderID];
+            }];
+            
+            feeds = [feeds sortedArrayUsingDescriptors:sortDescriptors];
+            
+            obj.feeds = [NSPointerArray weakObjectsPointerArray];
+            [obj.feeds addObjectsFromArray:feeds];
+            
+        }];
+        
+        [self.DS setData:feedsAndFolders section:1];
+    }
+    
 }
 
 #pragma mark - Data
