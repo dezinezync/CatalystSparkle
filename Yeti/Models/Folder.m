@@ -17,6 +17,7 @@
     [encoder encodeObject:self.status forKey:@"status"];
     [encoder encodeObject:self.title forKey:@"title"];
     [encoder encodeObject:self.userID forKey:@"userID"];
+    [encoder encodeObject:self.feedIDs.allObjects forKey:@"feedIDs"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -29,13 +30,28 @@
         self.status = [decoder decodeObjectForKey:@"status"];
         self.title = [decoder decodeObjectForKey:@"title"];
         self.userID = [decoder decodeObjectForKey:@"userID"];
+        
+        NSArray <NSNumber *> *feedIDs = [decoder decodeObjectForKey:@"feedIDs"];
+        if (feedIDs != nil) {
+            self.feedIDs = [NSSet setWithArray:feedIDs];
+        }
+        
     }
     return self;
 }
 
 - (BOOL)isEqualToFolder:(Folder *)object {
-    return ([[object folderID] isEqualToNumber:self.folderID]
-            && [[object title] isEqualToString:self.title]);
+    BOOL checkOne = ([[object folderID] isEqualToNumber:self.folderID]
+                     && [[object title] isEqualToString:self.title]
+                     && [object.feedIDs isEqualToSet:self.feedIDs]);
+    
+    BOOL checkTwo = YES;
+    
+    if (object.feeds != nil && self.feeds != nil) {
+        checkTwo = [[object.feeds allObjects] isEqualToArray:self.feeds.allObjects];
+    }
+    
+    return checkOne && checkTwo;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -90,7 +106,18 @@
         
         self.feedIDs = value;
 
-    } else {
+    }
+    else if ([key isEqualToString:propSel(feeds)]
+             && [value isKindOfClass:NSArray.class]
+             && [(NSArray *)value count] > 0
+             && [[(NSArray *)value firstObject] isKindOfClass:NSNumber.class]) {
+        
+        value = [NSSet setWithArray:value];
+        
+        self.feedIDs = value;
+        
+    }
+    else {
         [super setValue:value forKey:key];
     }
 

@@ -277,29 +277,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
        
         Folder *folder = [Folder instanceFromDictionary:obj];
         
-        NSArray <NSNumber *> * feedIDs = [[[obj valueForKey:@"feeds"] rz_filter:^BOOL(NSNumber * obj, NSUInteger idx, NSArray *array) {
-            return obj != nil && [obj integerValue] > 0;
-        }] sortedArrayUsingSelector:@selector(compare:)];
-        
-        folder.feedIDs = [NSSet setWithArray:feedIDs];
-        
-        folder.feeds = [NSPointerArray weakObjectsPointerArray];
-        
-        [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
-            
-            [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
-                
-                if ([feed.feedID isEqualToNumber:objx]) {
-                    feed.folderID = folder.folderID;
-                    if ([folder.feeds containsObject:feed] == NO) {
-                        [folder.feeds addObject:feed];
-                    }
-                }
-                
-            }];
-            
-        }];
-        
         return folder;
         
     }];
@@ -1576,9 +1553,44 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 {
     _feeds = feeds ?: @[];
     
+    // calling this invalidates the pointers we store in folders.
+    // calling the folders setter will remap the feeds.
+    self.folders = [self folders];
+    
     if (_feeds) {
         [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : _feeds, @"folders": self.folders ?: @[]}];
     }
+}
+
+- (void)setFolders:(NSArray<Folder *> *)folders {
+    
+    _folders = folders ?: @[];
+    
+    [_folders enumerateObjectsUsingBlock:^(Folder * _Nonnull folder, NSUInteger idxx, BOOL * _Nonnull stopx) {
+       
+        if (folder.feeds == nil) {
+            folder.feeds = [NSPointerArray weakObjectsPointerArray];
+            
+            NSArray *feedIDs = folder.feedIDs.allObjects;
+            
+            [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                    
+                    if ([feed.feedID isEqualToNumber:objx]) {
+                        feed.folderID = folder.folderID;
+                        if ([folder.feeds containsObject:feed] == NO) {
+                            [folder.feeds addPointer:(__bridge void *)feed];
+                        }
+                    }
+                    
+                }];
+                
+            }];
+        }
+        
+    }];
+    
 }
 
 //- (void)setFolders:(NSArray<Folder *> *)folders
@@ -2412,8 +2424,8 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
+        self->_folders = [coder decodeObjectForKey:kFoldersKey];
         self.feeds = [coder decodeObjectForKey:kFeedsKey];
-        self.folders = [coder decodeObjectForKey:kFoldersKey];
 //        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
         self.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];

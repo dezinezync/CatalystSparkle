@@ -534,45 +534,10 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
-    
-    [coder encodeObject:self.DS2.data forKey:kDS2Data];
-    
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
-    
-    NSArray *feedsAndFolders = [coder decodeObjectForKey:kDS2Data];
-    
-    if (feedsAndFolders != nil) {
-        
-        // for the folders, the feeds will be empty.
-        // we need to remap these.
-        NSArray <Folder *> *folders = [feedsAndFolders rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-            return [obj isKindOfClass:Folder.class];
-        }];
-        
-        NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:propSel(feedID) ascending:YES];
-        
-        NSArray <NSSortDescriptor *> *sortDescriptors = @[descriptor];
-        
-        [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-           
-            // find all feeds belonging to this folder.
-            NSArray <Feed *> *feeds = [[MyFeedsManager feeds] rz_filter:^BOOL(Feed *objx, NSUInteger idxx, NSArray *arrayx) {
-                return [objx.folderID isEqualToNumber:obj.folderID];
-            }];
-            
-            feeds = [feeds sortedArrayUsingDescriptors:sortDescriptors];
-            
-            obj.feeds = [NSPointerArray weakObjectsPointerArray];
-            [obj.feeds addObjectsFromArray:feeds];
-            
-        }];
-        
-        [self.DS setData:feedsAndFolders section:1];
-    }
-    
 }
 
 #pragma mark - Data
@@ -651,12 +616,27 @@ NSString * const kDS2Data = @"DS2Data";
         
         [data addObjectsFromArray:MyFeedsManager.feedsWithoutFolders];
         
-        CGPoint contentOffset = self.tableView.contentOffset;
+//        CGPoint contentOffset = self.tableView.contentOffset;
+//
+//        CGRect layoutFrame = [self.tableView.layoutMarginsGuide layoutFrame];
+//        CGRect screen = [[UIScreen mainScreen] bounds];
+//        CGRect statusBar = [[UIApplication sharedApplication] statusBarFrame];
+//
+//        contentOffset.y = -(screen.size.height - layoutFrame.size.height - statusBar.size.height);
+        
+        [self.DS2 resetData];
+        [self.tableView reloadData];
         
         [self.DS setData:data section:1];
         
-        [self.tableView.layer removeAllAnimations];
-        [self.tableView setContentOffset:contentOffset animated:NO];
+//        // schedule for next loop
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            // schedule for 0.15 once in the next loop
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationFade];
+//            });
+//
+//        });
         
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
@@ -892,31 +872,59 @@ NSString * const kDS2Data = @"DS2Data";
 #pragma mark - <FolderInteractionDelegate>
 
 - (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
+    
+    __block Folder * actionableFolder = folder;
  
-    NSUInteger index = [self.DS2.data indexOfObject:folder];
+    __block NSUInteger index = [self.DS2.data indexOfObject:folder];
+    
+    if (index == NSNotFound) {
+        
+//        // try finding by traversing the Datasource
+//        [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//
+//            if ([obj isKindOfClass:folder.class]
+//                && [[(Folder *)obj folderID] isEqualToNumber:folder.folderID]) {
+//                index = idx;
+//                *stop = YES;
+//
+//                actionableFolder = obj;
+//            }
+//
+//        }];
+//
+//        if (index == NSNotFound) {
+            DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
+            return;
+//        }
+//        else {
+//            // update the folder on the cell
+//            FolderCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:1]];
+//            if (cell != nil) {
+//                [cell setValue:actionableFolder forKeyPath:@"folder"];
+//            }
+//        }
+    }
     
     CGPoint contentOffset = self.tableView.contentOffset;
     
-    if (folder != nil && (folder.feeds == nil || folder.feeds.allObjects.count == 0)) {
-        // it is possible that this folder is actually empty
-        // but let's check it anyways
-        
-        [folder.feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull feedID, BOOL * _Nonnull stop) {
-            
-            Feed *feed = [MyFeedsManager feedForID:feedID];
-            
-            if (feed != nil && [folder.feeds containsObject:feed] == NO) {
-                [folder.feeds addObject:feed];
-            }
-            
-        }];
-        
-    }
+//    if (folder != nil && (folder.feeds == nil || folder.feeds.allObjects.count == 0)) {
+//        // it is possible that this folder is actually empty
+//        // but let's check it anyways
+//
+//        [MyFeedsManager.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//
+//            if ([obj.feedID isEqualToNumber:folder.folderID] == YES) {
+//                [folder.feeds addPointer:(__bridge void *)obj];
+//            }
+//
+//        }];
+//
+//    }
     
-    if (folder.isExpanded) {
+    if (actionableFolder.isExpanded) {
         
         DDLogDebug(@"Closing index: %@", @(index));
-        folder.expanded = NO;
+        actionableFolder.expanded = NO;
         
         // remove these feeds from the datasource
         NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
@@ -924,7 +932,7 @@ NSString * const kDS2Data = @"DS2Data";
             if ([obj isKindOfClass:Folder.class])
                 return YES;
             
-            if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:folder.folderID]) {
+            if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:actionableFolder.folderID]) {
                 return NO;
             }
             
@@ -936,7 +944,7 @@ NSString * const kDS2Data = @"DS2Data";
         
     }
     else {
-        folder.expanded = YES;
+        actionableFolder.expanded = YES;
         DDLogDebug(@"Opening index: %@", @(index));
         
         // add these feeds to the datasource after the above index
@@ -946,7 +954,7 @@ NSString * const kDS2Data = @"DS2Data";
         data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
             if ([obj isKindOfClass:Feed.class]) {
                 Feed *feed = obj;
-                if ([feed.folderID isEqualToNumber:folder.folderID]) {
+                if ([feed.folderID isEqualToNumber:actionableFolder.folderID]) {
                     return NO;
                 }
             }
@@ -954,9 +962,9 @@ NSString * const kDS2Data = @"DS2Data";
             return YES;
         }].mutableCopy;
         
-        NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, folder.feeds.allObjects.count)];
+        NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, actionableFolder.feeds.allObjects.count)];
         
-        [data insertObjects:folder.feeds.allObjects atIndexes:set];
+        [data insertObjects:actionableFolder.feeds.allObjects atIndexes:set];
         
         @try {
             [self.DS setData:data section:1];
