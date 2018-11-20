@@ -8,7 +8,7 @@
 
 #import "FeedVC.h"
 
-@interface CustomFeedVC : FeedVC
+@interface CustomFeedVC : FeedVC <UIViewControllerRestoration>
 
 @property (nonatomic, assign, getter=isUnread) BOOL unread;
 

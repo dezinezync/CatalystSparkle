@@ -139,19 +139,19 @@
 
 NSString * const kBAuthorData = @"AuthorData";
 
-+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-    Author *author = [coder decodeObjectForKey:kBAuthorData];
-    
-    if (author) {
-        DetailAuthorVC *vc = [[DetailAuthorVC alloc] init];
-        vc.author = author;
-        vc.customFeed = FeedTypeFeed;
-        
-        return vc;
-    }
-    
-    return nil;
-}
+//+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+//    Author *author = [coder decodeObjectForKey:kBAuthorData];
+//
+//    if (author) {
+//        DetailAuthorVC *vc = [[DetailAuthorVC alloc] init];
+//        vc.author = author;
+//        vc.customFeed = FeedTypeFeed;
+//
+//        return vc;
+//    }
+//
+//    return nil;
+//}
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
@@ -166,6 +166,7 @@ NSString * const kBAuthorData = @"AuthorData";
     
     if (author) {
         self.author = author;
+        self.customFeed = FeedTypeFeed;
     }
     
 }

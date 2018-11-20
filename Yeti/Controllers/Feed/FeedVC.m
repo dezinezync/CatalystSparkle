@@ -1314,6 +1314,9 @@ NSString * const kCurrentPage = @"FeedsLoadedPage";
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.feed forKey:kFeedData];
@@ -1321,6 +1324,9 @@ NSString * const kCurrentPage = @"FeedsLoadedPage";
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    
     [super decodeRestorableStateWithCoder:coder];
     
     Feed *feed = [coder decodeObjectForKey:kFeedData];

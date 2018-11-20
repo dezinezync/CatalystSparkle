@@ -2269,7 +2269,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         NSArray <NSNumber *> * bookmarked = [responseObject valueForKey:@"bookmarks"];
         NSArray <NSNumber *> * deleted = [responseObject valueForKey:@"deleted"];
         
-        DDLogDebug(@"Bookmarked: %@\nDeleted:%@", bookmarked, deleted);
+//        DDLogDebug(@"Bookmarked: %@\nDeleted:%@", bookmarked, deleted);
         
         strongify(self);
         
@@ -2315,7 +2315,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                         
                     }];
                     
-                    DDLogDebug(@"Index of bookmark: %@", @(index));
+//                    DDLogDebug(@"Index of bookmark: %@", @(index));
                     
                     if (index != NSNotFound) {
                         count--;

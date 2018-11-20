@@ -15,6 +15,9 @@
 		F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
+		F013E6DD21A03FA700BAA151 /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */; };
+		F013E6DE21A03FA700BAA151 /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
 		F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; };
 		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
@@ -109,7 +112,6 @@
 		F070C3011FBABC3600912CCF /* YetiUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3001FBABC3600912CCF /* YetiUITests.m */; };
 		F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3231FBAC10600912CCF /* JLRoutes.framework */; };
 		F070C32B1FBAC10600912CCF /* OMGHTTPURLRQ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */; };
-		F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3261FBAC10600912CCF /* DZAppdelegate.framework */; };
 		F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */; };
 		F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3331FBAC37600912CCF /* FeedsVC.m */; };
 		F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3381FBAC3CC00912CCF /* FeedsManager.m */; };
@@ -293,6 +295,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F013E6CC21A03F8500BAA151 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0F9492E1B15A06400014A4B;
+			remoteInfo = DZAppDelegate;
+		};
+		F013E6CE21A03F8500BAA151 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0F949471B15A06400014A4B;
+			remoteInfo = DZAppDelegateTests;
+		};
+		F013E6D021A03F8500BAA151 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0634F9E1B6B4C950025C347;
+			remoteInfo = DZAppdelegate;
+		};
+		F013E6D221A03F8500BAA151 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0634FA81B6B4C950025C347;
+			remoteInfo = DZAppdelegateTests;
+		};
+		F013E6DF21A03FA700BAA151 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0634F9D1B6B4C950025C347;
+			remoteInfo = DZAppdelegate;
+		};
 		F017F5FF216677AA00C514BB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
@@ -440,6 +477,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F0B05E4E21400C61001FD00B /* DZNetworking.framework in Embed Frameworks */,
+				F013E6DE21A03FA700BAA151 /* DZAppdelegate.framework in Embed Frameworks */,
 				F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */,
 				F0C9F3DB2149151A007EF1E8 /* DZKit.framework in Embed Frameworks */,
 			);
@@ -462,6 +500,9 @@
 		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
+		F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = ../../DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
+		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
+		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
 		F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = ../../DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
@@ -618,7 +659,6 @@
 		F070C3231FBAC10600912CCF /* JLRoutes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JLRoutes.framework; path = Carthage/Build/iOS/JLRoutes.framework; sourceTree = SOURCE_ROOT; };
 		F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Carthage/Build/iOS/OMGHTTPURLRQ.framework; sourceTree = SOURCE_ROOT; };
 		F070C3251FBAC10600912CCF /* YapDatabase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YapDatabase.framework; path = Carthage/Build/iOS/YapDatabase.framework; sourceTree = SOURCE_ROOT; };
-		F070C3261FBAC10600912CCF /* DZAppdelegate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DZAppdelegate.framework; path = Carthage/Build/iOS/DZAppdelegate.framework; sourceTree = SOURCE_ROOT; };
 		F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
 		F070C3321FBAC37600912CCF /* FeedsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsVC.h; sourceTree = "<group>"; };
 		F070C3331FBAC37600912CCF /* FeedsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsVC.m; sourceTree = "<group>"; };
@@ -980,6 +1020,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F013E6DD21A03FA700BAA151 /* DZAppdelegate.framework in Frameworks */,
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
 				F0D7E224215B72F100CB64E9 /* libssl.a in Frameworks */,
@@ -987,7 +1028,6 @@
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
-				F070C32D1FBAC10600912CCF /* DZAppdelegate.framework in Frameworks */,
 				F0C9F3DA2149151A007EF1E8 /* DZKit.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
 				F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */,
@@ -1014,6 +1054,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F013E6C621A03F8500BAA151 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F013E6CD21A03F8500BAA151 /* DZAppDelegate.app */,
+				F013E6CF21A03F8500BAA151 /* DZAppDelegateTests.xctest */,
+				F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */,
+				F013E6D321A03F8500BAA151 /* DZAppdelegateTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F017F5FA216677AA00C514BB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1358,6 +1409,8 @@
 				F0A7B8F320FA21C00056A2C0 /* _YetiStoreVC.m */,
 				F04CFAC42154B57B00AA7B5E /* StoreVC.h */,
 				F04CFAC52154B57B00AA7B5E /* StoreVC.m */,
+				F013E6E121A116EE00BAA151 /* MainNavController.h */,
+				F013E6E221A116EE00BAA151 /* MainNavController.m */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1435,7 +1488,6 @@
 				F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
 				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
-				F070C3261FBAC10600912CCF /* DZAppdelegate.framework */,
 				F070C3231FBAC10600912CCF /* JLRoutes.framework */,
 				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
 				F070C3251FBAC10600912CCF /* YapDatabase.framework */,
@@ -1581,6 +1633,7 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */,
 				F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */,
 				F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */,
 				F0B05E3A21400C2F001FD00B /* DZNetworking.xcodeproj */,
@@ -1929,6 +1982,7 @@
 				F0C9F3DD2149151A007EF1E8 /* PBXTargetDependency */,
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 				F017F60A216677C700C514BB /* PBXTargetDependency */,
+				F013E6E021A03FA700BAA151 /* PBXTargetDependency */,
 			);
 			name = Yeti;
 			productName = Yeti;
@@ -2027,6 +2081,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F013E6C621A03F8500BAA151 /* Products */;
+					ProjectRef = F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */;
+				},
+				{
 					ProductGroup = F0C9F3C9214914CA007EF1E8 /* Products */;
 					ProjectRef = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
 				},
@@ -2050,6 +2108,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F013E6CD21A03F8500BAA151 /* DZAppDelegate.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DZAppDelegate.app;
+			remoteRef = F013E6CC21A03F8500BAA151 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F013E6CF21A03F8500BAA151 /* DZAppDelegateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZAppDelegateTests.xctest;
+			remoteRef = F013E6CE21A03F8500BAA151 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZAppdelegate.framework;
+			remoteRef = F013E6D021A03F8500BAA151 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F013E6D321A03F8500BAA151 /* DZAppdelegateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZAppdelegateTests.xctest;
+			remoteRef = F013E6D221A03F8500BAA151 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F017F600216677AA00C514BB /* DZThemeKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2279,7 +2365,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/DZAppdelegate.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/CocoaLumberjack.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/JLRoutes.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OMGHTTPURLRQ.framework",
@@ -2288,7 +2373,6 @@
 			);
 			name = Carthage;
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/DZAppdelegate.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JLRoutes.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OMGHTTPURLRQ.framework",
@@ -2412,6 +2496,7 @@
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */,
+				F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
@@ -2503,6 +2588,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F013E6E021A03FA700BAA151 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZAppdelegate;
+			targetProxy = F013E6DF21A03FA700BAA151 /* PBXContainerItemProxy */;
+		};
 		F017F606216677B100C514BB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DZThemeKit;

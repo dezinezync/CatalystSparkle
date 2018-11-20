@@ -71,7 +71,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.sizeCache = @{}.mutableCopy;
         
         self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), feed.feedID);
-        self.restorationClass = self.class;
+//        self.restorationClass = self.class;
     }
     
     return self;
@@ -94,7 +94,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [super viewDidLoad];
     
     self.title = self.feed.title;
-    self.collectionView.restorationIdentifier = self.restorationIdentifier;
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
@@ -242,6 +241,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     }
     
     return _activityIndicatorView;
+}
+
+- (void)setRestorationIdentifier:(NSString *)restorationIdentifier {
+    [super setRestorationIdentifier:restorationIdentifier];
+    
+    self.restorationClass = self.class;
+    
+    self.collectionView.restorationIdentifier = [restorationIdentifier stringByAppendingString:@"-collectionView"];
 }
 
 #pragma mark - Setters
@@ -778,6 +785,9 @@ NSString * const kSizCache = @"FeedSizesCache";
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.feed forKey:kBFeedData];
@@ -786,6 +796,9 @@ NSString * const kSizCache = @"FeedSizesCache";
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    
     [super decodeRestorableStateWithCoder:coder];
     
     if ([NSStringFromClass(self.class) isEqualToString:NSStringFromClass(DetailFeedVC.class)] == YES) {
@@ -914,6 +927,10 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     
     CGSize contentSize = self.collectionView.contentSize;
+    
+    if (CGSizeEqualToSize(contentSize, CGSizeZero)) {
+        contentSize = [UIScreen mainScreen].bounds.size;
+    }
     
     CGFloat width = contentSize.width;
     

@@ -55,6 +55,7 @@ static void *KVO_Unread = &KVO_Unread;
 - (instancetype)initWithStyle:(UITableViewStyle)style {
     if (self = [super initWithStyle:style]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
+//        self.restorationClass = self.class;
     }
     
     return self;
@@ -533,10 +534,16 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+     DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    
     [super encodeRestorableStateWithCoder:coder];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    
     [super decodeRestorableStateWithCoder:coder];
 }
 

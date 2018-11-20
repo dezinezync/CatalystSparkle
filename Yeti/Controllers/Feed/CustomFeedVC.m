@@ -43,6 +43,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     _unread = unread;
     
     self.restorationIdentifier = unread ? @"UnreadVC" : @"BookmarksVC";
+    self.restorationClass = self.class;
 }
 
 - (BOOL)ef_hidesNavBorder
@@ -317,6 +318,33 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+#pragma mark - Restoration
+
+#define kIsUnread @"CustomFeedVC-isUnread"
+
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    CustomFeedVC *vc = [[CustomFeedVC alloc] init];
+    
+    vc.unread = [coder decodeBoolForKey:kIsUnread];
+    
+    return vc;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeBool:self.isUnread forKey:kIsUnread];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super decodeRestorableStateWithCoder:coder];
+    
+    self.unread = [coder decodeBoolForKey:kIsUnread];
+    
 }
 
 @end

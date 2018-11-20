@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RecommendationsVC : UICollectionViewController
+@interface RecommendationsVC : UICollectionViewController <UIViewControllerRestoration>
 
 @end

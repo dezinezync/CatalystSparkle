@@ -137,12 +137,12 @@
 
 NSString * const kBFolderData = @"FolderData";
 
-+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-    DetailFolderVC *vc = [[DetailFolderVC alloc] init];
-    vc.customFeed = FeedTypeFolder;
-    
-    return vc;
-}
+//+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+//    DetailFolderVC *vc = [[DetailFolderVC alloc] init];
+//    vc.customFeed = FeedTypeFolder;
+//    
+//    return vc;
+//}
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];

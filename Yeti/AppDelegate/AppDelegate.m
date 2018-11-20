@@ -36,21 +36,21 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
-    BOOL using = [self commonInit:application];
+    self.window = [[UIWindow alloc] init];
     
-    __unused BOOL unused = [super application:application willFinishLaunchingWithOptions:launchOptions];
+    BOOL retval = [self commonInit:application];
     
-    return using;
+    return retval;
     
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    BOOL using = [self commonInit:application];
+    BOOL retval = [self commonInit:application];
     
-    __unused BOOL unused = [super application:application didFinishLaunchingWithOptions:launchOptions];
+    [self.window makeKeyAndVisible];
     
-    return using;
+    return retval;
     
 }
 
@@ -60,6 +60,17 @@ AppDelegate *MyAppDelegate = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
+        [self setupRouting];
+        
+        NSDictionary *defaults = [self performSelector:@selector(appDefaults)];
+        
+        if(defaults)
+        {
+            [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+        }
+        
+        [self setupRootController];
         
         // Set app-wide shared cache (first number is megabyte value)
         NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
@@ -74,7 +85,7 @@ AppDelegate *MyAppDelegate = nil;
         
         [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
         
-        self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+//        self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
         
         weakify(self);
         
@@ -90,7 +101,7 @@ AppDelegate *MyAppDelegate = nil;
         });
         
         if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications]) {
-            asyncMain(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 [application registerForRemoteNotifications];
             });
         }
@@ -166,6 +177,8 @@ AppDelegate *MyAppDelegate = nil;
 
 #pragma mark - State Restoration
 
+#define kFeedsManager @"FeedsManager"
+
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
     return YES;
 }
@@ -206,10 +219,16 @@ AppDelegate *MyAppDelegate = nil;
 
 - (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
     DDLogDebug(@"Application will save restoration data");
+    
+    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
 }
 
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
     DDLogDebug(@"Application did restore");
+}
+
+- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
+    return nil;
 }
 
 #pragma mark -
@@ -249,10 +268,10 @@ AppDelegate *MyAppDelegate = nil;
 
 - (void)setupRootController {
     
-    if (_restoring == YES) {
-        _restoring = NO;
-        return;
-    }
+//    if (_restoring == YES) {
+//        _restoring = NO;
+//        return;
+//    }
     
     SplitVC *splitVC = [[SplitVC alloc] init];
     

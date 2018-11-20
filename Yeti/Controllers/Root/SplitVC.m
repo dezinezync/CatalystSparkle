@@ -19,6 +19,7 @@
 
 #import "AppDelegate.h"
 #import "TwoFingerPanGestureRecognizer.h"
+#import "MainNavController.h"
 
 @interface SplitVC () <UISplitViewControllerDelegate, UIGestureRecognizerDelegate>
 
@@ -31,15 +32,15 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
+//        self.restorationClass = self.class;
+        
         self.delegate = self;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
         });
         
-        FeedsVC *vc = [[FeedsVC alloc] initWithStyle:UITableViewStylePlain];
-        YTNavigationController *nav1 = [[YTNavigationController alloc] initWithRootViewController:vc];
-        nav1.restorationIdentifier = @"mainNav";
+        MainNavController *nav1 = [[MainNavController alloc] init];
         
         UINavigationController *nav2 = [self emptyVC];
 
@@ -254,14 +255,26 @@
 
 #pragma mark - <UIViewControllerRestoration>
 
-NSString * const kFeedsManager = @"FeedsManager";
++ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
+
+    return [[SplitVC alloc] init];
+
+}
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
+    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    
     [super encodeRestorableStateWithCoder:coder];
     
-    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
+}
 
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    
+    [super decodeRestorableStateWithCoder:coder];
+    
 }
 
 #pragma mark - <UISplitViewControllerDelegate>

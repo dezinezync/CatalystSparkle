@@ -59,4 +59,10 @@
     return nil;
 }
 
+#pragma mark -
+
++ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
+    return [[[self class] alloc] init];
+}
+
 @end

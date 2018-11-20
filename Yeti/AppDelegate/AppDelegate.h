@@ -16,7 +16,9 @@
 
 extern AppDelegate * MyAppDelegate;
 
-@interface AppDelegate : DZAppDelegate
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (nonatomic, strong) UIWindow *window;
 
 @property (nonatomic, weak) UIAlertController *addFeedDialog;
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;

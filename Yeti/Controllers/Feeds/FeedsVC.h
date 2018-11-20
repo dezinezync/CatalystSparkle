@@ -13,7 +13,7 @@
 @class DZSectionedDatasource;
 @class DZBasicDatasource;
 
-@interface FeedsVC : UITableViewController {
+@interface FeedsVC : UITableViewController <UIViewControllerRestoration> {
     BOOL _refreshing;
     BOOL _preCommitLoading;
     BOOL _noPreSetup;

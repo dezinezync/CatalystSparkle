@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DetailCustomVC : DetailFeedVC
+@interface DetailCustomVC : DetailFeedVC <UIViewControllerRestoration>
 
 @property (nonatomic, assign, getter=isUnread) BOOL unread;
 

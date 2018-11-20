@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
-@interface DetailFeedVC : UICollectionViewController <ScrollLoading> {
+@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration> {
     NSOperation *_searchOperation;
     NSInteger _page;
     BOOL _canLoadNext;

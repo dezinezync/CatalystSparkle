@@ -50,7 +50,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     
     _hasSetupState = YES;
     
-    self.restorationIdentifier = self.isUnread ? @"UnreadVC" : @"BookmarksVC";
+    self.restorationIdentifier = self.isUnread ? @"UnreadVC-Detail" : @"BookmarksVC-Detail";
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     if (!self.isUnread) {
@@ -329,15 +329,19 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 #pragma mark - State Restoration
 
-NSString * const kBUnreadData = @"UnreadData";
-NSString * const kBIsUnread = @"VCIsUnread";
+#define kBUnreadData @"UnreadData"
+#define kBIsUnread @"VCIsUnread"
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     DetailCustomVC *vc = [[DetailCustomVC alloc] init];
     
-    return vc;
+    if ([coder decodeBoolForKey:kBIsUnread]) {
+        vc.unread = YES;
+    }
     
-    return nil;
+    vc.restorationIdentifier = vc.isUnread ? @"UnreadVC-Detail" : @"BookmarksVC-Detail";
+    
+    return vc;
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -349,20 +353,16 @@ NSString * const kBIsUnread = @"VCIsUnread";
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
     [super decodeRestorableStateWithCoder:coder];
     
     NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
     
     if (items) {
-        [self.DS resetData];
-        self.DS.data = items;
         self.customFeed = FeedTypeCustom;
         [self setupLayout];
         
-        if ([coder decodeBoolForKey:kBIsUnread]) {
-            self.unread = YES;
-        }
-        
+        self.DS.data = items;
     }
     
 }

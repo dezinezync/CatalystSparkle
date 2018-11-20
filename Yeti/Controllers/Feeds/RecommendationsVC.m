@@ -48,6 +48,11 @@ static NSString * const reuseIdentifier = @"Cell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.restorationIdentifier = NSStringFromClass(self.class);
+    self.restorationClass = [self class];
+    
+    self.collectionView.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-collectionView"];
+    
     self.title = @"Recommendations";
     
     // Uncomment the following line to preserve selection between presentations
@@ -343,6 +348,14 @@ static NSString * const reuseIdentifier = @"Cell";
     }
     
     return _activity;
+}
+
+#pragma mark -
+
++ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
+    
+    return [[RecommendationsVC alloc] initWithNibName:NSStringFromClass([self class]) bundle:nil];
+    
 }
 
 @end

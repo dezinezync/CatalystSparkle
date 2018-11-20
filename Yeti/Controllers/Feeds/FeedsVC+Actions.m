@@ -78,6 +78,10 @@
     [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
+        
+        if (self == nil) {
+            return;
+        }
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([responseObject integerValue] == 2) {
