@@ -31,7 +31,7 @@
     _author = author;
     
     if (author) {
-        self.restorationIdentifier = formattedString(@"%@-%@-%@", NSStringFromClass(self.class), self.feed.feedID, author.authorID);
+        self.restorationIdentifier = NSStringFromClass(self.class);
     }
 }
 
@@ -137,36 +137,42 @@
 
 #pragma mark - State Restoration
 
-NSString * const kBAuthorData = @"AuthorData";
+#define kBAuthorData @"AuthorData"
+#define kBAuthorDS @"AuthorDS"
+#define kBAuthorFeed @"AuthorFeed"
 
-//+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-//    Author *author = [coder decodeObjectForKey:kBAuthorData];
-//
-//    if (author) {
-//        DetailAuthorVC *vc = [[DetailAuthorVC alloc] init];
-//        vc.author = author;
-//        vc.customFeed = FeedTypeFeed;
-//
-//        return vc;
-//    }
-//
-//    return nil;
-//}
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    Author *author = [coder decodeObjectForKey:kBAuthorData];
+    Feed *feed = [coder decodeObjectForKey:kBAuthorFeed];
+
+    if (author != nil && feed != nil) {
+        DetailAuthorVC *vc = [[DetailAuthorVC alloc] initWithFeed:feed];
+        vc.author = author;
+        vc.customFeed = FeedTypeFeed;
+
+        return vc;
+    }
+
+    return nil;
+}
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.author forKey:kBAuthorData];
+    [coder encodeObject:self.DS.data forKey:kBAuthorDS];
+    [coder encodeObject:self.feed forKey:kBAuthorFeed];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
     
-    Author *author = [coder decodeObjectForKey:kBAuthorData];
+    NSArray *data = [coder decodeObjectForKey:kBAuthorDS];
     
-    if (author) {
-        self.author = author;
-        self.customFeed = FeedTypeFeed;
+    if (data) {
+        [self setupLayout];
+        
+        self.DS.data = data;
     }
     
 }
