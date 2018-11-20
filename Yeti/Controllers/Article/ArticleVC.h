@@ -12,7 +12,7 @@
 #import "ArticleHelperView.h"
 #import "FeedItem.h"
 
-@interface ArticleVC : UIViewController <ArticleHandler> {
+@interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration> {
     BOOL _showSearchBar;
     
     UIView *_searchHighlightingRect;

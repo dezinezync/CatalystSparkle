@@ -2296,6 +2296,9 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.item forKey:kArticleData];
@@ -2304,6 +2307,9 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    
     [super decodeRestorableStateWithCoder:coder];
     
     FeedItem * item = [coder decodeObjectForKey:kArticleData];
