@@ -333,7 +333,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 #define kBIsUnread @"VCIsUnread"
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-    DetailCustomVC *vc = [[DetailCustomVC alloc] init];
+    DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
     
     if ([coder decodeBoolForKey:kBIsUnread]) {
         vc.unread = YES;
