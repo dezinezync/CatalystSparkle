@@ -339,6 +339,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         vc.unread = YES;
     }
     
+    vc.customFeed = FeedTypeCustom;
     vc.restorationIdentifier = vc.isUnread ? @"UnreadVC-Detail" : @"BookmarksVC-Detail";
     
     return vc;
@@ -359,7 +360,6 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
     
     if (items) {
-        self.customFeed = FeedTypeCustom;
         [self setupLayout];
         
         self.DS.data = items;

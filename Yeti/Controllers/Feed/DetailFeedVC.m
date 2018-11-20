@@ -70,7 +70,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         self.sizeCache = @{}.mutableCopy;
         
-        self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), feed.feedID);
+        self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
     }
     
@@ -805,6 +805,8 @@ NSString * const kSizCache = @"FeedSizesCache";
         Feed *feed = [coder decodeObjectForKey:kBFeedData];
         
         if (feed) {
+            [self setupLayout];
+            
             self.feed = feed;
             [self.DS resetData];
             self.DS.data = self.feed.articles;

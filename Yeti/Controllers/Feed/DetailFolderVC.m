@@ -37,7 +37,7 @@
         
         self.sizeCache = @{}.mutableCopy;
         
-        self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), folder.folderID);
+        self.restorationIdentifier = NSStringFromClass(self.class);
         self.restorationClass = self.class;
     }
     
@@ -135,19 +135,28 @@
 
 #pragma mark - State Restoration
 
-NSString * const kBFolderData = @"FolderData";
+#define kBFolderData @"FolderData"
+#define kBFolderObj @"FolderObject"
 
-//+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
-//    DetailFolderVC *vc = [[DetailFolderVC alloc] init];
-//    vc.customFeed = FeedTypeFolder;
-//    
-//    return vc;
-//}
++ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    
+    Folder *folder = [coder decodeObjectForKey:kBFolderObj];
+    
+    DetailFolderVC *vc;
+    
+    if (folder != nil) {
+        vc = [[DetailFolderVC alloc] initWithFolder:folder];
+        vc.customFeed = FeedTypeFolder;
+    }
+    
+    return vc;
+}
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.DS.data forKey:kBFolderData];
+    [coder encodeObject:self.folder forKey:kBFolderObj];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -156,8 +165,9 @@ NSString * const kBFolderData = @"FolderData";
     NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBFolderData];
     
     if (items) {
+        [self setupLayout];
+        
         self.DS.data = items;
-        self.customFeed = FeedTypeFolder;
     }
     
 }
