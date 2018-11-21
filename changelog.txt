@@ -5,6 +5,7 @@
 [IMPROVE]
 - Adjsuted gamma for dark themes.
 - Improved contrast for the OPML Import/Export Interface.
+- Cover Image support for the Extended Layout.
 
 [FIX]
 - State Restoration which broke in v1.1.0 is now fixed.

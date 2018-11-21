@@ -22,6 +22,7 @@
 
 #import "YetiThemeKit.h"
 #import "NSString+ImageProxy.h"
+#import "UIImage+Sizing.h"
 
 BOOL _IsAccessibilityContentCategory(void) {
     return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
@@ -270,6 +271,9 @@ NSString *const kiPadArticleImageCell = @"com.yeti.cell.iPadArticleImageCell";
         stackView.layoutMarginsRelativeArrangement = YES;
         
     }
+    else {
+        self.markerView.hidden = YES;
+    }
     
     if (feedType != FeedTypeFeed) {
         
@@ -307,10 +311,26 @@ NSString *const kiPadArticleImageCell = @"com.yeti.cell.iPadArticleImageCell";
     if (item.coverImage != nil) {
         NSString *url = [item.coverImage pathForImageProxy:NO maxWidth:160.f quality:0.f];
         
+        self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+        
         [self.coverImage il_setImageWithURL:url];
     }
     else {
-        self.coverImage.hidden = YES;
+        NSString *url = [feed faviconURI];
+        
+        if (url != nil) {
+            
+            self.coverImage.contentMode = UIViewContentModeCenter;
+            
+            [self.coverImage il_setImageWithURL:url mutate:^UIImage *(UIImage * _Nonnull image) {
+                
+                UIImage *sized = [UIImage imageWithImage:image scaledToSize:CGSizeMake(36.f, 36.f) cornerRadius:4.f];
+                
+                return sized;
+                
+            } success:nil error:nil];
+        }
+        
     }
     
 }

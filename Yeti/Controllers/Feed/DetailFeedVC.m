@@ -38,6 +38,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 @interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
+    
+    BOOL _initialSetup;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
@@ -169,7 +171,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 {
     [super viewWillAppear:animated];
     
-    [self didChangeTheme];
+    if (self->_initialSetup == NO) {
+        self->_initialSetup = YES;
+        
+        [self setupLayout];
+        [self didChangeTheme];
+    }
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
