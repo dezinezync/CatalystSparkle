@@ -258,7 +258,9 @@ NSString *const kImportCell = @"importCell";
             
         }
         
-        self.title = formattedString(@"Creating %@ Folders", @(self.unmappedFolders.count));
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.title = formattedString(@"Creating %@ Folders", @(self.unmappedFolders.count));
+        });
         
         NSInteger lastIndex = self.unmappedFolders.count - 1;
         
@@ -353,8 +355,6 @@ NSString *const kImportCell = @"importCell";
 }
 
 - (void)importFeed:(NSDictionary *)data {
-    
-    return;
     
     if (data == nil) {
         [self resumeFeedsImport];
