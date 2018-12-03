@@ -1,4 +1,4 @@
 github "joeldev/JLRoutes"
-github "dzns/DZAppDelegate"
 github "kishikawakatsumi/UICKeyChainStore"
 github "Flipboard/FLAnimatedImage"
+github "yapstudios/YapDatabase"

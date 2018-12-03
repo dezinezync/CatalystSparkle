@@ -8,7 +8,7 @@
 
 #import "FeedsVC+Search.h"
 
-@interface FeedsVC (Actions)
+@interface FeedsVC (Actions) <UITextFieldDelegate>
 
 - (NSAttributedString *)lastUpdateAttributedString;
 

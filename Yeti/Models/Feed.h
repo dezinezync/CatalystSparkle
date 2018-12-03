@@ -37,5 +37,8 @@
 - (BOOL)isEqualToFeed:(Feed *)object;
 
 @property (nonatomic, copy) NSString *faviconURI;
+@property (nonatomic) NSString *displayTitle;
+
+@property (nonatomic, copy) NSString *localName;
 
 @end

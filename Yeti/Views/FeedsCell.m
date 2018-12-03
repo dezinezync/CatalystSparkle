@@ -171,7 +171,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.feed = feed;
     
-    self.titleLabel.text = feed.title;
+    self.titleLabel.text = feed.displayTitle;
     self.countLabel.text = (feed.unread ?: @0).stringValue;
     
     NSString *url = [feed faviconURI];

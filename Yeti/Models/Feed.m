@@ -35,6 +35,7 @@
     [encoder encodeObject:self.hub forKey:@"hub"];
     [encoder encodeBool:self.hubSubscribed forKey:@"hubSubscribed"];
     [encoder encodeBool:self.subscribed forKey:@"subscribed"];
+    [encoder encodeObject:self.localName forKey:propSel(localName)];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -54,6 +55,7 @@
         self.hub = [decoder decodeObjectForKey:@"hub"];
         self.hubSubscribed = [decoder decodeBoolForKey:@"hubSubscribed"];
         self.subscribed = [decoder decodeBoolForKey:@"subscribed"];
+        self.localName = [decoder decodeObjectForKey:propSel(localName)];
     }
     return self;
 }
@@ -260,9 +262,21 @@
     
     [dictionary setObject:@(self.hubSubscribed) forKey:@"hubSubscribed"];
     [dictionary setObject:@(self.subscribed) forKey:@"subscribed"];
+    
+    if (self.localName) {
+        [dictionary setObject:self.localName forKey:propSel(localName)];
+    }
 
     return dictionary;
 
+}
+
+#pragma mark - Getters
+
+- (NSString *)displayTitle {
+    
+    return self.localName ?: self.title;
+    
 }
 
 - (NSString *)faviconURI

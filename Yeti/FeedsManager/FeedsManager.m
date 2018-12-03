@@ -63,6 +63,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 {
     if (self = [super init]) {
         
+        [DBManager initialize];
+        
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         
 //        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
@@ -264,8 +266,25 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
+    
     NSMutableArray <Feed *> *feeds = [[[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-        return [Feed instanceFromDictionary:obj];
+        
+        Feed *feed = [Feed instanceFromDictionary:obj];
+        
+        NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
+        
+        __block NSString *localName = nil;
+        
+        [MyDBManager.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            localName = [transaction objectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+            
+        }];
+        
+        feed.localName = localName;
+        
+        return feed;
+        
     }] mutableCopy];
     
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];

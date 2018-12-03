@@ -15,6 +15,7 @@
 #import "MoveFoldersVC.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSString+Extras.h>
 
 #import "NewFolderVC.h"
 #import "YTNavigationController.h"
@@ -218,6 +219,14 @@
             
         }
         
+        [avc addAction:[UIAlertAction actionWithTitle:@"Rename Feed" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            self.alertIndexPath = indexPath;
+            
+            [self renameFeed:feed];
+            
+        }]];
+        
         [avc addAction:[UIAlertAction actionWithTitle:@"Delete Feed" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
             
             strongify(self);
@@ -381,6 +390,110 @@
         
         [self presentViewController:avc animated:YES completion:nil];
     });
+    
+}
+
+#pragma mark - Action Extensions
+
+- (void)clearAlertProperties {
+    self.alertDoneAction = nil;
+    self.alertTextField = nil;
+    self.alertFeed = nil;
+}
+
+- (void)renameFeed:(Feed *)feed {
+    
+    self.alertFeed = feed;
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Rename Feed" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *done = [UIAlertAction actionWithTitle:@"Rename" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        NSString *name = [[self.alertTextField text] stringByStrippingWhitespace];
+        
+        NSString *localNameKey = formattedString(@"feed-%@", self.alertFeed.feedID);
+        
+        if (self.alertFeed.localName != nil) {
+            // the user can pass a clear string to clear the local name
+            
+            if ([name length] == 0) {
+                // clear the local name
+                [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                
+                    self.alertFeed.localName = nil;
+                    
+                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                        [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                    
+                        [self clearAlertProperties];
+                        
+                    });
+                    
+                }];
+                
+                return;
+            }
+        }
+        
+        // setup the new name for the user
+        [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            self.alertFeed.localName = name;
+            
+            [transaction setObject:name forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                
+                [self clearAlertProperties];
+                
+            });
+            
+        }];
+        
+    }];
+    
+    [avc addAction:done];
+    
+    self.alertDoneAction = done;
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self clearAlertProperties];
+            
+        });
+        
+    }]];
+    
+    [avc addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+       
+        self.alertTextField = textField;
+        
+        [textField setPlaceholder:@"Feed Name"];
+        [textField setText:(feed.localName ?: feed.title)];
+        
+        textField.delegate = self;
+        
+        if (self.alertFeed.localName != nil) {
+            self.alertDoneAction.enabled = YES;
+        }
+        else {
+            self.alertDoneAction.enabled = ([(feed.localName ?: feed.title) stringByStrippingWhitespace].length >= 3);
+        }
+        
+    }];
+    
+    [self presentViewController:avc animated:YES completion:^{
+       
+        [self.alertTextField becomeFirstResponder];
+        
+    }];
     
 }
 
@@ -549,6 +662,29 @@
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     [self presentViewController:avc animated:YES completion:nil];
+    
+}
+
+#pragma mark - <UITextFieldDelegate>
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    
+    if (textField == self.alertTextField) {
+        NSString *formatted = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        
+        /*
+         * If the user has setup a localName, they can pass a clear input to remove it.
+         * If a localName is not set, the name has to be atleast 3 chars.
+         */
+        if (self.alertFeed.localName != nil) {
+            self.alertDoneAction.enabled = YES;
+        }
+        else {
+            self.alertDoneAction.enabled = ([[formatted stringByStrippingWhitespace] length] >= 3);
+        }
+    }
+    
+    return YES;
     
 }
 
