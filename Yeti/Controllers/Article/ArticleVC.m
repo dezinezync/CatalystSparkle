@@ -41,6 +41,7 @@
 
 #import "YetiThemeKit.h"
 #import <AVKit/AVKit.h>
+#import "YTExtractor.h"
 
 typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateUnknown,
@@ -79,6 +80,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) IBOutlet UILabel *errorTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *errorDescriptionLabel;
 @property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
+
+@property (nonatomic, strong) YTExtractor *ytExtractor;
 
 @end
 
@@ -170,6 +173,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
+    self.ytExtractor = [[YTExtractor alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -1655,6 +1659,58 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+    NSString *videoID = [[content url] lastPathComponent];
+    
+    DDLogDebug(@"Extracting YT info for: %@", videoID);
+    
+    if ([_last isKindOfClass:Linebreak.class] == NO) {
+        [self addLinebreak];
+    }
+    
+    AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
+    playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    
+    [self addChildViewController:playerController];
+    
+    UIView *playerView = playerController.view;
+    playerView.translatesAutoresizingMaskIntoConstraints = NO;
+    [playerView.heightAnchor constraintEqualToAnchor:playerView.widthAnchor multiplier:(9.f/16.f)].active = YES;
+    
+    [self.stackView addArrangedSubview:playerView];
+    [playerController didMoveToParentViewController:self];
+    
+    [self.videos addPointer:(__bridge void *)playerController];
+    
+    _last = playerView;
+    
+    [self addLinebreak];
+    
+    [self.ytExtractor extract:videoID success:^(NSURL * _Nonnull videoInfo) {
+        
+        if (videoInfo) {
+            playerController.player = [AVPlayer playerWithURL:videoInfo];
+        }
+        else {
+            [self.stackView removeArrangedSubview:playerView];
+            [playerView removeFromSuperview];
+            
+            [self _addYoutube:content];
+        }
+        
+    } error:^(NSError * _Nonnull error) {
+       
+        DDLogError(@"Error extracting Youtube Video info: %@", error.localizedDescription);
+        
+        [self.stackView removeArrangedSubview:playerView];
+        [playerView removeFromSuperview];
+        
+        [self _addYoutube:content];
+        
+    }];
+}
+
+// fallback
+- (void)_addYoutube:(Content *)content {
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
     youtube.URL = [NSURL URLWithString:content.url];
@@ -1663,7 +1719,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.stackView addArrangedSubview:youtube];
     
-//    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
+    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-LayoutPadding].active = YES;
     
     [self addLinebreak];
 }
@@ -1713,7 +1769,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (content.url == nil && content.content == nil)
         return;
     
-    if (![_last isKindOfClass:Linebreak.class]) {
+    if ([_last isKindOfClass:Linebreak.class] == NO) {
         [self addLinebreak];
     }
     
