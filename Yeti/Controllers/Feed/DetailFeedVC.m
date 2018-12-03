@@ -95,7 +95,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = self.feed.title;
+    self.title = [self.feed displayTitle];
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     

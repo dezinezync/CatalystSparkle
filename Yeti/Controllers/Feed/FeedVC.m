@@ -59,7 +59,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = self.feed.title;
+    self.title = [self.feed displayTitle];
     self.tableView.restorationIdentifier = self.restorationIdentifier;
     
     self.tableView.dragDelegate = self;
