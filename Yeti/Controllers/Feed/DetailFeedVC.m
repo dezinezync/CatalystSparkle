@@ -295,11 +295,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    if (_loadingNext == YES && _page == 0) {
+    if (self.DS.state == DZDatasourceLoading && _page == 0) {
         self.activityIndicatorView.hidden = NO;
         [self.activityIndicatorView startAnimating];
         
         return self.activityIndicatorView;
+    }
+    
+    if (self.DS.data.count > 0) {
+        return nil;
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -418,8 +422,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (void)loadNextPage
 {
     
-    if (self.loadingNext)
+    if (self.DS.state == DZDatasourceLoading) {
         return;
+    }
     
     if (self->_ignoreLoadScroll)
         return;
@@ -428,7 +433,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    self.loadingNext = YES;
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -444,7 +449,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             return;
         
         self->_page = page;
-        self.loadingNext = NO;
         
         if (!responseObject.count) {
             self->_canLoadNext = NO;
@@ -485,6 +489,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             if (self->_ignoreLoadScroll) {
                 self->_ignoreLoadScroll = NO;
             }
+            
+            self.DS.state = DZDatasourceLoaded;
         });
         
         if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
@@ -499,7 +505,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         if (!self)
             return;
         
-        self.loadingNext = NO;
+        self.DS.state = DZDatasourceError;
     }];
 }
 
