@@ -123,8 +123,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [self setupLayout];
     
-    [self setupNavigationBar];
-    
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
@@ -172,6 +170,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [super viewWillAppear:animated];
     
     if (self->_initialSetup == NO) {
+        [self setupNavigationBar];
+        
         self->_initialSetup = YES;
         
         [self setupLayout];
@@ -345,7 +345,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     ArticleCellB *cell = nil;
     
-    if ([NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
+    if (self.isExploring == NO && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
         cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleImageCell forIndexPath:indexPath];
     }
     else {
