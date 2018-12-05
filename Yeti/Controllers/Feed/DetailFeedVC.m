@@ -870,6 +870,29 @@ NSString * const kSizCache = @"FeedSizesCache";
     else {
         // sorting button
         YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        SEL isUnread = NSSelectorFromString(@"isUnread");
+
+        if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
+            
+            // when the active option is either of these two, we don't need
+            // to do anything extra
+            if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
+                
+                // map it to whatever the selected option is
+                if (option == YTSortAllAsc) {
+                    option = YTSortUnreadAsc;
+                }
+                else if (option == YTSortAllDesc) {
+                    option = YTSortUnreadDesc;
+                }
+                
+            }
+            
+        }
+#pragma clang diagnostic pop
         
         UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
         sorting.width = 32.f;

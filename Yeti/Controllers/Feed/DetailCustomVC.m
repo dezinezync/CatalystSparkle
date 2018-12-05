@@ -131,7 +131,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     
     UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortAllDesc];
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
         
         [self setSortingOption:YTSortAllDesc];
         
@@ -139,7 +139,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     
     UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortAllAsc];
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
         
         [self setSortingOption:YTSortAllAsc];
         
@@ -148,8 +148,8 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     @try {
-        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortAllDesc] forKeyPath:@"image"];
-        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortAllAsc] forKeyPath:@"image"];
+        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
+        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
     }
     @catch (NSException *exc) {
         
