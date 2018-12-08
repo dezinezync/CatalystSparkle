@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "NSString+Components.h"
+#import "VideoInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YTExtractor : NSObject
 
 - (void)extract:(NSString *)videoID
-        success:(void (^)(NSURL * videoInfo))successCB
+        success:(void (^)(VideoInfo * videoInfo))successCB
           error:(void (^)(NSError * error))errorCB;
 
 @end

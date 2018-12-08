@@ -23,7 +23,7 @@ NSString * const ERROR_unknown = @"Unknown error occured";
 
 @implementation YTExtractor
 
-- (void)extract:(NSString *)videoID success:(void (^)(NSURL * _Nonnull))successCB error:(void (^)(NSError * _Nonnull))errorCB {
+- (void)extract:(NSString *)videoID success:(void (^)(VideoInfo * _Nonnull))successCB error:(void (^)(NSError * _Nonnull))errorCB {
     
     if (!videoID || [videoID isBlank]) {
         if (errorCB != nil) {
@@ -36,41 +36,31 @@ NSString * const ERROR_unknown = @"Unknown error occured";
         return;
     }
     
-    [self extractRawInfo:videoID success:^(NSArray * _Nonnull rawDict) {
+    [self extractRawInfo:videoID success:^(VideoInfo * _Nonnull videoInfo) {
         
-        // convert dict to VideoInfo and return
         if (successCB) {
-            NSString *URI = nil;
+        
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(videoInfo);
+            });
             
-            for (NSDictionary *dict in rawDict) {
-                
-                NSString *type = dict[@"type"];
-                
-                if (type && [type containsString:@"video/mp4"] == YES) {
-                    
-                    NSString *size = dict[@"quality"];
-                    
-                    if([size containsString:@"720"] == YES) {
-                        URI = dict[@"url"];
-                    }
-                    
-                }
-            }
-            
-            NSURL *URL = nil;
-            
-            if (URI) {
-                URL = [NSURL URLWithString:URI];
-            }
-            
-            successCB(URL);
         }
         
-    } error:errorCB];
+    } error:^(NSError * _Nonnull error) {
+        
+        if (errorCB) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                errorCB(error);
+            });
+            
+        }
+        
+    }];
     
 }
 
-- (void)extractRawInfo:(NSString *)videoID success:(void (^)(NSArray * _Nonnull))successCB error:(void (^)(NSError * _Nonnull))errorCB {
+- (void)extractRawInfo:(NSString *)videoID success:(void (^)(VideoInfo * _Nonnull))successCB error:(void (^)(NSError * _Nonnull))errorCB {
     
     NSURL *baseURL = formattedURL(infoBasePrefix, videoID);
     
@@ -101,17 +91,49 @@ NSString * const ERROR_unknown = @"Unknown error occured";
             return;
         }
         
-        NSArray <NSDictionary *> *dict = [self extractInfoFromDataString:dataString];
+        NSArray *mapped = [self extractInfoFromDataString:dataString];
         
-        if (dict && [dict isKindOfClass:NSError.class]) {
+        NSString *thumbnail = [mapped firstObject];
+        
+        NSArray <NSDictionary *> *rawDict = [mapped lastObject];
+        
+        if (rawDict && [rawDict isKindOfClass:NSError.class]) {
             if (errorCB) {
-                errorCB((NSError *)dict);
+                errorCB((NSError *)rawDict);
             }
             
             return;
         }
         
-        successCB(dict);
+        VideoInfo *videoInfo = [[VideoInfo alloc] init];
+        videoInfo.coverImage = thumbnail;
+        
+        NSString *URI = nil;
+        
+        for (NSDictionary *dict in rawDict) {
+            
+            NSString *type = dict[@"type"];
+            
+            if (type && [type containsString:@"video/mp4"] == YES) {
+                
+                NSString *size = dict[@"quality"];
+                
+                if([size containsString:@"720"] == YES) {
+                    URI = dict[@"url"];
+                }
+                
+            }
+        }
+        
+        NSURL *URL = nil;
+        
+        if (URI) {
+            URL = [NSURL URLWithString:URI];
+        }
+        
+        videoInfo.url = URL;
+        
+        successCB(videoInfo);
         
     }];
     
@@ -122,6 +144,12 @@ NSString * const ERROR_unknown = @"Unknown error occured";
 - (id)extractInfoFromDataString:(NSString *)dataString {
     
     NSDictionary *pairs = [dataString queryComponents];
+    
+    NSString *thumbnail = pairs[@"thumbnail_url"];
+    
+    if ([[thumbnail lastPathComponent] isEqualToString:@"default.jpg"]) {
+        thumbnail = [thumbnail stringByReplacingOccurrencesOfString:@"/default.jpg" withString:@"/maxresdefault.jpg"];
+    }
     
     NSString * streamsMap = pairs[@"url_encoded_fmt_stream_map"];
     
@@ -139,7 +167,7 @@ NSString * const ERROR_unknown = @"Unknown error occured";
         
     }];
     
-    return mappedInfo;
+    return @[thumbnail, mappedInfo];
     
 }
 

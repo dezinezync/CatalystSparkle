@@ -38,7 +38,7 @@
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"YTExtractor:extractInfo"];
     
-    [self.extractor extract:videoID success:^(NSURL * _Nonnull videoInfo) {
+    [self.extractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
     
         [expectation fulfill];
         
@@ -60,7 +60,7 @@
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
         
-        [self.extractor extract:videoID success:^(NSURL * _Nonnull videoInfo) {
+        [self.extractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
             
             [expectation fulfill];
             
