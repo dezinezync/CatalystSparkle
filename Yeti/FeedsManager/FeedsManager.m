@@ -1010,7 +1010,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
             NSArray *feeds = [folder.feeds allObjects];
             
-            [folder.feeds removeAllObjects];
+            if (folder.feeds != nil && [folder.feeds count] > 0) {
+                [folder.feeds removeAllObjects];
+            }
+            else {
+                folder.feeds = [NSPointerArray weakObjectsPointerArray];
+            }
             
             feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return [del indexOfObject:obj.feedID] == NSNotFound;
@@ -1687,7 +1692,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         defaultConfig.HTTPShouldUsePipelining = YES;
         defaultConfig.waitsForConnectivity = NO;
         defaultConfig.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
-        defaultConfig.timeoutIntervalForRequest = 30;
+        defaultConfig.timeoutIntervalForRequest = 60;
 
         DZURLSession *session = [[DZURLSession alloc] init];
         

@@ -299,10 +299,13 @@
 - (BOOL)addFeed:(NSURL *)url {
     // check if we already have this feed
     Feed * have = nil;
-    for (Feed *item in MyFeedsManager.feeds) {
-        if ([item.url isEqualToString:url.absoluteString]) {
-            have = item;
-            break;
+    
+    if (MyFeedsManager != nil && MyFeedsManager.feeds != nil) {
+        for (Feed *item in MyFeedsManager.feeds) {
+            if ([item.url isEqualToString:url.absoluteString]) {
+                have = item;
+                break;
+            }
         }
     }
     
