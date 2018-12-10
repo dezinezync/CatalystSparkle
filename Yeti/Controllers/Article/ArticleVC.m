@@ -800,7 +800,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
         
         if (self.item && self.item.isRead == NO) {
-            [MyFeedsManager article:self.item markAsRead:YES];
+            // since v1.2, fetching the article marks it as read.
+//            [MyFeedsManager article:self.item markAsRead:YES];
             
             if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
                 [self.providerDelegate userMarkedArticle:self.item read:YES];

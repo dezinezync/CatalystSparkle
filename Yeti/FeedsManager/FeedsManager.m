@@ -541,7 +541,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return;
     }
     
-    NSString *path = formattedString(@"/article/%@", articleID);
+    NSString *path = formattedString(@"/1.2/article/%@", articleID);
     
     NSMutableDictionary *params = @{}.mutableCopy;
     
