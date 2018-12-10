@@ -110,7 +110,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (YapDatabasePostSanitizer)databasePostSanitizer
 {
-    YapDatabasePostSanitizer postSanitizer = ^(NSString *collection, NSString *key, id object){
+    YapDatabasePostSanitizer postSanitizer = ^(NSString *collection, NSString *key, id object) {
         
 //        if ([object isKindOfClass:[MyDatabaseObject class]])
 //        {

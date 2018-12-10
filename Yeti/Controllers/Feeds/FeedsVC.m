@@ -166,6 +166,7 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
     [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
     [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
+    [center addObserver:self selector:@selector(updateNotification:) name:UIDatabaseConnectionDidUpdateNotification object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
@@ -580,11 +581,11 @@ NSString * const kDS2Data = @"DS2Data";
 //    
 //}
 
-- (void)setupData:(NSArray <Feed *> *)feeds
+- (void)setupData
 {
     
     if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(setupData:) withObject:feeds waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(setupData:) withObject:nil waitUntilDone:NO];
         return;
     }
     
@@ -761,7 +762,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)updateNotification:(NSNotification *)note {
     
-    [self setupData:[note.userInfo valueForKey:@"feeds"]];
+    [self setupData];
     
 }
 
