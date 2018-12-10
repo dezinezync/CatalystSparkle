@@ -16,6 +16,7 @@
 
 - (void)didTapSearch;
 - (void)didTapSearchNext;
+- (void)didTapSearchPrevious;
 - (void)didTapSearchDone;
 
 - (void)didTapRead:(id)sender;

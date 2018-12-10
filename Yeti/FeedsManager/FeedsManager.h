@@ -10,6 +10,8 @@
 #import <DZNetworking/DZNetworking.h>
 #import "Reachability.h"
 
+#import "DBManager.h"
+
 #import "Feed.h"
 #import "Folder.h"
 #import "YTUserID.h"
@@ -153,6 +155,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 #pragma mark - Error formatting
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
+
+#pragma mark - Local Data
+
+#define LOCAL_NAME_COLLECTION @"localNames"
 
 @end
 

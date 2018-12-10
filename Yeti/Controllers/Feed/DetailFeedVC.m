@@ -95,7 +95,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = self.feed.title;
+    self.title = [self.feed displayTitle];
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
@@ -122,8 +122,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     }
     
     [self setupLayout];
-    
-    [self setupNavigationBar];
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
@@ -172,6 +170,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [super viewWillAppear:animated];
     
     if (self->_initialSetup == NO) {
+        [self setupNavigationBar];
+        
         self->_initialSetup = YES;
         
         [self setupLayout];
@@ -295,11 +295,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    if (_loadingNext == YES && _page == 0) {
+    if (self.DS.state == DZDatasourceLoading && _page == 0) {
         self.activityIndicatorView.hidden = NO;
         [self.activityIndicatorView startAnimating];
         
         return self.activityIndicatorView;
+    }
+    
+    if (self.DS.data.count > 0) {
+        return nil;
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -345,7 +349,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     ArticleCellB *cell = nil;
     
-    if ([NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
+    if (self.isExploring == NO && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
         cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleImageCell forIndexPath:indexPath];
     }
     else {
@@ -418,8 +422,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (void)loadNextPage
 {
     
-    if (self.loadingNext)
+    if (self.DS.state == DZDatasourceLoading) {
         return;
+    }
     
     if (self->_ignoreLoadScroll)
         return;
@@ -428,7 +433,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    self.loadingNext = YES;
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -444,7 +449,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             return;
         
         self->_page = page;
-        self.loadingNext = NO;
         
         if (!responseObject.count) {
             self->_canLoadNext = NO;
@@ -485,6 +489,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             if (self->_ignoreLoadScroll) {
                 self->_ignoreLoadScroll = NO;
             }
+            
+            self.DS.state = DZDatasourceLoaded;
         });
         
         if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
@@ -499,7 +505,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         if (!self)
             return;
         
-        self.loadingNext = NO;
+        self.DS.state = DZDatasourceError;
     }];
 }
 
@@ -870,6 +876,29 @@ NSString * const kSizCache = @"FeedSizesCache";
     else {
         // sorting button
         YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        SEL isUnread = NSSelectorFromString(@"isUnread");
+
+        if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
+            
+            // when the active option is either of these two, we don't need
+            // to do anything extra
+            if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
+                
+                // map it to whatever the selected option is
+                if (option == YTSortAllAsc) {
+                    option = YTSortUnreadAsc;
+                }
+                else if (option == YTSortAllDesc) {
+                    option = YTSortUnreadDesc;
+                }
+                
+            }
+            
+        }
+#pragma clang diagnostic pop
         
         UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
         sorting.width = 32.f;

@@ -33,4 +33,11 @@
 
 - (void)showSubscriptionsInterface;
 
+#pragma mark - Actions Extension
+
+@property (nonatomic, weak) UITextField *alertTextField;
+@property (nonatomic, weak) UIAlertAction *alertDoneAction;
+@property (nonatomic, weak) Feed *alertFeed;
+@property (nonatomic, strong) NSIndexPath *alertIndexPath;
+
 @end

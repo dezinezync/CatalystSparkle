@@ -40,7 +40,11 @@
 #import <SafariServices/SafariServices.h>
 
 #import "YetiThemeKit.h"
-#import <AVKit/AVKit.h>
+#import "YTPlayer.h"
+#import "YTExtractor.h"
+#import "NSString+ImageProxy.h"
+
+static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateUnknown,
@@ -50,7 +54,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -79,6 +83,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) IBOutlet UILabel *errorTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *errorDescriptionLabel;
 @property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
+
+@property (nonatomic, strong) YTExtractor *ytExtractor;
 
 @end
 
@@ -170,6 +176,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
+    self.ytExtractor = [[YTExtractor alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -1655,6 +1662,92 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+    NSString *videoID = [[content url] lastPathComponent];
+    
+    DDLogDebug(@"Extracting YT info for: %@", videoID);
+    
+    if ([_last isKindOfClass:Linebreak.class] == NO) {
+        [self addLinebreak];
+    }
+    
+    AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
+    playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    playerController.updatesNowPlayingInfoCenter = NO;
+    
+    [self addChildViewController:playerController];
+    
+    UIView *playerView = playerController.view;
+    playerView.translatesAutoresizingMaskIntoConstraints = NO;
+    [playerView.heightAnchor constraintEqualToAnchor:playerView.widthAnchor multiplier:(9.f/16.f)].active = YES;
+    
+    [self.stackView addArrangedSubview:playerView];
+    [playerController didMoveToParentViewController:self];
+    
+    [self.videos addPointer:(__bridge void *)playerController];
+    
+    _last = playerView;
+    
+    [self addLinebreak];
+    
+    [self.ytExtractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
+        
+        if (videoInfo) {
+            YTPlayer *player = [YTPlayer playerWithURL:videoInfo.url];
+            playerController.player = player;
+            
+            player.playerViewController = playerController;
+            
+            if (videoInfo.coverImage) {
+
+                UIImageView *imageView = [[UIImageView alloc] initWithFrame:playerController.contentOverlayView.bounds];
+                imageView.contentMode = UIViewContentModeScaleAspectFill;
+                imageView.autoUpdateFrameOrConstraints = NO;
+
+                [playerController.contentOverlayView addSubview:imageView];
+
+                [imageView.widthAnchor constraintEqualToAnchor:playerController.contentOverlayView.widthAnchor multiplier:1.f].active = YES;
+                [imageView.heightAnchor constraintEqualToAnchor:playerController.contentOverlayView.heightAnchor multiplier:1.f].active = YES;
+                [imageView.leadingAnchor constraintEqualToAnchor:playerController.contentOverlayView.leadingAnchor].active = YES;
+                [imageView.trailingAnchor constraintEqualToAnchor:playerController.contentOverlayView.trailingAnchor].active = YES;
+
+                NSString *thumbnail = [videoInfo.coverImage pathForImageProxy:NO maxWidth:0.f quality:0.f];
+
+                [imageView il_setImageWithURL:thumbnail success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+
+//                    [playerController.player addObserver:self forKeyPath:propSel(rate) options:NSKeyValueObservingOptionNew context:KVO_PlayerRate];
+                    
+                    DDLogInfo(@"Video player image has been set: %@", URL);
+                    
+                } error:^(NSError * _Nonnull error) {
+
+                    DDLogError(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
+
+                }];
+
+            }
+            
+        }
+        else {
+            [self.stackView removeArrangedSubview:playerView];
+            [playerView removeFromSuperview];
+            
+            [self _addYoutube:content];
+        }
+        
+    } error:^(NSError * _Nonnull error) {
+       
+        DDLogError(@"Error extracting Youtube Video info: %@", error.localizedDescription);
+        
+        [self.stackView removeArrangedSubview:playerView];
+        [playerView removeFromSuperview];
+        
+        [self _addYoutube:content];
+        
+    }];
+}
+
+// fallback
+- (void)_addYoutube:(Content *)content {
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
     youtube.URL = [NSURL URLWithString:content.url];
@@ -1663,7 +1756,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.stackView addArrangedSubview:youtube];
     
-//    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-padding].active = YES;
+    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-LayoutPadding].active = YES;
     
     [self addLinebreak];
 }
@@ -1713,7 +1806,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (content.url == nil && content.content == nil)
         return;
     
-    if (![_last isKindOfClass:Linebreak.class]) {
+    if ([_last isKindOfClass:Linebreak.class] == NO) {
         [self addLinebreak];
     }
     
@@ -2331,6 +2424,21 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
             [self.scrollView setContentOffset:offset animated:NO];
         });
     }
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if ([object isKindOfClass:AVPlayer.class] && [keyPath isEqualToString:propSel(rate)]) {
+        
+        [object removeObserver:self forKeyPath:propSel(rate) context:KVO_PlayerRate];
+        
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+    
 }
 
 @end

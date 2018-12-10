@@ -276,7 +276,7 @@ static NSString * const reuseIdentifier = @"Cell";
     return header;
 }
 
-#pragma mark <UICollectionViewDelegate>
+#pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -306,6 +306,7 @@ static NSString * const reuseIdentifier = @"Cell";
             
             if (isPhone) {
                 DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+                vc.customFeed = NO;
                 vc.exploring = YES;
                 vc.customFeed = FeedTypeFeed;
                 

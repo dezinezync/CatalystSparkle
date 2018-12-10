@@ -738,25 +738,24 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)didUpdateTheme {
     
-    weakify(self);
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(didUpdateTheme) withObject:nil waitUntilDone:NO];
+        return;
+    }
     
-    asyncMain(^{
-        
-        strongify(self);
-        
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        self.refreshControl.tintColor = [theme captionColor];
-        
-        if (self.hairlineView) {
-            self.hairlineView.backgroundColor = theme.cellColor;
-        }
-        
-        [[self.headerView tableView] reloadData];
-        self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-        
-        [self.tableView reloadData];
-    });
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.refreshControl.tintColor = [theme captionColor];
+    
+    if (self.hairlineView != nil) {
+        self.hairlineView.backgroundColor = theme.cellColor;
+        [self.hairlineView setNeedsDisplay];
+    }
+    
+    [[self.headerView tableView] reloadData];
+    self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    
+    [self.tableView reloadData];
     
 }
 

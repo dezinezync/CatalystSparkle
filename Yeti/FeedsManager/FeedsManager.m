@@ -63,6 +63,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 {
     if (self = [super init]) {
         
+        [DBManager initialize];
+        
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         
 //        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
@@ -264,8 +266,25 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
+    
     NSMutableArray <Feed *> *feeds = [[[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-        return [Feed instanceFromDictionary:obj];
+        
+        Feed *feed = [Feed instanceFromDictionary:obj];
+        
+        NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
+        
+        __block NSString *localName = nil;
+        
+        [MyDBManager.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            localName = [transaction objectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+            
+        }];
+        
+        feed.localName = localName;
+        
+        return feed;
+        
     }] mutableCopy];
     
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
@@ -991,7 +1010,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
             NSArray *feeds = [folder.feeds allObjects];
             
-            [folder.feeds removeAllObjects];
+            if (folder.feeds != nil && [folder.feeds count] > 0) {
+                [folder.feeds removeAllObjects];
+            }
+            else {
+                folder.feeds = [NSPointerArray weakObjectsPointerArray];
+            }
             
             feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return [del indexOfObject:obj.feedID] == NSNotFound;
@@ -1668,7 +1692,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         defaultConfig.HTTPShouldUsePipelining = YES;
         defaultConfig.waitsForConnectivity = NO;
         defaultConfig.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
-        defaultConfig.timeoutIntervalForRequest = 30;
+        defaultConfig.timeoutIntervalForRequest = 60;
 
         DZURLSession *session = [[DZURLSession alloc] init];
         
