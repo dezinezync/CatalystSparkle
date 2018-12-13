@@ -413,30 +413,7 @@
         
         NSString *localNameKey = formattedString(@"feed-%@", self.alertFeed.feedID);
         
-        if (self.alertFeed.localName != nil) {
-            // the user can pass a clear string to clear the local name
-            
-            if ([name length] == 0) {
-                // clear the local name
-                [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-                
-                    self.alertFeed.localName = nil;
-                    
-                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                        [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-                    
-                        [self clearAlertProperties];
-                        
-                    });
-                    
-                }];
-                
-                return;
-            }
-        }
+        
         
         // setup the new name for the user
         [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {

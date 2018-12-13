@@ -10,7 +10,7 @@
 #import <DZNetworking/DZNetworking.h>
 #import "Reachability.h"
 
-#import "DBManager.h"
+#import "DBManager+CloudCore.h"
 
 #import "Feed.h"
 #import "Folder.h"

@@ -7,6 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "FeedsManager.h"
+#import "Feed.h"
+
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseCloudCore.h>
 
@@ -31,6 +35,10 @@ extern DBManager * MyDBManager;
 @property (nonatomic, strong) YapDatabase *database;
 @property (nonatomic, strong) YapDatabaseConnection *uiConnection;
 @property (nonatomic, strong) YapDatabaseConnection *bgConnection;
+
+#pragma mark - Methods
+
+- (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(void(^)(BOOL success))completionCB;
 
 #pragma mark - CloudCore
 

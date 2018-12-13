@@ -64,6 +64,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (self = [super init]) {
         
         [DBManager initialize];
+        [MyDBManager registerCloudCoreExtension];
         
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         

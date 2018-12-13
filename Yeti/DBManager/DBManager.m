@@ -64,6 +64,39 @@ NSString *const kNotificationsKey = @"notifications";
     return self;
 }
 
+#pragma mark - Methods
+
+- (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle {
+    
+    NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
+    
+    if (feed.localName != nil) {
+        // the user can pass a clear string to clear the local name
+        
+        if ([customTitle length] == 0) {
+            // clear the local name
+            [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                
+                feed.localName = nil;
+                
+                [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                    
+                    [self clearAlertProperties];
+                    
+                });
+                
+            }];
+            
+            return;
+        }
+    }
+    
+}
+
 #pragma mark - Setup
 
 - (YapDatabaseSerializer)databaseSerializer
