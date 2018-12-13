@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "DBManager.h"
+#import "DBManager+CloudCore.h"
 
 #import "Feed.h"
 

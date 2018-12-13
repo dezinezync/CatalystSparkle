@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <YapDatabase/YapDatabase.h>
+#import <YapDatabase/YapDatabaseCloudCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +20,9 @@ extern NSString * const kNotificationsKey;
 
 extern DBManager * MyDBManager;
 
-@interface DBManager : NSObject
+@interface DBManager : NSObject {
+    YapDatabaseCloudCore * _cloudCoreExtension;
+}
 
 + (void)initialize;
 
@@ -28,6 +31,10 @@ extern DBManager * MyDBManager;
 @property (nonatomic, strong) YapDatabase *database;
 @property (nonatomic, strong) YapDatabaseConnection *uiConnection;
 @property (nonatomic, strong) YapDatabaseConnection *bgConnection;
+
+#pragma mark - CloudCore
+
+@property (nonatomic, strong) YapDatabaseCloudCore *cloudCoreExtension;
 
 @end
 
