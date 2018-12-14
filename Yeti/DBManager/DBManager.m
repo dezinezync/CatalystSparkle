@@ -9,6 +9,7 @@
 #import "DBManager+CloudCore.h"
 
 #import "Feed.h"
+#import "FeedOperation.h"
 
 DBManager *MyDBManager;
 
@@ -66,7 +67,21 @@ NSString *const kNotificationsKey = @"notifications";
 
 #pragma mark - Methods
 
-- (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle {
+- (FeedOperation *)_renameFeed:(Feed *)feed title:(NSString *)title {
+    
+    if (feed == nil) {
+        return nil;
+    }
+    
+    FeedOperation *operation = [[FeedOperation alloc] init];
+    operation.feed = feed;
+    operation.customTitle = title ?: @"";
+    
+    return operation;
+    
+}
+
+- (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(nonnull void (^)(BOOL))completionCB {
     
     NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
     
@@ -75,25 +90,74 @@ NSString *const kNotificationsKey = @"notifications";
         
         if ([customTitle length] == 0) {
             // clear the local name
-            [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
                 
-                feed.localName = nil;
+                FeedOperation *operation = [self _renameFeed:feed title:customTitle];
                 
-                [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                __weak typeof(operation) weakOp = operation;
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
+                operation.completionBlock = ^(BOOL success) {
                     
-                    [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                    feed.localName = nil;
                     
-                    [self clearAlertProperties];
+                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
                     
-                });
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        if (completionCB) {
+                            completionCB(YES);
+                        }
+                        
+                    });
+                    
+                    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                        
+                        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:weakOp.uuid];
+                        
+                    }];
+                    
+                };
+                
+                [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
                 
             }];
             
             return;
         }
     }
+    
+    // setup the new name for the user
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        FeedOperation *operation = [self _renameFeed:feed title:customTitle];
+        
+        __weak typeof(operation) weakOp = operation;
+        
+        operation.completionBlock = ^(BOOL success) {
+            
+            feed.localName = customTitle;
+            
+            [transaction setObject:customTitle forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+            
+            if (completionCB) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionCB(YES);
+                });
+                
+            }
+            
+            [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                
+                [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:weakOp.uuid];
+                
+            }];
+            
+        };
+        
+        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
+        
+    }];
     
 }
 

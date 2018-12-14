@@ -158,8 +158,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Local Data
 
-#define LOCAL_NAME_COLLECTION @"localNames"
-
 @end
 
 #import "FeedsManager+KVS.h"

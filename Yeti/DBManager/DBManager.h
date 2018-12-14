@@ -14,6 +14,8 @@
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseCloudCore.h>
 
+#define cloudCoreExtensionName @"ElytraCloudCoreExtension"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class DBManager;

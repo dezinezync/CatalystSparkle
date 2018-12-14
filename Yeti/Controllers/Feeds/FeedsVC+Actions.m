@@ -411,24 +411,11 @@
         
         NSString *name = [[self.alertTextField text] stringByStrippingWhitespace];
         
-        NSString *localNameKey = formattedString(@"feed-%@", self.alertFeed.feedID);
-        
-        
-        
-        // setup the new name for the user
-        [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        [MyDBManager renameFeed:self.alertFeed customTitle:name completion:^(BOOL success) {
             
-            self.alertFeed.localName = name;
+            [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             
-            [transaction setObject:name forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-                
-                [self clearAlertProperties];
-                
-            });
+            [self clearAlertProperties];
             
         }];
         

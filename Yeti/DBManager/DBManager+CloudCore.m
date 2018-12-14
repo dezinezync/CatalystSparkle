@@ -8,13 +8,17 @@
 
 #import "DBManager+CloudCore.h"
 
-#define cloudCoreExtensionName @"ElytraCloudCoreExtension"
+@interface YapDatabaseCloudCoreOperation (StartMethodExtension)
+
+- (void)start;
+
+@end
 
 @implementation DBManager (CloudCore)
 
 - (void)registerCloudCoreExtension {
     
-    [self.database asyncRegisterExtension:self.cloudCoreExtension withName:cloudCoreExtensionName completionQueue: dispatch_get_main_queue() completionBlock:^(BOOL ready) {
+    [self.database asyncRegisterExtension:self.cloudCoreExtension withName:cloudCoreExtensionName completionQueue:dispatch_get_main_queue() completionBlock:^(BOOL ready) {
         
         DDLogInfo(@"Cloud core extension registered !");
         
@@ -30,7 +34,7 @@
         
         YapDatabaseCloudCore *ext = [[YapDatabaseCloudCore alloc] initWithVersionTag:cloudCoreVersion options:nil];
          
-         YapDatabaseCloudCorePipeline *pipeline = [[YapDatabaseCloudCorePipeline alloc] initWithName:YapDatabaseCloudCoreDefaultPipelineName delegate:self];
+        YapDatabaseCloudCorePipeline *pipeline = [[YapDatabaseCloudCorePipeline alloc] initWithName:YapDatabaseCloudCoreDefaultPipelineName delegate:self];
         pipeline.maxConcurrentOperationCount = 5;
          
          [ext registerPipeline:pipeline];
@@ -49,13 +53,15 @@
     
     DDLogDebug(@"CloudCore:[Pipeline] %@ > %@", pipeline.name, operation);
     
+    [operation start];
+    
     // on success
     // on API error, use the same
-    [self.uiConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-       
-        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:operation.uuid];
-        
-    }];
+//    [self.uiConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+//       
+//        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:operation.uuid];
+//        
+//    }];
     
     // on network failure
 //    [pipeline setStatusAsPendingForOperationWithUUID:operation.uuid];
