@@ -54,20 +54,7 @@
     DDLogDebug(@"CloudCore:[Pipeline] %@ > %@", pipeline.name, operation);
     
     [operation start];
-    
-    // on success
-    // on API error, use the same
-//    [self.uiConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-//       
-//        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:operation.uuid];
-//        
-//    }];
-    
-    // on network failure
-//    [pipeline setStatusAsPendingForOperationWithUUID:operation.uuid];
-    
-    // in case of a conflict
-//    [pipeline suspend];
+
 }
 
 @end

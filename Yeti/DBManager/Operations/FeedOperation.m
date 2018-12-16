@@ -15,18 +15,33 @@
     
     DDLogDebug(@"Starting Operation: %@", self);
     
-    if (self.completionBlock) {
-        self.completionBlock(YES);
-    }
-    else {
-        // since this can be called later on app-launch or restore, handle additional logic here
-        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-            
-            [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
-            
-        }];
+    // network IO happens here.
+    
+    // on success
+    // since this can be called later on app-launch or restore, handle additional logic here
+    [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
         
+        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
+        
+    }];
+    
+//  on API error, use the same
+    [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
+        
+    }];
+    
+    YapDatabaseCloudCorePipeline *pipeline = [MyDBManager.cloudCoreExtension pipelineWithName:self.pipeline];
+    
+    if (pipeline) {
+        //  on network failure
+        [pipeline setStatusAsPendingForOperationWithUUID:self.uuid];
+        
+        //  in case of a conflict
+        [pipeline suspend];
     }
+
     
 }
 

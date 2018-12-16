@@ -13,6 +13,7 @@
 
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseCloudCore.h>
+#import <YapDatabase/YapDatabaseCloudCorePipeline.h>
 
 #define cloudCoreExtensionName @"ElytraCloudCoreExtension"
 

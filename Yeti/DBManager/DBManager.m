@@ -94,29 +94,17 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 FeedOperation *operation = [self _renameFeed:feed title:customTitle];
                 
-                __weak typeof(operation) weakOp = operation;
+                feed.localName = nil;
                 
-                operation.completionBlock = ^(BOOL success) {
+                [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    feed.localName = nil;
+                    if (completionCB) {
+                        completionCB(YES);
+                    }
                     
-                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        if (completionCB) {
-                            completionCB(YES);
-                        }
-                        
-                    });
-                    
-                    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-                        
-                        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:weakOp.uuid];
-                        
-                    }];
-                    
-                };
+                });
                 
                 [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
                 
@@ -131,29 +119,17 @@ NSString *const kNotificationsKey = @"notifications";
         
         FeedOperation *operation = [self _renameFeed:feed title:customTitle];
         
-        __weak typeof(operation) weakOp = operation;
+        feed.localName = customTitle;
         
-        operation.completionBlock = ^(BOOL success) {
+        [transaction setObject:customTitle forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        
+        if (completionCB) {
             
-            feed.localName = customTitle;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionCB(YES);
+            });
             
-            [transaction setObject:customTitle forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-            
-            if (completionCB) {
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionCB(YES);
-                });
-                
-            }
-            
-            [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-                
-                [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:weakOp.uuid];
-                
-            }];
-            
-        };
+        }
         
         [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
         
