@@ -742,6 +742,49 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
+- (void)renameFeed:(Feed *)feed title:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSDictionary *query = @{};
+    if ([self userID] != nil) {
+        query = @{@"userID": [self userID]};
+    }
+    else {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSCocoaErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey : @"No user ID is currently available."}], nil, nil);
+        }
+        
+        return;
+    }
+    
+    if (feed == nil) {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSCocoaErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey : @"No feed provided."}], nil, nil);
+        }
+        return;
+    }
+    
+    if (title == nil) {
+        title = @"";
+    }
+    
+    NSDictionary *body = @{@"feedID": feed.feedID,
+                           @"title": title
+                           };
+    
+    [self.session POST:@"/1.2/customFeed" queryParams:query parameters:body success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray
@@ -766,7 +809,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     for (Folder *folder in MyFeedsManager.folders) { @autoreleasepool {
        
-        [self updateFeedsReadCount:folder.feeds markedRead:markedRead];
+        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
         
     } }
     
@@ -1698,7 +1741,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

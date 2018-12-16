@@ -16,31 +16,50 @@
     DDLogDebug(@"Starting Operation: %@", self);
     
     // network IO happens here.
-    
-    // on success
-    // since this can be called later on app-launch or restore, handle additional logic here
-    [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    if (self.feed && self.customTitle) {
         
-        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
+        [MyFeedsManager renameFeed:self.feed title:self.customTitle success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            // on success
+            // since this can be called later on app-launch or restore, handle additional logic here
+            [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                
+                [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
+                
+            }];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            YapDatabaseCloudCorePipeline *pipeline = [MyDBManager.cloudCoreExtension pipelineWithName:self.pipeline];
+            
+            if (pipeline) {
+                //  on network failure
+                // retry after one minute with backoff implemented by the framework
+                [pipeline setStatusAsPendingForOperationWithUUID:self.uuid retryDelay:60];
+                
+                //  in case of a conflict
+                // [pipeline suspend];
+            }
+            
+        }];
         
-    }];
-    
-//  on API error, use the same
-    [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-        
-        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
-        
-    }];
-    
-    YapDatabaseCloudCorePipeline *pipeline = [MyDBManager.cloudCoreExtension pipelineWithName:self.pipeline];
-    
-    if (pipeline) {
-        //  on network failure
-        [pipeline setStatusAsPendingForOperationWithUUID:self.uuid];
-        
-        //  in case of a conflict
-        [pipeline suspend];
     }
+    else {
+        DDLogError(@"Nothing to do in operation: %@ for feed: %@", NSStringFromClass(self.class), self.feed ? self.feed.title : @"No feed");
+        
+        // close this request
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
+            
+        }];
+    }
+//  on API error, use the same
+//    [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+//
+//        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] completeOperationWithUUID:self.uuid];
+//
+//    }];
 
     
 }

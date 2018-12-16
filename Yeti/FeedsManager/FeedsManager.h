@@ -90,6 +90,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)renameFeed:(Feed * _Nonnull)feed title:(NSString * _Nullable)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray;
