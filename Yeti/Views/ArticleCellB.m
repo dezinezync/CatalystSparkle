@@ -175,6 +175,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
+- (BOOL)showImage {
+    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+        return NO;
+    
+    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+        return CheckWiFi();
+    }
+    
+    return YES;
+}
+
 #pragma mark - Config
 
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
@@ -231,7 +242,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     self.timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
     
-    Feed *feed = [MyFeedsManager feedForID:item.feedID];
+//    Feed *feed = [MyFeedsManager feedForID:item.feedID];
     
     if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
         // find the first paragraph
@@ -275,59 +286,53 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     
-    if ([NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES) {
+    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && item.coverImage != nil) {
         // user wants cover images shown
         
         CGFloat maxWidth = self.coverImage.bounds.size.width * UIScreen.mainScreen.scale;
         
-        if (item.coverImage != nil) {
-            NSString *url = [item.coverImage pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
+        NSString *url = [item.coverImage pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
+        
+        self.coverImage.hidden = NO;
+        
+        self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+        
+        [self.coverImage il_setImageWithURL:url mutate:^UIImage *(UIImage * _Nonnull image) {
             
-            self.coverImage.hidden = NO;
+            NSString *cacheKey = formattedString(@"%@-%@", @(maxWidth), url);
             
-            self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+            __block UIImage *scaled = nil;
             
-            [self.coverImage il_setImageWithURL:url mutate:^UIImage *(UIImage * _Nonnull image) {
+            // check cache
+            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+            
+            [SharedImageLoader.cache objectforKey:cacheKey callback:^(UIImage * _Nullable image) {
                 
-                NSString *cacheKey = formattedString(@"%@-%@", @(maxWidth), url);
+                scaled = image;
                 
-                __block UIImage *scaled = nil;
+                UNLOCK(semaphore);
                 
-                // check cache
-                dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+            }];
+            
+            LOCK(semaphore);
+            
+            if (scaled == nil) {
                 
-                [SharedImageLoader.cache objectforKey:cacheKey callback:^(UIImage * _Nullable image) {
-                   
-                    scaled = image;
-                    
-                    UNLOCK(semaphore);
-                    
-                }];
+                NSData *imageData;
                 
-                LOCK(semaphore);
+                scaled = [image fastScale:maxWidth quality:1.f imageData:&imageData];
                 
-                if (scaled == nil) {
-                    
-                    NSData *imageData;
-                
-                    scaled = [image fastScale:maxWidth quality:1.f imageData:&imageData];
-                    
-                    [SharedImageLoader.cache setObject:scaled data:imageData forKey:cacheKey];
-                }
-                
-                return scaled;
-                
-            } success:nil error:nil];
-        }
-        else {
-            // no image available for this item
-            // so hide the imageview anyways
-            self.coverImage.hidden = YES;
-        }
+                [SharedImageLoader.cache setObject:scaled data:imageData forKey:cacheKey];
+            }
+            
+            return scaled;
+            
+        } success:nil error:nil];
         
     }
     else {
         // do not show cover images
+        self.coverImage.image = nil;
         self.coverImage.hidden = YES;
     }
     

@@ -9,7 +9,6 @@
 #import "DetailFeedVC+Actions.h"
 
 #import "ArticleCellB.h"
-#import "ArticleImageCellB.h"
 
 #import "ArticleVC.h"
 #import "DetailAuthorVC.h"
@@ -113,7 +112,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCellB.class) bundle:nil] forCellWithReuseIdentifier:kiPadArticleCell];
-    [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleImageCellB.class) bundle:nil] forCellWithReuseIdentifier:kiPadArticleImageCell];
     [self.collectionView registerClass:DetailFeedHeaderView.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView];
     
     // Do any additional setup after loading the view.
@@ -347,14 +345,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    ArticleCellB *cell = nil;
-    
-//    if (self.isExploring == NO && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
-//        cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleImageCell forIndexPath:indexPath];
-//    }
-//    else {
-        cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleCell forIndexPath:indexPath];
-//    }
+    ArticleCellB *cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleCell forIndexPath:indexPath];
     
     // Configure the cell
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
