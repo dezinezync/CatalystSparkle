@@ -6,9 +6,10 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "DBManager.h"
+#import "DBManager+CloudCore.h"
 
 #import "Feed.h"
+#import "FeedOperation.h"
 
 DBManager *MyDBManager;
 
@@ -64,6 +65,78 @@ NSString *const kNotificationsKey = @"notifications";
     return self;
 }
 
+#pragma mark - Methods
+
+- (FeedOperation *)_renameFeed:(Feed *)feed title:(NSString *)title {
+    
+    if (feed == nil) {
+        return nil;
+    }
+    
+    FeedOperation *operation = [[FeedOperation alloc] init];
+    operation.feed = feed;
+    operation.customTitle = title ?: @"";
+    
+    return operation;
+    
+}
+
+- (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(nonnull void (^)(BOOL))completionCB {
+    
+    NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
+    
+    if (feed.localName != nil) {
+        // the user can pass a clear string to clear the local name
+        
+        if ([customTitle length] == 0) {
+            // clear the local name
+            [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                
+                FeedOperation *operation = [self _renameFeed:feed title:customTitle];
+                
+                feed.localName = nil;
+                
+                [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    if (completionCB) {
+                        completionCB(YES);
+                    }
+                    
+                });
+                
+                [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
+                
+            }];
+            
+            return;
+        }
+    }
+    
+    // setup the new name for the user
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        FeedOperation *operation = [self _renameFeed:feed title:customTitle];
+        
+        feed.localName = customTitle;
+        
+        [transaction setObject:customTitle forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        
+        if (completionCB) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionCB(YES);
+            });
+            
+        }
+        
+        [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
+        
+    }];
+    
+}
+
 #pragma mark - Setup
 
 - (YapDatabaseSerializer)databaseSerializer
@@ -110,7 +183,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (YapDatabasePostSanitizer)databasePostSanitizer
 {
-    YapDatabasePostSanitizer postSanitizer = ^(NSString *collection, NSString *key, id object){
+    YapDatabasePostSanitizer postSanitizer = ^(NSString *collection, NSString *key, id object) {
         
 //        if ([object isKindOfClass:[MyDatabaseObject class]])
 //        {

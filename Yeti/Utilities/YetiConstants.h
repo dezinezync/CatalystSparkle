@@ -114,6 +114,8 @@ YETI_EXPORT NSString * const kShowMarkReadPrompt;
 
 extern BOOL canSupportOLED (void);
 
+#define LOCAL_NAME_COLLECTION @"localNames"
+
 @interface SortImageProvider : NSObject
 
 + (UIImage *)imageForSortingOption:(YetiSortOption)option;

@@ -81,10 +81,10 @@
         copy = formattedString(@"https://images.weserv.nl/?url=%@", copy);
         
         if (usedSRCSet == NO) {
-            copy = formattedString(@"%@?w=%@&dpr=%@&output=jpeg&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), @(quality));
+            copy = formattedString(@"%@&w=%@&dpr=%@&output=jpeg&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), @(quality));
         }
         
-        DDLogInfo(@"weserv.nl proxy URL: %@", copy);
+//        DDLogInfo(@"weserv.nl proxy URL: %@", copy);
         
     }
     

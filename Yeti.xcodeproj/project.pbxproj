@@ -244,8 +244,6 @@
 		F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C9E21B920A10032FD5A /* YTPlayer.m */; };
 		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
 		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
-		F0BF8337219AE02F0047352A /* ArticleImageCellB.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BF8336219AE02F0047352A /* ArticleImageCellB.xib */; };
-		F0BF8342219AE0590047352A /* ArticleImageCellB.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BF8341219AE0590047352A /* ArticleImageCellB.m */; };
 		F0BF8345219AE3820047352A /* NSString+ImageProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BF8344219AE3820047352A /* NSString+ImageProxy.m */; };
 		F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */; };
 		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
@@ -300,6 +298,8 @@
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
 		F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
+		F0EB27D921C20B81007E3547 /* DBManager+CloudCore.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */; };
+		F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27E821C20FF0007E3547 /* FeedOperation.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
@@ -852,9 +852,6 @@
 		F0BAE4D721523C7B00249A5E /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
 		F0BAE4D821523C7B00249A5E /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
 		F0BAE4D921523C7B00249A5E /* FolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderCell.xib; sourceTree = "<group>"; };
-		F0BF8336219AE02F0047352A /* ArticleImageCellB.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArticleImageCellB.xib; sourceTree = "<group>"; };
-		F0BF8340219AE04B0047352A /* ArticleImageCellB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArticleImageCellB.h; sourceTree = "<group>"; };
-		F0BF8341219AE0590047352A /* ArticleImageCellB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArticleImageCellB.m; sourceTree = "<group>"; };
 		F0BF8343219AE3820047352A /* NSString+ImageProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+ImageProxy.h"; sourceTree = "<group>"; };
 		F0BF8344219AE3820047352A /* NSString+ImageProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+ImageProxy.m"; sourceTree = "<group>"; };
 		F0C2E47220D79BF3001FACC6 /* UICKeyChainStore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UICKeyChainStore.framework; path = Carthage/Build/iOS/UICKeyChainStore.framework; sourceTree = SOURCE_ROOT; };
@@ -1021,6 +1018,10 @@
 		F0E71E701FD6F72200408CFF /* PaddedLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
 		F0E71E711FD6F72200408CFF /* PaddedLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedLabel.m; sourceTree = "<group>"; };
 		F0E71E731FD6FF7100408CFF /* Yeti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yeti.entitlements; sourceTree = "<group>"; };
+		F0EB27D721C20B81007E3547 /* DBManager+CloudCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DBManager+CloudCore.h"; sourceTree = "<group>"; };
+		F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DBManager+CloudCore.m"; sourceTree = "<group>"; };
+		F0EB27E721C20FF0007E3547 /* FeedOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedOperation.h; sourceTree = "<group>"; };
+		F0EB27E821C20FF0007E3547 /* FeedOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedOperation.m; sourceTree = "<group>"; };
 		F0EBC7DC1FBAF8A5004A5605 /* Paragraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Paragraph.h; sourceTree = "<group>"; };
 		F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Paragraph.m; sourceTree = "<group>"; };
 		F0EBC7DF1FBB2181004A5605 /* Heading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Heading.h; sourceTree = "<group>"; };
@@ -1295,6 +1296,7 @@
 				F070C3101FBABC8500912CCF /* Categories */,
 				F070C30E1FBABC7500912CCF /* Controllers */,
 				F070C3361FBAC3C100912CCF /* FeedsManager */,
+				F0EB27E521C20EBC007E3547 /* DBManager */,
 				F070C3111FBABC8A00912CCF /* Models */,
 				F070C30F1FBABC7A00912CCF /* Utilities */,
 				F070C3351FBAC37A00912CCF /* Views */,
@@ -1644,9 +1646,6 @@
 				F0AFAC04216C76B400AB7057 /* ArticleCellB.h */,
 				F0AFAC05216C76B400AB7057 /* ArticleCellB.m */,
 				F0AFAC06216C76B400AB7057 /* ArticleCellB.xib */,
-				F0BF8340219AE04B0047352A /* ArticleImageCellB.h */,
-				F0BF8341219AE0590047352A /* ArticleImageCellB.m */,
-				F0BF8336219AE02F0047352A /* ArticleImageCellB.xib */,
 				F0AFAC11216C78D400AB7057 /* TagCell.h */,
 				F0AFAC12216C78D400AB7057 /* TagCell.m */,
 				F0AFAC13216C78D400AB7057 /* TagCell.xib */,
@@ -1669,8 +1668,6 @@
 				F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */,
 				F05D21841FF2222F003DE813 /* YTUserID.h */,
 				F05D21851FF2222F003DE813 /* YTUserID.m */,
-				F055166121B4FF59008F1F2F /* DBManager.h */,
-				F055166221B4FF59008F1F2F /* DBManager.m */,
 			);
 			path = FeedsManager;
 			sourceTree = "<group>";
@@ -1986,6 +1983,27 @@
 				F0D7E212215B72F100CB64E9 /* libssl.a */,
 			);
 			path = lib;
+			sourceTree = "<group>";
+		};
+		F0EB27E521C20EBC007E3547 /* DBManager */ = {
+			isa = PBXGroup;
+			children = (
+				F0EB27E621C20FD9007E3547 /* Operations */,
+				F055166121B4FF59008F1F2F /* DBManager.h */,
+				F055166221B4FF59008F1F2F /* DBManager.m */,
+				F0EB27D721C20B81007E3547 /* DBManager+CloudCore.h */,
+				F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */,
+			);
+			path = DBManager;
+			sourceTree = "<group>";
+		};
+		F0EB27E621C20FD9007E3547 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				F0EB27E721C20FF0007E3547 /* FeedOperation.h */,
+				F0EB27E821C20FF0007E3547 /* FeedOperation.m */,
+			);
+			path = Operations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2322,7 +2340,6 @@
 				F0A5AE9C20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
 				F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
-				F0BF8337219AE02F0047352A /* ArticleImageCellB.xib in Resources */,
 				F0AFAC1A216C7A5200AB7057 /* DetailFeedVC.xib in Resources */,
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
@@ -2496,6 +2513,7 @@
 				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
 				F05DC07020831FD3009029E1 /* AuthorVC.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
+				F0EB27D921C20B81007E3547 /* DBManager+CloudCore.m in Sources */,
 				F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */,
 				F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
@@ -2606,7 +2624,7 @@
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
-				F0BF8342219AE0590047352A /* ArticleImageCellB.m in Sources */,
+				F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */,

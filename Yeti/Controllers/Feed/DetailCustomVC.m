@@ -217,9 +217,13 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             
             self->_page = page;
             
+            BOOL canLoadNext = YES;
+            
             if (![responseObject count]) {
+                canLoadNext = NO;
+                
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self->_canLoadNext = NO;
+                    self->_canLoadNext = canLoadNext;
                     self.loadingNext = NO;
                 });
                 
@@ -252,7 +256,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                     [self.collectionView.refreshControl endRefreshing];
                 }
                 
-                if (page == 1 && self->_canLoadNext) {
+                if (page == 1 && canLoadNext) {
                     [self loadNextPage];
                 }
             })

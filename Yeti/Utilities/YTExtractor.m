@@ -93,17 +93,17 @@ NSString * const ERROR_unknown = @"Unknown error occured";
         
         NSArray *mapped = [self extractInfoFromDataString:dataString];
         
-        NSString *thumbnail = [mapped firstObject];
-        
-        NSArray <NSDictionary *> *rawDict = [mapped lastObject];
-        
-        if (rawDict && [rawDict isKindOfClass:NSError.class]) {
+        if (mapped && [mapped isKindOfClass:NSError.class]) {
             if (errorCB) {
-                errorCB((NSError *)rawDict);
+                errorCB((NSError *)mapped);
             }
             
             return;
         }
+        
+        NSString *thumbnail = [mapped firstObject];
+        
+        NSArray <NSDictionary *> *rawDict = [mapped lastObject];
         
         VideoInfo *videoInfo = [[VideoInfo alloc] init];
         videoInfo.coverImage = thumbnail;
@@ -155,8 +155,9 @@ NSString * const ERROR_unknown = @"Unknown error occured";
     
     if (!streamsMap) {
         NSString *errorString = pairs[@"reason"];
+        NSString *errorCodeString = pairs[@"errorcode"];
         
-        return [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: (errorString ?: ERROR_cantExtractFmtStreamMap)}];
+        return [NSError errorWithDomain:NSCocoaErrorDomain code:errorCodeString.integerValue userInfo:@{NSLocalizedDescriptionKey: (errorString ?: ERROR_cantExtractFmtStreamMap)}];
     }
     
     NSArray <NSString *> *streamMapComponents = [streamsMap componentsSeparatedByString:@","];

@@ -257,10 +257,10 @@ static NSString * const reuseIdentifier = @"Cell";
     
     switch (indexPath.section) {
         case 1:
-            text = @"Most read";
+            text = @"Most Read";
             break;
         case 2:
-            text = @"Highest Subscribers";
+            text = @"Most Subscribers";
             break;
         default:
             text = @"Trending";

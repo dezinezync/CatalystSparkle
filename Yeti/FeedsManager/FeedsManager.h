@@ -10,7 +10,7 @@
 #import <DZNetworking/DZNetworking.h>
 #import "Reachability.h"
 
-#import "DBManager.h"
+#import "DBManager+CloudCore.h"
 
 #import "Feed.h"
 #import "Folder.h"
@@ -90,6 +90,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)renameFeed:(Feed * _Nonnull)feed title:(NSString * _Nullable)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray;
@@ -157,8 +159,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 
 #pragma mark - Local Data
-
-#define LOCAL_NAME_COLLECTION @"localNames"
 
 @end
 

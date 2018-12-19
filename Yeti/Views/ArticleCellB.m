@@ -21,6 +21,8 @@
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "YetiThemeKit.h"
+#import "NSString+ImageProxy.h"
+#import "UIImage+Sizing.h"
 
 BOOL IsAccessibilityContentCategory(void) {
     return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
@@ -46,12 +48,15 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 - (void)awakeFromNib {
     [super awakeFromNib];
     
+    self.coverImage.layer.cornerRadius = 4.f;
+    self.coverImage.autoUpdateFrameOrConstraints = NO;
+    
     // Initialization code
     self.contentView.frame = self.bounds;
     self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
-    CALayer *iconLayer = self.faviconView.layer;
-    iconLayer.borderWidth = 1/[UIScreen mainScreen].scale;
+//    CALayer *iconLayer = self.faviconView.layer;
+//    iconLayer.borderWidth = 1/[UIScreen mainScreen].scale;
     
     if (self.selectedBackgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
@@ -76,18 +81,18 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
+//    self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
     
     BOOL isAccessibilityContentCategory = IsAccessibilityContentCategory();
     
     UIStackView *stackView = (UIStackView *)[self.authorLabel superview];
     if (isAccessibilityContentCategory) {
-        self.faviconView.hidden = YES;
+//        self.faviconView.hidden = YES;
         
         stackView.axis = UILayoutConstraintAxisVertical;
         self.timeLabel.textAlignment = NSTextAlignmentLeft;
         
-        stackView = (UIStackView *)[self.faviconView superview];
+//        stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
         insets.top = [TypeFactory.shared titleFont].pointSize / 2.f;
         stackView.layoutMargins = insets;
@@ -95,12 +100,12 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMarginsRelativeArrangement = YES;
     }
     else {
-        self.faviconView.hidden = (self.feedType == FeedTypeFeed);
+//        self.faviconView.hidden = (self.feedType == FeedTypeFeed);
         
         stackView.axis = UILayoutConstraintAxisHorizontal;
         self.timeLabel.textAlignment = NSTextAlignmentRight;
         
-        stackView = (UIStackView *)[self.faviconView superview];
+//        stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
         insets.top = self.feedType == FeedTypeFeed ? ([TypeFactory.shared titleFont].pointSize / 3.f) : 0;
         stackView.layoutMargins = insets;
@@ -144,14 +149,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.titleLabel.text = nil;
     self.authorLabel.text = nil;
     self.timeLabel.text = nil;
-    self.faviconView.image = nil;
+//    self.faviconView.image = nil;
     self.markerView.image = nil;
     
-    self.faviconView.hidden = NO;
+//    self.faviconView.hidden = NO;
     self.titleLabel.font = [TypeFactory.shared titleFont];
     
     self.backgroundView.alpha = 0.f;
     self.separatorView.hidden = YES;
+    
+    self.coverImage.image = nil;
+    [self.coverImage il_cancelImageLoading];
     
 }
 
@@ -167,6 +175,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
+- (BOOL)showImage {
+    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+        return NO;
+    
+    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+        return CheckWiFi();
+    }
+    
+    return YES;
+}
+
 #pragma mark - Config
 
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
@@ -178,6 +197,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.feedType = feedType;
     
     NSString *appendFormat = @" - %@";
+    
+    // setup the constraints for the leading edge
+    // depending on the device for correct
+    // alignment with the header
+    if ([[[UIDevice currentDevice] name] containsString:@"iPhone"]) {
+        self.leadingConstraint.constant = 16.f;
+    }
+    else {
+        // keep defaults for iPad
+        self.leadingConstraint.constant = 12.f;
+    }
     
     if (item.author) {
         if ([item.author isKindOfClass:NSString.class]) {
@@ -212,7 +242,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     self.timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
     
-    Feed *feed = [MyFeedsManager feedForID:item.feedID];
+//    Feed *feed = [MyFeedsManager feedForID:item.feedID];
     
     if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
         // find the first paragraph
@@ -245,22 +275,65 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     UIStackView *stackView = (UIStackView *)[self.markerView superview];
     
-    if (feedType != FeedTypeCustom) {
-        if (!item.isRead)
-            self.markerView.image = [UIImage imageNamed:@"munread"];
-        else if (item.isBookmarked)
-            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
-        else
-            self.markerView.image = nil;
+    if (!item.isRead) {
+        self.markerView.tintColor = YTThemeKit.theme.tintColor;
+        self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    else if (item.isBookmarked)
+        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+    else {
+        self.markerView.tintColor = YTThemeKit.theme.borderColor;
+        self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    
+    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && item.coverImage != nil) {
+        // user wants cover images shown
         
-        self.faviconView.hidden = YES;
+        CGFloat maxWidth = self.coverImage.bounds.size.width * UIScreen.mainScreen.scale;
         
-        UIEdgeInsets margins = [stackView layoutMargins];
-        margins.top = [TypeFactory.shared titleFont].pointSize/2.f;
+        NSString *url = [item.coverImage pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
         
-        stackView.layoutMargins = margins;
-        stackView.layoutMarginsRelativeArrangement = YES;
+        self.coverImage.hidden = NO;
         
+        self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+        
+        [self.coverImage il_setImageWithURL:url mutate:^UIImage *(UIImage * _Nonnull image) {
+            
+            NSString *cacheKey = formattedString(@"%@-%@", @(maxWidth), url);
+            
+            __block UIImage *scaled = nil;
+            
+            // check cache
+            dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+            
+            [SharedImageLoader.cache objectforKey:cacheKey callback:^(UIImage * _Nullable image) {
+                
+                scaled = image;
+                
+                UNLOCK(semaphore);
+                
+            }];
+            
+            LOCK(semaphore);
+            
+            if (scaled == nil) {
+                
+                NSData *imageData;
+                
+                scaled = [image fastScale:maxWidth quality:1.f imageData:&imageData];
+                
+                [SharedImageLoader.cache setObject:scaled data:imageData forKey:cacheKey];
+            }
+            
+            return scaled;
+            
+        } success:nil error:nil];
+        
+    }
+    else {
+        // do not show cover images
+        self.coverImage.image = nil;
+        self.coverImage.hidden = YES;
     }
     
     if (feedType != FeedTypeFeed) {
@@ -277,23 +350,23 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
         stackView.layoutMarginsRelativeArrangement = YES;
         
-        NSString *url = [feed faviconURI];
-        
-        self.faviconView.hidden = NO;
-        
-        if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
-            @try {
-                weakify(self);
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    strongify(self);
-                    [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
-                });
-            }
-            @catch (NSException *exc) {
-                // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-                DDLogWarn(@"ArticleCell setImage: %@", exc);
-            }
-        }
+//        NSString *url = [feed faviconURI];
+//
+//        self.faviconView.hidden = NO;
+//
+//        if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+//            @try {
+//                weakify(self);
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                    strongify(self);
+//                    [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
+//                });
+//            }
+//            @catch (NSException *exc) {
+//                // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
+//                DDLogWarn(@"ArticleCell setImage: %@", exc);
+//            }
+//        }
     }
     
 }

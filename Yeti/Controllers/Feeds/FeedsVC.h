@@ -29,7 +29,7 @@
 
 @property (nonatomic, copy) NSDate *sinceDate;
 
-- (void)setupData:(NSArray <Feed *> *)feeds;
+- (void)setupData;
 
 - (void)showSubscriptionsInterface;
 
