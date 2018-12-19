@@ -611,9 +611,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (!article)
         return;
     
-    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == YES) {
-        return;
-    }
+//    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == YES) {
+//        return;
+//    }
     
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
     
@@ -652,11 +652,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
                 // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
                 if (cell != nil && article.isBookmarked == NO) {
+                    
+                    cell.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                    
                     if (read == YES) {
-                        cell.markerView.image = nil;
+                        cell.markerView.tintColor = [[YTThemeKit theme] borderColor];
                     }
                     else {
-                        cell.markerView.image = [UIImage imageNamed:@"munread"];
+                        cell.markerView.tintColor = [[YTThemeKit theme] tintColor];
                     }
                 }
             }
