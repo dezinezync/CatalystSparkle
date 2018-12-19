@@ -349,12 +349,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     ArticleCellB *cell = nil;
     
-    if (self.isExploring == NO && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
-        cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleImageCell forIndexPath:indexPath];
-    }
-    else {
+//    if (self.isExploring == NO && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
+//        cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleImageCell forIndexPath:indexPath];
+//    }
+//    else {
         cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleCell forIndexPath:indexPath];
-    }
+//    }
     
     // Configure the cell
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];

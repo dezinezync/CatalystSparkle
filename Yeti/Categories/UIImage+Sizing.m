@@ -36,4 +36,31 @@
     return newImage;
 }
 
+- (UIImage *)fastScale:(CGFloat)maxWidth quality:(CGFloat)quality imageData:(NSData **)imageData {
+    
+    UIImage *scaled;
+    
+    *imageData = UIImageJPEGRepresentation(self, 1);
+    CGImageSourceRef src = CGImageSourceCreateWithData((__bridge CFDataRef)*imageData, NULL);
+    CFDictionaryRef options = (__bridge CFDictionaryRef) @{
+                                                           (id) kCGImageSourceCreateThumbnailFromImageAlways : @YES,
+                                                           (id) kCGImageSourceThumbnailMaxPixelSize : @(maxWidth),
+                                                           (id) kCGImageSourceShouldCacheImmediately: @YES
+                                                           };
+    
+    CGImageRef scaledImageRef = CGImageSourceCreateThumbnailAtIndex(src, 0, options);
+    scaled = [UIImage imageWithCGImage:scaledImageRef];
+    CGImageRelease(scaledImageRef);
+    
+    if (scaled == nil) {
+        scaled = self;
+    }
+    else {
+        *imageData = UIImageJPEGRepresentation(scaled, 1);
+    }
+    
+    return scaled;
+    
+}
+
 @end
