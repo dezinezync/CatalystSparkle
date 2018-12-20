@@ -51,8 +51,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
-    self.translatesAutoresizingMaskIntoConstraints = NO;
-    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
+    self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Initialization code
     self.contentView.frame = self.bounds;
@@ -289,8 +290,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     
+    BOOL willShowCover = NO;
+    
     if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && item.coverImage != nil) {
         // user wants cover images shown
+        willShowCover = YES;
         
         CGFloat maxWidth = self.coverImage.bounds.size.width * UIScreen.mainScreen.scale;
         
@@ -339,6 +343,14 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.coverImage.hidden = YES;
     }
     
+    CGFloat width = self.bounds.size.width - 24.f;
+    
+    self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 0.f); // 80 + 12
+    self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth;
+    self.titleWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
+    
+//    self.timeLabel.preferredMaxLayoutWidth = width;
+    
     if (feedType != FeedTypeFeed) {
         
         if (IsAccessibilityContentCategory()) {
@@ -372,21 +384,58 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 //        }
     }
     
+//    [self.contentView layoutIfNeeded];
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    
 }
 
 #pragma mark -
 
--  (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+//- (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+//
+//    UICollectionViewLayoutAttributes *attributes = [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
+//
+//    CGRect frame = attributes.frame;
+//    frame.size = self.estimatedSize;
+//
+//    attributes.frame = frame;
+//
+//    return attributes;
+//
+//}
 
-    UICollectionViewLayoutAttributes *attributes = [layoutAttributes copy];
+//- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
+//
+//    [super applyLayoutAttributes:layoutAttributes];
+//
+//    CGRect frame = layoutAttributes.frame;
+//    CGFloat width = frame.size.width - 24.f;
+//
+////    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && self.item.coverImage != nil) {
+////
+////        self.titleLabel.preferredMaxLayoutWidth = width - 80.f - 12.f;
+////        self.authorLabel.preferredMaxLayoutWidth = width - 80.f - 12.f;
+////        self.timeLabel.preferredMaxLayoutWidth = (width / 2.f);
+////
+////    }
+////    else {
+////        self.titleLabel.preferredMaxLayoutWidth = width;
+////        self.authorLabel.preferredMaxLayoutWidth = width;
+////        self.timeLabel.preferredMaxLayoutWidth = (width / 2.f);
+////    }
+//
+//}
 
-    CGRect frame = attributes.frame;
-    frame.size = self.estimatedSize;
-
-    attributes.frame = frame;
-
-    return attributes;
-
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
+    
+    CGSize size = [self.contentView systemLayoutSizeFittingSize:targetSize];
+//    CGSize estimated = [self estimatedSize];
+//
+//    size.height = MAX(size.height, estimated.height);
+    
+    return size;
+    
 }
 
 - (CGSize)estimatedSize {

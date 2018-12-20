@@ -27,6 +27,8 @@ extern NSString *const kiPadArticleCell;
 @property (weak, nonatomic) IBOutlet UIView *masterview;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *widthContraint;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleWidthConstraint;
+
 - (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableDictionary *)sizeCache;
 
 @property (weak, nonatomic) NSMutableDictionary *sizeCache;

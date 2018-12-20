@@ -105,9 +105,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     self.DS.delegate = self;
     self.DS.data = @[];
     
-    self.DS.addAnimation = UITableViewRowAnimationFade;
+    self.DS.addAnimation = UITableViewRowAnimationNone;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
-    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    self.DS.reloadAnimation = UITableViewRowAnimationNone;
     
     self.collectionView.prefetchDataSource = self;
     
@@ -123,8 +123,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
         self->_shouldShowHeader = YES;
     }
-    
-    [self setupLayout];
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
@@ -508,6 +506,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
+            CGPoint contentOffset = self.collectionView.contentOffset;
+            
             NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
             articles = [articles arrayByAddingObjectsFromArray:responseObject];
             self.feed.articles = articles;
@@ -519,6 +519,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             @catch (NSException *exc) {
                 DDLogWarn(@"Exception updating feed articles: %@", exc);
             }
+            
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [self.collectionView setContentOffset:contentOffset animated:NO];
+//            });
         });
         
         self->_page = page;
@@ -1016,7 +1020,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
     }
     
-    CGSize contentSize = self.collectionView.contentSize;
+    CGSize contentSize = self.collectionView.bounds.size;
     
     if (CGSizeEqualToSize(contentSize, CGSizeZero)) {
         contentSize = [UIScreen mainScreen].bounds.size;
