@@ -585,7 +585,7 @@ NSString * const kDS2Data = @"DS2Data";
 {
     
     if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(setupData:) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
         return;
     }
     

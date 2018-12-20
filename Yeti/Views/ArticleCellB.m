@@ -51,6 +51,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
+    
     // Initialization code
     self.contentView.frame = self.bounds;
     self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;

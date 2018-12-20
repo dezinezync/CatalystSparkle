@@ -34,7 +34,7 @@
 
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
-@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
+@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
     
@@ -46,6 +46,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
+
+@property (nonatomic, strong) NSMutableDictionary *prefetchedImageTasks;
 
 @end
 
@@ -70,6 +72,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         _page = 0;
         
         self.sizeCache = @{}.mutableCopy;
+        self.prefetchedImageTasks = @{}.mutableCopy;
         
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
@@ -102,9 +105,11 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     self.DS.delegate = self;
     self.DS.data = @[];
     
-    self.DS.addAnimation = UITableViewRowAnimationLeft;
+    self.DS.addAnimation = UITableViewRowAnimationFade;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    
+    self.collectionView.prefetchDataSource = self;
     
     [self.collectionView addObserver:self forKeyPath:propSel(frame) options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:KVO_DetailFeedFrame];
     
@@ -382,7 +387,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-#pragma mark <UICollectionViewDelegate>
+#pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -393,18 +398,71 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [self.navigationController pushViewController:vc animated:YES];
     
-    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")] == NO) {
+}
+
+#pragma mark - <UICollectionViewDataSourcePrefetching>
+
+- (void)collectionView:(UICollectionView *)collectionView prefetchItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    
+    for (NSIndexPath *indexPath in indexPaths) { @autoreleasepool {
+       
+        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            ArticleCellB *cell = (ArticleCellB *)[collectionView cellForItemAtIndexPath:indexPath];
-            if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
-                cell.markerView.image = nil;
-            }
-            
-        });
+        if (item == nil) {
+            continue;
+        }
         
-    }
+        if (item.coverImage == nil) {
+            continue;
+        }
+        
+        if (self.prefetchedImageTasks[item.coverImage] != nil) {
+            continue;
+        }
+        
+        NSURLSessionTask *task = [SharedImageLoader downloadImageForURL:item.coverImage success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            DDLogDebug(@"Cached image for %@", item.coverImage);
+            
+            [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
+            
+        }];
+        
+        self.prefetchedImageTasks[item.coverImage] = task;
+        
+    } }
+    
+}
+
+- (void)collectionView:(UICollectionView *)collectionView cancelPrefetchingForItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    
+    for (NSIndexPath *indexPath in indexPaths) { @autoreleasepool {
+        
+        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        
+        if (item == nil) {
+            continue;
+        }
+        
+        if (item.coverImage == nil) {
+            continue;
+        }
+        
+        NSURLSessionDataTask *task = self.prefetchedImageTasks[item.coverImage];
+        
+        if (task == nil) {
+            continue;
+        }
+        
+        [task cancel];
+        
+        [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
+        
+    } }
     
 }
 
