@@ -51,27 +51,31 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
-//    self.translatesAutoresizingMaskIntoConstraints = NO;
+    self.clipsToBounds = YES;
+    self.contentView.clipsToBounds = YES;
+    
+    self.translatesAutoresizingMaskIntoConstraints = NO;
 //    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Initialization code
     self.contentView.frame = self.bounds;
-    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+//    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
 //    CALayer *iconLayer = self.faviconView.layer;
 //    iconLayer.borderWidth = 1/[UIScreen mainScreen].scale;
     
     if (self.selectedBackgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        
+        view.autoresizingMask = UIViewAutoresizingNone;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
         self.selectedBackgroundView = view;
     }
-    
+
     if (self.backgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        view.autoresizingMask = UIViewAutoresizingNone;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
         view.alpha = 0.f;
         self.backgroundView = view;
     }
@@ -79,6 +83,15 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.separatorHeight.constant = 1.f/[UIScreen mainScreen].scale;
     
     [self setupAppearance];
+}
+
+- (void)layoutSubviews {
+    
+    [super layoutSubviews];
+    
+    self.selectedBackgroundView.frame = self.bounds;
+    self.backgroundView.frame = self.bounds;
+    
 }
 
 - (void)setupAppearance {
@@ -165,16 +178,20 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.image = nil;
     [self.coverImage il_cancelImageLoading];
     
+    self.mainStackView.spacing = UIStackViewSpacingUseSystem;
+    
 }
 
 - (void)setHighlighted:(BOOL)highlighted {
     
+    self.backgroundView.frame = self.bounds;
     self.backgroundView.alpha = highlighted ? 1.f : 0.f;
     
 }
 
 - (void)setSelected:(BOOL)selected {
     
+    self.selectedBackgroundView.frame = self.bounds;
     self.selectedBackgroundView.alpha = selected ? 1.f : 0.f;
     
 }
@@ -233,13 +250,15 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         appendFormat = @"%@";
     }
     
-    if (item.blogTitle) {
-        self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, item.blogTitle];
-    }
-    else {
-        Feed *feed = [MyFeedsManager feedForID:item.feedID];
-        if (feed) {
-            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feed.title];
+    if (feedType != FeedTypeFeed) {
+        if (item.blogTitle) {
+            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, item.blogTitle];
+        }
+        else {
+            Feed *feed = [MyFeedsManager feedForID:item.feedID];
+            if (feed) {
+                self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feed.title];
+            }
         }
     }
     
@@ -343,13 +362,26 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.coverImage.hidden = YES;
     }
     
-    CGFloat width = self.bounds.size.width - 24.f;
+    CGFloat width = self.bounds.size.width - 20.f;
     
-    self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 0.f); // 80 + 12
-    self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth;
+    self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 4.f); // 80 + 12
     self.titleWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
     
-//    self.timeLabel.preferredMaxLayoutWidth = width;
+    if (willShowCover) {
+        self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 24.f;
+    }
+    else {
+        self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 140.f;
+        self.mainStackView.spacing = 0.f;
+    }
+    
+    self.timeLabel.preferredMaxLayoutWidth = 80.f;
+    
+#if DEBUG_LAYOUT == 1
+    self.titleLabel.backgroundColor = UIColor.greenColor;
+    self.authorLabel.backgroundColor = UIColor.redColor;
+    self.timeLabel.backgroundColor = UIColor.blueColor;
+#endif
     
     if (feedType != FeedTypeFeed) {
         
@@ -427,16 +459,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 //
 //}
 
-- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
-    
-    CGSize size = [self.contentView systemLayoutSizeFittingSize:targetSize];
-//    CGSize estimated = [self estimatedSize];
+//- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
 //
-//    size.height = MAX(size.height, estimated.height);
-    
-    return size;
-    
-}
+//    [self setNeedsLayout];
+//    [self layoutIfNeeded];
+//
+//    CGSize size = [self.contentView systemLayoutSizeFittingSize:targetSize withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityDefaultLow];
+//
+//    return size;
+//
+//}
 
 - (CGSize)estimatedSize {
     

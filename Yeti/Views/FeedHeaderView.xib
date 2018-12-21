@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -33,16 +33,16 @@
                     <rect key="frame" x="-4" y="21" width="383" height="67"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Koz-Bm-Ohl">
-                            <rect key="frame" x="0.0" y="0.0" width="123.5" height="11"/>
+                            <rect key="frame" x="0.0" y="0.0" width="120.5" height="11"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="Authors:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fv1-hS-Zd3">
-                                    <rect key="frame" x="0.0" y="0.0" width="64.5" height="11"/>
-                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="61.5" height="11"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iC6-4d-Jf2">
-                                    <rect key="frame" x="72.5" y="0.0" width="51" height="11"/>
+                                    <rect key="frame" x="69.5" y="0.0" width="51" height="11"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                     <state key="normal" title="Button"/>
                                 </button>
@@ -71,7 +71,7 @@
                 <constraint firstItem="OI2-Rt-hIw" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="8" id="H29-l8-zOM"/>
                 <constraint firstItem="Ft5-xF-0pa" firstAttribute="bottom" secondItem="uJz-Sh-cST" secondAttribute="bottom" id="P7E-BK-1h2"/>
                 <constraint firstAttribute="bottom" secondItem="uJz-Sh-cST" secondAttribute="bottom" constant="8" id="RpF-Vd-vnr"/>
-                <constraint firstItem="uJz-Sh-cST" firstAttribute="top" secondItem="OI2-Rt-hIw" secondAttribute="baseline" constant="10" symbolType="layoutAnchor" id="SaA-ag-gQi"/>
+                <constraint firstItem="uJz-Sh-cST" firstAttribute="top" secondItem="OI2-Rt-hIw" secondAttribute="baseline" constant="12.5" symbolType="layoutAnchor" id="SaA-ag-gQi"/>
                 <constraint firstItem="uJz-Sh-cST" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="fhu-Hf-I4D"/>
                 <constraint firstItem="Ft5-xF-0pa" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="liL-G8-TkK"/>
                 <constraint firstAttribute="trailing" secondItem="uJz-Sh-cST" secondAttribute="trailing" id="m1R-aM-cHa"/>
