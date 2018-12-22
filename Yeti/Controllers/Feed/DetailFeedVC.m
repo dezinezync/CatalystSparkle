@@ -1097,7 +1097,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         cellWidth = width - (padding * 2.f);
     }
     
-    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 132.f);
+    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
     self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
     
     if (self->_shouldShowHeader) {

@@ -51,10 +51,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
-    self.clipsToBounds = YES;
-    self.contentView.clipsToBounds = YES;
+//    self.clipsToBounds = YES;
+//    self.contentView.clipsToBounds = YES;
     
-    self.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.translatesAutoresizingMaskIntoConstraints = NO;
 //    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -67,22 +67,38 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     if (self.selectedBackgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
-        view.autoresizingMask = UIViewAutoresizingNone;
         view.translatesAutoresizingMaskIntoConstraints = NO;
         self.selectedBackgroundView = view;
+        
+        [self constraintToSelf:self.selectedBackgroundView];
     }
 
     if (self.backgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
-        view.autoresizingMask = UIViewAutoresizingNone;
         view.translatesAutoresizingMaskIntoConstraints = NO;
         view.alpha = 0.f;
         self.backgroundView = view;
+        
+        [self constraintToSelf:self.backgroundView];
     }
     
     self.separatorHeight.constant = 1.f/[UIScreen mainScreen].scale;
     
     [self setupAppearance];
+}
+
+- (void)constraintToSelf:(UIView *)view {
+    
+    if ([view superview] == nil || [view superview] != self) {
+        // none of our business
+        return;
+    }
+    
+    [view.widthAnchor constraintEqualToAnchor:self.widthAnchor multiplier:1.f].active = YES;
+    [view.heightAnchor constraintEqualToAnchor:self.heightAnchor multiplier:1.f].active = YES;
+    [view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+    [view.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+    
 }
 
 - (void)layoutSubviews {
@@ -182,19 +198,27 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-- (void)setHighlighted:(BOOL)highlighted {
+#pragma mark - Marking
+
+- (void)mark:(UIView *)view reference:(UIView *)reference {
     
-    self.backgroundView.frame = self.bounds;
-    self.backgroundView.alpha = highlighted ? 1.f : 0.f;
+    for (UIView *subview in view.subviews) {
+        if ([subview isKindOfClass:UILabel.class] || [subview isKindOfClass:UIImageView.class]) {
+            subview.backgroundColor = reference.backgroundColor;
+        }
+        else if ([subview isKindOfClass:UIStackView.class]) {
+            for (UIView *arranged in [(UIStackView *)subview arrangedSubviews]) {
+                [self mark:arranged reference:reference];
+            }
+        }
+        else {
+            [self mark:subview reference:reference];
+        }
+    }
     
 }
 
-- (void)setSelected:(BOOL)selected {
-    
-    self.selectedBackgroundView.frame = self.bounds;
-    self.selectedBackgroundView.alpha = selected ? 1.f : 0.f;
-    
-}
+#pragma mark - Config
 
 - (BOOL)showImage {
     if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
@@ -206,8 +230,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     return YES;
 }
-
-#pragma mark - Config
 
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
     
@@ -381,6 +403,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.titleLabel.backgroundColor = UIColor.greenColor;
     self.authorLabel.backgroundColor = UIColor.redColor;
     self.timeLabel.backgroundColor = UIColor.blueColor;
+    
+    self.backgroundColor = [UIColor grayColor];
+    self.contentView.backgroundColor = [UIColor yellowColor];
 #endif
     
     if (feedType != FeedTypeFeed) {

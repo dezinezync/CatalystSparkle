@@ -20,7 +20,7 @@
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" axis="vertical" distribution="equalSpacing" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="qkY-n6-DZZ">
-                        <rect key="frame" x="12" y="12" width="309" height="121"/>
+                        <rect key="frame" x="12" y="12" width="309" height="122"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" alignment="top" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="cQN-WE-YB5">
                                 <rect key="frame" x="0.0" y="0.0" width="309" height="87"/>
@@ -28,7 +28,7 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" horizontalCompressionResistancePriority="1000" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="XrI-dK-P2Y">
                                         <rect key="frame" x="0.0" y="0.0" width="217" height="87"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1" verticalHuggingPriority="251" horizontalCompressionResistancePriority="999" text="Hands-On: Belkin’s USB-C to HDMI Adapter for the 2018 iPad Pro" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MX6-dl-tiI">
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1" verticalHuggingPriority="251" horizontalCompressionResistancePriority="999" text="Hands-On: Belkin’s USB-C to HDMI Adapter for the 2018 iPad Pro" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MX6-dl-tiI">
                                                 <rect key="frame" x="0.0" y="0.0" width="217" height="64.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="217" id="f1Q-rI-UBv"/>
@@ -40,15 +40,14 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ALo-ya-bmI">
                                                 <rect key="frame" x="0.0" y="72.5" width="217" height="14.5"/>
                                                 <subviews>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CEI-O5-9z9">
+                                                    <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CEI-O5-9z9">
                                                         <rect key="frame" x="0.0" y="3.5" width="8" height="8"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" priority="999" constant="8" id="hme-o9-FVw"/>
                                                             <constraint firstAttribute="width" priority="999" constant="8" id="tYG-lL-uOy"/>
                                                         </constraints>
                                                     </imageView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author Name - Website Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ohl-9C-34v">
+                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Author Name - Website Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ohl-9C-34v">
                                                         <rect key="frame" x="16" y="0.0" width="201" height="14.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <nil key="textColor"/>
@@ -58,9 +57,8 @@
                                             </stackView>
                                         </subviews>
                                     </stackView>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2Gi-zH-JaP">
+                                    <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2Gi-zH-JaP">
                                         <rect key="frame" x="225" y="0.0" width="84" height="80"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" priority="999" constant="80" id="D3Q-C5-Cpb"/>
                                             <constraint firstAttribute="width" priority="999" constant="80" id="QTw-GH-Cab"/>
@@ -69,12 +67,12 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" alignment="top" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="heb-TO-Hty">
-                                <rect key="frame" x="0.0" y="106.5" width="309" height="14.5"/>
+                                <rect key="frame" x="0.0" y="107.5" width="309" height="14.5"/>
                                 <subviews>
                                     <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="ACR-1G-aB6">
                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="50"/>
                                     </stackView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJ8-ig-8Gv">
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJ8-ig-8Gv">
                                         <rect key="frame" x="0.0" y="0.0" width="309" height="14.5"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                         <nil key="textColor"/>
@@ -98,10 +96,10 @@
                 <constraint firstItem="QVo-Kf-nSK" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="4CF-ph-vTE"/>
                 <constraint firstAttribute="trailing" secondItem="QVo-Kf-nSK" secondAttribute="trailing" id="BT5-tc-V60"/>
                 <constraint firstItem="qkY-n6-DZZ" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="12" id="E18-N2-Kvx"/>
+                <constraint firstAttribute="bottom" secondItem="qkY-n6-DZZ" secondAttribute="bottom" constant="12" id="IXJ-1R-IMw"/>
                 <constraint firstAttribute="trailing" secondItem="qkY-n6-DZZ" secondAttribute="trailing" constant="12" id="Lxr-TF-eed"/>
                 <constraint firstAttribute="bottom" secondItem="QVo-Kf-nSK" secondAttribute="bottom" id="MKw-Mg-jQy"/>
                 <constraint firstItem="qkY-n6-DZZ" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="12" id="bjC-3D-dPX"/>
-                <constraint firstItem="QVo-Kf-nSK" firstAttribute="top" secondItem="qkY-n6-DZZ" secondAttribute="bottom" constant="12" id="gPJ-ZZ-2rs"/>
             </constraints>
             <size key="customSize" width="333" height="146"/>
             <userDefinedRuntimeAttributes>
@@ -120,7 +118,7 @@
                 <outlet property="titleLabel" destination="MX6-dl-tiI" id="vJ5-Ti-Evj"/>
                 <outlet property="titleWidthConstraint" destination="f1Q-rI-UBv" id="AsN-ti-2q6"/>
             </connections>
-            <point key="canvasLocation" x="-591.00719424460431" y="79.856115107913666"/>
+            <point key="canvasLocation" x="-805" y="74"/>
         </collectionViewCell>
     </objects>
 </document>
