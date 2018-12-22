@@ -176,7 +176,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         self->_initialSetup = YES;
         
-        [self setupLayout];
+//        [self setupLayout];
         [self didChangeTheme];
     }
     
@@ -205,13 +205,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-    
-        [self setupLayout];
-        
+    if (coordinator != nil) {
+        [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            
+            [self didChangeContentCategory];
+            
+        } completion:nil];
+    }
+    else {
         [self didChangeContentCategory];
-    
-    } completion:nil];
+    }
     
 }
 
@@ -409,9 +412,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     NSString *key = formattedString(@"%@-%@", @(indexPath.section), @(indexPath.item));
     NSValue *value = self.sizeCache[key];
     
-    if (value != nil) {
-        return [value CGSizeValue];
-    }
+//    if (value != nil) {
+//        return [value CGSizeValue];
+//    }
     
     CGRect frame = CGRectZero;
     frame.size = self.flowLayout.estimatedItemSize;
@@ -420,8 +423,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (_protoCell == nil) {
         UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
         _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
-        _protoCell.frame = frame;
     }
+    
+    _protoCell.frame = frame;
     
     [_protoCell awakeFromNib];
     
@@ -462,7 +466,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         NSURLSessionTask *task = [SharedImageLoader downloadImageForURL:item.coverImage success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            DDLogDebug(@"Cached image for %@", item.coverImage);
+//            DDLogDebug(@"Cached image for %@", item.coverImage);
             
             [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
             
@@ -1062,7 +1066,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
     }
     
-    self.flowLayout.sectionInset = UIEdgeInsetsZero;
+//    self.flowLayout.sectionInset = UIEdgeInsetsZero;
     self.collectionView.layoutMargins = UIEdgeInsetsZero;
     
     CGSize contentSize = self.collectionView.bounds.size;
@@ -1107,6 +1111,8 @@ NSString * const kSizCache = @"FeedSizesCache";
         self.flowLayout.headerReferenceSize = CGSizeZero;
     }
     
+    [self.flowLayout invalidateLayout];
+    
 }
 
 - (void)setupHeaderView {
@@ -1136,7 +1142,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-#pragma mark - KVO
+#pragma mark - KVO / Actions
 
 - (void)didChangeTheme {
     
@@ -1163,6 +1169,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     dispatch_async(dispatch_get_main_queue(), ^{
         self.sizeCache = @{}.mutableCopy;
+        [self setupLayout];
     });
     
     if ([[self.collectionView indexPathsForVisibleItems] count]) {

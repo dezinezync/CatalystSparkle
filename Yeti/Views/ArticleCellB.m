@@ -106,6 +106,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     [super layoutSubviews];
     
+    DDLogDebug(@"Frame: %@", NSStringFromCGRect(self.bounds));
+    
     self.selectedBackgroundView.frame = self.bounds;
     self.backgroundView.frame = self.bounds;
     
@@ -576,8 +578,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 //
 //    [super applyLayoutAttributes:layoutAttributes];
 //
-//    CGRect frame = layoutAttributes.frame;
-//    CGFloat width = frame.size.width - 24.f;
+//    DDLogDebug(@"Attributes: %@", layoutAttributes);
+//
+////    CGRect frame = layoutAttributes.frame;
+////    CGFloat width = frame.size.width - 24.f;
 //
 ////    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && self.item.coverImage != nil) {
 ////
