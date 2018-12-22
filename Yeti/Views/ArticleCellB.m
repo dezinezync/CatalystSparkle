@@ -40,6 +40,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *separatorHeight;
 
 @property (assign, nonatomic) FeedType feedType;
+@property (weak, nonatomic) NSURLSessionTask *faviconTask;
 
 @end
 
@@ -196,6 +197,12 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     self.mainStackView.spacing = UIStackViewSpacingUseSystem;
     
+    if (self.faviconTask) {
+        [self.faviconTask cancel];
+    }
+    
+    self.faviconTask = nil;
+    
 }
 
 #pragma mark - Marking
@@ -231,13 +238,116 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     return YES;
 }
 
+- (void)configureTitle {
+    
+    if (self.faviconTask) {
+        [self.faviconTask cancel];
+        self.faviconTask = nil;
+    }
+    
+    if (self.item == nil) {
+        return;
+    }
+    
+    if (self.feedType == FeedTypeFeed) {
+        self.titleLabel.text = self.item.articleTitle;
+        
+        return;
+    }
+    
+    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+    para.lineSpacing = 24.f;
+    
+    NSDictionary *attributes = @{NSFontAttributeName: self.titleLabel.font,
+                                 NSForegroundColorAttributeName: self.titleLabel.textColor,
+                                 };
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formattedString(@"  %@", self.item.articleTitle) attributes:attributes];
+    
+    NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+    
+    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    NSString *url = [feed faviconURI];
+    
+    NSString *key = formattedString(@"24-%@", url);
+    
+    dispatch_async(SharedImageLoader.ioQueue, ^{
+       
+        [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable img) {
+           
+            if (img != nil) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    attachment.image = img;
+                    [self.titleLabel setNeedsDisplay];
+                });
+                
+            }
+            else {
+                self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    UIImage *image = responseObject;
+                    
+                    if (image != nil) {
+                        
+                        CGFloat width = 24.f * UIScreen.mainScreen.scale;
+                        
+                        image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
+                        
+                        NSData *jpeg = UIImageJPEGRepresentation(image, 1.f);
+                        
+                        [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        if (image == nil) {
+                            attachment.bounds = CGRectZero;
+                        }
+                        else {
+                            attachment.image = image;
+                        }
+                        
+                        [self.titleLabel setNeedsDisplay];
+                    });
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        attachment.bounds = CGRectZero;
+                        
+                        [self.titleLabel setNeedsDisplay];
+                    });
+                    
+                }];
+            }
+            
+        }];
+        
+    });
+    
+    attachment.bounds = CGRectMake(0, -6, 24, 24);
+    NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
+    
+    [attachmentString appendAttributedString:attrs];
+    
+    self.titleLabel.attributedText = attachmentString;
+    
+}
+
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
     
     self.sizeCache = sizeCache;
     self.item = item;
-    self.titleLabel.text = item.articleTitle;
     self.authorLabel.text = @"";
     self.feedType = feedType;
+    
+    [self configureTitle];
     
     NSString *appendFormat = @" - %@";
     
