@@ -626,6 +626,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         strongify(self);
         
+        // v1.2 will automatically mark the articles as read upon successfully fetching.
+        [self updateFeedAndFolder:responseObject];
+        
         [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -636,6 +639,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.state = ArticleStateError;
         
     }];
+}
+
+- (void)updateFeedAndFolder:(FeedItem *)item {
+    
+    Feed *feed = [MyFeedsManager feedForID:item.feedID];
+    
+    if (feed != nil) {
+        
+        feed.unread = @(MAX(0, feed.unread.integerValue - 1));
+        
+        if (feed.folderID != nil) {
+            Folder *folder = [MyFeedsManager folderForID:feed.folderID];
+            
+            if (folder != nil) {
+                [folder willChangeValueForKey:propSel(unreadCount)];
+                // simply tell the unreadCount property that it has been updated.
+                // KVO should handle the rest for us
+                [folder didChangeValueForKey:propSel(unreadCount)];
+            }
+        }
+        
+    }
+    
 }
 
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {

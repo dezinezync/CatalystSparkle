@@ -40,6 +40,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *separatorHeight;
 
 @property (assign, nonatomic) FeedType feedType;
+@property (weak, nonatomic) NSURLSessionTask *faviconTask;
 
 @end
 
@@ -51,34 +52,63 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
+//    self.clipsToBounds = YES;
+//    self.contentView.clipsToBounds = YES;
+    
 //    self.translatesAutoresizingMaskIntoConstraints = NO;
 //    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
     
     // Initialization code
     self.contentView.frame = self.bounds;
-    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+//    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
 //    CALayer *iconLayer = self.faviconView.layer;
 //    iconLayer.borderWidth = 1/[UIScreen mainScreen].scale;
     
     if (self.selectedBackgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        
+        view.translatesAutoresizingMaskIntoConstraints = NO;
         self.selectedBackgroundView = view;
+        
+        [self constraintToSelf:self.selectedBackgroundView];
     }
-    
+
     if (self.backgroundView == nil) {
         UIView *view = [[UIView alloc] initWithFrame:self.bounds];
-        view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
         view.alpha = 0.f;
         self.backgroundView = view;
+        
+        [self constraintToSelf:self.backgroundView];
     }
     
     self.separatorHeight.constant = 1.f/[UIScreen mainScreen].scale;
     
     [self setupAppearance];
+}
+
+- (void)constraintToSelf:(UIView *)view {
+    
+    if ([view superview] == nil || [view superview] != self) {
+        // none of our business
+        return;
+    }
+    
+    [view.widthAnchor constraintEqualToAnchor:self.widthAnchor multiplier:1.f].active = YES;
+    [view.heightAnchor constraintEqualToAnchor:self.heightAnchor multiplier:1.f].active = YES;
+    [view.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+    [view.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+    
+}
+
+- (void)layoutSubviews {
+    
+    [super layoutSubviews];
+    
+    self.selectedBackgroundView.frame = self.bounds;
+    self.backgroundView.frame = self.bounds;
+    
 }
 
 - (void)setupAppearance {
@@ -165,19 +195,37 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.image = nil;
     [self.coverImage il_cancelImageLoading];
     
+    self.mainStackView.spacing = UIStackViewSpacingUseSystem;
+    
+    if (self.faviconTask) {
+        [self.faviconTask cancel];
+    }
+    
+    self.faviconTask = nil;
+    
 }
 
-- (void)setHighlighted:(BOOL)highlighted {
+#pragma mark - Marking
+
+- (void)mark:(UIView *)view reference:(UIView *)reference {
     
-    self.backgroundView.alpha = highlighted ? 1.f : 0.f;
+    for (UIView *subview in view.subviews) {
+        if ([subview isKindOfClass:UILabel.class] || [subview isKindOfClass:UIImageView.class]) {
+            subview.backgroundColor = reference.backgroundColor;
+        }
+        else if ([subview isKindOfClass:UIStackView.class]) {
+            for (UIView *arranged in [(UIStackView *)subview arrangedSubviews]) {
+                [self mark:arranged reference:reference];
+            }
+        }
+        else {
+            [self mark:subview reference:reference];
+        }
+    }
     
 }
 
-- (void)setSelected:(BOOL)selected {
-    
-    self.selectedBackgroundView.alpha = selected ? 1.f : 0.f;
-    
-}
+#pragma mark - Config
 
 - (BOOL)showImage {
     if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
@@ -190,15 +238,116 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     return YES;
 }
 
-#pragma mark - Config
+- (void)configureTitle {
+    
+    if (self.faviconTask) {
+        [self.faviconTask cancel];
+        self.faviconTask = nil;
+    }
+    
+    if (self.item == nil) {
+        return;
+    }
+    
+    if (self.feedType == FeedTypeFeed) {
+        self.titleLabel.text = self.item.articleTitle;
+        
+        return;
+    }
+    
+    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+    para.lineSpacing = 24.f;
+    
+    NSDictionary *attributes = @{NSFontAttributeName: self.titleLabel.font,
+                                 NSForegroundColorAttributeName: self.titleLabel.textColor,
+                                 };
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formattedString(@"  %@", self.item.articleTitle) attributes:attributes];
+    
+    NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+    
+    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    NSString *url = [feed faviconURI];
+    
+    NSString *key = formattedString(@"24-%@", url);
+    
+    dispatch_async(SharedImageLoader.ioQueue, ^{
+       
+        [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable img) {
+           
+            if (img != nil) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    attachment.image = img;
+                    [self.titleLabel setNeedsDisplay];
+                });
+                
+            }
+            else {
+                self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    UIImage *image = responseObject;
+                    
+                    if (image != nil) {
+                        
+                        CGFloat width = 24.f * UIScreen.mainScreen.scale;
+                        
+                        image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
+                        
+                        NSData *jpeg = UIImageJPEGRepresentation(image, 1.f);
+                        
+                        [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        if (image == nil) {
+                            attachment.bounds = CGRectZero;
+                        }
+                        else {
+                            attachment.image = image;
+                        }
+                        
+                        [self.titleLabel setNeedsDisplay];
+                    });
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        attachment.bounds = CGRectZero;
+                        
+                        [self.titleLabel setNeedsDisplay];
+                    });
+                    
+                }];
+            }
+            
+        }];
+        
+    });
+    
+    attachment.bounds = CGRectMake(0, -6, 24, 24);
+    NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
+    
+    [attachmentString appendAttributedString:attrs];
+    
+    self.titleLabel.attributedText = attachmentString;
+    
+}
 
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
     
     self.sizeCache = sizeCache;
     self.item = item;
-    self.titleLabel.text = item.articleTitle;
     self.authorLabel.text = @"";
     self.feedType = feedType;
+    
+    [self configureTitle];
     
     NSString *appendFormat = @" - %@";
     
@@ -233,13 +382,15 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         appendFormat = @"%@";
     }
     
-    if (item.blogTitle) {
-        self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, item.blogTitle];
-    }
-    else {
-        Feed *feed = [MyFeedsManager feedForID:item.feedID];
-        if (feed) {
-            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feed.title];
+    if (feedType != FeedTypeFeed) {
+        if (item.blogTitle) {
+            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, item.blogTitle];
+        }
+        else {
+            Feed *feed = [MyFeedsManager feedForID:item.feedID];
+            if (feed) {
+                self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feed.title];
+            }
         }
     }
     
@@ -343,13 +494,29 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.coverImage.hidden = YES;
     }
     
-    CGFloat width = self.bounds.size.width - 24.f;
+    CGFloat width = self.bounds.size.width - 20.f;
     
-    self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 0.f); // 80 + 12
-    self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth;
+    self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 4.f); // 80 + 12
     self.titleWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
     
-//    self.timeLabel.preferredMaxLayoutWidth = width;
+    if (willShowCover) {
+        self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 24.f;
+    }
+    else {
+        self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 140.f;
+        self.mainStackView.spacing = 0.f;
+    }
+    
+    self.timeLabel.preferredMaxLayoutWidth = 80.f;
+    
+#if DEBUG_LAYOUT == 1
+    self.titleLabel.backgroundColor = UIColor.greenColor;
+    self.authorLabel.backgroundColor = UIColor.redColor;
+    self.timeLabel.backgroundColor = UIColor.blueColor;
+    
+    self.backgroundColor = [UIColor grayColor];
+    self.contentView.backgroundColor = [UIColor yellowColor];
+#endif
     
     if (feedType != FeedTypeFeed) {
         
@@ -427,16 +594,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 //
 //}
 
-- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
-    
-    CGSize size = [self.contentView systemLayoutSizeFittingSize:targetSize];
-//    CGSize estimated = [self estimatedSize];
+//- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
 //
-//    size.height = MAX(size.height, estimated.height);
-    
-    return size;
-    
-}
+//    [self setNeedsLayout];
+//    [self layoutIfNeeded];
+//
+//    CGSize size = [self.contentView systemLayoutSizeFittingSize:targetSize withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityDefaultLow];
+//
+//    return size;
+//
+//}
 
 - (CGSize)estimatedSize {
     

@@ -251,12 +251,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 - (void)updateFolderCount {
     
     if (![NSThread isMainThread]) {
-        weakify(self);
-        asyncMain(^{
-            strongify(self);
-            
-            [self updateFolderCount];
-        })
+        [self performSelectorOnMainThread:@selector(updateFolderCount) withObject:nil waitUntilDone:NO];
         
         return;
     }

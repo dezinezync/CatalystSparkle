@@ -39,6 +39,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     BOOL _ignoreLoadScroll;
     
     BOOL _initialSetup;
+    ArticleCellB *_protoCell;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
@@ -361,6 +362,11 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     BOOL showSeparator = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
+//    if (cell.widthContraint == nil) {
+//        cell.widthContraint = [cell.widthAnchor constraintEqualToConstant:self.flowLayout.estimatedItemSize.width];
+//        cell.widthContraint.active = YES;
+//    }
+    
     [cell showSeparator:showSeparator];
     
     return cell;
@@ -395,6 +401,42 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     vc.providerDelegate = self;
     
     [self.navigationController pushViewController:vc animated:YES];
+    
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    
+    NSString *key = formattedString(@"%@-%@", @(indexPath.section), @(indexPath.item));
+    NSValue *value = self.sizeCache[key];
+    
+    if (value != nil) {
+        return [value CGSizeValue];
+    }
+    
+    CGRect frame = CGRectZero;
+    frame.size = self.flowLayout.estimatedItemSize;
+    frame.size.height -= 40;
+    
+    if (_protoCell == nil) {
+        UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
+        _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
+        _protoCell.frame = frame;
+    }
+    
+    [_protoCell awakeFromNib];
+    
+    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+    
+    [_protoCell configure:item customFeed:self.customFeed sizeCache:self.sizeCache];
+    
+    CGSize size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
+    size.height = floor(size.height) + 1.f;
+    
+    self.sizeCache[key] = [NSValue valueWithCGSize:size];
+    
+    [_protoCell prepareForReuse];
+    
+    return size;
     
 }
 
@@ -506,7 +548,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            CGPoint contentOffset = self.collectionView.contentOffset;
+//            CGPoint contentOffset = self.collectionView.contentOffset;
             
             NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
             articles = [articles arrayByAddingObjectsFromArray:responseObject];
@@ -1008,9 +1050,9 @@ NSString * const kSizCache = @"FeedSizesCache";
 - (void)setupLayout {
     
     BOOL isCompact = [[[self.collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
-    
+
     CGFloat padding = isCompact ? 0 : [self.flowLayout minimumInteritemSpacing];
-    
+
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
         self.flowLayout.minimumLineSpacing = 0;
@@ -1019,6 +1061,9 @@ NSString * const kSizCache = @"FeedSizesCache";
     else {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
     }
+    
+    self.flowLayout.sectionInset = UIEdgeInsetsZero;
+    self.collectionView.layoutMargins = UIEdgeInsetsZero;
     
     CGSize contentSize = self.collectionView.bounds.size;
     
@@ -1052,7 +1097,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         cellWidth = width - (padding * 2.f);
     }
     
-    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 100.f);
+    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
     self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
     
     if (self->_shouldShowHeader) {

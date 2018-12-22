@@ -658,7 +658,7 @@ NSString * const kDS2Data = @"DS2Data";
     weakify(self);
     
     if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
-        asyncMain(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
@@ -667,7 +667,7 @@ NSString * const kDS2Data = @"DS2Data";
     }
     else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
         
-        asyncMain(^{
+       dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
