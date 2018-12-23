@@ -120,6 +120,8 @@
 		F069AC1A206E060C00021ABF /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F069AC19206E060C00021ABF /* CheckWifi.m */; };
 		F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */; };
 		F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
+		F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B9F4F21CFAE8300D452A1 /* ChangeSet.m */; };
+		F06B9F5E21CFAEBC00D452A1 /* SyncChange.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B9F5D21CFAEBC00D452A1 /* SyncChange.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -665,6 +667,10 @@
 		F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Keyboard.m"; sourceTree = "<group>"; };
 		F06B766220C27CD000FBCDE7 /* YTNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTNavigationController.h; sourceTree = "<group>"; };
 		F06B766320C27CD000FBCDE7 /* YTNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTNavigationController.m; sourceTree = "<group>"; };
+		F06B9F4E21CFAE8300D452A1 /* ChangeSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeSet.h; sourceTree = "<group>"; };
+		F06B9F4F21CFAE8300D452A1 /* ChangeSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangeSet.m; sourceTree = "<group>"; };
+		F06B9F5C21CFAEBC00D452A1 /* SyncChange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncChange.h; sourceTree = "<group>"; };
+		F06B9F5D21CFAEBC00D452A1 /* SyncChange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyncChange.m; sourceTree = "<group>"; };
 		F06E0F2A2134656A00CEC644 /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = SOURCE_ROOT; };
 		F06F913F20D3E55A00A358B0 /* SubscriptionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubscriptionView.h; sourceTree = "<group>"; };
 		F06F914020D3E55A00A358B0 /* SubscriptionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubscriptionView.m; sourceTree = "<group>"; };
@@ -2001,6 +2007,10 @@
 				F055166221B4FF59008F1F2F /* DBManager.m */,
 				F0EB27D721C20B81007E3547 /* DBManager+CloudCore.h */,
 				F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */,
+				F06B9F4E21CFAE8300D452A1 /* ChangeSet.h */,
+				F06B9F4F21CFAE8300D452A1 /* ChangeSet.m */,
+				F06B9F5C21CFAEBC00D452A1 /* SyncChange.h */,
+				F06B9F5D21CFAEBC00D452A1 /* SyncChange.m */,
 			);
 			path = DBManager;
 			sourceTree = "<group>";
@@ -2578,6 +2588,7 @@
 				F0AA8C90216B4A5500C65DAE /* DTError.m in Sources */,
 				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
 				F0D7E22B215B72F100CB64E9 /* RMStore.m in Sources */,
+				F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */,
 				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
@@ -2596,6 +2607,7 @@
 				F0AFAC07216C76B400AB7057 /* ArticleCellB.m in Sources */,
 				F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */,
 				F0D7E225215B72F100CB64E9 /* RMAppReceipt.m in Sources */,
+				F06B9F5E21CFAEBC00D452A1 /* SyncChange.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,

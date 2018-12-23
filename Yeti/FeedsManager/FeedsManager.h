@@ -17,6 +17,7 @@
 #import "YTUserID.h"
 #import "Subscription.h"
 #import "FeedsManagerErrors.h"
+#import "ChangeSet.h"
 
 #import "YetiConstants.h"
 
@@ -141,6 +142,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)getSubscriptionWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getOPMLWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#pragma mark - Sync
+
+- (void)getSync:(NSString *)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark -
 

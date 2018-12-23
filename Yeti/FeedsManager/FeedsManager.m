@@ -1526,6 +1526,67 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+#pragma mark - Sync
+
+- (void)getSync:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (!self.userID) {
+        
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSNetServicesErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Try again in 2s"}], nil, nil);
+        }
+        
+        return;
+        
+    }
+    
+    NSDictionary *query = @{@"token": token,
+                            @"userID": self.userID
+                            };
+    
+    [self.session GET:@"/1.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode == 304) {
+            // nothing changed. exit early
+            return;
+        }
+        
+        // server will respond with changes and changeToken
+        NSString *changeToken = responseObject[@"changeToken"];
+        NSArray <NSDictionary *> * changes = responseObject[@"changes"];
+        
+        if (successCB) {
+            ChangeSet *changeSet = [[ChangeSet alloc] init];
+            changeSet.changeToken = changeToken;
+            
+            NSMutableArray <SyncChange *> *changeMembers = [[NSMutableArray alloc] initWithCapacity:changes.count];
+            
+            for (NSDictionary *change in changes) {
+                SyncChange *changeObj = [[SyncChange alloc] init];
+                [changeObj setValuesForKeysWithDictionary:change];
+                
+                [changeMembers addObject:changeObj];
+            }
+            
+            changeSet.changes = changeMembers.copy;
+            
+            successCB(changeSet, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Setters
 
 //- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
@@ -1741,7 +1802,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
