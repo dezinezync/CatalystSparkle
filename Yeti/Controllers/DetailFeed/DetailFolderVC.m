@@ -35,7 +35,7 @@
         
         self.customFeed = FeedTypeFolder;
         
-        self.sizeCache = @{}.mutableCopy;
+        self.sizeCache = @[].mutableCopy;
         
         self.restorationIdentifier = NSStringFromClass(self.class);
         self.restorationClass = self.class;
