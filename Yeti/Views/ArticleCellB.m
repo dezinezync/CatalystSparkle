@@ -349,7 +349,14 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
     });
     
-    attachment.bounds = CGRectMake(0, -6, 24, 24);
+    // positive offsets push it up, negative push it down
+    // this is similar to NSRect
+    CGFloat fontSize = self.titleLabel.font.pointSize;
+    CGFloat baseline = 17.f; // we compute our expected using this
+    CGFloat expected = 7.f;  // from the above, so A:B :: C:D
+    CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
+    
+    attachment.bounds = CGRectMake(0, yOffset, 24, 24);
     NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
     
     [attachmentString appendAttributedString:attrs];
