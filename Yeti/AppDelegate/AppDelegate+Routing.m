@@ -10,6 +10,7 @@
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
 #import "YetiConstants.h"
+#import "YetiThemeKit.h"
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
@@ -707,6 +708,7 @@
             return;
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
+        sfvc.preferredControlTintColor = YTThemeKit.theme.tintColor;
         
         // get the top VC
         UISplitViewController *splitVC = (UISplitViewController *)[[self window] rootViewController];
