@@ -72,7 +72,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         _canLoadNext = YES;
         _page = 0;
         
-        self.sizeCache = @{}.mutableCopy;
+        self.sizeCache = @[].mutableCopy;
         self.prefetchedImageTasks = @{}.mutableCopy;
         
         self.restorationIdentifier = NSStringFromClass(self.class);
@@ -101,6 +101,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     self.title = [self.feed displayTitle];
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
+//    self.flowLayout.delegate = self;
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.collectionView];
     self.DS.delegate = self;
@@ -176,7 +177,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         self->_initialSetup = YES;
         
-//        [self setupLayout];
+        [self setupLayout];
         [self didChangeTheme];
     }
     
@@ -407,41 +408,79 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    
-    NSString *key = formattedString(@"%@-%@", @(indexPath.section), @(indexPath.item));
-    NSValue *value = self.sizeCache[key];
-    
+//- (CGFloat)collectionView:(UICollectionView *)collectionView heightForItemAtIndexPath:(NSIndexPath *)indexPath {
+//
+//    NSNumber *value = indexPath.item < self.sizeCache.count ? self.sizeCache[indexPath.item] : nil;
+//
 //    if (value != nil) {
-//        return [value CGSizeValue];
+//        CGFloat size = [value floatValue];
+//        return size;
 //    }
-    
+//
+//    CGRect frame = CGRectZero;
+//    frame.size.width = self.flowLayout.collectionViewWidth;
+//    frame.size.height = 90.f;
+//
+//    if (_protoCell == nil) {
+//        UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
+//        _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
+//    }
+//
+//    _protoCell.frame = frame;
+//
+//    [_protoCell awakeFromNib];
+//
+//    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+//
+//    [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
+//
+//    CGSize size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
+//    size.height = floor(size.height) + 1.f;
+//
+//    self.sizeCache[indexPath.item] = @(size.height);
+//
+//    [_protoCell prepareForReuse];
+//
+//    return size.height;
+//
+//}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
+
+    NSValue *value = [self.sizeCache safeObjectAtIndex:indexPath.item];
+
+    if (value != nil) {
+        CGSize size = [value CGSizeValue];
+        if (size.width == self.flowLayout.estimatedItemSize.width) {
+            return size;
+        }
+    }
+
     CGRect frame = CGRectZero;
     frame.size = self.flowLayout.estimatedItemSize;
-    frame.size.height -= 40;
-    
+
     if (_protoCell == nil) {
         UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
         _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
     }
-    
+
     _protoCell.frame = frame;
-    
+
     [_protoCell awakeFromNib];
-    
+
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
-    
-    [_protoCell configure:item customFeed:self.customFeed sizeCache:self.sizeCache];
-    
+
+    [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
+
     CGSize size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
     size.height = floor(size.height) + 1.f;
-    
-    self.sizeCache[key] = [NSValue valueWithCGSize:size];
-    
+
+    self.sizeCache[indexPath.item] = [NSValue valueWithCGSize:size];
+
     [_protoCell prepareForReuse];
-    
+
     return size;
-    
+
 }
 
 #pragma mark - <UICollectionViewDataSourcePrefetching>
@@ -929,7 +968,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     
     _page = [coder decodeIntegerForKey:kBCurrentPage];
-    NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
+    NSArray *sizesCache = [coder decodeObjectForKey:kSizCache];
     
     if (sizesCache) {
         self.sizeCache = sizesCache.mutableCopy;
@@ -1059,40 +1098,44 @@ NSString * const kSizCache = @"FeedSizesCache";
 
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
-        self.flowLayout.minimumLineSpacing = 0;
-        self.flowLayout.minimumInteritemSpacing = 0;
+        self.flowLayout.minimumLineSpacing = 0.1f;
+        self.flowLayout.minimumInteritemSpacing = 0.1f;
+//        self.flowLayout.columns = 1;
     }
     else {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
+        self.flowLayout.minimumLineSpacing = 0.1f;
+        self.flowLayout.minimumInteritemSpacing = 0.1f;
+//        self.flowLayout.columns = 2;
     }
     
-//    self.flowLayout.sectionInset = UIEdgeInsetsZero;
+    self.flowLayout.sectionInset = UIEdgeInsetsZero;
     self.collectionView.layoutMargins = UIEdgeInsetsZero;
-    
+
     CGSize contentSize = self.collectionView.bounds.size;
-    
+
     if (CGSizeEqualToSize(contentSize, CGSizeZero)) {
         contentSize = [UIScreen mainScreen].bounds.size;
     }
-    
+
     CGFloat width = contentSize.width;
-    
+
     /*
      On iPads (Regular)
      |- 16 - (cell) - 16 - (cell) - 16 -|
      */
-    
+
     /*
      On iPhones (Compact)
      |- 0 - (cell) - 0 -|
      */
-    
+
     CGFloat totalPadding =  padding * 3.f;
-    
+
     CGFloat usableWidth = width - totalPadding;
-    
+
     CGFloat cellWidth = usableWidth;
-    
+
     if (usableWidth > 601.f) {
         // the remainder will be absorbed by the interimSpacing
         cellWidth = floor(usableWidth / 2.f);
@@ -1100,10 +1143,10 @@ NSString * const kSizCache = @"FeedSizesCache";
     else {
         cellWidth = width - (padding * 2.f);
     }
-    
+
     self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
     self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
-    
+
     if (self->_shouldShowHeader) {
         self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 80.f);
     }
@@ -1168,7 +1211,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 - (void)didChangeContentCategory {
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.sizeCache = @{}.mutableCopy;
+        self.sizeCache = @[].mutableCopy;
         [self setupLayout];
     });
     

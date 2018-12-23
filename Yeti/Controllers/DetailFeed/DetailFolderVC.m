@@ -31,7 +31,7 @@
     if (self = [super initWithNibName:NSStringFromClass(DetailFeedVC.class) bundle:nil]) {
         self.folder = folder;
         _canLoadNext = YES;
-        _page = 0;
+        self.page = 0;
         
         self.customFeed = FeedTypeFolder;
         
@@ -87,7 +87,7 @@
     
     weakify(self);
     
-    NSInteger page = _page + 1;
+    NSInteger page = self.page + 1;
     
     YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
     
@@ -100,7 +100,7 @@
         
         self.loadingNext = NO;
         
-        self->_page = page;
+        self.page = page;
         
         if (![responseObject count]) {
             self->_canLoadNext = NO;
