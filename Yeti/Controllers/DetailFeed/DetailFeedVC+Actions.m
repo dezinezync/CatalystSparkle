@@ -425,7 +425,7 @@
     self->_canLoadNext = YES;
     self.loadingNext = NO;
     
-    self->_page = 0;
+    self.page = 0;
     [self.DS resetData];
     
     [self loadNextPage];

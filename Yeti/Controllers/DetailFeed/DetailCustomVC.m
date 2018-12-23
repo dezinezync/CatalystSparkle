@@ -72,7 +72,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         
         self.DS.data = [MyFeedsManager unread];
         if (self.DS.data.count > 0) {
-            _page = floor([self.DS.data count]/10.f);
+            self.page = floor([self.DS.data count]/10.f);
         }
         
         [self loadNextPage];
@@ -205,7 +205,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     weakify(self);
     
     if (self.isUnread) {
-        NSInteger page = self->_page + 1;
+        NSInteger page = self.page + 1;
         YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
         
         [MyFeedsManager getUnreadForPage:page sorting:sorting success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -215,7 +215,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             if (!self)
                 return;
             
-            self->_page = page;
+            self.page = page;
             
             BOOL canLoadNext = YES;
             
@@ -243,7 +243,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                 }
             }
             
-            self->_page = page;
+            self.page = page;
             
             self.loadingNext = NO;
             
@@ -298,7 +298,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
     if ([sender isRefreshing]) {
-        _page = 0;
+        self.page = 0;
         _canLoadNext = YES;
         
         [self loadNextPage];

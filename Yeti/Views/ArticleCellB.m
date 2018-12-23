@@ -36,8 +36,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 @property (nonatomic, readonly) CGSize estimatedSize;
 @property (weak, nonatomic) IBOutlet UIStackView *contentStackView;
 
-@property (weak, nonatomic) IBOutlet UIView *separatorView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *separatorHeight;
+@property (weak, nonatomic) UIView *separatorView;
 
 @property (assign, nonatomic) FeedType feedType;
 @property (weak, nonatomic) NSURLSessionTask *faviconTask;
@@ -52,8 +51,27 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
-//    self.clipsToBounds = YES;
-//    self.contentView.clipsToBounds = YES;
+    self.clipsToBounds = YES;
+    self.contentView.clipsToBounds = YES;
+    
+    if (self.separatorView == nil) {
+        CGFloat height = 1.f/[UIScreen mainScreen].scale;
+        CGRect frame = CGRectMake(0, self.bounds.size.height - height, self.bounds.size.width, height);
+        
+        UIView *separator = [[UIView alloc] initWithFrame:frame];
+        separator.backgroundColor = [(YetiTheme *)[YTThemeKit theme] borderColor];
+        separator.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self addSubview:separator];
+        [separator.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
+        [separator.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
+        [separator.heightAnchor constraintEqualToConstant:height].active = YES;
+        [separator.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
+        
+        separator.hidden = YES;
+        self.separatorView = separator;
+        
+    }
     
 //    self.translatesAutoresizingMaskIntoConstraints = NO;
 //    self.masterview.translatesAutoresizingMaskIntoConstraints = NO;
@@ -83,8 +101,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         [self constraintToSelf:self.backgroundView];
     }
     
-    self.separatorHeight.constant = 1.f/[UIScreen mainScreen].scale;
-    
     [self setupAppearance];
 }
 
@@ -102,14 +118,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-- (void)layoutSubviews {
-    
-    [super layoutSubviews];
-    
-    self.selectedBackgroundView.frame = self.bounds;
-    self.backgroundView.frame = self.bounds;
-    
-}
+//- (void)layoutSubviews {
+//    
+//    [super layoutSubviews];
+//    
+//    DDLogDebug(@"Frame: %@", NSStringFromCGRect(self.bounds));
+//    
+//    self.selectedBackgroundView.frame = self.bounds;
+//    self.backgroundView.frame = self.bounds;
+//    
+//}
 
 - (void)setupAppearance {
     
@@ -331,7 +349,14 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
     });
     
-    attachment.bounds = CGRectMake(0, -6, 24, 24);
+    // positive offsets push it up, negative push it down
+    // this is similar to NSRect
+    CGFloat fontSize = self.titleLabel.font.pointSize;
+    CGFloat baseline = 17.f; // we compute our expected using this
+    CGFloat expected = 7.f;  // from the above, so A:B :: C:D
+    CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
+    
+    attachment.bounds = CGRectMake(0, yOffset, 24, 24);
     NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
     
     [attachmentString appendAttributedString:attrs];
@@ -576,8 +601,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 //
 //    [super applyLayoutAttributes:layoutAttributes];
 //
-//    CGRect frame = layoutAttributes.frame;
-//    CGFloat width = frame.size.width - 24.f;
+//    DDLogDebug(@"Attributes: %@", layoutAttributes);
+//
+////    CGRect frame = layoutAttributes.frame;
+////    CGFloat width = frame.size.width - 24.f;
 //
 ////    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && self.item.coverImage != nil) {
 ////

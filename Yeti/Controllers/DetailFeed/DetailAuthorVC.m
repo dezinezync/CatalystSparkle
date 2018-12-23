@@ -62,18 +62,18 @@
 
 - (void)setupLayout {
     
-    CGFloat padding = self.flowLayout.minimumInteritemSpacing;
-    
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, 0.f, padding, 0.f);
-    }
-    else {
-        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding/2.f, padding, padding/2.f);
-    }
-    
-    self.flowLayout.estimatedItemSize = UICollectionViewFlowLayoutAutomaticSize;
-    
-    self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 40.f);
+//    CGFloat padding = self.flowLayout.minimumInteritemSpacing;
+//    
+//    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+//        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, 0.f, padding, 0.f);
+//    }
+//    else {
+//        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding/2.f, padding, padding/2.f);
+//    }
+//    
+//    self.flowLayout.estimatedItemSize = UICollectionViewFlowLayoutAutomaticSize;
+//    
+//    self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 40.f);
     
 }
 
@@ -97,7 +97,7 @@
     
     weakify(self);
     
-    NSInteger page = _page + 1;
+    NSInteger page = self.page + 1;
     
     [MyFeedsManager articlesByAuthor:self.author.authorID feedID:self.feed.feedID page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -106,7 +106,7 @@
         if (!self)
             return;
         
-        self->_page = page;
+        self.page = page;
         
         if (![responseObject count]) {
             self->_canLoadNext = NO;

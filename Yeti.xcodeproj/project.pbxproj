@@ -1160,17 +1160,6 @@
 				F05DC07820832DB5009029E1 /* AuthorBioVC.h */,
 				F05DC07920832DB5009029E1 /* AuthorBioVC.m */,
 				F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */,
-				F0AFAC16216C7A5200AB7057 /* DetailFeedVC.h */,
-				F0AFAC17216C7A5200AB7057 /* DetailFeedVC.m */,
-				F0AFAC18216C7A5200AB7057 /* DetailFeedVC.xib */,
-				F0AFAC1B216C8AEA00AB7057 /* DetailFeedVC+Actions.h */,
-				F0AFAC1C216C8AEA00AB7057 /* DetailFeedVC+Actions.m */,
-				F0D1E979216DECAC009A8614 /* DetailAuthorVC.h */,
-				F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */,
-				F046DF55216E30AC00FFDBD7 /* DetailCustomVC.h */,
-				F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */,
-				F05E0C0D2174AFA70042FC38 /* DetailFolderVC.h */,
-				F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -1216,6 +1205,24 @@
 				F03AC033205533D900FB111A /* HTMLUtils.m */,
 			);
 			path = CodeParser;
+			sourceTree = "<group>";
+		};
+		F043430621CF433000F854E4 /* DetailFeed */ = {
+			isa = PBXGroup;
+			children = (
+				F0AFAC16216C7A5200AB7057 /* DetailFeedVC.h */,
+				F0AFAC17216C7A5200AB7057 /* DetailFeedVC.m */,
+				F0AFAC18216C7A5200AB7057 /* DetailFeedVC.xib */,
+				F0AFAC1B216C8AEA00AB7057 /* DetailFeedVC+Actions.h */,
+				F0AFAC1C216C8AEA00AB7057 /* DetailFeedVC+Actions.m */,
+				F0D1E979216DECAC009A8614 /* DetailAuthorVC.h */,
+				F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */,
+				F046DF55216E30AC00FFDBD7 /* DetailCustomVC.h */,
+				F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */,
+				F05E0C0D2174AFA70042FC38 /* DetailFolderVC.h */,
+				F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */,
+			);
+			path = DetailFeed;
 			sourceTree = "<group>";
 		};
 		F047F4D220C25FAC00626968 /* Spectral */ = {
@@ -1332,6 +1339,7 @@
 			children = (
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F01D714B1FBBF51300DF84B9 /* Feed */,
+				F043430621CF433000F854E4 /* DetailFeed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
 				F018A2CB205D0EF9001E682B /* Settings */,
 				F064A52E2157632700A385AD /* Intro */,
