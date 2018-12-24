@@ -468,12 +468,23 @@
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
-                    _byLabel.text = formattedString(@"Last Synced: %@", formatted);
+                    _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
                     [_byLabel sizeToFit];
                     [_byLabel setNeedsLayout];
                     [_byLabel layoutIfNeeded];
                     
                 });
+            }
+            else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    _byLabel.text = @"A Dezine Zync App.";
+                    [_byLabel sizeToFit];
+                    [_byLabel setNeedsLayout];
+                    [_byLabel layoutIfNeeded];
+                    
+                });
+                
             }
             
         }];
