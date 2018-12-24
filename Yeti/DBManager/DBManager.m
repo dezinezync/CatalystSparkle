@@ -11,6 +11,8 @@
 #import "Feed.h"
 #import "FeedOperation.h"
 
+#import <DZKit/NSString+Extras.h>
+
 DBManager *MyDBManager;
 
 NSNotificationName const UIDatabaseConnectionWillUpdateNotification = @"UIDatabaseConnectionWillUpdateNotification";
@@ -60,6 +62,7 @@ NSString *const kNotificationsKey = @"notifications";
     if ((self = [super init]))
     {
         [self setupDatabase];
+        [self setupSync];
     }
     
     return self;
@@ -234,6 +237,97 @@ NSString *const kNotificationsKey = @"notifications";
                                              selector:@selector(yapDatabaseModified:)
                                                  name:YapDatabaseModifiedNotification
                                                object:_database];
+}
+
+#pragma mark - Sync
+
+- (void)setupSync {
+    
+    // check if sync has been setup on this device.
+    [self.bgConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        
+        NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+        
+        // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
+        if (token == nil) {
+            
+            NSString *token = [@"1993-03-11 06:11:00" base64Encoded];
+            
+            [self syncNow:token];
+            
+        }
+        else {
+            // if we do, check with the server for updates
+            [self syncNow:token];
+        }
+        
+    }];
+    
+}
+
+- (void)syncNow:(NSString *)token {
+    
+    if (MyFeedsManager == nil) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [self syncNow:token];
+        });
+        
+        return;
+    }
+    
+    [MyFeedsManager getSync:token success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        // save the new change token to our local db
+        [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+
+            [transaction setObject:changeSet.changeToken forKey:syncToken inCollection:SYNC_COLLECTION];
+            
+            // now for every change set, create/update an appropriate key in the database
+            
+            for (SyncChange *change in changeSet.changes) {
+                
+                NSString *localNameKey = formattedString(@"feed-%@", change.feedID);
+                
+                // for now we're only syncing titles, so check those
+                if (change.title == nil) {
+                    // remove the custom title
+                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                }
+                else {
+                    // doesn't matter if we overwrite the changes.
+                    [transaction setObject:change.title forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                }
+                
+            }
+
+        }];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([error.localizedDescription containsString:@"Try again in"]) {
+            
+            // get the seconds value
+            NSString *secondsString = [error.localizedDescription stringByReplacingOccurrencesOfString:@"Try again in " withString:@""];
+            secondsString = [error.localizedDescription stringByReplacingOccurrencesOfString:@"s" withString:@""];
+            
+            NSInteger seconds = secondsString.integerValue;
+            
+            if (seconds != NSNotFound) {
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    [self syncNow:token];
+                });
+                
+            }
+            
+            return;
+            
+        }
+       
+        DDLogError(@"An error occurred when syncing changes: %@", error);
+        
+    }];
+    
 }
 
 #pragma mark - Notifications

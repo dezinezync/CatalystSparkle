@@ -1775,6 +1775,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 // fallback
 - (void)_addYoutube:(Content *)content {
+    // this now breaks the layout which is not desirable.
+    return;
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
     youtube.URL = [NSURL URLWithString:content.url];
