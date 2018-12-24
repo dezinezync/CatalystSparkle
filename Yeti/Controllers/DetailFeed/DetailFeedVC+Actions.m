@@ -194,10 +194,10 @@
 
 - (void)didLongPressOnAllRead:(id)sender {
     
-    if (sender && [sender isKindOfClass:UILongPressGestureRecognizer.class]
-        && [(UILongPressGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
-        return;
-    }
+//    if (sender && [sender isKindOfClass:UILongPressGestureRecognizer.class]
+//        && [(UILongPressGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
+//        return;
+//    }
     
     BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
     
@@ -224,7 +224,7 @@
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             

@@ -987,22 +987,15 @@ NSString * const kSizCache = @"FeedSizesCache";
     self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
-    UIButton *allReadButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [allReadButton setImage:[UIImage imageNamed:@"done_all"] forState:UIControlStateNormal];
-    [allReadButton sizeToFit];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapAllRead:)];
-    [allReadButton addGestureRecognizer:tap];
-    
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressOnAllRead:)];
-    [allReadButton addGestureRecognizer:longPress];
-    
-    [longPress requireGestureRecognizerToFail:tap];
-    
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithCustomView:allReadButton];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
-    allRead.accessibilityHint = @"Mark all current articles as read. Long Tap to Mark all backdated articles as read.";
+    allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
+    
+    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all_bd"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
+    allReadBackDated.accessibilityValue = @"Mark all articles as read";
+    allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
+    allReadBackDated.width = 32.f;
     
     if (self.isExploring) {
         // check if the user is subscribed to this feed
@@ -1045,7 +1038,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         sorting.width = 32.f;
         
         if (!(self.feed.hubSubscribed && self.feed.hub)) {
-            NSMutableArray *buttons = @[allRead].mutableCopy;
+            NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
             
             if ([self showsSortingButton]) {
                 [buttons addObject:sorting];
@@ -1062,7 +1055,7 @@ NSString * const kSizCache = @"FeedSizesCache";
             notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
             notifications.width = 32.f;
             
-            NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
+            NSMutableArray *buttons = @[allReadBackDated, allRead, notifications].mutableCopy;
             
             if ([self showsSortingButton]) {
                 [buttons addObject:sorting];
