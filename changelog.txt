@@ -1,19 +1,25 @@
 [NEW]
-- Swipe up with two fingers to change to the light theme.
-- Swipe down with two fingers to change to the dark theme.
+- Mark All Read button is now split into two actions:
+    1. Mark All Articles which are currently loaded as read.
+    2. Mark All Articles including back dated ones as read. (Default)
+
+- New Article Preview Layout (more on this later.)
+
+- Renaming Feeds. Long tap on a feed to bring up the rename option.
+
+- Youtube videos are now rendered natively within the app when possible. This removes the last piece dependant on webviews. 
 
 [IMPROVE]
-- Adjsuted gamma for dark themes.
-- Improved contrast for the OPML Import/Export Interface.
-- Cover Image support for the Extended Layout.
+- Reduced memory usage on boot.
+- Reduced memory usage when showing cover images.
+- Fixed jumpy scroll views when loading additional content.
+- Reduced power usage when syncing new Feeds & Unread items information.
+- When opening links inside Safari within the app, the Safari view is now tinted as per your preference.
+
+Build 189 included the following note:
+"Experimental code to improve memory management for articles with a lot of images. Please let me know if you notice any issues when scrolling inside an article when the image begins to go off-screen."
+
+This is now permanent and active for all users.
 
 [FIX]
-- State Restoration which broke in v1.1.0 is now fixed.
-
--- 189 --
-
-[FIXES]
-- Fixed a crash when loading some specific articles which could cause the app to continously build up RAM usage and eventually crash.
-
-[IMPROVE]
-- Experimental code to improve memory management for articles with a lot of images. Please let me know if you notice any issues when scrolling inside an article when the image begins to go off-screen.
+- Fixed a bug with Bookmarks sometimes not loading correctly for some users.
