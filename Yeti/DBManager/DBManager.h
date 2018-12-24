@@ -17,6 +17,10 @@
 
 #define cloudCoreExtensionName @"ElytraCloudCoreExtension"
 
+#define SYNC_COLLECTION @"sync-collection"
+#define syncToken @"syncToken" // last sync date we stored or the one sent by the server
+#define syncedChanges @"syncedChanges" // have the synced the changes with our local store ?    
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class DBManager;

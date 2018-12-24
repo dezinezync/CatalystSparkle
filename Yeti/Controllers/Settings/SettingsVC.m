@@ -24,6 +24,7 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "YetiThemeKit.h"
+#import "DBManager+CloudCore.h"
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -93,6 +94,8 @@
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
 }
+
+#pragma mark -
 
 #pragma mark - Actions
 
@@ -439,11 +442,41 @@
         UILabel *_byLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 70.f - 16.f, CGRectGetWidth(self.view.bounds), 30.f)];
         _byLabel.textColor = theme.subtitleColor;
         _byLabel.textAlignment = NSTextAlignmentCenter;
-        _byLabel.text = @"A Dezine Zync Studios app.";
-        _byLabel.font = [UIFont systemFontOfSize:12.f];
+        _byLabel.numberOfLines = 0;
+        _byLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         _byLabel.transform = CGAffineTransformMakeTranslation(0, 30.f);
         _byLabel.autoresizingMask = dz.autoresizingMask;
         _byLabel.backgroundColor = theme.tableColor;
+        
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+            
+            if (token != nil) {
+                NSString *dateString = [token decodeBase64];
+                
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
+                
+                NSDate *date = [formatter dateFromString:dateString];
+                
+                formatter.dateStyle = NSDateFormatterShortStyle;
+                formatter.timeStyle = NSDateFormatterShortStyle;
+                formatter.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+                
+                NSString *formatted = [formatter stringFromDate:date];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    _byLabel.text = formattedString(@"Last Synced: %@", formatted);
+                    [_byLabel sizeToFit];
+                    [_byLabel setNeedsLayout];
+                    [_byLabel layoutIfNeeded];
+                    
+                });
+            }
+            
+        }];
         
         [_footerView addSubview:_byLabel];
     }

@@ -19,8 +19,6 @@ NSNotificationName const UIDatabaseConnectionWillUpdateNotification = @"UIDataba
 NSNotificationName const UIDatabaseConnectionDidUpdateNotification  = @"UIDatabaseConnectionDidUpdateNotification";
 NSString *const kNotificationsKey = @"notifications";
 
-#define SYNC_COLLECTION @"sync-collection"
-
 @implementation DBManager
 
 + (void)initialize
@@ -242,9 +240,6 @@ NSString *const kNotificationsKey = @"notifications";
 }
 
 #pragma mark - Sync
-
-#define syncToken @"syncToken" // last sync date we stored or the one sent by the server
-#define syncedChanges @"syncedChanges" // have the synced the changes with our local store ?
 
 - (void)setupSync {
     
