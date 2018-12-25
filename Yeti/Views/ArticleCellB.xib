@@ -75,14 +75,14 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" alignment="top" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="heb-TO-Hty">
+                            <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="heb-TO-Hty">
                                 <rect key="frame" x="0.0" y="107.5" width="309" height="14.5"/>
                                 <subviews>
-                                    <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="ACR-1G-aB6">
-                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="50"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ACR-1G-aB6">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="14.5"/>
                                     </stackView>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJ8-ig-8Gv">
-                                        <rect key="frame" x="0.0" y="0.0" width="309" height="14.5"/>
+                                        <rect key="frame" x="58" y="0.0" width="251" height="14.5"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -112,11 +112,12 @@
                 <outlet property="mainStackView" destination="qkY-n6-DZZ" id="V1l-kz-xbY"/>
                 <outlet property="markerView" destination="CEI-O5-9z9" id="upq-AL-BuF"/>
                 <outlet property="summaryLabel" destination="sB2-5s-gGw" id="01s-xE-LWH"/>
+                <outlet property="tagsStack" destination="ACR-1G-aB6" id="UqG-of-zTj"/>
                 <outlet property="timeLabel" destination="WJ8-ig-8Gv" id="jes-kk-hB6"/>
                 <outlet property="titleLabel" destination="MX6-dl-tiI" id="vJ5-Ti-Evj"/>
                 <outlet property="titleWidthConstraint" destination="f1Q-rI-UBv" id="AsN-ti-2q6"/>
             </connections>
-            <point key="canvasLocation" x="-805" y="74"/>
+            <point key="canvasLocation" x="-955" y="183"/>
         </collectionViewCell>
     </objects>
 </document>

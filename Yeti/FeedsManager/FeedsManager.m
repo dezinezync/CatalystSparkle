@@ -1190,6 +1190,66 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+#pragma mark - Tags
+
+- (void)getTagFeed:(NSString *)tag page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (tag == nil || [[tag stringByStrippingWhitespace] isBlank]) {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSNetServicesErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An invalid or no tag was received."}], nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSDictionary *params = @{@"userID": [self userID],
+                             @"page": page ? @(page) : @(1),
+                             @"tag": tag
+                             };
+    
+    [self.session GET:@"/1.2/tagfeed" parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode == 304) {
+            if (successCB) {
+                successCB(nil, response, task);
+            }
+            return;
+        }
+        
+        if (successCB == nil) {
+            return;
+        }
+        
+        NSArray <NSDictionary *> *feedObjects = responseObject[@"feeds"];
+        NSArray <NSDictionary *> *articleObjects = responseObject[@"articles"];
+        
+        NSArray <FeedItem *> *articles = [articleObjects rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        NSArray <Feed *> *feeds = [feedObjects rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        successCB(@{
+                    @"feeds": feeds,
+                    @"articles": articles
+                    }, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB

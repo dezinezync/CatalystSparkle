@@ -193,14 +193,14 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         return;
     }
     
-    if (self.loadingNext)
+    if (self.DS.state != DZDatasourceLoaded)
         return;
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.loadingNext = YES;
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -227,7 +227,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                     self.loadingNext = NO;
                 });
                 
-                self.DS.data = self.DS.data ?: @[];
+                if (page == 1) {
+                    self.DS.data = @[];
+                }
+                else {
+                    self.DS.data = self.DS.data ?: @[];
+                }
             }
             else {
                 @try {
@@ -242,6 +247,8 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                     DDLogWarn(@"Exception setting unread articles: %@", exc);
                 }
             }
+            
+            self.DS.state = DZDatasourceLoaded;
             
             self.page = page;
             
@@ -269,7 +276,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             if (!self)
                 return;
             
-            self.loadingNext = NO;
+            self.DS.state = DZDatasourceError;
             
             weakify(self);
             

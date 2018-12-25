@@ -40,6 +40,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 
 @property (assign, nonatomic) FeedType feedType;
 @property (weak, nonatomic) NSURLSessionTask *faviconTask;
+@property (weak, nonatomic) IBOutlet UIStackView *tagsStack;
 
 @end
 
@@ -207,6 +208,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         [self.faviconTask cancel];
     }
     
+    self.summaryLabel.text = nil;
+    
+    if (self.tagsStack.arrangedSubviews.count) {
+        
+        for (UIView *subview in self.tagsStack.arrangedSubviews) {
+            [self.tagsStack removeArrangedSubview:subview];
+            [subview removeFromSuperview];
+        }
+        
+    }
+    
     self.faviconTask = nil;
     
 }
@@ -297,29 +309,46 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
             else {
                 self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
-                    UIImage *image = responseObject;
-                    
-                    if (image != nil) {
+                    dispatch_async(SharedImageLoader.ioQueue, ^{
                         
-                        CGFloat width = 24.f * UIScreen.mainScreen.scale;
+                        UIImage *image = nil;
                         
-                        image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
-                        
-                        NSData *jpeg = UIImageJPEGRepresentation(image, 1.f);
-                        
-                        [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                        if (image == nil) {
-                            attachment.bounds = CGRectZero;
-                        }
-                        else {
-                            attachment.image = image;
+                        if ([responseObject isKindOfClass:UIImage.class] == NO) {
+                            
+                            if ([responseObject isKindOfClass:NSData.class]) {
+                                image = [[UIImage alloc] initWithData:responseObject];
+                            }
+                            
+                            if (image == nil) {
+                                return;
+                            }
+
                         }
                         
-                        [self.titleLabel setNeedsDisplay];
+                        image = responseObject;
+                        
+                        if (image != nil) {
+                            
+                            CGFloat width = 24.f * UIScreen.mainScreen.scale;
+                            
+                            image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
+                            
+                            NSData *jpeg = UIImageJPEGRepresentation(image, 1.f);
+                            
+                            [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            
+                            if (image == nil) {
+                                attachment.bounds = CGRectZero;
+                            }
+                            else {
+                                attachment.image = image;
+                            }
+                            
+                            [self.titleLabel setNeedsDisplay];
+                        });
                     });
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -557,27 +586,38 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMargins = margins;
         
         stackView.layoutMarginsRelativeArrangement = YES;
-        
-//        NSString *url = [feed faviconURI];
-//
-//        self.faviconView.hidden = NO;
-//
-//        if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
-//            @try {
-//                weakify(self);
-//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//                    strongify(self);
-//                    [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
-//                });
-//            }
-//            @catch (NSException *exc) {
-//                // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-//                DDLogWarn(@"ArticleCell setImage: %@", exc);
-//            }
-//        }
     }
     
-//    [self.contentView layoutIfNeeded];
+    if (item.keywords != nil && [item.keywords count] > 0) {
+        
+        if (item.keywords.count > 4) {
+            item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];
+        }
+        
+        DDLogDebug(@"Keywords: %@", item.keywords);
+        
+        for (NSString *tag in item.keywords) { @autoreleasepool {
+            
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+            [button setTitle:tag forState:UIControlStateNormal];
+            
+            button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+            button.titleLabel.adjustsFontForContentSizeCategory = YES;
+            
+            [button sizeToFit];
+            
+            [button setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
+            
+            [button addTarget:self action:@selector(didTapTag:) forControlEvents:UIControlEventTouchUpInside];
+            
+            [self.tagsStack addArrangedSubview:button];
+            
+        } }
+        
+        [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
+        
+    }
+    
     [self setNeedsLayout];
     [self layoutIfNeeded];
     
@@ -585,53 +625,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 
 #pragma mark -
 
-//- (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
-//
-//    UICollectionViewLayoutAttributes *attributes = [super preferredLayoutAttributesFittingAttributes:layoutAttributes];
-//
-//    CGRect frame = attributes.frame;
-//    frame.size = self.estimatedSize;
-//
-//    attributes.frame = frame;
-//
-//    return attributes;
-//
-//}
-
-//- (void)applyLayoutAttributes:(UICollectionViewLayoutAttributes *)layoutAttributes {
-//
-//    [super applyLayoutAttributes:layoutAttributes];
-//
-//    DDLogDebug(@"Attributes: %@", layoutAttributes);
-//
-////    CGRect frame = layoutAttributes.frame;
-////    CGFloat width = frame.size.width - 24.f;
-//
-////    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && self.item.coverImage != nil) {
-////
-////        self.titleLabel.preferredMaxLayoutWidth = width - 80.f - 12.f;
-////        self.authorLabel.preferredMaxLayoutWidth = width - 80.f - 12.f;
-////        self.timeLabel.preferredMaxLayoutWidth = (width / 2.f);
-////
-////    }
-////    else {
-////        self.titleLabel.preferredMaxLayoutWidth = width;
-////        self.authorLabel.preferredMaxLayoutWidth = width;
-////        self.timeLabel.preferredMaxLayoutWidth = (width / 2.f);
-////    }
-//
-//}
-
-//- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize {
-//
-//    [self setNeedsLayout];
-//    [self layoutIfNeeded];
-//
-//    CGSize size = [self.contentView systemLayoutSizeFittingSize:targetSize withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityDefaultLow];
-//
-//    return size;
-//
-//}
+- (void)didTapTag:(UIButton *)sender {
+    
+    NSString *tag = [sender titleForState:UIControlStateNormal];
+    
+    DDLogDebug(@"Tapped tag: %@", tag);
+    
+}
 
 - (CGSize)estimatedSize {
     

@@ -117,6 +117,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#pragma mark - Tags
+
+- (void)getTagFeed:(NSString *)tag page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB;
+
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
