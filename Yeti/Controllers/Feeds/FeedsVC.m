@@ -40,6 +40,8 @@ static void *KVO_Unread = &KVO_Unread;
 
 @interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
     BOOL _setupObservors;
+    
+    BOOL _openingOnLaunch;
 }
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
@@ -109,6 +111,16 @@ static void *KVO_Unread = &KVO_Unread;
         if (MyFeedsManager.userID) {
             [self userDidUpdate];
         }
+        
+        BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kOpenUnreadOnLaunch];
+        
+        if (pref) {
+            _openingOnLaunch = YES;
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        }
     }
 }
 
@@ -167,6 +179,7 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
     [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
     [center addObserver:self selector:@selector(updateNotification:) name:UIDatabaseConnectionDidUpdateNotification object:nil];
+    [center addObserver:self selector:@selector(hideBookmarksPreferenceChanged) name:ShowBookmarksTabPreferenceChanged object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
@@ -464,8 +477,17 @@ static void *KVO_Unread = &KVO_Unread;
             vc.customFeed = FeedTypeCustom;
             vc.unread = indexPath.row == 0;
             
+            BOOL animated = YES;
+            
+            // we dont want an animated push on the navigation stack
+            // when the app is launched and the user wants this behavior
+            if (_openingOnLaunch == YES) {
+                animated = NO;
+                _openingOnLaunch = NO;
+            }
+            
             if (isPhone) {
-                [self.navigationController pushViewController:vc animated:YES];
+                [self.navigationController pushViewController:vc animated:animated];
             }
             else {
                 UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -734,6 +756,19 @@ NSString * const kDS2Data = @"DS2Data";
     NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
     
     [self.tableView reloadRowsAtIndexPaths:visible withRowAnimation:UITableViewRowAnimationFade];
+    
+}
+
+- (void)hideBookmarksPreferenceChanged {
+    
+    BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
+    
+    if (pref) {
+        self.DS1.data = @[@"Unread"];
+    }
+    else {
+        self.DS1.data = @[@"Unread", @"Bookmarks"];
+    }
     
 }
 

@@ -28,7 +28,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     self.title = @"Miscellaneous";
     self.forPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
     
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt"];
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread"];
     
     if (self.forPhone) {
         self.sections = [self.sections arrayByAddingObject:@"Extended Feed Layout"];
@@ -62,7 +62,16 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == (self.sections.count - 1) && self.forPhone) {
+    
+    if (section == 3) {
+        return @"You can optionally hide the Bookmarks Tab from the Feeds Interface.";
+    }
+    
+    else if (section == 4) {
+        return @"When this setting is enabled, the app will open the Unread Interface upon launch.";
+    }
+    
+    else if (section == (self.sections.count - 1) && self.forPhone) {
         return @"Extended Feed Layout was introduced in version 1.1 of the app and brings the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
     }
     
@@ -157,6 +166,18 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         [sw setOn:[defaults boolForKey:kShowUnreadCounts]];
         [sw addTarget:self action:@selector(didChangeUnreadCountsPreference:) forControlEvents:UIControlEventValueChanged];
     }
+    else  if ([sectionName isEqualToString:@"Hide Bookmarks"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:[defaults boolForKey:kHideBookmarksTab]];
+        [sw addTarget:self action:@selector(didChangeBookmarksPref:) forControlEvents:UIControlEventValueChanged];
+    }
+    else  if ([sectionName isEqualToString:@"Open Unread"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:[defaults boolForKey:kOpenUnreadOnLaunch]];
+        [sw addTarget:self action:@selector(didChangeUnreadPref:) forControlEvents:UIControlEventValueChanged];
+    }
     
     cell.accessoryView = sw;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -248,5 +269,26 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     [defaults synchronize];
     
 }
+
+- (void)didChangeBookmarksPref:(UISwitch *)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sender.isOn forKey:kHideBookmarksTab];
+    [defaults synchronize];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [NSNotificationCenter.defaultCenter postNotificationName:ShowBookmarksTabPreferenceChanged object:nil];
+    });
+    
+}
+
+- (void)didChangeUnreadPref:(UISwitch *)sender {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:sender.isOn forKey:kOpenUnreadOnLaunch];
+    [defaults synchronize];
+    
+}
+
 
 @end

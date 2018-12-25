@@ -112,6 +112,9 @@ YetiSortOption const YTSortUnreadDesc = @"2"; // 2
 YetiSortOption const YTSortUnreadAsc = @"3";  // 3
 
 NSString * const kShowMarkReadPrompt = @"com.dezinezync.elytra.showMarkReadPrompt";
+NSString * const kHideBookmarksTab = @"com.dezinezync.elytra.hideBookmarksTab";
+NSNotificationName const ShowBookmarksTabPreferenceChanged = @"com.dezinezync.elytra.note.showBookmarksTab";
+NSString * const kOpenUnreadOnLaunch = @"com.dezinezync.elytra.openUnreadOnLaunch";
 
 NSString * const IAPOneMonth     = @"com.dezinezync.elytra.non.1m";
 NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";

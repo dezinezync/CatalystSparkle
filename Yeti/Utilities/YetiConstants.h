@@ -89,6 +89,9 @@ YETI_EXPORT NSString * const kUseExtendedFeedLayout;
 
 YETI_EXPORT NSString * const kShowUnreadCounts;
 YETI_EXPORT NSNotificationName const ShowUnreadCountsPreferenceChanged;
+YETI_EXPORT NSString * const kHideBookmarksTab;
+YETI_EXPORT NSNotificationName const ShowBookmarksTabPreferenceChanged;
+YETI_EXPORT NSString * const kOpenUnreadOnLaunch;
 
 typedef NS_ENUM(NSInteger, FeedType) {
     FeedTypeFeed,
