@@ -121,6 +121,8 @@ NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";
 NSString * const IAPTwelveMonth  = @"com.dezinezync.elytra.non.12m";
 NSString * const IAPLifetime     = @"com.dezinezync.elytra.life";
 
+NSString * const kPreviewLines = @"com.dezinezync.elytra.summaryPreviewLines";
+
 #pragma mark -
 
 NSString * modelIdentifier (void) {

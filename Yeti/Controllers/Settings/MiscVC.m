@@ -10,10 +10,15 @@
 #import "YetiThemeKit.h"
 #import "SettingsCell.h"
 #import "YetiConstants.h"
+#import "PreviewLinesVC.h"
+
+#import <DZKit/UIViewController+AnimatedDeselect.h>
 
 NSString *const kMiscSettingsCell = @"settingsCell";
 
-@interface MiscVC ()
+@interface MiscVC () {
+    BOOL _showingPreview;
+}
 
 @property (nonatomic, strong) NSArray <NSString *> *sections;
 
@@ -26,10 +31,27 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     self.title = @"Miscellaneous";
     
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread"];
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview"];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    if (_showingPreview == YES) {
+        _showingPreview = NO;
+        
+        [self dz_smoothlyDeselectRows:self.tableView];
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:5];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        
+        cell.detailTextLabel.text = [self previewLinesText];
+    }
+    
 }
 
 #pragma mark - Table view data source
@@ -63,6 +85,10 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     else if (section == 4) {
         return @"When this setting is enabled, the app will open the Unread Interface upon launch.";
+    }
+    
+    else if (section == 5) {
+        return @"Number of summary lines to show when viewing list of Articles.";
     }
     
     return nil;
@@ -160,16 +186,61 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         [sw addTarget:self action:@selector(didChangeUnreadPref:) forControlEvents:UIControlEventValueChanged];
     }
     
-    cell.accessoryView = sw;
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if ([sectionName isEqualToString:@"Preview"]) {
+        cell.textLabel.text = sectionName;
+        
+        cell.detailTextLabel.text = [self previewLinesText];
+        
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    else {
+        cell.accessoryView = sw;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
     
     return cell;
         
 }
 
+#pragma mark -
+
+- (NSString *)previewLinesText {
+    NSInteger lines = [[NSUserDefaults standardUserDefaults] integerForKey:kPreviewLines];
+    
+    NSString *text = nil;
+    
+    if (lines == 0) {
+        text = @"None";
+    }
+    else {
+        if (lines == 1) {
+            text = @"1 Line";
+        }
+        else {
+            text = formattedString(@"%@ Lines", @(lines));
+        }
+    }
+    
+    return text;
+}
+
+#pragma mark -
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section == 1) {
+        return;
+    }
+    
+    // preview lines
+    if (indexPath.section == 5) {
+        
+        _showingPreview = YES;
+        
+        PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:UITableViewStylePlain];
+        
+        [self.navigationController pushViewController:vc animated:YES];
+        
         return;
     }
     

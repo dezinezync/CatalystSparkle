@@ -118,22 +118,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-//- (void)layoutSubviews {
-//    
-//    [super layoutSubviews];
-//    
-//    DDLogDebug(@"Frame: %@", NSStringFromCGRect(self.bounds));
-//    
-//    self.selectedBackgroundView.frame = self.bounds;
-//    self.backgroundView.frame = self.bounds;
-//    
-//}
-
 - (void)setupAppearance {
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-//    self.faviconView.layer.borderColor = [(YetiTheme *)[YTThemeKit theme] borderColor].CGColor;
     
     BOOL isAccessibilityContentCategory = IsAccessibilityContentCategory();
     
@@ -171,6 +158,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.titleLabel.textColor = theme.titleColor;
     self.timeLabel.textColor = theme.subtitleColor;
     self.authorLabel.textColor = theme.subtitleColor;
+    self.summaryLabel.textColor = theme.captionColor;
     
     self.backgroundColor = theme.cellColor;
     
@@ -374,6 +362,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     [self configureTitle];
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSInteger previewLines = [defaults integerForKey:kPreviewLines];
+    
+    if (previewLines == 0) {
+        self.summaryLabel.text = nil;
+    }
+    else {
+        self.summaryLabel.numberOfLines = previewLines;
+        self.summaryLabel.text = item.summary;
+    }
+    
     NSString *appendFormat = @" - %@";
     
     // setup the constraints for the leading edge
@@ -524,12 +523,14 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 4.f); // 80 + 12
     self.titleWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
     
+    self.summaryLabel.preferredMaxLayoutWidth = width;
+    
     if (willShowCover) {
         self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 24.f;
     }
     else {
         self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 140.f;
-        self.mainStackView.spacing = 0.f;
+//        self.mainStackView.spacing = 0.f;
     }
     
     self.timeLabel.preferredMaxLayoutWidth = 80.f;

@@ -268,7 +268,8 @@ AppDelegate *MyAppDelegate = nil;
              kShowUnreadCounts: @YES,
              kUseImageProxy: @NO,
              kDetailFeedSorting: YTSortAllDesc,
-             kShowMarkReadPrompt: @YES
+             kShowMarkReadPrompt: @YES,
+             kPreviewLines: @0
              };
 }
 
