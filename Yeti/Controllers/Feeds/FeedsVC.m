@@ -567,6 +567,8 @@ NSString * const kDS2Data = @"DS2Data";
     
     DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
     
+    _noPreSetup = YES;
+    
     [super decodeRestorableStateWithCoder:coder];
 }
 
