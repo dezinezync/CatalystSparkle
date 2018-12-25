@@ -15,7 +15,6 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 @interface MiscVC ()
 
-@property (nonatomic, assign) BOOL forPhone;
 @property (nonatomic, strong) NSArray <NSString *> *sections;
 
 @end
@@ -26,13 +25,8 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     [super viewDidLoad];
     
     self.title = @"Miscellaneous";
-    self.forPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
     
     self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread"];
-    
-    if (self.forPhone) {
-        self.sections = [self.sections arrayByAddingObject:@"Extended Feed Layout"];
-    }
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
@@ -69,10 +63,6 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     else if (section == 4) {
         return @"When this setting is enabled, the app will open the Unread Interface upon launch.";
-    }
-    
-    else if (section == (self.sections.count - 1) && self.forPhone) {
-        return @"Extended Feed Layout was introduced in version 1.1 of the app and brings the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
     }
     
     return nil;
@@ -145,16 +135,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     NSString *sectionName = [self.sections objectAtIndex:indexPath.section];
     
-    // on iPhones and iPod touches, we show an additional row
-    if ([sectionName isEqualToString:@"Extended Feed Layout"]) {
-     
-        cell.textLabel.text = sectionName;
-        
-        [sw setOn:[defaults boolForKey:kUseExtendedFeedLayout]];
-        [sw addTarget:self action:@selector(didChangeExtendedLayoutPreference:) forControlEvents:UIControlEventValueChanged];
-        
-    }
-    else if ([sectionName isEqualToString:@"Mark Read Prompt"]) {
+    if ([sectionName isEqualToString:@"Mark Read Prompt"]) {
         cell.textLabel.text = sectionName;
         
         [sw setOn:[defaults boolForKey:kShowMarkReadPrompt]];
@@ -241,14 +222,6 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 }
 
 #pragma mark - Actions
-
-- (void)didChangeExtendedLayoutPreference:(UISwitch *)sender {
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kUseExtendedFeedLayout];
-    [defaults synchronize];
-    
-}
 
 - (void)didChangeUnreadCountsPreference:(UISwitch *)sender {
     

@@ -151,6 +151,12 @@ AppDelegate *MyAppDelegate = nil;
         
         retval = YES;
         
+        // from v1.2, this is the default.
+        if ([NSUserDefaults.standardUserDefaults boolForKey:kUseExtendedFeedLayout] == NO) {
+            [NSUserDefaults.standardUserDefaults setBool:YES forKey:kUseExtendedFeedLayout];
+            [NSUserDefaults.standardUserDefaults synchronize];
+        }
+        
     });
     
     return retval;
@@ -258,7 +264,7 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsArticleFont: ALPSystem,
              kSubscriptionType: @"None",
              kShowArticleCoverImages: @NO,
-             kUseExtendedFeedLayout: @NO,
+             kUseExtendedFeedLayout: @YES,
              kShowUnreadCounts: @YES,
              kUseImageProxy: @NO,
              kDetailFeedSorting: YTSortAllDesc,
