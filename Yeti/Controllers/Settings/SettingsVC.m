@@ -22,9 +22,20 @@
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
 #import <DZKit/UIViewController+AnimatedDeselect.h>
+#import <DZKit/DZMessagingController.h>
 
 #import "YetiThemeKit.h"
 #import "DBManager+CloudCore.h"
+
+#import <sys/utsname.h>
+
+NSString* deviceName() {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
+}
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -142,7 +153,7 @@
                 return 5;
             break;
         case 2:
-            return 3;
+            return 4;
             break;
         default:
             return 5;
@@ -249,13 +260,24 @@
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
                     break;
-                case 2:
-                    cell.textLabel.text = @"Attributions";
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    break;
-                default:
+                case 1:
+                {
                     cell.textLabel.text = @"Rate";
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    break;
+                case 2:
+                {
+                    cell.textLabel.text = @"Attributions";
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    break;
+                default:
+                {
+                    cell.textLabel.text = @"Contact";
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    
             }
             
             
@@ -359,6 +381,9 @@
                     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
                 });
             }
+            else if (indexPath.row == 3) {
+                [self showContactInterface];
+            }
             break;
     }
     
@@ -377,6 +402,9 @@
     // Push the view controller.
     if (vc) {
         [self.navigationController pushViewController:vc animated:YES];
+    }
+    else {
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 
@@ -413,6 +441,35 @@
     });
     
     _hasAnimatedFooterView = NO;
+}
+
+#pragma mark -
+
+- (void)showContactInterface {
+    
+    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
+    attachment.fileName = @"debugInfo.txt";
+    attachment.mimeType = @"text/plain";
+    
+    UIDevice *device = [UIDevice currentDevice];
+    NSString *model = deviceName();
+    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
+    NSString *deviceUUID = device.identifierForVendor.UUIDString;
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+    
+    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.userIDManager.UUIDString, appVersion, buildNumber);
+    
+    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [DZMessagingController presentEmailWithBody:@""
+                                        subject:@"Elytra Support"
+                                     recipients:@[@"support@elytra.app"]
+                                    attachments:@[attachment]
+                                 fromController:self];
+    
 }
 
 #pragma mark - Getters
