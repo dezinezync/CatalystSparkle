@@ -293,7 +293,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     NSString *url = [feed faviconURI];
     
-    NSString *key = formattedString(@"24-%@", url);
+    NSString *key = formattedString(@"png-24-%@", url);
     
     dispatch_async(SharedImageLoader.ioQueue, ^{
        
@@ -334,7 +334,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                             
                             image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
                             
-                            NSData *jpeg = UIImageJPEGRepresentation(image, 1.f);
+                            NSData *jpeg = UIImagePNGRepresentation(image);
                             
                             [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
                         }
