@@ -23,6 +23,7 @@
 #import "YetiThemeKit.h"
 #import "NSString+ImageProxy.h"
 #import "UIImage+Sizing.h"
+#import "UIColor+Hex.h"
 
 BOOL IsAccessibilityContentCategory(void) {
     return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
@@ -596,13 +597,19 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
         DDLogDebug(@"Keywords: %@", item.keywords);
         
-        for (NSString *tag in item.keywords) { @autoreleasepool {
-            
+        NSArray <UIColor *> * const tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
+                                                  [UIColor colorFromHexString:@"#7441FF"],
+                                                  [UIColor colorFromHexString:@"#558B2F"],
+                                                  [UIColor colorFromHexString:@"#E8883A"]];
+        
+        [item.keywords enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
             UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-            [button setTitle:tag forState:UIControlStateNormal];
+            [button setTitle:obj forState:UIControlStateNormal];
             
             button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
             button.titleLabel.adjustsFontForContentSizeCategory = YES;
+            [button setTitleColor:tagColors[idx] forState:UIControlStateNormal];
             
             [button sizeToFit];
             
@@ -612,7 +619,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
             
             [self.tagsStack addArrangedSubview:button];
             
-        } }
+        }];
         
         [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
         

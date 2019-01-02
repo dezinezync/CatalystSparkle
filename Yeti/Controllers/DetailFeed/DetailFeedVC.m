@@ -408,46 +408,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-//- (CGFloat)collectionView:(UICollectionView *)collectionView heightForItemAtIndexPath:(NSIndexPath *)indexPath {
-//
-//    NSNumber *value = indexPath.item < self.sizeCache.count ? self.sizeCache[indexPath.item] : nil;
-//
-//    if (value != nil) {
-//        CGFloat size = [value floatValue];
-//        return size;
-//    }
-//
-//    CGRect frame = CGRectZero;
-//    frame.size.width = self.flowLayout.collectionViewWidth;
-//    frame.size.height = 90.f;
-//
-//    if (_protoCell == nil) {
-//        UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
-//        _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
-//    }
-//
-//    _protoCell.frame = frame;
-//
-//    [_protoCell awakeFromNib];
-//
-//    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
-//
-//    [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
-//
-//    CGSize size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
-//    size.height = floor(size.height) + 1.f;
-//
-//    self.sizeCache[indexPath.item] = @(size.height);
-//
-//    [_protoCell prepareForReuse];
-//
-//    return size.height;
-//
-//}
-
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
 
-    NSValue *value = [self.sizeCache safeObjectAtIndex:indexPath.item];
+    NSValue *value = self.sizeCache.count < indexPath.item ? [self.sizeCache safeObjectAtIndex:indexPath.item] : nil;
 
     if (value != nil) {
         CGSize size = [value CGSizeValue];
@@ -1093,16 +1056,13 @@ NSString * const kSizCache = @"FeedSizesCache";
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
         self.flowLayout.minimumLineSpacing = 0.1f;
         self.flowLayout.minimumInteritemSpacing = 0.1f;
-//        self.flowLayout.columns = 1;
     }
     else {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
-        self.flowLayout.minimumLineSpacing = 0.1f;
-        self.flowLayout.minimumInteritemSpacing = 0.1f;
-//        self.flowLayout.columns = 2;
+        self.flowLayout.minimumLineSpacing = padding;
+        self.flowLayout.minimumInteritemSpacing = padding;
     }
     
-    self.flowLayout.sectionInset = UIEdgeInsetsZero;
     self.collectionView.layoutMargins = UIEdgeInsetsZero;
 
     CGSize contentSize = self.collectionView.bounds.size;
