@@ -50,6 +50,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 - (void)awakeFromNib {
     [super awakeFromNib];
     
+    self.opaque = YES;
+    
     self.coverImage.layer.cornerRadius = 4.f;
     self.coverImage.autoUpdateFrameOrConstraints = NO;
     
@@ -112,6 +114,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         // none of our business
         return;
     }
+    
+    view.opaque = YES;
     
     [view.widthAnchor constraintEqualToAnchor:self.widthAnchor multiplier:1.f].active = YES;
     [view.heightAnchor constraintEqualToAnchor:self.heightAnchor multiplier:1.f].active = YES;
@@ -209,7 +213,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         [self.faviconTask cancel];
     }
     
-    self.summaryLabel.text = nil;
+//    self.summaryLabel.text = nil;
     
     if (self.tagsStack.arrangedSubviews.count) {
         
@@ -258,6 +262,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 }
 
 - (void)configureTitle {
+    
+    self.titleLabel.text = nil;
     
     if (self.faviconTask) {
         [self.faviconTask cancel];
@@ -383,9 +389,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-- (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableDictionary *)sizeCache {
+- (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableArray *)sizeCache {
     
-    self.sizeCache = sizeCache;
+//    self.sizeCache = sizeCache;
     self.item = item;
     self.authorLabel.text = @"";
     self.feedType = feedType;
@@ -638,85 +644,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     DDLogDebug(@"Tapped tag: %@", tag);
     
-}
-
-- (CGSize)estimatedSize {
-    
-    if (self.sizeCache
-        && self.item
-        && self.sizeCache[self.item.identifier.stringValue]) {
-        
-        CGSize size = CGSizeFromString(self.sizeCache[self.item.identifier.stringValue]);
-        
-        return size;
-        
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didTapTag:)]) {
+        [self.delegate didTapTag:tag];
     }
-    
-    UICollectionView *collectionView;
-    
-    if (self.superview) {
-        collectionView = (UICollectionView *)[self superview];
-    }
-    else {
-        UISplitViewController *splitVC = (UISplitViewController *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
-        UINavigationController *nav = [[splitVC viewControllers] lastObject];
-        UICollectionViewController *cv = [[nav viewControllers] lastObject];
-        
-        collectionView = cv.collectionView;
-    }
-    
-    CGSize contentSize = collectionView.contentSize;
-    
-    CGFloat width = contentSize.width;
-    
-    if (width == 0) {
-        width = [UIScreen mainScreen].bounds.size.width;
-    }
-    
-    /*
-     On iPads (Regular)
-     |- 16 - (cell) - 16 - (cell) - 16 -|
-     */
-    
-    /*
-     On iPhones (Compact)
-     |- 0 - (cell) - 0 -|
-     */
-    
-    // get actual values from the layout
-    BOOL isCompact = [[[collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
-    
-    CGFloat padding = isCompact ? 0 :[(UICollectionViewFlowLayout *)[collectionView collectionViewLayout] minimumInteritemSpacing];
-    CGFloat totalPadding =  padding * 3.f;
-    
-    CGFloat usableWidth = width - totalPadding;
-    
-    CGFloat cellWidth = usableWidth;
-    
-    if (usableWidth > 601.f) {
-        // the remainder will be absorbed by the interimSpacing
-        cellWidth = floor(usableWidth / 2.f);
-    }
-    else {
-        cellWidth = width - (padding * 2.f);
-    }
-    
-    [self.contentView layoutIfNeeded];
-    
-    CGSize fittingSize = CGSizeZero;
-    fittingSize.width = cellWidth;
-    
-    CGSize proposedSize = [self.contentView systemLayoutSizeFittingSize:CGSizeMake(fittingSize.width, 200.f) withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityFittingSizeLevel];
-    
-    fittingSize.height = proposedSize.height;
-    
-//    fittingSize.height += 12.f * 2.f;
-    
-    if (self.sizeCache && self.item && proposedSize.height <= 200.f) {
-        self.sizeCache[self.item.identifier.stringValue] = NSStringFromCGSize(fittingSize);
-    }
-    
-    return fittingSize;
     
 }
 

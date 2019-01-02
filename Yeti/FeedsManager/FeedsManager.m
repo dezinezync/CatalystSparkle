@@ -306,8 +306,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return feeds;
 }
 
-- (Feed *)feedForID:(NSNumber *)feedID
-{
+- (Feed *)feedForID:(NSNumber *)feedID {
+    
+    if (feedID == nil) {
+        return nil;
+    }
     
     Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
         if ([current.feedID isEqualToNumber:feedID])
@@ -315,10 +318,24 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return prev;
     }];
     
+    if (feed == nil && self.temporaryFeeds != nil && self.temporaryFeeds.count > 0) {
+        
+        feed = [MyFeedsManager.temporaryFeeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+            if ([current.feedID isEqualToNumber:feedID])
+                return current;
+            return prev;
+        }];
+        
+    }
+    
     return feed;
 }
 
 - (Folder *)folderForID:(NSNumber *)folderID {
+    
+    if (folderID == nil) {
+        return nil;
+    }
     
     Folder *folder = [self.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
         if ([current.folderID isEqualToNumber:folderID]) {

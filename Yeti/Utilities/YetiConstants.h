@@ -98,7 +98,8 @@ YETI_EXPORT NSString * const kPreviewLines;
 typedef NS_ENUM(NSInteger, FeedType) {
     FeedTypeFeed,
     FeedTypeCustom,
-    FeedTypeFolder
+    FeedTypeFolder,
+    FeedTypeTag
 };
 
 YETI_EXPORT NSString * const kUseImageProxy;

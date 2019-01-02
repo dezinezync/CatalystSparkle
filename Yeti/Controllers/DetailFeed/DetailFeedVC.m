@@ -13,6 +13,7 @@
 #import "ArticleVC.h"
 #import "DetailAuthorVC.h"
 #import "DetailFeedHeaderView.h"
+#import "TagFeedVC.h"
 
 #import "FeedsManager.h"
 
@@ -34,7 +35,7 @@
 
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
-@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching> {
+@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching, ArticleCellDelegate> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
     
@@ -359,17 +360,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
     
     if (item != nil) {
-        [cell configure:item customFeed:self.isCustomFeed sizeCache:self.sizeCache];
+        [cell configure:item customFeed:self.customFeed sizeCache:self.sizeCache];
+    }
+    
+    if (cell.delegate == nil || cell.delegate != self) {
+        cell.delegate = self;
     }
     
     [cell setupAppearance];
     
     BOOL showSeparator = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
-    
-//    if (cell.widthContraint == nil) {
-//        cell.widthContraint = [cell.widthAnchor constraintEqualToConstant:self.flowLayout.estimatedItemSize.width];
-//        cell.widthContraint.active = YES;
-//    }
     
     [cell showSeparator:showSeparator];
     
@@ -392,6 +392,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     }
     
     return nil;
+    
+}
+
+#pragma mark - <ArticleCellDelegate>
+
+- (void)didTapTag:(NSString *)tag {
+    
+    TagFeedVC *vc = [[TagFeedVC alloc] initWithTag:tag];
+    
+    [self.navigationController pushViewController:vc animated:YES];
     
 }
 

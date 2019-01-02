@@ -31,33 +31,35 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     NSString *_pushToken;
 }
 
-@property (nonatomic, strong, readonly) Subscription *subscription;
+@property (atomic, strong, readonly) Subscription *subscription;
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 
-@property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;
+@property (atomic, strong, readonly) YTUserID * _Nonnull userIDManager;
 
-@property (nonatomic) NSNumber * _Nullable userID;
+@property (atomic) NSNumber * _Nullable userID;
 
 @property (nonatomic, strong) NSString *pushToken;
 
 @property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
 
-@property (nonatomic, strong) UICKeyChainStore *keychain;
+@property (atomic, strong) UICKeyChainStore *keychain;
 
 @property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
 
 #pragma mark - Feeds
 
-@property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
+@property (atomic, strong) NSArray <Feed *> * _Nullable feeds;
+
+@property (atomic, strong) NSArray <Feed *> * _Nullable temporaryFeeds;
 
 @property (nonatomic, readonly) NSArray <Feed *> * _Nullable feedsWithoutFolders;
 
-@property (nonatomic, assign) NSInteger totalUnread;
-@property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
+@property (atomic, assign) NSInteger totalUnread;
+@property (atomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
-@property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
+@property (atomic, strong) NSArray <Folder *> * _Nullable folders;
 
 #pragma mark - Networking
 

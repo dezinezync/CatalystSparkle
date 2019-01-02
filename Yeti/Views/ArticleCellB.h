@@ -12,6 +12,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol ArticleCellDelegate <NSObject>
+
+@optional
+- (void)didTapTag:(NSString *)tag;
+
+@end
+
 extern NSString *const kiPadArticleCell;
 
 @interface ArticleCellB : UICollectionViewCell
@@ -27,10 +34,12 @@ extern NSString *const kiPadArticleCell;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleWidthConstraint;
 
-- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableDictionary *)sizeCache;
+- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableArray *)sizeCache;
 
-@property (weak, nonatomic) NSMutableDictionary *sizeCache;
+//@property (weak, nonatomic) NSMutableDictionary *sizeCache;
 @property (weak, nonatomic) FeedItem *item;
+
+@property (weak, nonatomic) id<ArticleCellDelegate> delegate;
 
 - (void)showSeparator:(BOOL)showSeparator;
 

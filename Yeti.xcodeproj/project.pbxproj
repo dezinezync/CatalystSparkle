@@ -15,6 +15,7 @@
 		F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
+		F01341AE21DC905400854DE1 /* TagFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F01341AD21DC905400854DE1 /* TagFeedVC.m */; };
 		F013E6DD21A03FA700BAA151 /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */; };
 		F013E6DE21A03FA700BAA151 /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
@@ -522,6 +523,8 @@
 		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
+		F01341AC21DC905400854DE1 /* TagFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagFeedVC.h; sourceTree = "<group>"; };
+		F01341AD21DC905400854DE1 /* TagFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TagFeedVC.m; sourceTree = "<group>"; };
 		F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = ../../DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
@@ -1232,6 +1235,8 @@
 				F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */,
 				F05E0C0D2174AFA70042FC38 /* DetailFolderVC.h */,
 				F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */,
+				F01341AC21DC905400854DE1 /* TagFeedVC.h */,
+				F01341AD21DC905400854DE1 /* TagFeedVC.m */,
 			);
 			path = DetailFeed;
 			sourceTree = "<group>";
@@ -2657,6 +2662,7 @@
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0315DBC20CA59FB00F5674A /* Subscription.m in Sources */,
+				F01341AE21DC905400854DE1 /* TagFeedVC.m in Sources */,
 				F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */,
 				F0D7E226215B72F100CB64E9 /* RMStoreAppReceiptVerifier.m in Sources */,
 			);
