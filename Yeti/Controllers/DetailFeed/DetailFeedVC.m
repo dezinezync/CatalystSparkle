@@ -401,7 +401,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     TagFeedVC *vc = [[TagFeedVC alloc] initWithTag:tag];
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
     
 }
 
@@ -414,7 +414,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
     
 }
 
@@ -1145,7 +1145,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     vc.author = author;
     vc.customFeed = self.customFeed;
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
 }
 
 #pragma mark - KVO / Actions

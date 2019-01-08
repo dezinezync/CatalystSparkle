@@ -94,7 +94,7 @@
     
     TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
     
 }
 

@@ -239,7 +239,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         
         PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:UITableViewStylePlain];
         
-        [self.navigationController pushViewController:vc animated:YES];
+        [self showViewController:vc sender:self];
         
         return;
     }

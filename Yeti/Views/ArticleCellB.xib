@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -100,6 +101,7 @@
                 <constraint firstAttribute="trailing" secondItem="qkY-n6-DZZ" secondAttribute="trailing" constant="12" id="Lxr-TF-eed"/>
                 <constraint firstItem="qkY-n6-DZZ" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="12" id="bjC-3D-dPX"/>
             </constraints>
+            <viewLayoutGuide key="safeArea" id="055-B1-cQj"/>
             <size key="customSize" width="333" height="146"/>
             <userDefinedRuntimeAttributes>
                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">

@@ -206,7 +206,7 @@
        
        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
 //       vc.inStack = YES;
-       [self.navigationController pushViewController:vc animated:YES];
+       [self showViewController:vc sender:self];
        
    }
     

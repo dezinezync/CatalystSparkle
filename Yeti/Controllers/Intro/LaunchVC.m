@@ -47,7 +47,7 @@
     
     IdentityVC *vc = [[IdentityVC alloc] initWithNibName:NSStringFromClass(IdentityVC.class) bundle:nil];
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
     
 }
 

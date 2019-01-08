@@ -9,7 +9,7 @@
 #import "FeedsSearchResults.h"
 #import "FeedsCell.h"
 #import "FolderCell.h"
-#import "FeedVC.h"
+#import "DetailFeedVC.h"
 
 @interface FeedsSearchResults ()
 
@@ -45,13 +45,11 @@
 {
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
-    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+    DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
     
     UIViewController *presenting = self.presentingViewController;
     
-    UINavigationController *nav = [presenting navigationController];
-    
-    [nav pushViewController:vc animated:YES];
+    [presenting showDetailViewController:vc sender:self];
 }
 
 @end

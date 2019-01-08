@@ -104,7 +104,7 @@
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
         
-        [self.navigationController pushViewController:vc animated:YES];
+        [self showViewController:vc sender:self];
         
         return;
     }

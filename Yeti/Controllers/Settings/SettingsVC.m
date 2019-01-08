@@ -401,7 +401,7 @@ NSString* deviceName() {
     
     // Push the view controller.
     if (vc) {
-        [self.navigationController pushViewController:vc animated:YES];
+        [self showViewController:vc sender:self];
     }
     else {
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];

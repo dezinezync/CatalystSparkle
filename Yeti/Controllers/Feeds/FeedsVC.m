@@ -463,46 +463,32 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    BOOL useExtendedLayout = NO;
-    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
-    if (isPhone) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        useExtendedLayout = [defaults boolForKey:kUseExtendedFeedLayout];
-    }
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     if (indexPath.section == 0) {
         
-        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
-            vc.customFeed = FeedTypeCustom;
-            vc.unread = indexPath.row == 0;
-            
-            BOOL animated = YES;
-            
-            // we dont want an animated push on the navigation stack
-            // when the app is launched and the user wants this behavior
-            if (_openingOnLaunch == YES) {
-                animated = NO;
-                _openingOnLaunch = NO;
-            }
-            
-            if (isPhone) {
-                [self.navigationController pushViewController:vc animated:animated];
-            }
-            else {
-                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
-                
-                [self.splitViewController showDetailViewController:nav sender:self];
-            }
+        DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
+        vc.customFeed = FeedTypeCustom;
+        vc.unread = indexPath.row == 0;
+        
+        BOOL animated = YES;
+        
+        // we dont want an animated push on the navigation stack
+        // when the app is launched and the user wants this behavior
+        if (_openingOnLaunch == YES) {
+            animated = NO;
+            _openingOnLaunch = NO;
+        }
+        
+        if (isPhone) {
+            [self showDetailController:vc sender:self];
         }
         else {
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
             
-            CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
-            vc.unread = indexPath.row == 0;
-            
-            [self.navigationController pushViewController:vc animated:YES];
-            
+            [self showDetailController:nav sender:self];
         }
         
         return;
@@ -513,21 +499,15 @@ static void *KVO_Unread = &KVO_Unread;
     if ([feed isKindOfClass:Feed.class]) {
         UIViewController *vc;
         
-        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            if (isPhone) {
-                vc = [[DetailFeedVC alloc] initWithFeed:feed];
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                vc = [DetailFeedVC instanceWithFeed:feed];
-                [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-                [self.splitViewController showDetailViewController:vc sender:self];
-            }
+        if (isPhone) {
+            vc = [[DetailFeedVC alloc] initWithFeed:feed];
         }
         else {
-            vc = [[FeedVC alloc] initWithFeed:feed];
-            [self.navigationController pushViewController:vc animated:YES];
+            vc = [DetailFeedVC instanceWithFeed:feed];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
         }
+        
+        [self showDetailController:vc sender:self];
     }
     else {
         // it's a folder
@@ -537,12 +517,12 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (isPhone) {
             vc = [[DetailFolderVC alloc] initWithFolder:folder];
-            [self.navigationController pushViewController:vc animated:YES];
         }
         else {
             vc = [DetailFolderVC instanceWithFolder:folder];
-            [self.splitViewController showDetailViewController:vc sender:self];
         }
+        
+        [self showDetailViewController:vc sender:self];
         
     }
     

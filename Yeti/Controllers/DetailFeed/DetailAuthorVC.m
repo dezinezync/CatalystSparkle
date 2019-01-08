@@ -60,23 +60,6 @@
     return formattedString(@"No recent articles are available from %@", self.author.name);
 }
 
-- (void)setupLayout {
-    
-//    CGFloat padding = self.flowLayout.minimumInteritemSpacing;
-//    
-//    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-//        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, 0.f, padding, 0.f);
-//    }
-//    else {
-//        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding/2.f, padding, padding/2.f);
-//    }
-//    
-//    self.flowLayout.estimatedItemSize = UICollectionViewFlowLayoutAutomaticSize;
-//    
-//    self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 40.f);
-    
-}
-
 - (void)reloadHeaderView {
     
     [(DetailAuthorHeaderView *)[self.headerView superview] setupAppearance];

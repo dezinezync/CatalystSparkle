@@ -143,7 +143,7 @@
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
 }
 
 - (void)didLongTapOnCell:(UITapGestureRecognizer *)sender
