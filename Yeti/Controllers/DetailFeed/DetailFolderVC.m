@@ -76,14 +76,14 @@
 - (void)loadNextPage
 {
     
-    if (self.loadingNext)
+    if (self.DS.state != DZDatasourceLoaded)
         return;
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.loadingNext = YES;
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -97,8 +97,6 @@
         
         if (!self)
             return;
-        
-        self.loadingNext = NO;
         
         self.page = page;
         
@@ -118,12 +116,14 @@
             [self loadNextPage];
         }
         
+        self.DS.state = DZDatasourceLoaded;
+        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
         
         strongify(self);
         
-        self.loadingNext = NO;
+        self.DS.state = DZDatasourceError;
         
         if (self.DS.data == nil || [self.DS.data count] == 0) {
             // the initial load has failed.

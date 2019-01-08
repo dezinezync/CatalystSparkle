@@ -595,13 +595,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMarginsRelativeArrangement = YES;
     }
     
-    if (item.keywords != nil && [item.keywords count] > 0) {
+    if (feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
         
         if (item.keywords.count > 4) {
             item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];
         }
         
-        DDLogDebug(@"Keywords: %@", item.keywords);
+//        DDLogDebug(@"Keywords: %@", item.keywords);
         
         NSArray <UIColor *> * const tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
                                                   [UIColor colorFromHexString:@"#7441FF"],

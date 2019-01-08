@@ -65,14 +65,14 @@
 - (void)loadNextPage
 {
     
-    if (self.loadingNext)
+    if (self.DS.state != DZDatasourceLoaded)
         return;
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.loadingNext = YES;
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -88,8 +88,6 @@
         NSArray *articles = responseObject[@"articles"];
         NSArray *feeds = responseObject[@"feeds"];
         
-        self.loadingNext = NO;
-        
         self.page = page;
         
         if (![responseObject count]) {
@@ -99,28 +97,26 @@
         
         if (page == 1 || self.DS.data == nil) {
             self.DS.data = articles;
+            MyFeedsManager.temporaryFeeds = feeds;
+            
+            if (self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                [self loadNextPage];
+            }
         }
         else {
             self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:articles];
-        }
-        
-        if (page == 1) {
-            MyFeedsManager.temporaryFeeds = feeds;
-        }
-        else {
+            
             MyFeedsManager.temporaryFeeds = [MyFeedsManager.temporaryFeeds arrayByAddingObjectsFromArray:feeds];
         }
         
-        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            [self loadNextPage];
-        }
+        self.DS.state = DZDatasourceLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
         
         strongify(self);
         
-        self.loadingNext = NO;
+        self.DS.state = DZDatasourceError;
         
         if (self.DS.data == nil || [self.DS.data count] == 0) {
             // the initial load has failed.
