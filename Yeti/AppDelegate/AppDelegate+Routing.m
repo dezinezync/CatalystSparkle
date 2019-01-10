@@ -611,6 +611,10 @@
     if (articleID == nil)
         return;
     
+    if (![articleID integerValue]) {
+        return;
+    }
+    
     FeedVC *feedVC = nil;
     
     UISplitViewController *splitVC;
