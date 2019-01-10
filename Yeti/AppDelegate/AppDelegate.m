@@ -264,12 +264,13 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsArticleFont: ALPSystem,
              kSubscriptionType: @"None",
              kShowArticleCoverImages: @NO,
-             kUseExtendedFeedLayout: @YES,
+             kUseExtendedFeedLayout: @YES, // deprecated in v1.2.0
              kShowUnreadCounts: @YES,
              kUseImageProxy: @NO,
              kDetailFeedSorting: YTSortAllDesc,
              kShowMarkReadPrompt: @YES,
-             kPreviewLines: @0
+             kPreviewLines: @0,
+             kShowTags: @YES
              };
 }
 
@@ -286,7 +287,7 @@ AppDelegate *MyAppDelegate = nil;
     
     [splitVC loadViewIfNeeded];
     
-    NSString *theme = [[NSUserDefaults standardUserDefaults] valueForKey:kDefaultsTheme];
+    NSString *theme = SharedPrefs.theme;
     NSString *themeName = nil;
     if ([theme isEqualToString:LightTheme]) {
         themeName = @"light";

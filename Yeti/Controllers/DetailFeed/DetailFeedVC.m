@@ -544,7 +544,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSInteger page = self->_page + 1;
     
-    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    YetiSortOption sorting = SharedPrefs.sortingOption;
     
     [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -982,7 +982,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     else {
         // sorting button
-        YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
+        YetiSortOption option = SharedPrefs.sortingOption;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"

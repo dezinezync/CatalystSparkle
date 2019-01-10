@@ -210,7 +210,7 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     if (self.isUnread) {
         NSInteger page = self->_page + 1;
         
-        YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+        YetiSortOption sorting = SharedPrefs.sortingOption;
         
         [MyFeedsManager getUnreadForPage:page sorting:sorting success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             

@@ -56,9 +56,9 @@
         return copy;
     }
     
-    NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
+    NSString *sizePreference = SharedPrefs.imageLoading;
     
-    if ([NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy]) {
+    if (SharedPrefs.imageProxy) {
         
         if (fabs(quality) <= 0) {
             

@@ -94,7 +94,7 @@ NSString *const kBasicCell = @"cell.theme";
         cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
         cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
         
-        YetiThemeType theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+        YetiThemeType theme = SharedPrefs.theme;
         
         cell.textLabel.text = indexPath.row == 0 ? @"Light" : (indexPath.row == 1 ? @"Dark" : @"Black");
         
@@ -119,7 +119,7 @@ NSString *const kBasicCell = @"cell.theme";
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         // get selection for current theme or default value
-        YetiThemeType themeType = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+        YetiThemeType themeType = SharedPrefs.theme;
         NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
         NSInteger colorIndex = [NSUserDefaults.standardUserDefaults integerForKey:defaultsKey] ?: [theme tintColorIndex].integerValue;
         
@@ -217,7 +217,7 @@ NSString *const kBasicCell = @"cell.theme";
         
         NSString *val = indexPath.row == 0 ? LightTheme : (indexPath.row == 1 ? DarkTheme : BlackTheme);
         
-        [defaults setValue:val forKey:kDefaultsTheme];
+        [SharedPrefs setValue:val forKey:propSel(theme)];
         
         NSString *themeName = nil;
         if ([val isEqualToString:LightTheme]) {
@@ -290,7 +290,7 @@ NSString *const kBasicCell = @"cell.theme";
         NSArray <UIColor *> *colours = [YetiThemeKit colours];
         
         NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-        YetiThemeType themeType = [defaults valueForKey:kDefaultsTheme];
+        YetiThemeType themeType = SharedPrefs.theme;
         NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
         
         UIButton *selectedButton = [object valueForKeyPath:keyPath];

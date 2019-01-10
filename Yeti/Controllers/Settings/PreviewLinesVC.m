@@ -23,7 +23,7 @@
     [super viewDidLoad];
     
     self.title = @"Preview";
-    self.selected = [[NSUserDefaults standardUserDefaults] integerForKey:kPreviewLines];
+    self.selected = SharedPrefs.previewLines;
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:reuseIdentifer];
     
@@ -85,9 +85,7 @@
     
     self.selected = indexPath.row;
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setInteger:self.selected forKey:kPreviewLines];
-    [defaults synchronize];
+    [SharedPrefs setValue:@(self.selected) forKey:propSel(previewLines)];
     
 }
 

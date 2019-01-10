@@ -150,7 +150,7 @@
 
 - (void)didTapAllRead:(id)sender {
     
-    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
         NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
@@ -199,7 +199,7 @@
 //        return;
 //    }
     
-    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
         [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -418,9 +418,7 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    [defaults setValue:option forKey:kDetailFeedSorting];
-    [defaults synchronize];
+    [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
     self->_canLoadNext = YES;
     self.loadingNext = NO;

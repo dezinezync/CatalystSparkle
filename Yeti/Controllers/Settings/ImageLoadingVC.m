@@ -28,10 +28,8 @@ NSString *const kXSwitchCell = @"cell.switch";
     
     self.title = @"Image Loading";
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    NSString *val1 = [defaults stringForKey:kDefaultsImageLoading];
-    NSString *val2 = [defaults stringForKey:kDefaultsImageBandwidth];
+    NSString *val1 = SharedPrefs.imageLoading;
+    NSString *val2 = SharedPrefs.imageBandwidth;
     
     if ([val1 isEqualToString:ImageLoadingMediumRes])
         self.selected = 1;
@@ -146,7 +144,7 @@ NSString *const kXSwitchCell = @"cell.switch";
             switch (indexPath.section) {
                 case 2:
                 {
-                    pref = [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages];
+                    pref = SharedPrefs.articleCoverImages;
                     [aSwitch addTarget:self action:@selector(didChangeCoverImagesPreference:) forControlEvents:UIControlEventValueChanged];
                     
                     cell.textLabel.text = @"Show cover images";
@@ -155,7 +153,7 @@ NSString *const kXSwitchCell = @"cell.switch";
                     
                 default:
                 {
-                    pref = [NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy];
+                    pref = SharedPrefs.imageProxy;
                     [aSwitch addTarget:self action:@selector(didChangeImageProxyPreference:) forControlEvents:UIControlEventValueChanged];
                     
                     cell.textLabel.text = @"Image Proxy";
@@ -190,10 +188,7 @@ NSString *const kXSwitchCell = @"cell.switch";
 
 - (void)didChangeCoverImagesPreference:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    
-    [defaults setBool:sender.isOn forKey:kShowArticleCoverImages];
-    [defaults synchronize];
+    [SharedPrefs setValue:@(sender.isOn) forKey:kShowArticleCoverImages];
     
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
         
@@ -216,29 +211,25 @@ NSString *const kXSwitchCell = @"cell.switch";
     
     [self.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     if (indexPath.section == 0) {
         if (self.selected == 0)
-            [defaults setValue:ImageLoadingLowRes forKey:kDefaultsImageLoading];
+            [SharedPrefs setValue:ImageLoadingLowRes forKey:propSel(imageLoading)];
         else if (self.selected == 1)
-            [defaults setValue:ImageLoadingMediumRes forKey:kDefaultsImageLoading];
+            [SharedPrefs setValue:ImageLoadingMediumRes forKey:propSel(imageBandwidth)];
         else
-            [defaults setValue:ImageLoadingHighRes forKey:kDefaultsImageLoading];
+            [SharedPrefs setValue:ImageLoadingHighRes forKey:propSel(imageLoading)];
         
         [[SharedImageLoader cache] removeAllObjects];
         [[SharedImageLoader cache] removeAllObjectsFromDisk];
     }
     else {
         if (self.bandwidth == 0)
-            [defaults setValue:ImageLoadingNever forKey:kDefaultsImageBandwidth];
+            [SharedPrefs setValue:ImageLoadingNever forKey:propSel(imageBandwidth)];
         else if (self.bandwidth == 1)
-            [defaults setValue:ImageLoadingOnlyWireless forKey:kDefaultsImageBandwidth];
+            [SharedPrefs setValue:ImageLoadingOnlyWireless forKey:propSel(imageBandwidth)];
         else
-            [defaults setValue:ImageLoadingAlways forKey:kDefaultsImageBandwidth];
+            [SharedPrefs setValue:ImageLoadingAlways forKey:propSel(imageBandwidth)];
     }
-    
-    [defaults synchronize];
     
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
         
@@ -249,9 +240,7 @@ NSString *const kXSwitchCell = @"cell.switch";
 
 - (void)didChangeImageProxyPreference:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kUseImageProxy];
-    [defaults synchronize];
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(imageProxy)];
     
 }
 

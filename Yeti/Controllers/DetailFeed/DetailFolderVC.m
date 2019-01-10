@@ -89,7 +89,7 @@
     
     NSInteger page = self.page + 1;
     
-    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    YetiSortOption sorting = SharedPrefs.sortingOption;
     
     [MyFeedsManager folderFeedFor:self.folder sorting:sorting page:page success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

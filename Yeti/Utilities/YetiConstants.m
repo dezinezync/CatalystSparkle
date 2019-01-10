@@ -115,6 +115,7 @@ NSString * const kShowMarkReadPrompt = @"com.dezinezync.elytra.showMarkReadPromp
 NSString * const kHideBookmarksTab = @"com.dezinezync.elytra.hideBookmarksTab";
 NSNotificationName const ShowBookmarksTabPreferenceChanged = @"com.dezinezync.elytra.note.showBookmarksTab";
 NSString * const kOpenUnreadOnLaunch = @"com.dezinezync.elytra.openUnreadOnLaunch";
+NSString * const kShowTags = @"com.dezinezync.elytra.showTags";
 
 NSString * const IAPOneMonth     = @"com.dezinezync.elytra.non.1m";
 NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";

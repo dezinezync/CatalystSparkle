@@ -182,7 +182,7 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         self.authorLabel.textAlignment = NSTextAlignmentRight;
     }
     
-    BOOL coverImagePref = [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages];
+    BOOL coverImagePref = SharedPrefs.articleCoverImages;
     BOOL showImage = coverImagePref == YES ? [self showImage] : NO;
     
     if (coverImagePref == NO || item.coverImage == nil || showImage == NO) {
@@ -224,10 +224,10 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
 }
 
 - (BOOL)showImage {
-    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
         return NO;
     
-    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+    else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
         return CheckWiFi();
     }
     

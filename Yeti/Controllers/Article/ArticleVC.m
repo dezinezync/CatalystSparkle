@@ -1005,10 +1005,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (BOOL)showImage {
-    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
         return NO;
     
-    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+    else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
         return CheckWiFi();
     }
     

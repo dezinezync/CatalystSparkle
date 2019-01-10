@@ -31,7 +31,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     self.title = @"Miscellaneous";
     
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview"];
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Show Tags", @"Preview"];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
@@ -79,6 +79,14 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     
+    if (section == 1) {
+        return @"Set whether you want to see the number of unread articles in each section.";
+    }
+    
+    if (section == 2) {
+        return @"Set whether the app should prompt you when marking articles as read.";
+    }
+    
     if (section == 3) {
         return @"You can optionally hide the Bookmarks Tab from the Feeds Interface.";
     }
@@ -88,6 +96,10 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     }
     
     else if (section == 5) {
+        return @"Set whether you want to see or hide tags from the list of Articles.";
+    }
+    
+    else if (section == 6) {
         return @"Number of summary lines to show when viewing list of Articles.";
     }
     
@@ -157,45 +169,50 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     UISwitch *sw = [[UISwitch alloc] init];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     NSString *sectionName = [self.sections objectAtIndex:indexPath.section];
     
     if ([sectionName isEqualToString:@"Mark Read Prompt"]) {
         cell.textLabel.text = sectionName;
         
-        [sw setOn:[defaults boolForKey:kShowMarkReadPrompt]];
+        [sw setOn:SharedPrefs.showMarkReadPrompts];
         [sw addTarget:self action:@selector(didChangeMarkReadPromptPreference:) forControlEvents:UIControlEventValueChanged];
     }
     else if ([sectionName isEqualToString:@"Unread Counters"]) {
         cell.textLabel.text = sectionName;
         
-        [sw setOn:[defaults boolForKey:kShowUnreadCounts]];
+        [sw setOn:SharedPrefs.showUnreadCounts];
         [sw addTarget:self action:@selector(didChangeUnreadCountsPreference:) forControlEvents:UIControlEventValueChanged];
     }
     else  if ([sectionName isEqualToString:@"Hide Bookmarks"]) {
         cell.textLabel.text = sectionName;
         
-        [sw setOn:[defaults boolForKey:kHideBookmarksTab]];
+        [sw setOn:SharedPrefs.hideBookmarks];
         [sw addTarget:self action:@selector(didChangeBookmarksPref:) forControlEvents:UIControlEventValueChanged];
     }
     else  if ([sectionName isEqualToString:@"Open Unread"]) {
         cell.textLabel.text = sectionName;
         
-        [sw setOn:[defaults boolForKey:kOpenUnreadOnLaunch]];
+        [sw setOn:SharedPrefs.openUnread];
         [sw addTarget:self action:@selector(didChangeUnreadPref:) forControlEvents:UIControlEventValueChanged];
+    }
+    else if ([sectionName isEqualToString:@"Show Tags"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:SharedPrefs.showTags];
+        [sw addTarget:self action:@selector(didChangeTagsPref:) forControlEvents:UIControlEventValueChanged];
     }
     
     if ([sectionName isEqualToString:@"Preview"]) {
         cell.textLabel.text = sectionName;
         
         cell.detailTextLabel.text = [self previewLinesText];
-        
+        cell.accessoryView = nil;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     else {
         cell.accessoryView = sw;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.detailTextLabel.text = nil;
     }
     
     return cell;
@@ -205,7 +222,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 #pragma mark -
 
 - (NSString *)previewLinesText {
-    NSInteger lines = [[NSUserDefaults standardUserDefaults] integerForKey:kPreviewLines];
+    NSInteger lines = SharedPrefs.previewLines;
     
     NSString *text = nil;
     
@@ -233,7 +250,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     }
     
     // preview lines
-    if (indexPath.section == 5) {
+    if (indexPath.section == 6) {
         
         _showingPreview = YES;
         
@@ -296,43 +313,32 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 - (void)didChangeUnreadCountsPreference:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kShowUnreadCounts];
-    [defaults synchronize];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
-    });
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showUnreadCounts)];
     
 }
 
 - (void)didChangeMarkReadPromptPreference:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kShowMarkReadPrompt];
-    [defaults synchronize];
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showMarkReadPrompts)];
     
 }
 
 - (void)didChangeBookmarksPref:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kHideBookmarksTab];
-    [defaults synchronize];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [NSNotificationCenter.defaultCenter postNotificationName:ShowBookmarksTabPreferenceChanged object:nil];
-    });
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(hideBookmarks)];
     
 }
 
 - (void)didChangeUnreadPref:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kOpenUnreadOnLaunch];
-    [defaults synchronize];
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(openUnread)];
     
 }
 
+- (void)didChangeTagsPref:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showTags)];
+    
+}
 
 @end

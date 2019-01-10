@@ -99,7 +99,7 @@
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     
-    NSString *theme = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsTheme];
+    NSString *theme = SharedPrefs.theme;
     
     return [theme isEqualToString:LightTheme] ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
     
@@ -188,9 +188,7 @@
         
         if (themeName != nil) {
             
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setValue:themeName forKey:kDefaultsTheme];
-            [defaults synchronize];
+            [SharedPrefs setValue:themeName forKey:propSel(theme)];
             
             UIGraphicsBeginImageContext(self.view.bounds.size);
             

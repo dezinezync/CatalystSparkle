@@ -387,7 +387,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     FeedsCell *ocell = nil;
     
-    BOOL showUnreadCounter = [[NSUserDefaults standardUserDefaults] boolForKey:kShowUnreadCounts];
+    BOOL showUnreadCounter = SharedPrefs.showUnreadCounts;
     
     if (indexPath.section == 0) {
         FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];

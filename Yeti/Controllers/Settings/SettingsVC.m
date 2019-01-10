@@ -115,9 +115,9 @@ NSString* deviceName() {
 }
 
 - (void)didChangeBackgroundRefreshPreference:(UISwitch *)sw {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sw.isOn forKey:kDefaultsBackgroundRefresh];
-    [defaults synchronize];
+    
+    [SharedPrefs setValue:@(sw.isOn) forKey:propSel(backgroundRefresh)];
+    
 }
 
 #pragma mark - Table view data source
@@ -206,7 +206,7 @@ NSString* deviceName() {
             switch (indexPath.row) {
                 case 0: {
                     cell.textLabel.text = @"Appearance";
-                    cell.detailTextLabel.text = [[defaults valueForKey:kDefaultsTheme] capitalizedString];
+                    cell.detailTextLabel.text = [SharedPrefs.theme capitalizedString];
                 }
                     break;
                 case 1:
@@ -214,7 +214,7 @@ NSString* deviceName() {
                     cell.textLabel.text = @"Background Fetch";
                     
                     UISwitch *sw = [[UISwitch alloc] init];
-                    [sw setOn:[defaults boolForKey:kDefaultsBackgroundRefresh]];
+                    [sw setOn:SharedPrefs.backgroundRefresh];
                     [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
                     
                     cell.accessoryView = sw;
@@ -223,7 +223,7 @@ NSString* deviceName() {
                     break;
                 case 2: {
                     cell.textLabel.text = @"Image Loading";
-                    cell.detailTextLabel.text = [defaults valueForKey:kDefaultsImageLoading];
+                    cell.detailTextLabel.text = SharedPrefs.imageLoading;
                 }
                     break;
                 case 3:

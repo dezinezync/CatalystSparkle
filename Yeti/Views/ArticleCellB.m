@@ -251,10 +251,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 #pragma mark - Config
 
 - (BOOL)showImage {
-    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
         return NO;
     
-    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+    else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
         return CheckWiFi();
     }
     
@@ -398,8 +398,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     [self configureTitle];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSInteger previewLines = [defaults integerForKey:kPreviewLines];
+    NSInteger previewLines = SharedPrefs.previewLines;
     
     if (previewLines == 0) {
         self.summaryLabel.text = nil;
@@ -503,7 +502,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     BOOL willShowCover = NO;
     
-    if ([self showImage] && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages] == YES && item.coverImage != nil) {
+    if ([self showImage] && SharedPrefs.articleCoverImages == YES && item.coverImage != nil) {
         // user wants cover images shown
         willShowCover = YES;
         
@@ -595,7 +594,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMarginsRelativeArrangement = YES;
     }
     
-    if (feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
+    if (SharedPrefs.showTags == YES && feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
         
         if (item.keywords.count > 4) {
             item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];

@@ -281,7 +281,7 @@
     
     BOOL usedSRCSet = NO;
     
-    NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
+    NSString *sizePreference = SharedPrefs.imageLoading;
     
     if (self.srcset && [self.srcset allKeys].count > 1) {
         NSArray <NSString *> * sizes = [self.srcset allKeys];

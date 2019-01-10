@@ -92,6 +92,7 @@ YETI_EXPORT NSNotificationName const ShowUnreadCountsPreferenceChanged;
 YETI_EXPORT NSString * const kHideBookmarksTab;
 YETI_EXPORT NSNotificationName const ShowBookmarksTabPreferenceChanged;
 YETI_EXPORT NSString * const kOpenUnreadOnLaunch;
+YETI_EXPORT NSString * const kShowTags;
 
 YETI_EXPORT NSString * const kPreviewLines;
 
@@ -129,3 +130,5 @@ extern BOOL canSupportOLED (void);
 @end
 
 #endif /* YetiConstants_h */
+
+#import "PrefsManager.h"
