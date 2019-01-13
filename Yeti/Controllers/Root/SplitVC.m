@@ -174,6 +174,14 @@
             // change to light theme.
             themeName = @"light";
         }
+        else {
+            if (canSupportOLED()) {
+                themeName = @"black";
+            }
+            else {
+                themeName = @"dark";
+            }
+        }
         
         if (sender.direction == UISwipeGestureRecognizerDirectionDown && [[YTThemeKit theme] isDark] == NO) {
             
@@ -184,6 +192,9 @@
                 themeName = @"dark";
             }
             
+        }
+        else {
+            themeName = @"light";
         }
         
         if (themeName != nil) {
@@ -200,30 +211,7 @@
             // insert this image into the view
             __block UIImageView *snapshot = [[UIImageView alloc] initWithImage:viewImage];
             snapshot.frame = self.view.bounds;
-            
-            UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, viewImage.size.width, viewImage.size.height)];
-            UIBezierPath *revealPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, viewImage.size.height, viewImage.size.width, viewImage.size.height)];
-            
-            if ([themeName isEqualToString:@"light"]) {
-                path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, viewImage.size.width, viewImage.size.height)];
-                revealPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, viewImage.size.width, 0)];
-            }
-            
-            CAShapeLayer *mask = [CAShapeLayer layer];
-            mask.path = path.CGPath;
-            
-            snapshot.layer.mask = mask;
-            snapshot.clipsToBounds = YES;
-            
-            CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-            animation.fromValue = (id)[path CGPath];
-            animation.toValue = (id)[revealPath CGPath];
-            animation.duration = 0.22;
-//#if DEBUG
-//            animation.duration = 3;
-//#endif
-            animation.fillMode = kCAFillModeForwards;
-            animation.removedOnCompletion = NO;
+            snapshot.alpha = 1.f;
             
             [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
             
@@ -234,17 +222,27 @@
             [CodeParser.sharedCodeParser loadTheme:themeName];
             
             [self setNeedsStatusBarAppearanceUpdate];
-            [snapshot.layer.mask addAnimation:animation forKey:@"anim"];
             
-            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+            NSTimeInterval duration = 0.22;
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(animation.duration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//#ifdef DEBUG
+//            duration = 3;
+//#endif
+            
+            [UIView animateWithDuration:duration animations:^{
+                
+                snapshot.alpha = 0.f;
+                
+            } completion:^(BOOL finished) {
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
                 
                 [snapshot removeFromSuperview];
                 viewImage = nil;
                 snapshot = nil;
                 
-            });
+            }];
+    
         }
         
     }

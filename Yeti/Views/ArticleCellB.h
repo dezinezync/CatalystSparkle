@@ -21,8 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kiPadArticleCell;
 
-@interface ArticleCellB : UICollectionViewCell
+@interface ArticleCellB : UICollectionViewCell {
+@public
+    BOOL _isShowingTags;
+    BOOL _isShowingCover;
+}
 
+@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
 @property (weak, nonatomic) IBOutlet UIImageView *faviconView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
@@ -31,10 +36,11 @@ extern NSString *const kiPadArticleCell;
 @property (weak, nonatomic) IBOutlet UIImageView *markerView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *leadingConstraint;
 @property (weak, nonatomic) IBOutlet UIImageView *coverImage;
+@property (weak, nonatomic) IBOutlet UILabel *secondaryTimeLabel;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleWidthConstraint;
 
-- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableArray *)sizeCache;
+- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableArray * _Nullable)sizeCache;
 
 //@property (weak, nonatomic) NSMutableDictionary *sizeCache;
 @property (weak, nonatomic) FeedItem *item;

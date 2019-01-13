@@ -445,8 +445,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
     [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
 
-    CGSize size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
-    size.height = floor(size.height) + 1.f;
+    CGSize size = frame.size;
+    
+    if (_protoCell->_isShowingCover == NO && _protoCell->_isShowingTags == NO) {
+        size.height = [[_protoCell mainStackView] sizeThatFits:frame.size].height + 12.f;
+    }
+    else {
+        size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
+        size.height = floor(size.height) + 1.f;
+    }
 
     self.sizeCache[indexPath.item] = [NSValue valueWithCGSize:size];
 

@@ -140,16 +140,14 @@ NSString * modelIdentifier (void) {
     return [NSString stringWithCString:sysInfo.machine encoding:NSUTF8StringEncoding];
 }
 
+// https://gist.github.com/adamawolf/3048717
 BOOL canSupportOLED (void) {
     NSSet *const OLEDiPhones = [NSSet setWithObjects:@"iPhone10,3", @"iPhone10,6", @"iPhone11,4", @"iPhone11,2", @"iPhone11,6", nil];
     
     NSString *model = modelIdentifier();
     
-#ifdef TARGET_IS_EXTENSION
-    return [OLEDiPhones containsObject:model];
-#else
-    return [OLEDiPhones containsObject:model] || [[[[UIApplication sharedApplication] keyWindow] traitCollection] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-#endif
+    return [OLEDiPhones containsObject:model] || [model hasPrefix:@"iPad8,"];
+    
 }
 
 @implementation SortImageProvider

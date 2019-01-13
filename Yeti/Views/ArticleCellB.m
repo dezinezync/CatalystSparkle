@@ -33,7 +33,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 
 @interface ArticleCellB ()
 
-@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
 @property (nonatomic, readonly) CGSize estimatedSize;
 @property (weak, nonatomic) IBOutlet UIStackView *contentStackView;
 
@@ -389,7 +388,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-- (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(nonnull NSMutableArray *)sizeCache {
+- (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(NSMutableArray *)sizeCache {
     
 //    self.sizeCache = sizeCache;
     self.item = item;
@@ -402,8 +401,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     if (previewLines == 0) {
         self.summaryLabel.text = nil;
+        self.summaryLabel.hidden = YES;
     }
     else {
+        self.summaryLabel.hidden = NO;
         self.summaryLabel.numberOfLines = previewLines;
         self.summaryLabel.text = item.summary;
     }
@@ -453,9 +454,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         }
     }
     
-    self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
-    self.timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
-    
 //    Feed *feed = [MyFeedsManager feedForID:item.feedID];
     
     if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
@@ -500,11 +498,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     
-    BOOL willShowCover = NO;
+    _isShowingCover = NO;
     
     if ([self showImage] && SharedPrefs.articleCoverImages == YES && item.coverImage != nil) {
         // user wants cover images shown
-        willShowCover = YES;
+        _isShowingCover = YES;
         
         CGFloat maxWidth = self.coverImage.bounds.size.width * UIScreen.mainScreen.scale;
         
@@ -555,17 +553,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     CGFloat width = self.bounds.size.width - 20.f;
     
-    self.titleLabel.preferredMaxLayoutWidth = width - (willShowCover ? 92.f : 4.f); // 80 + 12
+    self.titleLabel.preferredMaxLayoutWidth = width - (_isShowingCover ? 92.f : 4.f); // 80 + 12
     self.titleWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
     
     self.summaryLabel.preferredMaxLayoutWidth = width;
     
-    if (willShowCover) {
+    if (_isShowingCover == YES) {
         self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 24.f;
     }
     else {
         self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 140.f;
-//        self.mainStackView.spacing = 0.f;
     }
     
     self.timeLabel.preferredMaxLayoutWidth = 80.f;
@@ -594,7 +591,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         stackView.layoutMarginsRelativeArrangement = YES;
     }
     
+    _isShowingTags = NO;
+    
     if (SharedPrefs.showTags == YES && feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
+        
+        self.tagsStack.hidden = NO;
         
         if (item.keywords.count > 4) {
             item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];
@@ -628,7 +629,29 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
         [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
         
+        _isShowingTags = YES;
+        
     }
+    else {
+        self.tagsStack.hidden = YES;
+    }
+    
+    UILabel *timeLabel = nil;
+    
+    if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
+        timeLabel = self.timeLabel;
+        
+        self.secondaryTimeLabel.hidden = YES;
+        self.timeLabel.hidden = NO;
+    }
+    else {
+        timeLabel = self.secondaryTimeLabel;
+        self.secondaryTimeLabel.hidden = NO;
+        self.timeLabel.hidden = YES;
+    }
+    
+    timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
+    timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
     
     [self setNeedsLayout];
     [self layoutIfNeeded];
