@@ -168,36 +168,34 @@
     
     if (sender.state == UIGestureRecognizerStateEnded && ((sender.direction | UISwipeGestureRecognizerDirectionUp) || (sender.direction | UISwipeGestureRecognizerDirectionDown))) {
         
+        NSString *activeTheme = SharedPrefs.theme;
+        NSInteger index = [YetiThemeKit.themeNames indexOfObject:activeTheme];
+        NSInteger lastThemeIndex = YetiThemeKit.themeNames.count - 1;
+        
         DDLogDebug(@"Direction: %@", @(sender.direction));
         
-        NSString *themeName = nil;
-        
-        if (sender.direction == UISwipeGestureRecognizerDirectionUp && [[YTThemeKit theme] isDark] == YES) {
-            // change to light theme.
-            themeName = @"light";
-        }
-        else {
-            if (canSupportOLED()) {
-                themeName = @"black";
-            }
-            else {
-                themeName = @"dark";
-            }
-        }
-        
-        if (sender.direction == UISwipeGestureRecognizerDirectionDown && [[YTThemeKit theme] isDark] == NO) {
+        if (sender.direction == UISwipeGestureRecognizerDirectionUp) {
+            // previous theme unless we are at 0, in that case the last theme
             
-            if (canSupportOLED()) {
-                themeName = @"black";
+            if (index == 0) {
+                index = lastThemeIndex;
             }
             else {
-                themeName = @"dark";
+                index--;
             }
             
         }
         else {
-            themeName = @"light";
+            // next theme, unless at the last theme, in that case first theme
+            if (index == lastThemeIndex) {
+                index = 0;
+            }
+            else {
+                index++;
+            }
         }
+        
+        NSString *themeName = [YetiThemeKit.themeNames objectAtIndex:index];
         
         if (themeName != nil) {
             

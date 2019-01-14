@@ -77,7 +77,7 @@ NSString *const kBasicCell = @"cell.theme";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     if (section == 0) {
-        return [YetiThemeKit themeNames].count - (_isPhoneX ? 0 : 1);
+        return [YetiThemeKit themeNames].count;
     }
     else if (section == 1) {
         return 1;

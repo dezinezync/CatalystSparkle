@@ -102,8 +102,7 @@
 }
 
 
-- (NSDictionary *)dictionaryRepresentation
-{
+- (NSDictionary *)dictionaryRepresentation {
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 

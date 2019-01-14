@@ -8,6 +8,7 @@
 
 #import "YetiThemeKit.h"
 #import "UIColor+Hex.h"
+#import "YetiConstants.h"
 #import <DZKit/NSString+Extras.h>
 
 YetiThemeKit * YTThemeKit;
@@ -34,8 +35,15 @@ NSArray <NSString *> * _themeNames;
     if (_themeNames == nil) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            // black should always be last
-            _themeNames = [NSArray arrayWithObjects:@"light", @"dark", @"reader", @"black", nil];
+            NSArray *themes = @[@"light", @"dark", @"reader"];
+            
+            if (canSupportOLED()) {
+                // black should always be last
+                themes = [themes arrayByAddingObject:@"black"];
+            }
+            
+            _themeNames = themes.copy;
+            themes = nil;
         });
     }
     
