@@ -1,4 +1,20 @@
 [NEW]
+- Added the Reader theme
+
+[IMPROVE]
+- Improved height calculation of new article cells when showing summaries when available.
+- Improved spacing of the timestamp on article cells in the absence of a cover image
+- The two finger swipe up or down gesture will now cycle through the available themes.
+- Improved memory management. The app on startup now consumes 5% less RAM. This also improves restoration times when waking the app from the background.
+
+[FIX]
+- The app will no longer try to open an article when receiving a push notification for a batch of articles.
+
+This build also introduces certain logic that will enable syncing of preferences across devices easily including other platforms. More on that soon.
+
+-- 200 --
+
+[NEW]
 - Mark All Read button is now split into two actions:
     1. Mark All Articles which are currently loaded as read.
     2. Mark All Articles including back dated ones as read. (Default)
