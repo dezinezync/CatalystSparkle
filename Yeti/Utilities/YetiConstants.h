@@ -54,6 +54,7 @@ YETI_EXPORT NSString * const kDefaultsTheme;
 
 YETI_EXPORT YetiThemeType const LightTheme;
 YETI_EXPORT YetiThemeType const DarkTheme;
+YETI_EXPORT YetiThemeType const ReaderTheme;
 YETI_EXPORT YetiThemeType const BlackTheme;
 
 YETI_EXPORT NSNotificationName kWillUpdateTheme;

@@ -13,6 +13,7 @@
 YetiThemeKit * YTThemeKit;
 
 NSArray <UIColor *> * _colours;
+NSArray <NSString *> * _themeNames;
 
 @interface YetiThemeKit ()
 
@@ -28,51 +29,55 @@ NSArray <UIColor *> * _colours;
     return YES;
 }
 
++ (NSArray <NSString *> *)themeNames {
+    
+    if (_themeNames == nil) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            // black should always be last
+            _themeNames = [NSArray arrayWithObjects:@"light", @"dark", @"reader", @"black", nil];
+        });
+    }
+    
+    return _themeNames;
+    
+}
+
 + (void)loadThemeKit {
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        YTThemeKit = [YetiThemeKit new];
-        NSArray <UIColor *> *colours = [YetiThemeKit colours];;
         
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *defaultsKey = [NSString stringWithFormat:@"theme-%@-color", @"light"];
+        dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+           
+            YTThemeKit = [YetiThemeKit new];
+            NSArray <UIColor *> *colours = [YetiThemeKit colours];
+            
+            [[YetiThemeKit themeNames] enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+               
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                NSString *defaultsKey = [NSString stringWithFormat:@"theme-%@-color", obj];
+                
+                NSURL *path = [[NSBundle mainBundle] URLForResource:obj withExtension:@"json"];
+                
+                __unused YetiTheme *theme = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
+                NSInteger tintIndex = [defaults integerForKey:defaultsKey] ?: NSNotFound;
+                
+                if (tintIndex != NSNotFound) {
+                    theme.tintColor = colours[tintIndex];
+                }
+                
+                if ([obj isEqualToString:@"dark"]
+                    || [obj isEqualToString:@"black"]) {
+                    
+                    theme.dark = YES;
+                    
+                }
+                
+            }];
+            
+        });
         
-        NSURL *path = [[NSBundle mainBundle] URLForResource:@"light" withExtension:@"json"];
-        
-        __unused YetiTheme *light = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
-        NSInteger tintIndex = [defaults integerForKey:defaultsKey];
-        
-        if (tintIndex != NSNotFound) {
-            light.tintColor = colours[tintIndex];
-            tintIndex = NSNotFound;
-        }
-        
-        path = [[NSBundle mainBundle] URLForResource:@"dark" withExtension:@"json"];
-        
-        YetiTheme *dark = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
-        dark.dark = YES;
-        
-        defaultsKey = [NSString stringWithFormat:@"theme-%@-color", @"dark"];
-        tintIndex = [defaults integerForKey:defaultsKey];
-        
-        if (tintIndex != NSNotFound) {
-            dark.tintColor = colours[tintIndex];
-            tintIndex = NSNotFound;
-        }
-        
-        path = [[NSBundle mainBundle] URLForResource:@"black" withExtension:@"json"];
-        
-        YetiTheme *black = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
-        black.dark = YES;
-        
-        defaultsKey = [NSString stringWithFormat:@"theme-%@-color", @"black"];
-        tintIndex = [defaults integerForKey:defaultsKey];
-        
-        if (tintIndex != NSNotFound) {
-            black.tintColor = colours[tintIndex];
-            tintIndex = NSNotFound;
-        }
     });
     
 }
@@ -84,7 +89,7 @@ NSArray <UIColor *> * _colours;
             _colours = @[
                          [UIColor colorFromHexString:@"007AFF"],
                          [UIColor colorFromHexString:@"ED4A5A"],
-                         [UIColor colorFromHexString:@"E8883A"],
+                         [UIColor colorFromHexString:@"DD6F2A"],
                          [UIColor colorFromHexString:@"F2BB4B"],
                          [UIColor colorFromHexString:@"78B856"],
                          [UIColor colorFromHexString:@"45A1E8"],

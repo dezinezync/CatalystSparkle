@@ -51,6 +51,7 @@ NSString * const kDefaultsTheme = @"theme";
 
 YetiThemeType const LightTheme = @"light";
 YetiThemeType const DarkTheme = @"dark";
+YetiThemeType const ReaderTheme = @"reader";
 YetiThemeType const BlackTheme = @"black";
 
 NSNotificationName kWillUpdateTheme = @"com.yeti.note.willUpdateTheme";

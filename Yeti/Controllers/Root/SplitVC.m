@@ -101,7 +101,9 @@
     
     NSString *theme = SharedPrefs.theme;
     
-    return [theme isEqualToString:LightTheme] ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
+    BOOL lightTheme = [theme isEqualToString:LightTheme] || [theme isEqualToString:ReaderTheme];
+    
+    return lightTheme ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
     
 }
 

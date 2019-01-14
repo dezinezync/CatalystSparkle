@@ -895,13 +895,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
-    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.title stringByAppendingString:@"\n"] : @"", author);
+    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.displayTitle stringByAppendingString:@"\n\n"] : @"", author);
     NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
     
     NSString *sublineText = formattedString(@"%@%@", firstLine, timestamp);
     
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    para.lineHeightMultiple = 1.025f;
+
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
     
@@ -911,6 +911,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
     
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
     
@@ -938,7 +939,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSRange feedTitleRange = NSMakeRange(NSNotFound, 0);
     
     if (feed) {
-        feedTitleRange = [sublineText rangeOfString:feed.title];
+        feedTitleRange = [sublineText rangeOfString:feed.displayTitle];
     }
     
     if (feedTitleRange.location != NSNotFound) {

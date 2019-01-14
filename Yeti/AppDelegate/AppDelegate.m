@@ -287,17 +287,7 @@ AppDelegate *MyAppDelegate = nil;
     
     [splitVC loadViewIfNeeded];
     
-    NSString *theme = SharedPrefs.theme;
-    NSString *themeName = nil;
-    if ([theme isEqualToString:LightTheme]) {
-        themeName = @"light";
-    }
-    else if ([theme isEqualToString:BlackTheme]) {
-        themeName = @"black";
-    }
-    else {
-        themeName = @"dark";
-    }
+    NSString *themeName = SharedPrefs.theme;
     
     YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
     [CodeParser.sharedCodeParser loadTheme:themeName];

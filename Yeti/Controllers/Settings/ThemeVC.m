@@ -77,7 +77,7 @@ NSString *const kBasicCell = @"cell.theme";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     if (section == 0) {
-        return _isPhoneX ? 3 : 2;
+        return [YetiThemeKit themeNames].count - (_isPhoneX ? 0 : 1);
     }
     else if (section == 1) {
         return 1;
@@ -96,11 +96,12 @@ NSString *const kBasicCell = @"cell.theme";
         
         YetiThemeType theme = SharedPrefs.theme;
         
-        cell.textLabel.text = indexPath.row == 0 ? @"Light" : (indexPath.row == 1 ? @"Dark" : @"Black");
+        cell.textLabel.text = [YetiThemeKit.themeNames[indexPath.row] capitalizedString];
         
         if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
             || ([theme isEqualToString:DarkTheme] && indexPath.row == 1)
-            || ([theme isEqualToString:BlackTheme] && indexPath.row == 2)) {
+            || ([theme isEqualToString:ReaderTheme] && indexPath.row == 2)
+            || ([theme isEqualToString:BlackTheme] && indexPath.row == 3)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -215,20 +216,11 @@ NSString *const kBasicCell = @"cell.theme";
     
     if (indexPath.section == 0) {
         
-        NSString *val = indexPath.row == 0 ? LightTheme : (indexPath.row == 1 ? DarkTheme : BlackTheme);
+        NSString *val = [YetiThemeKit.themeNames objectAtIndex:indexPath.row];
         
-        [SharedPrefs setValue:val forKey:propSel(theme)];
+        NSString *themeName = [val lowercaseString];
         
-        NSString *themeName = nil;
-        if ([val isEqualToString:LightTheme]) {
-            themeName = @"light";
-        }
-        else if ([val isEqualToString:BlackTheme]) {
-            themeName = @"black";
-        }
-        else {
-            themeName = @"dark";
-        }
+        [SharedPrefs setValue:themeName forKey:propSel(theme)];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];

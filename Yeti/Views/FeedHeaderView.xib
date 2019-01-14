@@ -33,16 +33,19 @@
                     <rect key="frame" x="-4" y="21" width="383" height="67"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="1000" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Koz-Bm-Ohl">
-                            <rect key="frame" x="0.0" y="0.0" width="120.5" height="11"/>
+                            <rect key="frame" x="0.0" y="0.0" width="123.5" height="11"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="Authors:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fv1-hS-Zd3">
-                                    <rect key="frame" x="0.0" y="0.0" width="61.5" height="11"/>
-                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="64.5" height="11"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
+                                    <variation key="heightClass=regular-widthClass=compact">
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                    </variation>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iC6-4d-Jf2">
-                                    <rect key="frame" x="69.5" y="0.0" width="51" height="11"/>
+                                    <rect key="frame" x="72.5" y="0.0" width="51" height="11"/>
                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                     <state key="normal" title="Button"/>
                                 </button>

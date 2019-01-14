@@ -47,7 +47,7 @@
     }
     else {
         [navBar setBarStyle:UIBarStyleDefault];
-        [navBar setBarTintColor:UIColor.whiteColor];
+        [navBar setBarTintColor:self.articleBackgroundColor];
 //        textView.keyboardAppearance = UIKeyboardAppearanceLight;
     }
     
