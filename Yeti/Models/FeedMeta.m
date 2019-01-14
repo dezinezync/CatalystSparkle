@@ -5,9 +5,9 @@
 {
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.icons forKey:@"icons"];
-    [encoder encodeObject:self.descriptionText forKey:@"descriptionText"];
-    [encoder encodeObject:self.feedlinks forKey:@"feedlinks"];
-    [encoder encodeObject:self.feeds forKey:@"feeds"];
+//    [encoder encodeObject:self.descriptionText forKey:@"descriptionText"];
+//    [encoder encodeObject:self.feedlinks forKey:@"feedlinks"];
+//    [encoder encodeObject:self.feeds forKey:@"feeds"];
     [encoder encodeObject:self.icon forKey:@"icon"];
     [encoder encodeObject:self.keywords forKey:@"keywords"];
     [encoder encodeObject:self.opengraph forKey:@"opengraph"];
@@ -19,9 +19,9 @@
 {
     if ((self = [super initWithCoder:decoder])) {
         self.icons = [decoder decodeObjectForKey:@"icons"];
-        self.descriptionText = [decoder decodeObjectForKey:@"descriptionText"];
-        self.feedlinks = [decoder decodeObjectForKey:@"feedlinks"];
-        self.feeds = [decoder decodeObjectForKey:@"feeds"];
+//        self.descriptionText = [decoder decodeObjectForKey:@"descriptionText"];
+//        self.feedlinks = [decoder decodeObjectForKey:@"feedlinks"];
+//        self.feeds = [decoder decodeObjectForKey:@"feeds"];
         self.icon = [decoder decodeObjectForKey:@"icon"];
         self.keywords = [decoder decodeObjectForKey:@"keywords"];
         self.opengraph = [decoder decodeObjectForKey:@"opengraph"];
@@ -60,20 +60,20 @@
             self.icons = value;
         }
 
-    } else if ([key isEqualToString:@"feeds"]) {
-
-        if ([value isKindOfClass:[NSArray class]])
-        {
-
-            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
-            for (id valueMember in value) {
-                NSDictionary *populatedMember = valueMember;
-                [myMembers addObject:populatedMember];
-            }
-
-            self.feeds = myMembers;
-
-        }
+//    } else if ([key isEqualToString:@"feeds"]) {
+//
+//        if ([value isKindOfClass:[NSArray class]])
+//        {
+//
+//            NSMutableArray *myMembers = [NSMutableArray arrayWithCapacity:[value count]];
+//            for (id valueMember in value) {
+//                NSDictionary *populatedMember = valueMember;
+//                [myMembers addObject:populatedMember];
+//            }
+//
+//            self.feeds = myMembers;
+//
+//        }
 
     } else if ([key isEqualToString:@"opengraph"]) {
 
@@ -111,17 +111,17 @@
         [dictionary setObject:self.icons forKey:@"icons"];
     }
 
-    if (self.descriptionText) {
-        [dictionary setObject:self.descriptionText forKey:@"descriptionText"];
-    }
+//    if (self.descriptionText) {
+//        [dictionary setObject:self.descriptionText forKey:@"descriptionText"];
+//    }
 
-    if (self.feedlinks) {
-        [dictionary setObject:self.feedlinks forKey:@"feedlinks"];
-    }
+//    if (self.feedlinks) {
+//        [dictionary setObject:self.feedlinks forKey:@"feedlinks"];
+//    }
 
-    if (self.feeds) {
-        [dictionary setObject:self.feeds forKey:@"feeds"];
-    }
+//    if (self.feeds) {
+//        [dictionary setObject:self.feeds forKey:@"feeds"];
+//    }
 
     if (self.icon) {
         [dictionary setObject:self.icon forKey:@"icon"];
