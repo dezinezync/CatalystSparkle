@@ -895,7 +895,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
-    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.displayTitle stringByAppendingString:@"\n\n"] : @"", author);
+    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.displayTitle stringByAppendingString:@"\n"] : @"", author);
     NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
     
     NSString *sublineText = formattedString(@"%@%@", firstLine, timestamp);
