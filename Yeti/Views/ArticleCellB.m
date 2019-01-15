@@ -135,6 +135,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
         stackView.axis = UILayoutConstraintAxisVertical;
         self.timeLabel.textAlignment = NSTextAlignmentLeft;
+        self.secondaryTimeLabel.textAlignment = NSTextAlignmentLeft;
         
 //        stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
@@ -148,6 +149,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
         stackView.axis = UILayoutConstraintAxisHorizontal;
         self.timeLabel.textAlignment = NSTextAlignmentRight;
+        self.secondaryTimeLabel.textAlignment = NSTextAlignmentRight;
         
 //        stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
@@ -160,10 +162,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     // if it's a micro blog post, use the normal font
     self.titleLabel.font = self.item.content && self.item.content.count ? [TypeFactory.shared bodyFont] : [TypeFactory.shared titleFont];
     
-    self.titleLabel.textColor = theme.titleColor;
-    self.timeLabel.textColor = theme.subtitleColor;
-    self.authorLabel.textColor = theme.subtitleColor;
-    self.summaryLabel.textColor = theme.captionColor;
+    self.titleLabel.textColor         = theme.titleColor;
+    self.timeLabel.textColor          = theme.subtitleColor;
+    self.secondaryTimeLabel.textColor = theme.subtitleColor;
+    self.authorLabel.textColor        = theme.subtitleColor;
+    self.summaryLabel.textColor       = theme.captionColor;
     
     self.backgroundColor = theme.cellColor;
     
@@ -192,6 +195,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     [super prepareForReuse];
     self.titleLabel.text = nil;
+    self.secondaryTimeLabel.text = nil;
     self.authorLabel.text = nil;
     self.timeLabel.text = nil;
 //    self.faviconView.image = nil;
@@ -566,11 +570,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     self.timeLabel.preferredMaxLayoutWidth = 80.f;
+    self.secondaryTimeLabel.preferredMaxLayoutWidth = 80.f;
     
 #if DEBUG_LAYOUT == 1
     self.titleLabel.backgroundColor = UIColor.greenColor;
     self.authorLabel.backgroundColor = UIColor.redColor;
     self.timeLabel.backgroundColor = UIColor.blueColor;
+    self.secondaryTimeLabel.backgroundColor = UIColor.blueColor;
     
     self.backgroundColor = [UIColor grayColor];
     self.contentView.backgroundColor = [UIColor yellowColor];

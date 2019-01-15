@@ -551,7 +551,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSInteger page = self->_page + 1;
     
-    YetiSortOption sorting = SharedPrefs.sortingOption;
+    YetiSortOption sorting = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
