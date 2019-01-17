@@ -97,6 +97,11 @@
 
 - (void)setState:(OPMLState)state {
     
+    if ([NSThread isMainThread] == NO) {
+        [self performSelectorOnMainThread:@selector(setState:) withObject:@(state) waitUntilDone:NO];
+        return;
+    }
+    
     OPMLState current = _state;
     
     _state = state;
@@ -350,11 +355,12 @@
         return;
     
     self.ioDoneButton.enabled = NO;
+    self.state = OPMLStateImport;
     
     weakify(self);
     
     NSString *url = formattedString(@"http://192.168.1.15:3000/user/opml");
-    url = @"https://api.elytra.app/user/opml";
+//    url = @"https://api.elytra.app/user/opml";
 #ifndef DEBUG
     url = @"https://api.elytra.app/user/opml";
 #endif
@@ -386,6 +392,7 @@
 
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
+            self.state = OPMLStateDefault;
             self.ioDoneButton.enabled = YES;
         });
 
