@@ -12,6 +12,9 @@
 #import "NewVCAnimator.h"
 #import "NewFeedDeckController.h"
 
+// this has been deprecated in v1.2 in favour of AddFeedVC.
+// this is still used as a superclass for creating new folders.
+
 @interface NewFeedVC : UIViewController <UIToolbarDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;

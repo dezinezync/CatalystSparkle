@@ -55,8 +55,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     
     if (!self.isUnread) {
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];
+        
         self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        
         self.navigationItem.rightBarButtonItem = nil;
+        
+        self.DS.state = DZDatasourceLoaded;
     }
     else {
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
@@ -74,6 +78,8 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         if (self.DS.data.count > 0) {
             self.page = floor([self.DS.data count]/10.f);
         }
+        
+        self.DS.state = DZDatasourceLoaded;
         
         [self loadNextPage];
         

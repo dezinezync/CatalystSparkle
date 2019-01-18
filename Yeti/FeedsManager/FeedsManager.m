@@ -423,7 +423,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSDictionary *params = @{@"URL" : url};
     if ([self userID] != nil) {
-        params = @{@"URL": url, @"userID": [self userID]};
+        params = @{@"URL": url, @"userID": [self userID]}; // test/demo user: 93
     }
 
     weakify(self);
@@ -1919,7 +1919,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

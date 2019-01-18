@@ -16,19 +16,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, AddFeedState) {
-    AddFeedStateDefault,
-    AddFeedStateLisiting,
-    AddFeedStateAdding,
-    AddFeedStateError
-};
-
 @interface AddFeedVC : UITableViewController
 
 + (NewFeedDeckController *)instanceInNavController;
 
 @property (atomic, assign) NSInteger page;
-@property (nonatomic, assign) AddFeedState state;
 
 @property (nonatomic, weak) UISearchBar *searchBar;
 

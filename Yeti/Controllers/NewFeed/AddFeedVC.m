@@ -11,6 +11,13 @@
 #import "YetiThemeKit.h"
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
+#import "DetailFeedVC.h"
+
+#import <DZKit/NSArray+Safe.h>
+#import <DZKit/AlertManager.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
+
+#import "AppDelegate+Routing.h"
 
 @interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, DZDatasource, UISearchResultsUpdating, ScrollLoading>
 
@@ -19,9 +26,13 @@
 
 @property (nonatomic, strong, readwrite) DZBasicDatasource *DS;
 
-@property (atomic, assign) NSInteger selected;
+@property (nonatomic, assign) NSInteger selected;
 @property (nonatomic, copy) NSString *query;
 @property (nonatomic, assign) BOOL loadedLast;
+
+@property (nonatomic, weak) UIBarButtonItem *cancelButton;
+
+@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
 
 @end
 
@@ -48,6 +59,8 @@
     
     self.title = @"Add Feed";
     
+    self.selected = NSNotFound;
+    
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
     
@@ -63,19 +76,18 @@
     
 }
 
-#pragma mark - State
+#pragma mark - Setters
 
-- (void)setState:(AddFeedState)state {
+- (void)setSelected:(NSInteger)selected
+{
+    _selected = selected;
     
-    if ([NSThread isMainThread] == NO) {
-        [self performSelectorOnMainThread:@selector(setState:) withObject:@(state) waitUntilDone:NO];
-        return;
+    if (_selected == NSNotFound) {
+        [self.cancelButton setTitle:@"Close"];
     }
-    
-    _state = state;
-    
-    
-    
+    else {
+        [self.cancelButton setTitle:@"Done"];
+    }
 }
 
 #pragma mark - <UITableViewDelegate>
@@ -116,7 +128,42 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-t
+    if (self.searchBar.selectedScopeButtonIndex == 0) {
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        
+        if (self.selected != NSNotFound) {
+            AddFeedCell *cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selected inSection:0]];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        
+        if (self.selected == indexPath.row) {
+            self.selected = NSNotFound;
+        }
+        else {
+            self.selected = indexPath.row;
+            AddFeedCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        
+        return;
+        
+    }
+    
+    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+    
+    if (feed) {
+        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+        vc.customFeed = NO;
+        vc.exploring = YES;
+        vc.customFeed = FeedTypeFeed;
+        
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    }
+
 }
 
 #pragma mark - Setups
@@ -131,7 +178,6 @@ t
     searchController.hidesNavigationBarDuringPresentation = NO;
     searchController.obscuresBackgroundDuringPresentation = NO;
     
-    searchController.searchBar.placeholder = @"Website or Feed URL";
     searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
     searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceDefault;
     
@@ -139,6 +185,8 @@ t
     
     self.searchBar = self.navigationItem.searchController.searchBar;
     self.searchBar.delegate = self;
+    
+    [self searchBar:searchController.searchBar selectedScopeButtonIndexDidChange:0];
 }
 
 - (void)setupDefaultViews {
@@ -155,6 +203,11 @@ t
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose:)];
+    
+    self.navigationItem.rightBarButtonItem = cancelButton;
+    self.cancelButton = self.navigationItem.rightBarButtonItem;
+    
 }
 
 - (void)setupErrorLabel {
@@ -162,6 +215,15 @@ t
 }
 
 #pragma mark - Getters
+
+- (UINotificationFeedbackGenerator *)notificationGenerator {
+    if (_notificationGenerator == nil) {
+        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        [_notificationGenerator prepare];
+    }
+    
+    return _notificationGenerator;
+}
 
 - (UIActivityIndicatorView *)loaderView {
     
@@ -201,6 +263,104 @@ t
     
 }
 
+#pragma mark - Actions
+
+- (void)didTapClose:(UIBarButtonItem *)sender {
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            [self didTapClose:sender];
+        });
+        
+        return;
+    }
+    
+    self.cancelButton.enabled = NO;
+    
+    if ([self.searchBar isFirstResponder]) {
+        [self.searchBar resignFirstResponder];
+    }
+    
+    if (self.selected != NSNotFound) {
+        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
+        
+        if (feed == nil) {
+            self.selected = NSNotFound;
+            return;
+        }
+        
+        NSString *path = feed.url;
+        
+        NSURL *URL = [NSURL URLWithString:path];
+        
+        weakify(self);
+        
+        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if ([responseObject isKindOfClass:Feed.class]) {
+                MyFeedsManager.feeds = [[MyFeedsManager feeds] arrayByAddingObject:responseObject];
+                
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [self.notificationGenerator prepare];
+                });
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.selected = NSNotFound;
+                    [self didTapClose:nil];
+                });
+                
+                return;
+            }
+            
+            DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+            
+            asyncMain(^{
+                self.cancelButton.enabled = YES;
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if (error.code == 304) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    self.selected = NSNotFound;
+                    [self didTapClose:nil];
+                    
+                });
+                return;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                [self.notificationGenerator prepare];
+            });
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.cancelButton.enabled = YES;
+            });
+            
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            
+        }];
+        
+        return;
+    }
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+}
+
 #pragma mark - <UISearchControllerDelegate>
 
 - (void)didPresentSearchController:(UISearchController *)searchController {
@@ -217,11 +377,27 @@ t
     
     self.searchBar.placeholder = @[@"Website or Feed URL", @"Website Name", @"Keywords"][selectedScope];
     
+    if (selectedScope == 0) {
+        self.searchBar.keyboardType = UIKeyboardTypeURL;
+        self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    }
+    else {
+        self.searchBar.keyboardType = UIKeyboardTypeDefault;
+        self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeWords;
+    }
+    
     [self searchBarTextDidEndEditing:self.searchBar];
     
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    
+    if (searchBar.selectedScopeButtonIndex == 0) {
+     
+        [self searchByURL:searchBar.text];
+        
+        return;
+    }
     
     if (self.networkTask != nil) {
         [self.networkTask cancel];
@@ -306,6 +482,121 @@ t
             // Do nothing
             DDLogError(@"Error loading search query: %@", error);
         }
+        
+    }];
+    
+}
+
+#pragma mark -
+
+- (void)searchByURL:(NSString *)text {
+    
+    if (text == nil || [text isBlank]) {
+        return;
+    }
+    
+    self.searchBar.userInteractionEnabled = NO;
+    self.cancelButton.enabled = NO;
+    
+    NSURL *url = [NSURL URLWithString:[text stringByStrippingWhitespace]];
+    
+    if (!url) {
+        [AlertManager showGenericAlertWithTitle:@"Incorrect URL" message:@"This is not a fully qualified URL. Please check the text you have entered."];
+        
+        return;
+    }
+    
+    NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
+    if (!components.scheme) {
+        components.scheme = @"http";
+        components.host = components.host ?: components.path;
+        components.path = nil;
+    }
+    
+    url = components.URL;
+    
+    [MyAppDelegate _showAddingFeedDialog];
+    
+    weakify(self);
+    
+    [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSInteger status = response.statusCode;
+        
+        strongify(self);
+        
+        [MyAppDelegate _dismissAddingFeedDialog];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
+        });
+        
+        if (status == 300) {
+            // multiple options
+            self.DS.data = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                
+                return [Feed instanceFromDictionary:obj];
+                
+            }];
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                [self.notificationGenerator prepare];
+            });
+            
+            return;
+        }
+        else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
+            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            
+            weakify(self);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self.notificationGenerator prepare];
+            });
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                self.selected = NSNotFound;
+                [self didTapClose:nil];
+            });
+            return;
+        }
+        
+        DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyAppDelegate _dismissAddingFeedDialog];
+        
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+            [self.notificationGenerator prepare];
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
+        });
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            NSString * title = @"Something Went Wrong";
+            
+            if ([error.localizedDescription containsString:@"already exists"]) {
+                title = @"Existing Feed";
+            }
+            
+            [AlertManager showGenericAlertWithTitle:title message:error.localizedDescription];
+        });
         
     }];
     

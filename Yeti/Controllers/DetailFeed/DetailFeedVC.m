@@ -187,6 +187,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [self dz_smoothlyDeselectCells:self.collectionView];
     
     if (self.DS.data == nil || self.DS.data.count == 0) {
+        self.DS.state = DZDatasourceLoaded;
         [self loadNextPage];
     }
     
