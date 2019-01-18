@@ -1,3 +1,8 @@
+[FIX]
+- Tags are now spaced correctly. 
+
+-- 203 --
+
 [NEW]
 - Added the Reader theme
 

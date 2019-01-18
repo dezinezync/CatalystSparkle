@@ -85,7 +85,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="heb-TO-Hty">
                                 <rect key="frame" x="0.0" y="107.5" width="309" height="14.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ACR-1G-aB6">
+                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="ACR-1G-aB6">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="14.5"/>
                                     </stackView>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJ8-ig-8Gv">

@@ -633,6 +633,12 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
             
         }];
         
+        // https://gist.github.com/morishin/639f5ff12c544eac9d7c64acbca54270
+        UIView *spacer = [[UIView alloc] init];
+        [spacer setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+        
+        [self.tagsStack addArrangedSubview:spacer];
+        
         [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
         
         _isShowingTags = YES;
