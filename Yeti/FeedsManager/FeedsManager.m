@@ -1664,6 +1664,46 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+#pragma mark - Search
+
+- (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    query = query ?: @"";
+    
+    NSDictionary *body = @{
+                           @"query": query,
+                           @"scope": @(scope),
+                           @"page": @(page)
+                           };
+    
+    NSDictionary *queryParams = @{@"userID": self.userID};
+    
+    return [self.session POST:@"/1.2/search" queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSArray <NSDictionary *> *feedObjs = [responseObject valueForKey:@"feeds"];
+        
+        NSArray <Feed *> *feeds = [feedObjs rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        if (successCB) {
+            successCB(feeds, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Setters
 
 //- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
@@ -1879,7 +1919,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

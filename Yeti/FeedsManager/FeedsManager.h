@@ -153,6 +153,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getSync:(NSString *)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#pragma mark - Search
+
+- (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark -
 
 - (void)resetAccount;

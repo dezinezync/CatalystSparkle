@@ -31,9 +31,7 @@
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
-    nav.transitioningDelegate = vc.newVCTD;
-    nav.modalPresentationStyle = UIModalPresentationCustom;
+    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
     
     return nav;
 }
@@ -45,9 +43,7 @@
     vc.feedsVC = feedsVC;
     vc.folderIndexPath = indexPath;
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
-    nav.transitioningDelegate = vc.newVCTD;
-    nav.modalPresentationStyle = UIModalPresentationCustom;
+    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
     
     return nav;
 }

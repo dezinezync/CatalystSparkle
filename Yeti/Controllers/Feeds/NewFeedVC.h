@@ -10,10 +10,9 @@
 #import "PaddedTextField.h"
 
 #import "NewVCAnimator.h"
+#import "NewFeedDeckController.h"
 
 @interface NewFeedVC : UIViewController <UIToolbarDelegate>
-
-@property (nonatomic, strong) NewVCTransitionDelegate *newVCTD;
 
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 

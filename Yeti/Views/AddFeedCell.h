@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Feed.h"
 
 extern NSString *const kAddFeedCell;
 
 @interface AddFeedCell : UITableViewCell
+
+- (void)configure:(Feed *)feed;
 
 @end

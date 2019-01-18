@@ -256,7 +256,7 @@ AppDelegate *MyAppDelegate = nil;
 #pragma mark - <DZAppDelegateProtocol>
 
 - (NSDictionary *)appDefaults {
-    return @{kDefaultsTheme: @"light",
+    return @{kDefaultsTheme: LightTheme,
              kDefaultsBackgroundRefresh: @YES,
              kDefaultsNotifications: @NO,
              kDefaultsImageLoading: ImageLoadingMediumRes,

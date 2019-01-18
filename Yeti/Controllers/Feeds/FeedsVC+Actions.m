@@ -17,6 +17,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 
+#import "AddFeedVC.h"
 #import "NewFolderVC.h"
 #import "YTNavigationController.h"
 #import "RecommendationsVC.h"
@@ -115,7 +116,7 @@
 - (void)didTapAdd:(UIBarButtonItem *)add
 {
     
-    UINavigationController *nav = [NewFeedVC instanceInNavController];
+    UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     [self presentViewController:nav animated:YES completion:nil];
     
