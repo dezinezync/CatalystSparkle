@@ -1,3 +1,15 @@
+
+[IMPROVE]
+- the new Add Feed Interface will now respect the readable width on iPads when applicable.
+
+[FIX]
+- In the new Add Feed Interface, if you had a query in the search bar (with Title or Keyword selected) and then tapped on the URL scope, the app would run a search with that as the url. This will no longer happen.
+- fixes the jerky scroll animation when showing cover images
+- fixes a rare crash when opening the Unread Feed.
+- fixes a rare crash when opening articles from the 9to5[...] feeds.
+
+-- 204 --
+
 [FIX]
 - Tags are now spaced correctly. 
 

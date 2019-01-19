@@ -33,17 +33,17 @@ PrefsManager * SharedPrefs = nil;
 }
 
 - (void)loadDefaults {
-    self.theme = [self.defaults stringForKey:kDefaultsTheme];
+    self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
     self.backgroundRefresh = [self.defaults boolForKey:kDefaultsBackgroundRefresh];
     self.notifications = [self.defaults boolForKey:kDefaultsNotifications];
-    self.imageLoading = [self.defaults stringForKey:kDefaultsImageLoading];
-    self.imageBandwidth = [self.defaults stringForKey:kDefaultsImageBandwidth];
-    self.articleFont = [self.defaults stringForKey:kDefaultsArticleFont];
+    self.imageLoading = [self.defaults stringForKey:kDefaultsImageLoading] ?: ImageLoadingAlways;
+    self.imageBandwidth = [self.defaults stringForKey:kDefaultsImageBandwidth] ?: ImageLoadingMediumRes;
+    self.articleFont = [self.defaults stringForKey:kDefaultsArticleFont] ?: ALPSystem;
     self.subscriptionType = [self.defaults stringForKey:kSubscriptionType];
     self.articleCoverImages = [self.defaults boolForKey:kShowArticleCoverImages];
     self.showUnreadCounts = [self.defaults boolForKey:kShowUnreadCounts];
     self.imageProxy = [self.defaults boolForKey:kUseImageProxy];
-    self.sortingOption = [self.defaults stringForKey:kDetailFeedSorting];
+    self.sortingOption = [self.defaults stringForKey:kDetailFeedSorting] ?: YTSortAllDesc;
     self.showMarkReadPrompts = [self.defaults boolForKey:kShowMarkReadPrompt];
     self.openUnread = [self.defaults boolForKey:kOpenUnreadOnLaunch];
     self.hideBookmarks = [self.defaults boolForKey:kHideBookmarksTab];
