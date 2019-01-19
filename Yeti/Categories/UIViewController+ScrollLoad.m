@@ -34,7 +34,12 @@
     
     DDLogDebug(@"Diff:%@\nThreshold:%@Percent:%@", @(diff), @(threshold), @(diff/threshold));
     
-    if ((diff/threshold) > 0.80f) {
+    BOOL percentage = (diff/threshold) > 0.80f;
+    CGFloat bottomOffset = (scrollView.bounds.size.height - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom)) - scrollView.contentOffset.y;
+    
+    BOOL isAtBottom = bottomOffset <= 120.f;
+    
+    if (percentage || isAtBottom) {
         id delegate = scrollView.delegate;
         
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {

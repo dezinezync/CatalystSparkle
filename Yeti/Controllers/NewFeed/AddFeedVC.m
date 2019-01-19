@@ -92,14 +92,30 @@
 
 #pragma mark - <UITableViewDelegate>
 
+- (void)setErrorLabelForDefaultState {
+    self.errorTitle = @[@"Enter URL to Begin", @"Begin Your Search", @"Begin Your Search"][self.searchBar.selectedScopeButtonIndex];
+    self.errorBody = @[@"Enter the website or feed URL to add it to your list.", @"Begin by typing the name of the website you want to search for.", @"Begin by typing a keyword. Separate multiple keywords with a space."][self.searchBar.selectedScopeButtonIndex];
+    
+    [self setupErrorLabel];
+}
+
 - (UIView *)viewForEmptyDataset {
     
     if (self.searchBar.text == nil || [self.searchBar.text isBlank]) {
-        return nil;
+        
+        [self setErrorLabelForDefaultState];
+        
+        return self.errorLabel;
     }
     
-    if (self.DS.state == DZDatasourceLoading && self.page == 0) {
+    if (self.DS.state == DZDatasourceLoading) {
+        [self.loaderView startAnimating];
         return self.loaderView;
+    }
+    else {
+        if ([self.loaderView isAnimating]) {
+            [self.loaderView stopAnimating];
+        }
     }
     
     if (self.DS.state == DZDatasourceError && self.page == 0) {
@@ -127,7 +143,12 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    cell.separatorInset = UIEdgeInsetsMake(0, tableView.readableContentGuide.layoutFrame.origin.x, 0, tableView.readableContentGuide.layoutFrame.origin.x);
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        cell.separatorInset = UIEdgeInsetsZero;
+    }
+    else {
+        cell.separatorInset = UIEdgeInsetsMake(0, tableView.readableContentGuide.layoutFrame.origin.x, 0, tableView.readableContentGuide.layoutFrame.origin.x);
+    }
     
 }
 
@@ -217,6 +238,47 @@
 }
 
 - (void)setupErrorLabel {
+    
+    NSMutableString *formatted = [[NSMutableString alloc] init];
+    if (self.errorTitle) {
+        [formatted appendString:self.errorTitle];
+        [formatted appendString:@"\n"];
+    }
+    
+    if (self.errorBody) {
+        [formatted appendString:self.errorBody];
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+    para.lineHeightMultiple = 1.4f;
+    para.alignment = self.errorLabel.textAlignment;
+    
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSParagraphStyleAttributeName: para
+                                 };
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
+    
+    if (self.errorTitle) {
+        NSRange range = [formatted rangeOfString:self.errorTitle];
+        
+        para = [para mutableCopy];
+        para.lineHeightMultiple = 1.2f;
+        
+        attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+                       NSForegroundColorAttributeName: theme.titleColor,
+                       NSParagraphStyleAttributeName: para
+                       };
+        
+        [attrs addAttributes:attributes range:range];
+    }
+    
+    self.errorLabel.attributedText = attrs;
+    self.errorLabel.preferredMaxLayoutWidth = self.tableView.readableContentGuide.layoutFrame.size.width;
+    [self.errorLabel sizeToFit];
     
 }
 
@@ -402,6 +464,10 @@
         [self searchBarTextDidEndEditing:self.searchBar];
     }
     
+    if (self.searchBar.text == nil || [self.searchBar.text isBlank]) {
+        [self setErrorLabelForDefaultState];
+    }
+    
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
@@ -439,7 +505,7 @@
     self.selected = NSNotFound;
     
     self.DS.data = @[];
-    self.DS.state = DZDatasourceLoaded;
+    self.DS.state = DZDatasourceLoading;
     
     [self loadNextPage];
 }
@@ -456,7 +522,7 @@
 
 - (void)loadNextPage {
     
-    if (self.DS.state != DZDatasourceLoaded) {
+    if (self.DS.state != DZDatasourceLoaded && self.page != 0) {
         return;
     }
     

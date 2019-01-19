@@ -33,11 +33,17 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     
     self.mainStackView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    UILayoutGuide *layoutGuide = self.readableContentGuide;
+    UILayoutGuide *layoutGuide;
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        layoutGuide = (UILayoutGuide *)self;
+    }
+    else {
+        layoutGuide = self.readableContentGuide;
+    }
+    
     [self.mainStackView.leadingAnchor constraintEqualToAnchor:layoutGuide.leadingAnchor constant:8.f].active = YES;
     [self.mainStackView.trailingAnchor constraintEqualToAnchor:layoutGuide.trailingAnchor constant:8.f].active = YES;
-    
-//    self.separatorInset = layoutGuide.inse
     
     self.faviconView.contentMode = UIViewContentModeCenter;
     self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
