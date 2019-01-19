@@ -81,7 +81,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         
         self.DS.state = DZDatasourceLoaded;
         
-        [self loadNextPage];
+//        [self loadNextPage];
         
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     }
