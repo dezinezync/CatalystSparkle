@@ -451,6 +451,7 @@
         // this prevents it from switching to the tab and then running the search
         self.searchBar.text = nil;
         self.DS.data = @[];
+        self.DS.state = DZDatasourceDefault;
         
         if ([self.searchBar isFirstResponder] == NO) {
             [self.searchBar becomeFirstResponder];
