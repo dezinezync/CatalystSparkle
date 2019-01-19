@@ -183,7 +183,7 @@
     else {
         
         // sorting button
-        YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
+        YetiSortOption option = SharedPrefs.sortingOption;
         
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -420,7 +420,7 @@
 
 - (void)didTapAllRead:(id)sender {
     
-    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
         NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
@@ -464,7 +464,7 @@
 
 - (void)didLongPressOnAllRead:(id)sender {
     
-    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
         [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -746,9 +746,7 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    [defaults setValue:option forKey:kDetailFeedSorting];
-    [defaults synchronize];
+    [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
     self->_canLoadNext = YES;
     self.loadingNext = NO;
@@ -979,7 +977,7 @@
     
     NSInteger page = self->_page + 1;
     
-    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    YetiSortOption sorting = SharedPrefs.sortingOption;
     
     [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

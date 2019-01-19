@@ -104,7 +104,7 @@
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
         
-        [self.navigationController pushViewController:vc animated:YES];
+        [self showViewController:vc sender:self];
         
         return;
     }
@@ -150,7 +150,7 @@
 
 - (void)didTapAllRead:(id)sender {
     
-    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
         NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
@@ -194,12 +194,12 @@
 
 - (void)didLongPressOnAllRead:(id)sender {
     
-    if (sender && [sender isKindOfClass:UILongPressGestureRecognizer.class]
-        && [(UILongPressGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
-        return;
-    }
+//    if (sender && [sender isKindOfClass:UILongPressGestureRecognizer.class]
+//        && [(UILongPressGestureRecognizer *)sender state] != UIGestureRecognizerStateBegan) {
+//        return;
+//    }
     
-    BOOL showPrompt = [NSUserDefaults.standardUserDefaults boolForKey:kShowMarkReadPrompt];
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
         [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -224,7 +224,7 @@
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -418,14 +418,12 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    [defaults setValue:option forKey:kDetailFeedSorting];
-    [defaults synchronize];
+    [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
     self->_canLoadNext = YES;
     self.loadingNext = NO;
     
-    self->_page = 0;
+    self.page = 0;
     [self.DS resetData];
     
     [self loadNextPage];

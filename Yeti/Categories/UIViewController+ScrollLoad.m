@@ -32,12 +32,23 @@
     CGFloat diff = contentHeight - actualPosition - scrollView.adjustedContentInset.top;
     CGFloat const threshold = scrollView.bounds.size.height - 120.f;
     
-//    DDLogDebug(@"%@ %@", @(diff), @(actualPosition));
-    if (diff <= threshold) {
-        if ([scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
-            id del = scrollView.delegate;
-            if (![del isLoadingNext] && ![del cantLoadNext])
-                [del loadNextPage];
+    DDLogDebug(@"Diff:%@\nThreshold:%@Percent:%@", @(diff), @(threshold), @(diff/threshold));
+    
+    BOOL percentage = (diff/threshold) > 0.80f;
+    CGFloat bottomOffset = (scrollView.bounds.size.height - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom)) - scrollView.contentOffset.y;
+    
+    BOOL isAtBottom = bottomOffset <= 120.f;
+    
+    if (percentage || isAtBottom) {
+        id delegate = scrollView.delegate;
+        
+        if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
+            
+            if (![delegate isLoadingNext] && ![delegate cantLoadNext]) {
+                DDLogInfo(@"Loading next page for: %@", self);
+                
+                [delegate loadNextPage];
+            }
         }
     }
 }

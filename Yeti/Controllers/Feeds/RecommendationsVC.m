@@ -257,10 +257,10 @@ static NSString * const reuseIdentifier = @"Cell";
     
     switch (indexPath.section) {
         case 1:
-            text = @"Most read";
+            text = @"Most Read";
             break;
         case 2:
-            text = @"Highest Subscribers";
+            text = @"Most Subscribers";
             break;
         default:
             text = @"Trending";
@@ -294,37 +294,30 @@ static NSString * const reuseIdentifier = @"Cell";
             break;
     }
     
-    BOOL useExtendedLayout = NO;
-    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
-    if (isPhone) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        useExtendedLayout = [defaults boolForKey:kUseExtendedFeedLayout];
-    }
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    
     
     if (feed) {
-        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        UIViewController *vcc;
+        
+        if (isPhone) {
+            DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+            vc.customFeed = NO;
+            vc.exploring = YES;
+            vc.customFeed = FeedTypeFeed;
             
-            if (isPhone) {
-                DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
-                vc.customFeed = NO;
-                vc.exploring = YES;
-                vc.customFeed = FeedTypeFeed;
-                
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                UINavigationController *nav = [DetailFeedVC instanceWithFeed:feed];
-                [(DetailFeedVC *)[nav topViewController] setCustomFeed:NO];
-                [(DetailFeedVC *)[nav topViewController] setExploring:YES];
-                [self.splitViewController showDetailViewController:nav sender:self];
-            }
-            
+            vcc = vc;
         }
         else {
-            FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-            vc.exploring = YES;
-            [self.navigationController pushViewController:vc animated:YES];
+            UINavigationController *nav = [DetailFeedVC instanceWithFeed:feed];
+            [(DetailFeedVC *)[nav topViewController] setCustomFeed:NO];
+            [(DetailFeedVC *)[nav topViewController] setExploring:YES];
+            
+            vcc = nav;
         }
+        
+        [self showDetailViewController:vcc sender:self];
     }
     else {
         [collectionView deselectItemAtIndexPath:indexPath animated:YES];

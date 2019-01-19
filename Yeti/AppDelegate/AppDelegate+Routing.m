@@ -10,6 +10,7 @@
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
 #import "YetiConstants.h"
+#import "YetiThemeKit.h"
 
 #import "FeedsVC.h"
 #import "FeedVC.h"
@@ -300,14 +301,17 @@
     // check if we already have this feed
     Feed * have = nil;
     
-    if (MyFeedsManager != nil && MyFeedsManager.feeds != nil) {
-        for (Feed *item in MyFeedsManager.feeds) {
-            if ([item.url isEqualToString:url.absoluteString]) {
-                have = item;
-                break;
-            }
+    @try {
+        if (MyFeedsManager != nil && MyFeedsManager.feeds != nil) {
+            for (Feed *item in MyFeedsManager.feeds) { @autoreleasepool {
+                if ([item.url isEqualToString:url.absoluteString]) {
+                    have = item;
+                    break;
+                }
+            } }
         }
     }
+    @catch (NSException *exc) {}
     
     if (have) {
         
@@ -607,6 +611,10 @@
     if (articleID == nil)
         return;
     
+    if (![articleID integerValue]) {
+        return;
+    }
+    
     FeedVC *feedVC = nil;
     
     UISplitViewController *splitVC;
@@ -707,6 +715,7 @@
             return;
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
+        sfvc.preferredControlTintColor = YTThemeKit.theme.tintColor;
         
         // get the top VC
         UISplitViewController *splitVC = (UISplitViewController *)[[self window] rootViewController];

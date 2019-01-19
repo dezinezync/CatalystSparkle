@@ -54,6 +54,7 @@ YETI_EXPORT NSString * const kDefaultsTheme;
 
 YETI_EXPORT YetiThemeType const LightTheme;
 YETI_EXPORT YetiThemeType const DarkTheme;
+YETI_EXPORT YetiThemeType const ReaderTheme;
 YETI_EXPORT YetiThemeType const BlackTheme;
 
 YETI_EXPORT NSNotificationName kWillUpdateTheme;
@@ -89,11 +90,18 @@ YETI_EXPORT NSString * const kUseExtendedFeedLayout;
 
 YETI_EXPORT NSString * const kShowUnreadCounts;
 YETI_EXPORT NSNotificationName const ShowUnreadCountsPreferenceChanged;
+YETI_EXPORT NSString * const kHideBookmarksTab;
+YETI_EXPORT NSNotificationName const ShowBookmarksTabPreferenceChanged;
+YETI_EXPORT NSString * const kOpenUnreadOnLaunch;
+YETI_EXPORT NSString * const kShowTags;
+
+YETI_EXPORT NSString * const kPreviewLines;
 
 typedef NS_ENUM(NSInteger, FeedType) {
     FeedTypeFeed,
     FeedTypeCustom,
-    FeedTypeFolder
+    FeedTypeFolder,
+    FeedTypeTag
 };
 
 YETI_EXPORT NSString * const kUseImageProxy;
@@ -114,6 +122,8 @@ YETI_EXPORT NSString * const kShowMarkReadPrompt;
 
 extern BOOL canSupportOLED (void);
 
+#define LOCAL_NAME_COLLECTION @"localNames"
+
 @interface SortImageProvider : NSObject
 
 + (UIImage *)imageForSortingOption:(YetiSortOption)option;
@@ -121,3 +131,5 @@ extern BOOL canSupportOLED (void);
 @end
 
 #endif /* YetiConstants_h */
+
+#import "PrefsManager.h"

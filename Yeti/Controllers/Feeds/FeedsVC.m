@@ -40,6 +40,8 @@ static void *KVO_Unread = &KVO_Unread;
 
 @interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
     BOOL _setupObservors;
+    
+    BOOL _openingOnLaunch;
 }
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
@@ -109,6 +111,16 @@ static void *KVO_Unread = &KVO_Unread;
         if (MyFeedsManager.userID) {
             [self userDidUpdate];
         }
+        
+        BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kOpenUnreadOnLaunch];
+        
+        if (pref) {
+            _openingOnLaunch = YES;
+            
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        }
     }
 }
 
@@ -166,6 +178,8 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
     [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
     [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
+    [center addObserver:self selector:@selector(updateNotification:) name:UIDatabaseConnectionDidUpdateNotification object:nil];
+    [center addObserver:self selector:@selector(hideBookmarksPreferenceChanged) name:ShowBookmarksTabPreferenceChanged object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
@@ -373,7 +387,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     FeedsCell *ocell = nil;
     
-    BOOL showUnreadCounter = [[NSUserDefaults standardUserDefaults] boolForKey:kShowUnreadCounts];
+    BOOL showUnreadCounter = SharedPrefs.showUnreadCounts;
     
     if (indexPath.section == 0) {
         FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
@@ -449,37 +463,32 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    BOOL useExtendedLayout = NO;
-    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
-    if (isPhone) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        useExtendedLayout = [defaults boolForKey:kUseExtendedFeedLayout];
-    }
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     if (indexPath.section == 0) {
         
-        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
-            vc.customFeed = FeedTypeCustom;
-            vc.unread = indexPath.row == 0;
-            
-            if (isPhone) {
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
-                
-                [self.splitViewController showDetailViewController:nav sender:self];
-            }
+        DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
+        vc.customFeed = FeedTypeCustom;
+        vc.unread = indexPath.row == 0;
+        
+        BOOL animated = YES;
+        
+        // we dont want an animated push on the navigation stack
+        // when the app is launched and the user wants this behavior
+        if (_openingOnLaunch == YES) {
+            animated = NO;
+            _openingOnLaunch = NO;
+        }
+        
+        if (isPhone) {
+            [self showDetailController:vc sender:self];
         }
         else {
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
             
-            CustomFeedVC *vc = [[CustomFeedVC alloc] initWithStyle:UITableViewStylePlain];
-            vc.unread = indexPath.row == 0;
-            
-            [self.navigationController pushViewController:vc animated:YES];
-            
+            [self showDetailController:nav sender:self];
         }
         
         return;
@@ -490,21 +499,15 @@ static void *KVO_Unread = &KVO_Unread;
     if ([feed isKindOfClass:Feed.class]) {
         UIViewController *vc;
         
-        if (useExtendedLayout || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            if (isPhone) {
-                vc = [[DetailFeedVC alloc] initWithFeed:feed];
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                vc = [DetailFeedVC instanceWithFeed:feed];
-                [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-                [self.splitViewController showDetailViewController:vc sender:self];
-            }
+        if (isPhone) {
+            vc = [[DetailFeedVC alloc] initWithFeed:feed];
         }
         else {
-            vc = [[FeedVC alloc] initWithFeed:feed];
-            [self.navigationController pushViewController:vc animated:YES];
+            vc = [DetailFeedVC instanceWithFeed:feed];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
         }
+        
+        [self showDetailController:vc sender:self];
     }
     else {
         // it's a folder
@@ -514,12 +517,12 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (isPhone) {
             vc = [[DetailFolderVC alloc] initWithFolder:folder];
-            [self.navigationController pushViewController:vc animated:YES];
         }
         else {
             vc = [DetailFolderVC instanceWithFolder:folder];
-            [self.splitViewController showDetailViewController:vc sender:self];
         }
+        
+        [self showDetailViewController:vc sender:self];
         
     }
     
@@ -543,6 +546,8 @@ NSString * const kDS2Data = @"DS2Data";
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
     DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    
+    _noPreSetup = YES;
     
     [super decodeRestorableStateWithCoder:coder];
 }
@@ -580,11 +585,11 @@ NSString * const kDS2Data = @"DS2Data";
 //    
 //}
 
-- (void)setupData:(NSArray <Feed *> *)feeds
+- (void)setupData
 {
     
     if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(setupData:) withObject:feeds waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
         return;
     }
     
@@ -657,7 +662,7 @@ NSString * const kDS2Data = @"DS2Data";
     weakify(self);
     
     if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
-        asyncMain(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
@@ -666,7 +671,7 @@ NSString * const kDS2Data = @"DS2Data";
     }
     else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
         
-        asyncMain(^{
+       dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
@@ -736,6 +741,19 @@ NSString * const kDS2Data = @"DS2Data";
     
 }
 
+- (void)hideBookmarksPreferenceChanged {
+    
+    BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
+    
+    if (pref) {
+        self.DS1.data = @[@"Unread"];
+    }
+    else {
+        self.DS1.data = @[@"Unread", @"Bookmarks"];
+    }
+    
+}
+
 - (void)didUpdateTheme {
     
     if (NSThread.isMainThread == NO) {
@@ -761,7 +779,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)updateNotification:(NSNotification *)note {
     
-    [self setupData:[note.userInfo valueForKey:@"feeds"]];
+    [self setupData];
     
 }
 

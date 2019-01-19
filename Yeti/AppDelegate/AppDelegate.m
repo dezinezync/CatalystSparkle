@@ -151,6 +151,12 @@ AppDelegate *MyAppDelegate = nil;
         
         retval = YES;
         
+        // from v1.2, this is the default.
+        if ([NSUserDefaults.standardUserDefaults boolForKey:kUseExtendedFeedLayout] == NO) {
+            [NSUserDefaults.standardUserDefaults setBool:YES forKey:kUseExtendedFeedLayout];
+            [NSUserDefaults.standardUserDefaults synchronize];
+        }
+        
     });
     
     return retval;
@@ -250,7 +256,7 @@ AppDelegate *MyAppDelegate = nil;
 #pragma mark - <DZAppDelegateProtocol>
 
 - (NSDictionary *)appDefaults {
-    return @{kDefaultsTheme: @"light",
+    return @{kDefaultsTheme: LightTheme,
              kDefaultsBackgroundRefresh: @YES,
              kDefaultsNotifications: @NO,
              kDefaultsImageLoading: ImageLoadingMediumRes,
@@ -258,11 +264,13 @@ AppDelegate *MyAppDelegate = nil;
              kDefaultsArticleFont: ALPSystem,
              kSubscriptionType: @"None",
              kShowArticleCoverImages: @NO,
-             kUseExtendedFeedLayout: @NO,
+             kUseExtendedFeedLayout: @YES, // deprecated in v1.2.0
              kShowUnreadCounts: @YES,
              kUseImageProxy: @NO,
              kDetailFeedSorting: YTSortAllDesc,
-             kShowMarkReadPrompt: @YES
+             kShowMarkReadPrompt: @YES,
+             kPreviewLines: @0,
+             kShowTags: @YES
              };
 }
 
@@ -279,17 +287,7 @@ AppDelegate *MyAppDelegate = nil;
     
     [splitVC loadViewIfNeeded];
     
-    NSString *theme = [[NSUserDefaults standardUserDefaults] valueForKey:kDefaultsTheme];
-    NSString *themeName = nil;
-    if ([theme isEqualToString:LightTheme]) {
-        themeName = @"light";
-    }
-    else if ([theme isEqualToString:BlackTheme]) {
-        themeName = @"black";
-    }
-    else {
-        themeName = @"dark";
-    }
+    NSString *themeName = SharedPrefs.theme;
     
     YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
     [CodeParser.sharedCodeParser loadTheme:themeName];

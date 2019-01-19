@@ -1,0 +1,690 @@
+//
+//  AddFeedVC.m
+//  Yeti
+//
+//  Created by Nikhil Nigade on 17/01/19.
+//  Copyright © 2019 Dezine Zync Studios. All rights reserved.
+//
+
+#import "AddFeedVC.h"
+#import "FeedsSearchResults.h"
+#import "YetiThemeKit.h"
+#import "FeedsManager.h"
+#import "AddFeedCell.h"
+#import "DetailFeedVC.h"
+
+#import <DZKit/NSArray+Safe.h>
+#import <DZKit/AlertManager.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
+
+#import "AppDelegate+Routing.h"
+
+@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, DZDatasource, UISearchResultsUpdating, ScrollLoading>
+
+@property (nonatomic, strong) UIActivityIndicatorView *loaderView;
+@property (nonatomic, strong) UILabel *errorLabel;
+
+@property (nonatomic, strong, readwrite) DZBasicDatasource *DS;
+
+@property (nonatomic, assign) NSInteger selected;
+@property (nonatomic, copy) NSString *query;
+@property (nonatomic, assign) BOOL loadedLast;
+
+@property (nonatomic, weak) UIBarButtonItem *cancelButton;
+
+@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
+
+@end
+
+@implementation AddFeedVC
+
++ (UINavigationController *)instanceInNavController {
+    
+    AddFeedVC *vc = [[AddFeedVC alloc] init];
+    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    
+    return nav;
+}
+
+- (BOOL)definesPresentationContext
+{
+    return YES;
+}
+
+#pragma mark -
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    self.title = @"Add Feed";
+    
+    self.selected = NSNotFound;
+    
+    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
+    self.DS.delegate = self;
+    
+    [self setupSearchController];
+    [self setupDefaultViews];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    // https://stackoverflow.com/a/28527114/1387258
+    [self.navigationItem.searchController setActive:YES];
+    
+}
+
+#pragma mark - Setters
+
+- (void)setSelected:(NSInteger)selected
+{
+    _selected = selected;
+    
+    if (_selected == NSNotFound) {
+        [self.cancelButton setTitle:@"Close"];
+    }
+    else {
+        [self.cancelButton setTitle:@"Done"];
+    }
+}
+
+#pragma mark - <UITableViewDelegate>
+
+- (void)setErrorLabelForDefaultState {
+    self.errorTitle = @[@"Enter URL to Begin", @"Begin Your Search", @"Begin Your Search"][self.searchBar.selectedScopeButtonIndex];
+    self.errorBody = @[@"Enter the website or feed URL to add it to your list.", @"Begin by typing the name of the website you want to search for.", @"Begin by typing a keyword. Separate multiple keywords with a space."][self.searchBar.selectedScopeButtonIndex];
+    
+    [self setupErrorLabel];
+}
+
+- (UIView *)viewForEmptyDataset {
+    
+    if (self.searchBar.text == nil || [self.searchBar.text isBlank]) {
+        
+        [self setErrorLabelForDefaultState];
+        
+        return self.errorLabel;
+    }
+    
+    if (self.DS.state == DZDatasourceLoading) {
+        [self.loaderView startAnimating];
+        return self.loaderView;
+    }
+    else {
+        if ([self.loaderView isAnimating]) {
+            [self.loaderView stopAnimating];
+        }
+    }
+    
+    if (self.DS.state == DZDatasourceError && self.page == 0) {
+        [self setupErrorLabel];
+        return self.errorLabel;
+    }
+    
+    return nil;
+    
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+    
+    AddFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:kAddFeedCell forIndexPath:indexPath];
+    
+    [cell configure:feed];
+    
+    cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    
+    return cell;
+    
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        cell.separatorInset = UIEdgeInsetsZero;
+    }
+    else {
+        cell.separatorInset = UIEdgeInsetsMake(0, tableView.readableContentGuide.layoutFrame.origin.x, 0, tableView.readableContentGuide.layoutFrame.origin.x);
+    }
+    
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (self.searchBar.selectedScopeButtonIndex == 0) {
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        
+        if (self.selected != NSNotFound) {
+            AddFeedCell *cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selected inSection:0]];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        
+        if (self.selected == indexPath.row) {
+            self.selected = NSNotFound;
+        }
+        else {
+            self.selected = indexPath.row;
+            AddFeedCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        }
+        
+        return;
+        
+    }
+    
+    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+    
+    if (feed) {
+        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+        vc.customFeed = NO;
+        vc.exploring = YES;
+        vc.customFeed = FeedTypeFeed;
+        
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else {
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    }
+
+}
+
+#pragma mark - Setups
+
+- (void)setupSearchController {
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    
+    searchController.searchResultsUpdater = self;
+    searchController.delegate = self;
+    searchController.hidesNavigationBarDuringPresentation = NO;
+    searchController.obscuresBackgroundDuringPresentation = NO;
+    
+    searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
+    searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceDefault;
+    
+    self.navigationItem.searchController = searchController;
+    
+    self.searchBar = self.navigationItem.searchController.searchBar;
+    self.searchBar.delegate = self;
+    
+    [self searchBar:searchController.searchBar selectedScopeButtonIndexDidChange:0];
+}
+
+- (void)setupDefaultViews {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.view.backgroundColor = theme.backgroundColor;
+    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
+    
+    self.tableView.tableFooterView = [UIView new];
+    
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AddFeedCell.class) bundle:nil] forCellReuseIdentifier:kAddFeedCell];
+    self.DS.addAnimation = UITableViewRowAnimationTop;
+    self.DS.deleteAnimation = UITableViewRowAnimationFade;
+    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose:)];
+    
+    self.navigationItem.rightBarButtonItem = cancelButton;
+    self.cancelButton = self.navigationItem.rightBarButtonItem;
+    
+}
+
+- (void)setupErrorLabel {
+    
+    NSMutableString *formatted = [[NSMutableString alloc] init];
+    if (self.errorTitle) {
+        [formatted appendString:self.errorTitle];
+        [formatted appendString:@"\n"];
+    }
+    
+    if (self.errorBody) {
+        [formatted appendString:self.errorBody];
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+    para.lineHeightMultiple = 1.4f;
+    para.alignment = self.errorLabel.textAlignment;
+    
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSParagraphStyleAttributeName: para
+                                 };
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
+    
+    if (self.errorTitle) {
+        NSRange range = [formatted rangeOfString:self.errorTitle];
+        
+        para = [para mutableCopy];
+        para.lineHeightMultiple = 1.2f;
+        
+        attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+                       NSForegroundColorAttributeName: theme.titleColor,
+                       NSParagraphStyleAttributeName: para
+                       };
+        
+        [attrs addAttributes:attributes range:range];
+    }
+    
+    self.errorLabel.attributedText = attrs;
+    self.errorLabel.preferredMaxLayoutWidth = self.tableView.readableContentGuide.layoutFrame.size.width;
+    [self.errorLabel sizeToFit];
+    
+}
+
+#pragma mark - Getters
+
+- (UINotificationFeedbackGenerator *)notificationGenerator {
+    if (_notificationGenerator == nil) {
+        _notificationGenerator = [[UINotificationFeedbackGenerator alloc] init];
+        [_notificationGenerator prepare];
+    }
+    
+    return _notificationGenerator;
+}
+
+- (UIActivityIndicatorView *)loaderView {
+    
+    if (_loaderView == nil) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        UIActivityIndicatorViewStyle style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+        
+        UIActivityIndicatorView *loader = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
+        [loader sizeToFit];
+        loader.translatesAutoresizingMaskIntoConstraints = NO;
+        loader.hidesWhenStopped = YES;
+        
+        _loaderView = loader;
+    }
+    
+    return _loaderView;
+    
+}
+
+- (UILabel *)errorLabel {
+    
+    if (_errorLabel == nil) {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 12.f, self.view.bounds.size.width - (24.f), 0.f)];
+        label.preferredMaxLayoutWidth = label.bounds.size.width;
+        label.textColor = theme.subtitleColor;
+        label.numberOfLines = 0;
+        label.textAlignment = NSTextAlignmentCenter;
+        label.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        _errorLabel = label;
+    }
+    
+    return _errorLabel;
+    
+}
+
+#pragma mark - Actions
+
+- (void)didTapClose:(UIBarButtonItem *)sender {
+    
+    if (![NSThread isMainThread]) {
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            [self didTapClose:sender];
+        });
+        
+        return;
+    }
+    
+    self.cancelButton.enabled = NO;
+    
+    if ([self.searchBar isFirstResponder]) {
+        [self.searchBar resignFirstResponder];
+    }
+    
+    if (self.selected != NSNotFound) {
+        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
+        
+        if (feed == nil) {
+            self.selected = NSNotFound;
+            return;
+        }
+        
+        NSString *path = feed.url;
+        
+        NSURL *URL = [NSURL URLWithString:path];
+        
+        weakify(self);
+        
+        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if ([responseObject isKindOfClass:Feed.class]) {
+                MyFeedsManager.feeds = [[MyFeedsManager feeds] arrayByAddingObject:responseObject];
+                
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [self.notificationGenerator prepare];
+                });
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.selected = NSNotFound;
+                    [self didTapClose:nil];
+                });
+                
+                return;
+            }
+            
+            DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+            
+            asyncMain(^{
+                self.cancelButton.enabled = YES;
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if (error.code == 304) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    self.selected = NSNotFound;
+                    [self didTapClose:nil];
+                    
+                });
+                return;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                [self.notificationGenerator prepare];
+            });
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.cancelButton.enabled = YES;
+            });
+            
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            
+        }];
+        
+        return;
+    }
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+}
+
+#pragma mark - <UISearchControllerDelegate>
+
+- (void)didPresentSearchController:(UISearchController *)searchController {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [searchController.searchBar becomeFirstResponder];
+    });
+    
+}
+
+#pragma mark - <UISearchBarDelegate>
+
+- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
+    
+    self.searchBar.placeholder = @[@"Website or Feed URL", @"Website Name", @"Keywords"][selectedScope];
+    
+    if (selectedScope == 0) {
+        self.searchBar.keyboardType = UIKeyboardTypeURL;
+        self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        // this prevents it from switching to the tab and then running the search
+        self.searchBar.text = nil;
+        self.DS.data = @[];
+        self.DS.state = DZDatasourceDefault;
+        
+        if ([self.searchBar isFirstResponder] == NO) {
+            [self.searchBar becomeFirstResponder];
+        }
+        
+    }
+    else {
+        self.searchBar.keyboardType = UIKeyboardTypeDefault;
+        self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        
+        [self searchBarTextDidEndEditing:self.searchBar];
+    }
+    
+    if (self.searchBar.text == nil || [self.searchBar.text isBlank]) {
+        [self setErrorLabelForDefaultState];
+    }
+    
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    
+    if (searchBar.selectedScopeButtonIndex == 0) {
+     
+        [self searchByURL:searchBar.text];
+        
+        return;
+    }
+    
+    if (self.networkTask != nil) {
+        [self.networkTask cancel];
+    }
+    
+    NSString *query = self.searchBar.text;
+    
+    if (query == nil || [query isBlank]) {
+        return;
+    }
+    
+    if (query.length < 3) {
+        return;
+    }
+    
+    if (self.searchBar.selectedScopeButtonIndex == 0) {
+        // add the feed normally
+        
+        return;
+    }
+    
+    self.page = 0;
+    self.query = query;
+    self.loadedLast = NO;
+    self.selected = NSNotFound;
+    
+    self.DS.data = @[];
+    self.DS.state = DZDatasourceLoading;
+    
+    [self loadNextPage];
+}
+
+#pragma mark - <ScrollLoading>
+
+- (BOOL)isLoadingNext {
+    return self.DS.state == DZDatasourceLoading;
+}
+
+- (BOOL)cantLoadNext {
+    return self.loadedLast || self.DS.state == DZDatasourceError;
+}
+
+- (void)loadNextPage {
+    
+    if (self.DS.state != DZDatasourceLoaded && self.page != 0) {
+        return;
+    }
+    
+    self.DS.state = DZDatasourceLoading;
+    
+    NSInteger page = self.page + 1;
+    
+    self.networkTask = [MyFeedsManager search:self.query scope:self.searchBar.selectedScopeButtonIndex page:page success:^(NSArray <Feed *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        self.DS.state = DZDatasourceLoaded;
+        
+        if (page == 1) {
+            self.DS.data = responseObject;
+        }
+        else {
+            NSArray *existing = self.DS.data;
+            NSArray *newSet = [existing arrayByAddingObjectsFromArray:responseObject];
+            
+            self.DS.data = newSet;
+        }
+        
+        self.loadedLast = responseObject.count < 20;
+        
+        self.page = page;
+        
+        DDLogDebug(@"%ld search results", responseObject.count);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        self.DS.state = DZDatasourceError;
+        
+        if (page == 1) {
+            self.errorTitle = @"Error Loading Results";
+            self.errorBody = error.localizedDescription;
+        }
+        else {
+            // Do nothing
+            DDLogError(@"Error loading search query: %@", error);
+        }
+        
+    }];
+    
+}
+
+#pragma mark -
+
+- (void)searchByURL:(NSString *)text {
+    
+    if (text == nil || [text isBlank]) {
+        return;
+    }
+    
+    self.searchBar.userInteractionEnabled = NO;
+    self.cancelButton.enabled = NO;
+    
+    NSURL *url = [NSURL URLWithString:[text stringByStrippingWhitespace]];
+    
+    if (!url) {
+        [AlertManager showGenericAlertWithTitle:@"Incorrect URL" message:@"This is not a fully qualified URL. Please check the text you have entered."];
+        
+        return;
+    }
+    
+    NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
+    if (!components.scheme) {
+        components.scheme = @"http";
+        components.host = components.host ?: components.path;
+        components.path = nil;
+    }
+    
+    url = components.URL;
+    
+    [MyAppDelegate _showAddingFeedDialog];
+    
+    weakify(self);
+    
+    [MyFeedsManager addFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSInteger status = response.statusCode;
+        
+        strongify(self);
+        
+        [MyAppDelegate _dismissAddingFeedDialog];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
+        });
+        
+        if (status == 300) {
+            // multiple options
+            self.DS.data = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                
+                return [Feed instanceFromDictionary:obj];
+                
+            }];
+            
+            weakify(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                [self.notificationGenerator prepare];
+            });
+            
+            return;
+        }
+        else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
+            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            
+            weakify(self);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                [self.notificationGenerator prepare];
+            });
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                self.selected = NSNotFound;
+                [self didTapClose:nil];
+            });
+            return;
+        }
+        
+        DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyAppDelegate _dismissAddingFeedDialog];
+        
+        weakify(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+            [self.notificationGenerator prepare];
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.searchBar.userInteractionEnabled = YES;
+            self.cancelButton.enabled = YES;
+        });
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            NSString * title = @"Something Went Wrong";
+            
+            if ([error.localizedDescription containsString:@"already exists"]) {
+                title = @"Existing Feed";
+            }
+            
+            [AlertManager showGenericAlertWithTitle:title message:error.localizedDescription];
+        });
+        
+    }];
+    
+}
+
+#pragma mark - <UISearchControllerDelegate>
+
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {}
+
+@end

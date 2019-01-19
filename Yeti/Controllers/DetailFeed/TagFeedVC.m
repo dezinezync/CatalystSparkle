@@ -1,41 +1,30 @@
 //
-//  DetailFolderVC.m
+//  TagFeedVC.m
 //  Yeti
 //
-//  Created by Nikhil Nigade on 15/10/18.
-//  Copyright © 2018 Dezine Zync Studios. All rights reserved.
+//  Created by Nikhil Nigade on 02/01/19.
+//  Copyright © 2019 Dezine Zync Studios. All rights reserved.
 //
 
-#import "DetailFolderVC.h"
+#import "TagFeedVC.h"
 #import "FeedsManager.h"
 
-@interface DetailFolderVC ()
+@interface TagFeedVC ()
 
 @end
 
-@implementation DetailFolderVC
+@implementation TagFeedVC
 
-+ (UINavigationController *)instanceWithFolder:(Folder *)folder {
-    
-    DetailFolderVC *instance = [[DetailFolderVC alloc] initWithFolder:folder];
-    
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
-    nav.restorationIdentifier = @"DetailFolderNavVC";
-    
-    return nav;
-    
-}
-
-- (instancetype)initWithFolder:(Folder *)folder {
+- (instancetype)initWithTag:(NSString *)tag {
     
     if (self = [super initWithNibName:NSStringFromClass(DetailFeedVC.class) bundle:nil]) {
-        self.folder = folder;
+        self.tag = tag;
         _canLoadNext = YES;
-        _page = 0;
+        self.page = 0;
         
-        self.customFeed = FeedTypeFolder;
+        self.customFeed = FeedTypeTag;
         
-        self.sizeCache = @{}.mutableCopy;
+        self.sizeCache = @[].mutableCopy;
         
         self.restorationIdentifier = NSStringFromClass(self.class);
         self.restorationClass = self.class;
@@ -49,12 +38,12 @@
     
     [super viewDidLoad];
     
-    self.title = self.folder.title;
+    self.title = self.tag;
     
 }
 
 - (NSString *)emptyViewSubtitle {
-    return formattedString(@"No recent articles are available in %@", self.folder.title);
+    return formattedString(@"No recent articles are available for %@", self.tag);
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
@@ -76,31 +65,30 @@
 - (void)loadNextPage
 {
     
-    if (self.loadingNext)
+    if (self.DS.state != DZDatasourceLoaded)
         return;
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.loadingNext = YES;
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
-    NSInteger page = _page + 1;
+    NSInteger page = self.page + 1;
     
-    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
-    
-    [MyFeedsManager folderFeedFor:self.folder sorting:sorting page:page success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getTagFeed:self.tag page:page success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
         if (!self)
             return;
         
-        self.loadingNext = NO;
+        NSArray *articles = responseObject[@"articles"];
+        NSArray *feeds = responseObject[@"feeds"];
         
-        self->_page = page;
+        self.page = page;
         
         if (![responseObject count]) {
             self->_canLoadNext = NO;
@@ -108,45 +96,50 @@
         }
         
         if (page == 1 || self.DS.data == nil) {
-            self.DS.data = responseObject;
+            self.DS.data = articles;
+            MyFeedsManager.temporaryFeeds = feeds;
+            
+            if (self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                [self loadNextPage];
+            }
         }
         else {
-            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:articles];
+            
+            MyFeedsManager.temporaryFeeds = [MyFeedsManager.temporaryFeeds arrayByAddingObjectsFromArray:feeds];
         }
         
-        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            [self loadNextPage];
-        }
+        self.DS.state = DZDatasourceLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
         
         strongify(self);
         
-        self.loadingNext = NO;
+        self.DS.state = DZDatasourceError;
         
         if (self.DS.data == nil || [self.DS.data count] == 0) {
             // the initial load has failed.
             self.DS.data = @[];
         }
-    
+        
     }];
 }
 
 #pragma mark - State Restoration
 
-#define kBFolderData @"FolderData"
-#define kBFolderObj @"FolderObject"
+#define kBTagData @"TagData"
+#define kBTagObj @"TagObject"
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     
-    Folder *folder = [coder decodeObjectForKey:kBFolderObj];
+    NSString *tag = [coder decodeObjectForKey:kBTagObj];
     
-    DetailFolderVC *vc;
+    TagFeedVC *vc;
     
-    if (folder != nil) {
-        vc = [[DetailFolderVC alloc] initWithFolder:folder];
-        vc.customFeed = FeedTypeFolder;
+    if (tag != nil) {
+        vc = [[TagFeedVC alloc] initWithTag:tag];
+        vc.customFeed = FeedTypeTag;
     }
     
     return vc;
@@ -155,14 +148,14 @@
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
-    [coder encodeObject:self.DS.data forKey:kBFolderData];
-    [coder encodeObject:self.folder forKey:kBFolderObj];
+    [coder encodeObject:self.DS.data forKey:kBTagData];
+    [coder encodeObject:self.tag forKey:kBTagObj];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     [super decodeRestorableStateWithCoder:coder];
     
-    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBFolderData];
+    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBTagData];
     
     if (items) {
         [self setupLayout];
@@ -171,6 +164,5 @@
     }
     
 }
-
 
 @end

@@ -17,6 +17,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 
+#import "AddFeedVC.h"
 #import "NewFolderVC.h"
 #import "YTNavigationController.h"
 #import "RecommendationsVC.h"
@@ -115,7 +116,7 @@
 - (void)didTapAdd:(UIBarButtonItem *)add
 {
     
-    UINavigationController *nav = [NewFeedVC instanceInNavController];
+    UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     [self presentViewController:nav animated:YES completion:nil];
     
@@ -143,7 +144,7 @@
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
 }
 
 - (void)didLongTapOnCell:(UITapGestureRecognizer *)sender
@@ -411,47 +412,11 @@
         
         NSString *name = [[self.alertTextField text] stringByStrippingWhitespace];
         
-        NSString *localNameKey = formattedString(@"feed-%@", self.alertFeed.feedID);
-        
-        if (self.alertFeed.localName != nil) {
-            // the user can pass a clear string to clear the local name
+        [MyDBManager renameFeed:self.alertFeed customTitle:name completion:^(BOOL success) {
             
-            if ([name length] == 0) {
-                // clear the local name
-                [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-                
-                    self.alertFeed.localName = nil;
-                    
-                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                        [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-                    
-                        [self clearAlertProperties];
-                        
-                    });
-                    
-                }];
-                
-                return;
-            }
-        }
-        
-        // setup the new name for the user
-        [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
             
-            self.alertFeed.localName = name;
-            
-            [transaction setObject:name forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-                
-                [self clearAlertProperties];
-                
-            });
+            [self clearAlertProperties];
             
         }];
         

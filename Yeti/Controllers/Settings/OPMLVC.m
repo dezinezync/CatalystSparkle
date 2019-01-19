@@ -97,6 +97,11 @@
 
 - (void)setState:(OPMLState)state {
     
+    if ([NSThread isMainThread] == NO) {
+        [self performSelectorOnMainThread:@selector(setState:) withObject:@(state) waitUntilDone:NO];
+        return;
+    }
+    
     OPMLState current = _state;
     
     _state = state;
@@ -350,6 +355,7 @@
         return;
     
     self.ioDoneButton.enabled = NO;
+    self.state = OPMLStateImport;
     
     weakify(self);
     
@@ -386,6 +392,7 @@
 
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
+            self.state = OPMLStateDefault;
             self.ioDoneButton.enabled = YES;
         });
 

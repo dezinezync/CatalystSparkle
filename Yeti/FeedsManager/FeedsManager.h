@@ -10,13 +10,14 @@
 #import <DZNetworking/DZNetworking.h>
 #import "Reachability.h"
 
-#import "DBManager.h"
+#import "DBManager+CloudCore.h"
 
 #import "Feed.h"
 #import "Folder.h"
 #import "YTUserID.h"
 #import "Subscription.h"
 #import "FeedsManagerErrors.h"
+#import "ChangeSet.h"
 
 #import "YetiConstants.h"
 
@@ -30,33 +31,35 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     NSString *_pushToken;
 }
 
-@property (nonatomic, strong, readonly) Subscription *subscription;
+@property (atomic, strong, readonly) Subscription *subscription;
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 
-@property (nonatomic, strong, readonly) YTUserID * _Nonnull userIDManager;
+@property (atomic, strong, readonly) YTUserID * _Nonnull userIDManager;
 
-@property (nonatomic) NSNumber * _Nullable userID;
+@property (atomic) NSNumber * _Nullable userID;
 
 @property (nonatomic, strong) NSString *pushToken;
 
 @property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
 
-@property (nonatomic, strong) UICKeyChainStore *keychain;
+@property (atomic, strong) UICKeyChainStore *keychain;
 
 @property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
 
 #pragma mark - Feeds
 
-@property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
+@property (atomic, strong) NSArray <Feed *> * _Nullable feeds;
+
+@property (atomic, strong) NSArray <Feed *> * _Nullable temporaryFeeds;
 
 @property (nonatomic, readonly) NSArray <Feed *> * _Nullable feedsWithoutFolders;
 
-@property (nonatomic, assign) NSInteger totalUnread;
-@property (nonatomic, strong) NSArray <FeedItem *> * _Nullable unread;
+@property (atomic, assign) NSInteger totalUnread;
+@property (atomic, strong) NSArray <FeedItem *> * _Nullable unread;
 
-@property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
+@property (atomic, strong) NSArray <Folder *> * _Nullable folders;
 
 #pragma mark - Networking
 
@@ -90,6 +93,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)renameFeed:(Feed * _Nonnull)feed title:(NSString * _Nullable)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray;
@@ -113,6 +118,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)removeFolder:(Folder *)folder success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#pragma mark - Tags
+
+- (void)getTagFeed:(NSString *)tag page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB;
 
 #pragma mark - Filters
 
@@ -140,6 +149,14 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getOPMLWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+#pragma mark - Sync
+
+- (void)getSync:(NSString *)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
+#pragma mark - Search
+
+- (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark -
 
 - (void)resetAccount;
@@ -157,8 +174,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
 
 #pragma mark - Local Data
-
-#define LOCAL_NAME_COLLECTION @"localNames"
 
 @end
 

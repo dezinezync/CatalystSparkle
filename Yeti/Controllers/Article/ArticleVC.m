@@ -626,6 +626,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         strongify(self);
         
+        // v1.2 will automatically mark the articles as read upon successfully fetching.
+        [self updateFeedAndFolder:responseObject];
+        
         [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -636,6 +639,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.state = ArticleStateError;
         
     }];
+}
+
+- (void)updateFeedAndFolder:(FeedItem *)item {
+    
+    Feed *feed = [MyFeedsManager feedForID:item.feedID];
+    
+    if (feed != nil) {
+        
+        feed.unread = @(MAX(0, feed.unread.integerValue - 1));
+        
+        if (feed.folderID != nil) {
+            Folder *folder = [MyFeedsManager folderForID:feed.folderID];
+            
+            if (folder != nil) {
+                [folder willChangeValueForKey:propSel(unreadCount)];
+                // simply tell the unreadCount property that it has been updated.
+                // KVO should handle the rest for us
+                [folder didChangeValueForKey:propSel(unreadCount)];
+            }
+        }
+        
+    }
+    
 }
 
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
@@ -800,7 +826,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
         
         if (self.item && self.item.isRead == NO) {
-            [MyFeedsManager article:self.item markAsRead:YES];
+            // since v1.2, fetching the article marks it as read.
+//            [MyFeedsManager article:self.item markAsRead:YES];
             
             if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
                 [self.providerDelegate userMarkedArticle:self.item read:YES];
@@ -868,13 +895,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
-    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.title stringByAppendingString:@"\n"] : @"", author);
+    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.displayTitle stringByAppendingString:@"\n"] : @"", author);
     NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
     
     NSString *sublineText = formattedString(@"%@%@", firstLine, timestamp);
     
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    para.lineHeightMultiple = 1.025f;
+
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
     
@@ -884,6 +911,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
     
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
     
@@ -911,7 +939,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSRange feedTitleRange = NSMakeRange(NSNotFound, 0);
     
     if (feed) {
-        feedTitleRange = [sublineText rangeOfString:feed.title];
+        feedTitleRange = [sublineText rangeOfString:feed.displayTitle];
     }
     
     if (feedTitleRange.location != NSNotFound) {
@@ -978,10 +1006,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (BOOL)showImage {
-    if ([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
         return NO;
     
-    else if([[NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageBandwidth] isEqualToString:ImageLoadingOnlyWireless]) {
+    else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
         return CheckWiFi();
     }
     
@@ -1748,6 +1776,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 // fallback
 - (void)_addYoutube:(Content *)content {
+    // this now breaks the layout which is not desirable.
+    return;
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
     youtube.URL = [NSURL URLWithString:content.url];

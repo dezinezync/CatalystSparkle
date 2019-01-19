@@ -56,9 +56,9 @@
         return copy;
     }
     
-    NSString *sizePreference = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsImageLoading];
+    NSString *sizePreference = SharedPrefs.imageLoading;
     
-    if ([NSUserDefaults.standardUserDefaults boolForKey:kUseImageProxy]) {
+    if (SharedPrefs.imageProxy) {
         
         if (fabs(quality) <= 0) {
             
@@ -81,10 +81,10 @@
         copy = formattedString(@"https://images.weserv.nl/?url=%@", copy);
         
         if (usedSRCSet == NO) {
-            copy = formattedString(@"%@?w=%@&dpr=%@&output=jpeg&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), @(quality));
+            copy = formattedString(@"%@&w=%@&dpr=%@&output=jpeg&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), @(quality));
         }
         
-        DDLogInfo(@"weserv.nl proxy URL: %@", copy);
+//        DDLogInfo(@"weserv.nl proxy URL: %@", copy);
         
     }
     

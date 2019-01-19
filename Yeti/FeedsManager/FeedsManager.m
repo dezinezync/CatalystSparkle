@@ -64,6 +64,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (self = [super init]) {
         
         [DBManager initialize];
+        [MyDBManager registerCloudCoreExtension];
         
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         
@@ -305,8 +306,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return feeds;
 }
 
-- (Feed *)feedForID:(NSNumber *)feedID
-{
+- (Feed *)feedForID:(NSNumber *)feedID {
+    
+    if (feedID == nil) {
+        return nil;
+    }
     
     Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
         if ([current.feedID isEqualToNumber:feedID])
@@ -314,10 +318,24 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return prev;
     }];
     
+    if (feed == nil && self.temporaryFeeds != nil && self.temporaryFeeds.count > 0) {
+        
+        feed = [MyFeedsManager.temporaryFeeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+            if ([current.feedID isEqualToNumber:feedID])
+                return current;
+            return prev;
+        }];
+        
+    }
+    
     return feed;
 }
 
 - (Folder *)folderForID:(NSNumber *)folderID {
+    
+    if (folderID == nil) {
+        return nil;
+    }
     
     Folder *folder = [self.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
         if ([current.folderID isEqualToNumber:folderID]) {
@@ -405,7 +423,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSDictionary *params = @{@"URL" : url};
     if ([self userID] != nil) {
-        params = @{@"URL": url, @"userID": [self userID]};
+        params = @{@"URL": url, @"userID": [self userID]}; // test/demo user: 93
     }
 
     weakify(self);
@@ -541,7 +559,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return;
     }
     
-    NSString *path = formattedString(@"/article/%@", articleID);
+    NSString *path = formattedString(@"/1.2/article/%@", articleID);
     
     NSMutableDictionary *params = @{}.mutableCopy;
     
@@ -741,6 +759,49 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
+- (void)renameFeed:(Feed *)feed title:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSDictionary *query = @{};
+    if ([self userID] != nil) {
+        query = @{@"userID": [self userID]};
+    }
+    else {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSCocoaErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey : @"No user ID is currently available."}], nil, nil);
+        }
+        
+        return;
+    }
+    
+    if (feed == nil) {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSCocoaErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey : @"No feed provided."}], nil, nil);
+        }
+        return;
+    }
+    
+    if (title == nil) {
+        title = @"";
+    }
+    
+    NSDictionary *body = @{@"feedID": feed.feedID,
+                           @"title": title
+                           };
+    
+    [self.session POST:@"/1.2/customFeed" queryParams:query parameters:body success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray
@@ -765,7 +826,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     for (Folder *folder in MyFeedsManager.folders) { @autoreleasepool {
        
-        [self updateFeedsReadCount:folder.feeds markedRead:markedRead];
+        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
         
     } }
     
@@ -1146,6 +1207,66 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+#pragma mark - Tags
+
+- (void)getTagFeed:(NSString *)tag page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (tag == nil || [[tag stringByStrippingWhitespace] isBlank]) {
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSNetServicesErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"An invalid or no tag was received."}], nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSDictionary *params = @{@"userID": [self userID],
+                             @"page": page ? @(page) : @(1),
+                             @"tag": tag
+                             };
+    
+    [self.session GET:@"/1.2/tagfeed" parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode == 304) {
+            if (successCB) {
+                successCB(nil, response, task);
+            }
+            return;
+        }
+        
+        if (successCB == nil) {
+            return;
+        }
+        
+        NSArray <NSDictionary *> *feedObjects = responseObject[@"feeds"];
+        NSArray <NSDictionary *> *articleObjects = responseObject[@"articles"];
+        
+        NSArray <FeedItem *> *articles = [articleObjects rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+        
+        NSArray <Feed *> *feeds = [feedObjects rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        successCB(@{
+                    @"feeds": feeds,
+                    @"articles": articles
+                    }, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
@@ -1470,6 +1591,107 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
+#pragma mark - Sync
+
+- (void)getSync:(NSString *)token success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (!self.userID) {
+        
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:NSNetServicesErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Try again in 2s"}], nil, nil);
+        }
+        
+        return;
+        
+    }
+    
+    NSDictionary *query = @{@"token": token,
+                            @"userID": self.userID
+                            };
+    
+    [self.session GET:@"/1.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode == 304) {
+            // nothing changed. exit early
+            return;
+        }
+        
+        // server will respond with changes and changeToken
+        NSString *changeToken = responseObject[@"changeToken"];
+        NSArray <NSDictionary *> * changes = responseObject[@"changes"];
+        
+        if (successCB) {
+            ChangeSet *changeSet = [[ChangeSet alloc] init];
+            changeSet.changeToken = changeToken;
+            
+            NSMutableArray <SyncChange *> *changeMembers = [[NSMutableArray alloc] initWithCapacity:changes.count];
+            
+            for (NSDictionary *change in changes) {
+                SyncChange *changeObj = [[SyncChange alloc] init];
+                [changeObj setValuesForKeysWithDictionary:change];
+                
+                [changeMembers addObject:changeObj];
+            }
+            
+            changeSet.changes = changeMembers.copy;
+            
+            successCB(changeSet, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
+#pragma mark - Search
+
+- (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    query = query ?: @"";
+    
+    NSDictionary *body = @{
+                           @"query": query,
+                           @"scope": @(scope),
+                           @"page": @(page)
+                           };
+    
+    NSDictionary *queryParams = @{@"userID": self.userID};
+    
+    return [self.session POST:@"/1.2/search" queryParams:queryParams parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSArray <NSDictionary *> *feedObjs = [responseObject valueForKey:@"feeds"];
+        
+        NSArray <Feed *> *feeds = [feedObjs rz_map:^id(NSDictionary *obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        if (successCB) {
+            successCB(feeds, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)

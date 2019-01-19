@@ -20,7 +20,6 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration> {
     NSOperation *_searchOperation;
-    NSInteger _page;
     BOOL _canLoadNext;
     
     NSIndexPath *_highlightedRow;
@@ -49,6 +48,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
+@property (assign) NSInteger page;
+
 - (BOOL)showsSortingButton;
 
 - (void)setupHeaderView;
@@ -59,7 +60,7 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 - (void)didChangeToArticle:(FeedItem *)item;
 
-@property (nonatomic, strong) NSMutableDictionary *sizeCache;
+@property (nonatomic, strong) NSMutableArray <NSValue *> *sizeCache;
 
 - (void)setupLayout;
 

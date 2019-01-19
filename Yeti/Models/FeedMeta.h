@@ -5,9 +5,9 @@
 }
 
 @property (nonatomic, strong) NSDictionary *icons;
-@property (nonatomic, copy) NSString *descriptionText;
-@property (nonatomic, copy) NSArray *feedlinks;
-@property (nonatomic, copy) NSArray *feeds;
+//@property (nonatomic, copy) NSString *descriptionText;
+//@property (nonatomic, copy) NSArray *feedlinks;
+//@property (nonatomic, copy) NSArray *feeds;
 @property (nonatomic, copy) NSString *icon;
 @property (nonatomic, copy) NSArray *keywords;
 @property (nonatomic, strong) MetaOpenGraph *opengraph;

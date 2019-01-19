@@ -12,20 +12,40 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol ArticleCellDelegate <NSObject>
+
+@optional
+- (void)didTapTag:(NSString *)tag;
+
+@end
+
 extern NSString *const kiPadArticleCell;
 
-@interface ArticleCellB : UICollectionViewCell
+@interface ArticleCellB : UICollectionViewCell {
+@public
+    BOOL _isShowingTags;
+    BOOL _isShowingCover;
+}
 
+@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
 @property (weak, nonatomic) IBOutlet UIImageView *faviconView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *summaryLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *markerView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *leadingConstraint;
+@property (weak, nonatomic) IBOutlet UIImageView *coverImage;
+@property (weak, nonatomic) IBOutlet UILabel *secondaryTimeLabel;
 
-- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableDictionary *)sizeCache;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleWidthConstraint;
 
-@property (weak, nonatomic) NSMutableDictionary *sizeCache;
+- (void)configure:(FeedItem * _Nonnull)item customFeed:(FeedType)isCustomFeed sizeCache:(NSMutableArray * _Nullable)sizeCache;
+
+//@property (weak, nonatomic) NSMutableDictionary *sizeCache;
 @property (weak, nonatomic) FeedItem *item;
+
+@property (weak, nonatomic) id<ArticleCellDelegate> delegate;
 
 - (void)showSeparator:(BOOL)showSeparator;
 

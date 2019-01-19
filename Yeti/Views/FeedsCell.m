@@ -17,6 +17,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 #import "TypeFactory.h"
+#import "NSString+ImageProxy.h"
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
@@ -177,6 +178,9 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     NSString *url = [feed faviconURI];
     
     if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+        
+        url = [url pathForImageProxy:NO maxWidth:24.f quality:0.f];
+        
         @try {
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -247,12 +251,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 - (void)updateFolderCount {
     
     if (![NSThread isMainThread]) {
-        weakify(self);
-        asyncMain(^{
-            strongify(self);
-            
-            [self updateFolderCount];
-        })
+        [self performSelectorOnMainThread:@selector(updateFolderCount) withObject:nil waitUntilDone:NO];
         
         return;
     }

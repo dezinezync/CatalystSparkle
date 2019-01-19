@@ -22,8 +22,20 @@
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
 #import <DZKit/UIViewController+AnimatedDeselect.h>
+#import <DZKit/DZMessagingController.h>
 
 #import "YetiThemeKit.h"
+#import "DBManager+CloudCore.h"
+
+#import <sys/utsname.h>
+
+NSString* deviceName() {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
+}
 
 @interface SettingsVC () <SettingsChanges> {
     BOOL _settingsUpdated;
@@ -94,6 +106,8 @@
     return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
 }
 
+#pragma mark -
+
 #pragma mark - Actions
 
 - (void)didTapDone {
@@ -101,9 +115,9 @@
 }
 
 - (void)didChangeBackgroundRefreshPreference:(UISwitch *)sw {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sw.isOn forKey:kDefaultsBackgroundRefresh];
-    [defaults synchronize];
+    
+    [SharedPrefs setValue:@(sw.isOn) forKey:propSel(backgroundRefresh)];
+    
 }
 
 #pragma mark - Table view data source
@@ -139,7 +153,7 @@
                 return 5;
             break;
         case 2:
-            return 3;
+            return 4;
             break;
         default:
             return 5;
@@ -192,7 +206,7 @@
             switch (indexPath.row) {
                 case 0: {
                     cell.textLabel.text = @"Appearance";
-                    cell.detailTextLabel.text = [[defaults valueForKey:kDefaultsTheme] capitalizedString];
+                    cell.detailTextLabel.text = [SharedPrefs.theme capitalizedString];
                 }
                     break;
                 case 1:
@@ -200,7 +214,7 @@
                     cell.textLabel.text = @"Background Fetch";
                     
                     UISwitch *sw = [[UISwitch alloc] init];
-                    [sw setOn:[defaults boolForKey:kDefaultsBackgroundRefresh]];
+                    [sw setOn:SharedPrefs.backgroundRefresh];
                     [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
                     
                     cell.accessoryView = sw;
@@ -209,7 +223,7 @@
                     break;
                 case 2: {
                     cell.textLabel.text = @"Image Loading";
-                    cell.detailTextLabel.text = [defaults valueForKey:kDefaultsImageLoading];
+                    cell.detailTextLabel.text = SharedPrefs.imageLoading;
                 }
                     break;
                 case 3:
@@ -246,13 +260,24 @@
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
                     break;
-                case 2:
-                    cell.textLabel.text = @"Attributions";
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    break;
-                default:
+                case 1:
+                {
                     cell.textLabel.text = @"Rate";
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    break;
+                case 2:
+                {
+                    cell.textLabel.text = @"Attributions";
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    break;
+                default:
+                {
+                    cell.textLabel.text = @"Contact";
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    
             }
             
             
@@ -356,6 +381,9 @@
                     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
                 });
             }
+            else if (indexPath.row == 3) {
+                [self showContactInterface];
+            }
             break;
     }
     
@@ -373,7 +401,10 @@
     
     // Push the view controller.
     if (vc) {
-        [self.navigationController pushViewController:vc animated:YES];
+        [self showViewController:vc sender:self];
+    }
+    else {
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
 
@@ -412,6 +443,35 @@
     _hasAnimatedFooterView = NO;
 }
 
+#pragma mark -
+
+- (void)showContactInterface {
+    
+    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
+    attachment.fileName = @"debugInfo.txt";
+    attachment.mimeType = @"text/plain";
+    
+    UIDevice *device = [UIDevice currentDevice];
+    NSString *model = deviceName();
+    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
+    NSString *deviceUUID = device.identifierForVendor.UUIDString;
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+    
+    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.userIDManager.UUIDString, appVersion, buildNumber);
+    
+    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [DZMessagingController presentEmailWithBody:@""
+                                        subject:@"Elytra Support"
+                                     recipients:@[@"support@elytra.app"]
+                                    attachments:@[attachment]
+                                 fromController:self];
+    
+}
+
 #pragma mark - Getters
 
 - (UIView *)footerView
@@ -439,11 +499,52 @@
         UILabel *_byLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 70.f - 16.f, CGRectGetWidth(self.view.bounds), 30.f)];
         _byLabel.textColor = theme.subtitleColor;
         _byLabel.textAlignment = NSTextAlignmentCenter;
-        _byLabel.text = @"A Dezine Zync Studios app.";
-        _byLabel.font = [UIFont systemFontOfSize:12.f];
+        _byLabel.numberOfLines = 0;
+        _byLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         _byLabel.transform = CGAffineTransformMakeTranslation(0, 30.f);
         _byLabel.autoresizingMask = dz.autoresizingMask;
         _byLabel.backgroundColor = theme.tableColor;
+        
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+            
+            if (token != nil) {
+                NSString *dateString = [token decodeBase64];
+                
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
+                
+                NSDate *date = [formatter dateFromString:dateString];
+                
+                formatter.dateStyle = NSDateFormatterShortStyle;
+                formatter.timeStyle = NSDateFormatterShortStyle;
+                formatter.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+                
+                NSString *formatted = [formatter stringFromDate:date];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
+                    [_byLabel sizeToFit];
+                    [_byLabel setNeedsLayout];
+                    [_byLabel layoutIfNeeded];
+                    
+                });
+            }
+            else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    _byLabel.text = @"A Dezine Zync App.";
+                    [_byLabel sizeToFit];
+                    [_byLabel setNeedsLayout];
+                    [_byLabel layoutIfNeeded];
+                    
+                });
+                
+            }
+            
+        }];
         
         [_footerView addSubview:_byLabel];
     }

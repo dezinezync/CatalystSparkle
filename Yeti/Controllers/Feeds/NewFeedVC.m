@@ -38,19 +38,12 @@
 {
     NewFeedVC *vc = [[NewFeedVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
-    nav.transitioningDelegate = vc.newVCTD;
-    nav.modalPresentationStyle = UIModalPresentationCustom;
-    nav.navigationBar.shadowImage = [UIImage new];
+    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
     
     return nav;
 }
 
 #pragma mark -
-
-- (BOOL)ef_hidesNavBorder {
-    return NO;
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -65,15 +58,17 @@
     self.selected = NSNotFound;
     self.data = @[];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.view.backgroundColor = theme.backgroundColor;
+    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.backgroundColor = theme.tableColor;
     [self.tableView registerClass:AddFeedCell.class forCellReuseIdentifier:kAddFeedCell];
     
     self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.extendedLayoutIncludesOpaqueBars = YES;
     
@@ -83,7 +78,7 @@
     self.tableView.contentInset = UIEdgeInsetsMake(48.f, 0, 0, 0);
     
     self.toolbar.delegate = self;
-    self.toolbar.barTintColor = theme.cellColor;
+    self.toolbar.barTintColor = theme.articlesBarColor;
     [self.toolbar setShadowImage:[UIImage new] forToolbarPosition:UIBarPositionTopAttached];
     
     self.input.layoutMargins = UIEdgeInsetsMake(0, 8.f, 0, 8.f);
@@ -108,7 +103,7 @@
         self.toolbar.translucent = YES;
     }
     
-    self.input.backgroundColor = theme.cellColor;
+    self.input.backgroundColor = theme.unreadBadgeColor;
     self.input.textColor = theme.titleColor;
     
     self.input.translatesAutoresizingMaskIntoConstraints = NO;
@@ -375,15 +370,6 @@
 }
 
 #pragma mark - Getters
-
-- (NewVCTransitionDelegate *)newVCTD
-{
-    if (!_newVCTD) {
-        _newVCTD = [[NewVCTransitionDelegate alloc] init];
-    }
-    
-    return _newVCTD;
-}
 
 - (UINotificationFeedbackGenerator *)notificationGenerator {
     if (_notificationGenerator == nil) {

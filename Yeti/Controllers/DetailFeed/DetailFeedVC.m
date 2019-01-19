@@ -9,11 +9,11 @@
 #import "DetailFeedVC+Actions.h"
 
 #import "ArticleCellB.h"
-#import "ArticleImageCellB.h"
 
 #import "ArticleVC.h"
 #import "DetailAuthorVC.h"
 #import "DetailFeedHeaderView.h"
+#import "TagFeedVC.h"
 
 #import "FeedsManager.h"
 
@@ -35,11 +35,12 @@
 
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
-@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration> {
+@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching, ArticleCellDelegate> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
     
     BOOL _initialSetup;
+    ArticleCellB *_protoCell;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
@@ -47,6 +48,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
 @property (nonatomic, weak) FeedHeaderView *headerView;
+
+@property (nonatomic, strong) NSMutableDictionary *prefetchedImageTasks;
 
 @end
 
@@ -70,7 +73,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         _canLoadNext = YES;
         _page = 0;
         
-        self.sizeCache = @{}.mutableCopy;
+        self.sizeCache = @[].mutableCopy;
+        self.prefetchedImageTasks = @{}.mutableCopy;
         
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
@@ -98,14 +102,17 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     self.title = [self.feed displayTitle];
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
+//    self.flowLayout.delegate = self;
     
     self.DS = [[DZBasicDatasource alloc] initWithView:self.collectionView];
     self.DS.delegate = self;
     self.DS.data = @[];
     
-    self.DS.addAnimation = UITableViewRowAnimationLeft;
+    self.DS.addAnimation = UITableViewRowAnimationNone;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
-    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    self.DS.reloadAnimation = UITableViewRowAnimationNone;
+    
+    self.collectionView.prefetchDataSource = self;
     
     [self.collectionView addObserver:self forKeyPath:propSel(frame) options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:KVO_DetailFeedFrame];
     
@@ -113,15 +120,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleCellB.class) bundle:nil] forCellWithReuseIdentifier:kiPadArticleCell];
-    [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(ArticleImageCellB.class) bundle:nil] forCellWithReuseIdentifier:kiPadArticleImageCell];
     [self.collectionView registerClass:DetailFeedHeaderView.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView];
     
     // Do any additional setup after loading the view.
     if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
         self->_shouldShowHeader = YES;
     }
-    
-    [self setupLayout];
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
@@ -183,6 +187,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [self dz_smoothlyDeselectCells:self.collectionView];
     
     if (self.DS.data == nil || self.DS.data.count == 0) {
+        self.DS.state = DZDatasourceLoaded;
         [self loadNextPage];
     }
     
@@ -203,13 +208,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-    
-        [self setupLayout];
-        
+    if (coordinator != nil) {
+        [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            
+            [self didChangeContentCategory];
+            
+        } completion:nil];
+    }
+    else {
         [self didChangeContentCategory];
-    
-    } completion:nil];
+    }
     
 }
 
@@ -347,20 +355,17 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    ArticleCellB *cell = nil;
-    
-    if (self.isExploring == NO && [NSUserDefaults.standardUserDefaults boolForKey:kShowArticleCoverImages]) {
-        cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleImageCell forIndexPath:indexPath];
-    }
-    else {
-        cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleCell forIndexPath:indexPath];
-    }
+    ArticleCellB *cell = (ArticleCellB *)[collectionView dequeueReusableCellWithReuseIdentifier:kiPadArticleCell forIndexPath:indexPath];
     
     // Configure the cell
     FeedItem *item = [self.DS objectAtIndexPath:indexPath];
     
     if (item != nil) {
-        [cell configure:item customFeed:self.isCustomFeed sizeCache:self.sizeCache];
+        [cell configure:item customFeed:self.customFeed sizeCache:self.sizeCache];
+    }
+    
+    if (cell.delegate == nil || cell.delegate != self) {
+        cell.delegate = self;
     }
     
     [cell setupAppearance];
@@ -391,7 +396,17 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-#pragma mark <UICollectionViewDelegate>
+#pragma mark - <ArticleCellDelegate>
+
+- (void)didTapTag:(NSString *)tag {
+    
+    TagFeedVC *vc = [[TagFeedVC alloc] initWithTag:tag];
+    
+    [self showViewController:vc sender:self];
+    
+}
+
+#pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
@@ -400,20 +415,118 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
     
-    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")] == NO) {
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            ArticleCellB *cell = (ArticleCellB *)[collectionView cellForItemAtIndexPath:indexPath];
-            if (cell && cell.markerView.image != nil && item.isBookmarked == NO) {
-                cell.markerView.image = nil;
-            }
-            
-        });
-        
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
+
+    NSValue *value = self.sizeCache.count < indexPath.item ? [self.sizeCache safeObjectAtIndex:indexPath.item] : nil;
+
+    if (value != nil) {
+        CGSize size = [value CGSizeValue];
+        if (size.width == self.flowLayout.estimatedItemSize.width) {
+            return size;
+        }
     }
+
+    CGRect frame = CGRectZero;
+    frame.size = self.flowLayout.estimatedItemSize;
+
+    if (_protoCell == nil) {
+        UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
+        _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
+    }
+
+    _protoCell.frame = frame;
+
+    [_protoCell awakeFromNib];
+
+    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+
+    [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
+
+    CGSize size = frame.size;
+    
+    if (_protoCell->_isShowingCover == NO && _protoCell->_isShowingTags == NO) {
+        size.height = [[_protoCell mainStackView] sizeThatFits:frame.size].height + 12.f;
+    }
+    else {
+        size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
+        size.height = floor(size.height) + 1.f;
+    }
+
+    self.sizeCache[indexPath.item] = [NSValue valueWithCGSize:size];
+
+    [_protoCell prepareForReuse];
+
+    return size;
+
+}
+
+#pragma mark - <UICollectionViewDataSourcePrefetching>
+
+- (void)collectionView:(UICollectionView *)collectionView prefetchItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    
+    for (NSIndexPath *indexPath in indexPaths) { @autoreleasepool {
+       
+        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        
+        if (item == nil) {
+            continue;
+        }
+        
+        if (item.coverImage == nil) {
+            continue;
+        }
+        
+        if (self.prefetchedImageTasks[item.coverImage] != nil) {
+            continue;
+        }
+        
+        NSURLSessionTask *task = [SharedImageLoader downloadImageForURL:item.coverImage success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+//            DDLogDebug(@"Cached image for %@", item.coverImage);
+            
+            [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
+            
+        }];
+        
+        self.prefetchedImageTasks[item.coverImage] = task;
+        
+    } }
+    
+}
+
+- (void)collectionView:(UICollectionView *)collectionView cancelPrefetchingForItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+    
+    for (NSIndexPath *indexPath in indexPaths) { @autoreleasepool {
+        
+        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        
+        if (item == nil) {
+            continue;
+        }
+        
+        if (item.coverImage == nil) {
+            continue;
+        }
+        
+        NSURLSessionDataTask *task = self.prefetchedImageTasks[item.coverImage];
+        
+        if (task == nil) {
+            continue;
+        }
+        
+        [task cancel];
+        
+        [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
+        
+    } }
     
 }
 
@@ -439,7 +552,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSInteger page = self->_page + 1;
     
-    YetiSortOption sorting = [[NSUserDefaults standardUserDefaults] valueForKey:kDetailFeedSorting];
+    YetiSortOption sorting = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -459,6 +572,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
+//            CGPoint contentOffset = self.collectionView.contentOffset;
+            
             NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
             articles = [articles arrayByAddingObjectsFromArray:responseObject];
             self.feed.articles = articles;
@@ -470,6 +585,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             @catch (NSException *exc) {
                 DDLogWarn(@"Exception updating feed articles: %@", exc);
             }
+            
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [self.collectionView setContentOffset:contentOffset animated:NO];
+//            });
         });
         
         self->_page = page;
@@ -620,9 +739,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (!article)
         return;
     
-    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == YES) {
-        return;
-    }
+//    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == YES) {
+//        return;
+//    }
     
     NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
     
@@ -661,11 +780,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
                 // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
                 if (cell != nil && article.isBookmarked == NO) {
+                    
+                    cell.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                    
                     if (read == YES) {
-                        cell.markerView.image = nil;
+                        cell.markerView.tintColor = [[YTThemeKit theme] borderColor];
                     }
                     else {
-                        cell.markerView.image = [UIImage imageNamed:@"munread"];
+                        cell.markerView.tintColor = [[YTThemeKit theme] tintColor];
                     }
                 }
             }
@@ -827,7 +949,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     
     _page = [coder decodeIntegerForKey:kBCurrentPage];
-    NSDictionary *sizesCache = [coder decodeObjectForKey:kSizCache];
+    NSArray *sizesCache = [coder decodeObjectForKey:kSizCache];
     
     if (sizesCache) {
         self.sizeCache = sizesCache.mutableCopy;
@@ -846,22 +968,15 @@ NSString * const kSizCache = @"FeedSizesCache";
     self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
-    UIButton *allReadButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [allReadButton setImage:[UIImage imageNamed:@"done_all"] forState:UIControlStateNormal];
-    [allReadButton sizeToFit];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapAllRead:)];
-    [allReadButton addGestureRecognizer:tap];
-    
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressOnAllRead:)];
-    [allReadButton addGestureRecognizer:longPress];
-    
-    [longPress requireGestureRecognizerToFail:tap];
-    
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithCustomView:allReadButton];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
-    allRead.accessibilityHint = @"Mark all current articles as read. Long Tap to Mark all backdated articles as read.";
+    allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
+    
+    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all_bd"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
+    allReadBackDated.accessibilityValue = @"Mark all articles as read";
+    allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
+    allReadBackDated.width = 32.f;
     
     if (self.isExploring) {
         // check if the user is subscribed to this feed
@@ -875,7 +990,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     else {
         // sorting button
-        YetiSortOption option = [NSUserDefaults.standardUserDefaults valueForKey:kDetailFeedSorting];
+        YetiSortOption option = SharedPrefs.sortingOption;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -904,7 +1019,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         sorting.width = 32.f;
         
         if (!(self.feed.hubSubscribed && self.feed.hub)) {
-            NSMutableArray *buttons = @[allRead].mutableCopy;
+            NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
             
             if ([self showsSortingButton]) {
                 [buttons addObject:sorting];
@@ -921,7 +1036,7 @@ NSString * const kSizCache = @"FeedSizesCache";
             notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
             notifications.width = 32.f;
             
-            NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
+            NSMutableArray *buttons = @[allReadBackDated, allRead, notifications].mutableCopy;
             
             if ([self showsSortingButton]) {
                 [buttons addObject:sorting];
@@ -952,42 +1067,46 @@ NSString * const kSizCache = @"FeedSizesCache";
 - (void)setupLayout {
     
     BOOL isCompact = [[[self.collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
-    
+
     CGFloat padding = isCompact ? 0 : [self.flowLayout minimumInteritemSpacing];
-    
+
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
-        self.flowLayout.minimumLineSpacing = 0;
-        self.flowLayout.minimumInteritemSpacing = 0;
+        self.flowLayout.minimumLineSpacing = 0.1f;
+        self.flowLayout.minimumInteritemSpacing = 0.1f;
     }
     else {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
+        self.flowLayout.minimumLineSpacing = padding;
+        self.flowLayout.minimumInteritemSpacing = padding;
     }
     
-    CGSize contentSize = self.collectionView.contentSize;
-    
+    self.collectionView.layoutMargins = UIEdgeInsetsZero;
+
+    CGSize contentSize = self.collectionView.bounds.size;
+
     if (CGSizeEqualToSize(contentSize, CGSizeZero)) {
         contentSize = [UIScreen mainScreen].bounds.size;
     }
-    
+
     CGFloat width = contentSize.width;
-    
+
     /*
      On iPads (Regular)
      |- 16 - (cell) - 16 - (cell) - 16 -|
      */
-    
+
     /*
      On iPhones (Compact)
      |- 0 - (cell) - 0 -|
      */
-    
+
     CGFloat totalPadding =  padding * 3.f;
-    
+
     CGFloat usableWidth = width - totalPadding;
-    
+
     CGFloat cellWidth = usableWidth;
-    
+
     if (usableWidth > 601.f) {
         // the remainder will be absorbed by the interimSpacing
         cellWidth = floor(usableWidth / 2.f);
@@ -995,16 +1114,18 @@ NSString * const kSizCache = @"FeedSizesCache";
     else {
         cellWidth = width - (padding * 2.f);
     }
-    
-    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 100.f);
+
+    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
     self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
-    
+
     if (self->_shouldShowHeader) {
         self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 80.f);
     }
     else {
         self.flowLayout.headerReferenceSize = CGSizeZero;
     }
+    
+    [self.flowLayout invalidateLayout];
     
 }
 
@@ -1032,10 +1153,10 @@ NSString * const kSizCache = @"FeedSizesCache";
     vc.author = author;
     vc.customFeed = self.customFeed;
     
-    [self.navigationController pushViewController:vc animated:YES];
+    [self showViewController:vc sender:self];
 }
 
-#pragma mark - KVO
+#pragma mark - KVO / Actions
 
 - (void)didChangeTheme {
     
@@ -1061,7 +1182,8 @@ NSString * const kSizCache = @"FeedSizesCache";
 - (void)didChangeContentCategory {
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.sizeCache = @{}.mutableCopy;
+        self.sizeCache = @[].mutableCopy;
+        [self setupLayout];
     });
     
     if ([[self.collectionView indexPathsForVisibleItems] count]) {

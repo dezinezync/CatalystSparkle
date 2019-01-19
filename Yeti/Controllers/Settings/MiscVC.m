@@ -10,12 +10,16 @@
 #import "YetiThemeKit.h"
 #import "SettingsCell.h"
 #import "YetiConstants.h"
+#import "PreviewLinesVC.h"
+
+#import <DZKit/UIViewController+AnimatedDeselect.h>
 
 NSString *const kMiscSettingsCell = @"settingsCell";
 
-@interface MiscVC ()
+@interface MiscVC () {
+    BOOL _showingPreview;
+}
 
-@property (nonatomic, assign) BOOL forPhone;
 @property (nonatomic, strong) NSArray <NSString *> *sections;
 
 @end
@@ -26,16 +30,28 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     [super viewDidLoad];
     
     self.title = @"Miscellaneous";
-    self.forPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
     
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt"];
-    
-    if (self.forPhone) {
-        self.sections = [self.sections arrayByAddingObject:@"Extended Feed Layout"];
-    }
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Show Tags", @"Preview"];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    if (_showingPreview == YES) {
+        _showingPreview = NO;
+        
+        [self dz_smoothlyDeselectRows:self.tableView];
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:5];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        
+        cell.detailTextLabel.text = [self previewLinesText];
+    }
+    
 }
 
 #pragma mark - Table view data source
@@ -62,8 +78,29 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == (self.sections.count - 1) && self.forPhone) {
-        return @"Extended Feed Layout was introduced in version 1.1 of the app and brings the richer Feed Interface from the iPad on your iPhone and iPod Touch.";
+    
+    if (section == 1) {
+        return @"Set whether you want to see the number of unread articles in each section.";
+    }
+    
+    if (section == 2) {
+        return @"Set whether the app should prompt you when marking articles as read.";
+    }
+    
+    if (section == 3) {
+        return @"You can optionally hide the Bookmarks Tab from the Feeds Interface.";
+    }
+    
+    else if (section == 4) {
+        return @"When this setting is enabled, the app will open the Unread Interface upon launch.";
+    }
+    
+    else if (section == 5) {
+        return @"Set whether you want to see or hide tags from the list of Articles.";
+    }
+    
+    else if (section == 6) {
+        return @"Number of summary lines to show when viewing list of Articles.";
     }
     
     return nil;
@@ -132,42 +169,95 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     
     UISwitch *sw = [[UISwitch alloc] init];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     NSString *sectionName = [self.sections objectAtIndex:indexPath.section];
     
-    // on iPhones and iPod touches, we show an additional row
-    if ([sectionName isEqualToString:@"Extended Feed Layout"]) {
-     
+    if ([sectionName isEqualToString:@"Mark Read Prompt"]) {
         cell.textLabel.text = sectionName;
         
-        [sw setOn:[defaults boolForKey:kUseExtendedFeedLayout]];
-        [sw addTarget:self action:@selector(didChangeExtendedLayoutPreference:) forControlEvents:UIControlEventValueChanged];
-        
-    }
-    else if ([sectionName isEqualToString:@"Mark Read Prompt"]) {
-        cell.textLabel.text = sectionName;
-        
-        [sw setOn:[defaults boolForKey:kShowMarkReadPrompt]];
+        [sw setOn:SharedPrefs.showMarkReadPrompts];
         [sw addTarget:self action:@selector(didChangeMarkReadPromptPreference:) forControlEvents:UIControlEventValueChanged];
     }
     else if ([sectionName isEqualToString:@"Unread Counters"]) {
         cell.textLabel.text = sectionName;
         
-        [sw setOn:[defaults boolForKey:kShowUnreadCounts]];
+        [sw setOn:SharedPrefs.showUnreadCounts];
         [sw addTarget:self action:@selector(didChangeUnreadCountsPreference:) forControlEvents:UIControlEventValueChanged];
     }
+    else  if ([sectionName isEqualToString:@"Hide Bookmarks"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:SharedPrefs.hideBookmarks];
+        [sw addTarget:self action:@selector(didChangeBookmarksPref:) forControlEvents:UIControlEventValueChanged];
+    }
+    else  if ([sectionName isEqualToString:@"Open Unread"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:SharedPrefs.openUnread];
+        [sw addTarget:self action:@selector(didChangeUnreadPref:) forControlEvents:UIControlEventValueChanged];
+    }
+    else if ([sectionName isEqualToString:@"Show Tags"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:SharedPrefs.showTags];
+        [sw addTarget:self action:@selector(didChangeTagsPref:) forControlEvents:UIControlEventValueChanged];
+    }
     
-    cell.accessoryView = sw;
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if ([sectionName isEqualToString:@"Preview"]) {
+        cell.textLabel.text = sectionName;
+        
+        cell.detailTextLabel.text = [self previewLinesText];
+        cell.accessoryView = nil;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    else {
+        cell.accessoryView = sw;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.detailTextLabel.text = nil;
+    }
     
     return cell;
         
 }
 
+#pragma mark -
+
+- (NSString *)previewLinesText {
+    NSInteger lines = SharedPrefs.previewLines;
+    
+    NSString *text = nil;
+    
+    if (lines == 0) {
+        text = @"None";
+    }
+    else {
+        if (lines == 1) {
+            text = @"1 Line";
+        }
+        else {
+            text = formattedString(@"%@ Lines", @(lines));
+        }
+    }
+    
+    return text;
+}
+
+#pragma mark -
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section == 1) {
+        return;
+    }
+    
+    // preview lines
+    if (indexPath.section == 6) {
+        
+        _showingPreview = YES;
+        
+        PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:UITableViewStylePlain];
+        
+        [self showViewController:vc sender:self];
+        
         return;
     }
     
@@ -221,31 +311,33 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 
 #pragma mark - Actions
 
-- (void)didChangeExtendedLayoutPreference:(UISwitch *)sender {
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kUseExtendedFeedLayout];
-    [defaults synchronize];
-    
-}
-
 - (void)didChangeUnreadCountsPreference:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kShowUnreadCounts];
-    [defaults synchronize];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
-    });
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showUnreadCounts)];
     
 }
 
 - (void)didChangeMarkReadPromptPreference:(UISwitch *)sender {
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:sender.isOn forKey:kShowMarkReadPrompt];
-    [defaults synchronize];
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showMarkReadPrompts)];
+    
+}
+
+- (void)didChangeBookmarksPref:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(hideBookmarks)];
+    
+}
+
+- (void)didChangeUnreadPref:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(openUnread)];
+    
+}
+
+- (void)didChangeTagsPref:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showTags)];
     
 }
 
