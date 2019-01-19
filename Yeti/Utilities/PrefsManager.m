@@ -34,21 +34,21 @@ PrefsManager * SharedPrefs = nil;
 
 - (void)loadDefaults {
     self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
-    self.backgroundRefresh = [self.defaults boolForKey:kDefaultsBackgroundRefresh];
+    self.backgroundRefresh = ([self.defaults valueForKey:kDefaultsBackgroundRefresh] ? [[self.defaults valueForKey:kDefaultsBackgroundRefresh] boolValue] : YES);
     self.notifications = [self.defaults boolForKey:kDefaultsNotifications];
     self.imageLoading = [self.defaults stringForKey:kDefaultsImageLoading] ?: ImageLoadingAlways;
     self.imageBandwidth = [self.defaults stringForKey:kDefaultsImageBandwidth] ?: ImageLoadingMediumRes;
     self.articleFont = [self.defaults stringForKey:kDefaultsArticleFont] ?: ALPSystem;
     self.subscriptionType = [self.defaults stringForKey:kSubscriptionType];
-    self.articleCoverImages = [self.defaults boolForKey:kShowArticleCoverImages];
-    self.showUnreadCounts = [self.defaults boolForKey:kShowUnreadCounts];
-    self.imageProxy = [self.defaults boolForKey:kUseImageProxy];
+    self.articleCoverImages = ([self.defaults valueForKey:kShowArticleCoverImages] ? [[self.defaults valueForKey:kShowArticleCoverImages] boolValue] : YES);
+    self.showUnreadCounts = ([self.defaults valueForKey:kShowUnreadCounts] ? [[self.defaults valueForKey:kShowUnreadCounts] boolValue] : YES);
+    self.imageProxy = ([self.defaults valueForKey:kUseImageProxy] ? [[self.defaults valueForKey:kUseImageProxy] boolValue] : YES);
     self.sortingOption = [self.defaults stringForKey:kDetailFeedSorting] ?: YTSortAllDesc;
-    self.showMarkReadPrompts = [self.defaults boolForKey:kShowMarkReadPrompt];
-    self.openUnread = [self.defaults boolForKey:kOpenUnreadOnLaunch];
-    self.hideBookmarks = [self.defaults boolForKey:kHideBookmarksTab];
+    self.showMarkReadPrompts = ([self.defaults valueForKey:kShowMarkReadPrompt] ? [[self.defaults valueForKey:kShowMarkReadPrompt] boolValue] : YES);
+    self.openUnread = ([self.defaults valueForKey:kOpenUnreadOnLaunch] ? [[self.defaults valueForKey:kOpenUnreadOnLaunch] boolValue] : NO);
+    self.hideBookmarks = ([self.defaults valueForKey:kHideBookmarksTab] ? [[self.defaults valueForKey:kHideBookmarksTab] boolValue] : NO);
     self.previewLines = [self.defaults integerForKey:kPreviewLines];
-    self.showTags = [self.defaults boolForKey:kShowTags];
+    self.showTags = ([self.defaults valueForKey:kShowTags] ? [[self.defaults valueForKey:kShowTags] boolValue] : YES);
 }
 
 - (NSString *)mappingForKey:(NSString *)key {
