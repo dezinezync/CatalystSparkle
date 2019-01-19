@@ -120,9 +120,14 @@
     [cell configure:feed];
     
     cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    cell.selectedBackgroundView.backgroundColor = [[[YTThemeKit theme] tintColor] colorWithAlphaComponent:0.2f];
     
     return cell;
+    
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    cell.separatorInset = UIEdgeInsetsMake(0, tableView.readableContentGuide.layoutFrame.origin.x, 0, tableView.readableContentGuide.layoutFrame.origin.x);
     
 }
 
@@ -195,10 +200,11 @@
     
     self.view.backgroundColor = theme.backgroundColor;
     self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
     
     self.tableView.tableFooterView = [UIView new];
     
-    [self.tableView registerClass:AddFeedCell.class forCellReuseIdentifier:kAddFeedCell];
+    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AddFeedCell.class) bundle:nil] forCellReuseIdentifier:kAddFeedCell];
     self.DS.addAnimation = UITableViewRowAnimationTop;
     self.DS.deleteAnimation = UITableViewRowAnimationFade;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
@@ -380,13 +386,21 @@
     if (selectedScope == 0) {
         self.searchBar.keyboardType = UIKeyboardTypeURL;
         self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        // this prevents it from switching to the tab and then running the search
+        self.searchBar.text = nil;
+        self.DS.data = @[];
+        
+        if ([self.searchBar isFirstResponder] == NO) {
+            [self.searchBar becomeFirstResponder];
+        }
+        
     }
     else {
         self.searchBar.keyboardType = UIKeyboardTypeDefault;
         self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        
+        [self searchBarTextDidEndEditing:self.searchBar];
     }
-    
-    [self searchBarTextDidEndEditing:self.searchBar];
     
 }
 

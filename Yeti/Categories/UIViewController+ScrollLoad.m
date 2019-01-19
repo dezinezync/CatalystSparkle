@@ -34,7 +34,7 @@
     
     DDLogDebug(@"Diff:%@\nThreshold:%@Percent:%@", @(diff), @(threshold), @(diff/threshold));
     
-    if ((diff/threshold) > 0.85f) {
+    if ((diff/threshold) > 0.80f) {
         id delegate = scrollView.delegate;
         
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {

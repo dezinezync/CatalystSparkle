@@ -283,6 +283,7 @@
 		F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */; };
 		F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */; };
 		F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */; };
+		F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */; };
 		F0D7E221215B72F100CB64E9 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E1C0215B72F100CB64E9 /* AppleIncRootCertificate.cer */; };
 		F0D7E222215B72F100CB64E9 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E1C3215B72F100CB64E9 /* LICENSE */; };
 		F0D7E223215B72F100CB64E9 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D7E211215B72F100CB64E9 /* libcrypto.a */; };
@@ -930,6 +931,7 @@
 		F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailAuthorVC.m; sourceTree = "<group>"; };
 		F0D1E984216DED50009A8614 /* DetailAuthorHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailAuthorHeaderView.h; sourceTree = "<group>"; };
 		F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailAuthorHeaderView.m; sourceTree = "<group>"; };
+		F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddFeedCell.xib; sourceTree = "<group>"; };
 		F0D7E1C0215B72F100CB64E9 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		F0D7E1C3215B72F100CB64E9 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		F0D7E1C5215B72F100CB64E9 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
@@ -1627,6 +1629,7 @@
 				F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */,
 				F0A4797C20637D2100A20195 /* AddFeedCell.h */,
 				F0A4797D20637D2100A20195 /* AddFeedCell.m */,
+				F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */,
 				F088089B206B8B9300ECE1E6 /* Tweet.h */,
 				F088089C206B8B9300ECE1E6 /* Tweet.m */,
 				F088089E206B8B9C00ECE1E6 /* Tweet.xib */,
@@ -2405,6 +2408,7 @@
 				F0A5AE9C20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
 				F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
+				F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */,
 				F0AFAC1A216C7A5200AB7057 /* DetailFeedVC.xib in Resources */,
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
