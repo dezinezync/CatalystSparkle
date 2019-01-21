@@ -1095,7 +1095,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 obj.folderID = folder.folderID;
             }];
             
-            [folder.feeds addObjectsFromArray:addedFeeds];
+            if (addedFeeds != nil && [addedFeeds isKindOfClass:NSArray.class] && addedFeeds.count) {
+                [folder.feeds addObjectsFromArray:addedFeeds];
+            }
         }
         
         // this pushes the update to FeedsVC

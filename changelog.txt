@@ -1,4 +1,10 @@
 
+[FIX]
+- Fixed a crash that would occur when showing the share options for a feed on iPads.
+- Fixed a crash that would occur when toggling the Cover Images option on certain devices. 
+
+-- 206 --
+
 [IMPROVE]
 - the new Add Feed Interface will now respect the readable width on iPads when applicable.
 
