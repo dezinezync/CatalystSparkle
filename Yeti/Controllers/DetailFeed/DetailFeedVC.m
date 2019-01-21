@@ -310,6 +310,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return self.activityIndicatorView;
     }
     
+    if (self.DS.state == DZDatasourceDefault) {
+        return nil;
+    }
+    
     if (self.DS.data.count > 0) {
         return nil;
     }
