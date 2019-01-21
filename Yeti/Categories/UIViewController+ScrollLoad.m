@@ -32,12 +32,12 @@
     CGFloat diff = contentHeight - actualPosition - scrollView.adjustedContentInset.top;
     CGFloat const threshold = scrollView.bounds.size.height - 120.f;
     
-    DDLogDebug(@"Diff:%@\nThreshold:%@Percent:%@", @(diff), @(threshold), @(diff/threshold));
-    
-    BOOL percentage = (diff/threshold) > 0.80f;
-    CGFloat bottomOffset = (scrollView.bounds.size.height - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom)) - scrollView.contentOffset.y;
+    BOOL percentage = (diff/threshold) > 0.70f;
+    CGFloat bottomOffset = (scrollView.bounds.size.height - scrollView.frame.origin.y - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom)) - scrollView.contentOffset.y;
     
     BOOL isAtBottom = bottomOffset <= 120.f;
+    
+    DDLogDebug(@"Diff:%@\nThreshold:%@\nPercent:%@\nisAtBottom:%@", @(diff), @(threshold), @(diff/threshold), @(isAtBottom));
     
     if (percentage || isAtBottom) {
         id delegate = scrollView.delegate;

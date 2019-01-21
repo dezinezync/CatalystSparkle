@@ -98,6 +98,9 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(showTags)]) {
         return kShowTags;
     }
+    else if ([key isEqualToString:propSel(imageProxy)]) {
+        return kUseImageProxy;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -113,11 +116,18 @@ PrefsManager * SharedPrefs = nil;
     
     NSString *mapping = [self mappingForKey:key];
     
+    if (mapping == nil) {
+        return;
+    }
+    
     if (value == nil) {
         [self.defaults removeObjectForKey:key];
     }
     else {
-        if ([value isKindOfClass:NSNumber.class]) {
+        if ([value isKindOfClass:NSClassFromString(@"__NSCFBoolean")]) {
+            [self.defaults setValue:value forKey:mapping];
+        }
+        else if ([value isKindOfClass:NSNumber.class]) {
             [self.defaults setInteger:[(NSNumber *)value integerValue] forKey:mapping];
         }
         else if ([NSStringFromClass([value class]) containsString:@"Boolean"]) {

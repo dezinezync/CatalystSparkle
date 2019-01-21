@@ -74,13 +74,9 @@
     
     self.DS.state = DZDatasourceLoading;
     
-    weakify(self);
-    
     NSInteger page = self.page + 1;
     
     [MyFeedsManager getTagFeed:self.tag page:page success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
         
         if (!self)
             return;
@@ -113,8 +109,6 @@
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
-        
-        strongify(self);
         
         self.DS.state = DZDatasourceError;
         

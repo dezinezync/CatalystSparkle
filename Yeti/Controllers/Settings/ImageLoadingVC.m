@@ -198,6 +198,12 @@ NSString *const kXSwitchCell = @"cell.switch";
     
 }
 
+- (void)didChangeImageProxyPreference:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(imageProxy)];
+    
+}
+
 #pragma mark - <UITableViewDelegate>
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -238,10 +244,5 @@ NSString *const kXSwitchCell = @"cell.switch";
     }
 }
 
-- (void)didChangeImageProxyPreference:(UISwitch *)sender {
-    
-    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(imageProxy)];
-    
-}
 
 @end
