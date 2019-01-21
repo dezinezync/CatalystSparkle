@@ -1,7 +1,8 @@
 
 [FIX]
 - Fixed a crash that would occur when showing the share options for a feed on iPads.
-- Fixed a crash that would occur when toggling the Cover Images option on certain devices. 
+- Fixed a crash that would occur when toggling the Cover Images option on certain devices.
+- Fixed a crash that would occur when toggling the Image Proxy option on certain devices. 
 
 -- 206 --
 
