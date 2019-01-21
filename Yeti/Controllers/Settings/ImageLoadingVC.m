@@ -188,7 +188,7 @@ NSString *const kXSwitchCell = @"cell.switch";
 
 - (void)didChangeCoverImagesPreference:(UISwitch *)sender {
     
-    [SharedPrefs setValue:@(sender.isOn) forKey:kShowArticleCoverImages];
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(articleCoverImages)];
     
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
         
