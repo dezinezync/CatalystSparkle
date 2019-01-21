@@ -36,6 +36,13 @@ NSString * const ERROR_unknown = @"Unknown error occured";
         return;
     }
     
+    if ([videoID containsString:@"?"]) {
+        NSRange range = [videoID rangeOfString:@"?"];
+        if (range.location != NSNotFound) {
+            videoID = [videoID substringToIndex:range.location];
+        }
+    }
+    
     [self extractRawInfo:videoID success:^(VideoInfo * _Nonnull videoInfo) {
         
         if (successCB) {

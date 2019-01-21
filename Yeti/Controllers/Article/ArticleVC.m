@@ -1777,7 +1777,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 // fallback
 - (void)_addYoutube:(Content *)content {
     // this now breaks the layout which is not desirable.
-    return;
+//    return;
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     Youtube *youtube = [[Youtube alloc] initWithFrame:frame];
@@ -1787,7 +1787,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.stackView addArrangedSubview:youtube];
     
-    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:-LayoutPadding].active = YES;
+//    [youtube.leadingAnchor constraintEqualToAnchor:self.stackView.leadingAnchor constant:LayoutPadding].active = YES;
     
     [self addLinebreak];
 }

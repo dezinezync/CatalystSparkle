@@ -50,6 +50,7 @@
     [super viewDidLoad];
     
     self.title = self.folder.title;
+    self.DS.state = DZDatasourceDefault;
     
 }
 
@@ -112,11 +113,11 @@
             self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
         }
         
+        self.DS.state = DZDatasourceLoaded;
+        
         if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             [self loadNextPage];
         }
-        
-        self.DS.state = DZDatasourceLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
