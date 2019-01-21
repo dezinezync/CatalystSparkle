@@ -272,6 +272,7 @@
             pvc.sourceView = cell;
             pvc.sourceRect = CGRectMake(MAX(0, location.x -  pvc.sourceView.bounds.size.width), 0, pvc.sourceView.bounds.size.width, pvc.sourceView.bounds.size.height);
             
+            pvc.sourceView = self.tableView;
         }
         
         [self presentViewController:avc animated:YES completion:nil];
@@ -545,7 +546,7 @@
             if (feed.extra && feed.extra.url) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     strongify(self);
-                    [self showShareOptionsVC:feed];
+                    [self showShareOptionsVC:feed indexPath:indexPath];
                 });
             }
             else {
@@ -557,6 +558,14 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                    
                     strongify(self);
+                    
+                    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                        UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
+                        
+                        pvc.sourceView = self.tableView;
+                        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+                        pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
+                    }
                     
                     [self presentViewController:activityVC animated:YES completion:nil];
                     
@@ -577,7 +586,7 @@
 
 }
 
-- (void)showShareOptionsVC:(Feed *)feed {
+- (void)showShareOptionsVC:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
     
     if (feed == nil) {
         return;
@@ -625,6 +634,14 @@
     }]];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        
+        pvc.sourceView = self.tableView;
+        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+        pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    }
     
     [self presentViewController:avc animated:YES completion:nil];
     
