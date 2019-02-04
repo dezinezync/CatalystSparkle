@@ -341,8 +341,8 @@
             url = self.favicon;
         }
         
-//        if (!url || (url && [url isKindOfClass:NSString.class] && [url isBlank]))
-//            return url;
+        if (!url || (url && [url isKindOfClass:NSString.class] && [url isBlank]))
+            return url;
         
         // ensure this is not an absolute URL
         NSURLComponents *components = [NSURLComponents componentsWithString:url];

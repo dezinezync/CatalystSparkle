@@ -123,8 +123,16 @@
         return self.errorLabel;
     }
     
-    return nil;
+    // the user entered a URL which has no RSS feeds on it
+    if (self.searchBar.selectedScopeButtonIndex == 0) {
+        self.errorTitle = @"No Feeds Found";
+        self.errorBody = @"No RSS Feeds were found on this website. Please check the URL or try a different website.";
+        
+        [self setupErrorLabel];
+        return self.errorLabel;
+    }
     
+    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -596,7 +604,9 @@
     
     url = components.URL;
     
-    [MyAppDelegate _showAddingFeedDialog];
+//    [MyAppDelegate _showAddingFeedDialog];
+    
+    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -606,7 +616,7 @@
         
         strongify(self);
         
-        [MyAppDelegate _dismissAddingFeedDialog];
+//        [MyAppDelegate _dismissAddingFeedDialog];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.searchBar.userInteractionEnabled = YES;
@@ -615,11 +625,16 @@
         
         if (status == 300) {
             // multiple options
-            self.DS.data = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            NSArray <Feed *> *feeds = [[responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
                 
                 return [Feed instanceFromDictionary:obj];
                 
+            }] rz_filter:^BOOL(Feed * obj, NSUInteger idx, NSArray *array) {
+                return obj.url && ([obj.url containsString:@"wp-json"] == NO);
             }];
+            
+            self.DS.data = feeds;
+            self.DS.state = DZDatasourceLoaded;
             
             weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -654,7 +669,9 @@
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [MyAppDelegate _dismissAddingFeedDialog];
+//        [MyAppDelegate _dismissAddingFeedDialog];
+        
+        self.DS.state = DZDatasourceError;
         
         weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -670,7 +687,7 @@
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            NSString * title = @"Something Went Wrong";
+            NSString * title = @"Something went Wrong";
             
             if ([error.localizedDescription containsString:@"already exists"]) {
                 title = @"Existing Feed";
