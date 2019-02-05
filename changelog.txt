@@ -1,3 +1,6 @@
+[IMPROVE]
+- Improved the description for the Image Proxy setting to make it's benefits more clear. 
+
 [FIX]
 - Fixed the Hide Bookmarks control not taking any actions even after restarting the app. 
 
