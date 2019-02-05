@@ -201,11 +201,13 @@ static void *KVO_Unread = &KVO_Unread;
     self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
     DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-    DS1.data = @[@"Unread"];
+    NSArray *DS1Data = @[@"Unread"];
     
     if (PrefsManager.sharedInstance.hideBookmarks == NO) {
-        DS1.data = [DS1.data arrayByAddingObject:@"Bookmarks"];
+        DS1Data = @[@"Unread", @"Bookmarks"];
     }
+    
+    DS1.data = DS1Data;
     
     DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
     
