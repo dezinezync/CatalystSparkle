@@ -1,3 +1,8 @@
 [FIX]
+- Fixed the Hide Bookmarks control not taking any actions even after restarting the app. 
+
+-- 216 --
+
+[FIX]
 - fixes search crashing when there are no favicons for a website
 - fixes search not showing correct error messages when no RSS Feeds are available on a particular website.
