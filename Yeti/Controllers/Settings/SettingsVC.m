@@ -183,8 +183,6 @@ NSString* deviceName() {
     
     cell.detailTextLabel.text = nil;
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     // Configure the cell...
     switch (indexPath.section) {
         case 0:

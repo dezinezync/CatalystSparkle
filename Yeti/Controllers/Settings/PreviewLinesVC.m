@@ -8,6 +8,7 @@
 
 #import "PreviewLinesVC.h"
 #import "YetiConstants.h"
+#import "YetiThemeKit.h"
 
 #define reuseIdentifer @"previewLinesCell"
 
@@ -60,6 +61,22 @@
     }
     else {
         cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    cell.textLabel.textColor = theme.titleColor;
+    cell.detailTextLabel.textColor = theme.captionColor;
+    cell.backgroundColor = theme.cellColor;
+    
+    if (cell.selectedBackgroundView == nil) {
+        cell.selectedBackgroundView = [UIView new];
+    }
+    
+    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    
+    if (cell.accessoryView != nil) {
+        cell.accessoryView = nil;
     }
     
     return cell;
