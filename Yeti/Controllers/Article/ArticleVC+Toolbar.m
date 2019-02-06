@@ -52,8 +52,15 @@
     self.toolbarItems = nil;
     self.navigationController.toolbarHidden = YES;
     // these are assigned in reverse order
-    self.navigationItem.rightBarButtonItems = @[share, search, bookmark, read, browser];
+    NSMutableArray *rightItems = @[share, search].mutableCopy;
     
+    if (PrefsManager.sharedInstance.hideBookmarks == NO) {
+        [rightItems addObject:bookmark];
+    }
+    
+    [rightItems addObjectsFromArray:@[read, browser]];
+    
+    self.navigationItem.rightBarButtonItems = rightItems;
     
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
 //        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];

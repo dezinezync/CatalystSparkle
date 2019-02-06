@@ -304,10 +304,32 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     NSString *key = formattedString(@"png-24-%@", url);
     
+    [self _configureTitleFavicon:key attachment:attachment url:url];
+    
+    // positive offsets push it up, negative push it down
+    // this is similar to NSRect
+    CGFloat fontSize = self.titleLabel.font.pointSize;
+    CGFloat baseline = 17.f; // we compute our expected using this
+    CGFloat expected = 7.f;  // from the above, so A:B :: C:D
+    CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
+    
+    attachment.bounds = CGRectMake(0, yOffset, 24, 24);
+    NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
+    
+    [attachmentString appendAttributedString:attrs];
+    
+    self.titleLabel.attributedText = attachmentString;
+    
+}
+
+- (void)_configureTitleFavicon:(NSString *)key
+                    attachment:(NSTextAttachment *)attachment
+                           url:(NSString *)url {
+    
     dispatch_async(SharedImageLoader.ioQueue, ^{
-       
+        
         [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable img) {
-           
+            
             if (img != nil) {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -332,7 +354,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                             if (image == nil) {
                                 return;
                             }
-
+                            
                         }
                         
                         image = responseObject;
@@ -375,21 +397,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         }];
         
     });
-    
-    // positive offsets push it up, negative push it down
-    // this is similar to NSRect
-    CGFloat fontSize = self.titleLabel.font.pointSize;
-    CGFloat baseline = 17.f; // we compute our expected using this
-    CGFloat expected = 7.f;  // from the above, so A:B :: C:D
-    CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
-    
-    attachment.bounds = CGRectMake(0, yOffset, 24, 24);
-    NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
-    
-    [attachmentString appendAttributedString:attrs];
-    
-    self.titleLabel.attributedText = attachmentString;
-    
 }
 
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(NSMutableArray *)sizeCache {
@@ -447,14 +454,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     if (feedType != FeedTypeFeed) {
-        if (item.blogTitle) {
-            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, item.blogTitle];
-        }
-        else {
-            Feed *feed = [MyFeedsManager feedForID:item.feedID];
-            if (feed) {
-                self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feed.title];
-            }
+        
+        Feed * feed = [MyFeedsManager feedForID:self.item.feedID];
+        
+        if (feed) {
+            NSString *feedTitle = feed.displayTitle;
+            
+            self.authorLabel.text = [self.authorLabel.text stringByAppendingFormat:appendFormat, feedTitle];
         }
     }
     

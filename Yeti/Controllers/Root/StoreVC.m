@@ -149,6 +149,11 @@
                                  NSParagraphStyleAttributeName : para
                                  };
     
+#ifdef DEBUG
+    [MyFeedsManager setValue:(MyFeedsManager.subscription ?: [Subscription new]) forKeyPath:propSel(subscription)];
+    MyFeedsManager.subscription.lifetime = YES;
+#endif
+    
     if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
         
         NSString *upto = @"";

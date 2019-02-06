@@ -83,7 +83,7 @@ NSString *const kXSwitchCell = @"cell.switch";
         return @"Enabling this shows cover images in the feeds list. This setting is also affected by your setting for Bandwidth.";
     }
     else {
-        return @"Elytra can optionally use the weserv.nl Image Proxy for loading images optimized to be displayed on this device.";
+        return @"Elytra can optionally use the weserv.nl Image Proxy for loading images optimized to be displayed on this device. Images loaded via the Image Proxy are smaller in size and therefore load faster and save bandwidth.";
     }
 }
 
