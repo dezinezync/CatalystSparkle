@@ -128,9 +128,9 @@
 
 - (void)_markVisibleRowsRead {
     
-    if ([self.class isKindOfClass:NSClassFromString(@"CustomFeedVC")] == YES) {
-        return;
-    }
+//    if ([self.class isKindOfClass:NSClassFromString(@"CustomFeedVC")] == YES) {
+//        return;
+//    }
     
     NSArray <NSIndexPath *> *indices = [self.collectionView indexPathsForVisibleItems];
     
@@ -166,6 +166,18 @@
             if (self && [self collectionView]) {
                 [self _markVisibleRowsRead];
                 [self _didFinishAllReadActionSuccessfully];
+            }
+            
+            if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")]) {
+                if (self.cantLoadNext == NO) {
+                    
+                    self.page = 0;
+                    self.DS.state = DZDatasourceLoading;
+                    
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        [self loadNextPage];
+                    });
+                }
             }
         });
     };
