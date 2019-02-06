@@ -20,9 +20,10 @@
         
         CAShapeLayer *borderLayer = [CAShapeLayer layer];
         borderLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(self.bounds, -2.f, -2.f) cornerRadius:14.f].CGPath;
-        borderLayer.fillColor = theme.isDark ? [UIColor whiteColor].CGColor : [UIColor blackColor].CGColor;
-        borderLayer.opacity = 0.25f;
+        borderLayer.strokeColor = [(theme.isDark ? [UIColor whiteColor] : [UIColor blackColor]) colorWithAlphaComponent:0.5].CGColor;
+        borderLayer.fillColor = UIColor.clearColor.CGColor;
         borderLayer.hidden = YES;
+        borderLayer.lineWidth = 2.f;
         
         CGRect bounds = self.bounds;
         CGFloat radius = MIN(bounds.size.width, bounds.size.height);
@@ -61,6 +62,7 @@
     _selected = selected;
     
     self.borderLayer.hidden = !selected;
+    self.borderLayer.fillColor = UIColor.clearColor.CGColor;
     
     [self.borderLayer setNeedsLayout];
 }

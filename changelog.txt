@@ -1,8 +1,14 @@
 [IMPROVE]
-- Improved the description for the Image Proxy setting to make it's benefits more clear. 
+- Improved the description for the Image Proxy setting to make it's benefits more clear.
+- Highlight state for the selected Tint Colour.
+- Mark All Read behaviour when in the Unread section.
 
 [FIX]
-- Fixed the Hide Bookmarks control not taking any actions even after restarting the app. 
+- Fixed the Hide Bookmarks control not taking any actions even after restarting the app.
+- Fixed custom blog titles not showing in the Unread feed.
+
+[CHANGE]
+- Changed the title from "Recommendations" to "Recommended".
 
 -- 216 --
 
