@@ -30,6 +30,24 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+			<key>reader</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>reader</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 		</dict>
 		<key>CFBundlePrimaryIcon</key>
 		<dict>

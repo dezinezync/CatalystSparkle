@@ -12,17 +12,29 @@
 #import "YetiConstants.h"
 #import "PreviewLinesVC.h"
 
+#import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 NSString *const kMiscSettingsCell = @"settingsCell";
 
 @interface MiscVC () {
     BOOL _showingPreview;
+    NSArray <NSString *> * _appIconNames;
 }
 
 @property (nonatomic, strong) NSArray <NSString *> *sections;
+@property (nonatomic, strong, readonly) NSArray <NSString *> * appIconNames;
 
 @end
+
+typedef NS_ENUM(NSInteger, AppIconName) {
+    AppIconLight = 0,
+    AppIconDark,
+    AppIconBlack,
+    AppIconReader,
+    AppIconFlutter,
+    AppIconLastIndex
+};
 
 @implementation MiscVC
 
@@ -63,7 +75,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     if (section == 0) {
-        return 3;
+        return AppIconLastIndex;
     }
     
     return 1;
@@ -124,20 +136,10 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
         
         NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
-        NSInteger selected = selectedIcon == nil ? 0 : ([selectedIcon isEqualToString:@"dark"] ? 1 : 2);
+        NSInteger selected = selectedIcon == nil ? 0 : [self.appIconNames indexOfObject:selectedIcon.capitalizedString];
         
         // Configure the cell...
-        switch (indexPath.row) {
-            case 0:
-                cell.textLabel.text = @"Light";
-                break;
-            case 1:
-                cell.textLabel.text = @"Dark";
-                break;
-            default:
-                cell.textLabel.text = @"Black";
-                break;
-        }
+        cell.textLabel.text = [self appIconNameForIndex:indexPath.row];
         
         cell.imageView.image = [UIImage imageNamed:cell.textLabel.text.lowercaseString];
         cell.imageView.contentMode = UIViewContentModeCenter;
@@ -241,6 +243,22 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     return text;
 }
 
+- (NSString *)appIconNameForIndex:(NSInteger)index {
+    
+    return [self.appIconNames safeObjectAtIndex:index];
+    
+}
+
+#pragma mark - Getters
+
+- (NSArray <NSString *> *)appIconNames {
+    if (_appIconNames == nil) {
+        _appIconNames = @[@"Light", @"Dark", @"Black", @"Reader", @"Flutter"];
+    }
+    
+    return _appIconNames;
+}
+
 #pragma mark -
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -262,18 +280,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     }
     
     if (indexPath.section == 0) {
-        NSString *name = nil;
-        
-        switch (indexPath.row) {
-            case 1:
-                name = @"dark";
-                break;
-            case 2:
-                name = @"black";
-                break;
-            default:
-                break;
-        }
+        NSString *name = [self appIconNameForIndex:indexPath.row].lowercaseString;
         
         [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
             
