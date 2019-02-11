@@ -12,6 +12,15 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>flutter-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter-dark</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -26,6 +35,24 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>dark</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>reader</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>reader</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -45,6 +72,33 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>flutter-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter-dark~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>reader</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>reader~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -83,7 +137,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.1</string>
+	<string>1.2.2</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -105,7 +159,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>219</string>
+	<string>221</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>

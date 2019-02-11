@@ -174,6 +174,14 @@
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
+		F09D12D8220D6CF800252902 /* flutter.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12C4220D6CF800252902 /* flutter.png */; };
+		F09D12D9220D6CF800252902 /* flutter~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12C5220D6CF800252902 /* flutter~ipad@2x.png */; };
+		F09D12DA220D6CF800252902 /* flutter@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12C6220D6CF800252902 /* flutter@3x.png */; };
+		F09D12DB220D6CF800252902 /* flutter@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12C7220D6CF800252902 /* flutter@2x.png */; };
+		F09D12DC220D6CF800252902 /* reader.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12D4220D6CF800252902 /* reader.png */; };
+		F09D12DD220D6CF800252902 /* reader@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12D5220D6CF800252902 /* reader@3x.png */; };
+		F09D12DE220D6CF800252902 /* reader@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12D6220D6CF800252902 /* reader@2x.png */; };
+		F09D12DF220D6CF800252902 /* reader~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09D12D7220D6CF800252902 /* reader~ipad@2x.png */; };
 		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
@@ -321,6 +329,10 @@
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
 		F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0FA473420CBAE500035B1F5 /* subscriptions.html */; };
+		F0FDB22B22112CD200EE67F8 /* flutter-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22722112CD100EE67F8 /* flutter-dark.png */; };
+		F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */; };
+		F0FDB22D22112CD200EE67F8 /* flutter-dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */; };
+		F0FDB22E22112CD200EE67F8 /* flutter-dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -774,6 +786,14 @@
 		F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ScrollLoad.m"; sourceTree = "<group>"; };
 		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		F09CB6A821637DE200F47036 /* elytraProcessor.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = elytraProcessor.js; sourceTree = "<group>"; };
+		F09D12C4220D6CF800252902 /* flutter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flutter.png; sourceTree = "<group>"; };
+		F09D12C5220D6CF800252902 /* flutter~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter~ipad@2x.png"; sourceTree = "<group>"; };
+		F09D12C6220D6CF800252902 /* flutter@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter@3x.png"; sourceTree = "<group>"; };
+		F09D12C7220D6CF800252902 /* flutter@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter@2x.png"; sourceTree = "<group>"; };
+		F09D12D4220D6CF800252902 /* reader.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = reader.png; sourceTree = "<group>"; };
+		F09D12D5220D6CF800252902 /* reader@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reader@3x.png"; sourceTree = "<group>"; };
+		F09D12D6220D6CF800252902 /* reader@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reader@2x.png"; sourceTree = "<group>"; };
+		F09D12D7220D6CF800252902 /* reader~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "reader~ipad@2x.png"; sourceTree = "<group>"; };
 		F09E96422055342000E61681 /* highlight.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = highlight.pack.js; sourceTree = "<group>"; };
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
@@ -1064,6 +1084,10 @@
 		F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFooterView.h; sourceTree = "<group>"; };
 		F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFooterView.m; sourceTree = "<group>"; };
 		F0FA473420CBAE500035B1F5 /* subscriptions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = subscriptions.html; sourceTree = "<group>"; };
+		F0FDB22722112CD100EE67F8 /* flutter-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark.png"; sourceTree = "<group>"; };
+		F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark@3x.png"; sourceTree = "<group>"; };
+		F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark@2x.png"; sourceTree = "<group>"; };
+		F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark~ipad@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1728,6 +1752,28 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F09D12C3220D6CF800252902 /* flutter */ = {
+			isa = PBXGroup;
+			children = (
+				F09D12C4220D6CF800252902 /* flutter.png */,
+				F09D12C6220D6CF800252902 /* flutter@3x.png */,
+				F09D12C7220D6CF800252902 /* flutter@2x.png */,
+				F09D12C5220D6CF800252902 /* flutter~ipad@2x.png */,
+			);
+			path = flutter;
+			sourceTree = "<group>";
+		};
+		F09D12D3220D6CF800252902 /* reader */ = {
+			isa = PBXGroup;
+			children = (
+				F09D12D4220D6CF800252902 /* reader.png */,
+				F09D12D5220D6CF800252902 /* reader@3x.png */,
+				F09D12D6220D6CF800252902 /* reader@2x.png */,
+				F09D12D7220D6CF800252902 /* reader~ipad@2x.png */,
+			);
+			path = reader;
+			sourceTree = "<group>";
+		};
 		F09E96412055340C00E61681 /* HLJS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1871,6 +1917,9 @@
 		F0D01CBD211867E9003A01DD /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				F0FDB22622112CD100EE67F8 /* flutter-dark */,
+				F09D12C3220D6CF800252902 /* flutter */,
+				F09D12D3220D6CF800252902 /* reader */,
 				F0542E31211DBFAB00D66878 /* black */,
 				F0D01CBF211867F0003A01DD /* dark */,
 			);
@@ -2072,6 +2121,17 @@
 				F0EEC85D21ECAF8B0046BB12 /* reader.json */,
 			);
 			path = themes;
+			sourceTree = "<group>";
+		};
+		F0FDB22622112CD100EE67F8 /* flutter-dark */ = {
+			isa = PBXGroup;
+			children = (
+				F0FDB22722112CD100EE67F8 /* flutter-dark.png */,
+				F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */,
+				F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */,
+				F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */,
+			);
+			path = "flutter-dark";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2373,7 +2433,10 @@
 				F09E96472055342000E61681 /* hljs.js in Resources */,
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
 				F0A5AEB220C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
+				F0FDB22B22112CD200EE67F8 /* flutter-dark.png in Resources */,
+				F09D12DB220D6CF800252902 /* flutter@2x.png in Resources */,
 				F064A54021576F5600A385AD /* TrialVC.xib in Resources */,
+				F0FDB22D22112CD200EE67F8 /* flutter-dark@2x.png in Resources */,
 				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
 				F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */,
 				F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
@@ -2385,6 +2448,7 @@
 				F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */,
 				F0A5AEAE20C19DA200CFA1D2 /* IBMPlexSans-Bold.ttf in Resources */,
 				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
+				F09D12D9220D6CF800252902 /* flutter~ipad@2x.png in Resources */,
 				F0A5AEBC20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
@@ -2393,11 +2457,14 @@
 				F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
 				F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */,
+				F0FDB22E22112CD200EE67F8 /* flutter-dark~ipad@2x.png in Resources */,
+				F09D12DD220D6CF800252902 /* reader@3x.png in Resources */,
 				F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */,
 				F0A5AE9820C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
 				F0A5AEAC20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
 				F0A5AE7020C197EF00CFA1D2 /* Merriweather-Italic.ttf in Resources */,
 				F0D01CC32118681C003A01DD /* dark@3x.png in Resources */,
+				F09D12DF220D6CF800252902 /* reader~ipad@2x.png in Resources */,
 				F0A5AEB820C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
 				F09E96482055342000E61681 /* styleHTML.js in Resources */,
 				F0D01CC52118681C003A01DD /* dark.png in Resources */,
@@ -2409,6 +2476,7 @@
 				F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
 				F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */,
+				F09D12D8220D6CF800252902 /* flutter.png in Resources */,
 				F0AFAC1A216C7A5200AB7057 /* DetailFeedVC.xib in Resources */,
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
@@ -2436,6 +2504,7 @@
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
+				F09D12DE220D6CF800252902 /* reader@2x.png in Resources */,
 				F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */,
 				F0D7E221215B72F100CB64E9 /* AppleIncRootCertificate.cer in Resources */,
 				F064A5332157638500A385AD /* LaunchVC.xib in Resources */,
@@ -2443,6 +2512,7 @@
 				F0A5AE8820C19CB400CFA1D2 /* IBMPlexSerif-Medium.ttf in Resources */,
 				F047F4F020C25FB900626968 /* Spectral-Light.ttf in Resources */,
 				F047F4EE20C25FB900626968 /* Spectral-BoldItalic.ttf in Resources */,
+				F09D12DA220D6CF800252902 /* flutter@3x.png in Resources */,
 				F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */,
 				F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */,
 				F0AFAC08216C76B400AB7057 /* ArticleCellB.xib in Resources */,
@@ -2456,9 +2526,11 @@
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
+				F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */,
 				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
+				F09D12DC220D6CF800252902 /* reader.png in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
@@ -2815,7 +2887,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2844,7 +2916,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2896,7 +2968,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2956,7 +3028,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -2985,7 +3057,7 @@
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3025,7 +3097,7 @@
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3059,7 +3131,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3078,7 +3150,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3097,7 +3169,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3113,7 +3185,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3158,7 +3230,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3187,7 +3259,7 @@
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3221,7 +3293,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3240,7 +3312,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3259,7 +3331,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 219;
+				CURRENT_PROJECT_VERSION = 221;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

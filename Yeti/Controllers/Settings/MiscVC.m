@@ -12,17 +12,30 @@
 #import "YetiConstants.h"
 #import "PreviewLinesVC.h"
 
+#import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 NSString *const kMiscSettingsCell = @"settingsCell";
 
 @interface MiscVC () {
     BOOL _showingPreview;
+    NSArray <NSString *> * _appIconNames;
 }
 
 @property (nonatomic, strong) NSArray <NSString *> *sections;
+@property (nonatomic, strong, readonly) NSArray <NSString *> * appIconNames;
 
 @end
+
+typedef NS_ENUM(NSInteger, AppIconName) {
+    AppIconLight = 0,
+    AppIconDark,
+    AppIconBlack,
+    AppIconReader,
+    AppIconFlutter,
+    AppIconFlutterDark,
+    AppIconLastIndex
+};
 
 @implementation MiscVC
 
@@ -63,7 +76,7 @@ NSString *const kMiscSettingsCell = @"settingsCell";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     if (section == 0) {
-        return 3;
+        return AppIconLastIndex;
     }
     
     return 1;
@@ -124,22 +137,22 @@ NSString *const kMiscSettingsCell = @"settingsCell";
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
         
         NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
-        NSInteger selected = selectedIcon == nil ? 0 : ([selectedIcon isEqualToString:@"dark"] ? 1 : 2);
         
-        // Configure the cell...
-        switch (indexPath.row) {
-            case 0:
-                cell.textLabel.text = @"Light";
-                break;
-            case 1:
-                cell.textLabel.text = @"Dark";
-                break;
-            default:
-                cell.textLabel.text = @"Black";
-                break;
+        if (selectedIcon != nil) {
+            selectedIcon = [selectedIcon stringByReplacingOccurrencesOfString:@"-" withString:@" "];
+            selectedIcon = selectedIcon.capitalizedString;
         }
         
-        cell.imageView.image = [UIImage imageNamed:cell.textLabel.text.lowercaseString];
+        NSInteger selected = selectedIcon == nil ? 0 : [self.appIconNames indexOfObject:selectedIcon];
+        
+        // Configure the cell...
+        NSString *name = [self appIconNameForIndex:indexPath.row];
+        
+        if (name != nil) {
+            cell.textLabel.text = [name stringByReplacingOccurrencesOfString:@"-" withString:@" - "];
+        }
+        
+        cell.imageView.image = [UIImage imageNamed:name.lowercaseString];
         cell.imageView.contentMode = UIViewContentModeCenter;
         
         if (selected == indexPath.row) {
@@ -241,6 +254,28 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     return text;
 }
 
+- (NSString *)appIconNameForIndex:(NSInteger)index {
+    
+    NSString *name = [self.appIconNames safeObjectAtIndex:index];
+    
+    if (name != nil) {
+        name = [name stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+    }
+    
+    return name;
+    
+}
+
+#pragma mark - Getters
+
+- (NSArray <NSString *> *)appIconNames {
+    if (_appIconNames == nil) {
+        _appIconNames = @[@"Light", @"Dark", @"Black", @"Reader", @"Flutter", @"Flutter Dark"];
+    }
+    
+    return _appIconNames;
+}
+
 #pragma mark -
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -262,18 +297,13 @@ NSString *const kMiscSettingsCell = @"settingsCell";
     }
     
     if (indexPath.section == 0) {
-        NSString *name = nil;
+        NSString *name = [self appIconNameForIndex:indexPath.row];
         
-        switch (indexPath.row) {
-            case 1:
-                name = @"dark";
-                break;
-            case 2:
-                name = @"black";
-                break;
-            default:
-                break;
+        if (name == nil) {
+            return;
         }
+        
+        name = name.lowercaseString;
         
         [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
             
