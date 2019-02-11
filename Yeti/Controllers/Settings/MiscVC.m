@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     AppIconBlack,
     AppIconReader,
     AppIconFlutter,
+    AppIconFlutterDark,
     AppIconLastIndex
 };
 
@@ -136,12 +137,22 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
         
         NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
-        NSInteger selected = selectedIcon == nil ? 0 : [self.appIconNames indexOfObject:selectedIcon.capitalizedString];
+        
+        if (selectedIcon != nil) {
+            selectedIcon = [selectedIcon stringByReplacingOccurrencesOfString:@"-" withString:@" "];
+            selectedIcon = selectedIcon.capitalizedString;
+        }
+        
+        NSInteger selected = selectedIcon == nil ? 0 : [self.appIconNames indexOfObject:selectedIcon];
         
         // Configure the cell...
-        cell.textLabel.text = [self appIconNameForIndex:indexPath.row];
+        NSString *name = [self appIconNameForIndex:indexPath.row];
         
-        cell.imageView.image = [UIImage imageNamed:cell.textLabel.text.lowercaseString];
+        if (name != nil) {
+            cell.textLabel.text = [name stringByReplacingOccurrencesOfString:@"-" withString:@" - "];
+        }
+        
+        cell.imageView.image = [UIImage imageNamed:name.lowercaseString];
         cell.imageView.contentMode = UIViewContentModeCenter;
         
         if (selected == indexPath.row) {
@@ -245,7 +256,13 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 
 - (NSString *)appIconNameForIndex:(NSInteger)index {
     
-    return [self.appIconNames safeObjectAtIndex:index];
+    NSString *name = [self.appIconNames safeObjectAtIndex:index];
+    
+    if (name != nil) {
+        name = [name stringByReplacingOccurrencesOfString:@" " withString:@"-"];
+    }
+    
+    return name;
     
 }
 
@@ -253,7 +270,7 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 
 - (NSArray <NSString *> *)appIconNames {
     if (_appIconNames == nil) {
-        _appIconNames = @[@"Light", @"Dark", @"Black", @"Reader", @"Flutter"];
+        _appIconNames = @[@"Light", @"Dark", @"Black", @"Reader", @"Flutter", @"Flutter Dark"];
     }
     
     return _appIconNames;
@@ -280,7 +297,13 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     }
     
     if (indexPath.section == 0) {
-        NSString *name = [self appIconNameForIndex:indexPath.row].lowercaseString;
+        NSString *name = [self appIconNameForIndex:indexPath.row];
+        
+        if (name == nil) {
+            return;
+        }
+        
+        name = name.lowercaseString;
         
         [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
             

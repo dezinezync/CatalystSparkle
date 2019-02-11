@@ -12,6 +12,15 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>flutter-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter-dark</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -63,6 +72,33 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>flutter-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter-dark~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>reader</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>reader~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>

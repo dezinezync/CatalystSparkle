@@ -329,6 +329,10 @@
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
 		F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */; };
 		F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0FA473420CBAE500035B1F5 /* subscriptions.html */; };
+		F0FDB22B22112CD200EE67F8 /* flutter-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22722112CD100EE67F8 /* flutter-dark.png */; };
+		F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */; };
+		F0FDB22D22112CD200EE67F8 /* flutter-dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */; };
+		F0FDB22E22112CD200EE67F8 /* flutter-dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1080,6 +1084,10 @@
 		F0FA473020CBAD7D0035B1F5 /* AccountFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountFooterView.h; sourceTree = "<group>"; };
 		F0FA473120CBAD7D0035B1F5 /* AccountFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountFooterView.m; sourceTree = "<group>"; };
 		F0FA473420CBAE500035B1F5 /* subscriptions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = subscriptions.html; sourceTree = "<group>"; };
+		F0FDB22722112CD100EE67F8 /* flutter-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark.png"; sourceTree = "<group>"; };
+		F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark@3x.png"; sourceTree = "<group>"; };
+		F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark@2x.png"; sourceTree = "<group>"; };
+		F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark~ipad@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1748,9 +1756,9 @@
 			isa = PBXGroup;
 			children = (
 				F09D12C4220D6CF800252902 /* flutter.png */,
-				F09D12C5220D6CF800252902 /* flutter~ipad@2x.png */,
 				F09D12C6220D6CF800252902 /* flutter@3x.png */,
 				F09D12C7220D6CF800252902 /* flutter@2x.png */,
+				F09D12C5220D6CF800252902 /* flutter~ipad@2x.png */,
 			);
 			path = flutter;
 			sourceTree = "<group>";
@@ -1909,6 +1917,7 @@
 		F0D01CBD211867E9003A01DD /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				F0FDB22622112CD100EE67F8 /* flutter-dark */,
 				F09D12C3220D6CF800252902 /* flutter */,
 				F09D12D3220D6CF800252902 /* reader */,
 				F0542E31211DBFAB00D66878 /* black */,
@@ -2112,6 +2121,17 @@
 				F0EEC85D21ECAF8B0046BB12 /* reader.json */,
 			);
 			path = themes;
+			sourceTree = "<group>";
+		};
+		F0FDB22622112CD100EE67F8 /* flutter-dark */ = {
+			isa = PBXGroup;
+			children = (
+				F0FDB22722112CD100EE67F8 /* flutter-dark.png */,
+				F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */,
+				F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */,
+				F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */,
+			);
+			path = "flutter-dark";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2413,8 +2433,10 @@
 				F09E96472055342000E61681 /* hljs.js in Resources */,
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
 				F0A5AEB220C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
+				F0FDB22B22112CD200EE67F8 /* flutter-dark.png in Resources */,
 				F09D12DB220D6CF800252902 /* flutter@2x.png in Resources */,
 				F064A54021576F5600A385AD /* TrialVC.xib in Resources */,
+				F0FDB22D22112CD200EE67F8 /* flutter-dark@2x.png in Resources */,
 				F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */,
 				F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */,
 				F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */,
@@ -2435,6 +2457,7 @@
 				F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */,
 				F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */,
+				F0FDB22E22112CD200EE67F8 /* flutter-dark~ipad@2x.png in Resources */,
 				F09D12DD220D6CF800252902 /* reader@3x.png in Resources */,
 				F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */,
 				F0A5AE9820C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
@@ -2503,6 +2526,7 @@
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */,
 				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
+				F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */,
 				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
