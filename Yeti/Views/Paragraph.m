@@ -18,6 +18,7 @@
 #import "TypeFactory.h"
 
 #import <DZKit/NSArray+Safe.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 
 @interface Paragraph ()
 
@@ -380,6 +381,51 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         self.backgroundColor = theme.articleBackgroundColor;
     }];
+    
+}
+
+- (void)copy:(id)sender {
+    
+    // calling the following crashes the app instantly
+    // due to a possible bug in iOS 12.1.4.
+//    [super copy:sender];
+    
+    NSRange range = self.selectedRange;
+    
+    if (range.location != NSNotFound && range.length > 0) {
+        
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        
+        @try {
+        
+            if (self.attributedText.length >= (range.length - range.location)) {
+                
+                NSError *error = nil;
+                
+                NSData *rtf = [self.attributedText dataFromRange:range
+                                              documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFTextDocumentType}
+                                                           error:&error];
+                
+                if (error != nil) {
+                    DDLogError(@"Error creating NSData from attributed text for copying to pasteboard: %@", error);
+                    
+                    return;
+                }
+                
+                pasteboard.items = @[@{(id)kUTTypeRTF: [[NSString alloc] initWithData:rtf encoding:NSUTF8StringEncoding],
+                                       (id)kUTTypeUTF8PlainText: self.attributedText.string}];
+                
+            }
+            
+        }
+        
+        @catch (NSException *exc) {
+            DDLogWarn(@"Exception when copying attributed text: %@", exc);
+            
+            pasteboard.string = [[self text] substringWithRange:range];
+        }
+        
+    }
     
 }
 
