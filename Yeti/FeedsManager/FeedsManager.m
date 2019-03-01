@@ -669,7 +669,54 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     else {
         path = formattedString(@"/unread/markall?userID=%@", userID);
         
-        [self.session POST:path parameters:nil success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        [self.session POST:path parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            NSArray <NSNumber *> *feedIDs = [responseObject valueForKey:@"feeds"];
+            
+            // only post the notification if it's affecting a feed or folder
+            // this avoids reducing or incrementing the count for unsubscribed feeds
+            if (feedIDs != nil && feedIDs.count > 0) {
+                
+                // since all articles are being marked as read
+                // the total count drops to 0 and no unread articles
+                // will be available
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.totalUnread = 0;
+                    self.unread = @[];
+                });
+                
+                NSInteger const newFeedUnread = 0;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    for (NSNumber *feedID in feedIDs) {
+                        
+                        Feed *feed = [self feedForID:feedID];
+                        
+                        if (feed != nil) {
+                            
+                            feed.unread = @(newFeedUnread);
+                            
+                            if (feed.folderID != nil) {
+                                Folder *folder = [self folderForID:feed.folderID];
+                                
+                                if (folder != nil) {
+                                    [folder willChangeValueForKey:propSel(unreadCount)];
+                                    // simply tell the unreadCount property that it has been updated.
+                                    // KVO should handle the rest for us
+                                    [folder didChangeValueForKey:propSel(unreadCount)];
+                                }
+                            }
+                            
+                        }
+                    }
+                });
+            }
+         
+            if (successCB) {
+                successCB(responseObject, response, task);
+            }
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             error = [self errorFromResponse:error.userInfo];
             

@@ -12,15 +12,6 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>flutter-dark</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>flutter-dark</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -44,6 +35,15 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>flutter</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter-dark</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -72,33 +72,6 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>flutter-dark</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>flutter-dark~ipad</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>reader</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>reader~ipad</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>flutter</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>flutter~ipad</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -113,6 +86,33 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>dark~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>flutter-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>flutter-dark~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>reader</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>reader~ipad</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -137,7 +137,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.2</string>
+	<string>1.2.3</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -159,7 +159,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>222</string>
+	<string>223</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>

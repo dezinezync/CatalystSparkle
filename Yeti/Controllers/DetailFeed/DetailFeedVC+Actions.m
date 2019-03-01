@@ -217,9 +217,12 @@
         [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (self && [self collectionView]) {
-                    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
+                if (self != nil && [self collectionView] != nil) {
+                    // if we're in the unread section
+                    if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] == YES) {
+                        self.DS.state = DZDatasourceLoading;
                         self.DS.data = @[];
+                        self.DS.state = DZDatasourceLoaded;
                     }
                     else {
                         [self _markVisibleRowsRead];
