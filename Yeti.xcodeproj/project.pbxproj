@@ -2899,7 +2899,7 @@
 					"TARGET_IS_EXTENSION=1",
 				);
 				INFOPLIST_FILE = YetiShare/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2925,7 +2925,7 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
 				INFOPLIST_FILE = YetiShare/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3074,7 +3074,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3113,7 +3113,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3275,7 +3275,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3340,7 +3340,7 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
 				INFOPLIST_FILE = YetiShare/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
