@@ -21,9 +21,9 @@ platform :ios do
     desc "Push a new beta build to TestFlight"
     lane :beta do
 
-        ensure_git_branch(
-            branch: 'dev'
-        )
+        # ensure_git_branch(
+        #     branch: 'dev'
+        # )
 
         changelog = File.read("../changelog.txt")
 
