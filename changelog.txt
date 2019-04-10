@@ -1,17 +1,2 @@
-[IMPROVE]
-- Improved the description for the Image Proxy setting to make it's benefits more clear.
-- Highlight state for the selected Tint Colour.
-- Mark All Read behaviour when in the Unread section.
-
 [FIX]
-- Fixed the Hide Bookmarks control not taking any actions even after restarting the app.
-- Fixed custom blog titles not showing in the Unread feed.
-
-[CHANGE]
-- Changed the title from "Recommendations" to "Recommended".
-
--- 216 --
-
-[FIX]
-- fixes search crashing when there are no favicons for a website
-- fixes search not showing correct error messages when no RSS Feeds are available on a particular website.
+- Fixed the padding for empty state messages in the Unread, Bookmarks and Feed Interfaces. 
