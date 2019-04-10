@@ -9,10 +9,11 @@
 #import "DetailFeedVC+Actions.h"
 
 #import "ArticleCellB.h"
+#import "PaddedLabel.h"
+#import "DetailFeedHeaderView.h"
 
 #import "ArticleVC.h"
 #import "DetailAuthorVC.h"
-#import "DetailFeedHeaderView.h"
 #import "TagFeedVC.h"
 
 #import "FeedsManager.h"
@@ -320,7 +321,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    UILabel *label = [[UILabel alloc] init];
+    CGRect layoutFrame = [self.view.readableContentGuide layoutFrame];
+    
+    PaddedLabel *label = [[PaddedLabel alloc] init];
+    label.padding = UIEdgeInsetsMake(0, layoutFrame.origin.x, 0, layoutFrame.origin.x);
     label.numberOfLines = 0;
     label.backgroundColor = theme.cellColor;
     label.opaque = YES;
