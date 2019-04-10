@@ -21,6 +21,8 @@
 #import "FeedVC.h"
 #import "YetiConstants.h"
 
+#import <PopMenu/PopMenu.h>
+
 @implementation ArticleVC (Toolbar)
 
 - (void)setupToolbar:(UITraitCollection *)newCollection

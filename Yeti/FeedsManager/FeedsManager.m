@@ -591,6 +591,48 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+- (void)getMercurialArticle:(NSNumber *)articleID success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (articleID == nil || [articleID integerValue] == 0) {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedsManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"Invalid or no article ID"}];
+            errorCB(error, nil, nil);
+        }
+        return;
+    }
+    
+    NSString *path = formattedString(@"/1.3/mercurial/%@", articleID);
+    
+    NSMutableDictionary *params = @{}.mutableCopy;
+    
+    if (MyFeedsManager.userID) {
+        params[@"userID"] = MyFeedsManager.userID;
+    }
+    
+    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (successCB) {
+            
+            FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
+            
+            successCB(item, response, task);
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 - (void)articlesByAuthor:(NSNumber *)authorID feedID:(NSNumber *)feedID page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB
 {
     if ([self userID] == nil) {
@@ -1968,7 +2010,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
