@@ -1,2 +1,5 @@
+[NEW]
+- Added a new Mercury button next to the author in the Article Interface. When not active, you can tap this button to load the full article when not available (This is useful when articles are published using truncated copies). When already activated, the button will appear with your choice of tint colour for the app. If already activated, the full post will be automatically rendered preventing the article from being loaded twice.
+
 [FIX]
 - Fixed the padding for empty state messages in the Unread, Bookmarks and Feed Interfaces. 
