@@ -2172,8 +2172,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return NO;
 }
 
-- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
-{
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+    
+    NSString *originalURL = [URL absoluteString];
+    
     if (URL.host == nil) {
         // absolute link in the article. Resovle to fully qualified URL
         NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item articleURL]];
@@ -2181,14 +2183,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         urlComp.host = articleComp.host;
         urlComp.scheme = articleComp.scheme;
+        urlComp.path = articleComp.path;
         URL = [urlComp URL];
     }
     
     NSString *absolute = URL.absoluteString;
     
+    DDLogDebug(@"Interact with URL: %@ and interaction type: %@", URL, @(interaction));
+    
     if (interaction != UITextItemInteractionPresentActions) {
         // footlinks and the like
-        if (absolute.length && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"]) {
+        
+        if (originalURL && (originalURL.length > 0 && [[originalURL substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"])) {
+            [self scrollToIdentifer:originalURL];
+            return NO;
+        }
+        
+        if ((absolute && (absolute.length > 0) && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"])) {
             [self scrollToIdentifer:absolute];
             return NO;
         }
@@ -2204,6 +2215,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             if (!retval)
                 return retval;
+        }
+        else {
+            
+            // open the link externally since it's not available in headings
+            // or the link appears to be different from the article's URL.
+            [self openLinkExternally:absolute];
+            return NO;
+            
         }
     }
     
@@ -2236,12 +2255,25 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self presentViewController:avc animated:YES completion:nil];
     }
     else {
-        NSURL *formatted = formattedURL(@"yeti://external?link=%@", absolute);
         
-        [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+        [self openLinkExternally:absolute];
+        
     }
     
     return NO;
+}
+
+- (void)openLinkExternally:(NSString *)link {
+    
+    if (link == nil || [link isBlank]) {
+        return;
+    }
+    
+    NSURL *formatted = formattedURL(@"yeti://external?link=%@", link);
+    
+    asyncMain(^{
+        [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+    });
 }
 
 - (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range
