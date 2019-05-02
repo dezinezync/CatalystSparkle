@@ -73,11 +73,6 @@
         // or optionally close it completely
         // if the user closes it up to 80% when swiping right
         if ((finalFrame.origin.x > (frame.size.width * 0.8f)) && (velocity.x > 0.f)) {
-            transform = CGAffineTransformMakeTranslation(frame.size.width, 0.f);
-        }
-        
-        // swiping right
-        if(velocity.x > 0.f && finalFrame.origin.x > finalFrame.size.width) {
             // close the menu
             [self resetSwipedCell];
             return;
