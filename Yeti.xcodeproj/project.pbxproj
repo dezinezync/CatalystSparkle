@@ -173,6 +173,7 @@
 		F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = F08808A2206B967A00ECE1E6 /* TweetImage.xib */; };
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
+		F0965764227AF90800F56FB9 /* DetailFeedVC+Swipe.m in Sources */ = {isa = PBXBuildFile; fileRef = F0965763227AF90800F56FB9 /* DetailFeedVC+Swipe.m */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -788,6 +789,8 @@
 		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		F0965762227AF90800F56FB9 /* DetailFeedVC+Swipe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DetailFeedVC+Swipe.h"; sourceTree = "<group>"; };
+		F0965763227AF90800F56FB9 /* DetailFeedVC+Swipe.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DetailFeedVC+Swipe.m"; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
@@ -1276,9 +1279,11 @@
 			children = (
 				F0AFAC16216C7A5200AB7057 /* DetailFeedVC.h */,
 				F0AFAC17216C7A5200AB7057 /* DetailFeedVC.m */,
-				F0AFAC18216C7A5200AB7057 /* DetailFeedVC.xib */,
+				F0965762227AF90800F56FB9 /* DetailFeedVC+Swipe.h */,
+				F0965763227AF90800F56FB9 /* DetailFeedVC+Swipe.m */,
 				F0AFAC1B216C8AEA00AB7057 /* DetailFeedVC+Actions.h */,
 				F0AFAC1C216C8AEA00AB7057 /* DetailFeedVC+Actions.m */,
+				F0AFAC18216C7A5200AB7057 /* DetailFeedVC.xib */,
 				F0D1E979216DECAC009A8614 /* DetailAuthorVC.h */,
 				F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */,
 				F046DF55216E30AC00FFDBD7 /* DetailCustomVC.h */,
@@ -2800,6 +2805,7 @@
 				F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
+				F0965764227AF90800F56FB9 /* DetailFeedVC+Swipe.m in Sources */,
 				F0315DBC20CA59FB00F5674A /* Subscription.m in Sources */,
 				F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */,
 				F01341AE21DC905400854DE1 /* TagFeedVC.m in Sources */,

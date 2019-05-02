@@ -78,7 +78,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.prefetchedImageTasks = @{}.mutableCopy;
         
         self.restorationIdentifier = NSStringFromClass(self.class);
-//        self.restorationClass = self.class;
     }
     
     return self;
@@ -132,6 +131,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(didChangeTheme) name:kDidUpdateTheme object:nil];
+    
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPanForSwipe:)];
+    pan.delegate = self;
+    [self.collectionView addGestureRecognizer:pan];
+    
+    self.swipePanGesture = pan;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -539,6 +544,10 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 }
 
 #pragma mark - <ScrollLoading>
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    [self resetSwipedCell];
+}
 
 - (void)loadNextPage
 {

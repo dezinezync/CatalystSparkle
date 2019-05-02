@@ -194,6 +194,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 - (void)prepareForReuse {
     
     [super prepareForReuse];
+    
+    [self setupInitialSwipeState];
+    
     self.titleLabel.text = nil;
     self.secondaryTimeLabel.text = nil;
     self.authorLabel.text = nil;
@@ -228,6 +231,18 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     self.faviconTask = nil;
+    
+}
+
+- (void)setFrame:(CGRect)frame {
+    
+    CGRect oldBounds = self.bounds;
+    
+    [super setFrame:frame];
+    
+    if (CGRectEqualToRect(oldBounds, self.bounds) == NO) {
+        [self setupInitialSwipeState];
+    }
     
 }
 
@@ -673,6 +688,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
     
+    [self setupInitialSwipeState];
+    
     [self setNeedsLayout];
     [self layoutIfNeeded];
     
@@ -689,6 +706,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     if (self.delegate && [self.delegate respondsToSelector:@selector(didTapTag:)]) {
         [self.delegate didTapTag:tag];
     }
+    
+}
+
+#pragma mark - Swiping
+
+- (void)setupInitialSwipeState {
+    
+    // reset the transform
+    self.swipeStackView.transform = CGAffineTransformIdentity;
+    self.swipeStackView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, self.bounds.size.width, 0.f);
     
 }
 

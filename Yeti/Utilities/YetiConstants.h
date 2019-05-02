@@ -11,6 +11,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
+#import "LayoutConstants.h"
+
 #define YETI_EXPORT FOUNDATION_EXPORT
 
 typedef NSString * FMNotification;

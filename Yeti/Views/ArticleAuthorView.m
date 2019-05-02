@@ -11,6 +11,14 @@
 #import "YetiThemeKit.h"
 #import "YetiConstants.h"
 
+@interface ArticleAuthorView () {
+    BOOL _didAddHorizontalConstraints;
+}
+
+@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
+
+@end
+
 @implementation ArticleAuthorView
 
 - (instancetype)initWithNib {
@@ -49,11 +57,19 @@
     
 }
 
-//- (void)dealloc {
-//
-//    [NSNotificationCenter.defaultCenter removeObserver:self];
-//
-//}
+- (void)didMoveToSuperview {
+    
+    [super didMoveToSuperview];
+    
+    if (self.superview != nil && self->_didAddHorizontalConstraints == NO) {
+        
+        UILayoutGuide *readable = self.superview.readableContentGuide;
+        [self.mainStackView.leadingAnchor constraintEqualToAnchor:readable.leadingAnchor constant:LayoutPadding/2].active = YES;
+        [self.mainStackView.trailingAnchor constraintEqualToAnchor:readable.trailingAnchor constant:LayoutPadding/2].active = YES;
+        
+    }
+    
+}
 
 #pragma mark - Setters
 

@@ -51,6 +51,13 @@ extern NSString *const kiPadArticleCell;
 
 - (void)setupAppearance;
 
+/* SWIPE ACTIONS */
+@property (weak, nonatomic) IBOutlet UIStackView *swipeStackView;
+@property (atomic, assign, getter=isSwiped) BOOL swiped;
+
+// this method can be called inside an animation block.
+- (void)setupInitialSwipeState;
+
 @end
 
 NS_ASSUME_NONNULL_END

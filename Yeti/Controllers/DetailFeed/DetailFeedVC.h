@@ -66,6 +66,12 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 - (NSString *)emptyViewSubtitle;
 
+#pragma mark - Swiping
+
+@property (nonatomic, weak) UIPanGestureRecognizer *swipePanGesture;
+
+@property (nonatomic, strong) NSIndexPath *swipingIndexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "DetailFeedVC.h"
+#import "DetailFeedVC+Swipe.h"
 #import "YetiConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
