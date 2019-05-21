@@ -1095,7 +1095,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if ([content.type isEqualToString:@"pre"]) {
+    else if ([content.type isEqualToString:@"pre"] || [content.type isEqualToString:@"code"]) {
         [self addPre:content];
     }
     else if ([content.type isEqualToString:@"li"]) {
