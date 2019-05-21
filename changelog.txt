@@ -3,3 +3,4 @@
 
 [FIX]
 - Fixed the padding for empty state messages in the Unread, Bookmarks and Feed Interfaces. 
+- Fixed the indentation on the Feeds Interface for Folder icons and Feed Favicons.
