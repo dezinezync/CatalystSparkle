@@ -246,6 +246,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+    
+    [super willMoveToWindow:newWindow];
+    
+    if (newWindow == nil) {
+        [self setupInitialSwipeState];
+    }
+    
+}
+
 #pragma mark - Marking
 
 - (void)mark:(UIView *)view reference:(UIView *)reference {
@@ -714,6 +724,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 - (void)setupInitialSwipeState {
     
     // reset the transform
+    self.mainStackView.transform = CGAffineTransformIdentity;
+    
     self.swipeStackView.transform = CGAffineTransformIdentity;
     self.swipeStackView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, self.bounds.size.width, 0.f);
     
