@@ -25,6 +25,8 @@
 #import "UIImage+Sizing.h"
 #import "UIColor+Hex.h"
 
+#import <PopMenu/PopMenu-Swift.h>
+
 BOOL IsAccessibilityContentCategory(void) {
     return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
 }
@@ -195,8 +197,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     [super prepareForReuse];
     
-    [self setupInitialSwipeState];
-    
     self.titleLabel.text = nil;
     self.secondaryTimeLabel.text = nil;
     self.authorLabel.text = nil;
@@ -231,28 +231,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     self.faviconTask = nil;
-    
-}
-
-- (void)setFrame:(CGRect)frame {
-    
-    CGRect oldBounds = self.bounds;
-    
-    [super setFrame:frame];
-    
-    if (CGRectEqualToRect(oldBounds, self.bounds) == NO) {
-        [self setupInitialSwipeState];
-    }
-    
-}
-
-- (void)willMoveToWindow:(UIWindow *)newWindow {
-    
-    [super willMoveToWindow:newWindow];
-    
-    if (newWindow == nil) {
-        [self setupInitialSwipeState];
-    }
     
 }
 
@@ -687,25 +665,30 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         timeLabel = self.timeLabel;
         
         self.secondaryTimeLabel.hidden = YES;
+        self.secondaryMenuButton.hidden = YES;
+        
         self.timeLabel.hidden = NO;
+        self.menuButton.hidden = NO;
     }
     else {
         timeLabel = self.secondaryTimeLabel;
+        
         self.secondaryTimeLabel.hidden = NO;
+        self.secondaryMenuButton.hidden = NO;
+        
         self.timeLabel.hidden = YES;
+        self.menuButton.hidden = YES;
     }
     
     timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
     timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
-    
-    [self setupInitialSwipeState];
     
     [self setNeedsLayout];
     [self layoutIfNeeded];
     
 }
 
-#pragma mark -
+#pragma mark - Actions
 
 - (void)didTapTag:(UIButton *)sender {
     
@@ -719,15 +702,17 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-#pragma mark - Swiping
-
-- (void)setupInitialSwipeState {
+- (IBAction)didTapMenuButton:(id)sender {
     
-    // reset the transform
-    self.mainStackView.transform = CGAffineTransformIdentity;
+    if (self.item == nil) {
+        return;
+    }
     
-    self.swipeStackView.transform = CGAffineTransformIdentity;
-    self.swipeStackView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, self.bounds.size.width, 0.f);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didTapMenuButton:forArticle:cell:)]) {
+        
+        [self.delegate didTapMenuButton:sender forArticle:self.item cell:self];
+        
+    }
     
 }
 

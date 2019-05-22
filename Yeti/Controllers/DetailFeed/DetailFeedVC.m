@@ -413,6 +413,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
+- (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
+    
+    DDLogDebug(@"Button:%@\nArticle:%@\nCell:%@", sender, article.articleTitle, [self.collectionView indexPathForCell:cell]);
+    
+}
+
 #pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {

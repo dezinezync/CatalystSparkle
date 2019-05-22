@@ -12,10 +12,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class ArticleCellB;
+
 @protocol ArticleCellDelegate <NSObject>
 
 @optional
 - (void)didTapTag:(NSString *)tag;
+
+- (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell;
 
 @end
 
@@ -51,12 +55,11 @@ extern NSString *const kiPadArticleCell;
 
 - (void)setupAppearance;
 
-/* SWIPE ACTIONS */
-@property (weak, nonatomic) IBOutlet UIStackView *swipeStackView;
-@property (atomic, assign, getter=isSwiped) BOOL swiped;
+/* Menu Button */
+@property (weak, nonatomic) IBOutlet UIButton *menuButton;
+@property (weak, nonatomic) IBOutlet UIButton *secondaryMenuButton;
 
-// this method can be called inside an animation block.
-- (void)setupInitialSwipeState;
+- (IBAction)didTapMenuButton:(id)sender;
 
 @end
 
