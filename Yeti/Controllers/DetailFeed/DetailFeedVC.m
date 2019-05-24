@@ -27,6 +27,7 @@
 #import "ArticleProvider.h"
 
 #import "YetiThemeKit.h"
+#import "PopMenuViewController.h"
 
 @interface UICollectionViewController ()
 
@@ -337,14 +338,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
     
-    NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+    NSDictionary *attributes = @{NSFontAttributeName: [TypeFactory shared].bodyFont,
                                  NSForegroundColorAttributeName: theme.subtitleColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
-    attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+    attributes = @{NSFontAttributeName: [TypeFactory.shared titleFont],
                    NSForegroundColorAttributeName: theme.titleColor,
                    NSParagraphStyleAttributeName: para
                    };
@@ -415,7 +416,80 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 - (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
     
+    if (article == nil) {
+        
+        NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
+        
+        article = [self.DS objectAtIndexPath:indexPath];
+        
+    }
+    
+    NSMutableArray *actions = [NSMutableArray arrayWithCapacity:3];
+    
+    if (article.isRead) {
+        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Unread" image:[UIImage imageNamed:@"menu-unread"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+            
+            [self userMarkedArticle:article read:NO];
+            
+        }]];
+    }
+    else {
+        
+        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Read" image:[UIImage imageNamed:@"menu-read"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+            
+            [self userMarkedArticle:article read:YES];
+            
+        }]];
+        
+    }
+    
+    if (article.isBookmarked) {
+        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Unbookmark" image:[UIImage imageNamed:@"menu-unbookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+            
+            [self userMarkedArticle:article bookmarked:NO];
+            
+        }]];
+    }
+    else {
+        
+        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Bookmark" image:[UIImage imageNamed:@"menu-bookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+            
+            [self userMarkedArticle:article bookmarked:YES];
+            
+        }]];
+        
+    }
+    
+    if ([self isMemberOfClass:DetailFeedVC.class] == NO) {
+        
+        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"View Feed" image:[UIImage imageNamed:@"menu-rss"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+            
+            NSNumber *feedID = article.feedID;
+            
+            NSURL *url = formattedURL(@"yeti://feed/%@", feedID);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+            });
+            
+        }]];
+        
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    PopMenuAppearance *appearance = [PopMenuAppearance new];
+    appearance.popMenuCornerRadius = 12.f;
+    appearance.popMenuColor = theme.menuColor;
+    appearance.popMenuTextColor = theme.menuTextColor;
+    
+    appearance.popMenuFont = [TypeFactory.shared boldBodyFont];
+    
+    PopMenuViewController *vc = [[PopMenuViewController alloc] initWithAppearance:appearance sourceView:sender actions:actions];
+    
     DDLogDebug(@"Button:%@\nArticle:%@\nCell:%@", sender, article.articleTitle, [self.collectionView indexPathForCell:cell]);
+    
+    [self presentViewController:vc animated:YES completion:nil];
     
 }
 
@@ -1178,7 +1252,9 @@ NSString * const kSizCache = @"FeedSizesCache";
     self.view.backgroundColor = theme.cellColor;
     self.collectionView.backgroundColor = theme.cellColor;
     
-    [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+    if (self.collectionView != nil) {
+       [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+    }
     
     self.hairlineView.backgroundColor = theme.cellColor;
     

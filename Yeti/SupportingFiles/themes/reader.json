@@ -14,5 +14,7 @@
     "focusColor": "#FFF9CF",
     "articleBackgroundColor": "#FDF5E8",
     "opmlViewColor": "#EFEFF4",
+    "menuColor": "#EFEFF4",
+    "menuTextColor": "#4F4F52",
     "tintColorIndex": 2
 }

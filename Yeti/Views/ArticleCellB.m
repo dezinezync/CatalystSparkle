@@ -704,10 +704,6 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 
 - (IBAction)didTapMenuButton:(id)sender {
     
-    if (self.item == nil) {
-        return;
-    }
-    
     if (self.delegate && [self.delegate respondsToSelector:@selector(didTapMenuButton:forArticle:cell:)]) {
         
         [self.delegate didTapMenuButton:sender forArticle:self.item cell:self];

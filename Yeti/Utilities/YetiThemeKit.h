@@ -8,6 +8,7 @@
 
 #import <DZThemeKit/DZThemeKit.h>
 #import "YetiTheme.h"
+#import "TypeFactory.h"
 
 @class YetiThemeKit;
 

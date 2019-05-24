@@ -54,13 +54,13 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e7v-66-3sl">
-                                                        <rect key="frame" x="78.5" y="8" width="45" height="14.5"/>
+                                                        <rect key="frame" x="78.5" y="8" width="110.5" height="14.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BTC-RG-bLe">
-                                                        <rect key="frame" x="131.5" y="4.5" width="85.5" height="22"/>
+                                                        <rect key="frame" x="197" y="4.5" width="20" height="22"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="20" id="4Qn-3K-2Bw"/>
                                                             <constraint firstAttribute="height" constant="20" id="ihJ-jz-A4r"/>
@@ -68,7 +68,6 @@
                                                         <state key="normal" image="menu-vert"/>
                                                         <variation key="default">
                                                             <mask key="constraints">
-                                                                <exclude reference="4Qn-3K-2Bw"/>
                                                                 <exclude reference="ihJ-jz-A4r"/>
                                                             </mask>
                                                         </variation>
@@ -119,7 +118,6 @@
                                         <state key="normal" image="menu-vert"/>
                                         <variation key="default">
                                             <mask key="constraints">
-                                                <exclude reference="HDA-a4-q9T"/>
                                                 <exclude reference="dks-Rh-1Ua"/>
                                             </mask>
                                         </variation>

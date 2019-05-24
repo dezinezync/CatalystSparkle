@@ -21,7 +21,6 @@
 		F013E6DD21A03FA700BAA151 /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */; };
 		F013E6DE21A03FA700BAA151 /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F013E6D121A03F8500BAA151 /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
-		F015705A225CADE600FA04F7 /* PopMenu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F015704E225CADE600FA04F7 /* PopMenu.framework */; };
 		F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; };
 		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
@@ -155,6 +154,12 @@
 		F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F074D802208DC2B4002F22CB /* WebP.framework */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
+		F07A31232296BEC900822969 /* PopMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31222296BEC900822969 /* PopMenuViewController.m */; };
+		F07A31262296C28700822969 /* PopMenuAppearance.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31252296C28700822969 /* PopMenuAppearance.m */; };
+		F07A31292296C81000822969 /* PopMenuDefaultAction.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31282296C81000822969 /* PopMenuDefaultAction.m */; };
+		F07A312C2297D5BE00822969 /* PopMenuPresentAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A312B2297D5BE00822969 /* PopMenuPresentAnimationController.m */; };
+		F07A312F2297D78800822969 /* PopMenuDismissAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A312E2297D78800822969 /* PopMenuDismissAnimationController.m */; };
+		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
 		F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A66572055539D00BA2D9F /* UIColor+HEX.m */; };
 		F07A665B205554FF00BA2D9F /* Code.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A665A205554FF00BA2D9F /* Code.m */; };
 		F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */; };
@@ -552,7 +557,6 @@
 		F013E6C521A03F8500BAA151 /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = ../../DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
-		F015704E225CADE600FA04F7 /* PopMenu.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PopMenu.framework; path = Carthage/Build/iOS/PopMenu.framework; sourceTree = SOURCE_ROOT; };
 		F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = ../../DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
@@ -757,6 +761,18 @@
 		F078B635206637B40048DBEA /* EmptyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyVC.h; sourceTree = "<group>"; };
 		F078B636206637B40048DBEA /* EmptyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyVC.m; sourceTree = "<group>"; };
 		F078B637206637B40048DBEA /* EmptyVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyVC.xib; sourceTree = "<group>"; };
+		F07A31212296BEC900822969 /* PopMenuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuViewController.h; sourceTree = "<group>"; };
+		F07A31222296BEC900822969 /* PopMenuViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuViewController.m; sourceTree = "<group>"; };
+		F07A31242296C28700822969 /* PopMenuAppearance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopMenuAppearance.h; sourceTree = "<group>"; };
+		F07A31252296C28700822969 /* PopMenuAppearance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopMenuAppearance.m; sourceTree = "<group>"; };
+		F07A31272296C81000822969 /* PopMenuDefaultAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuDefaultAction.h; sourceTree = "<group>"; };
+		F07A31282296C81000822969 /* PopMenuDefaultAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuDefaultAction.m; sourceTree = "<group>"; };
+		F07A312A2297D5BE00822969 /* PopMenuPresentAnimationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuPresentAnimationController.h; sourceTree = "<group>"; };
+		F07A312B2297D5BE00822969 /* PopMenuPresentAnimationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuPresentAnimationController.m; sourceTree = "<group>"; };
+		F07A312D2297D78800822969 /* PopMenuDismissAnimationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuDismissAnimationController.h; sourceTree = "<group>"; };
+		F07A312E2297D78800822969 /* PopMenuDismissAnimationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuDismissAnimationController.m; sourceTree = "<group>"; };
+		F07A31302297FC9D00822969 /* UIView+Anchoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Anchoring.h"; sourceTree = "<group>"; };
+		F07A31312297FC9D00822969 /* UIView+Anchoring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Anchoring.m"; sourceTree = "<group>"; };
 		F07A66562055539D00BA2D9F /* UIColor+HEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HEX.h"; sourceTree = "<group>"; };
 		F07A66572055539D00BA2D9F /* UIColor+HEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HEX.m"; sourceTree = "<group>"; };
 		F07A6659205554FF00BA2D9F /* Code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Code.h; sourceTree = "<group>"; };
@@ -1111,7 +1127,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F013E6DD21A03FA700BAA151 /* DZAppdelegate.framework in Frameworks */,
-				F015705A225CADE600FA04F7 /* PopMenu.framework in Frameworks */,
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F055166021B4FEAA008F1F2F /* YapDatabase.framework in Frameworks */,
 				F0C2E47420D79BF3001FACC6 /* UICKeyChainStore.framework in Frameworks */,
@@ -1316,6 +1331,23 @@
 			path = black;
 			sourceTree = "<group>";
 		};
+		F057811222968D800066081B /* PopMenu */ = {
+			isa = PBXGroup;
+			children = (
+				F07A31272296C81000822969 /* PopMenuDefaultAction.h */,
+				F07A31282296C81000822969 /* PopMenuDefaultAction.m */,
+				F07A31242296C28700822969 /* PopMenuAppearance.h */,
+				F07A31252296C28700822969 /* PopMenuAppearance.m */,
+				F07A31212296BEC900822969 /* PopMenuViewController.h */,
+				F07A31222296BEC900822969 /* PopMenuViewController.m */,
+				F07A312A2297D5BE00822969 /* PopMenuPresentAnimationController.h */,
+				F07A312B2297D5BE00822969 /* PopMenuPresentAnimationController.m */,
+				F07A312D2297D78800822969 /* PopMenuDismissAnimationController.h */,
+				F07A312E2297D78800822969 /* PopMenuDismissAnimationController.m */,
+			);
+			path = PopMenu;
+			sourceTree = "<group>";
+		};
 		F064A52E2157632700A385AD /* Intro */ = {
 			isa = PBXGroup;
 			children = (
@@ -1415,6 +1447,7 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F057811222968D800066081B /* PopMenu */,
 				F09BE12720F1C370000D1EB9 /* Settings.bundle */,
 				F03AC02D205533C200FB111A /* CodeParser */,
 				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
@@ -1474,6 +1507,8 @@
 				F0BF8344219AE3820047352A /* NSString+ImageProxy.m */,
 				F04E92BD21B5429300AD1FB2 /* NSString+Components.h */,
 				F04E92BE21B5429300AD1FB2 /* NSString+Components.m */,
+				F07A31302297FC9D00822969 /* UIView+Anchoring.h */,
+				F07A31312297FC9D00822969 /* UIView+Anchoring.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1601,7 +1636,6 @@
 		F070C3211FBAC0EE00912CCF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F015704E225CADE600FA04F7 /* PopMenu.framework */,
 				F055165421B4FEAA008F1F2F /* YapDatabase.framework */,
 				F0D7E1BE215B72F100CB64E9 /* RMStore */,
 				F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */,
@@ -2244,6 +2278,7 @@
 					};
 					F070C2D81FBABC3500912CCF = {
 						CreatedOnToolsVersion = 9.1;
+						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.AutoFillCredentialProvider = {
@@ -2590,7 +2625,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/UICKeyChainStore.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FLAnimatedImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/YapDatabase.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/PopMenu.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -2600,7 +2634,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/UICKeyChainStore.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/FLAnimatedImage.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/YapDatabase.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/PopMenu.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2659,6 +2692,7 @@
 				F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,
+				F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */,
 				F005265F1FBF148E00A103CD /* Youtube.m in Sources */,
 				F06B765F20C278EC00FBCDE7 /* FeedsVC+Keyboard.m in Sources */,
 				F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */,
@@ -2675,6 +2709,7 @@
 				F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F023E55B2076900E00FF513C /* CustomFeedVC.m in Sources */,
+				F07A31262296C28700822969 /* PopMenuAppearance.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
@@ -2719,6 +2754,7 @@
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
+				F07A312C2297D5BE00822969 /* PopMenuPresentAnimationController.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F055166321B4FF59008F1F2F /* DBManager.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
@@ -2758,6 +2794,7 @@
 				F0D7E228215B72F100CB64E9 /* RMStoreTransaction.m in Sources */,
 				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
+				F07A31292296C81000822969 /* PopMenuDefaultAction.m in Sources */,
 				F0AA8C8E216B4A5500C65DAE /* DTTimePeriodGroup.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
@@ -2785,11 +2822,13 @@
 				F0AA8C8D216B4A5500C65DAE /* NSDate+DateTools.m in Sources */,
 				F0AFAC14216C78D400AB7057 /* TagCell.m in Sources */,
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
+				F07A31232296BEC900822969 /* PopMenuViewController.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
 				F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
+				F07A312F2297D78800822969 /* PopMenuDismissAnimationController.m in Sources */,
 				F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */,
 				F02459D42059135E002906C3 /* FeedVC+Search.m in Sources */,
@@ -3068,8 +3107,10 @@
 		F070C3061FBABC3600912CCF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -3100,6 +3141,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3108,8 +3152,10 @@
 		F070C3071FBABC3600912CCF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -3138,6 +3184,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3270,8 +3318,10 @@
 		F0E40386211C7F1C0029F844 /* Testflight */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -3300,6 +3350,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
