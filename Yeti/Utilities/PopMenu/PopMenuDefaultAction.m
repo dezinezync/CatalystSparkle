@@ -139,6 +139,7 @@
     
     self.titleLabel.tintColor = tintColor;
     self.iconImageView.tintColor = tintColor;
+    self.titleLabel.textColor = tintColor;
     self.backgroundColor = [PopMenuDefaultAction blackOrWhiteContrastingColor:tintColor];
     
 }

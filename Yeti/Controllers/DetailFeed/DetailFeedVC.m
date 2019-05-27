@@ -37,7 +37,7 @@
 
 static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
-@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching, ArticleCellDelegate> {
+@interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching, ArticleCellDelegate, UIAdaptivePresentationControllerDelegate> {
     UIImageView *_barImageView;
     BOOL _ignoreLoadScroll;
     
@@ -460,21 +460,37 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
     }
     
-    if ([self isMemberOfClass:DetailFeedVC.class] == NO) {
+//    if ([self isMemberOfClass:DetailFeedVC.class] == NO) {
+//
+//        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"View Feed" image:[UIImage imageNamed:@"menu-rss"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+//
+//            NSNumber *feedID = article.feedID;
+//
+//            NSURL *url = formattedURL(@"yeti://feed/%@", feedID);
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+//            });
+//
+//        }]];
+//
+//    }
+    
+    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Share" image:[UIImage imageNamed:@"menu-share"] color:[UIColor blueColor] didSelect:^(id  _Nonnull action) {
         
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"View Feed" image:[UIImage imageNamed:@"menu-rss"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            NSNumber *feedID = article.feedID;
-            
-            NSURL *url = formattedURL(@"yeti://feed/%@", feedID);
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-            });
-            
-        }]];
+        NSString *title = article.articleTitle;
+        NSURL *URL = formattedURL(@"%@", article.articleURL);
         
-    }
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.sourceView = sender;
+        pvc.sourceRect = [(UIView *)sender frame];
+        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        
+        [self presentViewController:avc animated:YES completion:nil];
+        
+    }]];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -1231,6 +1247,18 @@ NSString * const kSizCache = @"FeedSizesCache";
 //    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
 }
+
+#pragma mark - <UIAdaptivePresentationControllerDelegate>
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
+{
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        return UIModalPresentationPopover;
+    }
+    
+    return UIModalPresentationNone;
+}
+
 
 #pragma mark - <FeedHeaderViewDelegate>
 
