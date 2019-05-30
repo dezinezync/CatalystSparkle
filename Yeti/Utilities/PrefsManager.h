@@ -40,6 +40,7 @@ extern PrefsManager * SharedPrefs;
 @property (assign) BOOL hideBookmarks; // kHideBookmarksTab
 @property (assign) NSInteger previewLines; // kPreviewLines
 @property (assign) BOOL showTags; // kShowTags
+@property (assign) BOOL useToolbar; // kUseToolbar
 
 @end
 

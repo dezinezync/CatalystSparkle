@@ -543,6 +543,7 @@
 		F00411041FC9960E00B513A9 /* Image.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
 		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
 		F005265E1FBF148E00A103CD /* Youtube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Youtube.m; sourceTree = "<group>"; };
+		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
 		F0095FAD20764130009BFFF3 /* FeedsHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsHeaderView.h; sourceTree = "<group>"; };
 		F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsHeaderView.m; sourceTree = "<group>"; };
 		F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsHeaderView.xib; sourceTree = "<group>"; };
@@ -1564,6 +1565,7 @@
 				F04CFAC52154B57B00AA7B5E /* StoreVC.m */,
 				F013E6E121A116EE00BAA151 /* MainNavController.h */,
 				F013E6E221A116EE00BAA151 /* MainNavController.m */,
+				F00710C6229FA1F0002943B2 /* BarPositioning.h */,
 			);
 			path = Root;
 			sourceTree = "<group>";

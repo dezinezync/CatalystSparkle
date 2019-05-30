@@ -49,6 +49,7 @@ PrefsManager * SharedPrefs = nil;
     self.hideBookmarks = ([self.defaults valueForKey:kHideBookmarksTab] ? [[self.defaults valueForKey:kHideBookmarksTab] boolValue] : NO);
     self.previewLines = [self.defaults integerForKey:kPreviewLines];
     self.showTags = ([self.defaults valueForKey:kShowTags] ? [[self.defaults valueForKey:kShowTags] boolValue] : YES);
+    self.useToolbar = ([self.defaults valueForKey:kUseToolbar] ? [[self.defaults valueForKey:kUseToolbar] boolValue] : NO);
 }
 
 - (NSString *)mappingForKey:(NSString *)key {
@@ -100,6 +101,9 @@ PrefsManager * SharedPrefs = nil;
     }
     else if ([key isEqualToString:propSel(imageProxy)]) {
         return kUseImageProxy;
+    }
+    else if ([key isEqualToString:propSel(useToolbar)]) {
+        return kUseToolbar;
     }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;

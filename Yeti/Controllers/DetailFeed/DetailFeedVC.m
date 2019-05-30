@@ -28,6 +28,9 @@
 
 #import "YetiThemeKit.h"
 #import "PopMenuViewController.h"
+#import "PrefsManager.h"
+
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @interface UICollectionViewController ()
 
@@ -460,21 +463,17 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
     }
     
-//    if ([self isMemberOfClass:DetailFeedVC.class] == NO) {
-//
-//        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"View Feed" image:[UIImage imageNamed:@"menu-rss"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-//
-//            NSNumber *feedID = article.feedID;
-//
-//            NSURL *url = formattedURL(@"yeti://feed/%@", feedID);
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-//            });
-//
-//        }]];
-//
-//    }
+    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Browser" image:[UIImage imageNamed:@"open_in_browser"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
+        
+        NSURL *URL = formattedURL(@"yeti://external?link=%@", article.articleURL);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+            
+        });
+        
+    }]];
     
     [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Share" image:[UIImage imageNamed:@"menu-share"] color:[UIColor blueColor] didSelect:^(id  _Nonnull action) {
         
@@ -1066,11 +1065,13 @@ NSString * const kSizCache = @"FeedSizesCache";
     return YES;
 }
 
-- (void)setupNavigationBar {
+- (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
-    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
-    self.navigationItem.leftItemsSupplementBackButton = YES;
-    
+    // Subscribe Button appears in the navigation bar
+    if (self.isExploring == YES) {
+        return @[];
+    }
+ 
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
@@ -1080,6 +1081,70 @@ NSString * const kSizCache = @"FeedSizesCache";
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
     allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
     allReadBackDated.width = 32.f;
+    
+    
+    // sorting button
+    YetiSortOption option = SharedPrefs.sortingOption;
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    SEL isUnread = NSSelectorFromString(@"isUnread");
+    
+    if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
+        
+        // when the active option is either of these two, we don't need
+        // to do anything extra
+        if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
+            
+            // map it to whatever the selected option is
+            if (option == YTSortAllAsc) {
+                option = YTSortUnreadAsc;
+            }
+            else if (option == YTSortAllDesc) {
+                option = YTSortUnreadDesc;
+            }
+            
+        }
+        
+    }
+#pragma clang diagnostic pop
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.width = 32.f;
+    
+    if (!(self.feed.hubSubscribed && self.feed.hub)) {
+        NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
+        
+        if ([self showsSortingButton]) {
+            [buttons addObject:sorting];
+        }
+        
+        return buttons;
+    }
+    else {
+        // push notifications are possible
+        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+        notifications.width = 32.f;
+        
+        NSMutableArray *buttons = @[allReadBackDated, allRead, notifications].mutableCopy;
+        
+        if ([self showsSortingButton]) {
+            [buttons addObject:sorting];
+        }
+        
+        return buttons;
+    }
+    
+}
+
+- (void)setupNavigationBar {
+    
+    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+    self.navigationItem.leftItemsSupplementBackButton = YES;
     
     if (self.isExploring) {
         // check if the user is subscribed to this feed
@@ -1092,61 +1157,16 @@ NSString * const kSizCache = @"FeedSizesCache";
         }
     }
     else {
-        // sorting button
-        YetiSortOption option = SharedPrefs.sortingOption;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        SEL isUnread = NSSelectorFromString(@"isUnread");
-
-        if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
-            
-            // when the active option is either of these two, we don't need
-            // to do anything extra
-            if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
-                
-                // map it to whatever the selected option is
-                if (option == YTSortAllAsc) {
-                    option = YTSortUnreadAsc;
-                }
-                else if (option == YTSortAllDesc) {
-                    option = YTSortUnreadDesc;
-                }
-                
-            }
-            
-        }
-#pragma clang diagnostic pop
         
-        UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
-        sorting.width = 32.f;
-        
-        if (!(self.feed.hubSubscribed && self.feed.hub)) {
-            NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
+        if (PrefsManager.sharedInstance.useToolbar == NO) {
+            self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
             
-            if ([self showsSortingButton]) {
-                [buttons addObject:sorting];
-            }
-            
-            self.navigationItem.rightBarButtonItems = buttons;
+            self.navigationController.toolbarHidden = YES;
         }
         else {
-            // push notifications are possible
-            NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
-            
-            UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-            notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-            notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
-            notifications.width = 32.f;
-            
-            NSMutableArray *buttons = @[allReadBackDated, allRead, notifications].mutableCopy;
-            
-            if ([self showsSortingButton]) {
-                [buttons addObject:sorting];
-            }
-            
-            self.navigationItem.rightBarButtonItems = buttons;
+            self.navigationController.toolbarHidden = NO;
         }
+        
     }
     
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
@@ -1165,6 +1185,30 @@ NSString * const kSizCache = @"FeedSizesCache";
     [self.navigationController.navigationBar addSubview:hairline];
     self.hairlineView = hairline;
     
+}
+
+- (NSArray <UIBarButtonItem *> *)toolbarItems {
+    
+    if (PrefsManager.sharedInstance.useToolbar == NO) {
+        return nil;
+    }
+    
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    fixed.width = 24.f;
+    
+    NSArray *right = [[self.rightBarButtonItems rz_map:^id(UIBarButtonItem *obj, NSUInteger idx, NSArray *array) {
+        
+        if (idx == 0) {
+            return obj;
+        }
+        
+        return @[flex, obj];
+        
+    }] rz_flatten];
+    
+    return right;
 }
 
 - (void)setupLayout {

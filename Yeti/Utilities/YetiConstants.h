@@ -97,6 +97,7 @@ YETI_EXPORT NSString * _Nonnull const kHideBookmarksTab;
 YETI_EXPORT NSNotificationName _Nonnull const ShowBookmarksTabPreferenceChanged;
 YETI_EXPORT NSString * _Nonnull const kOpenUnreadOnLaunch;
 YETI_EXPORT NSString * _Nonnull const kShowTags;
+YETI_EXPORT NSString * _Nonnull const kUseToolbar;
 
 YETI_EXPORT NSString * _Nonnull const kPreviewLines;
 

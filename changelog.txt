@@ -1,4 +1,10 @@
 [NEW]
+- Added open in browser option to the articles menu
+- Added option to show all interface options in the toolbar.
+
+-- 233 --
+
+[NEW]
 - Added a new Mercury button next to the author in the Article Interface. When not active, you can tap this button to load the full article when not available (This is useful when articles are published using truncated copies). When already activated, the button will appear with your choice of tint colour for the app. If already activated, the full post will be automatically rendered preventing the article from being loaded twice.
 
 - Added Menu button to the Article Cells to make Marking the Article read, unread, bookmark, unbookmark and view the RSS feed of the article simpler. [Known Issue: Sometimes, tapping the button will cause the article to open instead. I'm working on a fix for this.]

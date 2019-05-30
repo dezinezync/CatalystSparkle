@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "FeedsHeaderView.h"
+#import "BarPositioning.h"
 
 @class Feed;
 @class DZSectionedDatasource;
 @class DZBasicDatasource;
 
-@interface FeedsVC : UITableViewController <UIViewControllerRestoration> {
+@interface FeedsVC : UITableViewController <UIViewControllerRestoration, BarPositioning> {
     BOOL _refreshing;
     BOOL _preCommitLoading;
     BOOL _noPreSetup;

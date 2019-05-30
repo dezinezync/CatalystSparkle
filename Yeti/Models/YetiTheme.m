@@ -32,6 +32,7 @@
 #endif
     
     UINavigationBar *navBar = [UINavigationBar appearance];
+    UIToolbar *toolbar = [UIToolbar appearance];
 //    UITextView *textView = [UITextView appearance];
 //    UITextField *textField = [UITextField appearance];
     
@@ -43,11 +44,18 @@
         [navBar setBarStyle:UIBarStyleBlack];
         [navBar setBarTintColor:self.cellColor];
         
+        [toolbar setBarStyle:UIBarStyleBlack];
+        [toolbar setBarTintColor:self.cellColor];
+        
 //        textView.keyboardAppearance = UIKeyboardAppearanceDark;
     }
     else {
         [navBar setBarStyle:UIBarStyleDefault];
         [navBar setBarTintColor:self.articleBackgroundColor];
+        
+        [toolbar setBarStyle:UIBarStyleDefault];
+        [toolbar setBarTintColor:self.articleBackgroundColor];
+        
 //        textView.keyboardAppearance = UIKeyboardAppearanceLight;
     }
     

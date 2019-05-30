@@ -119,15 +119,26 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         || self.splitViewController.view.bounds.size.height < 814.f) {
         
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
-        
-        self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
+        if (PrefsManager.sharedInstance.useToolbar) {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 12.f, 0);
+        }
+        else {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
+            self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
+        }
         
     }
     else if (self.splitViewController.view.bounds.size.height > 814.f
              && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
+        if (PrefsManager.sharedInstance.useToolbar) {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 12.f, 0);
+        }
+        else {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
+        }
         
     }
     
@@ -266,6 +277,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.providerDelegate == nil)
         return;
+    
+    if (PrefsManager.sharedInstance.useToolbar == YES) {
+        return;
+    }
     
     ArticleHelperView *helperView = [[ArticleHelperView alloc] initWithNib];
     helperView.frame = CGRectMake((self.view.bounds.size.width - 190.f) / 2.f, self.view.bounds.size.height - 44.f - 32.f, 190.f, 44.f);

@@ -147,10 +147,7 @@ NSString* deviceName() {
             return 2;
             break;
         case 1:
-            if (UIApplication.sharedApplication.supportsAlternateIcons == YES)
-                return 6;
-            else
-                return 5;
+            return 6;
             break;
         case 2:
             return 4;
@@ -232,6 +229,7 @@ NSString* deviceName() {
                     break;
                 case 5:
                     cell.textLabel.text = @"Miscellaneous";
+                    break;
                     break;
                 default:
                     break;
