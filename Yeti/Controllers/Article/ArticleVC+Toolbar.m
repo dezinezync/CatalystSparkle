@@ -80,7 +80,7 @@
     
 }
 
-- (NSArray <UIBarButtonItem *> *)toolbarItems {
+- (NSArray <UIBarButtonItem *> *)commonNavBarItems {
     
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
@@ -91,7 +91,13 @@
     browser.accessibilityValue = @"Open the article in the browser";
     browser.accessibilityLabel = @"Browser";
     
-    self.navigationItem.rightBarButtonItems = @[share, browser];
+    return @[share, browser];
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)toolbarItems {
+    
+    self.navigationItem.rightBarButtonItems = self.commonNavBarItems;
     
     if (PrefsManager.sharedInstance.useToolbar == NO) {
         return nil;
@@ -130,7 +136,7 @@
 {
     if (PrefsManager.sharedInstance.useToolbar == NO) {
         
-        self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
+        self.navigationItem.rightBarButtonItems = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
         self.navigationController.toolbarHidden = YES;
         
     }

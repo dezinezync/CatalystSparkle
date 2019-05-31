@@ -1,3 +1,8 @@
+[FIX]
+- Fixed nav bar items when the Use Toolbar option is disabled for the Article Viewer interface. 
+
+-- 234 --
+
 [NEW]
 - Added open in browser option to the articles menu
 - Added option to show all interface options in the toolbar.
