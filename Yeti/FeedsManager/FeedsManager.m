@@ -2019,10 +2019,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         session.responseParser = [DZJSONResponseParser new];
 
         weakify(self);
-        session.requestModifier = ^NSURLRequest *(NSURLRequest *request) {
+        session.requestModifier = ^NSMutableURLRequest *(NSMutableURLRequest *request) {
           
-            NSMutableURLRequest *mutableReq = request.mutableCopy;
-            [mutableReq setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 
             // compute Authorization
             strongify(self);
@@ -2037,10 +2036,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
             NSString *signature = [self hmac:stringToSign withKey:encoded];
             
-            [mutableReq setValue:signature forHTTPHeaderField:@"Authorization"];
-            [mutableReq setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
-            [mutableReq setValue:timecode forHTTPHeaderField:@"x-timestamp"];
-            return mutableReq;
+            [request setValue:signature forHTTPHeaderField:@"Authorization"];
+            [request setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
+            [request setValue:timecode forHTTPHeaderField:@"x-timestamp"];
+            return request;
             
         };
         
