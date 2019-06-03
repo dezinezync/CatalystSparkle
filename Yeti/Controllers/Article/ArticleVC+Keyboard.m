@@ -76,12 +76,53 @@
     [scrollView setContentOffset:targetOffset animated:YES];
 }
 
-- (void)didTapPreviousArticle:(id)sender {
-    [self.helperView didTapPreviousArticle:sender];
+- (void)didTapPreviousArticle:(UIButton *)sender {
+    
+    if (self.helperView) {
+        [self.helperView didTapPreviousArticle:sender];
+        return;
+    }
+    
+    if (sender == nil || [sender respondsToSelector:@selector(setEnabled:)] == NO) {
+        return;
+    }
+    
+    if (self.providerDelegate == nil) {
+        sender.enabled = NO;
+        return;
+    }
+    
+    FeedItem *article = [self.providerDelegate previousArticleFor:[self currentArticle]];
+    
+    if (article)
+        [self setupArticle:article];
+    else
+        sender.enabled = NO;
 }
 
-- (void)didTapNextArticle:(id)sender {
-    [self.helperView didTapNextArticle:sender];
+- (void)didTapNextArticle:(UIButton *)sender {
+    
+    if (self.helperView) {
+        [self.helperView didTapNextArticle:sender];
+        return;
+    }
+    
+    if (sender == nil || [sender respondsToSelector:@selector(setEnabled:)] == NO) {
+        return;
+    }
+    
+    if (self.providerDelegate == nil) {
+        sender.enabled = NO;
+        return;
+    }
+    
+    FeedItem *article = [self.providerDelegate nextArticleFor:[self currentArticle]];
+    
+    if (article)
+        [self setupArticle:article];
+    else
+        sender.enabled = NO;
+    
 }
 
 #pragma mark - Gallery Nav

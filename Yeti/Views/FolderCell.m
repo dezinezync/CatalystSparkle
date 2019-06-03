@@ -68,6 +68,9 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapIcon:)];
     [self.faviconView addGestureRecognizer:tap];
+    
+    self.preservesSuperviewLayoutMargins = false;
+    self.separatorInset = UIEdgeInsetsMake(0, 40.f, 0, 0);
 }
 
 - (void)prepareForReuse

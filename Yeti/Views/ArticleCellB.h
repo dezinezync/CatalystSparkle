@@ -12,10 +12,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class ArticleCellB;
+
 @protocol ArticleCellDelegate <NSObject>
 
 @optional
 - (void)didTapTag:(NSString *)tag;
+
+- (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell;
 
 @end
 
@@ -50,6 +54,12 @@ extern NSString *const kiPadArticleCell;
 - (void)showSeparator:(BOOL)showSeparator;
 
 - (void)setupAppearance;
+
+/* Menu Button */
+@property (weak, nonatomic) IBOutlet UIButton *menuButton;
+@property (weak, nonatomic) IBOutlet UIButton *secondaryMenuButton;
+
+- (IBAction)didTapMenuButton:(id)sender;
 
 @end
 

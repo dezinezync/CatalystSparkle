@@ -77,7 +77,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
 
-- (void)getFeed:(Feed * _Nonnull)feed sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getFeed:(Feed * _Nonnull)feed sorting:(YetiSortOption _Nonnull)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -86,6 +86,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
+- (void)getMercurialArticle:(NSNumber * _Nonnull)articleID success:(successBlock)successCB error:(errorBlock)errorCB;
 
 - (void)markFeedRead:(Feed * _Nonnull)feed success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
@@ -99,9 +101,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)updateUnreadArray;
 
-@property (nonatomic, copy) NSDate *unreadLastUpdate;
+@property (nonatomic, copy) NSDate * _Nullable unreadLastUpdate;
 
-- (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption _Nonnull)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

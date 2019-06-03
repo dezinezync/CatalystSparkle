@@ -32,6 +32,8 @@
 @property (nonatomic, copy) NSNumber *feedID;
 @property (nonatomic, copy) NSString *summary;
 
+@property (nonatomic, assign) BOOL mercury;
+
 // used for encoding and decoding
 @property (class, nonatomic, strong) NSDateFormatter *formatter;
 

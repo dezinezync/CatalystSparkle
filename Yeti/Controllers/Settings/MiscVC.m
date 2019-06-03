@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     self.title = @"Miscellaneous";
     
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Show Tags", @"Preview"];
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Show Tags", @"Preview", @"Use Toolbar"];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
@@ -114,6 +114,10 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     else if (section == 6) {
         return @"Number of summary lines to show when viewing list of Articles.";
+    }
+    
+    else if (section == 7) {
+        return @"Show all actions in toolbar at the bottom of the interface instead of the navigation bar at the top. (Requires an App restart)";
     }
     
     return nil;
@@ -213,6 +217,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         [sw setOn:SharedPrefs.showTags];
         [sw addTarget:self action:@selector(didChangeTagsPref:) forControlEvents:UIControlEventValueChanged];
+    }
+    else if ([sectionName isEqualToString:@"Use Toolbar"]) {
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:SharedPrefs.useToolbar];
+        [sw addTarget:self action:@selector(didChangeToolbarPref:) forControlEvents:UIControlEventValueChanged];
     }
     
     if ([sectionName isEqualToString:@"Preview"]) {
@@ -368,6 +378,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 - (void)didChangeTagsPref:(UISwitch *)sender {
     
     [SharedPrefs setValue:@(sender.isOn) forKey:propSel(showTags)];
+    
+}
+
+- (void)didChangeToolbarPref:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(useToolbar)];
     
 }
 

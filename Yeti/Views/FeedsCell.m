@@ -63,6 +63,9 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     UIView *selected = [UIView new];
     selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
     self.selectedBackgroundView = selected;
+    
+    self.preservesSuperviewLayoutMargins = NO;
+    self.separatorInset = UIEdgeInsetsMake(0, 40.f, 0, 0);
 }
 
 - (void)prepareForReuse
@@ -161,10 +164,15 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         self.indentationLevel = 1;
         self.stackLeading.constant = 8.f + (self.indentationWidth * self.indentationLevel);
         
+        self.separatorInset = UIEdgeInsetsMake(0, 40.f + self.indentationWidth, 0, 0);
+        
         [self setNeedsUpdateConstraints];
         [self layoutIfNeeded];
         
         registers = NO;
+    }
+    else {
+        self.separatorInset = UIEdgeInsetsMake(0, 40.f, 0, 0);
     }
     
     self.faviconView.cacheImage = YES;

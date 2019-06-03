@@ -43,6 +43,8 @@ static NSDateFormatter *_formatter = nil;
     
     [encoder encodeObject:self.feedID forKey:@"feedID"];
     [encoder encodeObject:self.summary forKey:@"summary"];
+    
+    [encoder encodeBool:self.mercury forKey:propSel(mercury)];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -71,6 +73,7 @@ static NSDateFormatter *_formatter = nil;
         
         self.feedID = [decoder decodeObjectForKey:@"feedID"];
         self.summary = [decoder decodeObjectForKey:@"summary"];
+        self.mercury = [decoder decodeObjectForKey:propSel(mercury)];
     }
     return self;
 }
@@ -191,8 +194,7 @@ static NSDateFormatter *_formatter = nil;
 
 }
 
-- (void)setValue:(id)value forUndefinedKey:(NSString *)key
-{
+- (void)setValue:(id)value forUndefinedKey:(NSString *)key {
     if ([key isEqualToString:@"id"]) {
         self.identifier = value;
     }
@@ -308,6 +310,8 @@ static NSDateFormatter *_formatter = nil;
     if (self.summary) {
         [dictionary setObject:self.summary forKey:@"summary"];
     }
+    
+    [dictionary setObject:@(self.mercury) forKey:propSel(mercury)];
 
     return dictionary;
 
@@ -330,7 +334,8 @@ static NSDateFormatter *_formatter = nil;
     return (item != nil
             && [item.identifier isEqualToNumber:self.identifier]
             && [item.feedID isEqualToNumber:self.feedID]
-            && (item.content ? item.content.hash == self.content.hash : YES));
+            && (item.content ? item.content.hash == self.content.hash : YES)
+            && item.mercury == self.mercury);
     
 }
 

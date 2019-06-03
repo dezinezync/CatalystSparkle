@@ -14,11 +14,13 @@
 #import "UIViewController+ScrollLoad.h"
 #import <DZKit/DZBasicDatasource.h>
 
+#import "BarPositioning.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
-@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration> {
+@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration, BarPositioning> {
     NSOperation *_searchOperation;
     BOOL _canLoadNext;
     

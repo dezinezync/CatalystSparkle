@@ -122,6 +122,13 @@ static void *KVO_Unread = &KVO_Unread;
             [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
         }
     }
+    
+    if (PrefsManager.sharedInstance.useToolbar == YES) {
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
+    }
+    else {
+        self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -237,6 +244,37 @@ static void *KVO_Unread = &KVO_Unread;
     }
 }
 
+- (UIBarButtonItem *)leftBarButtonItem {
+    
+    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
+    settings.accessibilityLabel = @"Settings";
+    settings.accessibilityHint = @"Elytra's App Settings";
+    
+    return settings;
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
+    
+    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    add.accessibilityLabel = @"New Feed";
+    add.accessibilityHint = @"Add a new RSS Feed";
+    add.width = 40.f;
+    
+    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    folder.accessibilityLabel = @"New Folder";
+    folder.accessibilityHint = @"Create a new folder";
+    folder.width = 40.f;
+    
+    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"whatshot"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
+    recommendations.accessibilityLabel = @"Recommendations";
+    recommendations.accessibilityHint = @"View RSS Feed Recommendations";
+    recommendations.width = 40.f;
+    
+    return @[add, folder, recommendations];
+    
+}
+
 - (void)setupNavigationBar {
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
@@ -253,24 +291,6 @@ static void *KVO_Unread = &KVO_Unread;
     [self.tableView addSubview:control];
     self.refreshControl = control;
     
-    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
-    add.accessibilityLabel = @"New Feed";
-    add.accessibilityHint = @"Add a new RSS Feed";
-    
-    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
-    folder.accessibilityLabel = @"New Folder";
-    folder.accessibilityHint = @"Create a new folder";
-    
-    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"whatshot"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
-    recommendations.accessibilityLabel = @"Recommendations";
-    recommendations.accessibilityHint = @"View RSS Feed Recommendations";
-    
-    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
-    settings.accessibilityLabel = @"Settings";
-    settings.accessibilityHint = @"Elytra's App Settings";
-    
-    self.navigationItem.rightBarButtonItems = @[add, folder, recommendations];
-    self.navigationItem.leftBarButtonItem = settings;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -306,6 +326,40 @@ static void *KVO_Unread = &KVO_Unread;
         [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     }
     
+    if (PrefsManager.sharedInstance.useToolbar == NO) {
+        self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
+        self.navigationItem.leftBarButtonItem = self.leftBarButtonItem;
+        
+        self.navigationController.toolbarHidden = YES;
+    }
+    else {
+        self.navigationController.toolbarHidden = NO;
+    }
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)toolbarItems {
+    
+    if (PrefsManager.sharedInstance.useToolbar == NO) {
+        return nil;
+    }
+    
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    fixed.width = 24.f;
+    
+    NSArray *right = [[self.rightBarButtonItems rz_map:^id(UIBarButtonItem *obj, NSUInteger idx, NSArray *array) {
+        
+        if (idx == 0) {
+            return obj;
+        }
+        
+        return @[flex, obj];
+        
+    }] rz_flatten];
+    
+    return [@[self.leftBarButtonItem, flex] arrayByAddingObjectsFromArray:right];
 }
 
 #pragma mark - Setters

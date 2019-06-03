@@ -161,15 +161,17 @@
     
     NSString *path = [directory stringByAppendingPathComponent:formattedString(@"%@.dat", item.identifier)];
     
-    BOOL errored = NO;
+    NSError *error = nil;
     
-    if (![NSKeyedArchiver archiveRootObject:item toFile:path]) {
-        errored = YES;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:item requiringSecureCoding:NO error:&error];
+    [data writeToFile:path options:NSDataWritingAtomic error:&error];
+    
+    if (error) {
         
         [AlertManager showGenericAlertWithTitle:@"App Error" message:@"Bookmarking the article failed as Yeti was unable to write the data to your device's storage. Please try again."];
     }
     
-    return errored;
+    return error == nil;
 }
 
 - (BOOL)removeLocalBookmark:(FeedItem *)item

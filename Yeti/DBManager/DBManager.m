@@ -148,7 +148,9 @@ NSString *const kNotificationsKey = @"notifications";
     // We just included it here for completeness.
     YapDatabaseSerializer serializer = ^(NSString *collection, NSString *key, id object) {
         
-        return [NSKeyedArchiver archivedDataWithRootObject:object];
+        NSError *error = nil;
+        
+        return [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
         
     };
     
