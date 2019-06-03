@@ -78,6 +78,8 @@ static NSString * const reuseIdentifier = @"Cell";
     
     [self _updateMetrics];
     
+    self.navigationController.toolbarHidden = YES;
+    
     if (self.state == ReccoStateLoaded)
         return;
     
@@ -105,6 +107,16 @@ static NSString * const reuseIdentifier = @"Cell";
         });
         
     }];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [super viewWillDisappear:animated];
+    
+    if (PrefsManager.sharedInstance.useToolbar == YES) {
+        self.navigationController.toolbarHidden = NO;
+    }
+    
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator

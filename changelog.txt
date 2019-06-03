@@ -1,17 +1,19 @@
-[IMPROVE]
-- Improved the description for the Image Proxy setting to make it's benefits more clear.
-- Highlight state for the selected Tint Colour.
-- Mark All Read behaviour when in the Unread section.
+[FIX]
+- Fixed nav bar items when the Use Toolbar option is disabled for the Article Viewer interface. 
+
+-- 234 --
+
+[NEW]
+- Added open in browser option to the articles menu
+- Added option to show all interface options in the toolbar.
+
+-- 233 --
+
+[NEW]
+- Added a new Mercury button next to the author in the Article Interface. When not active, you can tap this button to load the full article when not available (This is useful when articles are published using truncated copies). When already activated, the button will appear with your choice of tint colour for the app. If already activated, the full post will be automatically rendered preventing the article from being loaded twice.
+
+- Added Menu button to the Article Cells to make Marking the Article read, unread, bookmark, unbookmark and view the RSS feed of the article simpler. [Known Issue: Sometimes, tapping the button will cause the article to open instead. I'm working on a fix for this.]
 
 [FIX]
-- Fixed the Hide Bookmarks control not taking any actions even after restarting the app.
-- Fixed custom blog titles not showing in the Unread feed.
-
-[CHANGE]
-- Changed the title from "Recommendations" to "Recommended".
-
--- 216 --
-
-[FIX]
-- fixes search crashing when there are no favicons for a website
-- fixes search not showing correct error messages when no RSS Feeds are available on a particular website.
+- Fixed the padding for empty state messages in the Unread, Bookmarks and Feed Interfaces. 
+- Fixed the indentation on the Feeds Interface for Folder icons and Feed Favicons.

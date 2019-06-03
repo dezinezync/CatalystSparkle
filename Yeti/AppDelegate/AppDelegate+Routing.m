@@ -104,6 +104,16 @@
         
     }];
     
+    [JLRoutes.globalRoutes addRoute:@"/feed/:feedID" handler:^BOOL(NSDictionary *parameters) {
+        
+        NSNumber *feedID = @([[parameters valueForKey:@"feedID"] integerValue]);
+        
+        [self openFeed:feedID article:nil];
+        
+        return YES;
+        
+    }];
+    
     [JLRoutes.globalRoutes addRoute:@"/feed/:feedID/article/:articleID" handler:^BOOL(NSDictionary *parameters) {
        
         NSNumber *feedID = @([[parameters valueForKey:@"feedID"] integerValue]);

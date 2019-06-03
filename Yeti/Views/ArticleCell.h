@@ -15,8 +15,8 @@ extern NSString *const _Nonnull kArticleCell;
 
 @property (weak, nonatomic) IBOutlet UIImageView * _Nullable markerView;
 
-@property (weak, nonatomic) IBOutlet UIImageView *coverImageView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *coverImageHeight;
+@property (weak, nonatomic) IBOutlet UIImageView * _Nullable coverImageView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint * _Nullable coverImageHeight;
 
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable summaryLabel;

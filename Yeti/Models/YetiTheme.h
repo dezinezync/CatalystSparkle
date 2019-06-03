@@ -28,4 +28,9 @@
 
 @property (nonatomic, copy) NSNumber *tintColorIndex;
 
+#pragma mark - 1.3
+@property (nonatomic, copy) UIColor *menuColor;
+
+@property (nonatomic, copy) UIColor *menuTextColor;
+
 @end

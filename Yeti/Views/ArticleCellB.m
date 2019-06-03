@@ -25,6 +25,8 @@
 #import "UIImage+Sizing.h"
 #import "UIColor+Hex.h"
 
+#import <PopMenu/PopMenu-Swift.h>
+
 BOOL IsAccessibilityContentCategory(void) {
     return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
 }
@@ -194,6 +196,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 - (void)prepareForReuse {
     
     [super prepareForReuse];
+    
     self.titleLabel.text = nil;
     self.secondaryTimeLabel.text = nil;
     self.authorLabel.text = nil;
@@ -662,12 +665,19 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         timeLabel = self.timeLabel;
         
         self.secondaryTimeLabel.hidden = YES;
+        self.secondaryMenuButton.hidden = YES;
+        
         self.timeLabel.hidden = NO;
+        self.menuButton.hidden = NO;
     }
     else {
         timeLabel = self.secondaryTimeLabel;
+        
         self.secondaryTimeLabel.hidden = NO;
+        self.secondaryMenuButton.hidden = NO;
+        
         self.timeLabel.hidden = YES;
+        self.menuButton.hidden = YES;
     }
     
     timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
@@ -678,7 +688,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 }
 
-#pragma mark -
+#pragma mark - Actions
 
 - (void)didTapTag:(UIButton *)sender {
     
@@ -688,6 +698,16 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(didTapTag:)]) {
         [self.delegate didTapTag:tag];
+    }
+    
+}
+
+- (IBAction)didTapMenuButton:(id)sender {
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didTapMenuButton:forArticle:cell:)]) {
+        
+        [self.delegate didTapMenuButton:sender forArticle:self.item cell:self];
+        
     }
     
 }

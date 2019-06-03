@@ -21,10 +21,11 @@
 #import "FeedVC.h"
 #import "YetiConstants.h"
 
+#import <PopMenu/PopMenu.h>
+
 @implementation ArticleVC (Toolbar)
 
-- (void)setupToolbar:(UITraitCollection *)newCollection
-{
+- (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"read"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
     read.accessibilityValue = @"Mark article unread";
@@ -35,49 +36,117 @@
     bookmark.accessibilityValue = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
     bookmark.accessibilityLabel = @"Bookmarked";
     
-    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
-    
-    share.accessibilityValue = @"Share article";
-    share.accessibilityLabel = @"Share";
-    
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
     search.accessibilityValue = @"Search in article";
     search.accessibilityLabel = @"Search";
+
     
-    UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"open_in_browser"] style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
-    browser.accessibilityValue = @"Open the article in the browser";
-    browser.accessibilityLabel = @"Browser";
-    
-    self.toolbarItems = nil;
-    self.navigationController.toolbarHidden = YES;
     // these are assigned in reverse order
-    NSMutableArray *rightItems = @[share, search].mutableCopy;
+    NSMutableArray *rightItems = @[search].mutableCopy;
     
     if (PrefsManager.sharedInstance.hideBookmarks == NO) {
         [rightItems addObject:bookmark];
     }
     
-    [rightItems addObjectsFromArray:@[read, browser]];
+    [rightItems addObject:read];
     
-    self.navigationItem.rightBarButtonItems = rightItems;
+    return rightItems;
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
+    
+    if (self.providerDelegate == nil) {
+        return @[];
+    }
+    
+    UIBarButtonItem *prevArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_upward"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapPreviousArticle:)];
+    prevArticle.accessibilityValue = @"Previous article";
+    
+    UIBarButtonItem *nextArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_downward"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNextArticle:)];
+    nextArticle.accessibilityValue = @"Next article";
+    
+    BOOL next = [self.providerDelegate hasPreviousArticleForArticle:self.item];
+    BOOL previous = [self.providerDelegate hasNextArticleForArticle:self.item];
+    
+    prevArticle.enabled = previous;
+    nextArticle.enabled = next;
+
+//    self.helperView.startOfArticle.enabled = NO;
+//    self.helperView.endOfArticle.enabled = YES;
+    
+    return @[nextArticle, prevArticle];
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)commonNavBarItems {
+    
+    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
+    
+    share.accessibilityValue = @"Share article";
+    share.accessibilityLabel = @"Share";
+    
+    UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"open_in_browser"] style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
+    browser.accessibilityValue = @"Open the article in the browser";
+    browser.accessibilityLabel = @"Browser";
+    
+    return @[share, browser];
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)toolbarItems {
+    
+    self.navigationItem.rightBarButtonItems = self.commonNavBarItems;
+    
+    if (PrefsManager.sharedInstance.useToolbar == NO) {
+        return nil;
+    }
+    
+    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    fixed.width = 24.f;
+    
+    NSArray *left = [[[self.leftBarButtonItems rz_map:^id(UIBarButtonItem *obj, NSUInteger idx, NSArray *array) {
+        
+        if (idx == 0) {
+            return obj;
+        }
+        
+        return @[flex, obj];
+        
+    }] rz_flatten] arrayByAddingObject:flex];
+    
+    NSArray *right = [[self.rightBarButtonItems rz_map:^id(UIBarButtonItem *obj, NSUInteger idx, NSArray *array) {
+        
+        if (idx == 0) {
+            return obj;
+        }
+        
+        return @[flex, obj];
+        
+    }] rz_flatten];
+    
+    return [left arrayByAddingObjectsFromArray:right];
+}
+
+
+- (void)setupToolbar:(UITraitCollection *)newCollection
+{
+    if (PrefsManager.sharedInstance.useToolbar == NO) {
+        
+        self.navigationItem.rightBarButtonItems = [self.commonNavBarItems arrayByAddingObjectsFromArray:self.leftBarButtonItems];
+        self.navigationController.toolbarHidden = YES;
+        
+    }
+    else {
+        self.navigationController.toolbarHidden = NO;
+    }
     
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-//        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStyleDone target:self action:@selector(didTapClose)];
-        
         UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.sharedApplication.keyWindow rootViewController] displayModeButtonItem];
         self.navigationItem.leftBarButtonItem = displayButton;
-//        if (self.navigationItem.leftBarButtonItem) {
-//            if (self.navigationItem.leftBarButtonItem == displayButton) {
-//                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, close];
-//            }
-//            else {
-//                self.navigationItem.leftBarButtonItems = @[self.navigationItem.leftBarButtonItem, displayButton, close];
-//            }
-//        }
-//        else {
-//            self.navigationItem.leftBarButtonItems = @[displayButton, close];
-//        }
     }
     else {
         self.navigationItem.leftBarButtonItems = nil;

@@ -16,7 +16,7 @@
 
 @protocol FolderInteractionDelegate <NSObject>
 
-- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell;
+- (void)didTapFolderIcon:(Folder * _Nonnull)folder cell:(FolderCell * _Nonnull)cell;
 
 @end
 

@@ -21,6 +21,7 @@
 #import "Linebreak.h"
 #import "Code.h"
 #import "Tweet.h"
+#import "ArticleAuthorView.h"
 
 #import "YetiConstants.h"
 #import "CheckWifi.h"
@@ -54,7 +55,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -118,15 +119,26 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         || self.splitViewController.view.bounds.size.height < 814.f) {
         
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
-        
-        self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
+        if (PrefsManager.sharedInstance.useToolbar) {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 12.f, 0);
+        }
+        else {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
+            self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
+        }
         
     }
     else if (self.splitViewController.view.bounds.size.height > 814.f
              && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
+        if (PrefsManager.sharedInstance.useToolbar) {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
+            self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 12.f, 0);
+        }
+        else {
+            self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
+        }
         
     }
     
@@ -265,6 +277,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.providerDelegate == nil)
         return;
+    
+    if (PrefsManager.sharedInstance.useToolbar == YES) {
+        return;
+    }
     
     ArticleHelperView *helperView = [[ArticleHelperView alloc] initWithNib];
     helperView.frame = CGRectMake((self.view.bounds.size.width - 190.f) / 2.f, self.view.bounds.size.height - 44.f - 32.f, 190.f, 44.f);
@@ -895,111 +911,71 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
-    NSString *firstLine = formattedString(@"%@%@", feed != nil ? [feed.displayTitle stringByAppendingString:@"\n"] : @"", author);
+    NSString *firstLine = feed != nil ? feed.displayTitle : nil;
     NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
     
-    NSString *sublineText = formattedString(@"%@%@", firstLine, timestamp);
+    NSString *sublineText = formattedString(@"%@%@", author, timestamp);
     
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
 
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
-    
+
     ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
     CGFloat baseFontSize = 32.f;
-    
+
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
-    
-    
+
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
-    
+
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
-    
+
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: theme.titleColor,
                                      NSParagraphStyleAttributeName: para,
                                      NSKernAttributeName: [NSNull null],
                                      };
-    
-    // Subline
-    baseFontSize = 16.f;
-    baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:baseFontSize weight:UIFontWeightMedium] : [UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:baseFontSize];
-    
-    UIFont *subtextFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleSubheadline] scaledFontForFont:baseFont];
-    
-    NSDictionary *subtextAttributes = @{NSFontAttributeName: subtextFont,
-                                        NSForegroundColorAttributeName: theme.captionColor,
-                                        NSParagraphStyleAttributeName: para,
-                                        NSKernAttributeName: [fontPref isEqualToString:ALPSystem] ? @(-0.43f) : [NSNull null]
-                                        };
-    
-    NSMutableAttributedString *subline = [[NSMutableAttributedString alloc] initWithString:sublineText attributes:subtextAttributes];
-    NSRange feedTitleRange = NSMakeRange(NSNotFound, 0);
-    
-    if (feed) {
-        feedTitleRange = [sublineText rangeOfString:feed.displayTitle];
-    }
-    
-    if (feedTitleRange.location != NSNotFound) {
-        [subline addAttribute:NSForegroundColorAttributeName value:theme.tintColor range:feedTitleRange];
-    }
-    
+
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
-    label.numberOfLines = 0;
-    label.attributedText = attrs;
-    label.translatesAutoresizingMaskIntoConstraints = NO;
-    label.lineBreakMode = NSLineBreakByWordWrapping;
-//    label.preferredMaxLayoutWidth = self.view.bounds.size.width;
-    
-    [label sizeToFit];
-    
-    label.backgroundColor = theme.articleBackgroundColor;
-    label.opaque = YES;
-    label.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    UILabel *sublabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.stackView.bounds.size.width, 0.f)];
-    sublabel.numberOfLines = 0;
-    sublabel.attributedText = subline;
-    sublabel.translatesAutoresizingMaskIntoConstraints = NO;
-    sublabel.lineBreakMode = NSLineBreakByWordWrapping;
-//    sublabel.preferredMaxLayoutWidth = self.view.bounds.size.width;
-    
-    [sublabel sizeToFit];
-    
-    sublabel.backgroundColor = theme.articleBackgroundColor;
-    sublabel.opaque = YES;
-    
-    UIView *mainView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 48.f)];
-    mainView.translatesAutoresizingMaskIntoConstraints = NO;
-    [mainView addSubview:label];
-    
-    [label.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor constant:4.f].active = YES;
-    [label.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor constant:4.f].active = YES;
-    [label.topAnchor constraintEqualToAnchor:mainView.topAnchor].active = YES;
-    [label setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
-    
-    [mainView addSubview:sublabel];
-    
-    [sublabel.leadingAnchor constraintEqualToAnchor:mainView.leadingAnchor constant:4.f].active = YES;
-    [sublabel.trailingAnchor constraintEqualToAnchor:mainView.trailingAnchor constant:4.f].active = YES;
-    [sublabel.firstBaselineAnchor constraintEqualToSystemSpacingBelowAnchor:label.lastBaselineAnchor multiplier:1.2f].active = YES;
-    [sublabel setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
-    
-    [sublabel.bottomAnchor constraintEqualToAnchor:mainView.bottomAnchor].active = YES;
+    ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
+    authorView.delegate = self;
     
     if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
-        mainView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-        label.textAlignment = NSTextAlignmentRight;
-        sublabel.textAlignment = NSTextAlignmentRight;
+        authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        authorView.titleLabel.textAlignment = NSTextAlignmentRight;
+        authorView.blogLabel.textAlignment = NSTextAlignmentRight;
     }
     
-    [mainView sizeToFit];
+    // this will be reused later after setting up the label.
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
     
-    [self.stackView addArrangedSubview:mainView];
+    authorView.frame = frame;
+    
+    authorView.titleLabel.attributedText = attrs;
+    authorView.blogLabel.text = firstLine;
+    authorView.authorLabel.text = sublineText;
+    
+    for (UILabel *label in @[authorView.titleLabel, authorView.blogLabel, authorView.authorLabel]) {
+        [label sizeToFit];
+    }
+    
+    [authorView sizeToFit];
+    
+    CGSize fittingSize = [authorView systemLayoutSizeFittingSize:CGSizeMake(self.view.bounds.size.width, CGFLOAT_MAX) withHorizontalFittingPriority:1000 verticalFittingPriority:1000];
+    
+    frame.size = fittingSize;
+    authorView.frame = frame;
+    
+    authorView.mercurialed = self.item.mercury;
+    
+    if (self.item.mercury) {
+        authorView.mercurialButton.enabled = NO;
+    }
+    
+    [self.stackView addArrangedSubview:authorView];
     
 }
 
@@ -1134,7 +1110,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if ([content.type isEqualToString:@"pre"]) {
+    else if ([content.type isEqualToString:@"pre"] || [content.type isEqualToString:@"code"]) {
         [self addPre:content];
     }
     else if ([content.type isEqualToString:@"li"]) {
@@ -1874,6 +1850,50 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
+#pragma mark - <ArticleAuthorViewDelegate>
+
+- (void)didTapMercurialButton:(id)sender completion:(void (^)(BOOL))completionHandler {
+    
+    if (self.item == nil || self.item.identifier == nil) {
+        
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+        
+        return;
+    }
+    
+    // if the article already has a mercury source
+    // this will only mark that and return
+    if (self.item.mercury == YES) {
+        
+        if (completionHandler) {
+            completionHandler(YES);
+        }
+        
+        return;
+    }
+    
+    [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [self setupArticle:responseObject];
+        
+        if (completionHandler) {
+            completionHandler(YES);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+        
+        [AlertManager showGenericAlertWithTitle:@"An Unexpected Error Occurred" message:error.localizedDescription fromVC:self];
+        
+    }];
+    
+}
+
 #pragma mark - <UIScrollViewDelegate>
 
 - (NSArray <UIView *> *)visibleViews {
@@ -2167,8 +2187,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return NO;
 }
 
-- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction
-{
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+    
+    NSString *originalURL = [URL absoluteString];
+    
     if (URL.host == nil) {
         // absolute link in the article. Resovle to fully qualified URL
         NSURLComponents *articleComp = [NSURLComponents componentsWithString:[self.item articleURL]];
@@ -2176,14 +2198,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         urlComp.host = articleComp.host;
         urlComp.scheme = articleComp.scheme;
+        urlComp.path = articleComp.path;
         URL = [urlComp URL];
     }
     
     NSString *absolute = URL.absoluteString;
     
+    DDLogDebug(@"Interact with URL: %@ and interaction type: %@", URL, @(interaction));
+    
     if (interaction != UITextItemInteractionPresentActions) {
         // footlinks and the like
-        if (absolute.length && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"]) {
+        
+        if (originalURL && (originalURL.length > 0 && [[originalURL substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"])) {
+            [self scrollToIdentifer:originalURL];
+            return NO;
+        }
+        
+        if ((absolute && (absolute.length > 0) && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"])) {
             [self scrollToIdentifer:absolute];
             return NO;
         }
@@ -2199,6 +2230,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             if (!retval)
                 return retval;
+        }
+        else {
+            
+            // open the link externally since it's not available in headings
+            // or the link appears to be different from the article's URL.
+            [self openLinkExternally:absolute];
+            return NO;
+            
         }
     }
     
@@ -2231,12 +2270,25 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self presentViewController:avc animated:YES completion:nil];
     }
     else {
-        NSURL *formatted = formattedURL(@"yeti://external?link=%@", absolute);
         
-        [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+        [self openLinkExternally:absolute];
+        
     }
     
     return NO;
+}
+
+- (void)openLinkExternally:(NSString *)link {
+    
+    if (link == nil || [link isBlank]) {
+        return;
+    }
+    
+    NSURL *formatted = formattedURL(@"yeti://external?link=%@", link);
+    
+    asyncMain(^{
+        [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+    });
 }
 
 - (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range

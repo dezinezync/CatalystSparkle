@@ -8,6 +8,7 @@
 
 #import <DZThemeKit/DZThemeKit.h>
 #import "YetiTheme.h"
+#import "TypeFactory.h"
 
 @class YetiThemeKit;
 
@@ -20,8 +21,8 @@ extern YetiThemeKit * _Nonnull YTThemeKit;
  */
 + (void)loadThemeKit;
 
-+ (NSArray <UIColor *> *)colours;
++ (NSArray <UIColor *> * _Nonnull)colours;
 
-+ (NSArray <NSString *> *)themeNames;
++ (NSArray <NSString *> * _Nonnull)themeNames;
 
 @end
