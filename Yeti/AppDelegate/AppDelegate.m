@@ -22,6 +22,8 @@
 #import "YetiConstants.h"
 #import "FeedsManager.h"
 
+//#import <LinkPresentation/LinkPresentation.h>
+
 AppDelegate *MyAppDelegate = nil;
 
 @interface AppDelegate () {
@@ -156,6 +158,20 @@ AppDelegate *MyAppDelegate = nil;
             [NSUserDefaults.standardUserDefaults setBool:YES forKey:kUseExtendedFeedLayout];
             [NSUserDefaults.standardUserDefaults synchronize];
         }
+        
+#ifdef DEBUG
+//        LPMetadataProvider *metadata = [[LPMetadataProvider alloc] init];
+//        [metadata startFetchingMetadataForURL:[NSURL URLWithString:@"https://www.youtube.com/watch?v=U3nlCMamIUg"] completionHandler:^(LPLinkMetadata * _Nullable metadata, NSError * _Nullable error) {
+//
+//            if (error) {
+//                DDLogError(@"Error loading metadata: %@", error);
+//            }
+//            else {
+//                DDLogDebug(@"Metadata: %@", metadata);
+//            }
+//
+//        }];
+#endif
         
     });
     

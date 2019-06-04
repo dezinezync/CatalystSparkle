@@ -92,6 +92,18 @@
 
 - (IBAction)didTapButton:(id)sender {
     
+#ifdef DEBUG
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        UICKeyChainStore *keychain = MyFeedsManager.keychain;
+        [keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+        
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    });
+    
+    return;
+#endif
+    
     TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
     
     [self showViewController:vc sender:self];

@@ -111,10 +111,10 @@
     
     [self.cancelButton.widthAnchor constraintEqualToConstant:80.f].active = YES;
     
-    UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
-    if (label) {
-        label.textColor = theme.captionColor;
-    }
+//    UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
+//    if (label) {
+//        label.textColor = theme.captionColor;
+//    }
 
 }
 

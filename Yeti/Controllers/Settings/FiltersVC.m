@@ -113,7 +113,7 @@ NSString *const kFiltersCell = @"filterCell";
     cell.textField.textColor = theme.titleColor;
     cell.textField.backgroundColor = theme.backgroundColor;
     cell.textField.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-    [(UILabel *)[cell.textField valueForKeyPath:@"_placeholderLabel"] setTextColor:theme.captionColor];
+//    [(UILabel *)[cell.textField valueForKeyPath:@"_placeholderLabel"] setTextColor:theme.captionColor];
     
     cell.backgroundColor = theme.cellColor;
     
