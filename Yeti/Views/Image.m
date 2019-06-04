@@ -155,17 +155,20 @@
             NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
             
             [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
-                strongify(self);
-                if (image) {
-                    self.imageView.settingCached = YES;
-                    self.imageView.image = image;
-                    self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-                }
-                else {
-                    [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    if (image) {
+                        self.imageView.settingCached = YES;
+                        self.imageView.image = image;
                         self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-                    } error:nil];
-                }
+                    }
+                    else {
+                        [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
+                        } error:nil];
+                    }
+                });
                 
             }];
         });

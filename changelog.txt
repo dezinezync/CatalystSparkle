@@ -1,4 +1,10 @@
 [FIX]
+- Fixed a crash that would occur when loading Youtube videos. Youtube has changed the API response which caused the crash. The new method is resilient to all such future API changes.
+- Fixed a state in the Article reader when using the toolbar where the previous and next article buttons would not update their states.
+
+-- 235 --
+
+[FIX]
 - Fixed nav bar items when the Use Toolbar option is disabled for the Article Viewer interface. 
 
 -- 234 --

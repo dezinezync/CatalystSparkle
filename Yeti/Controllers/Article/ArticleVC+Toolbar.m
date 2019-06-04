@@ -72,9 +72,16 @@
     
     prevArticle.enabled = previous;
     nextArticle.enabled = next;
-
-//    self.helperView.startOfArticle.enabled = NO;
-//    self.helperView.endOfArticle.enabled = YES;
+    
+    if (self.helperView != nil) {
+        self.helperView.startOfArticle.enabled = NO;
+        self.helperView.endOfArticle.enabled = YES;
+    }
+    
+    if (PrefsManager.sharedInstance.useToolbar == YES) {
+        _nextButtonItem = nextArticle;
+        _prevButtonItem = prevArticle;
+    }
     
     return @[nextArticle, prevArticle];
     

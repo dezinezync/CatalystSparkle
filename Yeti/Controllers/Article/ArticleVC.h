@@ -21,6 +21,8 @@
     NSArray <NSValue *> *_searchingRects;
     NSInteger _searchCurrentIndex;
     CGRect _keyboardRect;
+    
+    UIBarButtonItem *_nextButtonItem, *_prevButtonItem;
 }
 
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
@@ -33,16 +35,16 @@
 
 @property (nonatomic, weak) id <ArticleProvider> _Nullable providerDelegate;
 
-@property (nonatomic, weak) ArticleHelperView *helperView;
+@property (nonatomic, weak) ArticleHelperView * _Nullable helperView;
 
-@property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
-@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
+@property (nonatomic, strong) UINotificationFeedbackGenerator * _Nullable notificationGenerator;
+@property (nonatomic, strong) UISelectionFeedbackGenerator * _Nullable feedbackGenerator;
 
-@property (nonatomic, weak) UISearchBar *searchBar;
-@property (nonatomic, weak) UIButton *searchPrevButton, *searchNextButton;
+@property (nonatomic, weak) UISearchBar * _Nullable searchBar;
+@property (nonatomic, weak) UIButton * _Nullable searchPrevButton, * _Nullable searchNextButton;
 
 #pragma mark - Private
 
-- (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range;
+- (CGRect)boundingRectIn:(UITextView * _Nonnull)textview forCharacterRange:(NSRange)range;
 
 @end

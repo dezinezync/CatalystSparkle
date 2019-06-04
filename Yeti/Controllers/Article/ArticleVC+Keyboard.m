@@ -76,6 +76,22 @@
     [scrollView setContentOffset:targetOffset animated:YES];
 }
 
+- (void)updateBarButtonItems {
+
+    if (self.providerDelegate == nil
+        || _prevButtonItem == nil
+        || _nextButtonItem == nil) {
+        return;
+    }
+    
+    BOOL next = [self.providerDelegate hasPreviousArticleForArticle:self.item];
+    BOOL previous = [self.providerDelegate hasNextArticleForArticle:self.item];
+    
+    _prevButtonItem.enabled = previous;
+    _nextButtonItem.enabled = next;
+    
+}
+
 - (void)didTapPreviousArticle:(UIButton *)sender {
     
     if (self.helperView) {
@@ -98,6 +114,8 @@
         [self setupArticle:article];
     else
         sender.enabled = NO;
+    
+    [self updateBarButtonItems];
 }
 
 - (void)didTapNextArticle:(UIButton *)sender {
@@ -123,6 +141,7 @@
     else
         sender.enabled = NO;
     
+    [self updateBarButtonItems];
 }
 
 #pragma mark - Gallery Nav

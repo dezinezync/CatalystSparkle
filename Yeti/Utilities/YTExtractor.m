@@ -154,6 +154,39 @@ NSString * const ERROR_unknown = @"Unknown error occured";
     
     NSString *thumbnail = pairs[@"thumbnail_url"];
     
+    if (thumbnail == nil) {
+        // updated response
+        
+        NSString *playerResponseString = pairs[@"player_response"];
+        
+        if (playerResponseString != nil) {
+            NSData *playerResponseData = [playerResponseString dataUsingEncoding:NSUTF8StringEncoding];
+            
+            NSDictionary *playerResponse = [NSJSONSerialization JSONObjectWithData:playerResponseData options:kNilOptions error:nil];
+            
+            NSDictionary *videoDetails = [playerResponse valueForKey:@"videoDetails"];
+            
+            if (videoDetails != nil) {
+                NSDictionary *thumbnailContainer = [videoDetails objectForKey:@"thumbnail"];
+                
+                if (thumbnailContainer != nil) {
+                    NSArray <NSDictionary <NSString *, NSString *> *> *thumbnails = [thumbnailContainer objectForKey:@"thumbnails"];
+                    
+                    if (thumbnails != nil && [thumbnails isKindOfClass:NSArray.class] && thumbnails.count > 0) {
+                        thumbnail = [[thumbnails lastObject] valueForKey:@"url"];
+                    }
+                    
+                }
+            }
+            
+        }
+        
+    }
+    
+    if (thumbnail == nil) {
+        thumbnail = @"";
+    }
+    
     if ([[thumbnail lastPathComponent] isEqualToString:@"default.jpg"]) {
         thumbnail = [thumbnail stringByReplacingOccurrencesOfString:@"/default.jpg" withString:@"/maxresdefault.jpg"];
     }
