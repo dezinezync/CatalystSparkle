@@ -312,12 +312,16 @@ static void *KVO_Unread = &KVO_Unread;
         searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
         
         CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
-        hairline.backgroundColor = theme.cellColor;
-        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
         
-        [searchController.searchBar addSubview:hairline];
-        self.hairlineView = hairline;
+        if (@available(iOS 13, *)) {}
+        else {
+            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
+            hairline.backgroundColor = theme.cellColor;
+            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+            
+            [searchController.searchBar addSubview:hairline];
+            self.hairlineView = hairline;
+        }
         
         self.navigationItem.searchController = searchController;
     }
@@ -825,9 +829,12 @@ NSString * const kDS2Data = @"DS2Data";
     
     self.refreshControl.tintColor = [theme captionColor];
     
-    if (self.hairlineView != nil) {
-        self.hairlineView.backgroundColor = theme.cellColor;
-        [self.hairlineView setNeedsDisplay];
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.hairlineView != nil) {
+            self.hairlineView.backgroundColor = theme.cellColor;
+            [self.hairlineView setNeedsDisplay];
+        }
     }
     
     [[self.headerView tableView] reloadData];

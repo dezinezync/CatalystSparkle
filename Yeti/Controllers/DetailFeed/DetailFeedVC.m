@@ -419,6 +419,21 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 - (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
     
+    if(@available(iOS 13, *)) {
+        [self _os12_didTapMenuButton:sender forArticle:article cell:cell];
+    }
+    else {
+        [self _os12_didTapMenuButton:sender forArticle:article cell:cell];
+    }
+    
+}
+
+- (void)didTapTest:(id)sender {
+    
+}
+
+- (void)_os12_didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
+    
     if (article == nil) {
         
         NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
@@ -1177,13 +1192,16 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-    UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.navigationController.navigationBar.bounds.size.width, height)];
-    hairline.backgroundColor = theme.cellColor;
-    hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-    
-    [self.navigationController.navigationBar addSubview:hairline];
-    self.hairlineView = hairline;
+    if (@available(iOS 13, *)) {}
+    else {
+        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
+        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.navigationController.navigationBar.bounds.size.width, height)];
+        hairline.backgroundColor = theme.cellColor;
+        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+        
+        [self.navigationController.navigationBar addSubview:hairline];
+        self.hairlineView = hairline;
+    }
     
 }
 
@@ -1328,7 +1346,12 @@ NSString * const kSizCache = @"FeedSizesCache";
        [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
     }
     
-    self.hairlineView.backgroundColor = theme.cellColor;
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.hairlineView != nil) {
+            self.hairlineView.backgroundColor = theme.cellColor;
+        }
+    }
     
     [self reloadHeaderView];
     

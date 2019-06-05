@@ -288,32 +288,32 @@
     return nav;
 }
 
-- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(YTNavigationController *)primaryViewController {
-
-    if (primaryViewController == secondaryViewController) {
-        return NO;
-    }
-
-    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class]) {
-
-        UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
-        UIViewController *topVC = [secondaryNav topViewController];
-
-        if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
-            [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
-            return YES;
-        }
-        else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
-            return YES;
-        }
-    }
-    else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
-        [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
-        return YES;
-    }
-
-    return NO;
-}
+//- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(YTNavigationController *)primaryViewController {
+//
+//    if (primaryViewController == secondaryViewController) {
+//        return NO;
+//    }
+//
+//    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class]) {
+//
+//        UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
+//        UIViewController *topVC = [secondaryNav topViewController];
+//
+//        if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
+//            [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
+//            return YES;
+//        }
+//        else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
+//            return YES;
+//        }
+//    }
+//    else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
+//        [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
+//        return YES;
+//    }
+//
+//    return NO;
+//}
 
 - (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
     
@@ -336,6 +336,18 @@
 
     return [self emptyVC];
 
+}
+
+- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
+    
+    if ([secondaryViewController isKindOfClass:[UINavigationController class]]
+        && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:[ArticleVC class]]
+        && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
+        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 #pragma mark - <UIGestureRecognizerDelegate>

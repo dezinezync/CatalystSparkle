@@ -3139,6 +3139,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/lib",
 				);
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -3183,6 +3184,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/lib",
 				);
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3349,6 +3351,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/lib",
 				);
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

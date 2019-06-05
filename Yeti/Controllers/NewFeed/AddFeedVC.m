@@ -41,7 +41,16 @@
 + (UINavigationController *)instanceInNavController {
     
     AddFeedVC *vc = [[AddFeedVC alloc] init];
-    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    
+    UINavigationController *nav = nil;
+    
+    if (@available(iOS 13, *)) {
+        nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.modalInPresentation = UIModalPresentationAutomatic;
+    }
+    else {
+        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    }
     
     return nav;
 }

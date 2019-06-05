@@ -201,17 +201,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
     }
     
-    if (!self.hairlineView) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        UINavigationBar *navbar = self.navigationController.navigationBar;
-        
-        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
-        hairline.backgroundColor = theme.cellColor;
-        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-        
-        [navbar addSubview:hairline];
-        self.hairlineView = hairline;
+    if (@available(iOS 13, *)) {}
+    else {
+        if (!self.hairlineView) {
+            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+            UINavigationBar *navbar = self.navigationController.navigationBar;
+            
+            CGFloat height = 1.f/[[UIScreen mainScreen] scale];
+            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
+            hairline.backgroundColor = theme.cellColor;
+            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+            
+            [navbar addSubview:hairline];
+            self.hairlineView = hairline;
+        }
     }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
@@ -354,8 +357,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     self.view.backgroundColor = theme.articleBackgroundColor;
     self.scrollView.backgroundColor = theme.articleBackgroundColor;
     
-    if (self.hairlineView != nil) {
-        self.hairlineView.backgroundColor = theme.articleBackgroundColor;
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.hairlineView != nil) {
+            self.hairlineView.backgroundColor = theme.articleBackgroundColor;
+        }
     }
     
     if (self.helperView != nil) {

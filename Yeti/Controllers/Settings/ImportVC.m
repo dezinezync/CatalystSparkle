@@ -87,16 +87,19 @@ NSString *const kImportCell = @"importCell";
     
     self.DS.data = self.unmappedFeeds;
  
-    if (self.hairlineView == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.navigationController.navigationBar.bounds.size.width, height)];
-        hairline.backgroundColor = theme.cellColor;
-        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-        
-        [self.navigationController.navigationBar addSubview:hairline];
-        self.hairlineView = hairline;
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.hairlineView == nil) {
+            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+            
+            CGFloat height = 1.f/[[UIScreen mainScreen] scale];
+            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.navigationController.navigationBar.bounds.size.width, height)];
+            hairline.backgroundColor = theme.cellColor;
+            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+            
+            [self.navigationController.navigationBar addSubview:hairline];
+            self.hairlineView = hairline;
+        }
     }
 }
 

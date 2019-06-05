@@ -343,7 +343,18 @@ NSString* deviceName() {
                     vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
                     break;
                 case 4:
-                    vc = [[OPMLDeckController alloc] init];
+                {
+                    if (@available(iOS 13, *)) {
+                        OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc1];
+                        nav.modalTransitionStyle = UIModalPresentationAutomatic;
+                        
+                        vc = nav;
+                    }
+                    else {
+                        vc = [[OPMLDeckController alloc] init];
+                    }
+                }
                     break;
                 case 5:
                     vc = [[MiscVC alloc] initWithStyle:UITableViewStyleGrouped];
@@ -387,7 +398,7 @@ NSString* deviceName() {
         [(id<SettingsNotifier>)vc setSettingsDelegate:self];
     }
     
-    if ([vc isKindOfClass:OPMLDeckController.class]) {
+    if ([vc isKindOfClass:OPMLDeckController.class] || [vc isKindOfClass:UINavigationController.class]) {
         
         [self presentViewController:vc animated:YES completion:nil];
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
