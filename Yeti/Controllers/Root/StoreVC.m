@@ -73,21 +73,30 @@
         self.selectedProduct = NSNotFound;
         
         [[DZActivityIndicatorManager shared] decrementCount];
-        self.productsRequestFinished = YES;
-        [self.tableView reloadData];
         
-        [footer.activityIndicator stopAnimating];
-        footer.activityIndicator.hidden = YES;
-        
-        footer.stackView.hidden = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            self.productsRequestFinished = YES;
+            [self.tableView reloadData];
+            
+            [footer.activityIndicator stopAnimating];
+            footer.activityIndicator.hidden = YES;
+            
+            footer.stackView.hidden = NO;
+            
+        });
         
     } failure:^(NSError *error) {
         
-        [[DZActivityIndicatorManager shared] decrementCount];
-        [AlertManager showGenericAlertWithTitle:@"Failed to load Products" message:error.localizedDescription];
-        
-        [footer.activityIndicator stopAnimating];
-        footer.activityIndicator.hidden = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            [[DZActivityIndicatorManager shared] decrementCount];
+            [AlertManager showGenericAlertWithTitle:@"Failed to load Products" message:error.localizedDescription];
+            
+            [footer.activityIndicator stopAnimating];
+            footer.activityIndicator.hidden = YES;
+            
+        });
 
     }];
     
@@ -348,6 +357,12 @@
 #pragma mark - Setters
 
 - (void)setSelectedProduct:(NSInteger)selectedProduct {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setSelectedProduct:) withObject:@(selectedProduct) waitUntilDone:NO];
+        return;
+    }
+    
     _selectedProduct = selectedProduct;
     
     StoreFooter *footer =  (StoreFooter *)[self.tableView tableFooterView];
@@ -462,13 +477,21 @@
 
 - (void)storeProductsRequestFinished:(NSNotification*)notification
 {
-    [self.tableView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
 {
-    self.purhcasedProductIdentifiers = _persistence.purchasedProductIdentifiers.allObjects;
-    [self.tableView reloadData];
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        self.purhcasedProductIdentifiers = self->_persistence.purchasedProductIdentifiers.allObjects;
+        [self.tableView reloadData];
+    });
 }
 
 @end
