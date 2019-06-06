@@ -36,15 +36,28 @@
         
         self.delegate = self;
         
+        [self loadViewIfNeeded];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+            
+            if (@available(iOS 13, *)) {
+                self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+            }
+            
         });
         
         MainNavController *nav1 = [[MainNavController alloc] init];
         
         UINavigationController *nav2 = [self emptyVC];
 
-        self.viewControllers = @[nav1, nav2];
+        if (self.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            self.viewControllers = @[nav1];
+            nav2 = nil;
+        }
+        else {
+            self.viewControllers = @[nav1, nav2];
+        }
         
     }
     
@@ -108,8 +121,6 @@
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-
     weakify(self);
     [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
 
@@ -137,6 +148,9 @@
 //        }
 
     }];
+    
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
 }
 
 #pragma mark -
@@ -345,7 +359,13 @@
         && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
         // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
         return YES;
-    } else {
+    }
+    else if ([secondaryViewController isKindOfClass:YTNavigationController.class]
+             && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
+        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+        return YES;
+    }
+    else {
         return NO;
     }
 }

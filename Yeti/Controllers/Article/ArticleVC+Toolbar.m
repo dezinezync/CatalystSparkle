@@ -151,7 +151,7 @@
         self.navigationController.toolbarHidden = NO;
     }
     
-    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.splitViewController != nil) {
         UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.sharedApplication.keyWindow rootViewController] displayModeButtonItem];
         self.navigationItem.leftBarButtonItem = displayButton;
     }

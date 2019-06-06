@@ -729,8 +729,24 @@ NSString * const kDS2Data = @"DS2Data";
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-            cell.countLabel.text = [@([(FeedsManager *)object totalUnread]) stringValue];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            
+            NSArray <NSIndexPath *> *indexPaths = [self.tableView indexPathsForVisibleRows];
+            
+            BOOL visible = NO;
+            
+            for (NSIndexPath *ip in indexPaths) {
+                if (ip.section == indexPath.section && ip.row == indexPath.row) {
+                    visible = YES;
+                    break;
+                }
+            }
+            
+            if (visible) {
+                FeedsCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                cell.countLabel.text = [@([(FeedsManager *)object totalUnread]) stringValue];
+            }
         });
     }
     else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {

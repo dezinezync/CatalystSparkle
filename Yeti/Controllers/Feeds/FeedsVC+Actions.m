@@ -135,7 +135,6 @@
     SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
     
     YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:settingsVC];
-//    navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];
 }
@@ -145,8 +144,7 @@
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
     if (@available(iOS 13, *)) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.modalInPresentation = UIModalPresentationOverCurrentContext;
+        YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
         
         [self presentViewController:nav animated:YES completion:nil];
     }

@@ -201,11 +201,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
     }
     
-    if (@available(iOS 13, *)) {}
+    UINavigationBar *navbar = self.navigationController.navigationBar;
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    if (@available(iOS 13, *)) {
+        self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    }
     else {
         if (!self.hairlineView) {
-            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-            UINavigationBar *navbar = self.navigationController.navigationBar;
             
             CGFloat height = 1.f/[[UIScreen mainScreen] scale];
             UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
