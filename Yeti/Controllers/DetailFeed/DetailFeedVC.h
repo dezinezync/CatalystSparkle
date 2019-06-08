@@ -48,6 +48,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
 
+@property (nonatomic, weak) UICollectionViewCompositionalLayout *compLayout;
+
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
 @property (assign) NSInteger page;

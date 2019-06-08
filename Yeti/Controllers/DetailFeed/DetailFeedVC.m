@@ -532,7 +532,26 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
     
-    [self showViewController:vc sender:self];
+    if (self.splitViewController == nil) {
+        // in a modal stack
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    else if (self.splitViewController != nil) {
+        
+        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            
+            [self.splitViewController showDetailViewController:nav sender:self];
+        }
+        else {
+            [self showViewController:vc sender:self];
+        }
+        
+    }
+    else {
+        [self presentViewController:vc animated:YES completion:nil];
+    }
     
 }
 
@@ -1232,9 +1251,30 @@ NSString * const kSizCache = @"FeedSizesCache";
 - (void)setupLayout {
     
     BOOL isCompact = [[[self.collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
-
+    
     CGFloat padding = isCompact ? 0 : [self.flowLayout minimumInteritemSpacing];
-
+    
+    if (@available(iOS 13, *)) {
+        
+        NSCollectionLayoutSize *layoutSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
+        
+        NSCollectionLayoutItem *layoutItem = [NSCollectionLayoutItem itemWithLayoutSize:layoutSize];
+        
+        NSInteger columnCount = isCompact ? 1 : 2;
+        
+        NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:layoutSize subitem:layoutItem count:columnCount];
+        
+        NSCollectionLayoutSection *layoutSection = [NSCollectionLayoutSection sectionWithGroup:layoutGroup];
+        
+        UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
+        
+        [self.collectionView setCollectionViewLayout:compLayout animated:NO];
+        
+        self.compLayout = (UICollectionViewCompositionalLayout *)[self.collectionView collectionViewLayout];
+        
+        return;
+    }
+    
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
         self.flowLayout.minimumLineSpacing = 0.1f;
@@ -1342,12 +1382,11 @@ NSString * const kSizCache = @"FeedSizesCache";
     self.view.backgroundColor = theme.cellColor;
     self.collectionView.backgroundColor = theme.cellColor;
     
-    if (self.collectionView != nil) {
-       [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
-    }
-    
     if (@available(iOS 13, *)) {}
     else {
+        
+        
+        
         if (self.hairlineView != nil) {
             self.hairlineView.backgroundColor = theme.cellColor;
         }
