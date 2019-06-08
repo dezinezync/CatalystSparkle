@@ -37,9 +37,11 @@
     
     BOOL isAtBottom = bottomOffset <= 120.f;
     
+    BOOL contentSmallerThanContentSize = contentHeight < scrollView.bounds.size.height;
+    
     DDLogDebug(@"Diff:%@\nThreshold:%@\nPercent:%@\nisAtBottom:%@", @(diff), @(threshold), @(diff/threshold), @(isAtBottom));
     
-    if (percentage || isAtBottom) {
+    if (percentage || isAtBottom || contentSmallerThanContentSize) {
         id delegate = scrollView.delegate;
         
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
