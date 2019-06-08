@@ -120,6 +120,18 @@
     
 }
 
+//- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+//    
+//    if (@available(iOS 13, *)) {
+//        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+//            [[NSNotificationCenter defaultCenter] postNotificationName:ThemeDidUpdate object:nil];
+//        }
+//    }
+//    
+//    [super traitCollectionDidChange:previousTraitCollection];
+//    
+//}
+
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     weakify(self);
     [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {

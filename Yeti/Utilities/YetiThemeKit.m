@@ -35,7 +35,14 @@ NSArray <NSString *> * _themeNames;
     if (_themeNames == nil) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            NSArray *themes = @[@"light", @"dark", @"reader"];
+            NSArray *themes = nil;
+            
+            if (@available(iOS 13, *)) {
+                themes = @[@"light", @"reader"];
+            }
+            else {
+                themes = @[@"light", @"dark", @"reader"];
+            }
             
             if (canSupportOLED()) {
                 // black should always be last
@@ -66,7 +73,7 @@ NSArray <NSString *> * _themeNames;
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 NSString *defaultsKey = [NSString stringWithFormat:@"theme-%@-color", obj];
                 
-                NSURL *path = [[NSBundle mainBundle] URLForResource:obj withExtension:@"json"];
+                NSURL *path = [[NSBundle bundleForClass:self.class] URLForResource:obj withExtension:@"json"];
                 
                 __unused YetiTheme *theme = (YetiTheme *)[YTThemeKit loadColorsFromFile:path];
                 NSInteger tintIndex = [defaults integerForKey:defaultsKey] ?: NSNotFound;
@@ -75,11 +82,14 @@ NSArray <NSString *> * _themeNames;
                     theme.tintColor = colours[tintIndex];
                 }
                 
-                if ([obj isEqualToString:@"dark"]
-                    || [obj isEqualToString:@"black"]) {
-                    
-                    theme.dark = YES;
-                    
+                if (@available(iOS 13, *)) {}
+                else {
+                    if ([obj isEqualToString:@"dark"]
+                        || [obj isEqualToString:@"black"]) {
+                        
+                        theme.dark = YES;
+                        
+                    }
                 }
                 
             }];

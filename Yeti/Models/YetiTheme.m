@@ -10,6 +10,21 @@
 
 @implementation YetiTheme
 
+- (NSArray <NSString *> *)additionalKeyPaths {
+    
+    return @[@"cellColor",
+             @"unreadBadgeColor",
+             @"unreadTextColor",
+             @"articlesBarColor",
+             @"subbbarColor",
+             @"focusColor",
+             @"articleBackgroundColor",
+             @"opmlViewColor",
+             @"menuColor",
+             @"menuTextColor"];
+    
+}
+
 - (void)updateAppearances {
     
     if (![NSThread isMainThread]) {
@@ -38,7 +53,10 @@
     
     // setting this to NO causes jumpy navigation bars
     // update UIViewController to set viewController.extendedLayoutIncludesOpaqueBars=YES;
-    navBar.translucent = ![self.name isEqualToString:@"black"];
+    if (@available(iOS 13, *)) {}
+    else {
+        navBar.translucent = ![self.name isEqualToString:@"black"];
+    }
     
     if (self.isDark) {
         [navBar setBarStyle:UIBarStyleBlack];
