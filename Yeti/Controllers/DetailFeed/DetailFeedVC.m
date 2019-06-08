@@ -540,9 +540,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+                
+                [self.splitViewController showDetailViewController:nav sender:self];
+            }
             
-            [self.splitViewController showDetailViewController:nav sender:self];
         }
         else {
             [self showViewController:vc sender:self];
@@ -1260,11 +1266,23 @@ NSString * const kSizCache = @"FeedSizesCache";
         
         NSCollectionLayoutItem *layoutItem = [NSCollectionLayoutItem itemWithLayoutSize:layoutSize];
         
+        if (isCompact == NO) {
+            layoutItem.edgeSpacing = [NSCollectionLayoutEdgeSpacing spacingForLeading:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] top:nil trailing:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] bottom:nil];
+            
+        }
+        
         NSInteger columnCount = isCompact ? 1 : 2;
         
         NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:layoutSize subitem:layoutItem count:columnCount];
         
+        // the following is not supported in iOS 13 Beta 1 when using estimated sizing. Using edgeSpacing on
+        // layoutItem instead.
+//        layoutGroup.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
         NSCollectionLayoutSection *layoutSection = [NSCollectionLayoutSection sectionWithGroup:layoutGroup];
+        
+        if (isCompact == NO) {
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+        }
         
         UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
         
