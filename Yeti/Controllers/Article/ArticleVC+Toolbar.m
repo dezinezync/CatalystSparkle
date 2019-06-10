@@ -27,16 +27,31 @@
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
-    UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"read"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
+    UIImage * readImage = nil,
+            * bookmarkImage = nil,
+            * searchImage = nil;
+    
+    if (@available(iOS 13, *)) {
+        readImage = [UIImage systemImageNamed:@"circle.fill"];
+        bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")];
+        searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
+    }
+    else {
+        readImage = [UIImage imageNamed:@"read"];
+        bookmarkImage = [UIImage imageNamed:(self.item.isBookmarked ? @"bookmark" : @"unbookmark")];
+        searchImage = [UIImage imageNamed:@"search"];
+    }
+    
+    UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
     read.accessibilityValue = @"Mark article unread";
     read.accessibilityLabel = @"Read state";
     
-    UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed: self.item.isBookmarked ? @"bookmark" : @"unbookmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
+    UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:bookmarkImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
     
     bookmark.accessibilityValue = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
     bookmark.accessibilityLabel = @"Bookmarked";
     
-    UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"search"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
+    UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:searchImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
     search.accessibilityValue = @"Search in article";
     search.accessibilityLabel = @"Search";
@@ -89,12 +104,24 @@
 
 - (NSArray <UIBarButtonItem *> *)commonNavBarItems {
     
-    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"share"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
+    UIImage * shareImage = nil,
+            * browserImage = nil;
+    
+    if (@available(iOS 13, *)) {
+        shareImage = [UIImage systemImageNamed:@"square.and.arrow.up"];
+        browserImage = [UIImage systemImageNamed:@"safari"];
+    }
+    else {
+        shareImage = [UIImage imageNamed:@"share"];
+        browserImage = [UIImage imageNamed:@"open_in_browser"];
+    }
+    
+    UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:shareImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
     share.accessibilityValue = @"Share article";
     share.accessibilityLabel = @"Share";
     
-    UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"open_in_browser"] style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
+    UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:browserImage style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
     browser.accessibilityValue = @"Open the article in the browser";
     browser.accessibilityLabel = @"Browser";
     
@@ -220,7 +247,13 @@
         BOOL errored = self.item.isBookmarked ? [MyFeedsManager addLocalBookmark:self.item] : [MyFeedsManager removeLocalBookmark:self.item];
         
         if (!errored) {
-            button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+            
+            if (@available(iOS 13, *)) {
+                button.image = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")];
+            }
+            else {
+                button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+            }
             
             [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:self.item userInfo:@{@"bookmarked": @(self.item.isBookmarked)}];
         }
@@ -273,7 +306,13 @@
     
     [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
     self.item.read = !self.item.isRead;
-    button.image = self.item.isRead ? [UIImage imageNamed:@"read"] : [UIImage imageNamed:@"unread"];
+    
+    if (@available(iOS 13, *)) {
+        button.image = [UIImage systemImageNamed:(self.item.isRead ? @"circle.fill" : @"circle")];
+    }
+    else {
+        button.image = self.item.isRead ? [UIImage imageNamed:@"read"] : [UIImage imageNamed:@"unread"];
+    }
     
     if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
         

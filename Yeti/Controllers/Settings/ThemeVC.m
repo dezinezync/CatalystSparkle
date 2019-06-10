@@ -98,7 +98,7 @@ NSString *const kBasicCell = @"cell.theme";
         
         NSString *themeName = YetiThemeKit.themeNames[indexPath.row];
         
-        cell.textLabel.text = [themeName capitalizedString];
+        cell.textLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
         
         NSInteger differenceInRowCount = 0;
         if (@available(iOS 13, *)) {

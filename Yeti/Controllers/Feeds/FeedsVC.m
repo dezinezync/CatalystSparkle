@@ -246,7 +246,16 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (UIBarButtonItem *)leftBarButtonItem {
     
-    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
+    UIImage *settingsImage = nil;
+    
+    if (@available(iOS 13, *)) {
+        settingsImage = [UIImage systemImageNamed:@"gear"];
+    }
+    else {
+        settingsImage = [UIImage imageNamed:@"settings"];
+    }
+    
+    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     settings.accessibilityLabel = @"Settings";
     settings.accessibilityHint = @"Elytra's App Settings";
     
@@ -256,17 +265,32 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
-    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    UIImage * newFolderImage = nil,
+            * recommendationsImage = nil,
+            * newFeedImage = nil;
+    
+    if (@available(iOS 13, *)) {
+        newFolderImage = [UIImage systemImageNamed:@"folder.badge.plus"];
+        recommendationsImage = [UIImage systemImageNamed:@"flame"];
+        newFeedImage = [UIImage systemImageNamed:@"plus"];
+    }
+    else {
+        newFolderImage = [UIImage imageNamed:@"create_new_folder"];
+        recommendationsImage = [UIImage imageNamed:@"whatshot"];
+        newFeedImage = [UIImage imageNamed:@"newFeed"];
+    }
+    
+    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithImage:newFeedImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAdd:)];
     add.accessibilityLabel = @"New Feed";
     add.accessibilityHint = @"Add a new RSS Feed";
     add.width = 40.f;
     
-    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:newFolderImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
     folder.accessibilityLabel = @"New Folder";
     folder.accessibilityHint = @"Create a new folder";
     folder.width = 40.f;
     
-    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"whatshot"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
+    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:recommendationsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
     recommendations.accessibilityLabel = @"Recommendations";
     recommendations.accessibilityHint = @"View RSS Feed Recommendations";
     recommendations.width = 40.f;
@@ -458,13 +482,40 @@ static void *KVO_Unread = &KVO_Unread;
         
         cell.titleLabel.text = [self.DS objectAtIndexPath:indexPath];
         
-        NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
-        cell.faviconView.image = [UIImage imageNamed:imageName];
+        NSString *imageName = nil;
+        UIImage *image = nil;
+        
+        if (@available(iOS 13, *)) {
+            if (indexPath.row == 0) {
+                imageName = @"ring.circle.fill";
+            }
+            else {
+                imageName = @"bookmark.fill";
+            }
+            
+            image = [UIImage systemImageNamed:imageName];
+            
+            cell.faviconView.image = image;
+        }
+        else {
+            imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
+            image = [UIImage imageNamed:imageName];
+        }
         
         if (indexPath.row == 0) {
+            
+            if (@available(iOS 13, *)) {
+                cell.faviconView.tintColor = [UIColor systemBlueColor];
+            }
+            
             cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
         }
         else {
+            
+            if (@available(iOS 13, *)) {
+                cell.faviconView.tintColor = [UIColor systemOrangeColor];
+            }
+            
             cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
         }
         
@@ -1085,7 +1136,23 @@ NSString * const kDS2Data = @"DS2Data";
     [self.feedbackGenerator selectionChanged];
     [self.feedbackGenerator prepare];
     
-    cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = nil;
+    
+    if (@available (iOS 13, *)) {
+        
+        if (folder.isExpanded == YES) {
+            image = [UIImage systemImageNamed:@"folder"];
+        }
+        else {
+            image = [UIImage systemImageNamed:@"folder.fill"];
+        }
+        
+    }
+    else {
+        image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    
+    cell.faviconView.image = image;
     
     weakify(self);
     

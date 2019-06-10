@@ -68,8 +68,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.separatorInset = UIEdgeInsetsMake(0, 40.f, 0, 0);
 }
 
-- (void)prepareForReuse
-{
+- (void)prepareForReuse{
     [self removeObservorInfo];
     
     [super prepareForReuse];
