@@ -167,7 +167,8 @@
         
         NSString *upto = @"";
         
-        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
+        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]
+            || MyFeedsManager.subscription.isLifetime == YES) {
             upto = @"3298 LY (A.K.A. our Lifetime)";
         }
         else {

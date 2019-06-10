@@ -12,7 +12,7 @@
 
 @interface ArticleHelperView : NibView
 
-@property (weak, nonatomic) IBOutlet UIStackView *stackView;
+@property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
 
 @property (weak, nonatomic) IBOutlet UIButton * _Nullable nextArticleButton;
 @property (weak, nonatomic) IBOutlet UIButton * _Nullable previousArticleButton;
@@ -26,12 +26,12 @@
 
 - (void)updateShadowPath;
 
-- (IBAction)didTapPreviousArticle:(UIButton *)sender;
+- (IBAction)didTapPreviousArticle:(UIButton * _Nullable)sender;
 
-- (IBAction)didTapNextArticle:(UIButton *)sender;
+- (IBAction)didTapNextArticle:(UIButton * _Nullable)sender;
 
-- (IBAction)didTapArticleTop:(UIButton *)sender;
+- (IBAction)didTapArticleTop:(UIButton * _Nullable)sender;
 
-- (IBAction)didTapArticleEnd:(UIButton *)sender;
+- (IBAction)didTapArticleEnd:(UIButton * _Nullable)sender;
 
 @end
