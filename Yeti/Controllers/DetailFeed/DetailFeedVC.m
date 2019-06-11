@@ -1267,6 +1267,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         NSCollectionLayoutItem *layoutItem = [NSCollectionLayoutItem itemWithLayoutSize:layoutSize];
         
         if (isCompact == NO) {
+            
             layoutItem.edgeSpacing = [NSCollectionLayoutEdgeSpacing spacingForLeading:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] top:nil trailing:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] bottom:nil];
             
         }
@@ -1284,7 +1285,29 @@ NSString * const kSizCache = @"FeedSizesCache";
             layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
         }
         
-        UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
+        UICollectionViewCompositionalLayout *compLayout = nil;
+        
+        if (self->_shouldShowHeader == YES) {
+            
+            NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
+
+            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop|NSDirectionalRectEdgeLeading|NSDirectionalRectEdgeTrailing]];
+            
+            boundryItem.pinToVisibleBounds = YES;
+            boundryItem.zIndex = 10;
+
+            UICollectionViewCompositionalLayoutConfiguration *config = [UICollectionViewCompositionalLayoutConfiguration new];
+
+            config.boundarySupplementaryItems = @[boundryItem];
+
+            compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection configuration:config];
+            
+        }
+        else {
+            
+            compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
+            
+        }
         
         [self.collectionView setCollectionViewLayout:compLayout animated:NO];
         
@@ -1294,14 +1317,18 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
         self.flowLayout.minimumLineSpacing = 0.1f;
         self.flowLayout.minimumInteritemSpacing = 0.1f;
+        
     }
     else {
+        
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
         self.flowLayout.minimumLineSpacing = padding;
         self.flowLayout.minimumInteritemSpacing = padding;
+        
     }
     
     self.collectionView.layoutMargins = UIEdgeInsetsZero;

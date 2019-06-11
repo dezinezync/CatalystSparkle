@@ -292,146 +292,23 @@ NSString* deviceName() {
             
             break;
     }
+
     
-    UIImage *image = nil;
+    NSString *title = [[cell.textLabel.text lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"];
     
-    if (@available(iOS 13, *)) {
-        
-//    case <#index#>:
-//        image = [UIImage systemImageNamed:@"<#imageName#>"];
-//        break;
-        
-        switch (indexPath.section) {
-            case 0:
-            {
-                switch (indexPath.row) {
-                    case 0:
-                        image = [UIImage systemImageNamed:@"person.crop.circle"];
-                        break;
-                    case 1:
-                        image = [UIImage systemImageNamed:@"line.horizontal.3.decrease.circle"];
-                }
-            }
-                break;
-            case 1:
-            {
-                switch (indexPath.row) {
-                    case 0:
-                        image = [UIImage systemImageNamed:@"paintbrush.fill"];
-                        break;
-                    case 1:
-                        image = [UIImage systemImageNamed:@"repeat"];
-                        break;
-                    case 2:
-                        image = [UIImage systemImageNamed:@"photo.on.rectangle"];
-                        break;
-                    case 3:
-                        image = [UIImage systemImageNamed:@"circle.grid.3x3.fill"];
-                        break;
-                    case 4:
-                        image = [UIImage systemImageNamed:@"cube.box"];
-                        break;
-                    case 5:
-                        image = [UIImage systemImageNamed:@"rectangle.grid.1x2.fill"];
-                        break;
-                }
-            }
-                break;
-            default:
-            {
-                switch (indexPath.row) {
-                    case 0:
-                        image = [UIImage imageNamed:@"settings_elytra"];
-                        break;
-                    case 1:
-                        image = [UIImage systemImageNamed:@"star.fill"];
-                        break;
-                    case 2:
-                        image = [UIImage systemImageNamed:@"checkmark.seal.fill"];
-                        break;
-                    case 3:
-                        image = [UIImage systemImageNamed:@"envelope"];
-                        break;
-                }
-            }
-                break;
-        }
+    if ([title containsString:@"opml"]) {
+        title = @"settings_opml";
     }
-    else {
-        NSString *title = [[cell.textLabel.text lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"];
-        
-        if ([title containsString:@"opml"]) {
-            title = @"settings_opml";
-        }
-        if ([title containsString:@"background"]) {
-            title = @"sync";
-        }
-        if ([title containsString:@"elytra"]) {
-            title = @"settings_elytra";
-        }
-        
-        image = [UIImage imageNamed:title];
+    if ([title containsString:@"background"]) {
+        title = @"sync";
     }
+    if ([title containsString:@"elytra"]) {
+        title = @"settings_elytra";
+    }
+    
+    UIImage *image = [UIImage imageNamed:title];
     
     cell.imageView.image = image;
-    
-    if (@available(iOS 13, *)) {
-        switch (indexPath.section) {
-// cell.imageView.tintColor = [UIColor <#systemColor#>];
-            case 0:
-            {
-                switch (indexPath.row) {
-                    case 0:
-                        cell.imageView.tintColor = [UIColor systemIndigoColor];
-                        break;
-                    case 1:
-                        cell.imageView.tintColor = [UIColor systemTealColor];
-                }
-            }
-                break;
-            case 1:
-            {
-                switch (indexPath.row) {
-                    case 0:
-                        cell.imageView.tintColor = [UIColor systemGreenColor];
-                        break;
-                    case 1:
-                        cell.imageView.tintColor = [UIColor systemGray2Color];
-                        break;
-                    case 2:
-                        cell.imageView.tintColor = [UIColor systemRedColor];
-                        break;
-                    case 3:
-                        cell.imageView.tintColor = [UIColor systemYellowColor];
-                        break;
-                    case 4:
-                        cell.imageView.tintColor = [UIColor systemPinkColor];
-                        break;
-                    case 5:
-                        cell.imageView.tintColor = [UIColor systemPurpleColor];
-                        break;
-                }
-            }
-                break;
-            default:
-            {
-                switch (indexPath.row) {
-                    case 1:
-                        cell.imageView.tintColor = [UIColor systemOrangeColor];
-                        break;
-                    case 2:
-                        cell.imageView.tintColor = [UIColor systemGreenColor];
-                        break;
-                    case 3:
-                        cell.imageView.tintColor = [UIColor systemBlueColor];
-                        break;
-                    default:
-                    break;
-                }
-            }
-                break;
-        }
-    }
     
     return cell;
 }
