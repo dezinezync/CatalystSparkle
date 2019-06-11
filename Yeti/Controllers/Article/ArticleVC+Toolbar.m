@@ -27,21 +27,10 @@
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
-    UIImage * readImage = nil,
-            * bookmarkImage = nil,
-            * searchImage = nil;
-    
-    if (@available(iOS 13, *)) {
-        readImage = [UIImage systemImageNamed:@"circle.fill"];
-        bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")];
-        searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
-    }
-    else {
-        readImage = [UIImage imageNamed:@"read"];
-        bookmarkImage = [UIImage imageNamed:(self.item.isBookmarked ? @"bookmark" : @"unbookmark")];
-        searchImage = [UIImage imageNamed:@"search"];
-    }
-    
+    UIImage * readImage = [UIImage imageNamed:@"read"],
+            * bookmarkImage = [UIImage imageNamed:(self.item.isBookmarked ? @"bookmark" : @"unbookmark")],
+            * searchImage = [UIImage imageNamed:@"search"];
+
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
     read.accessibilityValue = @"Mark article unread";
     read.accessibilityLabel = @"Read state";
@@ -56,7 +45,6 @@
     search.accessibilityValue = @"Search in article";
     search.accessibilityLabel = @"Search";
 
-    
     // these are assigned in reverse order
     NSMutableArray *rightItems = @[search].mutableCopy;
     
@@ -104,17 +92,8 @@
 
 - (NSArray <UIBarButtonItem *> *)commonNavBarItems {
     
-    UIImage * shareImage = nil,
-            * browserImage = nil;
-    
-    if (@available(iOS 13, *)) {
-        shareImage = [UIImage systemImageNamed:@"square.and.arrow.up"];
-        browserImage = [UIImage systemImageNamed:@"safari"];
-    }
-    else {
-        shareImage = [UIImage imageNamed:@"share"];
-        browserImage = [UIImage imageNamed:@"open_in_browser"];
-    }
+    UIImage * shareImage = [UIImage imageNamed:@"share"],
+            * browserImage = [UIImage imageNamed:@"open_in_browser"];
     
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:shareImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
@@ -247,15 +226,14 @@
         BOOL errored = self.item.isBookmarked ? [MyFeedsManager addLocalBookmark:self.item] : [MyFeedsManager removeLocalBookmark:self.item];
         
         if (!errored) {
+        
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                UIImage *image = self.item.isBookmarked ? [UIImage imageNamed:@"unbookmark"] : [UIImage imageNamed:@"bookmark"];
+                
+                [button setImage:image];
+            });
             
-            if (@available(iOS 13, *)) {
-                button.image = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")];
-            }
-            else {
-                button.image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
-            }
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:self.item userInfo:@{@"bookmarked": @(self.item.isBookmarked)}];
         }
         else {
             self.item.bookmarked = !self.item.bookmarked;
@@ -265,13 +243,13 @@
             [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
         }
      
-        button.enabled = YES;
-        
         weakify(self);
         
         dispatch_async(dispatch_get_main_queue(), ^{
            
             strongify(self);
+            
+            button.enabled = YES;
             
             [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
             [[self notificationGenerator] prepare];
@@ -307,12 +285,7 @@
     [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
     self.item.read = !self.item.isRead;
     
-    if (@available(iOS 13, *)) {
-        button.image = [UIImage systemImageNamed:(self.item.isRead ? @"circle.fill" : @"circle")];
-    }
-    else {
-        button.image = self.item.isRead ? [UIImage imageNamed:@"read"] : [UIImage imageNamed:@"unread"];
-    }
+    button.image = self.item.isRead ? [UIImage imageNamed:@"read"] : [UIImage imageNamed:@"unread"];
     
     if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
         

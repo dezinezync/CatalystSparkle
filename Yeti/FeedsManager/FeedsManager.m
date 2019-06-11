@@ -2233,6 +2233,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         } @catch (NSException *excp) {}
     }
     
+    @synchronized (self) {
+        self.bookmarksCount = @(self.bookmarks.count);
+    }
+    
 }
 
 - (void)userDidUpdate {

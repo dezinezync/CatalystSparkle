@@ -246,14 +246,7 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (UIBarButtonItem *)leftBarButtonItem {
     
-    UIImage *settingsImage = nil;
-    
-    if (@available(iOS 13, *)) {
-        settingsImage = [UIImage systemImageNamed:@"gear"];
-    }
-    else {
-        settingsImage = [UIImage imageNamed:@"settings"];
-    }
+    UIImage *settingsImage = [UIImage imageNamed:@"settings"];
     
     UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     settings.accessibilityLabel = @"Settings";
@@ -265,20 +258,9 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
-    UIImage * newFolderImage = nil,
-            * recommendationsImage = nil,
-            * newFeedImage = nil;
-    
-    if (@available(iOS 13, *)) {
-        newFolderImage = [UIImage systemImageNamed:@"folder.badge.plus"];
-        recommendationsImage = [UIImage systemImageNamed:@"flame"];
-        newFeedImage = [UIImage systemImageNamed:@"plus"];
-    }
-    else {
-        newFolderImage = [UIImage imageNamed:@"create_new_folder"];
-        recommendationsImage = [UIImage imageNamed:@"whatshot"];
-        newFeedImage = [UIImage imageNamed:@"newFeed"];
-    }
+    UIImage * newFolderImage = [UIImage imageNamed:@"create_new_folder"],
+            * recommendationsImage = [UIImage imageNamed:@"whatshot"],
+            * newFeedImage = [UIImage imageNamed:@"new"];
     
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithImage:newFeedImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAdd:)];
     add.accessibilityLabel = @"New Feed";
@@ -482,39 +464,16 @@ static void *KVO_Unread = &KVO_Unread;
         
         cell.titleLabel.text = [self.DS objectAtIndexPath:indexPath];
         
-        NSString *imageName = nil;
-        UIImage *image = nil;
+        NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
+        UIImage *image = [UIImage imageNamed:imageName];
         
-        if (@available(iOS 13, *)) {
-            if (indexPath.row == 0) {
-                imageName = @"ring.circle.fill";
-            }
-            else {
-                imageName = @"bookmark.fill";
-            }
-            
-            image = [UIImage systemImageNamed:imageName];
-            
-            cell.faviconView.image = image;
-        }
-        else {
-            imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
-            image = [UIImage imageNamed:imageName];
-        }
+        cell.faviconView.image = image;
         
         if (indexPath.row == 0) {
-            
-            if (@available(iOS 13, *)) {
-                cell.faviconView.tintColor = [UIColor systemBlueColor];
-            }
             
             cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
         }
         else {
-            
-            if (@available(iOS 13, *)) {
-                cell.faviconView.tintColor = [UIColor systemOrangeColor];
-            }
             
             cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
         }
@@ -1036,48 +995,11 @@ NSString * const kDS2Data = @"DS2Data";
     __block NSUInteger index = [self.DS2.data indexOfObject:folder];
     
     if (index == NSNotFound) {
-        
-//        // try finding by traversing the Datasource
-//        [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//            if ([obj isKindOfClass:folder.class]
-//                && [[(Folder *)obj folderID] isEqualToNumber:folder.folderID]) {
-//                index = idx;
-//                *stop = YES;
-//
-//                actionableFolder = obj;
-//            }
-//
-//        }];
-//
-//        if (index == NSNotFound) {
-            DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
-            return;
-//        }
-//        else {
-//            // update the folder on the cell
-//            FolderCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:1]];
-//            if (cell != nil) {
-//                [cell setValue:actionableFolder forKeyPath:@"folder"];
-//            }
-//        }
+        DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
+        return;
     }
     
     CGPoint contentOffset = self.tableView.contentOffset;
-    
-//    if (folder != nil && (folder.feeds == nil || folder.feeds.allObjects.count == 0)) {
-//        // it is possible that this folder is actually empty
-//        // but let's check it anyways
-//
-//        [MyFeedsManager.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//            if ([obj.feedID isEqualToNumber:folder.folderID] == YES) {
-//                [folder.feeds addPointer:(__bridge void *)obj];
-//            }
-//
-//        }];
-//
-//    }
     
     if (actionableFolder.isExpanded) {
         
@@ -1138,19 +1060,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     UIImage *image = nil;
     
-    if (@available (iOS 13, *)) {
-        
-        if (folder.isExpanded == YES) {
-            image = [UIImage systemImageNamed:@"folder"];
-        }
-        else {
-            image = [UIImage systemImageNamed:@"folder.fill"];
-        }
-        
-    }
-    else {
-        image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    }
+    image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     cell.faviconView.image = image;
     

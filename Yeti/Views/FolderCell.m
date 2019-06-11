@@ -40,12 +40,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     self.faviconView.contentMode = UIViewContentModeCenter;
     
-    if (@available (iOS 13, *)) {
-        self.faviconView.image = [UIImage systemImageNamed:@"folder.fill"];
-    }
-    else {
-        self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    }
+    self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
@@ -96,12 +91,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
-    if (@available (iOS 13, *)) {
-        self.faviconView.image = [UIImage systemImageNamed:@"folder.fill"];
-    }
-    else {
-        self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    }
+    self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     self.indentationLevel = 0;
@@ -191,21 +181,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    UIImage *image = nil;
-    
-    if (@available (iOS 13, *)) {
-        
-        if (folder.isExpanded == YES) {
-            image = [UIImage systemImageNamed:@"folder"];
-        }
-        else {
-            image = [UIImage systemImageNamed:@"folder.fill"];
-        }
-        
-    }
-    else {
-        image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    }
+    UIImage *image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.faviconView.image = image;
     

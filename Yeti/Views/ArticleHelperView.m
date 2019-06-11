@@ -28,16 +28,6 @@
         self.endOfArticle.accessibilityValue = @"Scroll to end of the article";
         
         self.layer.cornerRadius = 22.f;
-        
-        if (@available(iOS 13, *)) {
-            [self.previousArticleButton setImage:[UIImage systemImageNamed:@"arrow.up"] forState:UIControlStateNormal];
-            
-            [self.nextArticleButton setImage:[UIImage systemImageNamed:@"arrow.down"] forState:UIControlStateNormal];
-            
-            [self.startOfArticle setImage:[UIImage systemImageNamed:@"arrowtriangle.up.fill"] forState:UIControlStateNormal];
-            
-            [self.endOfArticle setImage:[UIImage systemImageNamed:@"arrowtriangle.down.fill"] forState:UIControlStateNormal];
-        }
     }
     
     return self;
