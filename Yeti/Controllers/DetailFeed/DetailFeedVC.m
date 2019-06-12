@@ -1272,42 +1272,36 @@ NSString * const kSizCache = @"FeedSizesCache";
             
         }
         
+        NSCollectionLayoutSize *groupSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
+        
         NSInteger columnCount = isCompact ? 1 : 2;
         
-        NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:layoutSize subitem:layoutItem count:columnCount];
+        NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:groupSize subitem:layoutItem count:columnCount];
         
-        // the following is not supported in iOS 13 Beta 1 when using estimated sizing. Using edgeSpacing on
-        // layoutItem instead.
-//        layoutGroup.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+        if (isCompact == NO) {
+            layoutGroup.interItemSpacing = [NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding];
+        }
+        
         NSCollectionLayoutSection *layoutSection = [NSCollectionLayoutSection sectionWithGroup:layoutGroup];
         
         if (isCompact == NO) {
             layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
         }
         
-        UICollectionViewCompositionalLayout *compLayout = nil;
-        
         if (self->_shouldShowHeader == YES) {
             
             NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
 
-            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop|NSDirectionalRectEdgeLeading|NSDirectionalRectEdgeTrailing]];
+            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
             
-            boundryItem.pinToVisibleBounds = YES;
             boundryItem.zIndex = 10;
 
-            UICollectionViewCompositionalLayoutConfiguration *config = [UICollectionViewCompositionalLayoutConfiguration new];
-
-            config.boundarySupplementaryItems = @[boundryItem];
-
-            compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection configuration:config];
+            layoutSection.boundarySupplementaryItems = @[boundryItem];
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(90.f, 0, 0, 0);
             
         }
-        else {
-            
-            compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
-            
-        }
+
+        UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
         
         [self.collectionView setCollectionViewLayout:compLayout animated:NO];
         
