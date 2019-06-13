@@ -226,6 +226,10 @@
 		<string>Spectral-Regular.ttf</string>
 		<string>Spectral-SemiBold.ttf</string>
 		<string>Spectral-SemiBoldItalic.ttf</string>
+		<string>OpenDyslexic-Regular.ttf</string>
+		<string>OpenDyslexic-Italic.ttf</string>
+		<string>OpenDyslexic-Bold.ttf</string>
+		<string>OpenDyslexic-BoldItalic.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

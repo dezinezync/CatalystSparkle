@@ -35,7 +35,7 @@ NSString *const kBasicCell = @"cell.theme";
     self.title = @"Appearance";
     // when adding a new font here or removing one,
     // update the method -[tableview:cellForRowAtIndexPath:]
-    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral];
+    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral, ALPOpenDyslexic];
     _fontNamesMap = @{
                       ALPSystem         : @"System (San Fransico)",
                       ALPSerif          : @"Georgia",
@@ -43,7 +43,8 @@ NSString *const kBasicCell = @"cell.theme";
                       ALPMerriweather   : @"Merriweather",
                       ALPPlexSerif      : @"Plex Serif",
                       ALPPlexSans       : @"Plex Sans",
-                      ALPSpectral       : @"Spectral"
+                      ALPSpectral       : @"Spectral",
+                      ALPOpenDyslexic   : @"OpenDyslexic"
                       };
     
         _isPhoneX = canSupportOLED();
@@ -142,7 +143,7 @@ NSString *const kBasicCell = @"cell.theme";
         // ARTICLE FONT
         cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         NSString *fontName = _fontNamesMap[_fonts[indexPath.row]];
         cell.textLabel.text = fontName;
@@ -165,7 +166,8 @@ NSString *const kBasicCell = @"cell.theme";
             || ([fontPref isEqualToString:ALPMerriweather] && indexPath.row == 3)
             || ([fontPref isEqualToString:ALPPlexSerif]    && indexPath.row == 4)
             || ([fontPref isEqualToString:ALPPlexSans]     && indexPath.row == 5)
-            || ([fontPref isEqualToString:ALPSpectral]     && indexPath.row == 6)) {
+            || ([fontPref isEqualToString:ALPSpectral]     && indexPath.row == 6)
+            || ([fontPref isEqualToString:ALPOpenDyslexic] && indexPath.row == 7)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             

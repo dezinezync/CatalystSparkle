@@ -29,7 +29,7 @@ extern PrefsManager * SharedPrefs;
 @property (assign) BOOL notifications; // kDefaultsNotifications
 @property (copy) ImageLoadingOption imageLoading; // kDefaultsImageLoading
 @property (copy) ImageLoadingOption imageBandwidth; // kDefaultsImageBandwidth
-@property (copy) ArticleLayoutPreference articleFont; // kDefaultsArticleFont
+@property (copy) ArticleLayoutFont articleFont; // kDefaultsArticleFont
 @property (copy) NSString *subscriptionType; // kSubscriptionType
 @property (assign) BOOL articleCoverImages; // kShowArticleCoverImages
 @property (assign) BOOL showUnreadCounts; // kShowUnreadCounts

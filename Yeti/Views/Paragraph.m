@@ -41,7 +41,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (!_paragraphStyle) {
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         UIFont *font = [[TypeFactory shared] bodyFont];
         
@@ -528,7 +528,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
             return _bodyFont;
         }
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         UIFont *defaultBodyFont = [[TypeFactory shared] bodyFont];
         
@@ -573,7 +573,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!_boldFont) {
         UIFont *bodyFont = [self bodyFont];
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
         
@@ -597,7 +597,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!_italicsFont) {
         UIFont *bodyFont = [self bodyFont];
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
         

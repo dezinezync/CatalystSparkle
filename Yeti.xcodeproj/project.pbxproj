@@ -162,6 +162,10 @@
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
 		F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A66572055539D00BA2D9F /* UIColor+HEX.m */; };
 		F07A665B205554FF00BA2D9F /* Code.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A665A205554FF00BA2D9F /* Code.m */; };
+		F07CD39522B266E9005BCDE7 /* OpenDyslexic-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */; };
+		F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */; };
+		F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38522B266E9005BCDE7 /* OpenDyslexic-Regular.ttf */; };
+		F07CD39E22B266E9005BCDE7 /* OpenDyslexic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38822B266E9005BCDE7 /* OpenDyslexic-Bold.ttf */; };
 		F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */; };
 		F07DCA4020C51AF30068ED51 /* FeedVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */; };
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
@@ -781,6 +785,10 @@
 		F07A66572055539D00BA2D9F /* UIColor+HEX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HEX.m"; sourceTree = "<group>"; };
 		F07A6659205554FF00BA2D9F /* Code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Code.h; sourceTree = "<group>"; };
 		F07A665A205554FF00BA2D9F /* Code.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Code.m; sourceTree = "<group>"; };
+		F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Italic.ttf"; sourceTree = "<group>"; };
+		F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-BoldItalic.ttf"; sourceTree = "<group>"; };
+		F07CD38522B266E9005BCDE7 /* OpenDyslexic-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Regular.ttf"; sourceTree = "<group>"; };
+		F07CD38822B266E9005BCDE7 /* OpenDyslexic-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Bold.ttf"; sourceTree = "<group>"; };
 		F07DCA3920C517D20068ED51 /* UITableViewController+KeyboardScroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UITableViewController+KeyboardScroll.h"; path = "Yeti/Categories/UITableViewController+KeyboardScroll.h"; sourceTree = SOURCE_ROOT; };
 		F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "UITableViewController+KeyboardScroll.m"; path = "Yeti/Categories/UITableViewController+KeyboardScroll.m"; sourceTree = SOURCE_ROOT; };
 		F07DCA3E20C51AF30068ED51 /* FeedVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Keyboard.h"; sourceTree = "<group>"; };
@@ -1796,6 +1804,17 @@
 			path = FeedsManager;
 			sourceTree = "<group>";
 		};
+		F07CD37D22B266E9005BCDE7 /* OpenDyslexic */ = {
+			isa = PBXGroup;
+			children = (
+				F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */,
+				F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */,
+				F07CD38522B266E9005BCDE7 /* OpenDyslexic-Regular.ttf */,
+				F07CD38822B266E9005BCDE7 /* OpenDyslexic-Bold.ttf */,
+			);
+			path = OpenDyslexic;
+			sourceTree = "<group>";
+		};
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1858,6 +1877,7 @@
 		F0A5AE5920C197BF00CFA1D2 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				F07CD37D22B266E9005BCDE7 /* OpenDyslexic */,
 				F047F4D220C25FAC00626968 /* Spectral */,
 				F0A5AE7520C19CAA00CFA1D2 /* PlexSerif */,
 				F0A5AE7420C19CA400CFA1D2 /* PlexSans */,
@@ -2489,6 +2509,7 @@
 				F0A5AE6A20C197EF00CFA1D2 /* Merriweather-Light.ttf in Resources */,
 				F0A5AE7220C197EF00CFA1D2 /* Merriweather-LightItalic.ttf in Resources */,
 				F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */,
+				F07CD39E22B266E9005BCDE7 /* OpenDyslexic-Bold.ttf in Resources */,
 				F0A5AE9420C19CB400CFA1D2 /* IBMPlexSerif-SemiBold.ttf in Resources */,
 				F09E96472055342000E61681 /* hljs.js in Resources */,
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
@@ -2529,6 +2550,7 @@
 				F0A5AEB820C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
 				F09E96482055342000E61681 /* styleHTML.js in Resources */,
 				F0D01CC52118681C003A01DD /* dark.png in Resources */,
+				F07CD39522B266E9005BCDE7 /* OpenDyslexic-Italic.ttf in Resources */,
 				F088089F206B8B9C00ECE1E6 /* Tweet.xib in Resources */,
 				F0A5AE9620C19CB400CFA1D2 /* IBMPlexSerif-Regular.ttf in Resources */,
 				F0AF314020D287E600E074D6 /* IntroViewDefault.xib in Resources */,
@@ -2561,6 +2583,7 @@
 				F05DC07D20832DB5009029E1 /* AuthorBioVC.xib in Resources */,
 				F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
+				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
@@ -2595,6 +2618,7 @@
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F09D12DC220D6CF800252902 /* reader.png in Resources */,
+				F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,

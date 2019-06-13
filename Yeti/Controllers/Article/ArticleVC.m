@@ -930,7 +930,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
 
-    ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
     CGFloat baseFontSize = 32.f;
 
     if (self.item.articleTitle.length > 24) {
