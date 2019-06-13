@@ -96,12 +96,19 @@ NSString *const kBasicCell = @"cell.theme";
         
         YetiThemeType theme = SharedPrefs.theme;
         
-        cell.textLabel.text = [YetiThemeKit.themeNames[indexPath.row] capitalizedString];
+        NSString *themeName = YetiThemeKit.themeNames[indexPath.row];
+        
+        cell.textLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
+        
+        NSInteger differenceInRowCount = 0;
+        if (@available(iOS 13, *)) {
+            differenceInRowCount = 1;
+        }
         
         if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
-            || ([theme isEqualToString:DarkTheme] && indexPath.row == 1)
-            || ([theme isEqualToString:ReaderTheme] && indexPath.row == 2)
-            || ([theme isEqualToString:BlackTheme] && indexPath.row == 3)) {
+            || ([theme isEqualToString:DarkTheme] && indexPath.row == (1 - differenceInRowCount))
+            || ([theme isEqualToString:ReaderTheme] && indexPath.row == (2 - differenceInRowCount))
+            || ([theme isEqualToString:BlackTheme] && indexPath.row == (3 - differenceInRowCount))) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             

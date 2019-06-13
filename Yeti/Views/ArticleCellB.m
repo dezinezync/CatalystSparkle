@@ -620,10 +620,20 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
 //        DDLogDebug(@"Keywords: %@", item.keywords);
         
-        NSArray <UIColor *> * const tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
-                                                  [UIColor colorFromHexString:@"#7441FF"],
-                                                  [UIColor colorFromHexString:@"#558B2F"],
-                                                  [UIColor colorFromHexString:@"#E8883A"]];
+        NSArray <UIColor *> * tagColors = nil;
+        
+        if (@available(iOS 13, *)) {
+            tagColors = @[[UIColor systemRedColor],
+                          [UIColor systemIndigoColor],
+                          [UIColor systemGreenColor],
+                          [UIColor systemOrangeColor]];
+        }
+        else {
+            tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
+                          [UIColor colorFromHexString:@"#7441FF"],
+                          [UIColor colorFromHexString:@"#558B2F"],
+                          [UIColor colorFromHexString:@"#E8883A"]];
+        }
         
         [item.keywords enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            

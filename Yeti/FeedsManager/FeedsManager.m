@@ -249,7 +249,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         }
         
         if (successCB) {
-            DDLogDebug(@"Responding to successCB from network");
+//            DDLogDebug(@"Responding to successCB from network");
             asyncMain(^{
                 successCB(@2, response, task);
             });
@@ -2231,6 +2231,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 self.bookmarks = bookmarks;
             }
         } @catch (NSException *excp) {}
+    }
+    
+    @synchronized (self) {
+        self.bookmarksCount = @(self.bookmarks.count);
     }
     
 }

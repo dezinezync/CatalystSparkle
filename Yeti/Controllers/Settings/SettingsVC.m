@@ -58,13 +58,17 @@ NSString* deviceName() {
     self.tableView.backgroundColor = theme.tableColor;
     self.view.backgroundColor = theme.tableColor;
     
-    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_down"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
-    done.accessibilityLabel = @"Close";
-    done.accessibilityHint = @"Close settings";
-    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    self.navigationItem.rightBarButtonItem = done;
+    
+    if (@available(iOS 13, *)) {}
+    else {
+        UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_down"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+        done.accessibilityLabel = @"Close";
+        done.accessibilityHint = @"Close settings";
+        
+        self.navigationItem.rightBarButtonItem = done;
+    }
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
@@ -77,8 +81,7 @@ NSString* deviceName() {
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self dz_smoothlyDeselectRows:self.tableView];
@@ -201,7 +204,10 @@ NSString* deviceName() {
             switch (indexPath.row) {
                 case 0: {
                     cell.textLabel.text = @"Appearance";
-                    cell.detailTextLabel.text = [SharedPrefs.theme capitalizedString];
+                    
+                    NSString *themeName = SharedPrefs.theme;
+                    
+                    cell.detailTextLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
                 }
                     break;
                 case 1:
@@ -286,8 +292,10 @@ NSString* deviceName() {
             
             break;
     }
+
     
     NSString *title = [[cell.textLabel.text lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+    
     if ([title containsString:@"opml"]) {
         title = @"settings_opml";
     }

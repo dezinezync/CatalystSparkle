@@ -128,7 +128,7 @@
 {
     NSString *path = formattedString(@"/article/%@/bookmark", item.identifier);
     
-    [self.backgroundSession POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         item.bookmarked = bookmarked;
         
@@ -153,8 +153,8 @@
     }];
 }
 
-- (BOOL)addLocalBookmark:(FeedItem *)item
-{
+- (BOOL)addLocalBookmark:(FeedItem *)item {
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
     NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
@@ -167,15 +167,15 @@
     [data writeToFile:path options:NSDataWritingAtomic error:&error];
     
     if (error) {
-        
         [AlertManager showGenericAlertWithTitle:@"App Error" message:@"Bookmarking the article failed as Yeti was unable to write the data to your device's storage. Please try again."];
     }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:item userInfo:@{@"bookmarked": @(item.isBookmarked)}];
     
     return error == nil;
 }
 
-- (BOOL)removeLocalBookmark:(FeedItem *)item
-{
+- (BOOL)removeLocalBookmark:(FeedItem *)item {
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
@@ -196,6 +196,8 @@
             [AlertManager showGenericAlertWithTitle:@"App Error" message:error.localizedDescription];
         }
     }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:item userInfo:@{@"bookmarked": @(item.isBookmarked)}];
     
     return errored;
 }

@@ -540,9 +540,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                [self.navigationController pushViewController:vc animated:YES];
+            }
+            else {
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+                
+                [self.splitViewController showDetailViewController:nav sender:self];
+            }
             
-            [self.splitViewController showDetailViewController:nav sender:self];
         }
         else {
             [self showViewController:vc sender:self];
@@ -1260,12 +1266,41 @@ NSString * const kSizCache = @"FeedSizesCache";
         
         NSCollectionLayoutItem *layoutItem = [NSCollectionLayoutItem itemWithLayoutSize:layoutSize];
         
+        if (isCompact == NO) {
+            
+            layoutItem.edgeSpacing = [NSCollectionLayoutEdgeSpacing spacingForLeading:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] top:nil trailing:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] bottom:nil];
+            
+        }
+        
+        NSCollectionLayoutSize *groupSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
+        
         NSInteger columnCount = isCompact ? 1 : 2;
         
-        NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:layoutSize subitem:layoutItem count:columnCount];
+        NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:groupSize subitem:layoutItem count:columnCount];
+        
+        if (isCompact == NO) {
+            layoutGroup.interItemSpacing = [NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding];
+        }
         
         NSCollectionLayoutSection *layoutSection = [NSCollectionLayoutSection sectionWithGroup:layoutGroup];
         
+        if (isCompact == NO) {
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+        }
+        
+        if (self->_shouldShowHeader == YES) {
+            
+            NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
+
+            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
+            
+            boundryItem.zIndex = 10;
+
+            layoutSection.boundarySupplementaryItems = @[boundryItem];
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(90.f, 0, 0, 0);
+            
+        }
+
         UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
         
         [self.collectionView setCollectionViewLayout:compLayout animated:NO];
@@ -1276,14 +1311,18 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        
         self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
         self.flowLayout.minimumLineSpacing = 0.1f;
         self.flowLayout.minimumInteritemSpacing = 0.1f;
+        
     }
     else {
+        
         self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
         self.flowLayout.minimumLineSpacing = padding;
         self.flowLayout.minimumInteritemSpacing = padding;
+        
     }
     
     self.collectionView.layoutMargins = UIEdgeInsetsZero;

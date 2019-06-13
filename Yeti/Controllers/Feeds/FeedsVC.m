@@ -246,7 +246,9 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (UIBarButtonItem *)leftBarButtonItem {
     
-    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
+    UIImage *settingsImage = [UIImage imageNamed:@"settings"];
+    
+    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     settings.accessibilityLabel = @"Settings";
     settings.accessibilityHint = @"Elytra's App Settings";
     
@@ -256,17 +258,21 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
-    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(didTapAdd:)];
+    UIImage * newFolderImage = [UIImage imageNamed:@"create_new_folder"],
+            * recommendationsImage = [UIImage imageNamed:@"whatshot"],
+            * newFeedImage = [UIImage imageNamed:@"new"];
+    
+    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithImage:newFeedImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAdd:)];
     add.accessibilityLabel = @"New Feed";
     add.accessibilityHint = @"Add a new RSS Feed";
     add.width = 40.f;
     
-    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"create_new_folder"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:newFolderImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
     folder.accessibilityLabel = @"New Folder";
     folder.accessibilityHint = @"Create a new folder";
     folder.width = 40.f;
     
-    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"whatshot"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
+    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:recommendationsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
     recommendations.accessibilityLabel = @"Recommendations";
     recommendations.accessibilityHint = @"View RSS Feed Recommendations";
     recommendations.width = 40.f;
@@ -459,12 +465,16 @@ static void *KVO_Unread = &KVO_Unread;
         cell.titleLabel.text = [self.DS objectAtIndexPath:indexPath];
         
         NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
-        cell.faviconView.image = [UIImage imageNamed:imageName];
+        UIImage *image = [UIImage imageNamed:imageName];
+        
+        cell.faviconView.image = image;
         
         if (indexPath.row == 0) {
+            
             cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
         }
         else {
+            
             cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
         }
         
@@ -985,48 +995,11 @@ NSString * const kDS2Data = @"DS2Data";
     __block NSUInteger index = [self.DS2.data indexOfObject:folder];
     
     if (index == NSNotFound) {
-        
-//        // try finding by traversing the Datasource
-//        [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//            if ([obj isKindOfClass:folder.class]
-//                && [[(Folder *)obj folderID] isEqualToNumber:folder.folderID]) {
-//                index = idx;
-//                *stop = YES;
-//
-//                actionableFolder = obj;
-//            }
-//
-//        }];
-//
-//        if (index == NSNotFound) {
-            DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
-            return;
-//        }
-//        else {
-//            // update the folder on the cell
-//            FolderCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:1]];
-//            if (cell != nil) {
-//                [cell setValue:actionableFolder forKeyPath:@"folder"];
-//            }
-//        }
+        DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
+        return;
     }
     
     CGPoint contentOffset = self.tableView.contentOffset;
-    
-//    if (folder != nil && (folder.feeds == nil || folder.feeds.allObjects.count == 0)) {
-//        // it is possible that this folder is actually empty
-//        // but let's check it anyways
-//
-//        [MyFeedsManager.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//
-//            if ([obj.feedID isEqualToNumber:folder.folderID] == YES) {
-//                [folder.feeds addPointer:(__bridge void *)obj];
-//            }
-//
-//        }];
-//
-//    }
     
     if (actionableFolder.isExpanded) {
         
@@ -1085,7 +1058,11 @@ NSString * const kDS2Data = @"DS2Data";
     [self.feedbackGenerator selectionChanged];
     [self.feedbackGenerator prepare];
     
-    cell.faviconView.image = [[UIImage imageNamed:(folder.isExpanded ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = nil;
+    
+    image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    cell.faviconView.image = image;
     
     weakify(self);
     

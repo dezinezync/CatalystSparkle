@@ -30,7 +30,7 @@
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1" verticalHuggingPriority="251" horizontalCompressionResistancePriority="999" text="Hands-On: Belkin’s USB-C to HDMI Adapter for the 2018 iPad Pro" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MX6-dl-tiI">
                                                 <rect key="frame" x="0.0" y="0.0" width="217" height="41.5"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="217" id="f1Q-rI-UBv"/>
+                                                    <constraint firstAttribute="width" priority="999" constant="217" id="f1Q-rI-UBv"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                 <nil key="textColor"/>
