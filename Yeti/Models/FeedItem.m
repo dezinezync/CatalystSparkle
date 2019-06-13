@@ -329,7 +329,24 @@ static NSDateFormatter *_formatter = nil;
     return [self.identifier.stringValue compare:item.identifier.stringValue options:NSNumericSearch];
 }
 
+- (NSUInteger)hash {
+    
+    NSUInteger hash = self.compareID.hash;
+    
+    hash += self.feedID.hash;
+    hash += self.isRead ? 1 : 0;
+    hash += self.isBookmarked ? 1 : 0;
+    hash += self.mercury ? 1 : 0;
+    
+    return hash;
+    
+}
+
 - (BOOL)isEqualToItem:(FeedItem *)item {
+    
+    if (item != nil && item.hash == self.hash) {
+        return YES;
+    }
     
     return (item != nil
             && [item.identifier isEqualToNumber:self.identifier]

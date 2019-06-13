@@ -37,7 +37,9 @@ API_AVAILABLE(ios(13.0))
 
 @property (nonatomic, assign) NSNumber * _Nullable loadOnReady;
 
-@property (nonatomic, strong) DZBasicDatasource *DS;
+@property (nonatomic, strong) DZBasicDatasource *DS NS_DEPRECATED_IOS(11.0, 12.3);
+
+@property (nonatomic, strong) UICollectionViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 
