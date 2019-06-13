@@ -226,6 +226,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     if (@available(iOS 13, *)) {
         if (self.DDS.snapshot.numberOfItems == 0) {
+            self.controllerState = StateLoaded;
             [self loadNextPage];
         }
     }
@@ -320,14 +321,29 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    if (self.DS == nil || self.DS.data == nil || self.DS.data.count == 0) {
-        weakify(self);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            [self setLoadOnReady:loadOnReady];
-        });
+    if (@available(iOS 13, *)) {
         
-        return;
+        if (self.DDS == nil || self.DDS.snapshot.numberOfItems == 0) {
+            weakify(self);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self setLoadOnReady:loadOnReady];
+            });
+            
+            return;
+        }
+        
+    }
+    else {
+        if (self.DS == nil || self.DS.data == nil || self.DS.data.count == 0) {
+            weakify(self);
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+                [self setLoadOnReady:loadOnReady];
+            });
+            
+            return;
+        }
     }
     
     _loadOnReady = loadOnReady;
@@ -348,19 +364,39 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    if (self.DS.state == DZDatasourceLoading && _page == 0) {
+    BOOL dataCheck = NO;
+    
+    if (@available(iOS 13, *)) {
+        dataCheck = self.controllerState == StateLoading && _page == 0;
+    }
+    else {
+        dataCheck = self.DS.state == DZDatasourceLoading && _page == 0;
+    }
+    
+    if (dataCheck) {
         self.activityIndicatorView.hidden = NO;
         [self.activityIndicatorView startAnimating];
         
         return self.activityIndicatorView;
     }
     
-    if (self.DS.state == DZDatasourceDefault) {
-        return nil;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState == StateDefault) {
+            return nil;
+        }
+        
+        if (self.DDS.snapshot.numberOfItems > 0) {
+            return nil;
+        }
     }
-    
-    if (self.DS.data.count > 0) {
-        return nil;
+    else {
+        if (self.DS.state == DZDatasourceDefault) {
+            return nil;
+        }
+        
+        if (self.DS.data.count > 0) {
+            return nil;
+        }
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -486,7 +522,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
         
-        article = [self.DS objectAtIndexPath:indexPath];
+        if (indexPath == nil) {
+            return;
+        }
+        
+        if (@available(iOS 13, *)) {
+            article = [self.DDS itemIdentifierForIndexPath:indexPath];
+        }
+        else {
+            article = [self.DS objectAtIndexPath:indexPath];
+        }
         
     }
     
@@ -638,8 +683,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     _protoCell.frame = frame;
 
     [_protoCell awakeFromNib];
+    
+    FeedItem *item = nil;
 
-    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+    if (@available(iOS 13, *)) {
+        item = [self.DDS itemIdentifierForIndexPath:indexPath];
+    }
+    else {
+        item = [self.DS objectAtIndexPath:indexPath];
+    }
 
     [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
 
@@ -667,7 +719,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     for (NSIndexPath *indexPath in indexPaths) { @autoreleasepool {
        
-        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        FeedItem *item = nil;
+        
+        if (@available(iOS 13, *)) {
+            item = [self.DDS itemIdentifierForIndexPath:indexPath];
+        }
+        else {
+            item = [self.DS objectAtIndexPath:indexPath];
+        }
         
         if (item == nil) {
             continue;
@@ -703,7 +762,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     for (NSIndexPath *indexPath in indexPaths) { @autoreleasepool {
         
-        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        FeedItem *item = nil;
+        
+        if (@available(iOS 13, *)) {
+            item = [self.DDS itemIdentifierForIndexPath:indexPath];
+        }
+        else {
+            item = [self.DS objectAtIndexPath:indexPath];
+        }
         
         if (item == nil) {
             continue;
@@ -731,8 +797,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 - (void)loadNextPage {
     
-    if (self.DS.state == DZDatasourceLoading) {
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState == StateLoading) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.state == DZDatasourceLoading) {
+            return;
+        }
     }
     
     if (self->_ignoreLoadScroll)
@@ -742,7 +815,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    self.DS.state = DZDatasourceLoading;
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateLoading;
+    }
+    else {
+        self.DS.state = DZDatasourceLoading;
+    }
     
     weakify(self);
     
@@ -759,42 +837,38 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         self->_page = page;
         
-        if (!responseObject.count) {
+        if (responseObject == nil || responseObject.count == 0) {
             self->_canLoadNext = NO;
         }
-        
-        weakify(self);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
+        else {
+            weakify(self);
             
-//            CGPoint contentOffset = self.collectionView.contentOffset;
-            
-            NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
-            articles = [articles arrayByAddingObjectsFromArray:responseObject];
-            self.feed.articles = articles;
-            self->_ignoreLoadScroll = YES;
-            
-            @try {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 
-                if (@available(iOS 13, *)) {
-                    NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                    [snapshot appendItemsWithIdentifiers:responseObject];
+                NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
+                articles = [articles arrayByAddingObjectsFromArray:responseObject];
+                self.feed.articles = articles;
+                self->_ignoreLoadScroll = YES;
+                
+                @try {
                     
-                    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                    if (@available(iOS 13, *)) {
+                        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                        [snapshot appendItemsWithIdentifiers:responseObject];
+                        
+                        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                    }
+                    else {
+                        self.DS.data = self.feed.articles;
+                    }
                 }
-                else {
-                    self.DS.data = self.feed.articles;
+                @catch (NSException *exc) {
+                    DDLogWarn(@"Exception updating feed articles: %@", exc);
                 }
-            }
-            @catch (NSException *exc) {
-                DDLogWarn(@"Exception updating feed articles: %@", exc);
-            }
-            
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [self.collectionView setContentOffset:contentOffset animated:NO];
-//            });
-        });
+                
+            });
+        }
         
         self->_page = page;
         
@@ -814,7 +888,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 self->_ignoreLoadScroll = NO;
             }
             
-            self.DS.state = DZDatasourceLoaded;
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
         });
         
         if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
@@ -829,7 +908,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         if (!self)
             return;
         
-        self.DS.state = DZDatasourceError;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateErrored;
+        }
+        else {
+            self.DS.state = DZDatasourceError;
+        }
     }];
 }
 
@@ -904,7 +988,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (index == NSNotFound)
         return NO;
     
-    return (index < (((NSArray <FeedItem *> *)self.DS.data).count - 1));
+    NSInteger count = 0;
+    
+    if (@available(iOS 13, *)) {
+        count = self.DDS.snapshot.numberOfItems;
+    }
+    else {
+        count = ((NSArray <FeedItem *> *)self.DS.data).count;
+    }
+    
+    return (index < (count - 1));
 }
 
 - (FeedItem *)previousArticleFor:(FeedItem *)item
@@ -971,7 +1064,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         }];
     }
     
-    if (index < (((NSArray <FeedItem *> *)self.DS.data).count - 1)) {
+    NSInteger count = 0;
+    if (@available(iOS 13, *)) {
+        count = self.DDS.snapshot.numberOfItems;
+    }
+    else {
+        count = ((NSArray <FeedItem *> *)self.DS.data).count;
+    }
+    
+    if (index < (count - 1)) {
         index++;
         
         [self willChangeArticle];
@@ -989,17 +1090,24 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     return nil;
 }
 
-- (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read
-{
+- (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read {
     
-    if (!article)
+    if (article == nil)
         return;
     
-//    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == YES) {
-//        return;
-//    }
+    NSUInteger index = NSNotFound;
     
-    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
+    if (@available(iOS 13, *)) {
+        NSIndexPath *indexPath = [self.DDS indexPathForItemIdentifier:article];
+        
+        if (indexPath != nil) {
+            index = indexPath.item;
+        }
+        
+    }
+    else {
+        index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
+    }
     
     if (index == NSNotFound)
         return;
@@ -1014,9 +1122,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             articleInFeed.read = read;
         }
         
-        FeedItem *articleInDS = [(NSArray <FeedItem *> *)self.DS.data safeObjectAtIndex:index];
+        FeedItem *articleInDS = nil;
         
-        if (articleInDS) {
+        if (@available(iOS 13, *)) {
+            articleInDS = [self.DDS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+        }
+        else {
+            articleInDS = [(NSArray <FeedItem *> *)self.DS.data safeObjectAtIndex:index];
+        }
+        
+        if (articleInDS != nil) {
             articleInDS.read = read;
             // if the article exists in the datasource,
             // we can expect a cell for it and therefore
@@ -1060,7 +1175,19 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    NSUInteger index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
+    NSUInteger index = NSNotFound;
+    
+    if (@available(iOS 13, *)) {
+        NSIndexPath *indexPath = [self.DDS indexPathForItemIdentifier:article];
+        
+        if (indexPath != nil) {
+            index = indexPath.item;
+        }
+        
+    }
+    else {
+        index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:article];
+    }
     
     if (index == NSNotFound)
         return;
@@ -1075,7 +1202,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             articleInFeed.bookmarked = bookmarked;
         }
         
-        FeedItem *articleInDS = [(NSArray <FeedItem *> *)self.DS.data safeObjectAtIndex:index];
+        FeedItem *articleInDS = nil;
+        
+        if (@available(iOS 13, *)) {
+            articleInDS = [self.DDS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+        }
+        else {
+            articleInDS = [(NSArray <FeedItem *> *)self.DS.data safeObjectAtIndex:index];
+        }
         
         if (articleInDS) {
             articleInDS.bookmarked = bookmarked;
@@ -1110,8 +1244,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-- (void)didChangeToArticle:(FeedItem *)item
-{
+- (void)didChangeToArticle:(FeedItem *)item {
     
     if ([NSThread isMainThread] == NO) {
         weakify(self);
@@ -1125,14 +1258,19 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    __block NSUInteger index = NSNotFound;
+    NSUInteger index = NSNotFound;
     
-    [self.DS.data enumerateObjectsUsingBlock:^(FeedItem *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([obj.identifier isEqualToNumber:item.identifier]) {
-            index = idx;
-            *stop = YES;
+    if (@available(iOS 13, *)) {
+        NSIndexPath *indexPath = [self.DDS indexPathForItemIdentifier:item];
+        
+        if (indexPath != nil) {
+            index = indexPath.item;
         }
-    }];
+        
+    }
+    else {
+        index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
+    }
     
     if (index == NSNotFound)
         return;
@@ -1199,8 +1337,20 @@ NSString * const kSizCache = @"FeedSizesCache";
             [self setupLayout];
             
             self.feed = feed;
-            [self.DS resetData];
-            self.DS.data = self.feed.articles;
+            
+            if (@available(iOS 13, *)) {
+                
+                NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+                [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+                [snapshot appendItemsWithIdentifiers:self.feed.articles];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+            }
+            else {
+                [self.DS resetData];
+                self.DS.data = self.feed.articles;
+            }
+            
         }
     }
     

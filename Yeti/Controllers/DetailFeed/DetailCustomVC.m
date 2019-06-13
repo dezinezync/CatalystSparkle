@@ -56,11 +56,24 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     if (!self.isUnread) {
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];
         
-        self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+            [snapshot appendItemsWithIdentifiers:MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+        }
+        else {
+            self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        }
         
         self.navigationItem.rightBarButtonItem = nil;
         
-        self.DS.state = DZDatasourceLoaded;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateLoaded;
+        }
+        else {
+            self.DS.state = DZDatasourceLoaded;
+        }
     }
     else {
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
@@ -74,12 +87,27 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
         self.collectionView.refreshControl = refresh;
         
-        self.DS.data = [MyFeedsManager unread];
-        if (self.DS.data.count > 0) {
-            self.page = floor([self.DS.data count]/10.f);
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+            [snapshot appendSectionsWithIdentifiers:MyFeedsManager.unread];
+            
+            if (MyFeedsManager.unread > 0) {
+                self.page = floor(MyFeedsManager.unread.count/10.f);
+            }
+        }
+        else {
+            self.DS.data = [MyFeedsManager unread];
+            if (self.DS.data.count > 0) {
+                self.page = floor([self.DS.data count]/10.f);
+            }
         }
         
-        self.DS.state = DZDatasourceLoaded;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateLoaded;
+        }
+        else {
+            self.DS.state = DZDatasourceLoaded;
+        }
         
 //        [self loadNextPage];
         
@@ -95,18 +123,45 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     if (_reloadDataset) {
         _reloadDataset = NO;
         
-        if (self.unread == NO) {
-            self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        if (@available(iOS 13, *)) {
+            if (self.unread == NO) {
+                NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+                [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+                [snapshot appendItemsWithIdentifiers:MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            }
+            else {
+                NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+                [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+                [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            }
         }
         else {
-            self.DS.data = MyFeedsManager.unread;
+            if (self.unread == NO) {
+                self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+            }
+            else {
+                self.DS.data = MyFeedsManager.unread;
+            }
         }
     }
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
     if (self.isUnread) {
-        self.DS.data = MyFeedsManager.unread;
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+            [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = MyFeedsManager.unread;
+        }
     }
 }
 
@@ -174,11 +229,25 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     [super setSortingOption:option];
     
     if (self.isUnread == NO) {
+        
+        NSArray *data = nil;
+        
         if ([option isEqualToString:YTSortAllDesc]) {
-            self.DS.data = [MyFeedsManager.bookmarks reverseObjectEnumerator].allObjects;
+            data = [MyFeedsManager.bookmarks reverseObjectEnumerator].allObjects;
         }
         else {
-            self.DS.data = MyFeedsManager.bookmarks;
+            data = MyFeedsManager.bookmarks;
+        }
+        
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+            [snapshot appendItemsWithIdentifiers:data];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = data;
         }
     }
     
@@ -199,14 +268,26 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         return;
     }
     
-    if (self.DS.state != DZDatasourceLoaded)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState != StateLoaded) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.state != DZDatasourceLoaded)
+            return;
+    }
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.DS.state = DZDatasourceLoading;
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateLoading;
+    }
+    else {
+        self.DS.state = DZDatasourceLoading;
+    }
     
     weakify(self);
     
@@ -225,7 +306,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             
             BOOL canLoadNext = YES;
             
-            if (![responseObject count]) {
+            if (responseObject == nil || [responseObject count] == 0) {
                 canLoadNext = NO;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -233,28 +314,41 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                     self.loadingNext = NO;
                 });
                 
-                if (page == 1) {
-                    self.DS.data = @[];
-                }
-                else {
-                    self.DS.data = self.DS.data ?: @[];
-                }
             }
             else {
                 @try {
-                    if (page == 1) {
-                        self.DS.data = responseObject;
+                    
+                    if (@available(iOS 13, *)) {
+                        
+                        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                        [snapshot appendItemsWithIdentifiers:responseObject];
+                        
+                        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                        
                     }
                     else {
-                        [self.DS append:responseObject];
+                        
+                        if (page == 1) {
+                            self.DS.data = responseObject;
+                        }
+                        else {
+                            [self.DS append:responseObject];
+                        }
+                        
                     }
+                    
                 }
                 @catch (NSException *exc) {
                     DDLogWarn(@"Exception setting unread articles: %@", exc);
                 }
             }
             
-            self.DS.state = DZDatasourceLoaded;
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
             
             self.page = page;
             
@@ -282,7 +376,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             if (!self)
                 return;
             
-            self.DS.state = DZDatasourceError;
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateErrored;
+            }
+            else {
+                self.DS.state = DZDatasourceError;
+            }
             
             weakify(self);
             
@@ -296,7 +395,17 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         }];
     }
     else {
-        self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+            [snapshot appendItemsWithIdentifiers:MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects;
+        }
         
         asyncMain(^{
             if ([self.collectionView.refreshControl isRefreshing]) {
@@ -365,7 +474,13 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
-    [coder encodeObject:self.DS.data forKey:kBUnreadData];
+    if (@available(iOS 13, *)) {
+        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBUnreadData];
+    }
+    else {
+        [coder encodeObject:self.DS.data forKey:kBUnreadData];
+    }
+    
     [coder encodeBool:self.unread forKey:kBIsUnread];
     
 }
@@ -379,7 +494,15 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     if (items) {
         [self setupLayout];
         
-        self.DS.data = items;
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+            [snapshot appendItemsWithIdentifiers:items];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = items;
+        }
     }
     
 }

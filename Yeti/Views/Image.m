@@ -544,6 +544,12 @@
 }
 
 - (void)setAnimatedImage:(FLAnimatedImage *)animatedImage {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setAnimatedImage:) withObject:animatedImage waitUntilDone:NO];
+        return;
+    }
+    
     [super setAnimatedImage:animatedImage];
     self.animationRepeatCount = 0;
 }

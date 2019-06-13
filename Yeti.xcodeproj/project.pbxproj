@@ -126,6 +126,7 @@
 		F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B766320C27CD000FBCDE7 /* YTNavigationController.m */; };
 		F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B9F4F21CFAE8300D452A1 /* ChangeSet.m */; };
 		F06B9F5E21CFAEBC00D452A1 /* SyncChange.m in Sources */ = {isa = PBXBuildFile; fileRef = F06B9F5D21CFAEBC00D452A1 /* SyncChange.m */; };
+		F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */ = {isa = PBXBuildFile; fileRef = F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */; };
 		F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C2DD1FBABC3600912CCF /* AppDelegate.m */; };
 		F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */; };
@@ -714,6 +715,8 @@
 		F06B9F4F21CFAE8300D452A1 /* ChangeSet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangeSet.m; sourceTree = "<group>"; };
 		F06B9F5C21CFAEBC00D452A1 /* SyncChange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncChange.h; sourceTree = "<group>"; };
 		F06B9F5D21CFAEBC00D452A1 /* SyncChange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyncChange.m; sourceTree = "<group>"; };
+		F06C666322B2ABBA00D425E9 /* UIViewController+Stateful.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Stateful.h"; sourceTree = "<group>"; };
+		F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Stateful.m"; sourceTree = "<group>"; };
 		F06E0F2A2134656A00CEC644 /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = SOURCE_ROOT; };
 		F06F913F20D3E55A00A358B0 /* SubscriptionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubscriptionView.h; sourceTree = "<group>"; };
 		F06F914020D3E55A00A358B0 /* SubscriptionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubscriptionView.m; sourceTree = "<group>"; };
@@ -1527,6 +1530,8 @@
 				F04E92BE21B5429300AD1FB2 /* NSString+Components.m */,
 				F07A31302297FC9D00822969 /* UIView+Anchoring.h */,
 				F07A31312297FC9D00822969 /* UIView+Anchoring.m */,
+				F06C666322B2ABBA00D425E9 /* UIViewController+Stateful.h */,
+				F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2805,6 +2810,7 @@
 				F05DC07B20832DB5009029E1 /* AuthorBioVC.m in Sources */,
 				F0AA8C90216B4A5500C65DAE /* DTError.m in Sources */,
 				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
+				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
 				F0D7E22B215B72F100CB64E9 /* RMStore.m in Sources */,
 				F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */,
 				F05A923421E71FBD0098448E /* PrefsManager.m in Sources */,

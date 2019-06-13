@@ -15,13 +15,13 @@
 #import <DZKit/DZBasicDatasource.h>
 
 #import "BarPositioning.h"
+#import "UIViewController+Stateful.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
-API_AVAILABLE(ios(13.0))
-@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration, BarPositioning> {
+@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration, BarPositioning, ControllerState> {
     NSOperation *_searchOperation;
     BOOL _canLoadNext;
     
@@ -56,6 +56,8 @@ API_AVAILABLE(ios(13.0))
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
 @property (assign) NSInteger page;
+
+@property (assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
 
 - (BOOL)showsSortingButton;
 
