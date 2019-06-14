@@ -207,8 +207,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark - Appearance
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     if (self->_initialSetup == NO) {
@@ -226,13 +225,13 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     if (@available(iOS 13, *)) {
         if (self.DDS.snapshot.numberOfItems == 0) {
-            self.controllerState = StateLoaded;
+            self.controllerState = StateLoading;
             [self loadNextPage];
         }
     }
     else {
         if (self.DS.data == nil || self.DS.data.count == 0) {
-            self.DS.state = DZDatasourceLoaded;
+            self.DS.state = DZDatasourceLoading;
             [self loadNextPage];
         }
     }
