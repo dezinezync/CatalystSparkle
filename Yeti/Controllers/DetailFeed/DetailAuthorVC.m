@@ -123,16 +123,17 @@
                 }
             }
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
-            
-            if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-                [self loadNextPage];
-            }
+        }
+        
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateLoaded;
+        }
+        else {
+            self.DS.state = DZDatasourceLoaded;
+        }
+        
+        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            [self loadNextPage];
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

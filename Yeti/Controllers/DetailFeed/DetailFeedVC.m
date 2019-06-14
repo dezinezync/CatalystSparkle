@@ -397,6 +397,94 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark - <UICollectionViewDataSource>
 
+- (void)setControllerState:(StateType)controllerState
+{
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setControllerState:) withObject:@(controllerState) waitUntilDone:NO];
+        return;
+    }
+    
+    if(_controllerState != controllerState)
+    {
+        
+        _controllerState = controllerState;
+        
+        if (self.DDS.snapshot == nil || self.DDS.snapshot.numberOfItems == 0) {
+            // we can be in any state
+            // but we should only show the empty view
+            // when there is no data
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self addEmptyView];
+            });
+        }
+        else {
+            // we have data, so the state doesn't matter
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self removeEmptyView];
+            });
+        }
+        
+    }
+    
+}
+
+- (void)addEmptyView
+{
+    
+    if (!NSThread.isMainThread) {
+        [self performSelectorOnMainThread:@selector(addEmptyView) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    if(![self respondsToSelector:@selector(viewForEmptyDataset)])
+        return;
+    
+    UIView *view = [self viewForEmptyDataset];
+    
+    if(view != nil) {
+        view.tag = emptyViewTag;
+        view.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        //        Check if the previous view, if existing, is present
+        [self removeEmptyView];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UILayoutGuide *guide = [self.view layoutMarginsGuide];
+            
+            [self.view addSubview:view];
+            
+            // this can be nil
+            if (guide != nil) {
+                if ([view isKindOfClass:UIActivityIndicatorView.class] == NO) {
+                    [view.widthAnchor constraintEqualToAnchor:guide.widthAnchor].active = YES;
+                }
+                
+                [view.centerXAnchor constraintEqualToAnchor:guide.centerXAnchor].active = YES;
+                [view.centerYAnchor constraintEqualToAnchor:guide.centerYAnchor].active = YES;
+            }
+        });
+        
+    }
+    
+}
+
+- (void)removeEmptyView {
+    
+    if (!NSThread.isMainThread) {
+        [self performSelectorOnMainThread:@selector(removeEmptyView) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    UIView *buffer = [self.view viewWithTag:emptyViewTag];
+    
+    while (buffer != nil && buffer.superview) {
+        [buffer removeFromSuperview];
+        
+        buffer = [self.view viewWithTag:emptyViewTag];
+    }
+}
+
 - (NSString *)emptyViewSubtitle {
     return formattedString(@"No recent articles are available from %@", self.feed.title);
 }
@@ -466,7 +554,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
-    attributes = @{NSFontAttributeName: [TypeFactory.shared titleFont],
+    attributes = @{NSFontAttributeName: [TypeFactory.shared boldBodyFont],
                    NSForegroundColorAttributeName: theme.titleColor,
                    NSParagraphStyleAttributeName: para
                    };

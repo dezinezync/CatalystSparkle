@@ -57,7 +57,7 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (assign) NSInteger page;
 
-@property (assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
+@property (nonatomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
 
 - (BOOL)showsSortingButton;
 
@@ -72,6 +72,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 @property (nonatomic, strong) NSMutableArray <NSValue *> *sizeCache;
 
 - (void)setupLayout;
+
+- (UIView *)viewForEmptyDataset;
 
 - (NSString *)emptyViewSubtitle;
 

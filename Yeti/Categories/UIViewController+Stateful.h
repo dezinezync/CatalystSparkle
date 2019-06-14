@@ -22,6 +22,12 @@ typedef NS_ENUM(NSInteger, StateType) {
 
 @property (atomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
 
+@optional
+
+- (UIView *)viewForEmptyDataset;
+
+- (NSString *)emptyViewSubtitle;
+
 @end
 
 NS_ASSUME_NONNULL_END

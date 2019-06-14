@@ -8,6 +8,3 @@
 
 #import "UIViewController+Stateful.h"
 
-@implementation UIViewController (Stateful)
-
-@end
