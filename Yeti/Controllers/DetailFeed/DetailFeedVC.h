@@ -75,6 +75,10 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 - (NSString *)emptyViewSubtitle;
 
+- (NSUInteger)indexOfItem:(FeedItem * _Nonnull)item retIndexPath:(NSIndexPath * _Nullable)indexPath;
+
+- (FeedItem * _Nullable)itemForIndexPath:(NSIndexPath * _Nonnull)indexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

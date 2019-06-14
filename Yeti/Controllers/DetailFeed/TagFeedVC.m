@@ -66,12 +66,12 @@
 {
     
     if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoaded) {
+        if (self.controllerState == StateLoading) {
             return;
         }
     }
     else {
-        if (self.DS.state != DZDatasourceLoaded)
+        if (self.DS.state != DZDatasourceLoading)
             return;
     }
     

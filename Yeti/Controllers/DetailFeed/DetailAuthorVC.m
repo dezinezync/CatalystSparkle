@@ -66,17 +66,29 @@
     
 }
 
-- (void)loadNextPage
-{
+- (void)loadNextPage {
     
-    if (self.loadingNext)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState == StateLoading) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.state == DZDatasourceLoading) {
+            return;
+        }
+    }
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.loadingNext = YES;
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateLoading;
+    }
+    else {
+        self.DS.state = DZDatasourceLoading;
+    }
     
     weakify(self);
     
@@ -111,7 +123,12 @@
                 }
             }
             
-            self.loadingNext = NO;
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
             
             if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
                 [self loadNextPage];
@@ -123,7 +140,12 @@
         
         strongify(self);
         
-        self.loadingNext = NO;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateErrored;
+        }
+        else {
+            self.DS.state = DZDatasourceError;
+        }
     }];
 }
 
