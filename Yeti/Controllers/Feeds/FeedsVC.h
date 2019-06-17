@@ -28,6 +28,8 @@
 @property (nonatomic, strong, readonly) DZSectionedDatasource *DS;
 @property (nonatomic, weak, readonly) DZBasicDatasource *DS1, *DS2;
 
+@property (nonatomic, strong) UITableViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
+
 @property (nonatomic, copy) NSDate *sinceDate;
 
 - (void)setupData;

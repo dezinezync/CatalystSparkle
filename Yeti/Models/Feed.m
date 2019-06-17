@@ -73,7 +73,27 @@
     return [self copy];
 }
 
+- (NSUInteger)hash {
+    
+    NSUInteger hash = 0;
+    hash += self.feedID.hash;
+    hash += self.title.hash;
+    hash += self.folderID.hash;
+    
+    return hash;
+    
+}
+
 - (BOOL)isEqualToFeed:(Feed *)object {
+    
+    if (object == nil || [object isKindOfClass:Feed.class] == NO) {
+        return NO;
+    }
+    
+    if (object.hash == self.hash) {
+        return YES;
+    }
+    
     return ([[object feedID] isEqualToNumber:self.feedID]
             && [[object title] isEqualToString:self.title]
             && [[object folderID] isEqualToNumber:self.folderID]);

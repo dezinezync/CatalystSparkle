@@ -40,7 +40,32 @@
     return self;
 }
 
+- (NSUInteger)hash {
+    
+    __block NSUInteger hash = 20;
+    hash += self.folderID.hash;
+    hash += self.title.hash;
+    
+    [self.feedIDs enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+        hash += [obj hash];
+    }];
+    
+//    hash += self.isExpanded == YES ? 1 : 0;
+    
+    return hash;
+    
+}
+
 - (BOOL)isEqualToFolder:(Folder *)object {
+    
+    if (object == nil || [object isKindOfClass:Folder.class] == NO) {
+        return NO;
+    }
+    
+    if (object.hash == self.hash) {
+        return YES;
+    }
+    
     BOOL checkOne = ([[object folderID] isEqualToNumber:self.folderID]
                      && [[object title] isEqualToString:self.title]
                      && [object.feedIDs isEqualToSet:self.feedIDs]);

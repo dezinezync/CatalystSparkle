@@ -35,6 +35,9 @@
 
 #import <StoreKit/SKStoreReviewController.h>
 
+NSString *const TopSection = @"top";
+NSString *const MainSection = @"main";
+
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
@@ -57,7 +60,6 @@ static void *KVO_Unread = &KVO_Unread;
 - (instancetype)initWithStyle:(UITableViewStyle)style {
     if (self = [super initWithStyle:style]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
-//        self.restorationClass = self.class;
     }
     
     return self;
@@ -201,34 +203,53 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.tableView.restorationIdentifier = self.restorationIdentifier;
     
-    self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
-    
-    self.DS.addAnimation = UITableViewRowAnimationFade;
-    self.DS.deleteAnimation = UITableViewRowAnimationFade;
-    self.DS.reloadAnimation = UITableViewRowAnimationFade;
-    
-    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-    NSArray *DS1Data = @[@"Unread"];
-    
-    if (PrefsManager.sharedInstance.hideBookmarks == NO) {
-        DS1Data = @[@"Unread", @"Bookmarks"];
-    }
-    
-    DS1.data = DS1Data;
-    
-    DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
-    
-    self.DS.datasources = @[DS1, DS2];
-    self.DS1 = [self.DS.datasources firstObject];
-    self.DS2 = [self.DS.datasources lastObject];
-    
-    self.DS.delegate = self;
-    
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(EmptyCell.class) bundle:nil] forCellReuseIdentifier:kEmptyCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FolderCell.class) bundle:nil] forCellReuseIdentifier:kFolderCell];
     
     self.tableView.tableFooterView = [UIView new];
+    
+    if (@available(iOS 13, *)) {
+        
+        UITableViewDiffableDataSource *DDS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull obj) {
+            
+            return [self tableView:tableView cellForRowAtIndexPath:indexPath];
+            
+        }];
+        
+        self.DDS = DDS;
+        
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];
+        [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+        
+    }
+    else {
+        self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
+        
+        self.DS.addAnimation = UITableViewRowAnimationFade;
+        self.DS.deleteAnimation = UITableViewRowAnimationFade;
+        self.DS.reloadAnimation = UITableViewRowAnimationFade;
+        
+        DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
+        NSArray *DS1Data = @[@"Unread"];
+        
+        if (PrefsManager.sharedInstance.hideBookmarks == NO) {
+            DS1Data = @[@"Unread", @"Bookmarks"];
+        }
+        
+        DS1.data = DS1Data;
+        
+        DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
+        
+        self.DS.datasources = @[DS1, DS2];
+        self.DS1 = [self.DS.datasources firstObject];
+        self.DS2 = [self.DS.datasources lastObject];
+        
+        self.DS.delegate = self;
+    }
     
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
@@ -432,6 +453,46 @@ static void *KVO_Unread = &KVO_Unread;
     return _sinceDate;
 }
 
+- (id)objectAtIndexPath:(NSIndexPath *)indexPath {
+    
+    id obj = nil;
+    
+    if (@available(iOS 13, *)) {
+        obj = [self.DDS itemIdentifierForIndexPath:indexPath];
+    }
+    else {
+        obj = [self.DS objectAtIndexPath:indexPath];
+    }
+    
+    return obj;
+    
+}
+
+- (NSUInteger)indexOfObject:(id)obj indexPath:(NSIndexPath *)outIndexPath {
+    
+    NSUInteger index = NSNotFound;
+    NSIndexPath *indexPath = nil;
+    
+    if (@available(iOS 13, *)) {
+        indexPath = [self.DDS indexPathForItemIdentifier:obj];
+        
+        if (indexPath != nil) {
+            index = indexPath.row;
+        }
+    }
+    else {
+        index = [self.DS2.data indexOfObject:obj];
+        if (index != NSNotFound) {
+            indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+        }
+    }
+    
+    outIndexPath = [indexPath copy];
+    
+    return index;
+    
+}
+
 #pragma mark - Table view data source
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -462,7 +523,7 @@ static void *KVO_Unread = &KVO_Unread;
     if (indexPath.section == 0) {
         FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
         
-        cell.titleLabel.text = [self.DS objectAtIndexPath:indexPath];
+        cell.titleLabel.text = [self objectAtIndexPath:indexPath];
         
         NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
         UIImage *image = [UIImage imageNamed:imageName];
@@ -483,12 +544,20 @@ static void *KVO_Unread = &KVO_Unread;
     }
     else {
         
-        if (!self.DS2.data.count) {
-            return [self rowForEmptySection:indexPath.section];
-        }
+//        if (@available(iOS 13, *)) {
+//            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+//            if (snapshot != nil && [snapshot numberOfItemsInSection:MainSection] == 0) {
+//                return [self rowForEmptySection:indexPath.section];
+//            }
+//        }
+//        else {
+//            if (!self.DS2.data.count) {
+//                return [self rowForEmptySection:indexPath.section];
+//            }
+//        }
         
         // Configure the cell...
-        id obj = [self.DS objectAtIndexPath:indexPath];
+        id obj = [self objectAtIndexPath:indexPath];
         if (obj) {
             if ([obj isKindOfClass:Feed.class]) {
                 FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
@@ -519,20 +588,6 @@ static void *KVO_Unread = &KVO_Unread;
     
     return ocell;
 }
-
-//- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-//    
-//    if (MyFeedsManager.subscription != nil && [MyFeedsManager.subscription hasExpired] == YES) {
-//        if (indexPath.section == 0 && indexPath.row == 1) {
-//            return YES;
-//        }
-//        
-//        return NO;
-//    }
-//    
-//    return YES;
-//    
-//}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -568,7 +623,7 @@ static void *KVO_Unread = &KVO_Unread;
         return;
     }
     
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+    Feed *feed = [self objectAtIndexPath:indexPath];
     
     if ([feed isKindOfClass:Feed.class]) {
         UIViewController *vc;
@@ -659,8 +714,7 @@ NSString * const kDS2Data = @"DS2Data";
 //    
 //}
 
-- (void)setupData
-{
+- (void)setupData {
     
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
@@ -669,8 +723,16 @@ NSString * const kDS2Data = @"DS2Data";
     
     self->_highlightedRow = nil;
     
+    NSArray *data = nil;
+    if (@available(iOS 13, *)) {
+        data = [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection];
+    }
+    else {
+        data = self.DS2.data;
+    }
+    
     // get a list of open folders
-    NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+    NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
         return [obj isKindOfClass:Folder.class] && [(Folder *)obj isExpanded];
     }] rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
         return obj.folderID;
@@ -702,27 +764,23 @@ NSString * const kDS2Data = @"DS2Data";
         
         [data addObjectsFromArray:MyFeedsManager.feedsWithoutFolders];
         
-//        CGPoint contentOffset = self.tableView.contentOffset;
-//
-//        CGRect layoutFrame = [self.tableView.layoutMarginsGuide layoutFrame];
-//        CGRect screen = [[UIScreen mainScreen] bounds];
-//        CGRect statusBar = [[UIApplication sharedApplication] statusBarFrame];
-//
-//        contentOffset.y = -(screen.size.height - layoutFrame.size.height - statusBar.size.height);
-        
-        [self.DS2 resetData];
-        [self.tableView reloadData];
-        
-        [self.DS setData:data section:1];
-        
-//        // schedule for next loop
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            // schedule for 0.15 once in the next loop
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [self.tableView reloadRowsAtIndexPaths:[self.tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationFade];
-//            });
-//
-//        });
+        if (@available(iOS 13, *)) {
+            
+            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+            [snapshot deleteSectionsWithIdentifiers:@[MainSection]];
+            
+            [snapshot appendSectionsWithIdentifiers:@[MainSection]];
+            [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            
+        }
+        else {
+            [self.DS2 resetData];
+            [self.tableView reloadData];
+            
+            [self.DS setData:data section:1];
+        }
         
     } @catch (NSException *exc) {
         DDLogWarn(@"Exception: %@", exc);
@@ -835,11 +893,27 @@ NSString * const kDS2Data = @"DS2Data";
     
     BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
     
-    if (pref) {
-        self.DS1.data = @[@"Unread"];
+    if (@available(iOS 13, *)) {
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        [snapshot deleteSectionsWithIdentifiers:@[TopSection]];
+        [snapshot insertSectionsWithIdentifiers:@[TopSection] beforeSectionWithIdentifier:MainSection];
+        
+        if (pref) {
+            [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
+        }
+        else {
+            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+        }
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     }
     else {
-        self.DS1.data = @[@"Unread", @"Bookmarks"];
+        if (pref) {
+            self.DS1.data = @[@"Unread"];
+        }
+        else {
+            self.DS1.data = @[@"Unread", @"Bookmarks"];
+        }
     }
     
 }
@@ -887,7 +961,20 @@ NSString * const kDS2Data = @"DS2Data";
     
     weakify(self);
     
-    if (self.DS2.data == nil || self.DS2.data.count == 0) {
+    BOOL userUpdatedButWeHaveData = YES;
+    
+    if (@available(iOS 13, *)) {
+        if ([self.DDS.snapshot numberOfItemsInSection:MainSection] == 0) {
+            userUpdatedButWeHaveData = NO;
+        }
+    }
+    else {
+        if (self.DS2.data == nil || self.DS2.data.count == 0) {
+            userUpdatedButWeHaveData = NO;
+        }
+    }
+    
+    if (userUpdatedButWeHaveData == NO) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             asyncMain(^{
                 strongify(self);
@@ -992,7 +1079,8 @@ NSString * const kDS2Data = @"DS2Data";
     
     __block Folder * actionableFolder = folder;
  
-    __block NSUInteger index = [self.DS2.data indexOfObject:folder];
+    NSIndexPath *indexPath = nil;
+    __block NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
     
     if (index == NSNotFound) {
         DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
@@ -1001,58 +1089,72 @@ NSString * const kDS2Data = @"DS2Data";
     
     CGPoint contentOffset = self.tableView.contentOffset;
     
-    if (actionableFolder.isExpanded) {
+    if (@available(iOS 13, *)) {
         
-        DDLogDebug(@"Closing index: %@", @(index));
-        actionableFolder.expanded = NO;
+        if (indexPath == nil) {
+            indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+        }
         
-        // remove these feeds from the datasource
-        NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-            
-            if ([obj isKindOfClass:Folder.class])
-                return YES;
-            
-            if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:actionableFolder.folderID]) {
-                return NO;
-            }
-            
-            return YES;
-            
-        }];
+        Folder *folderFromDS = [self.DDS itemIdentifierForIndexPath:indexPath];
         
-        [self.DS setData:data section:1];
+        folderFromDS.expanded = folderFromDS.isExpanded ? NO : YES;
         
+        [self setupData];
     }
     else {
-        actionableFolder.expanded = YES;
-        DDLogDebug(@"Opening index: %@", @(index));
-        
-        // add these feeds to the datasource after the above index
-        NSMutableArray * data = [self.DS2.data mutableCopy];
-        
-        // data shouldn't contain any object with this folder ID
-        data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-            if ([obj isKindOfClass:Feed.class]) {
-                Feed *feed = obj;
-                if ([feed.folderID isEqualToNumber:actionableFolder.folderID]) {
+        if (actionableFolder.isExpanded) {
+            
+            DDLogDebug(@"Closing index: %@", @(index));
+            actionableFolder.expanded = NO;
+            
+            // remove these feeds from the datasource
+            NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+                
+                if ([obj isKindOfClass:Folder.class])
+                    return YES;
+                
+                if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:actionableFolder.folderID]) {
                     return NO;
                 }
+                
+                return YES;
+                
+            }];
+            
+            [self.DS setData:data section:1];
+            
+        }
+        else {
+            actionableFolder.expanded = YES;
+            DDLogDebug(@"Opening index: %@", @(index));
+            
+            // add these feeds to the datasource after the above index
+            NSMutableArray * data = [self.DS2.data mutableCopy];
+            
+            // data shouldn't contain any object with this folder ID
+            data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+                if ([obj isKindOfClass:Feed.class]) {
+                    Feed *feed = obj;
+                    if ([feed.folderID isEqualToNumber:actionableFolder.folderID]) {
+                        return NO;
+                    }
+                }
+                
+                return YES;
+            }].mutableCopy;
+            
+            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, actionableFolder.feeds.allObjects.count)];
+            
+            [data insertObjects:actionableFolder.feeds.allObjects atIndexes:set];
+            
+            @try {
+                [self.DS setData:data section:1];
+            }
+            @catch (NSException *exc) {
+                DDLogWarn(@"Exception updating feeds: %@", exc);
             }
             
-            return YES;
-        }].mutableCopy;
-        
-        NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, actionableFolder.feeds.allObjects.count)];
-        
-        [data insertObjects:actionableFolder.feeds.allObjects atIndexes:set];
-        
-        @try {
-            [self.DS setData:data section:1];
         }
-        @catch (NSException *exc) {
-            DDLogWarn(@"Exception updating feeds: %@", exc);
-        }
-        
     }
     
     [self.feedbackGenerator selectionChanged];
