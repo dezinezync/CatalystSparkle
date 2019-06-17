@@ -103,15 +103,21 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 {
     
 #ifdef DEBUG
-    _UUID = [[NSUUID alloc] initWithUUIDString:@"815E2709-31CC-4EB8-9067-D84F224BED66"];
-    _userID = @(1);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-    });
+    if (_UUID == nil) {
+        _UUID = [[NSUUID alloc] initWithUUIDString:@"815E2709-31CC-4EB8-9067-D84F224BED66"];
+        _userID = @(1);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+        });
+    }
+    
+    return _UUID;
+    
 #endif
     
-    if (!_UUID) {
+    if (_UUID == nil) {
         // check if the store already has one
         UICKeyChainStore *keychain = self.delegate.keychain;
         

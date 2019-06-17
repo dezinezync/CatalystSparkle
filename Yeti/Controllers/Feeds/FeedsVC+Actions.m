@@ -48,12 +48,7 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing) {
-        
-        if ([sender isRefreshing])
-            [sender endRefreshing];
-        
-        _refreshing = NO;
+    if (_refreshing == YES || (sender != nil && [sender isRefreshing] == YES)) {
         
         return;
     }
@@ -74,7 +69,9 @@
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
         DDLogError(@"Failed to fetch unread: %@", error);
+        
     }];
     
     [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -91,18 +88,26 @@
             }
             
             self->_refreshing = NO;
+            
+            if (sender != nil && sender.isRefreshing == YES) {
+                [sender endRefreshing];
+            }
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         DDLogError(@"%@", error);
         
-        if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
-            [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
-        }
-        
         asyncMain(^{
-            [sender endRefreshing];
+            if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
+                if (UIApplication.sharedApplication.applicationState == UIApplicationStateActive) {
+                    [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
+                }
+            }
+            
+            if (sender != nil && sender.isRefreshing == YES) {
+                [sender endRefreshing];
+            }
         });
         
         strongify(self);
