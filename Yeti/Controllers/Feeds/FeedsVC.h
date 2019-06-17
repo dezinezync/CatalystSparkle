@@ -25,8 +25,8 @@
 
 @property (nonatomic, weak) FeedsHeaderView *headerView;
 
-@property (nonatomic, strong, readonly) DZSectionedDatasource *DS;
-@property (nonatomic, weak, readonly) DZBasicDatasource *DS1, *DS2;
+@property (nonatomic, strong, readonly) DZSectionedDatasource *DS NS_DEPRECATED_IOS(11, 13.0);
+@property (nonatomic, weak, readonly) DZBasicDatasource *DS1, *DS2 NS_DEPRECATED_IOS(11, 13.0);
 
 @property (nonatomic, strong) UITableViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
 

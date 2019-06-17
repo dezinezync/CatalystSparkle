@@ -10,7 +10,6 @@
 #import "FeedsManager.h"
 #import "FeedsCell.h"
 #import "FolderCell.h"
-#import "FeedVC.h"
 #import "DetailFeedVC.h"
 #import "DetailCustomVC.h"
 #import "DetailFolderVC.h"

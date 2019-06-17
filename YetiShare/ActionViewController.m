@@ -254,11 +254,12 @@
             [self showError:@"Elytra failed to load contents of this page"];
             return;
         }
-        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-escape-sequence"
         NSRegularExpression *regexp = [NSRegularExpression regularExpressionWithPattern:@"\<link[^rel]+rel\=\"alternate\"[^\>]+\>" options:kNilOptions error:&error];
         NSRegularExpression *titleExpression = [NSRegularExpression regularExpressionWithPattern:@"(title\=\"([^\"]+))\"" options:kNilOptions error:&error];
         NSRegularExpression *hrefExpression = [NSRegularExpression regularExpressionWithPattern:@"(href\=\"([^\"]+))\"" options:kNilOptions error:&error];
-        
+#pragma clang diagnostic pop
         if (error) {
             [self showError:@"Elytra failed to process contents of this page"];
             return;

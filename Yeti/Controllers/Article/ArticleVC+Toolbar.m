@@ -16,9 +16,10 @@
 #import "Paragraph.h"
 #import "FeedsManager.h"
 
+#import "DetailFeedVC.h"
 #import "EmptyVC.h"
 #import "SplitVC.h"
-#import "FeedVC.h"
+
 #import "YetiConstants.h"
 
 #import <PopMenu/PopMenu.h>
@@ -176,13 +177,15 @@
     [vc showDetailViewController:emptyVC sender:self];
     
     UINavigationController *nav = vc.viewControllers.firstObject;
-    FeedVC *top = (FeedVC *)[nav topViewController];
+    DetailFeedVC *top = (DetailFeedVC *)[nav topViewController];
     
-    if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
-        NSIndexPath *selected = [top.tableView indexPathForSelectedRow];
+    if (top != nil && ([top isKindOfClass:DetailFeedVC.class] || [top.class isSubclassOfClass:DetailFeedVC.class])) {
+        NSArray <NSIndexPath *> *selectedItems = [top.collectionView indexPathsForSelectedItems];
+        
+        NSIndexPath *selected = selectedItems.count ? [selectedItems firstObject] : nil;
         
         if (selected != nil) {
-            [top.tableView deselectRowAtIndexPath:selected animated:YES];
+            [top.collectionView deselectItemAtIndexPath:selected animated:YES];
         }
     }
 }

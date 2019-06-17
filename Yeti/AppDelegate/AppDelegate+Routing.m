@@ -13,7 +13,7 @@
 #import "YetiThemeKit.h"
 
 #import "FeedsVC.h"
-#import "FeedVC.h"
+#import "DetailFeedVC.h"
 #import "ArticleVC.h"
 #import "FolderCell.h"
 #import "YTNavigationController.h"
@@ -510,9 +510,9 @@
     // get the primary navigation controller
     YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
     
-    if ([[nav topViewController] isKindOfClass:FeedVC.class]) {
+    if ([[nav topViewController] isKindOfClass:DetailFeedVC.class]) {
         // check if the current topVC is the same feed
-        if ([[[(FeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
+        if ([[[(DetailFeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
             
             if (articleID != nil) {
                 asyncMain(^{
@@ -625,7 +625,7 @@
         return;
     }
     
-    FeedVC *feedVC = nil;
+    DetailFeedVC *feedVC = nil;
     
     UISplitViewController *splitVC;
     UINavigationController *nav;
@@ -640,12 +640,12 @@
             nav = [[splitVC viewControllers] firstObject];
         }
         
-        feedVC = (FeedVC *)[nav topViewController];
+        feedVC = (DetailFeedVC *)[nav topViewController];
     }
     @catch (NSException *exc) {}
     
     if (feedVC != nil
-        && ([feedVC isKindOfClass:FeedVC.class] || [feedVC isKindOfClass:NSClassFromString(@"DetailFeedVC")])) {
+        && ([feedVC isKindOfClass:DetailFeedVC.class])) {
         feedVC.loadOnReady = articleID;
     }
     else {

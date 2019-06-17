@@ -27,6 +27,9 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
     
     NSIndexPath *_highlightedRow;
     BOOL _shouldShowHeader;
+    
+    @public
+    StateType _controllerState NS_AVAILABLE_IOS(13.0);
 }
 
 + (UINavigationController *)instanceWithFeed:(Feed * _Nullable)feed;
@@ -57,7 +60,7 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (assign) NSInteger page;
 
-@property (nonatomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
+@property (atomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
 
 - (BOOL)showsSortingButton;
 

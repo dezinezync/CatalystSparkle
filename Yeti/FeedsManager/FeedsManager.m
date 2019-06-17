@@ -30,17 +30,15 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
-@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration>
-{
+@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration> {
     NSString *_receiptLastUpdatePath;
-    Subscription * _subscription;
 }
 
-@property (nonatomic, strong, readwrite) DZURLSession *session, *backgroundSession;
-@property (nonatomic, strong, readwrite) Reachability *reachability;
+@property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
+@property (nonatomic, strong, readwrite) Reachability * _Nonnull reachability;
 
-@property (nonatomic, strong, readwrite) YTUserID *userIDManager;
-@property (nonatomic, strong, readwrite) Subscription *subscription;
+@property (atomic, strong, readwrite) YTUserID * _Nonnull userIDManager;
+@property (atomic, strong, readwrite) Subscription * _Nullable subscription;
 
 @end
 
@@ -130,15 +128,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return self;
 }
 
-- (NSNumber *)userID
-{
+- (NSNumber *)userID {
     return self.userIDManager.userID;
-}
-
-- (void)dealloc {
-    
-    
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1859,97 +1850,106 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (void)setSubscription:(Subscription *)subscription {
-    _subscription = subscription;
     
-    if (_subscription && [[(RMStoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
-        _subscription.lifetime = YES;
-    }
-    
+    @synchronized (self) {
+        self->_subscription = subscription;
+        
+        if (self->_subscription
+            && [[(RMStoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
+            self->_subscription.lifetime = YES;
+        }
+        
 #ifndef DEBUG
 #if TESTFLIGHT == 1
-    if (_subscription && _subscription.error == nil) {
-        // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
-        _subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
-    }
+        if (self->_subscription && self->_subscription.error == nil) {
+            // Sat Aug 31 2019 23:59:59 GMT+0000 (UTC)
+            self->_subscription.expiry = [NSDate dateWithTimeIntervalSince1970:1567295999];
+        }
 #endif
 #endif
-    
-//#if TESTFLIGHT == 0
-    [self setupSubscriptionNotification];
-//#endif
-    
-    if (subscription && [subscription hasExpired] && [subscription preAppstore] == NO) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:subscription];
-        });
+        
+        //#if TESTFLIGHT == 0
+        [self setupSubscriptionNotification];
+        //#endif
+        
+        if (self->_subscription && [self->_subscription hasExpired] && [self->_subscription preAppstore] == NO) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter] postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:self->_subscription];
+            });
+        }
     }
     
 }
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds
 {
-    _feeds = feeds ?: @[];
+    @synchronized (self) {
+        self->_feeds = feeds ?: @[];
+    }
     
     // calling this invalidates the pointers we store in folders.
     // calling the folders setter will remap the feeds.
     self.folders = [self folders];
     
-    if (_feeds) {
+    if (self->_feeds) {
         [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : _feeds, @"folders": self.folders ?: @[]}];
     }
 }
 
 - (void)setFolders:(NSArray<Folder *> *)folders {
     
-    _folders = folders ?: @[];
-    
-    [_folders enumerateObjectsUsingBlock:^(Folder * _Nonnull folder, NSUInteger idxx, BOOL * _Nonnull stopx) {
-       
-        if (folder.feeds == nil) {
-            folder.feeds = [NSPointerArray weakObjectsPointerArray];
+    @synchronized (self) {
+        self->_folders = folders ?: @[];
+        
+        [self->_folders enumerateObjectsUsingBlock:^(Folder * _Nonnull folder, NSUInteger idxx, BOOL * _Nonnull stopx) {
             
-            NSArray *feedIDs = folder.feedIDs.allObjects;
-            
-            [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (folder.feeds == nil) {
+                folder.feeds = [NSPointerArray weakObjectsPointerArray];
                 
-                [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                NSArray *feedIDs = folder.feedIDs.allObjects;
+                
+                [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
                     
-                    if ([feed.feedID isEqualToNumber:objx]) {
-                        feed.folderID = folder.folderID;
-                        if ([folder.feeds containsObject:feed] == NO) {
-                            [folder.feeds addPointer:(__bridge void *)feed];
+                    [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
+                        
+                        if ([feed.feedID isEqualToNumber:objx]) {
+                            feed.folderID = folder.folderID;
+                            if ([folder.feeds containsObject:feed] == NO) {
+                                [folder.feeds addPointer:(__bridge void *)feed];
+                            }
                         }
-                    }
+                        
+                    }];
                     
                 }];
-                
-            }];
-        }
-        
-    }];
+            }
+            
+        }];
+    }
     
 }
 
-//- (void)setFolders:(NSArray<Folder *> *)folders
-//{
-//    _folders = folders ?: @[];
-//    
-//    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : self.feeds, @"folders": self.folders}];
-//}
-//
-//- (void)setUnread:(NSArray<FeedItem *> *)unread {
-//    
-//    [self willChangeValueForKey:propSel(unread)];
-//    
-//    _unread = unread;
-//    
-//    [self didChangeValueForKey:propSel(unread)];
-//    
-//    [[NSNotificationCenter defaultCenter] postNotificationName:FeedDidUpReadCount object:nil];
-//    
-//}
+- (void)setKeychain:(UICKeyChainStore *)keychain {
+    
+    @synchronized (self) {
+        self->_keychain = keychain;
+    }
+    
+}
+
+- (void)setUserID:(NSNumber *)userID {
+    self.userIDManager.userID = userID;
+}
 
 #pragma mark - Getters
+
+- (NSArray <Feed *> *)feeds {
+    return self->_feeds;
+}
+
+- (NSArray <Folder *> *)folders {
+    return self->_folders;
+}
 
 - (NSArray <Feed *> *)feedsWithoutFolders {
     
@@ -1960,8 +1960,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return feeds;
 }
 
-- (Subscription *)getSubscription {
-    return _subscription;
+- (Subscription *)subscription {
+    return self->_subscription;
 }
 
 - (Reachability *)reachability {
@@ -1977,9 +1977,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (!_keychain) {
         UICKeyChainStore *keychain = [UICKeyChainStore keyChainStoreWithService:@"com.dezinezync.Yeti"];
         keychain.synchronizable = YES;
-        
-//        [keychain setAccessibility:kSecAccessControlApplicationPassword authenticationPolicy:UICKeyChainStoreAuthenticationPolicyUserPresence];
-//        keychain.authenticationPrompt = @"Elytra needs to access your account ID securely.";
         
         _keychain = keychain;
     }
@@ -2171,7 +2168,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             FeedItem *item = nil;
             
             @try {
-                item = [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+                NSData *fileData = [[NSData alloc] initWithContentsOfFile:filePath];
+                
+                if (fileData != nil) {
+                    item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:nil];
+                }
             }
             @catch (NSException *exception) {
                 DDLogWarn(@"Bookmark load exception: %@", exception);

@@ -29,9 +29,19 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject {
     NSString *_pushToken;
+    
+    NSArray<Feed *> * _feeds;
+    
+    NSArray <Folder *> * _folders;
+    
+    Subscription * _subscription;
+    
+    NSNumber * _userID;
+    
+    UICKeyChainStore * _keychain;
 }
 
-@property (atomic, strong, readonly) Subscription *subscription;
+@property (atomic, strong, readonly) Subscription * _Nullable subscription;
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 
@@ -39,11 +49,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (atomic) NSNumber * _Nullable userID;
 
-@property (nonatomic, strong) NSString *pushToken;
+@property (nonatomic, strong) NSString * _Nullable pushToken;
 
-@property (nonatomic, weak) Feed *subsribeAfterPushEnabled;
+@property (nonatomic, weak) Feed * _Nullable subsribeAfterPushEnabled;
 
-@property (atomic, strong) UICKeyChainStore *keychain;
+@property (atomic, strong) UICKeyChainStore * _Nonnull keychain;
 
 @property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
@@ -63,7 +73,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Networking
 
-@property (nonatomic, strong, readonly) Reachability *reachability;
+@property (nonatomic, strong, readonly) Reachability * _Nonnull reachability;
 
 #pragma mark - Misc
 @property (nonatomic, assign) BOOL shouldRequestReview;
@@ -87,7 +97,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
-- (void)getMercurialArticle:(NSNumber * _Nonnull)articleID success:(successBlock)successCB error:(errorBlock)errorCB;
+- (void)getMercurialArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)markFeedRead:(Feed * _Nonnull)feed success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
@@ -111,31 +121,31 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (Folder * _Nullable)folderForID:(NSNumber * _Nonnull)folderID;
 
-- (void)addFolder:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)addFolder:(NSString * _Nonnull)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)renameFolder:(Folder *)folder to:(NSString *)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)renameFolder:(Folder * _Nonnull)folder to:(NSString * _Nonnull)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)updateFolder:(Folder *)folder add:(NSArray <NSNumber *> * _Nullable)add remove:(NSArray <NSNumber *> * _Nullable)del  success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)updateFolder:(Folder * _Nonnull)folder add:(NSArray <NSNumber *> * _Nullable)add remove:(NSArray <NSNumber *> * _Nullable)del  success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)removeFolder:(Folder *)folder success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)removeFolder:(Folder * _Nonnull)folder success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)folderFeedFor:(Folder *)folder sorting:(YetiSortOption)sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)folderFeedFor:(Folder * _Nonnull)folder sorting:(YetiSortOption _Nullable )sorting page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Tags
 
-- (void)getTagFeed:(NSString *)tag page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB;
+- (void)getTagFeed:(NSString * _Nonnull)tag page:(NSInteger)page success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Filters
 
 - (void)getFiltersWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)addFilter:(NSString *)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)addFilter:(NSString * _Nonnull)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)removeFilter:(NSString *)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)removeFilter:(NSString * _Nonnull)word success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Subscriptions
 
-- (void)addPushToken:(NSString *)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)addPushToken:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)subsribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -143,9 +153,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Store
 
-- (void)updateExpiryTo:(NSDate *)date isTrial:(BOOL)isTrial success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)updateExpiryTo:(NSDate * _Nonnull)date isTrial:(BOOL)isTrial success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)postAppReceipt:(NSData *)receipt success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)postAppReceipt:(NSData * _Nonnull)receipt success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getSubscriptionWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -153,11 +163,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - Sync
 
-- (void)getSync:(NSString *)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getSync:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Search
 
-- (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (NSURLSessionTask * _Nullable)search:(NSString * _Nonnull)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark -
 
@@ -165,11 +175,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - <YTUserDelegate>
 
-- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
+- (void)getUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
+- (void)updateUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock)successCB error:(errorBlock)errorCB;
+- (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Error formatting
 

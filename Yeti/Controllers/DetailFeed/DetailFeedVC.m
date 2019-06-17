@@ -397,8 +397,11 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark - <UICollectionViewDataSource>
 
-- (void)setControllerState:(StateType)controllerState
-{
+- (StateType)controllerState {
+    return self->_controllerState;
+}
+
+- (void)setControllerState:(StateType)controllerState {
     
     if (NSThread.isMainThread == NO) {
         [self performSelectorOnMainThread:@selector(setControllerState:) withObject:@(controllerState) waitUntilDone:NO];
@@ -408,7 +411,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if(_controllerState != controllerState)
     {
         
-        _controllerState = controllerState;
+        @synchronized (self) {
+            self->_controllerState = controllerState;
+        }
         
         if (self.DDS.snapshot == nil || self.DDS.snapshot.numberOfItems == 0) {
             // we can be in any state
