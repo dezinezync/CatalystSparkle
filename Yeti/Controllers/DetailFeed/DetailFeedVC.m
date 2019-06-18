@@ -32,6 +32,8 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+NSString *const ArticlesSection = @"main";
+
 @interface UICollectionViewController ()
 
 - (UICollectionView *)_newCollectionViewWithFrame:(CGRect)frame collectionViewLayout:(UICollectionViewLayout *)layout;
@@ -128,7 +130,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         };
         
         NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-        [snapshot appendSectionsWithIdentifiers:@[@"articles"]];
+        [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
         
         [self.DDS applySnapshot:snapshot animatingDifferences:NO];
         
@@ -660,8 +662,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             return;
         }
         
-        
-        
     }
     
     NSMutableArray *actions = [NSMutableArray arrayWithCapacity:3];
@@ -835,6 +835,89 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 }
 
+- (UIContextMenuConfiguration *)collectionView:(UICollectionView *)collectionView contextMenuConfigurationForItemAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point  API_AVAILABLE(ios(13.0)) {
+    
+    FeedItem *item = [self itemForIndexPath:indexPath];
+    
+    if (item == nil) {
+        return nil;
+    }
+    
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feedItem-%@", @(item.hash)) previewProvider:nil actionProvider:^UIMenu<UIAction *> * _Nullable(NSArray<UIMenuElement<UIAction *> *> * _Nonnull suggestedActions) {
+       
+        UIAction *read = nil;
+        
+        if (item.isRead == YES) {
+            
+            read = [UIAction actionWithTitle:@"Unread" image:[UIImage systemImageNamed:@"circle"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self userMarkedArticle:item read:NO];
+                
+            }];
+            
+        }
+        else {
+            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"circle.fill"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self userMarkedArticle:item read:YES];
+                
+            }];
+        }
+        
+        UIAction *bookmark = nil;
+        
+        if (item.isBookmarked == YES) {
+            
+            bookmark = [UIAction actionWithTitle:@"Unbookmark" image:[UIImage systemImageNamed:@"bookmark"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+            
+                [self userMarkedArticle:item bookmarked:NO];
+                
+            }];
+            
+        }
+        else {
+            bookmark = [UIAction actionWithTitle:@"Bookmark" image:[UIImage systemImageNamed:@"bookmark.fill"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self userMarkedArticle:item bookmarked:YES];
+                
+            }];
+        }
+        
+        UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+        
+            NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+                
+            });
+            
+        }];
+        
+        UIAction *share = [UIAction actionWithTitle:@"Share Article" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+            
+            NSString *title = item.articleTitle;
+            NSURL *URL = formattedURL(@"%@", item.articleURL);
+            
+            UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
+            
+            UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+            pvc.sourceView = self.collectionView;
+            pvc.sourceRect = [[self.collectionView cellForItemAtIndexPath:indexPath] frame];
+            
+            [self presentViewController:avc animated:YES completion:nil];
+            
+        }];
+        
+        return [UIMenu actionMenuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share]];
+        
+    }];
+    
+    return config;
+    
+}
+
 #pragma mark - <UICollectionViewDataSourcePrefetching>
 
 - (void)collectionView:(UICollectionView *)collectionView prefetchItemsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
@@ -963,7 +1046,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                     
                     if (@available(iOS 13, *)) {
                         NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                        [snapshot appendItemsWithIdentifiers:responseObject];
+                        [snapshot appendItemsWithIdentifiers:responseObject intoSectionWithIdentifier:ArticlesSection];
                         
                         [self.DDS applySnapshot:snapshot animatingDifferences:YES];
                     }
@@ -1124,12 +1207,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (article == nil)
         return;
     
-    NSIndexPath *indexPath = nil;
+    __block NSIndexPath *indexPath = nil;
     
     NSUInteger index = [self indexOfItem:article retIndexPath:indexPath];
     
     if (index == NSNotFound)
         return;
+    
+    if (indexPath == nil) {
+        indexPath = [NSIndexPath indexPathForItem:index inSection:0];
+    }
     
     weakify(self);
     
@@ -1143,18 +1230,25 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         FeedItem *articleInDS = [self itemForIndexPath:indexPath];
         
+        if (@available(iOS 13, *)) {
+            if (articleInDS == nil) {
+                articleInDS = [self.DDS.snapshot.itemIdentifiers objectAtIndex:index];
+            }
+        }
+        
         if (articleInDS != nil) {
             articleInDS.read = read;
             // if the article exists in the datasource,
             // we can expect a cell for it and therefore
             // reload it.
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
             
             NSArray <NSIndexPath *> * visible = self.collectionView.indexPathsForVisibleItems;
+            
             BOOL isVisible = NO;
             for (NSIndexPath *ip in visible) {
-                if (ip.row == index) {
+                if (ip.item == index) {
                     isVisible = YES;
+                    indexPath = ip;
                     break;
                 }
             }
@@ -1180,19 +1274,19 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 - (void)userMarkedArticle:(FeedItem *)article bookmarked:(BOOL)bookmarked {
     
-    if (!article)
+    if (article == nil)
         return;
     
-    if ([self isKindOfClass:NSClassFromString(@"CustomFeedVC")]) {
-        return;
-    }
+    __block NSIndexPath *indexPath = nil;
     
-    NSUInteger index = NSNotFound;
-    
-    
+    NSUInteger index = [self indexOfItem:article retIndexPath:indexPath];
     
     if (index == NSNotFound)
         return;
+    
+    if (indexPath == nil) {
+        indexPath = [NSIndexPath indexPathForItem:index inSection:0];
+    }
     
     weakify(self);
     
@@ -1206,18 +1300,25 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         FeedItem *articleInDS = [self itemForIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
         
-        if (articleInDS) {
+        if (@available(iOS 13, *)) {
+            if (articleInDS == nil) {
+                articleInDS = [self.DDS.snapshot.itemIdentifiers objectAtIndex:index];
+            }
+        }
+        
+        if (articleInDS != nil) {
+            
             articleInDS.bookmarked = bookmarked;
             // if the article exists in the datasource,
             // we can expect a cell for it and therefore
             // reload it.
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-            
             NSArray <NSIndexPath *> * visible = self.collectionView.indexPathsForVisibleItems;
+            
             BOOL isVisible = NO;
             for (NSIndexPath *ip in visible) {
-                if (ip.row == index) {
+                if (ip.item == index) {
                     isVisible = YES;
+                    indexPath = ip;
                     break;
                 }
             }
@@ -1326,8 +1427,7 @@ NSString * const kSizCache = @"FeedSizesCache";
             if (@available(iOS 13, *)) {
                 
                 NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-                [snapshot appendSectionsWithIdentifiers:@[@"main"]];
-                [snapshot appendItemsWithIdentifiers:self.feed.articles];
+                [snapshot appendItemsWithIdentifiers:self.feed.articles intoSectionWithIdentifier:ArticlesSection];
                 
                 [self.DDS applySnapshot:snapshot animatingDifferences:NO];
             }

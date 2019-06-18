@@ -586,17 +586,15 @@
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
-    weakify(self);
-    
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Feed URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        
+        [self shareFeedURL:feed indexPath:indexPath];
         
     }]];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        
+        [self shareWebsiteURL:feed indexPath:indexPath];
         
     }]];
     
