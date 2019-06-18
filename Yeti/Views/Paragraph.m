@@ -635,7 +635,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         return theme.captionColor;
     }
     
-    return theme.subtitleColor;
+    return theme.paragraphColor;
 }
 
 - (BOOL)translatesAutoresizingMaskIntoConstraints

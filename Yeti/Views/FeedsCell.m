@@ -115,40 +115,39 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     }];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [self removeObservorInfo];
 }
 
 #pragma mark - Setter
 
-- (void)setBackgroundColor:(UIColor *)backgroundColor {
-    [super setBackgroundColor:backgroundColor];
-    
-    self.contentView.backgroundColor = backgroundColor;
-    for (UIView *subview in self.contentView.subviews) {
-        if ([subview isKindOfClass:UIStackView.class]) {
-            UIColor *color = backgroundColor;
-            CGFloat alpha;
-            
-            [color getRed:nil green:nil blue:nil alpha:&alpha];
-            if (alpha < 1.f)
-                color = [UIColor clearColor];
-            
-            [[(UIStackView *)subview arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.backgroundColor = color;
-            }];
-        }
-        else {
-            subview.backgroundColor = backgroundColor;
-        }
-    }
-    
-    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
-        Theme *theme = [YTThemeKit theme];
-        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
-    }
-}
+//- (void)setBackgroundColor:(UIColor *)backgroundColor {
+//    [super setBackgroundColor:backgroundColor];
+//    
+//    self.contentView.backgroundColor = backgroundColor;
+//    for (UIView *subview in self.contentView.subviews) {
+//        if ([subview isKindOfClass:UIStackView.class]) {
+//            UIColor *color = backgroundColor;
+//            CGFloat alpha;
+//            
+//            [color getRed:nil green:nil blue:nil alpha:&alpha];
+//            if (alpha < 1.f)
+//                color = [UIColor clearColor];
+//            
+//            [[(UIStackView *)subview arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                obj.backgroundColor = color;
+//            }];
+//        }
+//        else {
+//            subview.backgroundColor = backgroundColor;
+//        }
+//    }
+//    
+//    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
+//        Theme *theme = [YTThemeKit theme];
+//        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
+//    }
+//}
 
 #pragma mark -
 

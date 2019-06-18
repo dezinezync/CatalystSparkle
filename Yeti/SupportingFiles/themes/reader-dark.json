@@ -16,5 +16,6 @@
     "opmlViewColor": "#2B2418",
     "menuColor": "#2B2418",
     "menuTextColor": "#E8C3AB",
-    "tintColorIndex": 2
+    "tintColorIndex": 2,
+    "paragraphColor": "#B08B77"
 }

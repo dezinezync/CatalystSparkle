@@ -21,7 +21,8 @@
              @"articleBackgroundColor",
              @"opmlViewColor",
              @"menuColor",
-             @"menuTextColor"];
+             @"menuTextColor",
+             @"paragraphColor"];
     
 }
 

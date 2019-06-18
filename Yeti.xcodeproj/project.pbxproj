@@ -2200,8 +2200,8 @@
 			isa = PBXGroup;
 			children = (
 				F0869B5C2099CF0000A5D723 /* light.json */,
-				F0647BE92099D2A9002291B9 /* dark.json */,
 				F0BD3C3422ABDD190069A8B0 /* light-dark.json */,
+				F0647BE92099D2A9002291B9 /* dark.json */,
 				F0B4FC21209C55A900C7941A /* black.json */,
 				F0BD3C4122ABDD240069A8B0 /* black-dark.json */,
 				F0EEC85D21ECAF8B0046BB12 /* reader.json */,

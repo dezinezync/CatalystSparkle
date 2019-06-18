@@ -562,14 +562,17 @@ static void *KVO_Unread = &KVO_Unread;
         }
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    ocell.faviconView.backgroundColor = theme.cellColor;
-    ocell.titleLabel.backgroundColor = theme.cellColor;
-    ocell.titleLabel.textColor = theme.titleColor;
-    
-    ocell.countLabel.backgroundColor = theme.unreadBadgeColor;
-    ocell.countLabel.textColor = theme.unreadTextColor;
+    if (@available(iOS 13, *)) {}
+    else {
+        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
+        ocell.faviconView.backgroundColor = theme.cellColor;
+        ocell.titleLabel.backgroundColor = theme.cellColor;
+        ocell.titleLabel.textColor = theme.titleColor;
+        
+        ocell.countLabel.backgroundColor = theme.unreadBadgeColor;
+        ocell.countLabel.textColor = theme.unreadTextColor;
+    }
     
     ocell.countLabel.hidden = !showUnreadCounter;
     
