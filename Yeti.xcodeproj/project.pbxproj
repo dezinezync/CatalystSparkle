@@ -173,6 +173,8 @@
 		F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = F08808A2206B967A00ECE1E6 /* TweetImage.xib */; };
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
+		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
+		F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -810,6 +812,9 @@
 		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePreviewVC.h; sourceTree = "<group>"; };
+		F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePreviewVC.m; sourceTree = "<group>"; };
+		F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticlePreviewVC.xib; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
@@ -1313,6 +1318,9 @@
 				F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */,
 				F01341AC21DC905400854DE1 /* TagFeedVC.h */,
 				F01341AD21DC905400854DE1 /* TagFeedVC.m */,
+				F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */,
+				F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */,
+				F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */,
 			);
 			path = DetailFeed;
 			sourceTree = "<group>";
@@ -2572,6 +2580,7 @@
 				F0BD3C4422ABDD2A0069A8B0 /* reader-dark.json in Resources */,
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
+				F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */,
 				F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
 				F0BD3C3522ABDD190069A8B0 /* light-dark.json in Resources */,
 				F0D01CC72118681C003A01DD /* dark@2x.png in Resources */,
@@ -2787,6 +2796,7 @@
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
 				F07A312C2297D5BE00822969 /* PopMenuPresentAnimationController.m in Sources */,
+				F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F055166321B4FF59008F1F2F /* DBManager.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
@@ -2988,6 +2998,7 @@
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3014,6 +3025,7 @@
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3447,6 +3459,7 @@
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

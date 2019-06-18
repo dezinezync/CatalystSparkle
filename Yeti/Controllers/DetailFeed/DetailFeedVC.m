@@ -7,6 +7,7 @@
 //
 
 #import "DetailFeedVC+Actions.h"
+#import "ArticlePreviewVC.h"
 
 #import "ArticleCellB.h"
 #import "PaddedLabel.h"
@@ -843,7 +844,13 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return nil;
     }
     
-    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feedItem-%@", @(item.hash)) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feedItem-%@", @(item.hash)) previewProvider:^UIViewController * _Nullable {
+        
+        ArticlePreviewVC *vc = [ArticlePreviewVC instanceForFeed:item];
+        
+        return vc;
+        
+    } actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
         
         UIAction *read = nil;
         
@@ -1799,7 +1806,16 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     if ([[self.collectionView indexPathsForVisibleItems] count]) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+            
+            if (@available(iOS 13, *)) {
+                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            }
+            else {
+                [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
+            }
+            
         });
     }
     
