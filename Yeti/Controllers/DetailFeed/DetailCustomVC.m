@@ -53,7 +53,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     self.restorationIdentifier = self.isUnread ? @"UnreadVC-Detail" : @"BookmarksVC-Detail";
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
-    if (!self.isUnread) {
+    if (self.isUnread == NO) {
         [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];
         
         if (@available(iOS 13, *)) {
@@ -91,22 +91,18 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
             [snapshot appendSectionsWithIdentifiers:MyFeedsManager.unread];
             
-            if (MyFeedsManager.unread > 0) {
-                self.page = floor(MyFeedsManager.unread.count/10.f);
-            }
-        }
-        else {
-            self.DS.data = [MyFeedsManager unread];
-            if (self.DS.data.count > 0) {
-                self.page = floor([self.DS.data count]/10.f);
-            }
-        }
-        
-        if (@available(iOS 13, *)) {
+            [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+            
             self.controllerState = StateLoaded;
         }
         else {
+            self.DS.data = [MyFeedsManager unread];
+            
             self.DS.state = DZDatasourceLoaded;
+        }
+        
+        if (self.DS.data.count > 0) {
+            self.page = floor([self.DS.data count]/10.f);
         }
         
 //        [self loadNextPage];
@@ -269,12 +265,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     }
     
     if (@available(iOS 13, *)) {
-        if (self.controllerState != StateLoading) {
+        if (self.controllerState == StateLoading) {
             return;
         }
     }
     else {
-        if (self.DS.state != DZDatasourceLoading)
+        if (self.DS.state == DZDatasourceLoading)
             return;
     }
     
