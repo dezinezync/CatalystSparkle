@@ -48,7 +48,7 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing == YES || (sender != nil && [sender isRefreshing] == YES)) {
+    if (_refreshing == YES) {
         
         return;
     }
@@ -62,10 +62,24 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
             
-            NSIndexPath *IPOne = [NSIndexPath indexPathForRow:0 inSection:0];
-            NSIndexPath *IPTwo = [NSIndexPath indexPathForRow:1 inSection:0];
+            if (@available(iOS 13, *)) {
+                
+                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                [snapshot deleteSectionsWithIdentifiers:@[TopSection]];
+                
+                [snapshot insertSectionsWithIdentifiers:@[TopSection] beforeSectionWithIdentifier:MainSection];
+                [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                
+            }
+            else {
+                NSIndexPath *IPOne = [NSIndexPath indexPathForRow:0 inSection:0];
+                NSIndexPath *IPTwo = [NSIndexPath indexPathForRow:1 inSection:0];
+                
+                [self.tableView reloadRowsAtIndexPaths:@[IPOne, IPTwo] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
             
-            [self.DS reloadItemsAtIndices:@[IPOne, IPTwo]];
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

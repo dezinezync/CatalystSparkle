@@ -89,7 +89,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         
         if (@available(iOS 13, *)) {
             NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-            [snapshot appendSectionsWithIdentifiers:MyFeedsManager.unread];
+            [snapshot appendItemsWithIdentifiers:(MyFeedsManager.unread ?: @[])];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:NO];
             

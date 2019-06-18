@@ -843,8 +843,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return nil;
     }
     
-    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feedItem-%@", @(item.hash)) previewProvider:nil actionProvider:^UIMenu<UIAction *> * _Nullable(NSArray<UIMenuElement<UIAction *> *> * _Nonnull suggestedActions) {
-       
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feedItem-%@", @(item.hash)) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+        
         UIAction *read = nil;
         
         if (item.isRead == YES) {
@@ -910,7 +910,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
         }];
         
-        return [UIMenu actionMenuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share]];
+        return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share]];
         
     }];
     

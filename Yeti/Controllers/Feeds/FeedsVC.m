@@ -666,7 +666,7 @@ static void *KVO_Unread = &KVO_Unread;
     else {
         Feed *feed = (Feed *)obj;
         
-        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feed-%@", feed.feedID) previewProvider:nil actionProvider:^UIMenu<UIAction *> * _Nullable(NSArray<UIMenuElement<UIAction *> *> * _Nonnull suggestedActions) {
+        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feed-%@", feed.feedID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
             
             UIMenuElement * share = nil;
             
@@ -686,7 +686,7 @@ static void *KVO_Unread = &KVO_Unread;
                 
                 NSArray <UIAction *> *shareChildren = @[shareFeed, shareWebsite];
                 
-                share = [UIMenu actionMenuWithTitle:@"Share" children:shareChildren];
+                share = [UIMenu menuWithTitle:@"Share" children:shareChildren];
                 
             }
             else {
@@ -713,7 +713,7 @@ static void *KVO_Unread = &KVO_Unread;
             
             NSArray <UIAction *> *actions = @[(UIAction *)share, move, delete];
             
-            UIMenu *menu = [UIMenu actionMenuWithTitle:@"Feed Menu" children:actions];
+            UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
             
             return menu;
             
