@@ -29,7 +29,7 @@
                     <navigationItem key="navigationItem" title="Feeds" id="Sck-4K-zWV">
                         <barButtonItem key="leftBarButtonItem" image="settings" style="done" id="9eT-6k-DZw"/>
                         <rightBarButtonItems>
-                            <barButtonItem title="Item" image="plus" catalog="system" style="done" id="yYu-Dy-n8P"/>
+                            <barButtonItem title="Item" image="new" style="done" id="yYu-Dy-n8P"/>
                             <barButtonItem image="create_new_folder" style="done" id="Mu2-o9-NGa"/>
                             <barButtonItem image="whatshot" style="done" id="U4L-sX-IzO"/>
                         </rightBarButtonItems>
@@ -63,7 +63,7 @@
     <resources>
         <image name="create_new_folder" width="30" height="24"/>
         <image name="navbarshadow" width="375" height="1"/>
-        <image name="plus" catalog="system" width="64" height="58"/>
+        <image name="new" width="16" height="16"/>
         <image name="settings" width="24" height="24"/>
         <image name="whatshot" width="24" height="24"/>
     </resources>

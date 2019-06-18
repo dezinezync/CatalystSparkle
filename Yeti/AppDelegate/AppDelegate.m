@@ -224,10 +224,22 @@ AppDelegate *MyAppDelegate = nil;
 #define kFeedsManager @"FeedsManager"
 
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+    
+    // broken in iOS 13.
+    if (@available(iOS 13, *)) {
+        return NO;
+    }
+    
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+    
+    // broken in iOS 13.
+    if (@available(iOS 13, *)) {
+        return NO;
+    }
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
