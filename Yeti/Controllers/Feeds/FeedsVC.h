@@ -36,6 +36,8 @@
 
 - (void)showSubscriptionsInterface;
 
+- (id)objectAtIndexPath:(NSIndexPath *)indexPath;
+
 #pragma mark - Actions Extension
 
 @property (nonatomic, weak) UITextField *alertTextField;

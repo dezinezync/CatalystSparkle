@@ -477,8 +477,7 @@
 
 #pragma mark - <UITableViewDelegate>
 
-- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip
-{
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip {
     
     if (ip.section == 0)
         return nil;
@@ -488,9 +487,7 @@
     
     __strong NSIndexPath *indexPath = [ip copy];
     
-    DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
-    
-    Feed *feed = [DS objectAtIndexPath:indexPath];
+    Feed *feed = [self objectAtIndexPath:indexPath];
     Folder *folder = nil;
     
     if ([feed isKindOfClass:Folder.class]) {
@@ -539,13 +536,9 @@
         
         UIContextualAction *move = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Move" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
            
-            UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+            completionHandler(YES);
             
-            strongify(self);
-            
-            [self.splitViewController presentViewController:nav animated:YES completion:^{
-                completionHandler(YES);
-            }];
+            [self feed_didTapMove:feed indexPath:indexPath];
             
         }];
         
@@ -555,34 +548,7 @@
            
             completionHandler(YES);
             
-            if (feed.extra && feed.extra.url) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self showShareOptionsVC:feed indexPath:indexPath];
-                });
-            }
-            else {
-                NSString *feedURL = [feed url];
-                NSURL *URL = [NSURL URLWithString:feedURL];
-                
-                UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                    strongify(self);
-                    
-                    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-                        UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
-                        
-                        pvc.sourceView = self.tableView;
-                        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
-                        pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
-                    }
-                    
-                    [self presentViewController:activityVC animated:YES completion:nil];
-                    
-                });
-            }
+            [self feed_didTapShare:feed indexPath:indexPath];
             
         }];
         
@@ -598,13 +564,23 @@
 
 }
 
-- (void)showShareOptionsVC:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+- (BOOL)feedCanShowExtraShareLevel:(Feed *)feed {
     
     if (feed == nil) {
-        return;
+        return NO;
     }
     
     if (feed.extra == nil || feed.extra.url == nil) {
+        return NO;
+    }
+    
+    return YES;
+    
+}
+
+- (void)showShareOptionsVC:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    if ([self feedCanShowExtraShareLevel:feed] == NO) {
         return;
     }
     
@@ -614,34 +590,13 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Feed URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        NSString *feedURL = [feed url];
-        NSURL *URL = [NSURL URLWithString:feedURL];
         
-        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            [self presentViewController:activityVC animated:YES completion:nil];
-            
-        });
         
     }]];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        NSString *websiteURL = feed.extra.url;
-        NSURL *URL = [NSURL URLWithString:websiteURL];
         
-        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            strongify(self);
-            
-            [self presentViewController:activityVC animated:YES completion:nil];
-            
-        });
         
     }]];
     
@@ -679,6 +634,86 @@
     }
     
     return YES;
+    
+}
+
+#pragma mark - Common Action Handlers
+
+- (void)shareFeedURL:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    NSString *feedURL = [feed url];
+    NSURL *URL = [NSURL URLWithString:feedURL];
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+    
+    [self showActivityController:activityVC indexPath:indexPath];
+    
+}
+
+- (void)shareWebsiteURL:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    NSString *websiteURL = feed.extra.url;
+    NSURL *URL = [NSURL URLWithString:websiteURL];
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+    
+    [self showActivityController:activityVC indexPath:indexPath];
+    
+}
+
+- (void)showActivityController:(UIActivityViewController *)avc indexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath != nil && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.sourceView = self.tableView;
+        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+        
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self presentViewController:avc animated:YES completion:nil];
+        
+    });
+    
+}
+
+- (void)feed_didTapShare:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    if (feed.extra && feed.extra.url) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self showShareOptionsVC:feed indexPath:indexPath];
+        });
+    }
+    else {
+        NSString *feedURL = [feed url];
+        NSURL *URL = [NSURL URLWithString:feedURL];
+        
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
+                
+                pvc.sourceView = self.tableView;
+                pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+                pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            }
+            
+            [self presentViewController:activityVC animated:YES completion:nil];
+            
+        });
+    }
+    
+}
+
+- (void)feed_didTapMove:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+    
+    [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
 }
 

@@ -10,20 +10,36 @@
 
 @interface FeedsVC (Actions) <UITextFieldDelegate>
 
-- (NSAttributedString *)lastUpdateAttributedString;
+- (NSAttributedString * _Nullable)lastUpdateAttributedString;
 
-- (void)didTapAdd:(UIBarButtonItem *)add;
+- (void)didTapAdd:(UIBarButtonItem * _Nullable)add;
 
-- (void)didTapAddFolder:(UIBarButtonItem *)add;
+- (void)didTapAddFolder:(UIBarButtonItem * _Nullable)add;
 
-- (void)didTapRecommendations:(UIBarButtonItem *)sender;
+- (void)didTapRecommendations:(UIBarButtonItem * _Nullable)sender;
 
 - (void)didTapSettings;
 
-- (void)beginRefreshing:(UIRefreshControl *)sender;
+- (void)beginRefreshing:(UIRefreshControl * _Nullable)sender;
 
-- (void)didLongTapOnCell:(UITapGestureRecognizer *)sender;
+- (void)didLongTapOnCell:(UITapGestureRecognizer * _Nullable)sender;
 
-- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (UISwipeActionsConfiguration * _Nullable)tableView:(UITableView * _Nonnull)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath;
+
+#pragma mark - Common Action Handlers
+
+- (BOOL)feedCanShowExtraShareLevel:(Feed * _Nonnull)feed;
+
+- (void)shareFeedURL:(Feed * _Nonnull)feed indexPath:(NSIndexPath * _Nonnull)indexPath;
+
+- (void)shareWebsiteURL:(Feed * _Nonnull)feed indexPath:(NSIndexPath * _Nonnull)indexPath;
+
+- (void)feed_didTapShare:(Feed * _Nonnull)sender indexPath:(NSIndexPath * _Nonnull)indexPath;
+
+- (void)feed_didTapMove:(Feed * _Nonnull)sender indexPath:(NSIndexPath * _Nonnull)indexPath;
+
+- (void)confirmFeedDelete:(Feed * _Nonnull)feed completionHandler:(void(^ _Nullable)(BOOL actionPerformed))completionHandler;
+
+- (void)confirmFolderDelete:(Folder * _Nonnull)folder completionHandler:(void(^ _Nullable)(BOOL actionPerformed))completionHandler;
 
 @end
