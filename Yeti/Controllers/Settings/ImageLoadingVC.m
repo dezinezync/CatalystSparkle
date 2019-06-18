@@ -46,6 +46,9 @@ NSString *const kXSwitchCell = @"cell.switch";
     
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"imageLoadingCell"];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kXSwitchCell];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -162,6 +165,7 @@ NSString *const kXSwitchCell = @"cell.switch";
             }
             
             [aSwitch setOn:pref];
+            [aSwitch setOnTintColor:self.view.tintColor];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
             cell.accessoryView = aSwitch;

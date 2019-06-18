@@ -7,6 +7,7 @@
 //
 
 #import "FilterInputCell.h"
+#import "YetiThemeKit.h"
 
 NSString *const kFilterInputCell = @"com.yeti.cell.filterinput";
 
@@ -15,12 +16,13 @@ NSString *const kFilterInputCell = @"com.yeti.cell.filterinput";
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+    
+    UILabel *label = [[self textField] valueForKeyPath:@"placeholderLabel"];
+    
+    if (label != nil) {
+        label.textColor = [(YetiTheme *)(YTThemeKit.theme) captionColor];
+    }
+    
 }
 
 @end

@@ -218,6 +218,8 @@ NSString* deviceName() {
                     [sw setOn:SharedPrefs.backgroundRefresh];
                     [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
                     
+                    [sw setOnTintColor:self.view.tintColor];
+                    
                     cell.accessoryView = sw;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }

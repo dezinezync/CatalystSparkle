@@ -225,6 +225,8 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         [sw addTarget:self action:@selector(didChangeToolbarPref:) forControlEvents:UIControlEventValueChanged];
     }
     
+    [sw setOnTintColor:self.view.tintColor];
+    
     if ([sectionName isEqualToString:@"Preview"]) {
         cell.textLabel.text = sectionName;
         

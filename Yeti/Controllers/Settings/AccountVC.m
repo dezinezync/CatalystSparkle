@@ -42,6 +42,9 @@
     
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
 }
 
 - (void)didReceiveMemoryWarning {

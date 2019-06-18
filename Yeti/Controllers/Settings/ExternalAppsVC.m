@@ -31,6 +31,9 @@
     
     [self.tableView registerClass:ExternalAppsCell.class forCellReuseIdentifier:kExternalAppsCell];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
+    
     UIApplication *app = [UIApplication sharedApplication];
     
     /**
