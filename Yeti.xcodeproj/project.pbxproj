@@ -712,7 +712,7 @@
 		F06B9F5D21CFAEBC00D452A1 /* SyncChange.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyncChange.m; sourceTree = "<group>"; };
 		F06C666322B2ABBA00D425E9 /* UIViewController+Stateful.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Stateful.h"; sourceTree = "<group>"; };
 		F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Stateful.m"; sourceTree = "<group>"; };
-		F06E0F2A2134656A00CEC644 /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = SOURCE_ROOT; };
+		F06E0F2A2134656A00CEC644 /* changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = changelog.md; sourceTree = SOURCE_ROOT; };
 		F06F913F20D3E55A00A358B0 /* SubscriptionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubscriptionView.h; sourceTree = "<group>"; };
 		F06F914020D3E55A00A358B0 /* SubscriptionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubscriptionView.m; sourceTree = "<group>"; };
 		F06F914420D3E56400A358B0 /* SubscriptionView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SubscriptionView.xib; sourceTree = "<group>"; };
@@ -1395,7 +1395,7 @@
 				F070C2F41FBABC3600912CCF /* YetiTests */,
 				F070C2FF1FBABC3600912CCF /* YetiUITests */,
 				F035A21620617EC3005A88EE /* YetiShare */,
-				F06E0F2A2134656A00CEC644 /* changelog.txt */,
+				F06E0F2A2134656A00CEC644 /* changelog.md */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
 			);
