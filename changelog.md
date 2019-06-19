@@ -1,4 +1,4 @@
-## First iOS 13 Build
+# First iOS 13 Build
 This is the very first iOS 13 build which aims to bring certain improvements to the system and match more closely with iOS 13. The aim of Elytra has always been to provide a seamless experience with the OS itself, deferring branding to the content.
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight. 
