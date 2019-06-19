@@ -18,6 +18,8 @@
 
 @interface ArticlePreviewVC ()
 
+@property (nonatomic, weak) FeedItem *item;
+
 @end
 
 @implementation ArticlePreviewVC
@@ -26,11 +28,24 @@
     
     ArticlePreviewVC *instance = [[ArticlePreviewVC alloc] initWithNibName:NSStringFromClass(ArticlePreviewVC.class) bundle:[NSBundle bundleForClass:ArticlePreviewVC.class]];
     
-    [instance loadViewIfNeeded];
-    
-    [instance configureForFeed:item];
+    instance.item = item;
     
     return instance;
+    
+}
+
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    
+//    self.view.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.captionLabel.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    if (self.item != nil) {
+        [self configureForFeed:self.item];
+    }
     
 }
 
@@ -82,38 +97,52 @@
         }
     }
     
+    [self.titleLabel sizeToFit];
+    
     self.captionLabel.text = item.summary;
     self.captionLabel.numberOfLines = SharedPrefs.previewLines ?: 3;
     
-    [self.view setNeedsLayout];
-    [self.view layoutIfNeeded];
+    [self.captionLabel sizeToFit];
+    
+//    [self.view setNeedsLayout];
+//    [self.view layoutIfNeeded];
     
 }
 
-- (CGSize)preferredContentSize {
-    
-    UIStackView *stackView = (UIStackView *)[self.titleLabel superview];
-    
-    CGFloat width = 0.f;
-    
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
-        && self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        
-        width = self.view.bounds.size.width;
-        
-    }
-    else {
-        width = [UIApplication sharedApplication].keyWindow.bounds.size.width;
-    }
-    
-    width = width - (LayoutPadding * 2);
-    
-    CGSize fittingSize = [stackView systemLayoutSizeFittingSize:CGSizeMake(width, CGFLOAT_MAX) withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityDefaultLow];
-    
-    fittingSize.height += (LayoutPadding * 2);
-    
-    return fittingSize;
-    
-}
+//- (CGSize)preferredContentSize {
+//    
+//    CGFloat width = 0.f, height = LayoutPadding * 2.f;
+//    
+//    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
+//        || self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//        
+//        width = self.view.bounds.size.width;
+//        
+//    }
+//    else {
+//        width = [UIApplication sharedApplication].keyWindow.bounds.size.width;
+//    }
+//    
+//    width = width - (LayoutPadding * 2);
+//    
+//    CGSize fittingSize = [self.imageView systemLayoutSizeFittingSize:CGSizeMake(width, CGFLOAT_MAX) withHorizontalFittingPriority:UILayoutPriorityRequired verticalFittingPriority:UILayoutPriorityDefaultLow];
+//    
+//    height += fittingSize.height;
+//    
+//    if (fittingSize.height > 0) {
+//        height += LayoutPadding;
+//    }
+//    
+//    fittingSize = [self.titleLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)];
+//    
+//    height += fittingSize.height + LayoutPadding;
+//    
+//    fittingSize = [self.captionLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)];
+//    
+//    height += fittingSize.height;
+//    
+//    return CGSizeMake(0.f, height);
+//    
+//}
 
 @end

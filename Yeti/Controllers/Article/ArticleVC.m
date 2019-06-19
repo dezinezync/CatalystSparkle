@@ -296,7 +296,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.view addSubview:helperView];
     
-    if (idiom == UIUserInterfaceIdiomPad && sizeClass == UIUserInterfaceSizeClassRegular) {
+    if (idiom == UIUserInterfaceIdiomPad || sizeClass == UIUserInterfaceSizeClassRegular) {
         // on iPad, wide
         // we also push it slightly lower to around where the hands usually are on iPads
         [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;

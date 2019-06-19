@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)instanceForFeed:(FeedItem *)item;
 
+- (void)configureForFeed:(FeedItem *)item;
+
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;

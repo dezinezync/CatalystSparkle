@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.15"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="iOS 13.0 system colors" minToolsVersion="11.0"/>
     </dependencies>
@@ -19,39 +18,38 @@
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalHuggingPriority="252" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="gM4-h7-YYI">
-                    <rect key="frame" x="12" y="12" width="296" height="544"/>
-                    <subviews>
-                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="iwl-F0-AgC">
-                            <rect key="frame" x="0.0" y="0.0" width="296" height="166.5"/>
-                            <constraints>
-                                <constraint firstAttribute="width" secondItem="iwl-F0-AgC" secondAttribute="height" multiplier="16:9" priority="999" id="ENR-7x-zCQ"/>
-                            </constraints>
-                        </imageView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y7G-8Q-4bF">
-                            <rect key="frame" x="0.0" y="174.5" width="296" height="347"/>
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="749" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="diO-Im-DZA">
-                            <rect key="frame" x="0.0" y="529.5" width="296" height="14.5"/>
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                            <color key="textColor" cocoaTouchSystemColor="secondaryLabelColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                    </subviews>
-                </stackView>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="iwl-F0-AgC">
+                    <rect key="frame" x="12" y="12" width="296" height="166.5"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="iwl-F0-AgC" secondAttribute="height" multiplier="16:9" priority="999" id="ENR-7x-zCQ"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="249" verticalCompressionResistancePriority="751" text="This is a very long title to test line overflow" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y7G-8Q-4bF">
+                    <rect key="frame" x="12" y="190.5" width="296" height="42.5"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="749" text="I could have used Lorem Ipsum text here but this is a much better way to test things out IMO." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="diO-Im-DZA">
+                    <rect key="frame" x="12" y="245" width="296" height="30.5"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                    <color key="textColor" cocoaTouchSystemColor="secondaryLabelColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
-            <color key="backgroundColor" cocoaTouchSystemColor="secondarySystemBackgroundColor"/>
+            <color key="backgroundColor" cocoaTouchSystemColor="tertiarySystemGroupedBackgroundColor"/>
             <constraints>
-                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="gM4-h7-YYI" secondAttribute="bottom" constant="12" id="4oU-uU-mxF"/>
-                <constraint firstItem="gM4-h7-YYI" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="12" id="Awe-Tw-cn0"/>
-                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="gM4-h7-YYI" secondAttribute="trailing" constant="12" id="ExK-Sa-9JP"/>
-                <constraint firstItem="gM4-h7-YYI" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" constant="12" id="bDg-xh-h66"/>
+                <constraint firstItem="y7G-8Q-4bF" firstAttribute="top" secondItem="iwl-F0-AgC" secondAttribute="bottom" constant="12" id="1Ub-3b-mZH"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="y7G-8Q-4bF" secondAttribute="trailing" constant="12" id="PSp-w1-42y"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="diO-Im-DZA" secondAttribute="trailing" constant="12" id="TsB-8m-fAN"/>
+                <constraint firstItem="diO-Im-DZA" firstAttribute="top" secondItem="y7G-8Q-4bF" secondAttribute="bottom" constant="12" id="dq7-EQ-aFO"/>
+                <constraint firstItem="iwl-F0-AgC" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" constant="12" id="gEe-CY-VuP"/>
+                <constraint firstItem="diO-Im-DZA" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="12" id="jPK-lX-Vhq"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="iwl-F0-AgC" secondAttribute="trailing" constant="12" id="onQ-sr-8yG"/>
+                <constraint firstItem="iwl-F0-AgC" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="12" id="qf1-bn-Ubg"/>
+                <constraint firstItem="y7G-8Q-4bF" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="12" id="te8-zG-VGT"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
             <point key="canvasLocation" x="132" y="122"/>

@@ -446,7 +446,7 @@
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         
