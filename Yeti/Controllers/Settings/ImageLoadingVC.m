@@ -177,7 +177,7 @@ NSString *const kXSwitchCell = @"cell.switch";
     
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
-    cell.backgroundColor = theme.cellColor;
+    cell.backgroundColor = theme.backgroundColor;
     
     if (indexPath.section != 2 && indexPath.section != 3) {
         UIView *selected = [UIView new];

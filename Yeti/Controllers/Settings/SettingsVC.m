@@ -169,7 +169,7 @@ NSString* deviceName() {
     
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
-    cell.backgroundColor = theme.cellColor;
+    cell.backgroundColor = theme.backgroundColor;
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -323,6 +323,12 @@ NSString* deviceName() {
     // Navigation logic may go here, for example:
     // Create the next view controller.
     
+    UITableViewStyle style = UITableViewStyleGrouped;
+    
+    if (@available(iOS 13, *)) {
+        style = UITableViewStyleInsetGrouped;
+    }
+    
     UIViewController *vc;
     // vc = [[<#DetailViewController#> alloc] initWithNibName:NSStringFromClass(<#NSString * _Nonnull aClassName#>) bundle:nil];
     switch (indexPath.section) {
@@ -341,7 +347,7 @@ NSString* deviceName() {
             switch (indexPath.row) {
                 case 0:
                 {
-                    vc = [[ThemeVC alloc] initWithStyle:UITableViewStyleGrouped];
+                    vc = [[ThemeVC alloc] initWithStyle:style];
                 }
                     break;
                 case 2:
@@ -367,7 +373,7 @@ NSString* deviceName() {
                 }
                     break;
                 case 5:
-                    vc = [[MiscVC alloc] initWithStyle:UITableViewStyleGrouped];
+                    vc = [[MiscVC alloc] initWithStyle:style];
                     break;
                 default:
                     break;

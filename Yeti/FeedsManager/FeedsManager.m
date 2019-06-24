@@ -1993,7 +1993,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
         NSDictionary *const additionalHTTPHeaders = @{
                                                       @"Accept": @"application/json",
-                                                      @"Content-Type": @"application/json"
+                                                      @"Content-Type": @"application/json",
+                                                      @"Accept-Encoding": @"gzip"
                                                       };
 
         [defaultConfig setHTTPAdditionalHeaders:additionalHTTPHeaders];
@@ -2069,7 +2070,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         [defaultConfig setHTTPAdditionalHeaders:@{
                                                   @"Accept": @"application/json",
-                                                  @"Content-Type": @"application/json"
+                                                  @"Content-Type": @"application/json",
+                                                  @"Accept-Encoding": @"gzip"
                                                   }];
         
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];

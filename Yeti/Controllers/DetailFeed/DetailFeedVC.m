@@ -789,53 +789,53 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
-//
-//    NSValue *value = self.sizeCache.count < indexPath.item ? [self.sizeCache safeObjectAtIndex:indexPath.item] : nil;
-//
-//    if (value != nil) {
-//        CGSize size = [value CGSizeValue];
-//        if (size.width == self.flowLayout.estimatedItemSize.width) {
-//            return size;
-//        }
-//    }
-//
-//    CGRect frame = CGRectZero;
-//    frame.size = self.flowLayout.estimatedItemSize;
-//
-//    if (_protoCell == nil) {
-//        UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
-//        _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
-//    }
-//
-//    _protoCell.frame = frame;
-//
-//    [_protoCell awakeFromNib];
-//
-//    FeedItem *item = [self itemForIndexPath:indexPath];
-//
-//    CGSize size = frame.size;
-//
-//    if (item != nil) {
-//        [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
-//
-//        if (_protoCell->_isShowingCover == NO && _protoCell->_isShowingTags == NO) {
-//            size.height = [[_protoCell mainStackView] sizeThatFits:frame.size].height + 12.f;
-//        }
-//        else {
-//            size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
-//            size.height = floor(size.height) + 1.f;
-//        }
-//
-//        self.sizeCache[indexPath.item] = [NSValue valueWithCGSize:size];
-//
-//        [_protoCell prepareForReuse];
-//
-//    }
-//
-//    return size;
-//
-//}
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(nonnull UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
+
+    NSValue *value = self.sizeCache.count < indexPath.item ? [self.sizeCache safeObjectAtIndex:indexPath.item] : nil;
+
+    if (value != nil) {
+        CGSize size = [value CGSizeValue];
+        if (size.width == self.flowLayout.estimatedItemSize.width) {
+            return size;
+        }
+    }
+
+    CGRect frame = CGRectZero;
+    frame.size = self.flowLayout.estimatedItemSize;
+
+    if (_protoCell == nil) {
+        UINib *nib = [UINib nibWithNibName:NSStringFromClass([ArticleCellB class]) bundle:nil];
+        _protoCell = [[nib instantiateWithOwner:_protoCell options:nil] objectAtIndex:0];
+    }
+
+    _protoCell.frame = frame;
+
+    [_protoCell awakeFromNib];
+
+    FeedItem *item = [self itemForIndexPath:indexPath];
+
+    CGSize size = frame.size;
+
+    if (item != nil) {
+        [_protoCell configure:item customFeed:self.customFeed sizeCache:nil];
+
+        if (_protoCell->_isShowingCover == NO && _protoCell->_isShowingTags == NO) {
+            size.height = [[_protoCell mainStackView] sizeThatFits:frame.size].height + 12.f;
+        }
+        else {
+            size = [_protoCell.contentView systemLayoutSizeFittingSize:frame.size];
+            size.height = floor(size.height) + 1.f;
+        }
+
+        self.sizeCache[indexPath.item] = [NSValue valueWithCGSize:size];
+
+        [_protoCell prepareForReuse];
+
+    }
+
+    return size;
+
+}
 
 - (UIContextMenuConfiguration *)collectionView:(UICollectionView *)collectionView contextMenuConfigurationForItemAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point  API_AVAILABLE(ios(13.0)) {
     
