@@ -671,27 +671,47 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     UILabel *timeLabel = nil;
     
+    if (@available(iOS 13, *)) {
+        self.menuButton.hidden = YES;
+        self.secondaryMenuButton.hidden = YES;
+    }
+    else {
+        if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
+            self.secondaryMenuButton.hidden = YES;
+            
+            self.menuButton.hidden = NO;
+        }
+        else {
+            self.secondaryMenuButton.hidden = NO;
+            
+            self.menuButton.hidden = YES;
+        }
+    }
+    
     if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
         timeLabel = self.timeLabel;
         
         self.secondaryTimeLabel.hidden = YES;
-        self.secondaryMenuButton.hidden = YES;
-        
         self.timeLabel.hidden = NO;
-        self.menuButton.hidden = NO;
     }
     else {
         timeLabel = self.secondaryTimeLabel;
         
-        self.secondaryTimeLabel.hidden = NO;
-        self.secondaryMenuButton.hidden = NO;
-        
         self.timeLabel.hidden = YES;
-        self.menuButton.hidden = YES;
+        self.secondaryTimeLabel.hidden = NO;
     }
     
-    timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
-    timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
+    NSString *timestamp = nil;
+    
+    if (@available(iOS 13, *)) {
+        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
+    }
+    else {
+        timestamp = [item.timestamp timeAgoSinceNow];
+    }
+    
+    timeLabel.text = timestamp;
+    timeLabel.accessibilityLabel = timestamp;
     
     [self setNeedsLayout];
     [self layoutIfNeeded];

@@ -133,8 +133,17 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         self.authorLabel.text = @"Unknown";
     }
     
-    self.timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
-    self.timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
+    NSString *timestamp = nil;
+    
+    if (@available(iOS 13, *)) {
+        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
+    }
+    else {
+        timestamp = [item.timestamp timeAgoSinceNow];
+    }
+    
+    self.timeLabel.text = timestamp;
+    self.timeLabel.accessibilityLabel = timestamp;
     
     if (!isCustomFeed) {
         if (!item.isRead)

@@ -921,7 +921,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
     NSString *firstLine = feed != nil ? feed.displayTitle : nil;
-    NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
+    NSString *timestamp = nil;
+    
+    if (@available(iOS 13, *)) {
+        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
+    }
+    else {
+        timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
+    }
     
     NSString *sublineText = formattedString(@"%@%@", author, timestamp);
     

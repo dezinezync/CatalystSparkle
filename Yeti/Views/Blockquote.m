@@ -55,16 +55,16 @@
     return @"Quote";
 }
 
-- (UIFont *)bodyFont {
-    
-    if (!_bodyFont) {
-        UIFont *base = [super bodyFont];
-        _bodyFont = [UIFont fontWithName:base.fontName size:(base.pointSize - 1.f)];
-    }
-    
-    return _bodyFont;
-    
-}
+//- (UIFont *)bodyFont {
+//    
+//    if (!_bodyFont) {
+//        UIFont *base = [super bodyFont];
+//        _bodyFont = [UIFont fontWithName:base.fontName size:(base.pointSize - 1.f)];
+//    }
+//    
+//    return _bodyFont;
+//    
+//}
 
 - (UIColor *)textColor {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];

@@ -150,7 +150,18 @@
         [self.avatar il_setImageWithURL:formattedURL(@"%@", avatarURI)];
     });
     
-    self.timeLabel.text = [[(NSString *)[content.attributes valueForKey:@"created"] dateFromTimestamp] timeAgoSinceNow];
+    NSString *timestamp = nil;
+    NSDate *date = [[(NSString *)content.attributes valueForKey:@"created"] dateFromTimestamp];
+    
+    if (@available(iOS 13, *)) {
+        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:date relativeToDate:NSDate.date];
+    }
+    else {
+        timestamp = [date timeAgoSinceNow];
+    }
+    
+    self.timeLabel.text = timestamp;
+    self.timeLabel.accessibilityLabel = timestamp;
     
     if (!content.images || !content.images.count || ![self showImage]) {
         self.collectionView.hidden = YES;
