@@ -983,7 +983,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 
                 @try {
                     prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-                     self.unread = prefiltered;
+                    self.unread = prefiltered;
                 }
                 @catch (NSException *exc) {}
             }
