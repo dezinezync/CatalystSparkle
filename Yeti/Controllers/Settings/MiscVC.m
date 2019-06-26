@@ -176,7 +176,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     cell.textLabel.textColor = theme.titleColor;
     
-    cell.backgroundColor = theme.backgroundColor;
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
+    }
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -301,7 +306,13 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         _showingPreview = YES;
         
-        PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:UITableViewStylePlain];
+        UITableViewStyle style = UITableViewStylePlain;
+        
+        if (@available(iOS 13, *)) {
+            style = UITableViewStyleInsetGrouped;
+        }
+        
+        PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:style];
         
         [self showViewController:vc sender:self];
         

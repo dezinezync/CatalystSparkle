@@ -182,20 +182,25 @@ NSString *const kBasicCell = @"cell.theme";
     }
     
     // Configure the cell...
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     if (indexPath.section == 1) {
         cell.selectedBackgroundView = nil;
     }
     else {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
         cell.textLabel.textColor = theme.titleColor;
         cell.detailTextLabel.textColor = theme.captionColor;
-        
-        cell.backgroundColor = theme.cellColor;
         
         cell.selectedBackgroundView = [UIView new];
         
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    }
+    
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
     }
     
     return cell;

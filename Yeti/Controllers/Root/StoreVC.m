@@ -149,12 +149,14 @@
     UITextView *textView = footer.footerLabel;
     __block NSMutableAttributedString *attrs;
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     para.alignment = NSTextAlignmentCenter;
     
     NSDictionary *attributes = @{
                                  NSFontAttributeName : textView.font,
-                                 NSForegroundColorAttributeName : textView.textColor,
+                                 NSForegroundColorAttributeName : theme.subtitleColor,
                                  NSParagraphStyleAttributeName : para
                                  };
     
