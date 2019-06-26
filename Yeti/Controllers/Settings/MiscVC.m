@@ -132,7 +132,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         cell.textLabel.textColor = theme.titleColor;
         
-        cell.backgroundColor = theme.backgroundColor;
+        if (@available(iOS 13, *)) {
+            cell.backgroundColor = theme.backgroundColor;
+        }
+        else {
+            cell.backgroundColor = theme.cellColor;
+        }
         
         if (cell.selectedBackgroundView == nil) {
             cell.selectedBackgroundView = [UIView new];
