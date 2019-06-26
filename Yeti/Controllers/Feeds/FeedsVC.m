@@ -649,84 +649,6 @@ static void *KVO_Unread = &KVO_Unread;
     
 }
 
-- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(nonnull NSIndexPath *)indexPath point:(CGPoint)point  API_AVAILABLE(ios(13.0)) {
-    
-    if (indexPath.section == 0) {
-        return nil;
-    }
-    
-    id obj = [self objectAtIndexPath:indexPath];
-    
-    if (obj == nil) {
-        return nil;
-    }
-    
-    UIContextMenuConfiguration *config = nil;
-    
-    if ([obj isKindOfClass:Folder.class]) {
-        
-    }
-    else {
-        Feed *feed = (Feed *)obj;
-        
-        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feed-%@", feed.feedID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
-            
-            UIMenuElement * share = nil;
-            
-            if ([self feedCanShowExtraShareLevel:feed] == YES) {
-                
-                UIAction *shareFeed = [UIAction actionWithTitle:@"Share Feed URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
-                    
-                    [self shareFeedURL:feed indexPath:indexPath];
-                    
-                }];
-                
-                UIAction *shareWebsite = [UIAction actionWithTitle:@"Share Website URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
-                    
-                    [self shareWebsiteURL:feed indexPath:indexPath];
-                    
-                }];
-                
-                NSArray <UIAction *> *shareChildren = @[shareFeed, shareWebsite];
-                
-                share = [UIMenu menuWithTitle:@"Share" children:shareChildren];
-                
-            }
-            else {
-                
-                share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
-                    
-                    [self feed_didTapShare:feed indexPath:indexPath];
-                    
-                }];
-                
-            }
-            
-            UIAction * move = [UIAction actionWithTitle:@"Move" image:[UIImage systemImageNamed:@"text.insert"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
-               
-                [self feed_didTapMove:feed indexPath:indexPath];
-                
-            }];
-            
-            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
-               
-                [self confirmFeedDelete:feed completionHandler:nil];
-                
-            }];
-            
-            NSArray <UIAction *> *actions = @[(UIAction *)share, move, delete];
-            
-            UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
-            
-            return menu;
-            
-        }];
-    }
-    
-    return config;
-    
-}
-
 #pragma mark - Restoration
 
 NSString * const kDS2Data = @"DS2Data";
@@ -836,10 +758,18 @@ NSString * const kDS2Data = @"DS2Data";
         
         if (@available(iOS 13, *)) {
             
-            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-            [snapshot deleteSectionsWithIdentifiers:@[MainSection]];
+            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+            [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];
             
-            [snapshot appendSectionsWithIdentifiers:@[MainSection]];
+            BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
+            
+            if (pref) {
+                [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
+            }
+            else {
+                [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+            }
+            
             [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];

@@ -50,8 +50,6 @@
         hash += [obj hash];
     }];
     
-//    hash += self.isExpanded == YES ? 1 : 0;
-    
     return hash;
     
 }

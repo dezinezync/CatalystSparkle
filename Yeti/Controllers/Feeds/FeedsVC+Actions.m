@@ -491,6 +491,111 @@
 
 #pragma mark - <UITableViewDelegate>
 
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(nonnull NSIndexPath *)indexPath point:(CGPoint)point  API_AVAILABLE(ios(13.0)) {
+    
+    if (indexPath.section == 0) {
+        return nil;
+    }
+    
+    id obj = [self objectAtIndexPath:indexPath];
+    
+    if (obj == nil) {
+        return nil;
+    }
+    
+    UIContextMenuConfiguration *config = nil;
+    
+    if ([obj isKindOfClass:Folder.class]) {
+        
+        Folder *folder = (Folder *)obj;
+        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"folder-%@", folder.folderID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+            
+            UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
+                
+                UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self presentViewController:nav animated:YES completion:nil];
+                });
+                
+            }];
+            
+            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self confirmFolderDelete:folder completionHandler:nil];
+                
+            }];
+            
+            NSArray <UIAction *> *actions = @[rename, delete];
+            
+            UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
+            
+            return menu;
+            
+        }];
+    }
+    else {
+        Feed *feed = (Feed *)obj;
+        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feed-%@", feed.feedID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+            
+            UIMenuElement * share = nil;
+            
+            if ([self feedCanShowExtraShareLevel:feed] == YES) {
+                
+                UIAction *shareFeed = [UIAction actionWithTitle:@"Share Feed URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                    
+                    [self shareFeedURL:feed indexPath:indexPath];
+                    
+                }];
+                
+                UIAction *shareWebsite = [UIAction actionWithTitle:@"Share Website URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                    
+                    [self shareWebsiteURL:feed indexPath:indexPath];
+                    
+                }];
+                
+                NSArray <UIAction *> *shareChildren = @[shareFeed, shareWebsite];
+                
+                share = [UIMenu menuWithTitle:@"Share" children:shareChildren];
+                
+            }
+            else {
+                
+                share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                    
+                    [self feed_didTapShare:feed indexPath:indexPath];
+                    
+                }];
+                
+            }
+            
+            UIAction * move = [UIAction actionWithTitle:@"Move" image:[UIImage systemImageNamed:@"text.insert"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self feed_didTapMove:feed indexPath:indexPath];
+                
+            }];
+            
+            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self confirmFeedDelete:feed completionHandler:nil];
+                
+            }];
+            
+            NSArray <UIAction *> *actions = @[(UIAction *)share, move, delete];
+            
+            UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
+            
+            return menu;
+            
+        }];
+    }
+    
+    return config;
+    
+}
+
 - (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip {
     
     if (ip.section == 0)

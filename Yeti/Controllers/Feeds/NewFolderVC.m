@@ -121,7 +121,13 @@
                 
                 self->_isUpdating = NO;
                 
-                [self.feedsVC.tableView reloadRowsAtIndexPaths:@[self.folderIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                if (@available(iOS 13, *)) {
+                    [self.feedsVC setupData];
+                }
+                else {
+                    [self.feedsVC.tableView reloadRowsAtIndexPaths:@[self.folderIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                }
+                
                 self.cancelButton.enabled = YES;
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];

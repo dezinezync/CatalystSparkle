@@ -24,6 +24,8 @@
 
 - (void)didLongTapOnCell:(UITapGestureRecognizer * _Nullable)sender;
 
+- (UIContextMenuConfiguration * _Nullable)tableView:(UITableView * _Nonnull)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath point:(CGPoint)point  API_AVAILABLE(ios(13.0));
+
 - (UISwipeActionsConfiguration * _Nullable)tableView:(UITableView * _Nonnull)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath;
 
 #pragma mark - Common Action Handlers

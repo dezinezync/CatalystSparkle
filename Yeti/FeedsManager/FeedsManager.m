@@ -1063,8 +1063,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
-- (void)renameFolder:(Folder *)folder to:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)renameFolder:(Folder *)folder to:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB {
     
     [self updateFolder:folder properties:@{@"title": title ?: @""} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
