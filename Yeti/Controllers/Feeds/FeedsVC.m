@@ -209,9 +209,9 @@ static void *KVO_Unread = &KVO_Unread;
         return;
     }
     
-    if (self.tableView.window == nil) {
-        return;
-    }
+//    if (self.tableView.window == nil) {
+//        return;
+//    }
     
     if (NSThread.isMainThread == NO) {
         [self performSelectorOnMainThread:@selector(setupTableView) withObject:nil waitUntilDone:NO];
@@ -268,6 +268,7 @@ static void *KVO_Unread = &KVO_Unread;
         self.DS2 = [self.DS.datasources lastObject];
         
         self.DS.delegate = self;
+        [self setupData];
     }
     
     if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
