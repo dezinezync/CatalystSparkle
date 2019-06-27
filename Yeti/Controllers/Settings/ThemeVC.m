@@ -234,20 +234,24 @@ NSString *const kBasicCell = @"cell.theme";
         
         NSString *themeName = [val lowercaseString];
         
-        [SharedPrefs setValue:themeName forKey:propSel(theme)];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
-        });
-        
-        YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-        [CodeParser.sharedCodeParser loadTheme:themeName];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
-        });
-        
-        reloadSections = [self.tableView indexPathsForVisibleRows];
+        if ([SharedPrefs.theme isEqualToString:themeName] == NO) {
+            
+            [SharedPrefs setValue:themeName forKey:propSel(theme)];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+            });
+            
+            YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+            [CodeParser.sharedCodeParser loadTheme:themeName];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+            });
+            
+            reloadSections = [self.tableView indexPathsForVisibleRows];
+            
+        }
         
     }
     else if (indexPath.section == 1) {
