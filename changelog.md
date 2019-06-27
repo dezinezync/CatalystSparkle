@@ -3,7 +3,7 @@ This is the very first iOS 13 build which aims to bring certain improvements to 
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
-## Changes in Build 245
+## Changes in Build 246
 - Fixed State Restoration. Works as expected now across app launches.
 
 - Tapping on a selected theme no longer reloads themes.
