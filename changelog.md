@@ -6,6 +6,10 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 ## Changes in Build 245
 - Fixed State Restoration. Works as expected now across app launches.
 
+- Tapping on a selected theme no longer reloads themes.
+
+- Improved the gamma point for Reader Theme (Dark and Light).
+
 ## Changes in Build 244
 - Fixed Settings cells incorrectly rendering in some cases (the footer label bug persists in this build and is a known issue.)
 
