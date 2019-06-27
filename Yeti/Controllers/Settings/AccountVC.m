@@ -264,7 +264,6 @@
 //            }
             
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUID];
-            MyFeedsManager.userIDManager.userID = userID;
             MyFeedsManager.userID = userID;
             
             asyncMain(^{

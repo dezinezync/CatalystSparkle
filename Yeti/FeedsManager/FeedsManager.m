@@ -2023,7 +2023,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             // compute Authorization
             strongify(self);
             
-            NSNumber *userID = self.userIDManager.userID ?: @0;
+            NSNumber *userID = self.userID ?: @0;
             
             NSString *UUID = (userID.integerValue > 0 && self.userIDManager.UUIDString) ? self.userIDManager.UUIDString : @"x890371abdgvdfggsnnaa=";
             NSString *encoded = [[UUID dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
@@ -2421,7 +2421,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     keychain[kHasShownOnboarding] = nil;
     
     self.userIDManager.UUID = nil;
-    self.userIDManager.userID = nil;
+    self.userID = nil;
 }
 
 #pragma mark - <YTUserDelegate>
@@ -2736,8 +2736,8 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    if (self.userIDManager.userID && self.userIDManager.UUID) {
-        [coder encodeInteger:self.userIDManager.userID.integerValue forKey:kUserID];
+    if (self.userID && self.userIDManager.UUID) {
+        [coder encodeInteger:self.userID.integerValue forKey:kUserID];
         [coder encodeObject:self.userIDManager.UUIDString forKey:kAccountID];
         
         [coder encodeObject:self.folders forKey:kFoldersKey];

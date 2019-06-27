@@ -79,7 +79,7 @@
         self.oldUserID = MyFeedsManager.userID;
         
         MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.textField.text];
-        MyFeedsManager.userIDManager.userID = nil;
+        MyFeedsManager.userID = nil;
         
         self.textField.enabled = NO;
         
@@ -92,10 +92,10 @@
             NSDictionary *user = [responseObject valueForKey:@"user"];
             DDLogDebug(@"Got existing user: %@", user);
             
-            MyFeedsManager.userIDManager.userID = @([[user valueForKey:@"id"] integerValue]);
+            MyFeedsManager.userID = @([[user valueForKey:@"id"] integerValue]);
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
             
-            [keychain setString: MyFeedsManager.userIDManager.userID.stringValue forKey:kUserID];
+            [keychain setString: MyFeedsManager.userID.stringValue forKey:kUserID];
             [keychain setString: MyFeedsManager.userIDManager.UUID.UUIDString forKey:kAccountID];
     
             [avc dismissViewControllerAnimated:YES completion:nil];
@@ -106,7 +106,7 @@
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.oldUUID];
-            MyFeedsManager.userIDManager.userID = self.oldUserID;
+            MyFeedsManager.userID = self.oldUserID;
             
             strongify(self);
             self.oldUUID = nil;
