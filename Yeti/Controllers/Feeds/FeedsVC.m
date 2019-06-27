@@ -44,6 +44,8 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL _setupObservors;
     
     BOOL _openingOnLaunch;
+    
+    BOOL _hasSetupTable;
 }
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
@@ -85,9 +87,10 @@ static void *KVO_Unread = &KVO_Unread;
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [self setupTableView];
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     
@@ -134,6 +137,8 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
+    [self setupTableView];
     
     if (MyFeedsManager.shouldRequestReview == YES) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -200,6 +205,21 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (void)setupTableView {
     
+    if (_hasSetupTable == YES) {
+        return;
+    }
+    
+    if (self.tableView.window == nil) {
+        return;
+    }
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setupTableView) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    _hasSetupTable = YES;
+    
     self.tableView.restorationIdentifier = self.restorationIdentifier;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(EmptyCell.class) bundle:nil] forCellReuseIdentifier:kEmptyCell];
@@ -250,9 +270,6 @@ static void *KVO_Unread = &KVO_Unread;
         self.DS.delegate = self;
     }
     
-    self.extendedLayoutIncludesOpaqueBars = YES;
-    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
-    
     if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
         [self.tableView addGestureRecognizer:longPress];
@@ -302,6 +319,9 @@ static void *KVO_Unread = &KVO_Unread;
 }
 
 - (void)setupNavigationBar {
+    
+    self.extendedLayoutIncludesOpaqueBars = YES;
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
     control.attributedTitle = [self lastUpdateAttributedString];
@@ -668,9 +688,10 @@ NSString * const kDS2Data = @"DS2Data";
     
     DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
     
-    _noPreSetup = YES;
-    
     [super decodeRestorableStateWithCoder:coder];
+    
+    _noPreSetup = YES;
+    _hasSetupTable = NO;
 }
 
 #pragma mark - Data

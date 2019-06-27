@@ -48,8 +48,7 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing == YES) {
-        
+    if (_refreshing == YES) {  
         return;
     }
     

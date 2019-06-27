@@ -234,8 +234,6 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             [defaults synchronize];
         }
     }
-    
-    MyFeedsManager.userID = _userID;
 }
 
 @end

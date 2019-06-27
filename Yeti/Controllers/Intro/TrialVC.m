@@ -104,7 +104,7 @@
 
 - (IBAction)didTapRestore:(id)sender {
     
-#ifdef DEBUG
+#if defined(DEBUG) || TESTFLIGHT == 1
     dispatch_async(dispatch_get_main_queue(), ^{
         
         UICKeyChainStore *keychain = MyFeedsManager.keychain;

@@ -225,20 +225,20 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
     
-    // broken in iOS 13.
-//    if (@available(iOS 13, *)) {
-        return NO;
-//    }
+//    // broken in iOS 13.
+////    if (@available(iOS 13, *)) {
+//        return NO;
+////    }
     
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
     
-    // broken in iOS 13.
-//    if (@available(iOS 13, *)) {
-        return NO;
-//    }
+//    // broken in iOS 13.
+////    if (@available(iOS 13, *)) {
+//        return NO;
+////    }
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -283,9 +283,9 @@ AppDelegate *MyAppDelegate = nil;
     DDLogDebug(@"Application did restore");
 }
 
-- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
-    return nil;
-}
+//- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
+//    return nil;
+//}
 
 #pragma mark -
 
@@ -320,7 +320,8 @@ AppDelegate *MyAppDelegate = nil;
              kDetailFeedSorting: YTSortAllDesc,
              kShowMarkReadPrompt: @YES,
              kPreviewLines: @0,
-             kShowTags: @YES
+             kShowTags: @YES,
+             kUseToolbar: @NO
              };
 }
 

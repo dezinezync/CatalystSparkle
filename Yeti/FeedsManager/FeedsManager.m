@@ -2761,7 +2761,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
     NSInteger userID = [coder decodeIntegerForKey:kUserID];
     
     if (UUIDString != nil && userID > 0) {
-        self.userIDManager.userID = @(userID);
+        self.userID = @(userID);
         self.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
