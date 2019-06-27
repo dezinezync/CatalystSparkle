@@ -3,6 +3,9 @@ This is the very first iOS 13 build which aims to bring certain improvements to 
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
+## Changes in Build 245
+- Fixed State Restoration. Works as expected now across app launches.
+
 ## Changes in Build 244
 - Fixed Settings cells incorrectly rendering in some cases (the footer label bug persists in this build and is a known issue.)
 
@@ -26,6 +29,4 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 ### Known Issues
 - **Launch Screen**: Sometimes, the launchscreen of the app may show a black bar at the top in the light theme mode. 
 
-- **State Restoration**: State Restoration has been disabled for the time-being. I am running into issues with it when building against the iOS 13 SDK and hope to file Radars with Apple once I have some concrete information for this. 
-
-- **Setup Process**: The setup process can sometimes bug out completely for reasons still unknown to me. If you manage to reproduce this, please record a video or take screenshots and send it to me.
+- **Settings Section**: Certain sections in Settings are rendered incorrectly and this is a bug in iOS 13. It should hopefully work better in the upcoming iOS Builds.
