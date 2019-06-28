@@ -61,23 +61,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
             
-            if (@available(iOS 13, *)) {
-                
-                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                [snapshot deleteSectionsWithIdentifiers:@[TopSection]];
-                
-                [snapshot insertSectionsWithIdentifiers:@[TopSection] beforeSectionWithIdentifier:MainSection];
-                [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
-                
-                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-                
-            }
-            else {
-                NSIndexPath *IPOne = [NSIndexPath indexPathForRow:0 inSection:0];
-                NSIndexPath *IPTwo = [NSIndexPath indexPathForRow:1 inSection:0];
-                
-                [self.tableView reloadRowsAtIndexPaths:@[IPOne, IPTwo] withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
+            [self setupData];
             
         });
         

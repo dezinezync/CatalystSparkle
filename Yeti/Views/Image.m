@@ -250,6 +250,12 @@
     if (self.isAnimatable)
         return;
     
+    // ensure it's always called on the Main Thread
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setupAnimationControls) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
     self.animatable = YES;
     
     UIButton *startStopButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];

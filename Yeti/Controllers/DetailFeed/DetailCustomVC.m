@@ -107,7 +107,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         else {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@"main"]];
-            [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread];
+            [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread ?: @[]];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         }

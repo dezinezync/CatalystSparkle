@@ -238,12 +238,6 @@ static void *KVO_Unread = &KVO_Unread;
         
         self.DDS = DDS;
         
-        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-        [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];
-        [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
-        
-        [self.DDS applySnapshot:snapshot animatingDifferences:NO];
-        
     }
     else {
         self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
@@ -268,8 +262,9 @@ static void *KVO_Unread = &KVO_Unread;
         self.DS2 = [self.DS.datasources lastObject];
         
         self.DS.delegate = self;
-        [self setupData];
     }
+    
+    [self setupData];
     
     if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
@@ -913,30 +908,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)hideBookmarksPreferenceChanged {
     
-    BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
-    
-    if (@available(iOS 13, *)) {
-        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-        [snapshot deleteSectionsWithIdentifiers:@[TopSection]];
-        [snapshot insertSectionsWithIdentifiers:@[TopSection] beforeSectionWithIdentifier:MainSection];
-        
-        if (pref) {
-            [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
-        }
-        else {
-            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
-        }
-        
-        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-    }
-    else {
-        if (pref) {
-            self.DS1.data = @[@"Unread"];
-        }
-        else {
-            self.DS1.data = @[@"Unread", @"Bookmarks"];
-        }
-    }
+    [self setupData];
     
 }
 

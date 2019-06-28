@@ -173,6 +173,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     if (@available(iOS 13, *)) {
         NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+        [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
         [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     }
     else {

@@ -72,6 +72,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 - (void)didChangeToArticle:(FeedItem *)item;
 
+- (void)setupData;
+
 @property (nonatomic, strong) NSMutableArray <NSValue *> *sizeCache;
 
 - (void)setupLayout;
