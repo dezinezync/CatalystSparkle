@@ -852,7 +852,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         if (item.isRead == YES) {
             
-            read = [UIAction actionWithTitle:@"Unread" image:[UIImage systemImageNamed:@"circle"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+            read = [UIAction actionWithTitle:@"Unread" image:[UIImage systemImageNamed:@"circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self userMarkedArticle:item read:NO];
                 
@@ -860,8 +860,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
         }
         else {
-            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"circle.fill"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
-                
+            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"circle.fill"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+             
                 [self userMarkedArticle:item read:YES];
                 
             }];
@@ -871,7 +871,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         if (item.isBookmarked == YES) {
             
-            bookmark = [UIAction actionWithTitle:@"Unbookmark" image:[UIImage systemImageNamed:@"bookmark"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+            bookmark = [UIAction actionWithTitle:@"Unbookmark" image:[UIImage systemImageNamed:@"bookmark"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
                 [self userMarkedArticle:item bookmarked:NO];
                 
@@ -879,14 +879,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
         }
         else {
-            bookmark = [UIAction actionWithTitle:@"Bookmark" image:[UIImage systemImageNamed:@"bookmark.fill"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+            bookmark = [UIAction actionWithTitle:@"Bookmark" image:[UIImage systemImageNamed:@"bookmark.fill"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self userMarkedArticle:item bookmarked:YES];
                 
             }];
         }
         
-        UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+        UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
         
             NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
             
@@ -898,7 +898,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
         }];
         
-        UIAction *share = [UIAction actionWithTitle:@"Share Article" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+        UIAction *share = [UIAction actionWithTitle:@"Share Article" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
             NSString *title = item.articleTitle;
             NSURL *URL = formattedURL(@"%@", item.articleURL);

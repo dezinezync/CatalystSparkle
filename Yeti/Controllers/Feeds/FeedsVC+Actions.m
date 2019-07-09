@@ -494,7 +494,7 @@
         
         config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"folder-%@", folder.folderID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
             
-            UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
+            UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
                 
@@ -504,7 +504,7 @@
                 
             }];
             
-            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
+            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self confirmFolderDelete:folder completionHandler:nil];
                 
@@ -527,13 +527,13 @@
             
             if ([self feedCanShowExtraShareLevel:feed] == YES) {
                 
-                UIAction *shareFeed = [UIAction actionWithTitle:@"Share Feed URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                UIAction *shareFeed = [UIAction actionWithTitle:@"Share Feed URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                     
                     [self shareFeedURL:feed indexPath:indexPath];
                     
                 }];
                 
-                UIAction *shareWebsite = [UIAction actionWithTitle:@"Share Website URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                UIAction *shareWebsite = [UIAction actionWithTitle:@"Share Website URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                     
                     [self shareWebsiteURL:feed indexPath:indexPath];
                     
@@ -546,7 +546,7 @@
             }
             else {
                 
-                share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+                share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                     
                     [self feed_didTapShare:feed indexPath:indexPath];
                     
@@ -554,13 +554,13 @@
                 
             }
             
-            UIAction * move = [UIAction actionWithTitle:@"Move" image:[UIImage systemImageNamed:@"text.insert"] options:kNilOptions handler:^(__kindof UIAction * _Nonnull action) {
+            UIAction * move = [UIAction actionWithTitle:@"Move" image:[UIImage systemImageNamed:@"text.insert"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self feed_didTapMove:feed indexPath:indexPath];
                 
             }];
             
-            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] options:UIActionOptionsDestructive handler:^(__kindof UIAction * _Nonnull action) {
+            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self confirmFeedDelete:feed completionHandler:nil];
                 
