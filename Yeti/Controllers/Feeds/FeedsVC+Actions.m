@@ -510,6 +510,8 @@
                 
             }];
             
+            delete.attributes = UIMenuElementAttributesDestructive;
+            
             NSArray <UIAction *> *actions = @[rename, delete];
             
             UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
@@ -565,6 +567,8 @@
                 [self confirmFeedDelete:feed completionHandler:nil];
                 
             }];
+            
+            delete.attributes = UIMenuElementAttributesDestructive;
             
             NSArray <UIAction *> *actions = @[(UIAction *)share, move, delete];
             

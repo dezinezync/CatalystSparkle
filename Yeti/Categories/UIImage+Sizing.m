@@ -41,17 +41,18 @@
     UIImage * scaled;
     NSData * data = UIImageJPEGRepresentation(self, 1);
     
-    CGImageSourceRef src = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
-    
     CFDictionaryRef options = (__bridge CFDictionaryRef) @{
                                                            (id) kCGImageSourceCreateThumbnailFromImageAlways : @YES,
                                                            (id) kCGImageSourceCreateThumbnailWithTransform : @YES,
                                                            (id) kCGImageSourceThumbnailMaxPixelSize : @(maxWidth),
-                                                           (id) kCGImageSourceShouldCacheImmediately: @YES
+                                                           (id) kCGImageSourceShouldCacheImmediately: @YES,
+                                                           (id) kCGImageSourceThumbnailMaxPixelSize: @(maxWidth)
                                                            };
     
+    CGImageSourceRef src = CGImageSourceCreateWithData((__bridge CFDataRef)data, nil);
     CGImageRef scaledImageRef = CGImageSourceCreateThumbnailAtIndex(src, 0, options);
     scaled = [UIImage imageWithCGImage:scaledImageRef];
+    
     CGImageRelease(scaledImageRef);
     
     if (scaled == nil) {

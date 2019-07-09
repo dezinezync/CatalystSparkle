@@ -366,9 +366,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                             
                             CGFloat width = 24.f * UIScreen.mainScreen.scale;
                             
-                            image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
+                            NSData *jpeg = nil;
                             
-                            NSData *jpeg = UIImagePNGRepresentation(image);
+                            image = [image fastScale:width quality:1.f imageData:&jpeg];
                             
                             [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
                         }

@@ -151,26 +151,30 @@
             [self _setupImage];
             
             weakify(self);
-            // check if we have the cached the sized image
-            NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
-            
-            [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
+            dispatch_async(SharedImageLoader.ioQueue, ^{
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    if (image) {
-                        self.imageView.settingCached = YES;
-                        self.imageView.image = image;
-                        self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
+                // check if we have the cached the sized image
+                NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
+                
+                [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
+                    
+                    if (image != nil) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            self.imageView.settingCached = YES;
+                            self.imageView.image = image;
+                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
+                        });
                     }
                     else {
                         [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
                             self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
                         } error:nil];
                     }
-                });
+                    
+                }];
                 
-            }];
+            });
+            
         });
     }
 }
@@ -410,7 +414,7 @@
                     
                     strongify(self);
                     
-                    UIImage * scaled = self.settingCached ? image : [UIImage imageWithImage:image scaledToSize:size];
+                    UIImage * scaled = self.settingCached ? image : [image fastScale:size.width quality:1 imageData:nil];
                     
                     // cache the scaled image
                     if (self.baseURL != nil && self.settingCached == NO) {
