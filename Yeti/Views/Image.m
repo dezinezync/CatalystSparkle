@@ -147,10 +147,9 @@
     else {
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
+            
             [self _setupImage];
             
-            weakify(self);
             dispatch_async(SharedImageLoader.ioQueue, ^{
                 
                 // check if we have the cached the sized image
