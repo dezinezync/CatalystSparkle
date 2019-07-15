@@ -222,7 +222,10 @@
     searchController.obscuresBackgroundDuringPresentation = NO;
     
     searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
-    searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceDefault;
+    if (@available(iOS 13, *)) {}
+    else {
+        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    }
     
     self.navigationItem.searchController = searchController;
     

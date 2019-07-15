@@ -1,7 +1,24 @@
-# iOS 13 Build
-This is the very first iOS 13 build which aims to bring certain improvements to the system and match more closely with iOS 13. The aim of Elytra has always been to provide a seamless experience with the OS itself, deferring branding to the content.
+# iOS 13 Builds
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
+
+## Changes in Build 249
+- Fixed the background sync issue which would crash Elytra.
+
+- Fixed selecting the Default App Icon not working (H/T: Anmol)
+
+- Fixed changing the Unread Counter option to crash the app (H/T: Anmol)
+
+- The Refresh Control on iOS 13 is now tinted by iOS and not the app. (H/T: Anmol)
+
+- Attributions Interface is now correctly rendered for your preference of Dark or Light UI. (H/T: Anmol)
+
+- Fixes the wrong Keyboard interface showing for inputs throughout the app. (H/T: Anmol)
+
+## Changes in Build 248
+- QoL changes for Beta 3. 
+
+- Known issue: Elytra will crash in the background when fetching updates for your Unread feed. I'll post a patch hopefully in the coming week to fix this issue.
 
 ## Changes in Build 247
 - Fixes a crash which would sometimes occur after tapping the **Load GIF** Button.

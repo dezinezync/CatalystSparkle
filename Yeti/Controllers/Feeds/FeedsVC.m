@@ -324,8 +324,11 @@ static void *KVO_Unread = &KVO_Unread;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    if (theme.isDark) {
-        control.tintColor = [theme captionColor];
+    if (@available(iOS 13, *)) {}
+    else {
+        if (theme.isDark) {
+            control.tintColor = [theme captionColor];
+        }
     }
     
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
@@ -341,15 +344,17 @@ static void *KVO_Unread = &KVO_Unread;
     
     // Search Controller setup
     {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
         
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:[[FeedsSearchResults alloc] initWithStyle:UITableViewStylePlain]];
         searchController.searchResultsUpdater = self;
         searchController.searchBar.placeholder = @"Search Feeds";
         searchController.searchBar.accessibilityHint = @"Search your feeds";
-        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        
+        if (@available(iOS 13, *)) {}
+        else {
+            searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        }
         
         searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
         
@@ -900,9 +905,14 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)unreadCountPreferenceChanged {
     
-    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
-    
-    [self.tableView reloadRowsAtIndexPaths:visible withRowAnimation:UITableViewRowAnimationFade];
+    if (@available(iOS 13, *)) {
+        [self setupData];
+    }
+    else {
+        NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
+        
+        [self.tableView reloadRowsAtIndexPaths:visible withRowAnimation:UITableViewRowAnimationFade];
+    }
     
 }
 
@@ -932,7 +942,10 @@ NSString * const kDS2Data = @"DS2Data";
     }
     
     [[self.headerView tableView] reloadData];
-    self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    if (@available(iOS 13, *)) {}
+    else {
+        self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    }
     
     [self.tableView reloadData];
     

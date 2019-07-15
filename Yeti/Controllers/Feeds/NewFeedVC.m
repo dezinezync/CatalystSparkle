@@ -93,7 +93,10 @@
     
     self.input.delegate = self;
     
-    self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    if (@available(iOS 13, *)) {}
+    else {
+        self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    }
     
     if (theme.isDark) {
         if ([theme.name isEqualToString:@"black"]) {

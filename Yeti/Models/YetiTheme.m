@@ -81,7 +81,7 @@
     [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     
-//    textField.keyboardAppearance = textView.keyboardAppearance;
+//    textField.keyboardAppearance = textView.keyboardAppearance;z
     
     Class splitVCClass = NSClassFromString(@"SplitVC");
     Class navClass = NSClassFromString(@"YTNavigationController");
@@ -90,8 +90,11 @@
     UITableView *tableView = [UITableView appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     tableView.backgroundColor = self.tableColor;
     
-    UIRefreshControl *refresh = [UIRefreshControl appearance];
-    refresh.tintColor = self.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+    if (@available(iOS 13, *)) {}
+    else {
+        UIRefreshControl *refresh = [UIRefreshControl appearance];
+        refresh.tintColor = self.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+    }
     
     UITableViewCell *cell = [UITableViewCell appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     cell.backgroundColor = self.cellColor;

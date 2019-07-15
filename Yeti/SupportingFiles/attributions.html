@@ -2,6 +2,20 @@
     <html lang="en-US">
         <head>
             <style>
+                :root {
+                    --color-text: rgba(0,0,0,.85);
+                    --color-background: #ffffff;
+                    --color-title: #000000;
+                }
+            
+                @media (prefers-color-scheme: dark) {
+                    :root {
+                        --color-text: rgba(255, 255, 255, 0.875);
+                        --color-background: #000001;
+                        --color-title: rgba(255, 255, 255, 1);
+                    }
+                }
+                
                 * {
                     box-sizing: inherit;
                 }
@@ -14,7 +28,8 @@
                     font-size: 1rem;
                     line-height: 1.333rem;
                     font-family: system, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
-                    color: #000;
+                    color: var(--color-text);
+                    background: var(--color-background);
                     -webkit-transform: none !important;
                     -ms-transform: none !important;
                     transform: none !important
@@ -29,6 +44,7 @@
             
                 h1, h3 {
                     line-height: 140%;
+                    color: var(--color-title);
                 }
             
                 p {
@@ -53,6 +69,10 @@
                         document.body.style.backgroundColor = "#222222";
                     }
                     
+                    return anchorStyle(tint);
+                }
+            
+                const anchorStyle = function (tint = "#007AFF") {
                     const css = `a { color: ${tint}; }`,
                     head = document.head || document.getElementsByTagName('head')[0],
                     style = document.createElement('style');

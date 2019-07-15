@@ -325,13 +325,11 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     }
     
     if (indexPath.section == 0) {
-        NSString *name = [self appIconNameForIndex:indexPath.row];
+        NSString *name = indexPath.row == 0 ? nil : [self appIconNameForIndex:indexPath.row];
         
-        if (name == nil) {
-            return;
+        if (name != nil) {
+            name = name.lowercaseString;
         }
-        
-        name = name.lowercaseString;
         
         [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
             

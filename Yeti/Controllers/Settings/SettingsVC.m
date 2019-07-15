@@ -394,11 +394,19 @@ NSString* deviceName() {
                 
                 Theme *theme = YTThemeKit.theme;
                 
-                if (![theme.name isEqualToString:@"light"]) {
+                if (@available(iOS 13, *)) {
                     NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
-                    NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
+                    NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
                     
                     webVC.evalJSOnLoad = js;
+                }
+                else {
+                    if (![theme.name isEqualToString:@"light"]) {
+                        NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
+                        NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
+                        
+                        webVC.evalJSOnLoad = js;
+                    }
                 }
                 
                 vc = webVC;

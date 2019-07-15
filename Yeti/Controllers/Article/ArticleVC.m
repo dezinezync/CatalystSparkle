@@ -2377,8 +2377,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         searchBar.delegate = self;
         searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-        searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        if (@available(iOS 13, *)) {}
+        else {
+            searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        }
         
         UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
         if (searchField) {

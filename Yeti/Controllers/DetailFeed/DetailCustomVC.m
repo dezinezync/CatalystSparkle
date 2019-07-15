@@ -67,10 +67,12 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     else {
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
         
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        if (theme.isDark) {
-            refresh.tintColor = [theme captionColor];
+        if (@available(iOS 13, *)) {
+            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+            
+            if (theme.isDark) {
+                refresh.tintColor = [theme captionColor];
+            }
         }
         
         [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
@@ -107,7 +109,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         else {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@"main"]];
-            [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread ?: @[]];
+            [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread ?: @[] intoSectionWithIdentifier:@"main"];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         }
