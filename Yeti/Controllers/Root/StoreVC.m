@@ -284,7 +284,7 @@
     [[DZActivityIndicatorManager shared] incrementCount];
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
         
-        self.restoreButton.enabled = YES;
+        [self setButtonsState:YES];
         
         [self processTransactions:@[transaction]];
         
