@@ -1040,6 +1040,11 @@ NSString * const kDS2Data = @"DS2Data";
     }
 #if TESTFLIGHT == 0
     StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+    
+    if (@available(iOS 13, *)) {
+        vc.modalInPresentation = YES;
+    }
+    
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
     

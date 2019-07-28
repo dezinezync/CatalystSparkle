@@ -99,8 +99,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 #pragma mark -
 
-- (NSUUID *)UUID
-{
+- (NSUUID *)UUID {
     
 #ifdef DEBUG
     
