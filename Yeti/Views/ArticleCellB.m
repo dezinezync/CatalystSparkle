@@ -305,9 +305,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     NSString *url = [feed faviconURI];
     
-    NSString *key = formattedString(@"png-24-%@", url);
-    
-    [self _configureTitleFavicon:key attachment:attachment url:url];
+    if (url != nil && [url isBlank] == NO) {
+        NSString *key = formattedString(@"png-24-%@", url);
+            
+        [self _configureTitleFavicon:key attachment:attachment url:url];
+    }
     
     // positive offsets push it up, negative push it down
     // this is similar to NSRect

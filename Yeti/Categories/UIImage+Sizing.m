@@ -41,12 +41,22 @@
     UIImage * scaled;
     NSData * data = UIImageJPEGRepresentation(self, 1);
     
+    CGFloat const deviceMaxWidth = MAX(UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height);
+    CGFloat usableWidth = MIN(maxWidth * UIScreen.mainScreen.scale, deviceMaxWidth);
+    
+    if (usableWidth >= self.size.width) {
+        if (imageData != nil) {
+            *imageData = UIImageJPEGRepresentation(self, 1);
+        }
+        
+        return self;
+    }
+    
     CFDictionaryRef options = (__bridge CFDictionaryRef) @{
                                                            (id) kCGImageSourceCreateThumbnailFromImageAlways : @YES,
                                                            (id) kCGImageSourceCreateThumbnailWithTransform : @YES,
-                                                           (id) kCGImageSourceThumbnailMaxPixelSize : @(maxWidth),
-                                                           (id) kCGImageSourceShouldCacheImmediately: @YES,
-                                                           (id) kCGImageSourceThumbnailMaxPixelSize: @(maxWidth)
+                                                           (id) kCGImageSourceThumbnailMaxPixelSize : @(usableWidth),
+                                                           (id) kCGImageSourceShouldCacheImmediately: @YES
                                                            };
     
     CGImageSourceRef src = CGImageSourceCreateWithData((__bridge CFDataRef)data, nil);

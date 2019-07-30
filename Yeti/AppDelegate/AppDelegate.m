@@ -82,6 +82,9 @@ AppDelegate *MyAppDelegate = nil;
         NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
         [NSURLCache setSharedURLCache:sharedCache];
         
+//        [SharedImageLoader.cache removeAllObjects];
+//        [SharedImageLoader.cache removeAllObjectsFromDisk];
+        
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             MyAppDelegate = self;
