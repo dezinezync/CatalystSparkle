@@ -702,8 +702,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // add Body
     [self addTitle];
     
-    if (self.item.content.count > 20) {
-        self->_deferredProcessing = YES;
+    // iOS 13 shouldn't need it and handle it well.
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.item.content.count > 20) {
+            self->_deferredProcessing = YES;
+        }
     }
     
     if (self.item.coverImage) {

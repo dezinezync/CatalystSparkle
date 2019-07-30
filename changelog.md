@@ -2,6 +2,16 @@
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
+## Changes in Build 250
+- fixes favicon issue in Feeds interface
+
+- removes deferred processing for paragraphs as the memory bug from iOS 12.2 is now fixed in iOS 13 Beta 5.
+
+- various sizing improvements for images and caching sized images
+
+- the subscription expiry modal should not be dismissable
+
+
 ## Changes in Build 249
 - Fixed the background sync issue which would crash Elytra.
 

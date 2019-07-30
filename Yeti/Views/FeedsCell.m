@@ -191,7 +191,11 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 strongify(self);
-                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
+                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                    
+                    self.faviconView.contentMode = UIViewContentModeScaleAspectFit;
+                    
+                } error:nil];
             });
         }
         @catch (NSException *exc) {
