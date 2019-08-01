@@ -13,6 +13,8 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - fixes the height of Tweets embedded in articles. When no images are present in the tweet, the Tweet context adjusts to account for this. 
 
+- improved Voice Over support for Lists, Ordered & Unordered variants. 
+
 ## Changes in Build 249
 - Fixed the background sync issue which would crash Elytra.
 
