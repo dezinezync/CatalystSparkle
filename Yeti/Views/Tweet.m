@@ -115,6 +115,8 @@
         self.collectionView.delegate = self;
         self.collectionView.dataSource = self;
         
+        self.textview.scrollEnabled = NO;
+        
         self.avatar.image = nil;
     }
     
@@ -177,6 +179,8 @@
     [self.textview layoutIfNeeded];
     [self.collectionView layoutIfNeeded];
     [self layoutIfNeeded];
+    
+    [self invalidateIntrinsicContentSize];
 }
 
 - (void)setupCollectionView {
@@ -210,11 +214,14 @@
     [self setupCollectionView];
 }
 
-- (CGSize)intrinsicContentSize
-{
+- (CGSize)intrinsicContentSize {
     CGSize size = CGSizeMake(self.bounds.size.width, 0.f);
     
-    if (!self.collectionView.isHidden) {
+    if (self.content == nil) {
+        return size;
+    }
+    
+    if (self.collectionView.isHidden == NO) {
         size.height += self.collectionView.bounds.size.height;
     }
     
@@ -230,13 +237,11 @@
 
 #pragma mark - <UICollectionViewDatasource>
 
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
-{
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return self.content ? 1 : 0;
 }
 
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (!self.content)
         return 0;
     

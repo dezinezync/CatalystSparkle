@@ -11,6 +11,7 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - the subscription expiry modal should not be dismissable
 
+- fixes the height of Tweets embedded in articles. When no images are present in the tweet, the Tweet context adjusts to account for this. 
 
 ## Changes in Build 249
 - Fixed the background sync issue which would crash Elytra.
