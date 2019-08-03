@@ -201,7 +201,7 @@
         
         if (@available(iOS 13, *)) {
             NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+            [snapshot appendSectionsWithIdentifiers:@[@0]];
             [snapshot appendItemsWithIdentifiers:items];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];

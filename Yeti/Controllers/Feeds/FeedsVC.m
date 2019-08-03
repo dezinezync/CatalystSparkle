@@ -34,8 +34,8 @@
 
 #import <StoreKit/SKStoreReviewController.h>
 
-NSString *const TopSection = @"top";
-NSString *const MainSection = @"main";
+#define TopSection  @0
+#define MainSection @1
 
 static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;

@@ -95,7 +95,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     if (@available(iOS 13, *)) {
         if (self.unread == NO) {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+            [snapshot appendSectionsWithIdentifiers:@[@0]];
             
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
                 [snapshot appendItemsWithIdentifiers:MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects];
@@ -108,8 +108,8 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         }
         else {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
-            [snapshot appendItemsWithIdentifiers:MyFeedsManager.unread ?: @[] intoSectionWithIdentifier:@"main"];
+            [snapshot appendSectionsWithIdentifiers:@[@0]];
+            [snapshot appendItemsWithIdentifiers:(MyFeedsManager.unread ?: @[]) intoSectionWithIdentifier:@0];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         }

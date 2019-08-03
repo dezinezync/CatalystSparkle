@@ -198,7 +198,7 @@
             NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
             
             if (snapshot.numberOfSections == 0) {
-                [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+                [snapshot appendSectionsWithIdentifiers:@[@0]];
             }
             
             [snapshot appendItemsWithIdentifiers:data];

@@ -198,6 +198,11 @@
             if (@available(iOS 13, *)) {
                 
                 NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                
+                if (snapshot.numberOfSections == 0) {
+                    [snapshot appendSectionsWithIdentifiers:@[@0]];
+                }
+                
                 [snapshot appendItemsWithIdentifiers:responseObject];
                 
                 [self.DDS applySnapshot:snapshot animatingDifferences:YES];
@@ -281,7 +286,7 @@
         
         if (@available(iOS 13, *)) {
             NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-            [snapshot appendSectionsWithIdentifiers:@[@"main"]];
+            [snapshot appendSectionsWithIdentifiers:@[@0]];
             [snapshot appendItemsWithIdentifiers:items];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];

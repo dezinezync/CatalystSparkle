@@ -33,7 +33,7 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-NSString *const ArticlesSection = @"main";
+#define ArticlesSection @0
 
 @interface UICollectionViewController ()
 
@@ -1430,6 +1430,7 @@ NSString * const kSizCache = @"FeedSizesCache";
             if (@available(iOS 13, *)) {
                 
                 NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+                [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
                 [snapshot appendItemsWithIdentifiers:self.feed.articles intoSectionWithIdentifier:ArticlesSection];
                 
                 [self.DDS applySnapshot:snapshot animatingDifferences:NO];

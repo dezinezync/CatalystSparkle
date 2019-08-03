@@ -1,4 +1,5 @@
-github "CaliCastle/PopMenu" "v2.1.2"
+github "CocoaLumberjack/CocoaLumberjack" "3.5.3"
 github "Flipboard/FLAnimatedImage" "1.0.14"
 github "joeldev/JLRoutes" "2.1"
 github "kishikawakatsumi/UICKeyChainStore" "v2.1.2"
+github "yapstudios/YapDatabase" "3.1.3"

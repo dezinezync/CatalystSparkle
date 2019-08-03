@@ -453,6 +453,11 @@
     weakify(self);
     
     asyncMain(^{
+        
+        if (self == nil) {
+            return;
+        }
+        
         strongify(self);
         [self invalidateIntrinsicContentSize];
         
