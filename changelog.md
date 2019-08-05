@@ -11,6 +11,8 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - Fixes the odd behaviour when lauching the app on an iPad would not show the sidebar. This required a custom implementation in iOS 12 to make it work correctly but is no longer needed for iOS 13 as of Beta 5. Hurray!
 
+- Fixes sharing of URLs from articles after long tapping on the URL to bring up the Share Sheet. 
+
 ## Changes in Build 251
 - Fixes a bunch of bugs coming from the Beta 5/ Public Beta 3 & 4 SDKs. App should be stable-r now. 
 

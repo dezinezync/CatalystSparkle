@@ -2276,7 +2276,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             text = formattedString(@"%@%@", text, articleTitle);
         }
         
-        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, URL] applicationActivities:nil];
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:nil];
         
         if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
