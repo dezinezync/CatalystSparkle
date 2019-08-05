@@ -955,7 +955,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: theme.titleColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: [NSNull null],
+                                     NSKernAttributeName: @0,
                                      };
 
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];

@@ -2143,7 +2143,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (NSArray <FeedItem *> *)bookmarks {
     
-    if (!_bookmarks) {
+    if (_bookmarks == nil || _bookmarks.count == 0) {
         
         NSFileManager *manager = [NSFileManager defaultManager];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -2164,7 +2164,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
         
+        NSError *error = nil;
+        
         for (NSString *path in objects) { @autoreleasepool {
+            error = nil;
             NSString *filePath = [directory stringByAppendingPathComponent:path];
             FeedItem *item = nil;
             
@@ -2172,7 +2175,24 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 NSData *fileData = [[NSData alloc] initWithContentsOfFile:filePath];
                 
                 if (fileData != nil) {
-                    item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:nil];
+                    
+                    if (@available(iOS 13, *)) {
+                        item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:&error];
+                        
+                        if (error != nil) {
+                            DDLogError(@"Error loading bookmark file from: %@\n%@", filePath, error);
+                        }
+                        
+                        if (item == nil) {
+                            // it could be archived using the old API. Try that.
+                            item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
+                        }
+                        
+                    }
+                    else {
+                        item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
+                    }
+                    
                 }
             }
             @catch (NSException *exception) {

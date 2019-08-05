@@ -2,6 +2,18 @@
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
+## Changes in Build 252
+- Disabled Drag and Drop on the Feeds Interface as it crashes immediately in iOS 13 Beta 5. 
+
+- Corrected the loading of bookmarked articles offline on iOS 13. 
+
+- Fixes copy behavior when highlighting text and then tapping on copy. This used a custom implementation since iOS 12.1.4 and I've finally found the issue and fixed it. Took over a year ¯\_(ツ)_/¯.
+
+- Fixes the odd behaviour when lauching the app on an iPad would not show the sidebar. This required a custom implementation in iOS 12 to make it work correctly but is no longer needed for iOS 13 as of Beta 5. Hurray!
+
+## Changes in Build 251
+- Fixes a bunch of bugs coming from the Beta 5/ Public Beta 3 & 4 SDKs. App should be stable-r now. 
+
 ## Changes in Build 250
 - fixes favicon issue in Feeds interface
 

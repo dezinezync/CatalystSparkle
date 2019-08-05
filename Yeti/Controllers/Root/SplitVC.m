@@ -38,14 +38,14 @@
         
         [self loadViewIfNeeded];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-            
-            if (@available(iOS 13, *)) {
-                self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
-            }
-            
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+//
+//            if (@available(iOS 13, *)) {
+//                self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+//            }
+//
+//        });
         
         MainNavController *nav1 = [[MainNavController alloc] init];
         
@@ -132,38 +132,38 @@
 //    
 //}
 
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    weakify(self);
-    [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-
-        // Why set the display mode in dispatch?
-        // It's a workaround: http://stackoverflow.com/a/28440974/242682
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-            strongify(self);
-            
-            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-            
-        });
-
-//        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+//    weakify(self);
+//    [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
 //
-//            if (self.viewControllers.count == 1) {
-//                UINavigationController *nav = [self emptyVC];
+//        // Why set the display mode in dispatch?
+//        // It's a workaround: http://stackoverflow.com/a/28440974/242682
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//           
+//            strongify(self);
+//            
+//            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+//            
+//        });
 //
-//                self.viewControllers = @[self.viewControllers.firstObject, nav];
-//            }
+////        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+////
+////            if (self.viewControllers.count == 1) {
+////                UINavigationController *nav = [self emptyVC];
+////
+////                self.viewControllers = @[self.viewControllers.firstObject, nav];
+////            }
+////
+////        }
+////        else {
+////            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
+////        }
 //
-//        }
-//        else {
-//            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
-//        }
-
-    }];
-    
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
-}
+//    }];
+//    
+//    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+//    
+//}
 
 #pragma mark -
 

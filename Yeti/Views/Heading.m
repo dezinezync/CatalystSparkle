@@ -106,8 +106,7 @@
     }
 }
 
-- (void)setLevel:(NSInteger)level
-{
+- (void)setLevel:(NSInteger)level {
     
     if (UIScreen.mainScreen.bounds.size.width <= 320.f) {
         self.font = self.level == 1 ? [UIFont preferredFontForTextStyle:UIFontTextStyleTitle1] : (self.level == 2 ? [UIFont preferredFontForTextStyle:UIFontTextStyleTitle2] : [UIFont preferredFontForTextStyle:UIFontTextStyleTitle3]);

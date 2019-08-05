@@ -266,14 +266,18 @@ static void *KVO_Unread = &KVO_Unread;
     
     [self setupData];
     
-    if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
-        [self.tableView addGestureRecognizer:longPress];
-    }
+    if (@available(iOS 13, *)) {}
     else {
-        // enable drag and drop on iPad
-        self.tableView.dragDelegate = self;
-        self.tableView.dropDelegate = self;
+        if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
+            [self.tableView addGestureRecognizer:longPress];
+        }
+        else {
+            // enable drag and drop on iPad
+            // crashes on iOS 13 Beta 5
+            self.tableView.dragDelegate = self;
+            self.tableView.dropDelegate = self;
+        }
     }
 }
 
