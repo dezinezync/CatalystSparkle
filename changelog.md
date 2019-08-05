@@ -13,6 +13,8 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - Fixes sharing of URLs from articles after long tapping on the URL to bring up the Share Sheet. 
 
+- Fixes the layout of the Accounts section. H/T. Anmol
+
 ## Changes in Build 251
 - Fixes a bunch of bugs coming from the Beta 5/ Public Beta 3 & 4 SDKs. App should be stable-r now. 
 

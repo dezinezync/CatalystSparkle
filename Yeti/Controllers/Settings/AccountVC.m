@@ -21,6 +21,7 @@
 #import "SplitVC.h"
 
 #import "StoreVC.h"
+#import "PaddedLabel.h"
 
 @interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate> {
     UITextField *_textField;
@@ -42,6 +43,17 @@
     
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
+    
+    PaddedLabel *label = [PaddedLabel new];
+    label.text = @"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
+    label.numberOfLines = 0;
+    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+    label.textColor = [YTThemeKit theme].captionColor;
+    label.padding = UIEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+    
+    self.tableView.tableFooterView = label;
+    
+    [label sizeToFit];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.tableView.backgroundColor = theme.tableColor;
@@ -66,20 +78,11 @@
     return 1;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 1)
         return @"Subscription";
     
     return @"Acount ID";
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == 0) {
-        return @"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
-    }
-    
-    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
