@@ -169,7 +169,12 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (NSURLSessionTask * _Nullable)search:(NSString * _Nonnull)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-#pragma mark -
+#pragma mark - Account
+
+/// Deactivate the current account and reset the app
+/// @param successCB The success block. Call -[FeedsManager resetAccount] upon success.
+/// @param errorCB The error block.
+- (void)deactivateAccountWithSuccess:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)resetAccount;
 

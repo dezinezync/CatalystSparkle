@@ -15,6 +15,8 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - Fixes the layout of the Accounts section. H/T. Anmol
 
+- Account deactivation is now handled directly through the API. This no longer requires you to send an email to deactivate the account which further ensures your privacy.  
+
 ## Changes in Build 251
 - Fixes a bunch of bugs coming from the Beta 5/ Public Beta 3 & 4 SDKs. App should be stable-r now. 
 

@@ -193,7 +193,7 @@
         }
         
         if (indexPath.row == 2) {
-            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Deactivate your Account?" message:@"Please ensure you have cancelled your Elytra Pro subscription before continuing." preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Deactivate your Account?" message:@"If you have remaining days on your Pro Subscription, no refund can be issued for the same." preferredStyle:UIAlertControllerStyleAlert];
             
             [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
             
@@ -227,7 +227,27 @@
 
 #pragma mark - Actions
 
+- (void)deactivateFromAPI {
+    
+    [MyFeedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+#ifndef DEBUG
+        [self userDidSendEmail];
+#endif
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Error Deactivating Account" message:error.localizedDescription];
+        
+    }];
+    
+}
+
 - (void)showInterfaceToSendDeactivationEmail {
+    
+    [self deactivateFromAPI];
+    return;
+    
     NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.userIDManager.UUIDString);
     
     DZMessagingController.shared.delegate = self;
@@ -331,13 +351,13 @@
 
 - (void)userDidSendEmail {
     
-    [DZMessagingController shared].delegate = nil;
+//    [DZMessagingController shared].delegate = nil;
     
     [MyFeedsManager resetAccount];
     
-    UINavigationController *nav = self.navigationController;
-    
     dispatch_async(dispatch_get_main_queue(), ^{
+        UINavigationController *nav = self.navigationController;
+        
         [nav popToRootViewControllerAnimated:NO];
         
         dispatch_async(dispatch_get_main_queue(), ^{

@@ -2007,7 +2007,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
@@ -2442,6 +2442,52 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     self.userIDManager.UUID = nil;
     self.userID = nil;
+}
+
+- (void)deactivateAccountWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (!MyFeedsManager.userID) {
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-401 userInfo:@{NSLocalizedDescriptionKey : @"No user account exists on this device."}];
+            errorCB(error, nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSString *path = formattedString(@"/1.4/%@/deactivate", self.userIDManager.UUID.UUIDString);
+    
+    [self.session POST:path queryParams:nil parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSNumber *statusVal = [responseObject valueForKey:@"status"];
+        BOOL status = statusVal.boolValue;
+        
+        if (!status) {
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:500 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error occurred when deactivating your account. Please try again."}];
+            
+            if (errorCB)
+                errorCB(error, response, task);
+            else {
+                DDLogError(@"Unhandled network error: %@", error);
+            }
+            
+            return;
+        }
+        
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+    }];
+    
 }
 
 #pragma mark - <YTUserDelegate>
