@@ -2,6 +2,9 @@
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
+## Changes in Build 253
+- Fixes the chances of the same image rendering twice in certain posts. 
+
 ## Changes in Build 252
 - Disabled Drag and Drop on the Feeds Interface as it crashes immediately in iOS 13 Beta 5. 
 
