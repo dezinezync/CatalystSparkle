@@ -468,10 +468,13 @@
     
 }
 
-- (void)updateAspectRatioWithImage:(UIImage *)image
-{
+- (void)updateAspectRatioWithImage:(UIImage *)image {
     if (!image)
         return;
+    
+    if (self.superview == nil || [self.superview respondsToSelector:@selector(aspectRatio)] == NO) {
+        return;
+    }
     
     NSLayoutConstraint *aspectRatio = [(Image *)[self superview] aspectRatio];
     

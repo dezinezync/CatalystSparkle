@@ -723,6 +723,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         });
     }
     
+    NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
+    
     if (self.item.enclosures && self.item.enclosures.count) {
         
         NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
@@ -744,7 +746,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     // single image, add as cover
                     Content *content = [Content new];
                     content.type = @"image";
-                    content.url = [[[enclosures firstObject] url] absoluteString];
+                    content.url = enclosures.firstObject.url.absoluteString;
+                    
+                    [imagesFromEnclosures addObject:content.url];
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [self addImage:content];
@@ -765,7 +769,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                         // single image, add as cover
                         Content *subcontent = [Content new];
                         subcontent.type = @"image";
-                        subcontent.url = [[enc url] absoluteString];
+                        subcontent.url = enc.url.absoluteString;
+                        
+                        [imagesFromEnclosures addObject:subcontent.url];
                         
                         [images addObject:subcontent];
                     }
@@ -818,10 +824,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
          * 2. If it's an image
          * 3. The article declares a cover image
          */
-        if (idx == 0 && ([obj.type isEqualToString:@"img"] || [obj.type isEqualToString:@"image"]) && self.item.coverImage != nil) {
+        BOOL isImage = [obj.type isEqualToString:@"img"] || [obj.type isEqualToString:@"image"];
+        BOOL hasCover = self.item.coverImage != nil;
+        BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:obj.url] != NSNotFound) : NO;
+        
+        if (idx == 0 && isImage && imageFromEnclosure) {
+            return;
+        }
+        
+        if (idx == 0 && isImage && hasCover) {
             // check if the cover image and the first image
             // are the same entities
-            
             NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
             NSURLComponents *imageComponents = [NSURLComponents componentsWithString:obj.url];
             
@@ -2188,12 +2201,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
     
     // if we're scrolling down, add the bottom offset so the bottom bar does not interfere
-    if (yOffset > self.scrollView.contentOffset.y)
+    if (yOffset > (self.scrollView.contentSize.height - self.scrollView.contentOffset.y))
         yOffset += self.scrollView.adjustedContentInset.bottom;
-    else
-        yOffset -= self.scrollView.adjustedContentInset.top;
+//    else
+//        yOffset -= self.scrollView.adjustedContentInset.top;
     
-    yOffset += (self.scrollView.bounds.size.height / 2.f);
+//    yOffset += (self.scrollView.bounds.size.height / 2.f);
     
     [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
     
