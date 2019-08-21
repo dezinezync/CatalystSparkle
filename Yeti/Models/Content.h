@@ -3,7 +3,7 @@
 
 #import <DZKit/DZDatasourceModel.h>
 
-@interface Content : DZObject <NSCoding, NSCopying> {
+@interface Content : DZObject <NSSecureCoding, NSCopying> {
 
 }
 

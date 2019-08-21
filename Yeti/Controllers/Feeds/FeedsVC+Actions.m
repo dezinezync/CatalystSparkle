@@ -303,7 +303,7 @@
             
             if (feed.folderID != nil && feed.folderID.integerValue) {
                 // remove it from the folder struct
-                [MyFeedsManager.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [ArticlesManager.shared.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     if ([obj.folderID isEqualToNumber:feed.folderID]) {
                         
@@ -320,13 +320,13 @@
                 }];
             }
             
-            NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+            NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
             
             feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return obj.feedID.integerValue != feedID.integerValue;
             }];
             
-            MyFeedsManager.feeds = feeds;
+            ArticlesManager.shared.feeds = feeds;
             
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{

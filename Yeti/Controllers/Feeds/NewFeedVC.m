@@ -216,7 +216,7 @@
             strongify(self);
             
             if ([responseObject isKindOfClass:Feed.class]) {
-                MyFeedsManager.feeds = [[MyFeedsManager feeds] arrayByAddingObject:responseObject];
+                ArticlesManager.shared.feeds = [[ArticlesManager.shared feeds] arrayByAddingObject:responseObject];
                 
                 weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -451,7 +451,7 @@
             return;
         }
         else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
             
             weakify(self);
             

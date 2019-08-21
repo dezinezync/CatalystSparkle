@@ -171,7 +171,7 @@
                 
             });
             
-            [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : MyFeedsManager.feeds, @"folders": MyFeedsManager.folders}];
+            [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : ArticlesManager.shared.feeds, @"folders": ArticlesManager.shared.folders}];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             

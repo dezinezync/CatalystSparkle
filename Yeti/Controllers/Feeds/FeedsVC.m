@@ -185,7 +185,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
     
-    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:MyFeedsManager];
+    [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
@@ -196,8 +196,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
-    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
-    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    [ArticlesManager.shared addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+    [ArticlesManager.shared addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
     
 }
 
@@ -758,7 +758,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     // ensures search bar does not dismiss on refresh or first load
     @try {
-        NSArray *folders = (MyFeedsManager.folders ?: @[]);
+        NSArray *folders = (ArticlesManager.shared.folders ?: @[]);
         
         if (openFolders.count) {
             [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -780,7 +780,7 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
         
-        [data addObjectsFromArray:MyFeedsManager.feedsWithoutFolders];
+        [data addObjectsFromArray:ArticlesManager.shared.feedsWithoutFolders];
         
         if (@available(iOS 13, *)) {
             
@@ -839,7 +839,7 @@ NSString * const kDS2Data = @"DS2Data";
             if (visible) {
                 FeedsCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                cell.countLabel.text = [@([(FeedsManager *)object totalUnread]) stringValue];
+                cell.countLabel.text = [@([MyFeedsManager totalUnread]) stringValue];
             }
         });
     }
@@ -849,7 +849,7 @@ NSString * const kDS2Data = @"DS2Data";
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-            cell.countLabel.text = [@([[(FeedsManager *)object bookmarks] count]) stringValue];
+            cell.countLabel.text = [@([[ArticlesManager.shared bookmarks] count]) stringValue];
         });
         
     }

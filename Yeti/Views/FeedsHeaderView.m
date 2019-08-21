@@ -43,8 +43,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
     
-    [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
-    [MyFeedsManager addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    [ArticlesManager.shared addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+    [ArticlesManager.shared addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
 }
 
 - (void)updateConstraints
@@ -78,8 +78,8 @@ static void *KVO_Unread = &KVO_Unread;
         }];
         
         @try {
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
+            [ArticlesManager.shared removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
+            [ArticlesManager.shared removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
         } @catch (NSException *exc) {
             
         }
@@ -146,8 +146,7 @@ static void *KVO_Unread = &KVO_Unread;
 
 #pragma mark - KVO
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     weakify(self);
     
     if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
@@ -155,7 +154,7 @@ static void *KVO_Unread = &KVO_Unread;
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-            cell.countLabel.text = [@([[(FeedsManager *)object unread] count]) stringValue];
+            cell.countLabel.text = [@([[ArticlesManager.shared unread] count]) stringValue];
         });
     }
     else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
@@ -164,7 +163,7 @@ static void *KVO_Unread = &KVO_Unread;
             strongify(self);
             
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-            cell.countLabel.text = [@([[(FeedsManager *)object bookmarks] count]) stringValue];
+            cell.countLabel.text = [@([[ArticlesManager.shared bookmarks] count]) stringValue];
         });
         
     }

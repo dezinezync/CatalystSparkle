@@ -16,6 +16,8 @@
 }
 
 @property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
+@property (weak, nonatomic) IBOutlet UIView *activityView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end
 
@@ -50,6 +52,9 @@
         // we do not observe this as the article interface is redrawn when the theme changes
 //        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:kDidUpdateTheme object:nil];
         [self didUpdateTheme];
+        
+        self.activityView.hidden = YES;
+        self.activityIndicator.hidden = YES;
         
     }
     
@@ -118,7 +123,14 @@
     }
     
     // disable it so the action does not trigger twice.
-    self.mercurialButton.enabled = NO;
+    {
+        self.mercurialButton.enabled = NO;
+        self.mercurialButton.hidden = YES;
+        
+        self.activityIndicator.hidden = NO;
+        self.activityView.hidden = NO;
+        [self.activityIndicator startAnimating];
+    }
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(didTapMercurialButton:completion:)]) {
         
@@ -138,7 +150,15 @@
                     
                     // if the action was completed, then we disable
                     // the button, which is the opposite of completed.
-                    self.mercurialButton.enabled = !completed;
+                    {
+                        [self.activityIndicator stopAnimating];
+                        self.activityView.hidden = YES;
+                        self.activityIndicator.hidden = YES;
+                        
+                        self.mercurialButton.enabled = !completed;
+                        self.mercurialButton.hidden = NO;
+                        
+                    }
                     
                 });
                 

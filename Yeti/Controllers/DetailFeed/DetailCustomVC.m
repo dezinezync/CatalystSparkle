@@ -98,10 +98,10 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             [snapshot appendSectionsWithIdentifiers:@[@0]];
             
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                [snapshot appendItemsWithIdentifiers:MyFeedsManager.bookmarks.reverseObjectEnumerator.allObjects];
+                [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.bookmarks.reverseObjectEnumerator.allObjects];
             }
             else {
-                [snapshot appendItemsWithIdentifiers:MyFeedsManager.bookmarks];
+                [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.bookmarks];
             }
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
@@ -109,7 +109,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         else {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@0]];
-            [snapshot appendItemsWithIdentifiers:(MyFeedsManager.unread ?: @[]) intoSectionWithIdentifier:@0];
+            [snapshot appendItemsWithIdentifiers:(ArticlesManager.shared.unread ?: @[]) intoSectionWithIdentifier:@0];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         }
@@ -118,15 +118,15 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         if (self.unread == NO) {
             
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                self.DS.data = [MyFeedsManager.bookmarks reverseObjectEnumerator].allObjects;
+                self.DS.data = [ArticlesManager.shared.bookmarks reverseObjectEnumerator].allObjects;
             }
             else {
-                self.DS.data = MyFeedsManager.bookmarks;
+                self.DS.data = ArticlesManager.shared.bookmarks;
             }
             
         }
         else {
-            self.DS.data = MyFeedsManager.unread;
+            self.DS.data = ArticlesManager.shared.unread;
         }
     }
     

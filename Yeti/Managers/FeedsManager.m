@@ -57,8 +57,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 #pragma mark -
 
-- (instancetype)init
-{
+- (instancetype)init {
     if (self = [super init]) {
         
         [DBManager initialize];
@@ -133,10 +132,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (void)didReceiveMemoryWarning {
-    self.bookmarks = nil;
-    self.folders = nil;
-    self.unread = nil;
-    self.feeds = nil;
+    ArticlesManager.shared.bookmarks = nil;
+    ArticlesManager.shared.folders = nil;
+    ArticlesManager.shared.unread = nil;
+    ArticlesManager.shared.feeds = nil;
 }
 
 #pragma mark - Feeds
@@ -172,9 +171,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             if (feeds.count >= 2) {
                 hasAddedFirstFeed = YES;
             }
-            else if (self.folders.count) {
+            else if (ArticlesManager.shared.folders.count) {
                 // check count of feeds in folders
-                NSNumber *total = (NSNumber *)[self.folders rz_reduce:^id(NSNumber *prev, Folder *current, NSUInteger idx, NSArray *array) {
+                NSNumber *total = (NSNumber *)[ArticlesManager.shared.folders rz_reduce:^id(NSNumber *prev, Folder *current, NSUInteger idx, NSArray *array) {
                     return @(prev.integerValue + current.feeds.count);
                 } initialValue:@(0)];
                 
@@ -186,20 +185,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(hasAddedFirstFeed) stringValue];
         }
         
-        if (!since || !MyFeedsManager.feeds.count) {
+        if (!since || !ArticlesManager.shared.feeds.count) {
             @synchronized (self) {
-                self.feeds = feeds;
+                ArticlesManager.shared.feeds = feeds;
             }
         }
         else {
 
             if (feeds.count) {
 
-                NSArray <Feed *> *copy = [MyFeedsManager.feeds copy];
+                NSArray <Feed *> *copy = [ArticlesManager.shared.feeds copy];
 
                 for (Feed *feed in feeds) {
                     // get the corresponding feed from the memory
-                    Feed *main = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+                    Feed *main = [ArticlesManager.shared.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
                         if (current.feedID.integerValue == feed.feedID.integerValue)
                             return current;
                         return prev;
@@ -228,12 +227,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 }
 
                 @synchronized (self) {
-                    self.feeds = feeds;
+                    ArticlesManager.shared.feeds = feeds;
                 }
             }
             else {
                 @synchronized (self) {
-                    self.feeds = feeds;
+                    ArticlesManager.shared.feeds = feeds;
                 }
             }
 
@@ -281,7 +280,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
     
-    self->_feeds = feeds;
+    ArticlesManager.shared.feeds = feeds;
     
     // create the folders map
     NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
@@ -292,7 +291,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
     }];
     
-    self->_folders = folders;
+    ArticlesManager.shared.folders = folders;
     
     return feeds;
 }
@@ -303,7 +302,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return nil;
     }
     
-    Feed *feed = [MyFeedsManager.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
+    Feed *feed = [ArticlesManager.shared.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
         if ([current.feedID isEqualToNumber:feedID])
             return current;
         return prev;
@@ -328,7 +327,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return nil;
     }
     
-    Folder *folder = [self.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+    Folder *folder = [ArticlesManager.shared.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
         if ([current.folderID isEqualToNumber:folderID]) {
             return current;
         }
@@ -400,7 +399,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)addFeed:(NSURL *)url success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-    NSArray <Feed *> *existing = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+    NSArray <Feed *> *existing = [ArticlesManager.shared.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
         return [obj.url isEqualToString:url.absoluteString];
     }];
     
@@ -489,7 +488,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)addFeedByID:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    NSArray <Feed *> *existing = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+    NSArray <Feed *> *existing = [ArticlesManager.shared.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
         return obj.feedID.integerValue == feedID.integerValue;
     }];
     
@@ -715,7 +714,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 // will be available
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.totalUnread = 0;
-                    self.unread = @[];
+                    ArticlesManager.shared.unread = @[];
                 });
                 
                 NSInteger const newFeedUnread = 0;
@@ -888,7 +887,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 {
     NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
     
-    NSArray <FeedItem *> *newUnread = [MyFeedsManager.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
         BOOL isRead = obj.isRead;
         if (isRead) {
             [markedRead addObject:obj.identifier];
@@ -899,12 +898,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (!markedRead.count)
         return;
     
-    _unread = newUnread;
+    ArticlesManager.shared.unread = newUnread;
     
     // propagate changes to the feeds object as well
-    [self updateFeedsReadCount:MyFeedsManager.feeds markedRead:markedRead];
+    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
     
-    for (Folder *folder in MyFeedsManager.folders) { @autoreleasepool {
+    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
        
         [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
         
@@ -969,27 +968,27 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         self.unreadLastUpdate = NSDate.date;
         
         if (page == 1) {
-            self.unread = items;
+            ArticlesManager.shared.unread = items;
         }
         else {
-            if (!self.unread) {
-                self.unread = items;
+            if (!ArticlesManager.shared.unread) {
+                ArticlesManager.shared.unread = items;
             }
             else {
-                NSArray *unread = MyFeedsManager.unread;
+                NSArray *unread = ArticlesManager.shared.unread;
                 NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                     return !obj.isRead;
                 }];
                 
                 @try {
                     prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-                    self.unread = prefiltered;
+                    ArticlesManager.shared.unread = prefiltered;
                 }
                 @catch (NSException *exc) {}
             }
         }
         // the conditional takes care of filtered article items.
-        self.totalUnread = MyFeedsManager.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+        self.totalUnread = ArticlesManager.shared.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
         
         if (successCB) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -1013,8 +1012,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSString *existing = @"";
     
-    if (MyFeedsManager.bookmarks.count) {
-        NSArray <FeedItem *> *bookmarks = MyFeedsManager.bookmarks;
+    if (ArticlesManager.shared.bookmarks.count) {
+        NSArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks;
         existing = [[bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return obj.identifier.stringValue;
         }] componentsJoinedByString:@","];
@@ -1042,11 +1041,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         Folder *instance = [Folder instanceFromDictionary:retval];
         
-        NSArray <Folder *> *folders = [MyFeedsManager folders];
+        NSArray <Folder *> *folders = [ArticlesManager.shared folders];
         folders = [folders arrayByAddingObject:instance];
         
         @synchronized (MyFeedsManager) {
-            MyFeedsManager.folders = folders;
+            ArticlesManager.shared.folders = folders;
         }
         
         if (successCB)
@@ -1077,7 +1076,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return;
         }
       
-        NSArray <Folder *> *folders = [MyFeedsManager folders];
+        NSArray <Folder *> *folders = [ArticlesManager.shared folders];
         
         // update our caches
         [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1090,7 +1089,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         }];
         
         // this will fire the notification
-        MyFeedsManager.folders = folders;
+        ArticlesManager.shared.folders = folders;
         
         if (successCB) {
             successCB(responseObject, response, task);
@@ -1136,8 +1135,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return;
         }
         
-        strongify(self);
-        
         // check delete ops first
         if (del && del.count) {
             NSArray <Feed *> * removedFeeds = [folder.feeds.allObjects rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
@@ -1166,7 +1163,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         // now run add ops
         if (add && add.count) {
-            NSArray <Feed *> * addedFeeds = [MyFeedsManager.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            NSArray <Feed *> * addedFeeds = [ArticlesManager.shared.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return [add indexOfObject:obj.feedID] != NSNotFound;
             }];
             
@@ -1181,7 +1178,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         // this pushes the update to FeedsVC
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.feeds = [self feeds];
+            ArticlesManager.shared.feeds = [ArticlesManager.shared feeds];
         });
         
         if (successCB) {
@@ -1203,13 +1200,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             
         }];
      
-        NSArray <Folder *> *folders = [self.folders rz_filter:^BOOL(Folder *obj, NSUInteger idx, NSArray *array) {
+        NSArray <Folder *> *folders = [ArticlesManager.shared.folders rz_filter:^BOOL(Folder *obj, NSUInteger idx, NSArray *array) {
             return ![obj.folderID isEqualToNumber:folder.folderID];
         }];
         
-        self.folders = folders;
+        ArticlesManager.shared.folders = folders;
         
-        self.feeds = [self feeds];
+        ArticlesManager.shared.feeds = [ArticlesManager.shared feeds];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
@@ -1880,54 +1877,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)setFeeds:(NSArray<Feed *> *)feeds
-{
-    @synchronized (self) {
-        self->_feeds = feeds ?: @[];
-    }
-    
-    // calling this invalidates the pointers we store in folders.
-    // calling the folders setter will remap the feeds.
-    self.folders = [self folders];
-    
-    if (self->_feeds) {
-        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : _feeds, @"folders": self.folders ?: @[]}];
-    }
-}
-
-- (void)setFolders:(NSArray<Folder *> *)folders {
-    
-    @synchronized (self) {
-        self->_folders = folders ?: @[];
-        
-        [self->_folders enumerateObjectsUsingBlock:^(Folder * _Nonnull folder, NSUInteger idxx, BOOL * _Nonnull stopx) {
-            
-            if (folder.feeds == nil) {
-                folder.feeds = [NSPointerArray weakObjectsPointerArray];
-                
-                NSArray *feedIDs = folder.feedIDs.allObjects;
-                
-                [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
-                    
-                    [self->_feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
-                        
-                        if ([feed.feedID isEqualToNumber:objx]) {
-                            feed.folderID = folder.folderID;
-                            if ([folder.feeds containsObject:feed] == NO) {
-                                [folder.feeds addPointer:(__bridge void *)feed];
-                            }
-                        }
-                        
-                    }];
-                    
-                }];
-            }
-            
-        }];
-    }
-    
-}
-
 - (void)setKeychain:(UICKeyChainStore *)keychain {
     
     @synchronized (self) {
@@ -1942,22 +1891,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 #pragma mark - Getters
 
-- (NSArray <Feed *> *)feeds {
-    return self->_feeds;
-}
-
-- (NSArray <Folder *> *)folders {
-    return self->_folders;
-}
-
-- (NSArray <Feed *> *)feedsWithoutFolders {
-    
-   NSArray <Feed *> * feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-        return obj.folderID == nil;
-    }];
-    
-    return feeds;
-}
 
 - (Subscription *)subscription {
     return self->_subscription;
@@ -2141,76 +2074,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return _bookmarksCount;
 }
 
-- (NSArray <FeedItem *> *)bookmarks {
-    
-    if (_bookmarks == nil || _bookmarks.count == 0) {
-        
-        NSFileManager *manager = [NSFileManager defaultManager];
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-        NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-        BOOL isDir;
-        
-        if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
-            NSError *error = nil;
-            if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                DDLogError(@"Error creating bookmarks directory: %@", error);
-            }
-        }
-        
-        NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
-        NSArray *objects = enumerator.allObjects;
-//            DDLogDebug(@"Have %@ bookmarks", @(objects.count));
-        
-        NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
-        
-        NSError *error = nil;
-        
-        for (NSString *path in objects) { @autoreleasepool {
-            error = nil;
-            NSString *filePath = [directory stringByAppendingPathComponent:path];
-            FeedItem *item = nil;
-            
-            @try {
-                NSData *fileData = [[NSData alloc] initWithContentsOfFile:filePath];
-                
-                if (fileData != nil) {
-                    
-                    if (@available(iOS 13, *)) {
-                        item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:&error];
-                        
-                        if (error != nil) {
-                            DDLogError(@"Error loading bookmark file from: %@\n%@", filePath, error);
-                        }
-                        
-                        if (item == nil) {
-                            // it could be archived using the old API. Try that.
-                            item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
-                        }
-                        
-                    }
-                    else {
-                        item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
-                    }
-                    
-                }
-            }
-            @catch (NSException *exception) {
-                DDLogWarn(@"Bookmark load exception: %@", exception);
-            }
-            
-            if (item) {
-                [bookmarkedItems addObject:item];
-            }
-        } }
-        
-        _bookmarks = [bookmarkedItems sortedArrayUsingSelector:@selector(compare:)];
-    }
-    
-    return _bookmarks;
-    
-}
-
 //#endif
 
 #pragma mark - Notifications
@@ -2233,9 +2096,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (isBookmarked) {
         // it was added
         @try {
-            NSArray *bookmarks = [MyFeedsManager.bookmarks arrayByAddingObject:item];
+            NSArray *bookmarks = [ArticlesManager.shared.bookmarks arrayByAddingObject:item];
             @synchronized (self) {
-                self.bookmarks = bookmarks;
+                ArticlesManager.shared.bookmarks = bookmarks;
             }
         }
         @catch (NSException *exc) {}
@@ -2244,19 +2107,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         NSInteger itemID = item.identifier.integerValue;
         
         @try {
-            NSArray <FeedItem *> *bookmarks = MyFeedsManager.bookmarks;
+            NSArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks;
             bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
                 return obj.identifier.integerValue != itemID;
             }];
             
             @synchronized (self) {
-                self.bookmarks = bookmarks;
+                ArticlesManager.shared.bookmarks = bookmarks;
             }
         } @catch (NSException *excp) {}
     }
     
     @synchronized (self) {
-        self.bookmarksCount = @(self.bookmarks.count);
+        self.bookmarksCount = @(ArticlesManager.shared.bookmarks.count);
     }
     
 }
@@ -2410,10 +2273,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (void)resetAccount {
-    self.folders = nil;
-    self.feeds = nil;
-    self.bookmarks = nil;
-    self.unread = nil;
+    ArticlesManager.shared.folders = nil;
+    ArticlesManager.shared.feeds = nil;
+    ArticlesManager.shared.bookmarks = nil;
+    ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
     
     [self removeAllLocalBookmarks];
@@ -2649,7 +2512,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     if (MyFeedsManager.userID == nil)
         return;
     
-    NSArray <NSString *> *existingArr = [MyFeedsManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <NSString *> *existingArr = [ArticlesManager.shared.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
     }];
     
@@ -2683,7 +2546,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if ((bookmarked && bookmarked.count) || (deleted && deleted.count)) {
             
-            NSMutableArray <FeedItem *> *bookmarks = MyFeedsManager.bookmarks.mutableCopy;
+            NSMutableArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks.mutableCopy;
          
             if (deleted && deleted.count) {
                 
@@ -2748,7 +2611,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                         
                         if (count == 0) {
                             @synchronized (MyFeedsManager) {
-                                MyFeedsManager.bookmarks = bookmarks;
+                                ArticlesManager.shared.bookmarks = bookmarks;
                             }
                         }
                         
@@ -2767,7 +2630,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             }
             else {
                 @synchronized (self) {
-                    self.bookmarks = bookmarks;
+                    ArticlesManager.shared.bookmarks = bookmarks;
                 }
             }
             
@@ -2806,13 +2669,13 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         [coder encodeInteger:self.userID.integerValue forKey:kUserID];
         [coder encodeObject:self.userIDManager.UUIDString forKey:kAccountID];
         
-        [coder encodeObject:self.folders forKey:kFoldersKey];
-        [coder encodeObject:self.feeds forKey:kFeedsKey];
+        [coder encodeObject:ArticlesManager.shared.folders forKey:kFoldersKey];
+        [coder encodeObject:ArticlesManager.shared.feeds forKey:kFeedsKey];
 //        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
-        [coder encodeObject:self.bookmarks forKey:kBookmarksKey];
+        [coder encodeObject:ArticlesManager.shared.bookmarks forKey:kBookmarksKey];
         [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
-        [coder encodeObject:self.unread forKey:kUnreadKey];
+        [coder encodeObject:ArticlesManager.shared.unread forKey:kUnreadKey];
         
         if (self.unreadLastUpdate) {
             [coder encodeDouble:[self.unreadLastUpdate timeIntervalSince1970] forKey:kUnreadLastUpdateKey];
@@ -2832,13 +2695,13 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         
         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
         
-        self->_folders = [coder decodeObjectForKey:kFoldersKey];
-        self.feeds = [coder decodeObjectForKey:kFeedsKey];
+        ArticlesManager.shared.folders = [coder decodeObjectForKey:kFoldersKey];
+        ArticlesManager.shared.feeds = [coder decodeObjectForKey:kFeedsKey];
 //        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
-        self.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
+        ArticlesManager.shared.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
-        self.unread = [coder decodeObjectForKey:kUnreadKey];
+        ArticlesManager.shared.unread = [coder decodeObjectForKey:kUnreadKey];
         
         double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
         if (unreadUpdate) {

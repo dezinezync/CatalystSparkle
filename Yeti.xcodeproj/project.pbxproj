@@ -344,6 +344,7 @@
 		F0FDB22D22112CD200EE67F8 /* flutter-dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */; };
 		F0FDB22E22112CD200EE67F8 /* flutter-dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */; };
 		F0FE188622B7EB7D007DD285 /* AuthorBioVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC07920832DB5009029E1 /* AuthorBioVC.m */; };
+		F0FEC4A323085E840082C79D /* ArticlesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FEC4A223085E840082C79D /* ArticlesManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1128,6 +1129,8 @@
 		F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark@3x.png"; sourceTree = "<group>"; };
 		F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark@2x.png"; sourceTree = "<group>"; };
 		F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flutter-dark~ipad@2x.png"; sourceTree = "<group>"; };
+		F0FEC4A123085E840082C79D /* ArticlesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlesManager.h; sourceTree = "<group>"; };
+		F0FEC4A223085E840082C79D /* ArticlesManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlesManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1560,7 +1563,7 @@
 				F070C31F1FBAC0C800912CCF /* AppDelegate */,
 				F070C3101FBABC8500912CCF /* Categories */,
 				F070C30E1FBABC7500912CCF /* Controllers */,
-				F070C3361FBAC3C100912CCF /* FeedsManager */,
+				F070C3361FBAC3C100912CCF /* Managers */,
 				F0EB27E521C20EBC007E3547 /* DBManager */,
 				F070C3111FBABC8A00912CCF /* Models */,
 				F070C30F1FBABC7A00912CCF /* Utilities */,
@@ -1936,7 +1939,7 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		F070C3361FBAC3C100912CCF /* FeedsManager */ = {
+		F070C3361FBAC3C100912CCF /* Managers */ = {
 			isa = PBXGroup;
 			children = (
 				F0D1C5DC20DA29AD0069BDA5 /* FeedsManagerErrors.h */,
@@ -1947,8 +1950,10 @@
 				F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */,
 				F05D21841FF2222F003DE813 /* YTUserID.h */,
 				F05D21851FF2222F003DE813 /* YTUserID.m */,
+				F0FEC4A123085E840082C79D /* ArticlesManager.h */,
+				F0FEC4A223085E840082C79D /* ArticlesManager.m */,
 			);
-			path = FeedsManager;
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		F07CD37D22B266E9005BCDE7 /* OpenDyslexic */ = {
@@ -2855,6 +2860,7 @@
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,
 				F070C3441FBACD2C00912CCF /* Content.m in Sources */,
 				F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */,
+				F0FEC4A323085E840082C79D /* ArticlesManager.m in Sources */,
 				F00E836B22C4826D0027C45E /* RMStoreTransaction.m in Sources */,
 				F070C3421FBACD2C00912CCF /* Range.m in Sources */,
 				F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */,

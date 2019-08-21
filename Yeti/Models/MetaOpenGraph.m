@@ -1,6 +1,11 @@
 #import "MetaOpenGraph.h"
 
 @implementation MetaOpenGraph
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];

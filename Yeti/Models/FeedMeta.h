@@ -1,6 +1,6 @@
 #import "MetaOpenGraph.h"
 
-@interface FeedMeta : DZObject <NSCoding> {
+@interface FeedMeta : DZObject <NSSecureCoding> {
 
 }
 

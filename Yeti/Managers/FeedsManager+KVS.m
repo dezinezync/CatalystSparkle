@@ -67,7 +67,7 @@
             
             strongify(self);
             
-            NSArray <FeedItem *> *unread = self.unread;
+            NSArray <FeedItem *> *unread = ArticlesManager.shared.unread;
             
             if (!read) {
                 unread = [unread arrayByAddingObjectsFromArray:items];
@@ -91,7 +91,7 @@
                 }
                 
                 self.totalUnread = MAX(0, newUnread);
-                self.unread = unread;
+                ArticlesManager.shared.unread = unread;
             });
             
             dispatch_async(dispatch_get_main_queue(), ^{

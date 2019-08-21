@@ -2,7 +2,7 @@
 #import "Enclosure.h"
 #import <DZKit/DZDatasourceModel.h>
 
-@interface FeedItem : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
+@interface FeedItem : DZObject <NSSecureCoding, NSCopying, DZDatasourceModel> {
 
 }
 

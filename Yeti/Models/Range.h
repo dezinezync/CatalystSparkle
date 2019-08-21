@@ -1,6 +1,6 @@
 #import <DZKit/DZObject.h>
 
-@interface Range : DZObject <NSCoding> {
+@interface Range : DZObject <NSSecureCoding> {
 
 }
 

@@ -421,7 +421,7 @@ NSString *const kImportCell = @"importCell";
         if (folderName != nil && [folderName isBlank] == NO) {
 
             // find the folder
-            Folder *folder = [MyFeedsManager.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
+            Folder *folder = [ArticlesManager.shared.folders rz_reduce:^id(Folder *prev, Folder *current, NSUInteger idx, NSArray *array) {
                 if ([current.title isEqualToString:folderName]) {
                     return current;
                 }

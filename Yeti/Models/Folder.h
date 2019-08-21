@@ -5,7 +5,7 @@
 
 @class Feed;
 
-@interface Folder : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
+@interface Folder : DZObject <NSSecureCoding, NSCopying, DZDatasourceModel> {
 
 }
 

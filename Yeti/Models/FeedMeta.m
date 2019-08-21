@@ -1,8 +1,12 @@
 #import "FeedMeta.h"
 
 @implementation FeedMeta
-- (void)encodeWithCoder:(NSCoder *)encoder
-{
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.icons forKey:@"icons"];
 //    [encoder encodeObject:self.descriptionText forKey:@"descriptionText"];

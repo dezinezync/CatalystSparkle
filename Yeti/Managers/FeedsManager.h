@@ -20,6 +20,7 @@
 #import "ChangeSet.h"
 
 #import "YetiConstants.h"
+#import "ArticlesManager.h"
 
 #import <UICKeyChainStore/UICKeyChainStore.h>
 
@@ -29,10 +30,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @interface FeedsManager : NSObject {
     NSString *_pushToken;
-    
-    NSArray<Feed *> * _feeds;
-    
-    NSArray <Folder *> * _folders;
     
     Subscription * _subscription;
     
@@ -55,21 +52,13 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (atomic, strong) UICKeyChainStore * _Nonnull keychain;
 
-@property (nonatomic, copy) NSArray <FeedItem *> * _Nullable bookmarks;
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
 
 #pragma mark - Feeds
 
-@property (atomic, strong) NSArray <Feed *> * _Nullable feeds;
-
 @property (atomic, strong) NSArray <Feed *> * _Nullable temporaryFeeds;
 
-@property (nonatomic, readonly) NSArray <Feed *> * _Nullable feedsWithoutFolders;
-
 @property (atomic, assign) NSInteger totalUnread;
-@property (atomic, strong) NSArray <FeedItem *> * _Nullable unread;
-
-@property (atomic, strong) NSArray <Folder *> * _Nullable folders;
 
 #pragma mark - Networking
 

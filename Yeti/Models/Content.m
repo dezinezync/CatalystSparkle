@@ -6,8 +6,11 @@
 
 @implementation Content
 
-- (NSString *)compareID
-{
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (NSString *)compareID {
     return [@(self.hash) stringValue];
 }
 
@@ -32,19 +35,19 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.content = [decoder decodeObjectForKey:@"content"];
-        self.ranges = [decoder decodeObjectForKey:@"ranges"];
-        self.type = [decoder decodeObjectForKey:@"type"];
-        self.identifier = [decoder decodeObjectForKey:@"identifier"];
-        self.alt = [decoder decodeObjectForKey:@"alt"];
-        self.url = [decoder decodeObjectForKey:@"url"];
-        self.items = [decoder decodeObjectForKey:@"items"];
-        self.level = [decoder decodeObjectForKey:@"level"];
-        self.attributes = [decoder decodeObjectForKey:@"attributes"];
-        self.videoID = [decoder decodeObjectForKey:@"videoID"];
+        self.content = [decoder decodeObjectOfClass:[NSString class] forKey:@"content"];
+        self.ranges = [decoder decodeObjectOfClass:[NSArray class] forKey:@"ranges"];
+        self.type = [decoder decodeObjectOfClass:[NSString class] forKey:@"type"];
+        self.identifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"identifier"];
+        self.alt = [decoder decodeObjectOfClass:[NSString class] forKey:@"alt"];
+        self.url = [decoder decodeObjectOfClass:[NSString class] forKey:@"url"];
+        self.items = [decoder decodeObjectOfClass:[NSArray class] forKey:@"items"];
+        self.level = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"level"];
+        self.attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+        self.videoID = [decoder decodeObjectOfClass:[NSString class] forKey:@"videoID"];
         self.size = [decoder decodeCGSizeForKey:@"size"];
-        self.srcset = [decoder decodeObjectForKey:@"srcset"];
-        self.images = [decoder decodeObjectForKey:@"images"];
+        self.srcset = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"srcset"];
+        self.images = [decoder decodeObjectOfClass:[NSArray class] forKey:@"images"];
     }
     return self;
 }

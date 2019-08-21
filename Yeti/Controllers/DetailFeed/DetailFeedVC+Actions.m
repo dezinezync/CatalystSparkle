@@ -376,10 +376,10 @@
     
     [MyFeedsManager addFeedByID:self.feed.feedID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+        NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
         feeds = [feeds arrayByAddingObject:responseObject];
         
-        MyFeedsManager.feeds = feeds;
+        ArticlesManager.shared.feeds = feeds;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);

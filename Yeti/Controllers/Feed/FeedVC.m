@@ -42,8 +42,7 @@
 
 @implementation FeedVC
 
-- (instancetype)initWithFeed:(Feed *)feed
-{
+- (instancetype)initWithFeed:(Feed *)feed {
     if (self = [super initWithStyle:UITableViewStylePlain]) {
         self.feed = feed;
         _canLoadNext = YES;

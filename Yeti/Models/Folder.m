@@ -3,6 +3,10 @@
 
 @implementation Folder
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (NSString *)compareID {
     return [self.folderID stringValue];
 }
@@ -23,15 +27,16 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.created = [decoder decodeObjectForKey:@"created"];
-        self.feeds = [decoder decodeObjectForKey:@"feeds"];
-        self.folderID = [decoder decodeObjectForKey:@"folderID"];
-        self.modified = [decoder decodeObjectForKey:@"modified"];
-        self.status = [decoder decodeObjectForKey:@"status"];
-        self.title = [decoder decodeObjectForKey:@"title"];
-        self.userID = [decoder decodeObjectForKey:@"userID"];
+        self.created = [decoder decodeObjectOfClass:NSString.class forKey:@"created"];
+        self.feeds = [decoder decodeObjectOfClass:NSPointerArray.class forKey:@"feeds"];
+        self.folderID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"folderID"];
+        self.modified = [decoder decodeObjectOfClass:NSString.class forKey:@"modified"];
+        self.status = [decoder decodeObjectOfClass:NSNumber.class forKey:@"status"];
+        self.title = [decoder decodeObjectOfClass:NSString.class forKey:@"title"];
+        self.userID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"userID"];
         
-        NSArray <NSNumber *> *feedIDs = [decoder decodeObjectForKey:@"feedIDs"];
+        NSArray <NSNumber *> *feedIDs = [decoder decodeObjectOfClass:NSArray.class forKey:@"feedIDs"];
+        
         if (feedIDs != nil) {
             self.feedIDs = [NSSet setWithArray:feedIDs];
         }

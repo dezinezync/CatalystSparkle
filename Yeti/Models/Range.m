@@ -9,6 +9,10 @@
 
 @implementation Range
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (NSString *)compareID
 {
     return [@(self.hash) stringValue];
@@ -27,11 +31,11 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.element = [decoder decodeObjectForKey:@"element"];
-        self.range = NSRangeFromString([decoder decodeObjectForKey:@"range"]);
-        self.type = [decoder decodeObjectForKey:@"type"];
-        self.url = [decoder decodeObjectForKey:@"url"];
-        self.level = [decoder decodeObjectForKey:@"level"];
+        self.element = [decoder decodeObjectOfClass:[NSString class] forKey:@"element"];
+        self.range = NSRangeFromString([decoder decodeObjectOfClass:[NSString class] forKey:@"range"]);
+        self.type = [decoder decodeObjectOfClass:[NSString class] forKey:@"type"];
+        self.url = [decoder decodeObjectOfClass:[NSString class] forKey:@"url"];
+        self.level = [decoder decodeObjectOfClass:[NSString class] forKey:@"level"];
     }
     return self;
 }

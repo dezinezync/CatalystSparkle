@@ -13,13 +13,15 @@
 
 #pragma mark -
 
-- (NSString *)compareID
-{
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (NSString *)compareID {
     return [self.feedID stringValue];
 }
 
-- (void)encodeWithCoder:(NSCoder *)encoder
-{
+- (void)encodeWithCoder:(NSCoder *)encoder {
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.authors forKey:@"authors"];
     [encoder encodeObject:self.etag forKey:@"etag"];
@@ -41,21 +43,21 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.authors = [decoder decodeObjectForKey:@"authors"];
-        self.etag = [decoder decodeObjectForKey:@"etag"];
-        self.favicon = [decoder decodeObjectForKey:@"favicon"];
-        self.feedID = [decoder decodeObjectForKey:@"feedID"];
-        self.folderID = [decoder decodeObjectForKey:@"folderID"];
-        self.articles = [decoder decodeObjectForKey:@"articles"];
-        self.summary = [decoder decodeObjectForKey:@"summary"];
-        self.title = [decoder decodeObjectForKey:@"title"];
-        self.url = [decoder decodeObjectForKey:@"url"];
-        self.extra = [decoder decodeObjectForKey:@"extra"];
-        self.unread = [decoder decodeObjectForKey:@"unread"];
-        self.hub = [decoder decodeObjectForKey:@"hub"];
+        self.authors = [decoder decodeObjectOfClass:NSArray.class forKey:@"authors"];
+        self.etag = [decoder decodeObjectOfClass:NSString.class forKey:@"etag"];
+        self.favicon = [decoder decodeObjectOfClass:NSString.class forKey:@"favicon"];
+        self.feedID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"feedID"];
+        self.folderID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"folderID"];
+        self.articles = [decoder decodeObjectOfClass:NSArray.class forKey:@"articles"];
+        self.summary = [decoder decodeObjectOfClass:NSString.class forKey:@"summary"];
+        self.title = [decoder decodeObjectOfClass:NSString.class forKey:@"title"];
+        self.url = [decoder decodeObjectOfClass:NSString.class forKey:@"url"];
+        self.extra = [decoder decodeObjectOfClass:FeedMeta.class forKey:@"extra"];
+        self.unread = [decoder decodeObjectOfClass:NSNumber.class forKey:@"unread"];
+        self.hub = [decoder decodeObjectOfClass:NSString.class forKey:@"hub"];
         self.hubSubscribed = [decoder decodeBoolForKey:@"hubSubscribed"];
         self.subscribed = [decoder decodeBoolForKey:@"subscribed"];
-        self.localName = [decoder decodeObjectForKey:propSel(localName)];
+        self.localName = [decoder decodeObjectOfClass:NSString.class forKey:propSel(localName)];
     }
     return self;
 }
