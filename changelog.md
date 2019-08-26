@@ -9,6 +9,8 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - Elytra now supports Secure Coding for your bookmarks. This is a core change for the app which ensures reliability of the data. No UI affected. 
 
+- Fixes keyboards not changing when changing the Scope when adding a new feed. This fix only applies to iOS 13. iOS 12 functions as expected. 
+
 ## Changes in Build 253
 - Fixes the chances of the same image rendering twice in certain posts. 
 

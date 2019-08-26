@@ -465,6 +465,8 @@
     
     self.searchBar.placeholder = @[@"Website or Feed URL", @"Website Name", @"Keywords"][selectedScope];
     
+    UIKeyboardType existingKeyboardType = self.searchBar.keyboardType;
+    
     if (selectedScope == 0) {
         self.searchBar.keyboardType = UIKeyboardTypeURL;
         self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -487,6 +489,11 @@
     
     if (self.searchBar.text == nil || [self.searchBar.text isBlank]) {
         [self setErrorLabelForDefaultState];
+    }
+    
+    if (self.searchBar.keyboardType != existingKeyboardType) {
+        [self.searchBar resignFirstResponder];
+        [self.searchBar becomeFirstResponder];
     }
     
 }
