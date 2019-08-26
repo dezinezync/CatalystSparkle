@@ -556,6 +556,11 @@
                 
             }
             
+            UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self renameFeed:feed];
+            }];
+            
             UIAction * move = [UIAction actionWithTitle:@"Move" image:[UIImage systemImageNamed:@"text.insert"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self feed_didTapMove:feed indexPath:indexPath];
@@ -570,7 +575,7 @@
             
             delete.attributes = UIMenuElementAttributesDestructive;
             
-            NSArray <UIAction *> *actions = @[(UIAction *)share, move, delete];
+            NSArray <UIAction *> *actions = @[(UIAction *)share, rename, move, delete];
             
             UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
             

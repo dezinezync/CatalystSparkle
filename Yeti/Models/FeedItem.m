@@ -57,10 +57,10 @@ static NSDateFormatter *_formatter = nil;
         self.identifier = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"identifier"];
         self.articleTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"articleTitle"];
         self.articleURL = [decoder decodeObjectOfClass:[NSString class] forKey:@"articleURL"];
-        self.author = [decoder decodeObjectOfClass:[NSString class] forKey:@"author"];
+        self.author = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSString.class, nil] forKey:@"author"];
         self.blogTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"blogTitle"];
         self.bookmarked = [[decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] boolValue];
-        self.content = [decoder decodeObjectOfClass:[NSArray class] forKey:@"content"];
+        self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
         self.coverImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"coverImage"];
         self.guid = [decoder decodeObjectOfClass:[NSString class] forKey:@"guid"];
         self.modified = [decoder decodeObjectOfClass:[NSString class] forKey:@"modified"];
@@ -73,7 +73,7 @@ static NSDateFormatter *_formatter = nil;
         self.itunesImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"itunesImage"];
         
         self.keywords = [decoder decodeObjectOfClass:[NSArray class] forKey:@"keywords"];
-        self.enclosures = [decoder decodeObjectOfClass:[NSArray class] forKey:@"enclosures"];
+        self.enclosures = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Enclosure.class, nil] forKey:@"enclosures"];
         
         self.feedID = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"feedID"];
         self.summary = [decoder decodeObjectOfClass:[NSString class] forKey:@"summary"];

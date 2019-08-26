@@ -5,7 +5,9 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 ## Changes in Build 254
 - Tapping the Mercury button now shows an activity indicator when network I/O is in progress. 
 
-- 
+- Fixes missing Rename Feed option from the context menus. 
+
+- Elytra now supports Secure Coding for your bookmarks. This is a core change for the app which ensures reliability of the data. No UI affected. 
 
 ## Changes in Build 253
 - Fixes the chances of the same image rendering twice in certain posts. 

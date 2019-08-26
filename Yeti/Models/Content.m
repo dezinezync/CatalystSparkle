@@ -36,18 +36,18 @@
 {
     if ((self = [super initWithCoder:decoder])) {
         self.content = [decoder decodeObjectOfClass:[NSString class] forKey:@"content"];
-        self.ranges = [decoder decodeObjectOfClass:[NSArray class] forKey:@"ranges"];
+        self.ranges = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Range.class, nil] forKey:@"ranges"];
         self.type = [decoder decodeObjectOfClass:[NSString class] forKey:@"type"];
         self.identifier = [decoder decodeObjectOfClass:[NSString class] forKey:@"identifier"];
         self.alt = [decoder decodeObjectOfClass:[NSString class] forKey:@"alt"];
         self.url = [decoder decodeObjectOfClass:[NSString class] forKey:@"url"];
-        self.items = [decoder decodeObjectOfClass:[NSArray class] forKey:@"items"];
+        self.items = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"items"];
         self.level = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"level"];
-        self.attributes = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"attributes"];
+        self.attributes = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, NSDictionary.class, nil] forKey:@"attributes"];
         self.videoID = [decoder decodeObjectOfClass:[NSString class] forKey:@"videoID"];
         self.size = [decoder decodeCGSizeForKey:@"size"];
         self.srcset = [decoder decodeObjectOfClass:[NSDictionary class] forKey:@"srcset"];
-        self.images = [decoder decodeObjectOfClass:[NSArray class] forKey:@"images"];
+        self.images = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"images"];
     }
     return self;
 }
