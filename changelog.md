@@ -2,6 +2,14 @@
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
+## Changes in Build 255
+
+- Fixed a crashing that could cause Tapping on "Rename" for a feed to crash the app. 
+
+- Improved how Feed Renaming is handled by the app to ensure updates are immediately processed on screen. 
+
+- Fixed the appearance of search results when tapping on a search result. 
+
 ## Changes in Build 254
 - Tapping the Mercury button now shows an activity indicator when network I/O is in progress. 
 

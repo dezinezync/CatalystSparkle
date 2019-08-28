@@ -22,6 +22,7 @@
 #import "YTNavigationController.h"
 #import "RecommendationsVC.h"
 #import "YetiThemeKit.h"
+#import "FeedsCell.h"
 
 @implementation FeedsVC (Actions)
 
@@ -424,7 +425,16 @@
         
         [MyDBManager renameFeed:self.alertFeed customTitle:name completion:^(BOOL success) {
             
-            [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            if (success) {
+                FeedsCell *cell = [self.tableView cellForRowAtIndexPath:self.alertIndexPath];
+                
+                if (cell) {
+                    cell.titleLabel.text = name;
+                }
+            }
+            else {
+                [AlertManager showGenericAlert];
+            }
             
             [self clearAlertProperties];
             
@@ -557,6 +567,8 @@
             }
             
             UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                self.alertIndexPath = indexPath;
                 
                 [self renameFeed:feed];
             }];

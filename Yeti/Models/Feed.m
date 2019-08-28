@@ -92,10 +92,6 @@
         return NO;
     }
     
-    if (object.hash == self.hash) {
-        return YES;
-    }
-    
     return ([[object feedID] isEqualToNumber:self.feedID]
             && [[object title] isEqualToString:self.title]
             && [[object folderID] isEqualToNumber:self.folderID]);
