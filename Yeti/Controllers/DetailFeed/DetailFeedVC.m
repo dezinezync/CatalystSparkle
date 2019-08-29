@@ -1377,11 +1377,28 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     weakify(self);
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        strongify(self);
-        
-        [self scrollViewDidEndDecelerating:self.collectionView];
-    });
+    BOOL loadNextPage = NO;
+    
+    /**
+     * Say there are 20 objects in our DataStore
+     * Our index is at 14 (0-based)
+     * We're expecting the equation below to result 6 (20-14)
+     * Which actually would state that 5 articles are remaining.
+     */
+    if (@available(iOS 13, *)) {
+        loadNextPage = (self.DDS.snapshot.numberOfItems - index) < 6;
+    }
+    else {
+        loadNextPage = (self.DS.data.count - index) < 6;
+    }
+    
+    if (loadNextPage) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
+            
+            [self scrollViewDidEndDecelerating:self.collectionView];
+        });
+    }
 }
 
 #pragma mark - State Restoration

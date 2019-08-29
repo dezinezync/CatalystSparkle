@@ -5,6 +5,8 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 ## Changes in Build 256
 - Fixed code formatting issue causing HTML Entities to be escaped and decoded incorrectly. 
 
+- Fixed the load next and load previous bug. 
+
 ## Changes in Build 255
 
 - Fixed a crashing that could cause Tapping on "Rename" for a feed to crash the app. 

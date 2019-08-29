@@ -338,7 +338,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.helperView.previousArticleButton setEnabled:previous];
     
     [self.helperView.nextArticleButton setEnabled:next];
-    
+    // UIActivityContentViewController
     self.helperView.startOfArticle.enabled = NO;
     self.helperView.endOfArticle.enabled = YES;
 }
