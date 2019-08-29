@@ -20,8 +20,7 @@
 
 @implementation Code
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
+- (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];

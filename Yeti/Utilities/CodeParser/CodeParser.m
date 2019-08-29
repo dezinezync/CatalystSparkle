@@ -78,7 +78,7 @@ static NSString *const hljs = @"window.hljs";
         return [self parse:code];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-escape-sequence"
-    NSString *command = formattedString(@"%@.fixMarkup(%@.highlight(\"%@\",\`%@\`).value);", hljs, hljs, language, code);
+    NSString *command = formattedString(@"%@.fixMarkup(%@.highlightAuto(\"%@\").value);", hljs, hljs, code);
 #pragma clang diagnostic pop
     JSContext *context = [[JSContext alloc] init];
     [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
