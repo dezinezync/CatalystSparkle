@@ -138,7 +138,14 @@
         
         ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
         
-        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        FeedItem *item = nil;
+        
+        if (@available(iOS 13, *)) {
+            item = [[self.DDS.snapshot itemIdentifiers] objectAtIndex:indexPath.item];
+        }
+        else {
+            item = [self.DS objectAtIndexPath:indexPath];
+        }
         
         if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
             cell.markerView.image = nil;
@@ -153,7 +160,17 @@
     BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
-        NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        
+        NSArray <FeedItem *> *data = nil;
+        
+        if (@available(iOS 13, *)) {
+            data = self.DDS.snapshot.itemIdentifiers;
+        }
+        else {
+            data = (NSArray <FeedItem *> *)self.DS.data;
+        }
+        
+        NSArray <FeedItem *> *unread = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return !obj.isRead;
         }];
         

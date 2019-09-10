@@ -6,7 +6,9 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 
 - Fixed huge layout on iPads for the Recommendations Interface.
 
-- Added new "Similar" section to the Recommendations. These are recommendations based on RSS Feeds you follow. If you and another person follow the same RSS Feed, Elytra will now show some feeds from that other person for you as a recommendation. These will be updated daily. 
+- Added new "Similar" section to the Recommendations. These are recommendations based on RSS Feeds you follow. If you and another person follow the same RSS Feed, Elytra will now show some feeds from that other person for you as a recommendation. These will be updated daily.
+
+- Marking Read immediately updates the UI once again. Marking read in the Unread feed should now also reload a fresh batch if available. 
 
 ## Changes in Build 256
 - Fixed code formatting issue causing HTML Entities to be escaped and decoded incorrectly. 
