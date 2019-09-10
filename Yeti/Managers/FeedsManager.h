@@ -90,7 +90,11 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)markFeedRead:(Feed * _Nonnull)feed success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
-- (void)getRecommendationsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB;
+/// Get Recommended RSS feeds
+/// @param count The count to limit each set to. Default: 9
+/// @param successCB The success callback
+/// @param errorCB The error callback
+- (void)getRecommendations:(NSInteger)count success:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

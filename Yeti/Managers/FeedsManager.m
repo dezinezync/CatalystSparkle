@@ -763,9 +763,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)getRecommendationsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB {
+- (void)getRecommendations:(NSInteger)count success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session GET:@"/recommendations" parameters:@{} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    count = count ?: 9;
+    
+    [self.session GET:@"/recommendations" parameters:@{@"count": @(count)} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
             return;
@@ -784,20 +786,34 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return [Feed instanceFromDictionary:obj];
         }];
         
+        NSArray <Feed *> *similar = [dict[@"similar"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
         dict[@"trending"] = trending;
         dict[@"highestSubs"] = subs;
         dict[@"mostRead"] = read;
+        dict[@"similar"] = similar;
         
         if (successCB) {
-            successCB(dict.copy, response, task);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(dict, response, task);
+            });
+            
             dict = nil;
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         error = [self errorFromResponse:error.userInfo];
         
-        if (errorCB)
-            errorCB(error, response, task);
+        if (errorCB) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                errorCB(error, response, task);
+            });
+            
+        }
         else {
             DDLogError(@"Unhandled network error: %@", error);
         }
@@ -1120,8 +1136,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         [dict setObject:toDel forKey:@"del"];
     }
-    
-    weakify(self);
     
     [self updateFolder:folder properties:dict.copy success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -1596,7 +1610,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
     weakify(self);
 
-    
     [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{

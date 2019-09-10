@@ -305,7 +305,9 @@
         if (self.favicon && [self.favicon containsString:@".twimg"]) {
             url = self.favicon;
         }
-        
+        else if ([self.favicon isBlank] == NO) {
+            url = self.favicon;
+        }
         else if (self.extra) {
             
             if (self.extra.icons && [self.extra.icons count]) {

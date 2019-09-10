@@ -84,28 +84,23 @@ static NSString * const reuseIdentifier = @"Cell";
     if (self.state == ReccoStateLoaded)
         return;
     
-    weakify(self);
-    [MyFeedsManager getRecommendationsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
+    NSInteger count = 9;
+    
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        count = 20;
+    }
+    
+    [MyFeedsManager getRecommendations:count success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         self.recommendations = responseObject;
-        weakify(self);
-        asyncMain(^{
-            strongify(self);
-            self.state = ReccoStateLoaded;
-        });
+        
+        self.state = ReccoStateLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        strongify(self);
-        
         self.loadError = error;
-        weakify(self);
-        asyncMain(^{
-            strongify(self);
-            self.state = ReccoStateError;
-        });
+        
+        self.state = ReccoStateError;
         
     }];
 }
@@ -200,8 +195,14 @@ static NSString * const reuseIdentifier = @"Cell";
 - (void)_updateMetrics {
     [self.collectionView layoutIfNeeded];
     
+    CGFloat columns = 3.f;
+    
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        columns = 4.f;
+    }
+    
     CGFloat width = MIN(self.collectionView.bounds.size.width, self.collectionView.contentSize.width);
-    CGFloat columnWidth = floor((width - 2.f) / 3.f);
+    CGFloat columnWidth = floor((width - (columns - 1.f)) / columns);
     
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
@@ -213,7 +214,7 @@ static NSString * const reuseIdentifier = @"Cell";
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     if (self.state == ReccoStateLoaded) {
-        return 3;
+        return 4;
     }
     
     return 0;
@@ -224,22 +225,30 @@ static NSString * const reuseIdentifier = @"Cell";
         return 0;
     }
     
-    NSInteger const maxCells = 9;
+    NSInteger MAX_CELLS = 9;
+    
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        MAX_CELLS = 8;
+    }
     
     switch (section) {
         case 1:
-            return MIN(maxCells, [self.recommendations[@"mostRead"] count]);
+            return MIN(MAX_CELLS, [self.recommendations[@"mostRead"] count]);
             break;
         case 2:
-            return MIN(maxCells, [self.recommendations[@"highestSubs"] count]);
+            return MIN(MAX_CELLS, [self.recommendations[@"highestSubs"] count]);
+            break;
+        case 0:
+            return MIN(20, [self.recommendations[@"similar"] count]);
             break;
         default:
-            return MIN(maxCells, [self.recommendations[@"trending"] count]);
+            return MIN(MAX_CELLS, [self.recommendations[@"trending"] count]);
             break;
     }
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    
     FeedsGridCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kFeedsGridCell forIndexPath:indexPath];
     
     // Configure the cell
@@ -251,6 +260,9 @@ static NSString * const reuseIdentifier = @"Cell";
             break;
         case 2:
             feed = [self.recommendations[@"highestSubs"] safeObjectAtIndex:indexPath.item];
+            break;
+        case 0:
+            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
             break;
         default:
             feed = [self.recommendations[@"trending"] safeObjectAtIndex:indexPath.item];
@@ -274,6 +286,9 @@ static NSString * const reuseIdentifier = @"Cell";
             break;
         case 2:
             text = @"Most Subscribers";
+            break;
+        case 0:
+            text = @"Similar";
             break;
         default:
             text = @"Trending";
@@ -302,6 +317,9 @@ static NSString * const reuseIdentifier = @"Cell";
         case 2:
             feed = [self.recommendations[@"highestSubs"] safeObjectAtIndex:indexPath.item];
             break;
+        case 0:
+            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
+            break;
         default:
             feed = [self.recommendations[@"trending"] safeObjectAtIndex:indexPath.item];
             break;
@@ -309,7 +327,6 @@ static NSString * const reuseIdentifier = @"Cell";
     
     BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
                     && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
-    
     
     if (feed) {
         UIViewController *vcc;
