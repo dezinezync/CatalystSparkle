@@ -2,6 +2,11 @@
 
 You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
 
+## Changes in Build 258
+- Fixes the layout for Image Loading Options Interface
+
+- Fixes code being displayed using the light style when dark mode is enabled.
+
 ## Changes in Build 257
 
 - Fixed huge layout on iPads for the Recommendations Interface.

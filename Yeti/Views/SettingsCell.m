@@ -30,6 +30,14 @@ NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
     return self;
 }
 
+- (CGSize)intrinsicContentSize {
+    
+    CGSize size = [super intrinsicContentSize];
+    
+    return size;
+    
+}
+
 @end
 
 @implementation AccountsCell

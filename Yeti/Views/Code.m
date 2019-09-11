@@ -92,8 +92,7 @@
     return size;
 }
 
-- (void)setAttributedText:(NSAttributedString *)attrs
-{
+- (void)setAttributedText:(NSAttributedString *)attrs {
     self.label.attributedText = attrs;
     [self.label sizeToFit];
     
