@@ -186,6 +186,20 @@
     return nav2;
 }
 
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    
+    [super traitCollectionDidChange:previousTraitCollection];
+    
+    if (@available(iOS 13, *)) {
+        
+        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+            [MyAppDelegate loadCodeTheme];
+        }
+        
+    }
+    
+}
+
 #pragma mark - Gestures
 
 - (void)didPanWithTwoFingers:(UISwipeGestureRecognizer *)sender {

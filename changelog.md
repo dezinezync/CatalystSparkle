@@ -5,7 +5,7 @@ You can skip these builds if you're not running iOS 13. You will not notice any 
 ## Changes in Build 258
 - Fixes the layout for Image Loading Options Interface
 
-- Fixes code being displayed using the light style when dark mode is enabled.
+- Fixes code snippests being displayed using the light style when dark mode is enabled.
 
 ## Changes in Build 257
 

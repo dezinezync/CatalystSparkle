@@ -344,7 +344,8 @@ AppDelegate *MyAppDelegate = nil;
     NSString *themeName = SharedPrefs.theme;
     
     YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-    [CodeParser.sharedCodeParser loadTheme:themeName];
+    
+    [self loadCodeTheme];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     
@@ -353,6 +354,26 @@ AppDelegate *MyAppDelegate = nil;
 }
 
 #pragma mark - Theming
+
+- (void)loadCodeTheme {
+    
+    NSString *themeName = SharedPrefs.theme;
+    
+    if (@available(iOS 13, *)) {
+        
+        if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            [CodeParser.sharedCodeParser loadTheme:@"dark"];
+        }
+        else {
+            [CodeParser.sharedCodeParser loadTheme:themeName];
+        }
+        
+    }
+    else {
+        [CodeParser.sharedCodeParser loadTheme:themeName];
+    }
+    
+}
 
 // https://ngs.io/2014/10/26/refresh-ui-appearance/
 
