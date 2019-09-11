@@ -1,6 +1,6 @@
 # iOS 13 Builds
 
-You can skip these builds if you're not running iOS 13. You will not notice any difference on iOS 12. If you do install these builds irrespective of the OS, these are some very early builds so please expect this to be buggy. You can always roll back to the AppStore version or a previous build from within Testflight.
+This the RC build of Elytra v1.4 which will shipped using the GM Build of iOS 13 to Apple. Please report bugs immediately via email. Do not use Testflight to report issues. 
 
 ## Changes in Build 258
 - Fixes the layout for Image Loading Options Interface
