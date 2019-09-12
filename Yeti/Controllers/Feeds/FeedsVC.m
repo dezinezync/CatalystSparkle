@@ -965,7 +965,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)updateNotification:(NSNotification *)note {
     
-//    [self setupData];
+    [self setupData];
     
 }
 
