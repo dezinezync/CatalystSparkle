@@ -29,6 +29,8 @@
     BOOL _didTapDone;
 }
 
+@property (nonatomic, strong) UILabel *footerSizingLabel;
+
 @end
 
 @implementation AccountVC
@@ -44,17 +46,6 @@
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
     
-    PaddedLabel *label = [PaddedLabel new];
-    label.text = @"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
-    label.numberOfLines = 0;
-    label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
-    label.textColor = [YTThemeKit theme].captionColor;
-    label.padding = UIEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
-    
-    self.tableView.tableFooterView = label;
-    
-    [label sizeToFit];
-    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.tableView.backgroundColor = theme.tableColor;
 }
@@ -67,6 +58,29 @@
 #pragma mark - Actions
 
 #pragma mark - Table view data source
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    
+    if (section == 0) {
+        return @"If you deactivate your account and wish to activate it again, please email me on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
+    }
+    else {
+        return nil;
+    }
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    
+    self.footerSizingLabel.frame = CGRectMake(0, 0, tableView.safeAreaLayoutGuide.layoutFrame.size.width, 0.f);
+    self.footerSizingLabel.text = [self tableView:tableView titleForFooterInSection:section];
+    [self.footerSizingLabel sizeToFit];
+    
+    CGFloat height = self.footerSizingLabel.frame.size.height + 12.f;
+    
+    return height;
+    
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
@@ -82,7 +96,7 @@
     if (section == 1)
         return @"Subscription";
     
-    return @"Acount ID";
+    return @"Account ID";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -224,6 +238,22 @@
 }
 
 #pragma mark - Getters
+
+- (UILabel *)footerSizingLabel {
+    
+    if (!_footerSizingLabel) {
+        UILabel *label = [UILabel new];
+        label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
+        label.font = TypeFactory.shared.footnoteFont;
+        label.numberOfLines = 0;
+        
+        _footerSizingLabel = label;
+        
+    }
+    
+    return _footerSizingLabel;
+    
+}
 
 #pragma mark - Actions
 

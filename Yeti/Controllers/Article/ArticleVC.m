@@ -1045,7 +1045,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)processContent:(Content *)content {
+    
     if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
+        
         if ([content.items count]) {
             
             if ([self containsOnlyImages:content]) {
@@ -1070,49 +1072,75 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 idx++;
             }}
         }
+        
     }
     else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
-        if (content.content.length)
+        
+        if (content.content.length) {
             [self addParagraph:content caption:NO];
+        }
         else if (content.items) {
+            
             for (Content *subcontent in content.items) {
                 [self processContent:subcontent];
             }
+            
         }
+        
     }
     else if ([content.type isEqualToString:@"heading"]) {
+        
         if (content.content.length)
             [self addHeading:content];
+        
     }
     else if ([content.type isEqualToString:@"linebreak"]) {
+        
         [self addLinebreak];
+        
     }
     else if ([content.type isEqualToString:@"figure"] && content.items && content.items.count) {
+        
         for (Content *image in content.items) {
             [self addImage:image];
         }
+        
     }
     else if ([content.type isEqualToString:@"image"]) {
+        
         [self addImage:content];
+        
     }
     else if ([content.type isEqualToString:@"blockquote"]) {
+        
         [self addQuote:content];
+        
     }
     else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]) {
+        
         [self addList:content];
+        
     }
     else if ([content.type isEqualToString:@"anchor"]) {
+        
         [self addParagraph:content caption:NO];
+        
     }
     else if ([content.type isEqualToString:@"aside"]) {
+        
             [self addAside:content];
+        
     }
     else if ([content.type isEqualToString:@"youtube"]) {
+        
         [self addYoutube:content];
         [self addLinebreak];
+        
     }
     else if ([content.type isEqualToString:@"gallery"]) {
+        
         [self addGallery:content];
+        
     }
     else if (([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"])
              || ([content.type isEqualToString:@"b"] || [content.type isEqualToString:@"strong"])
@@ -1144,20 +1172,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     else if ([content.type isEqualToString:@"pre"] || [content.type isEqualToString:@"code"]) {
+        
         [self addPre:content];
+        
     }
     else if ([content.type isEqualToString:@"li"]) {
+        
         Content *parent = [Content new];
         parent.type = @"orderedlist";
         parent.items = @[content];
         
         [self addList:parent];
+        
     }
     else if ([content.type isEqualToString:@"tweet"]) {
+        
         [self addTweet:content];
+        
     }
     else if ([content.type isEqualToString:@"br"]) {
+        
         [self addLinebreak];
+        
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
@@ -1166,7 +1202,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         // wont be handled at the moment
     }
     else if ([content.type isEqualToString:@"video"]) {
+        
         [self addVideo:content];
+        
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);
