@@ -2,6 +2,10 @@
 
 This the RC build of Elytra v1.4 which will shipped using the GM Build of iOS 13 to Apple. Please report bugs immediately via email. Do not use Testflight to report issues. 
 
+## Changes in Build 260
+
+- Fixes adding multiple enclosures to the Article View in forms of an Image, Gallery, Video or multiple videos. 
+
 ## Changes in Build 259  
 
 Thanks to PD for reporting these.
