@@ -238,10 +238,44 @@ static NSParagraphStyle * _paragraphStyle = nil;
             NSMutableDictionary *dict = @{}.mutableCopy;
             
             if ([range.element isEqualToString:@"strong"] || [range.element isEqualToString:@"b"] || [range.element isEqualToString:@"bold"]) {
-                [dict setObject:self.boldFont forKey:NSFontAttributeName];
+                
+                __block BOOL hasExisitingAttributes = NO;
+                
+                [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+                   
+                    if ([value.description containsString:@"italic"]) {
+                        hasExisitingAttributes = YES;
+                    }
+                    
+                }];
+                
+                if (hasExisitingAttributes) {
+                    [dict setObject:self.boldItalicsFont forKey:NSFontAttributeName];
+                }
+                else {
+                    [dict setObject:self.boldFont forKey:NSFontAttributeName];
+                }
+                
             }
             else if ([range.element isEqualToString:@"italics"] || [range.element isEqualToString:@"em"]) {
-                [dict setObject:self.italicsFont forKey:NSFontAttributeName];
+                
+                __block BOOL hasExisitingAttributes = NO;
+                
+                [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+                   
+                    if ([value.description containsString:@"bold"]) {
+                        hasExisitingAttributes = YES;
+                    }
+                    
+                }];
+                
+                if (hasExisitingAttributes) {
+                    [dict setObject:self.boldItalicsFont forKey:NSFontAttributeName];
+                }
+                else {
+                    [dict setObject:self.italicsFont forKey:NSFontAttributeName];
+                }
+                
             }
             else if ([range.element isEqualToString:@"sup"]) {
 //                [dict setObject:@1 forKey:@"NSSuperScript"];
@@ -617,6 +651,30 @@ static NSParagraphStyle * _paragraphStyle = nil;
     }
     
     return _italicsFont;
+    
+}
+
+- (UIFont *)boldItalicsFont {
+    
+    if (!_boldItalicsFont) {
+        UIFont *bodyFont = [self bodyFont];
+        
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
+            bodyFont = [UIFont fontWithName:fontName size:bodyFont.pointSize];
+        }
+        
+        UIFontDescriptor *italicDescriptor = [bodyFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic];
+        
+        _boldItalicsFont = [UIFont fontWithDescriptor:italicDescriptor size:self.bodyFont.pointSize];
+    }
+    
+    return _boldItalicsFont;
     
 }
 

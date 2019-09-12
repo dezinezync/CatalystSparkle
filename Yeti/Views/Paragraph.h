@@ -19,7 +19,7 @@
 @property (nonatomic, strong) UIFont * _Nullable bodyFont;
 
 // these are automatically updated when the bodyFont changes
-@property (nonatomic, strong) UIFont * _Nullable italicsFont, * _Nullable boldFont;
+@property (nonatomic, strong) UIFont * _Nullable italicsFont, * _Nullable boldFont, * _Nullable boldItalicsFont;
 
 @property (nonatomic, assign) BOOL afterHeading;
 @property (nonatomic, assign, getter=isCaption) BOOL caption;

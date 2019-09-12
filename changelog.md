@@ -2,6 +2,14 @@
 
 This the RC build of Elytra v1.4 which will shipped using the GM Build of iOS 13 to Apple. Please report bugs immediately via email. Do not use Testflight to report issues. 
 
+## Changes in Build 259  
+
+Thanks to PD for reporting these.
+
+- Fixes the typo in the Accounts Interface
+
+- Fixes handling of nested italic and bold descriptors. Previously, only one of the two would be used (latest taking the priority). Now the following HTML, `<em><strong>Test</strong></em>` will render with a Bold Italic type.
+
 ## Changes in Build 258
 - Fixes the layout for Image Loading Options Interface
 
