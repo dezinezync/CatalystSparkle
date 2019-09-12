@@ -798,7 +798,15 @@ NSString * const kDS2Data = @"DS2Data";
             
             [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
             
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
+            
+            @try {
+                [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
+            } @catch (NSException *exception) {
+                DDLogError(@"Exception updating Feeds DS: %@", exception);
+            } @finally {
+                
+            }
             
         }
         else {
@@ -957,7 +965,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)updateNotification:(NSNotification *)note {
     
-    [self setupData];
+//    [self setupData];
     
 }
 

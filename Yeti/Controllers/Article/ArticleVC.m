@@ -750,9 +750,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     
                     [imagesFromEnclosures addObject:content.url];
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self addImage:content];
-                    });
+                    self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
                 }
             }
             else {
@@ -778,11 +776,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     
                 }
                 
-                content.items = images;
+                content.images = images;
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self addGallery:content];
-                });
+                self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
                 
             }
             
@@ -804,9 +800,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     subcontent.type = @"video";
                     subcontent.url = [[enc url] absoluteString];
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self addVideo:subcontent];
-                    });
+                    self.item.content = [@[subcontent] arrayByAddingObjectsFromArray:self.item.content];
                 }
                 
             } }
