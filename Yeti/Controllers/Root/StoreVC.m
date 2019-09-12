@@ -261,7 +261,7 @@
     [[DZActivityIndicatorManager shared] incrementCount];
     [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray <SKPaymentTransaction *> *transactions) {
         
-        self.buyButton.enabled = YES;
+       [self setButtonsState:YES];
         
         [self processTransactions:transactions];
         
