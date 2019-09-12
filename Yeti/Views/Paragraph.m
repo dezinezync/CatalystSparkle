@@ -41,7 +41,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     if (!_paragraphStyle) {
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         UIFont *font = [[TypeFactory shared] bodyFont];
         
@@ -226,7 +226,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     NSDictionary *baseAttributes = @{NSFontAttributeName : [self bodyFont],
                                      NSForegroundColorAttributeName: self.textColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: [NSNull null]};
+                                     NSKernAttributeName: @0};
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:text attributes:baseAttributes];
     
@@ -238,10 +238,44 @@ static NSParagraphStyle * _paragraphStyle = nil;
             NSMutableDictionary *dict = @{}.mutableCopy;
             
             if ([range.element isEqualToString:@"strong"] || [range.element isEqualToString:@"b"] || [range.element isEqualToString:@"bold"]) {
-                [dict setObject:self.boldFont forKey:NSFontAttributeName];
+                
+                __block BOOL hasExisitingAttributes = NO;
+                
+                [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+                   
+                    if ([value.description containsString:@"italic"]) {
+                        hasExisitingAttributes = YES;
+                    }
+                    
+                }];
+                
+                if (hasExisitingAttributes) {
+                    [dict setObject:self.boldItalicsFont forKey:NSFontAttributeName];
+                }
+                else {
+                    [dict setObject:self.boldFont forKey:NSFontAttributeName];
+                }
+                
             }
             else if ([range.element isEqualToString:@"italics"] || [range.element isEqualToString:@"em"]) {
-                [dict setObject:self.italicsFont forKey:NSFontAttributeName];
+                
+                __block BOOL hasExisitingAttributes = NO;
+                
+                [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+                   
+                    if ([value.description containsString:@"bold"]) {
+                        hasExisitingAttributes = YES;
+                    }
+                    
+                }];
+                
+                if (hasExisitingAttributes) {
+                    [dict setObject:self.boldItalicsFont forKey:NSFontAttributeName];
+                }
+                else {
+                    [dict setObject:self.italicsFont forKey:NSFontAttributeName];
+                }
+                
             }
             else if ([range.element isEqualToString:@"sup"]) {
 //                [dict setObject:@1 forKey:@"NSSuperScript"];
@@ -384,50 +418,54 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
 }
 
-- (void)copy:(id)sender {
-    
-    // calling the following crashes the app instantly
-    // due to a possible bug in iOS 12.1.4.
-//    [super copy:sender];
-    
-    NSRange range = self.selectedRange;
-    
-    if (range.location != NSNotFound && range.length > 0) {
-        
-        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-        
-        @try {
-        
-            if (self.attributedText.length >= (range.length - range.location)) {
-                
-                NSError *error = nil;
-                
-                NSData *rtf = [self.attributedText dataFromRange:range
-                                              documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFTextDocumentType}
-                                                           error:&error];
-                
-                if (error != nil) {
-                    DDLogError(@"Error creating NSData from attributed text for copying to pasteboard: %@", error);
-                    
-                    return;
-                }
-                
-                pasteboard.items = @[@{(id)kUTTypeRTF: [[NSString alloc] initWithData:rtf encoding:NSUTF8StringEncoding],
-                                       (id)kUTTypeUTF8PlainText: self.attributedText.string}];
-                
-            }
-            
-        }
-        
-        @catch (NSException *exc) {
-            DDLogWarn(@"Exception when copying attributed text: %@", exc);
-            
-            pasteboard.string = [[self text] substringWithRange:range];
-        }
-        
-    }
-    
-}
+//- (void)copy:(id)sender {
+//    
+//    // calling the following crashes the app instantly
+//    // due to a possible bug in iOS 12.1.4.
+//    
+//    if (@available(iOS 13, *)) {
+//        [super copy:sender];
+//        return;
+//    }
+//    
+//    NSRange range = self.selectedRange;
+//    
+//    if (range.location != NSNotFound && range.length > 0) {
+//        
+//        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+//        
+//        @try {
+//        
+//            if (self.attributedText.length >= (range.length - range.location)) {
+//                
+//                NSError *error = nil;
+//                
+//                NSData *rtf = [self.attributedText dataFromRange:range
+//                                              documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFTextDocumentType}
+//                                                           error:&error];
+//                
+//                if (error != nil) {
+//                    DDLogError(@"Error creating NSData from attributed text for copying to pasteboard: %@", error);
+//                    
+//                    return;
+//                }
+//                
+//                pasteboard.items = @[@{(id)kUTTypeRTF: [[NSString alloc] initWithData:rtf encoding:NSUTF8StringEncoding],
+//                                       (id)kUTTypeUTF8PlainText: self.attributedText.string}];
+//                
+//            }
+//            
+//        }
+//        
+//        @catch (NSException *exc) {
+//            DDLogWarn(@"Exception when copying attributed text: %@", exc);
+//            
+//            pasteboard.string = [[self text] substringWithRange:range];
+//        }
+//        
+//    }
+//    
+//}
 
 #pragma mark - Overrides
 
@@ -528,7 +566,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
             return _bodyFont;
         }
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         UIFont *defaultBodyFont = [[TypeFactory shared] bodyFont];
         
@@ -573,7 +611,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!_boldFont) {
         UIFont *bodyFont = [self bodyFont];
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
         
@@ -597,7 +635,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (!_italicsFont) {
         UIFont *bodyFont = [self bodyFont];
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
         
@@ -613,6 +651,30 @@ static NSParagraphStyle * _paragraphStyle = nil;
     }
     
     return _italicsFont;
+    
+}
+
+- (UIFont *)boldItalicsFont {
+    
+    if (!_boldItalicsFont) {
+        UIFont *bodyFont = [self bodyFont];
+        
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
+            bodyFont = [UIFont fontWithName:fontName size:bodyFont.pointSize];
+        }
+        
+        UIFontDescriptor *italicDescriptor = [bodyFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold | UIFontDescriptorTraitItalic];
+        
+        _boldItalicsFont = [UIFont fontWithDescriptor:italicDescriptor size:self.bodyFont.pointSize];
+    }
+    
+    return _boldItalicsFont;
     
 }
 
@@ -635,7 +697,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         return theme.captionColor;
     }
     
-    return theme.subtitleColor;
+    return theme.paragraphColor;
 }
 
 - (BOOL)translatesAutoresizingMaskIntoConstraints

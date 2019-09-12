@@ -305,9 +305,11 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     NSString *url = [feed faviconURI];
     
-    NSString *key = formattedString(@"png-24-%@", url);
-    
-    [self _configureTitleFavicon:key attachment:attachment url:url];
+    if (url != nil && [url isBlank] == NO) {
+        NSString *key = formattedString(@"png-24-%@", url);
+            
+        [self _configureTitleFavicon:key attachment:attachment url:url];
+    }
     
     // positive offsets push it up, negative push it down
     // this is similar to NSRect
@@ -366,9 +368,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                             
                             CGFloat width = 24.f * UIScreen.mainScreen.scale;
                             
-                            image = [UIImage imageWithImage:image scaledToSize:CGSizeMake(width, width) cornerRadius:4.f];
+                            NSData *jpeg = nil;
                             
-                            NSData *jpeg = UIImagePNGRepresentation(image);
+                            image = [image fastScale:width quality:1.f imageData:&jpeg];
                             
                             [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
                         }
@@ -620,10 +622,20 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
 //        DDLogDebug(@"Keywords: %@", item.keywords);
         
-        NSArray <UIColor *> * const tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
-                                                  [UIColor colorFromHexString:@"#7441FF"],
-                                                  [UIColor colorFromHexString:@"#558B2F"],
-                                                  [UIColor colorFromHexString:@"#E8883A"]];
+        NSArray <UIColor *> * tagColors = nil;
+        
+        if (@available(iOS 13, *)) {
+            tagColors = @[[UIColor systemRedColor],
+                          [UIColor systemIndigoColor],
+                          [UIColor systemGreenColor],
+                          [UIColor systemOrangeColor]];
+        }
+        else {
+            tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
+                          [UIColor colorFromHexString:@"#7441FF"],
+                          [UIColor colorFromHexString:@"#558B2F"],
+                          [UIColor colorFromHexString:@"#E8883A"]];
+        }
         
         [item.keywords enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            
@@ -661,27 +673,47 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     UILabel *timeLabel = nil;
     
+    if (@available(iOS 13, *)) {
+        self.menuButton.hidden = YES;
+        self.secondaryMenuButton.hidden = YES;
+    }
+    else {
+        if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
+            self.secondaryMenuButton.hidden = YES;
+            
+            self.menuButton.hidden = NO;
+        }
+        else {
+            self.secondaryMenuButton.hidden = NO;
+            
+            self.menuButton.hidden = YES;
+        }
+    }
+    
     if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
         timeLabel = self.timeLabel;
         
         self.secondaryTimeLabel.hidden = YES;
-        self.secondaryMenuButton.hidden = YES;
-        
         self.timeLabel.hidden = NO;
-        self.menuButton.hidden = NO;
     }
     else {
         timeLabel = self.secondaryTimeLabel;
         
-        self.secondaryTimeLabel.hidden = NO;
-        self.secondaryMenuButton.hidden = NO;
-        
         self.timeLabel.hidden = YES;
-        self.menuButton.hidden = YES;
+        self.secondaryTimeLabel.hidden = NO;
     }
     
-    timeLabel.text = [item.timestamp shortTimeAgoSinceNow];
-    timeLabel.accessibilityLabel = [item.timestamp timeAgoSinceNow];
+    NSString *timestamp = nil;
+    
+    if (@available(iOS 13, *)) {
+        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
+    }
+    else {
+        timestamp = [item.timestamp timeAgoSinceNow];
+    }
+    
+    timeLabel.text = timestamp;
+    timeLabel.accessibilityLabel = timestamp;
     
     [self setNeedsLayout];
     [self layoutIfNeeded];

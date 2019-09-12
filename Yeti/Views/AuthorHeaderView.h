@@ -13,9 +13,9 @@
 
 @property (nonatomic, weak) UIImageView * _Nullable shadowImage;
 
-@property (weak, nonatomic) IBOutlet UITextView *textview;
+@property (weak, nonatomic) IBOutlet UITextView * _Nullable textview;
 
-@property (weak, nonatomic) Author *author;
+@property (weak, nonatomic) Author * _Nullable author;
 
 - (void)setupAppearance;
 

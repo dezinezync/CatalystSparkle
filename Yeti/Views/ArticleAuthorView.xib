@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14806.4"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,7 +16,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" alignment="bottom" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="vqK-pg-CHs">
-                    <rect key="frame" x="0.0" y="0.0" width="101.5" height="91"/>
+                    <rect key="frame" x="0.0" y="0.0" width="141.5" height="91"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Y1v-AW-bIe">
                             <rect key="frame" x="0.0" y="7.5" width="61.5" height="83.5"/>
@@ -42,8 +41,23 @@
                                 </label>
                             </subviews>
                         </stackView>
-                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FV3-zj-953">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tsF-d2-CiZ">
                             <rect key="frame" x="69.5" y="59" width="32" height="32"/>
+                            <subviews>
+                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="boP-4U-TvB">
+                                    <rect key="frame" x="6" y="6" width="20" height="20"/>
+                                </activityIndicatorView>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstAttribute="width" priority="999" constant="32" id="FyQ-My-roZ"/>
+                                <constraint firstItem="boP-4U-TvB" firstAttribute="centerY" secondItem="tsF-d2-CiZ" secondAttribute="centerY" id="IB2-pd-cM5"/>
+                                <constraint firstAttribute="height" priority="999" constant="32" id="OA9-54-mix"/>
+                                <constraint firstItem="boP-4U-TvB" firstAttribute="centerX" secondItem="tsF-d2-CiZ" secondAttribute="centerX" id="a6M-qI-NRq"/>
+                            </constraints>
+                        </view>
+                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FV3-zj-953">
+                            <rect key="frame" x="109.5" y="59" width="32" height="32"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="32" id="9Zr-el-beg"/>
                                 <constraint firstAttribute="width" constant="32" id="OAR-YG-vrd"/>
@@ -66,6 +80,8 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
+                <outlet property="activityIndicator" destination="boP-4U-TvB" id="EjX-6Q-ItU"/>
+                <outlet property="activityView" destination="tsF-d2-CiZ" id="Zy9-xJ-vyu"/>
                 <outlet property="authorLabel" destination="Pgn-Lv-eak" id="3kX-pg-sEf"/>
                 <outlet property="blogLabel" destination="mPi-PK-pf5" id="eCt-Dh-4cq"/>
                 <outlet property="mainStackView" destination="vqK-pg-CHs" id="BhH-Hf-v9p"/>

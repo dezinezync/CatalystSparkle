@@ -7,7 +7,6 @@
 //
 
 #import "OPMLDeckController.h"
-#import "OPMLVC.h"
 #import "YetiThemeKit.h"
 
 @interface OPMLDeckController ()

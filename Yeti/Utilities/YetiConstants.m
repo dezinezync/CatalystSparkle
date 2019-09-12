@@ -61,13 +61,16 @@ NSNotificationName kDidUpdateTheme = @"com.yeti.note.didUpdateTheme";
 
 NSString * const kDefaultsArticleFont = @"articleFont";
 
-ArticleLayoutPreference const ALPSerif = @"articlelayout.georgia";
-ArticleLayoutPreference const ALPSystem = @"articlelayout.system";
-ArticleLayoutPreference const ALPHelvetica = @"articlelayout.helveticaNeue";
-ArticleLayoutPreference const ALPMerriweather = @"articlelayout.merriweather";
-ArticleLayoutPreference const ALPPlexSerif = @"articlelayout.IBMPlexSerif";
-ArticleLayoutPreference const ALPPlexSans = @"articlelayout.IBMPlexSans";
-ArticleLayoutPreference const ALPSpectral = @"articlelayout.Spectral";
+
+
+ArticleLayoutFont const ALPSerif = @"articlelayout.georgia";
+ArticleLayoutFont const ALPSystem = @"articlelayout.system";
+ArticleLayoutFont const ALPHelvetica = @"articlelayout.helveticaNeue";
+ArticleLayoutFont const ALPMerriweather = @"articlelayout.merriweather";
+ArticleLayoutFont const ALPPlexSerif = @"articlelayout.IBMPlexSerif";
+ArticleLayoutFont const ALPPlexSans = @"articlelayout.IBMPlexSans";
+ArticleLayoutFont const ALPSpectral = @"articlelayout.Spectral";
+ArticleLayoutFont const ALPOpenDyslexic = @"articlelayout.OpenDyslexic";
 
 #pragma mark - Subscription
 

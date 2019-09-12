@@ -9,7 +9,7 @@
 #import <DZKit/DZObject.h>
 #import <DZKit/DZDatasourceModel.h>
 
-@interface Enclosure : DZObject <NSCoding, DZDatasourceModel> {
+@interface Enclosure : DZObject <NSSecureCoding, DZDatasourceModel> {
 
 }
 

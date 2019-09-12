@@ -35,7 +35,7 @@ NSString *const kBasicCell = @"cell.theme";
     self.title = @"Appearance";
     // when adding a new font here or removing one,
     // update the method -[tableview:cellForRowAtIndexPath:]
-    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral];
+    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral, ALPOpenDyslexic];
     _fontNamesMap = @{
                       ALPSystem         : @"System (San Fransico)",
                       ALPSerif          : @"Georgia",
@@ -43,7 +43,8 @@ NSString *const kBasicCell = @"cell.theme";
                       ALPMerriweather   : @"Merriweather",
                       ALPPlexSerif      : @"Plex Serif",
                       ALPPlexSans       : @"Plex Sans",
-                      ALPSpectral       : @"Spectral"
+                      ALPSpectral       : @"Spectral",
+                      ALPOpenDyslexic   : @"OpenDyslexic"
                       };
     
         _isPhoneX = canSupportOLED();
@@ -96,12 +97,19 @@ NSString *const kBasicCell = @"cell.theme";
         
         YetiThemeType theme = SharedPrefs.theme;
         
-        cell.textLabel.text = [YetiThemeKit.themeNames[indexPath.row] capitalizedString];
+        NSString *themeName = YetiThemeKit.themeNames[indexPath.row];
+        
+        cell.textLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
+        
+        NSInteger differenceInRowCount = 0;
+        if (@available(iOS 13, *)) {
+            differenceInRowCount = 1;
+        }
         
         if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
-            || ([theme isEqualToString:DarkTheme] && indexPath.row == 1)
-            || ([theme isEqualToString:ReaderTheme] && indexPath.row == 2)
-            || ([theme isEqualToString:BlackTheme] && indexPath.row == 3)) {
+            || ([theme isEqualToString:DarkTheme] && indexPath.row == (1 - differenceInRowCount))
+            || ([theme isEqualToString:ReaderTheme] && indexPath.row == (2 - differenceInRowCount))
+            || ([theme isEqualToString:BlackTheme] && indexPath.row == (3 - differenceInRowCount))) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -135,7 +143,7 @@ NSString *const kBasicCell = @"cell.theme";
         // ARTICLE FONT
         cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
         
-        ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
         NSString *fontName = _fontNamesMap[_fonts[indexPath.row]];
         cell.textLabel.text = fontName;
@@ -158,7 +166,8 @@ NSString *const kBasicCell = @"cell.theme";
             || ([fontPref isEqualToString:ALPMerriweather] && indexPath.row == 3)
             || ([fontPref isEqualToString:ALPPlexSerif]    && indexPath.row == 4)
             || ([fontPref isEqualToString:ALPPlexSans]     && indexPath.row == 5)
-            || ([fontPref isEqualToString:ALPSpectral]     && indexPath.row == 6)) {
+            || ([fontPref isEqualToString:ALPSpectral]     && indexPath.row == 6)
+            || ([fontPref isEqualToString:ALPOpenDyslexic] && indexPath.row == 7)) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -173,20 +182,25 @@ NSString *const kBasicCell = @"cell.theme";
     }
     
     // Configure the cell...
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     if (indexPath.section == 1) {
         cell.selectedBackgroundView = nil;
     }
     else {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
         cell.textLabel.textColor = theme.titleColor;
         cell.detailTextLabel.textColor = theme.captionColor;
-        
-        cell.backgroundColor = theme.cellColor;
         
         cell.selectedBackgroundView = [UIView new];
         
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    }
+    
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
     }
     
     return cell;
@@ -220,20 +234,24 @@ NSString *const kBasicCell = @"cell.theme";
         
         NSString *themeName = [val lowercaseString];
         
-        [SharedPrefs setValue:themeName forKey:propSel(theme)];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
-        });
-        
-        YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-        [CodeParser.sharedCodeParser loadTheme:themeName];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
-        });
-        
-        reloadSections = [self.tableView indexPathsForVisibleRows];
+        if ([SharedPrefs.theme isEqualToString:themeName] == NO) {
+            
+            [SharedPrefs setValue:themeName forKey:propSel(theme)];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+            });
+            
+            YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+            [CodeParser.sharedCodeParser loadTheme:themeName];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+            });
+            
+            reloadSections = [self.tableView indexPathsForVisibleRows];
+            
+        }
         
     }
     else if (indexPath.section == 1) {

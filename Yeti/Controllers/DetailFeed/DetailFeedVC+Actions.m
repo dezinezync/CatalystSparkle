@@ -138,7 +138,14 @@
         
         ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
         
-        FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+        FeedItem *item = nil;
+        
+        if (@available(iOS 13, *)) {
+            item = [[self.DDS.snapshot itemIdentifiers] objectAtIndex:indexPath.item];
+        }
+        else {
+            item = [self.DS objectAtIndexPath:indexPath];
+        }
         
         if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
             cell.markerView.image = nil;
@@ -153,7 +160,17 @@
     BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
     
     void(^markReadInline)(void) = ^(void) {
-        NSArray <FeedItem *> *unread = [(NSArray <FeedItem *> *)self.DS.data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        
+        NSArray <FeedItem *> *data = nil;
+        
+        if (@available(iOS 13, *)) {
+            data = self.DDS.snapshot.itemIdentifiers;
+        }
+        else {
+            data = (NSArray <FeedItem *> *)self.DS.data;
+        }
+        
+        NSArray <FeedItem *> *unread = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return !obj.isRead;
         }];
         
@@ -376,10 +393,10 @@
     
     [MyFeedsManager addFeedByID:self.feed.feedID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+        NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
         feeds = [feeds arrayByAddingObject:responseObject];
         
-        MyFeedsManager.feeds = feeds;
+        ArticlesManager.shared.feeds = feeds;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -446,7 +463,7 @@
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular){
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         

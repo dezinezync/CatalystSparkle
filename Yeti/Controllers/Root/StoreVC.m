@@ -73,21 +73,30 @@
         self.selectedProduct = NSNotFound;
         
         [[DZActivityIndicatorManager shared] decrementCount];
-        self.productsRequestFinished = YES;
-        [self.tableView reloadData];
         
-        [footer.activityIndicator stopAnimating];
-        footer.activityIndicator.hidden = YES;
-        
-        footer.stackView.hidden = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            self.productsRequestFinished = YES;
+            [self.tableView reloadData];
+            
+            [footer.activityIndicator stopAnimating];
+            footer.activityIndicator.hidden = YES;
+            
+            footer.stackView.hidden = NO;
+            
+        });
         
     } failure:^(NSError *error) {
         
-        [[DZActivityIndicatorManager shared] decrementCount];
-        [AlertManager showGenericAlertWithTitle:@"Failed to load Products" message:error.localizedDescription];
-        
-        [footer.activityIndicator stopAnimating];
-        footer.activityIndicator.hidden = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            [[DZActivityIndicatorManager shared] decrementCount];
+            [AlertManager showGenericAlertWithTitle:@"Failed to load Products" message:error.localizedDescription];
+            
+            [footer.activityIndicator stopAnimating];
+            footer.activityIndicator.hidden = YES;
+            
+        });
 
     }];
     
@@ -140,12 +149,14 @@
     UITextView *textView = footer.footerLabel;
     __block NSMutableAttributedString *attrs;
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     para.alignment = NSTextAlignmentCenter;
     
     NSDictionary *attributes = @{
                                  NSFontAttributeName : textView.font,
-                                 NSForegroundColorAttributeName : textView.textColor,
+                                 NSForegroundColorAttributeName : theme.subtitleColor,
                                  NSParagraphStyleAttributeName : para
                                  };
     
@@ -158,7 +169,8 @@
         
         NSString *upto = @"";
         
-        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
+        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]
+            || MyFeedsManager.subscription.isLifetime == YES) {
             upto = @"3298 LY (A.K.A. our Lifetime)";
         }
         else {
@@ -249,7 +261,7 @@
     [[DZActivityIndicatorManager shared] incrementCount];
     [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray <SKPaymentTransaction *> *transactions) {
         
-        self.buyButton.enabled = YES;
+       [self setButtonsState:YES];
         
         [self processTransactions:transactions];
         
@@ -272,7 +284,7 @@
     [[DZActivityIndicatorManager shared] incrementCount];
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
         
-        self.restoreButton.enabled = YES;
+        [self setButtonsState:YES];
         
         [self processTransactions:@[transaction]];
         
@@ -348,6 +360,12 @@
 #pragma mark - Setters
 
 - (void)setSelectedProduct:(NSInteger)selectedProduct {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setSelectedProduct:) withObject:@(selectedProduct) waitUntilDone:NO];
+        return;
+    }
+    
     _selectedProduct = selectedProduct;
     
     StoreFooter *footer =  (StoreFooter *)[self.tableView tableFooterView];
@@ -462,13 +480,21 @@
 
 - (void)storeProductsRequestFinished:(NSNotification*)notification
 {
-    [self.tableView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
 {
-    self.purhcasedProductIdentifiers = _persistence.purchasedProductIdentifiers.allObjects;
-    [self.tableView reloadData];
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
+        
+        self.purhcasedProductIdentifiers = self->_persistence.purchasedProductIdentifiers.allObjects;
+        [self.tableView reloadData];
+    });
 }
 
 @end

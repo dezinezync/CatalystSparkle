@@ -42,8 +42,7 @@
 
 @implementation FeedVC
 
-- (instancetype)initWithFeed:(Feed *)feed
-{
+- (instancetype)initWithFeed:(Feed *)feed {
     if (self = [super initWithStyle:UITableViewStylePlain]) {
         self.feed = feed;
         _canLoadNext = YES;
@@ -258,7 +257,10 @@
         searchController.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-searchController"];
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        if (@available(iOS 13, *)) {}
+        else {
+            searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        }
         
         self.navigationItem.searchController = searchController;
         self.navigationItem.hidesSearchBarWhenScrolling = NO;

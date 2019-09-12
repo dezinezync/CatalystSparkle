@@ -16,22 +16,27 @@
 
 static NSDateFormatter *_formatter = nil;
 
-- (void)encodeWithCoder:(NSCoder *)encoder
-{
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder {
     [super encodeWithCoder:encoder];
+    
     [encoder encodeObject:self.identifier forKey:@"identifier"];
     
     [encoder encodeObject:self.articleTitle forKey:@"articleTitle"];
     [encoder encodeObject:self.articleURL forKey:@"articleURL"];
     [encoder encodeObject:self.author forKey:@"author"];
     [encoder encodeObject:self.blogTitle forKey:@"blogTitle"];
-    [encoder encodeObject:[NSNumber numberWithBool:self.bookmarked] forKey:@"bookmarked"];
     [encoder encodeObject:self.content forKey:@"content"];
     [encoder encodeObject:self.coverImage forKey:@"coverImage"];
     [encoder encodeObject:self.guid forKey:@"guid"];
     [encoder encodeObject:self.modified forKey:@"modified"];
-    [encoder encodeObject:[NSNumber numberWithBool:self.read] forKey:@"read"];
     [encoder encodeObject:self.timestamp forKey:@"timestamp"];
+    
+    [encoder encodeObject:@(self.bookmarked) forKey:@"bookmarked"];
+    [encoder encodeObject:@(self.read) forKey:@"read"];
     
     [encoder encodeObject:self.mediaCredit forKey:@"mediaCredit"];
     [encoder encodeObject:self.mediaDescription forKey:@"mediaDescription"];
@@ -47,33 +52,32 @@ static NSDateFormatter *_formatter = nil;
     [encoder encodeBool:self.mercury forKey:propSel(mercury)];
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
-{
+- (id)initWithCoder:(NSCoder *)decoder {
     if ((self = [super initWithCoder:decoder])) {
-        self.identifier = [decoder decodeObjectForKey:@"identifier"];
-        self.articleTitle = [decoder decodeObjectForKey:@"articleTitle"];
-        self.articleURL = [decoder decodeObjectForKey:@"articleURL"];
-        self.author = [decoder decodeObjectForKey:@"author"];
-        self.blogTitle = [decoder decodeObjectForKey:@"blogTitle"];
-        self.bookmarked = [(NSNumber *)[decoder decodeObjectForKey:@"bookmarked"] boolValue];
-        self.content = [decoder decodeObjectForKey:@"content"];
-        self.coverImage = [decoder decodeObjectForKey:@"coverImage"];
-        self.guid = [decoder decodeObjectForKey:@"guid"];
-        self.modified = [decoder decodeObjectForKey:@"modified"];
-        self.read = [(NSNumber *)[decoder decodeObjectForKey:@"read"] boolValue];
-        self.timestamp = [decoder decodeObjectForKey:@"timestamp"];
+        self.identifier = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"identifier"];
+        self.articleTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"articleTitle"];
+        self.articleURL = [decoder decodeObjectOfClass:[NSString class] forKey:@"articleURL"];
+        self.author = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSString.class, nil] forKey:@"author"];
+        self.blogTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"blogTitle"];
+        self.bookmarked = [[decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] boolValue];
+        self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
+        self.coverImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"coverImage"];
+        self.guid = [decoder decodeObjectOfClass:[NSString class] forKey:@"guid"];
+        self.modified = [decoder decodeObjectOfClass:[NSString class] forKey:@"modified"];
+        self.bookmarked = [[decoder decodeObjectOfClass:[NSNumber class] forKey:@"read"] boolValue];
+        self.timestamp = [decoder decodeObjectOfClass:[NSDate class] forKey:@"timestamp"];
         
-        self.mediaCredit = [decoder decodeObjectForKey:@"mediaCredit"];
-        self.mediaDescription = [decoder decodeObjectForKey:@"mediaDescription"];
-        self.mediaRating = [decoder decodeObjectForKey:@"mediaRating"];
-        self.itunesImage = [decoder decodeObjectForKey:@"itunesImage"];
+        self.mediaCredit = [decoder decodeObjectOfClass:[NSString class] forKey:@"mediaCredit"];
+        self.mediaDescription = [decoder decodeObjectOfClass:[NSString class] forKey:@"mediaDescription"];
+        self.mediaRating = [decoder decodeObjectOfClass:[NSString class] forKey:@"mediaRating"];
+        self.itunesImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"itunesImage"];
         
-        self.keywords = [decoder decodeObjectForKey:@"keywords"];
-        self.enclosures = [decoder decodeObjectForKey:@"enclosures"];
+        self.keywords = [decoder decodeObjectOfClass:[NSArray class] forKey:@"keywords"];
+        self.enclosures = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Enclosure.class, nil] forKey:@"enclosures"];
         
-        self.feedID = [decoder decodeObjectForKey:@"feedID"];
-        self.summary = [decoder decodeObjectForKey:@"summary"];
-        self.mercury = [decoder decodeObjectForKey:propSel(mercury)];
+        self.feedID = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"feedID"];
+        self.summary = [decoder decodeObjectOfClass:[NSString class] forKey:@"summary"];
+        self.mercury = [decoder decodeBoolForKey:@"mercury"];
     }
     return self;
 }
@@ -329,7 +333,24 @@ static NSDateFormatter *_formatter = nil;
     return [self.identifier.stringValue compare:item.identifier.stringValue options:NSNumericSearch];
 }
 
+- (NSUInteger)hash {
+    
+    NSUInteger hash = self.compareID.hash;
+    
+    hash += self.feedID.hash;
+//    hash += self.isRead ? 1 : 0;
+//    hash += self.isBookmarked ? 1 : 0;
+    hash += self.mercury ? 1 : 0;
+    
+    return hash;
+    
+}
+
 - (BOOL)isEqualToItem:(FeedItem *)item {
+    
+    if (item != nil && item.hash == self.hash) {
+        return YES;
+    }
     
     return (item != nil
             && [item.identifier isEqualToNumber:self.identifier]

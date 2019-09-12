@@ -2,6 +2,20 @@
     <html lang="en-US">
         <head>
             <style>
+                :root {
+                    --color-text: rgba(0,0,0,.85);
+                    --color-background: #ffffff;
+                    --color-title: #000000;
+                }
+            
+                @media (prefers-color-scheme: dark) {
+                    :root {
+                        --color-text: rgba(255, 255, 255, 0.875);
+                        --color-background: #000001;
+                        --color-title: rgba(255, 255, 255, 1);
+                    }
+                }
+                
                 * {
                     box-sizing: inherit;
                 }
@@ -14,7 +28,8 @@
                     font-size: 1rem;
                     line-height: 1.333rem;
                     font-family: system, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
-                    color: #000;
+                    color: var(--color-text);
+                    background: var(--color-background);
                     -webkit-transform: none !important;
                     -ms-transform: none !important;
                     transform: none !important
@@ -29,6 +44,7 @@
             
                 h1, h3 {
                     line-height: 140%;
+                    color: var(--color-title);
                 }
             
                 p {
@@ -53,6 +69,10 @@
                         document.body.style.backgroundColor = "#222222";
                     }
                     
+                    return anchorStyle(tint);
+                }
+            
+                const anchorStyle = function (tint = "#007AFF") {
                     const css = `a { color: ${tint}; }`,
                     head = document.head || document.getElementsByTagName('head')[0],
                     style = document.createElement('style');
@@ -79,7 +99,7 @@
             <p>
                 The Mercury project by Postlight has been a huge game-changer, which now powers parts of Elytra, like many other wonderful apps like itself.</p>
             </p>
-            
+            <hr />
             <h1>Source Code &amp; Libraries</h1>
             <h3>DZKit</h3>
             
@@ -225,27 +245,6 @@
             THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </p>
             
-            <h3>Material Icons</h3>
-            
-            <p>
-            Copyright 2017 Google
-            </p>
-            <p>
-            Licensed under the Apache License, Version 2.0 (the "License");
-            you may not use this file except in compliance with the License.
-            You may obtain a copy of the License at
-            </p>
-            <p>
-            http://www.apache.org/licenses/LICENSE-2.0
-            </p>
-            <p>
-            Unless required by applicable law or agreed to in writing, software
-            distributed under the License is distributed on an "AS IS" BASIS,
-            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-            See the License for the specific language governing permissions and
-            limitations under the License.
-            </p>
-            
             <h3>CocoaLumberjack</h3>
             <p>
             Copyright (c) 2010-2016, Deusty, LLC
@@ -330,7 +329,7 @@
             LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             SOFTWARE.</p>
-            
+            <hr />
             <h1>Fonts</h1>
             <h3>Merriweather</h3>
             <p>
@@ -360,6 +359,23 @@
             <a href="http://scripts.sil.org/OFL">http://scripts.sil.org/OFL</a>
             </p>
             
+            <h3>Open Dyslexic</h3>
+            <p>Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is a trademark of Bitstream, Inc.</p>
+            
+            <p>Permission is hereby granted, free of charge, to any person obtaining a copy of the fonts accompanying this license (“Fonts”) and associated documentation files (the “Font Software”), to reproduce and distribute the Font Software, including without limitation the rights to use, copy, merge, publish, distribute, and/or sell copies of the Font Software, and to permit persons to whom the Font Software is furnished to do so, subject to the following conditions:</p>
+            
+            <p>The above copyright and trademark notices and this permission notice shall be included in all copies of one or more of the Font Software typefaces.</p>
+            
+            <p>The Font Software may be modified, altered, or added to, and in particular the designs of glyphs or characters in the Fonts may be modified and additional glyphs or characters may be added to the Fonts, only if the fonts are renamed to names not containing either the words “Bitstream” or the word “Vera”.</p>
+            
+            <p>This License becomes null and void to the extent applicable to Fonts or Font Software that has been modified and is distributed under the “Bitstream Vera” names.</p>
+            
+            <p>The Font Software may be sold as part of a larger software package but no copy of one or more of the Font Software typefaces may be sold by itself.</p>
+            
+            <p>THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.</p>
+            
+            <p>Except as contained in this notice, the names of Gnome, the Gnome Foundation, and Bitstream Inc., shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Font Software without prior written authorization from the Gnome Foundation or Bitstream Inc., respectively. For further information, contact: fonts at gnome dot org.</p>
+            <hr />
             <h1>Appicon Artwork</h1>
             <p>All App Icon artwork is the respective property of the right owners and is used in Elytra only for representation purposes.</p>
         </body>

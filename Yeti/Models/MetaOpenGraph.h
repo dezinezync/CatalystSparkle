@@ -1,7 +1,7 @@
 #import <DZKit/DZObject.h>
 
 
-@interface MetaOpenGraph : DZObject <NSCoding> {
+@interface MetaOpenGraph : DZObject <NSSecureCoding> {
 
 }
 

@@ -65,14 +65,26 @@
 - (void)loadNextPage
 {
     
-    if (self.DS.state != DZDatasourceLoaded)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState == StateLoading) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.state != DZDatasourceLoading)
+            return;
+    }
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.DS.state = DZDatasourceLoading;
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateLoading;
+    }
+    else {
+        self.DS.state = DZDatasourceLoading;
+    }
     
     NSInteger page = self.page + 1;
     
@@ -86,35 +98,62 @@
         
         self.page = page;
         
-        if (![responseObject count]) {
+        if (responseObject == nil || [responseObject count] == 0) {
             self->_canLoadNext = NO;
-            self.DS.data = self.DS.data ?: @[];
-        }
-        
-        if (page == 1 || self.DS.data == nil) {
-            self.DS.data = articles;
-            MyFeedsManager.temporaryFeeds = feeds;
-            
-            if (self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-                [self loadNextPage];
-            }
         }
         else {
-            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:articles];
+            if (page == 1) {
+                MyFeedsManager.temporaryFeeds = feeds;
+            }
+            else {
+                MyFeedsManager.temporaryFeeds = [MyFeedsManager.temporaryFeeds arrayByAddingObjectsFromArray:feeds];
+            }
             
-            MyFeedsManager.temporaryFeeds = [MyFeedsManager.temporaryFeeds arrayByAddingObjectsFromArray:feeds];
+            if (@available(iOS 13, *)) {
+                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                [snapshot appendItemsWithIdentifiers:articles];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            }
+            else {
+                if (page == 1 || self.DS.data == nil) {
+                    self.DS.data = articles;
+                }
+                else {
+                    self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:articles];
+                }
+                
+                if (@available(iOS 13, *)) {
+                    self.controllerState = StateLoaded;
+                }
+                else {
+                    self.DS.state = DZDatasourceLoaded;
+                }
+            }
+            
+            if (page == 1) {
+                if (self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                    [self loadNextPage];
+                }
+            }
         }
-        
-        self.DS.state = DZDatasourceLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
         
-        self.DS.state = DZDatasourceError;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateErrored;
+        }
+        else {
+            self.DS.state = DZDatasourceError;
+        }
         
-        if (self.DS.data == nil || [self.DS.data count] == 0) {
-            // the initial load has failed.
-            self.DS.data = @[];
+        if (@available(iOS 13, *)) {}
+        else {
+            if (self.DS.data == nil || [self.DS.data count] == 0) {
+                // the initial load has failed.
+                self.DS.data = @[];
+            }
         }
         
     }];
@@ -142,7 +181,13 @@
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
-    [coder encodeObject:self.DS.data forKey:kBTagData];
+    if (@available(iOS 13, *)) {
+        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBTagData];
+    }
+    else {
+        [coder encodeObject:self.DS.data forKey:kBTagData];
+    }
+    
     [coder encodeObject:self.tag forKey:kBTagObj];
 }
 
@@ -154,7 +199,16 @@
     if (items) {
         [self setupLayout];
         
-        self.DS.data = items;
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+            [snapshot appendSectionsWithIdentifiers:@[@0]];
+            [snapshot appendItemsWithIdentifiers:items];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = items;
+        }
     }
     
 }

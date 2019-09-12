@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vG3-Rt-Fbo">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vG3-Rt-Fbo">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.13"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -14,9 +12,10 @@
             <objects>
                 <tableViewController title="Feeds" id="qzR-e3-RIG" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="nVc-Wb-cuq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="551"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="sectionIndexBackgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <sections>
                             <tableViewSection id="H5d-r3-gNb">
                                 <cells/>
@@ -28,13 +27,14 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Feeds" id="Sck-4K-zWV">
-                        <barButtonItem key="leftBarButtonItem" image="settings" style="plain" id="9eT-6k-DZw"/>
+                        <barButtonItem key="leftBarButtonItem" image="settings" style="done" id="9eT-6k-DZw"/>
                         <rightBarButtonItems>
-                            <barButtonItem style="plain" systemItem="add" id="yYu-Dy-n8P"/>
-                            <barButtonItem image="create_new_folder" style="plain" id="Mu2-o9-NGa"/>
-                            <barButtonItem image="whatshot" style="plain" id="U4L-sX-IzO"/>
+                            <barButtonItem title="Item" image="new" style="done" id="yYu-Dy-n8P"/>
+                            <barButtonItem image="create_new_folder" style="done" id="Mu2-o9-NGa"/>
+                            <barButtonItem image="whatshot" style="done" id="U4L-sX-IzO"/>
                         </rightBarButtonItems>
                     </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gRr-53-VdJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -44,9 +44,12 @@
         <scene sceneID="xux-py-4fI">
             <objects>
                 <navigationController id="vG3-Rt-Fbo" sceneMemberID="viewController">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" shadowImage="navbarshadow" largeTitles="YES" id="uIx-1x-63G">
-                        <rect key="frame" x="0.0" y="20" width="375" height="96"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="barTintColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     </navigationBar>
                     <connections>
                         <segue destination="qzR-e3-RIG" kind="relationship" relationship="rootViewController" id="IKz-nf-zh9"/>
@@ -58,9 +61,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="create_new_folder" width="20" height="16"/>
+        <image name="create_new_folder" width="30" height="24"/>
         <image name="navbarshadow" width="375" height="1"/>
-        <image name="settings" width="18" height="18"/>
-        <image name="whatshot" width="16" height="21"/>
+        <image name="new" width="16" height="16"/>
+        <image name="settings" width="24" height="24"/>
+        <image name="whatshot" width="24" height="24"/>
     </resources>
 </document>

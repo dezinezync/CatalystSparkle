@@ -16,26 +16,26 @@
 
 @property (nonatomic, assign) BOOL avoidsLazyLoading;
 
-@property (nonatomic, strong) UIFont * bodyFont;
+@property (nonatomic, strong) UIFont * _Nullable bodyFont;
 
 // these are automatically updated when the bodyFont changes
-@property (nonatomic, strong) UIFont *italicsFont, *boldFont;
+@property (nonatomic, strong) UIFont * _Nullable italicsFont, * _Nullable boldFont, * _Nullable boldItalicsFont;
 
 @property (nonatomic, assign) BOOL afterHeading;
 @property (nonatomic, assign, getter=isCaption) BOOL caption;
 
-@property (nonatomic, strong, class) NSParagraphStyle * paragraphStyle;
+@property (nonatomic, strong, class) NSParagraphStyle * _Nullable paragraphStyle;
 
-@property (nonatomic, strong) NSLayoutConstraint *leading, *trailing;
+@property (nonatomic, strong) NSLayoutConstraint * _Nullable leading, * _Nullable trailing;
 
 - (void)viewWillAppear;
 - (void)viewDidDisappear;
 
-- (void)setText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
+- (void)setText:(NSString * _Nonnull)text ranges:(NSArray <Range *> * _Nullable)ranges attributes:(NSDictionary * _Nullable)attributes;
 
-+ (NSLocaleLanguageDirection)languageDirectionForText:(NSString *)text;
++ (NSLocaleLanguageDirection)languageDirectionForText:(NSString * _Nonnull)text;
 
-- (void)updateStyle:(id)animated;
+- (void)updateStyle:(id _Nullable)animated;
 
 /**
  Process the given text and ranges and returns an Attributed String. Processes on the thread it is called on. Returns on the same thread.
@@ -44,7 +44,7 @@
  @param ranges The appliable ranges
  @return An attributed string
  */
-- (NSAttributedString *)processText:(NSString *)text ranges:(NSArray <Range *> *)ranges attributes:(NSDictionary *)attributes;
+- (NSAttributedString * _Nullable )processText:(NSString * _Nonnull)text ranges:(NSArray <Range *> * _Nonnull)ranges attributes:(NSDictionary * _Nonnull)attributes;
 
 - (NSArray <UIView *> * _Nonnull)ignoreSubviewsFromLayouting;
 
@@ -55,10 +55,10 @@
  */
 @property (nonatomic, assign, getter=isBigContainer) BOOL bigContainer;
 
-@property (nonatomic, strong) NSMutableArray *accessibileElements;
+@property (nonatomic, strong) NSMutableArray * _Nullable accessibileElements;
 
 #pragma mark -
 
-+ (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range;
++ (CGRect)boundingRectIn:(UITextView * _Nonnull)textview forCharacterRange:(NSRange)range;
 
 @end

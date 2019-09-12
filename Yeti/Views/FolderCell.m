@@ -39,7 +39,9 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     // Initialization code
     
     self.faviconView.contentMode = UIViewContentModeCenter;
-    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
@@ -86,9 +88,10 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.cacheImage = NO;
     self.faviconView.cachedSuffix = nil;
-    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
+    
+    self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     self.indentationLevel = 0;
@@ -178,7 +181,9 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    self.faviconView.image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    self.faviconView.image = image;
     
     if (dropDelegate != nil) {
         UIDropInteraction * dropInteraction = [[UIDropInteraction alloc] initWithDelegate:self];

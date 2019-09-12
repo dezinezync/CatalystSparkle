@@ -11,6 +11,10 @@
 
 @implementation Author
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs {
     
     Author *instance = [[Author alloc] init];
@@ -28,9 +32,9 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
-        self.authorID = [aDecoder decodeObjectForKey:@"authorID"];
-        self.name = [aDecoder decodeObjectForKey:@"name"];
-        self.bio = [aDecoder decodeObjectForKey:@"bio"];
+        self.authorID = [aDecoder decodeObjectOfClass:NSNumber.class forKey:@"authorID"];
+        self.name = [aDecoder decodeObjectOfClass:NSString.class forKey:@"name"];
+        self.bio = [aDecoder decodeObjectOfClass:NSString.class forKey:@"bio"];
     }
     
     return self;

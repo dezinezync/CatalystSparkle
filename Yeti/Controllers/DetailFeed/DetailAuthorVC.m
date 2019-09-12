@@ -66,17 +66,29 @@
     
 }
 
-- (void)loadNextPage
-{
+- (void)loadNextPage {
     
-    if (self.loadingNext)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState == StateLoading) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.state == DZDatasourceLoading) {
+            return;
+        }
+    }
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.loadingNext = YES;
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateLoading;
+    }
+    else {
+        self.DS.state = DZDatasourceLoading;
+    }
     
     weakify(self);
     
@@ -91,19 +103,34 @@
         
         self.page = page;
         
-        if (![responseObject count]) {
+        if (responseObject == nil || responseObject.count == 0) {
             self->_canLoadNext = NO;
-            self.DS.data = self.DS.data ?: @[];
-        }
-        
-        if (page == 1 && self.DS.data.count) {
-            self.DS.data = responseObject;
         }
         else {
-            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+            
+            if (@available(iOS 13, *)) {
+                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                [snapshot appendItemsWithIdentifiers:responseObject];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            }
+            else {
+                if (page == 1 && self.DS.data.count) {
+                    self.DS.data = responseObject;
+                }
+                else {
+                    self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+                }
+            }
+            
         }
         
-        self.loadingNext = NO;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateLoaded;
+        }
+        else {
+            self.DS.state = DZDatasourceLoaded;
+        }
         
         if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             [self loadNextPage];
@@ -114,7 +141,12 @@
         
         strongify(self);
         
-        self.loadingNext = NO;
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateErrored;
+        }
+        else {
+            self.DS.state = DZDatasourceError;
+        }
     }];
 }
 
@@ -143,8 +175,15 @@
     [super encodeRestorableStateWithCoder:coder];
     
     [coder encodeObject:self.author forKey:kBAuthorData];
-    [coder encodeObject:self.DS.data forKey:kBAuthorDS];
+    
     [coder encodeObject:self.feed forKey:kBAuthorFeed];
+    
+    if (@available(iOS 13, *)) {
+        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBAuthorDS];
+    }
+    else {
+        [coder encodeObject:self.DS.data forKey:kBAuthorDS];
+    }
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -155,7 +194,20 @@
     if (data) {
         [self setupLayout];
         
-        self.DS.data = data;
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+            
+            if (snapshot.numberOfSections == 0) {
+                [snapshot appendSectionsWithIdentifiers:@[@0]];
+            }
+            
+            [snapshot appendItemsWithIdentifiers:data];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = data;
+        }
     }
     
 }

@@ -22,9 +22,9 @@
     NSIndexPath *_highlightedRow;
 }
 
-@property (nonatomic, assign) NSNumber *loadOnReady;
+@property (nonatomic, assign) NSNumber * _Nullable loadOnReady;
 
-@property (nonatomic, strong) DZBasicDatasource *DS;
+@property (nonatomic, strong) DZBasicDatasource * _Nullable DS;
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 
@@ -40,22 +40,22 @@
 
 - (void)setupHeaderView;
 
-- (void)userMarkedArticle:(FeedItem *)article read:(BOOL)read;
+- (void)userMarkedArticle:(FeedItem * _Nonnull)article read:(BOOL)read;
 
-- (void)userMarkedArticle:(FeedItem *)article bookmarked:(BOOL)bookmarked;
+- (void)userMarkedArticle:(FeedItem * _Nonnull)article bookmarked:(BOOL)bookmarked;
 
-- (void)didChangeToArticle:(FeedItem *)item;
+- (void)didChangeToArticle:(FeedItem * _Nonnull)item;
 
 - (void)_didFinishAllReadActionSuccessfully;
 
 #pragma mark -
 
-- (NSString *)emptyViewSubtitle;
+- (NSString * _Nonnull)emptyViewSubtitle;
 
-- (void)didTapSortOptions:(UIBarButtonItem *)sender;
+- (void)didTapSortOptions:(UIBarButtonItem * _Nullable )sender;
 
-- (void)setSortingOption:(YetiSortOption)option;
+- (void)setSortingOption:(YetiSortOption _Nullable )option;
 
-- (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender;
+- (void)presentAllReadController:(UIAlertController * _Nonnull)avc fromSender:(id _Nullable)sender;
 
 @end

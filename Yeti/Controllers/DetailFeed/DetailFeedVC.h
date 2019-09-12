@@ -15,17 +15,21 @@
 #import <DZKit/DZBasicDatasource.h>
 
 #import "BarPositioning.h"
+#import "UIViewController+Stateful.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
-@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration, BarPositioning> {
+@interface DetailFeedVC : UICollectionViewController <ScrollLoading, UIViewControllerRestoration, BarPositioning, ControllerState> {
     NSOperation *_searchOperation;
     BOOL _canLoadNext;
     
     NSIndexPath *_highlightedRow;
     BOOL _shouldShowHeader;
+    
+    @public
+    StateType _controllerState NS_AVAILABLE_IOS(13.0);
 }
 
 + (UINavigationController *)instanceWithFeed:(Feed * _Nullable)feed;
@@ -36,7 +40,9 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, assign) NSNumber * _Nullable loadOnReady;
 
-@property (nonatomic, strong) DZBasicDatasource *DS;
+@property (nonatomic, strong) DZBasicDatasource *DS NS_DEPRECATED_IOS(11.0, 12.3);
+
+@property (nonatomic, strong) UICollectionViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
 
 @property (nonatomic, getter=isLoadingNext) BOOL loadingNext;
 
@@ -48,9 +54,13 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, weak) UICollectionViewFlowLayout *flowLayout;
 
+@property (nonatomic, weak) UICollectionViewCompositionalLayout *compLayout NS_AVAILABLE_IOS(13.0);
+
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
 @property (assign) NSInteger page;
+
+@property (atomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
 
 - (BOOL)showsSortingButton;
 
@@ -66,7 +76,13 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 - (void)setupLayout;
 
+- (UIView *)viewForEmptyDataset;
+
 - (NSString *)emptyViewSubtitle;
+
+- (NSUInteger)indexOfItem:(FeedItem * _Nonnull)item retIndexPath:(NSIndexPath * _Nullable)indexPath;
+
+- (FeedItem * _Nullable)itemForIndexPath:(NSIndexPath * _Nonnull)indexPath;
 
 @end
 

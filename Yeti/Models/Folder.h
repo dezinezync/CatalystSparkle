@@ -5,7 +5,7 @@
 
 @class Feed;
 
-@interface Folder : DZObject <NSCoding, NSCopying, DZDatasourceModel> {
+@interface Folder : DZObject <NSSecureCoding, NSCopying, DZDatasourceModel> {
 
 }
 
@@ -20,7 +20,7 @@
 
 @property (nonatomic, strong) NSSet *feedIDs;
 
-@property (nonatomic, assign, getter=isExpanded) BOOL expanded;
+@property (atomic, assign, getter=isExpanded) BOOL expanded;
 
 + (Folder *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

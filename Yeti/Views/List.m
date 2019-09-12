@@ -23,8 +23,7 @@
 
 #pragma mark -
 
-- (BOOL)isCaption
-{
+- (BOOL)isCaption {
     return self.isQuoted;
 }
 
@@ -62,6 +61,10 @@
     return self.type == OrderedList ? @"Ordered List" : @"Unordered list";
 }
 
+- (UIAccessibilityContainerType)accessibilityContainerType {
+    return UIAccessibilityContainerTypeList;
+}
+
 - (void)setContent:(Content *)content {
     
     weakify(self);
@@ -78,8 +81,7 @@
     
 }
 
-- (void)append:(Content *)item index:(NSUInteger)index attributedString:(NSMutableAttributedString *)attrs indent:(NSInteger)indent
-{
+- (void)append:(Content *)item index:(NSUInteger)index attributedString:(NSMutableAttributedString *)attrs indent:(NSInteger)indent {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     if (index > 1) {

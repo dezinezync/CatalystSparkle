@@ -76,9 +76,10 @@ static NSString *const hljs = @"window.hljs";
     
     if (!language || !language.length)
         return [self parse:code];
-    
-    NSString *command = formattedString(@"%@.fixMarkup(%@.highlight(\"%@\",\`%@\`).value);", hljs, hljs, language, code);
-    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-escape-sequence"
+    NSString *command = formattedString(@"%@.fixMarkup(%@.highlightAuto(\"%@\").value);", hljs, hljs, code);
+#pragma clang diagnostic pop
     JSContext *context = [[JSContext alloc] init];
     [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
         DDLogDebug(@"%@", aVal);
@@ -104,8 +105,13 @@ static NSString *const hljs = @"window.hljs";
 {
     
     code = [self neatifyCode:code];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-escape-sequence"
     
     NSString *command = formattedString(@"%@.fixMarkup(%@.highlightAuto(\`%@\`).value);", hljs, hljs, code);
+    
+#pragma clang diagnostic pop
+    
     JSContext *context = [[JSContext alloc] init];
     [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
         DDLogDebug(@"%@", aVal);

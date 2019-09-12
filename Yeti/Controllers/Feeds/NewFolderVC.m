@@ -31,7 +31,15 @@
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
-    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    UINavigationController *nav = nil;
+    
+    if (@available(iOS 13, *)) {
+        nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.modalInPresentation = UIModalPresentationAutomatic;
+    }
+    else {
+        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    }
     
     return nav;
 }
@@ -43,7 +51,15 @@
     vc.feedsVC = feedsVC;
     vc.folderIndexPath = indexPath;
     
-    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    UINavigationController *nav = nil;
+    
+    if (@available(iOS 13, *)) {
+        nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.modalInPresentation = UIModalPresentationAutomatic;
+    }
+    else {
+        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    }
     
     return nav;
 }
@@ -105,7 +121,13 @@
                 
                 self->_isUpdating = NO;
                 
-                [self.feedsVC.tableView reloadRowsAtIndexPaths:@[self.folderIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                if (@available(iOS 13, *)) {
+                    [self.feedsVC setupData];
+                }
+                else {
+                    [self.feedsVC.tableView reloadRowsAtIndexPaths:@[self.folderIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+                }
+                
                 self.cancelButton.enabled = YES;
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
@@ -149,7 +171,7 @@
                 
             });
             
-            [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : MyFeedsManager.feeds, @"folders": MyFeedsManager.folders}];
+            [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : ArticlesManager.shared.feeds, @"folders": ArticlesManager.shared.folders}];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             

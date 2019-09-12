@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Subscription : NSObject <NSCoding>
+@interface Subscription : NSObject <NSSecureCoding>
 
 @property (nonatomic, copy) NSNumber *identifer;
 @property (nonatomic, copy) NSString *environment;

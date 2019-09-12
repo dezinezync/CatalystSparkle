@@ -10,6 +10,22 @@
 
 @implementation YetiTheme
 
+- (NSArray <NSString *> *)additionalKeyPaths {
+    
+    return @[@"cellColor",
+             @"unreadBadgeColor",
+             @"unreadTextColor",
+             @"articlesBarColor",
+             @"subbbarColor",
+             @"focusColor",
+             @"articleBackgroundColor",
+             @"opmlViewColor",
+             @"menuColor",
+             @"menuTextColor",
+             @"paragraphColor"];
+    
+}
+
 - (void)updateAppearances {
     
     if (![NSThread isMainThread]) {
@@ -38,7 +54,10 @@
     
     // setting this to NO causes jumpy navigation bars
     // update UIViewController to set viewController.extendedLayoutIncludesOpaqueBars=YES;
-    navBar.translucent = ![self.name isEqualToString:@"black"];
+    if (@available(iOS 13, *)) {}
+    else {
+        navBar.translucent = ![self.name isEqualToString:@"black"];
+    }
     
     if (self.isDark) {
         [navBar setBarStyle:UIBarStyleBlack];
@@ -62,7 +81,7 @@
     [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     
-//    textField.keyboardAppearance = textView.keyboardAppearance;
+//    textField.keyboardAppearance = textView.keyboardAppearance;z
     
     Class splitVCClass = NSClassFromString(@"SplitVC");
     Class navClass = NSClassFromString(@"YTNavigationController");
@@ -71,8 +90,11 @@
     UITableView *tableView = [UITableView appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     tableView.backgroundColor = self.tableColor;
     
-    UIRefreshControl *refresh = [UIRefreshControl appearance];
-    refresh.tintColor = self.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+    if (@available(iOS 13, *)) {}
+    else {
+        UIRefreshControl *refresh = [UIRefreshControl appearance];
+        refresh.tintColor = self.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+    }
     
     UITableViewCell *cell = [UITableViewCell appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
     cell.backgroundColor = self.cellColor;

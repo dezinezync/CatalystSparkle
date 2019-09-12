@@ -20,14 +20,14 @@
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController
 {
-    if (!MyFeedsManager.feeds || !MyFeedsManager.feeds.count) {
-        if (!MyFeedsManager.folders || !MyFeedsManager.folders.count)
+    if (!ArticlesManager.shared.feeds || !ArticlesManager.shared.feeds.count) {
+        if (!ArticlesManager.shared.folders || !ArticlesManager.shared.folders.count)
             return;
     }
     
     NSString *text = searchController.searchBar.text;
     
-    NSArray *data = [[MyFeedsManager folders] arrayByAddingObjectsFromArray:(NSArray *)[MyFeedsManager feedsWithoutFolders]];
+    NSArray *data = [[ArticlesManager.shared folders] arrayByAddingObjectsFromArray:(NSArray *)[ArticlesManager.shared feedsWithoutFolders]];
     DZBasicDatasource *DS = [(SearchResults *)[searchController searchResultsController] DS];
     
     if ([text isBlank]) {

@@ -22,6 +22,7 @@
 #import "YTNavigationController.h"
 #import "RecommendationsVC.h"
 #import "YetiThemeKit.h"
+#import "FeedsCell.h"
 
 @implementation FeedsVC (Actions)
 
@@ -48,13 +49,7 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if (_refreshing) {
-        
-        if ([sender isRefreshing])
-            [sender endRefreshing];
-        
-        _refreshing = NO;
-        
+    if (_refreshing == YES) {  
         return;
     }
     
@@ -67,14 +62,14 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
             
-            NSIndexPath *IPOne = [NSIndexPath indexPathForRow:0 inSection:0];
-            NSIndexPath *IPTwo = [NSIndexPath indexPathForRow:1 inSection:0];
+            [self setupData];
             
-            [self.DS reloadItemsAtIndices:@[IPOne, IPTwo]];
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
         DDLogError(@"Failed to fetch unread: %@", error);
+        
     }];
     
     [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -91,18 +86,26 @@
             }
             
             self->_refreshing = NO;
+            
+            if (sender != nil && sender.isRefreshing == YES) {
+                [sender endRefreshing];
+            }
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         DDLogError(@"%@", error);
         
-        if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
-            [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
-        }
-        
         asyncMain(^{
-            [sender endRefreshing];
+            if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
+                if (UIApplication.sharedApplication.applicationState == UIApplicationStateActive) {
+                    [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
+                }
+            }
+            
+            if (sender != nil && sender.isRefreshing == YES) {
+                [sender endRefreshing];
+            }
         });
         
         strongify(self);
@@ -135,7 +138,6 @@
     SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
     
     YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:settingsVC];
-    navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];
 }
@@ -144,7 +146,15 @@
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    [self showViewController:vc sender:self];
+    if (@available(iOS 13, *)) {
+        YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
+        
+        [self presentViewController:nav animated:YES completion:nil];
+    }
+    else {
+        [self showViewController:vc sender:self];
+    }
+
 }
 
 - (void)didLongTapOnCell:(UITapGestureRecognizer *)sender
@@ -294,7 +304,7 @@
             
             if (feed.folderID != nil && feed.folderID.integerValue) {
                 // remove it from the folder struct
-                [MyFeedsManager.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [ArticlesManager.shared.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     if ([obj.folderID isEqualToNumber:feed.folderID]) {
                         
@@ -311,13 +321,13 @@
                 }];
             }
             
-            NSArray <Feed *> *feeds = MyFeedsManager.feeds;
+            NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
             
             feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
                 return obj.feedID.integerValue != feedID.integerValue;
             }];
             
-            MyFeedsManager.feeds = feeds;
+            ArticlesManager.shared.feeds = feeds;
             
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -415,7 +425,16 @@
         
         [MyDBManager renameFeed:self.alertFeed customTitle:name completion:^(BOOL success) {
             
-            [self.tableView reloadRowsAtIndexPaths:@[self.alertIndexPath] withRowAnimation:UITableViewRowAnimationFade];
+            if (success) {
+                FeedsCell *cell = [self.tableView cellForRowAtIndexPath:self.alertIndexPath];
+                
+                if (cell) {
+                    cell.titleLabel.text = name;
+                }
+            }
+            else {
+                [AlertManager showGenericAlert];
+            }
             
             [self clearAlertProperties];
             
@@ -465,8 +484,123 @@
 
 #pragma mark - <UITableViewDelegate>
 
-- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip
-{
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(nonnull NSIndexPath *)indexPath point:(CGPoint)point  API_AVAILABLE(ios(13.0)) {
+    
+    if (indexPath.section == 0) {
+        return nil;
+    }
+    
+    id obj = [self objectAtIndexPath:indexPath];
+    
+    if (obj == nil) {
+        return nil;
+    }
+    
+    UIContextMenuConfiguration *config = nil;
+    
+    if ([obj isKindOfClass:Folder.class]) {
+        
+        Folder *folder = (Folder *)obj;
+        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"folder-%@", folder.folderID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+            
+            UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self presentViewController:nav animated:YES completion:nil];
+                });
+                
+            }];
+            
+            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self confirmFolderDelete:folder completionHandler:nil];
+                
+            }];
+            
+            delete.attributes = UIMenuElementAttributesDestructive;
+            
+            NSArray <UIAction *> *actions = @[rename, delete];
+            
+            UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
+            
+            return menu;
+            
+        }];
+    }
+    else {
+        Feed *feed = (Feed *)obj;
+        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"feed-%@", feed.feedID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+            
+            UIMenuElement * share = nil;
+            
+            if ([self feedCanShowExtraShareLevel:feed] == YES) {
+                
+                UIAction *shareFeed = [UIAction actionWithTitle:@"Share Feed URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                    
+                    [self shareFeedURL:feed indexPath:indexPath];
+                    
+                }];
+                
+                UIAction *shareWebsite = [UIAction actionWithTitle:@"Share Website URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                    
+                    [self shareWebsiteURL:feed indexPath:indexPath];
+                    
+                }];
+                
+                NSArray <UIAction *> *shareChildren = @[shareFeed, shareWebsite];
+                
+                share = [UIMenu menuWithTitle:@"Share" children:shareChildren];
+                
+            }
+            else {
+                
+                share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                    
+                    [self feed_didTapShare:feed indexPath:indexPath];
+                    
+                }];
+                
+            }
+            
+            UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                self.alertIndexPath = indexPath;
+                
+                [self renameFeed:feed];
+            }];
+            
+            UIAction * move = [UIAction actionWithTitle:@"Move" image:[UIImage systemImageNamed:@"text.insert"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self feed_didTapMove:feed indexPath:indexPath];
+                
+            }];
+            
+            UIAction * delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self confirmFeedDelete:feed completionHandler:nil];
+                
+            }];
+            
+            delete.attributes = UIMenuElementAttributesDestructive;
+            
+            NSArray <UIAction *> *actions = @[(UIAction *)share, rename, move, delete];
+            
+            UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
+            
+            return menu;
+            
+        }];
+    }
+    
+    return config;
+    
+}
+
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)ip {
     
     if (ip.section == 0)
         return nil;
@@ -476,9 +610,7 @@
     
     __strong NSIndexPath *indexPath = [ip copy];
     
-    DZBasicDatasource *DS = [self valueForKeyPath:@"DS"];
-    
-    Feed *feed = [DS objectAtIndexPath:indexPath];
+    Feed *feed = [self objectAtIndexPath:indexPath];
     Folder *folder = nil;
     
     if ([feed isKindOfClass:Folder.class]) {
@@ -527,13 +659,9 @@
         
         UIContextualAction *move = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Move" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
            
-            UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+            completionHandler(YES);
             
-            strongify(self);
-            
-            [self.splitViewController presentViewController:nav animated:YES completion:^{
-                completionHandler(YES);
-            }];
+            [self feed_didTapMove:feed indexPath:indexPath];
             
         }];
         
@@ -543,34 +671,7 @@
            
             completionHandler(YES);
             
-            if (feed.extra && feed.extra.url) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self showShareOptionsVC:feed indexPath:indexPath];
-                });
-            }
-            else {
-                NSString *feedURL = [feed url];
-                NSURL *URL = [NSURL URLWithString:feedURL];
-                
-                UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                    strongify(self);
-                    
-                    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-                        UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
-                        
-                        pvc.sourceView = self.tableView;
-                        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
-                        pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
-                    }
-                    
-                    [self presentViewController:activityVC animated:YES completion:nil];
-                    
-                });
-            }
+            [self feed_didTapShare:feed indexPath:indexPath];
             
         }];
         
@@ -586,50 +687,37 @@
 
 }
 
-- (void)showShareOptionsVC:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+- (BOOL)feedCanShowExtraShareLevel:(Feed *)feed {
     
     if (feed == nil) {
-        return;
+        return NO;
     }
     
     if (feed.extra == nil || feed.extra.url == nil) {
+        return NO;
+    }
+    
+    return YES;
+    
+}
+
+- (void)showShareOptionsVC:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    if ([self feedCanShowExtraShareLevel:feed] == NO) {
         return;
     }
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
-    weakify(self);
-    
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Feed URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        NSString *feedURL = [feed url];
-        NSURL *URL = [NSURL URLWithString:feedURL];
-        
-        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            [self presentViewController:activityVC animated:YES completion:nil];
-            
-        });
+        [self shareFeedURL:feed indexPath:indexPath];
         
     }]];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Share Website URL" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        NSString *websiteURL = feed.extra.url;
-        NSURL *URL = [NSURL URLWithString:websiteURL];
-        
-        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            strongify(self);
-            
-            [self presentViewController:activityVC animated:YES completion:nil];
-            
-        });
+        [self shareWebsiteURL:feed indexPath:indexPath];
         
     }]];
     
@@ -667,6 +755,86 @@
     }
     
     return YES;
+    
+}
+
+#pragma mark - Common Action Handlers
+
+- (void)shareFeedURL:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    NSString *feedURL = [feed url];
+    NSURL *URL = [NSURL URLWithString:feedURL];
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+    
+    [self showActivityController:activityVC indexPath:indexPath];
+    
+}
+
+- (void)shareWebsiteURL:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    NSString *websiteURL = feed.extra.url;
+    NSURL *URL = [NSURL URLWithString:websiteURL];
+    
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+    
+    [self showActivityController:activityVC indexPath:indexPath];
+    
+}
+
+- (void)showActivityController:(UIActivityViewController *)avc indexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath != nil && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.sourceView = self.tableView;
+        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+        
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self presentViewController:avc animated:YES completion:nil];
+        
+    });
+    
+}
+
+- (void)feed_didTapShare:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    if (feed.extra && feed.extra.url) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self showShareOptionsVC:feed indexPath:indexPath];
+        });
+    }
+    else {
+        NSString *feedURL = [feed url];
+        NSURL *URL = [NSURL URLWithString:feedURL];
+        
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
+                
+                pvc.sourceView = self.tableView;
+                pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+                pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            }
+            
+            [self presentViewController:activityVC animated:YES completion:nil];
+            
+        });
+    }
+    
+}
+
+- (void)feed_didTapMove:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
+    
+    UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+    
+    [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
 }
 

@@ -49,7 +49,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     DS1.data = @[@"None"];
     
     DZBasicDatasource *DS2= [[DZBasicDatasource alloc] init];
-    DS2.data = [MyFeedsManager folders];
+    DS2.data = [ArticlesManager.shared folders];
     
     DZSectionedDatasource *DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
     DS.datasources = @[DS1, DS2];
