@@ -1,0 +1,21 @@
+{
+    "backgroundColor": ["secondarySystemBackgroundColor", "#2C2C2E"],
+    "titleColor": ["labelColor", "#ffffff"],
+    "subtitleColor": ["secondaryLabelColor", "#EBEBF560"],
+    "captionColor": ["tertiaryLabelColor", "#EBEBF530"],
+    "borderColor": ["separatorColor", "#54545865"],
+    "tableColor": ["systemBackgroundColor", "#1C1C1E"],
+    "tintColor": ["systemRedColor", "#FF453A"],
+    "unreadBadgeColor": ["secondarySystemFillColor", "#78788032"],
+    "unreadTextColor": ["secondaryLabelColor", "#EBEBF560"],
+    "articlesBarColor": ["systemBackgroundColor", "#2C2C2E"],
+    "cellColor": ["systemBackgroundColor", "#1C1C1E"],
+    "subbarColor": ["secondarySystemBackgroundColor", "#2C2C2E"],
+    "focusColor": ["quaternaryLabelColor", "#EBEBF518"],
+    "articleBackgroundColor": ["systemBackgroundColor", "#1C1C1E"],
+    "opmlViewColor": ["systemGroupedBackgroundColor", "#2C2C2E"],
+    "menuColor": ["systemGroupedBackgroundColor", "#2C2C2E"],
+    "menuTextColor": ["secondaryLabelColor", "#EBEBF560"],
+    "tintColorIndex": 1,
+    "paragraphColor": "#EFEFF4"
+}

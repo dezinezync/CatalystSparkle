@@ -58,13 +58,17 @@ NSString* deviceName() {
     self.tableView.backgroundColor = theme.tableColor;
     self.view.backgroundColor = theme.tableColor;
     
-    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_down"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
-    done.accessibilityLabel = @"Close";
-    done.accessibilityHint = @"Close settings";
-    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    self.navigationItem.rightBarButtonItem = done;
+    
+    if (@available(iOS 13, *)) {}
+    else {
+        UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_down"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+        done.accessibilityLabel = @"Close";
+        done.accessibilityHint = @"Close settings";
+        
+        self.navigationItem.rightBarButtonItem = done;
+    }
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
@@ -77,8 +81,7 @@ NSString* deviceName() {
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self dz_smoothlyDeselectRows:self.tableView];
@@ -166,7 +169,13 @@ NSString* deviceName() {
     
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
-    cell.backgroundColor = theme.cellColor;
+    
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
+    }
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -201,7 +210,10 @@ NSString* deviceName() {
             switch (indexPath.row) {
                 case 0: {
                     cell.textLabel.text = @"Appearance";
-                    cell.detailTextLabel.text = [SharedPrefs.theme capitalizedString];
+                    
+                    NSString *themeName = SharedPrefs.theme;
+                    
+                    cell.detailTextLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
                 }
                     break;
                 case 1:
@@ -211,6 +223,8 @@ NSString* deviceName() {
                     UISwitch *sw = [[UISwitch alloc] init];
                     [sw setOn:SharedPrefs.backgroundRefresh];
                     [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
+                    
+                    [sw setOnTintColor:self.view.tintColor];
                     
                     cell.accessoryView = sw;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -286,8 +300,10 @@ NSString* deviceName() {
             
             break;
     }
+
     
     NSString *title = [[cell.textLabel.text lowercaseString] stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+    
     if ([title containsString:@"opml"]) {
         title = @"settings_opml";
     }
@@ -313,6 +329,12 @@ NSString* deviceName() {
     // Navigation logic may go here, for example:
     // Create the next view controller.
     
+    UITableViewStyle style = UITableViewStyleGrouped;
+    
+    if (@available(iOS 13, *)) {
+        style = UITableViewStyleInsetGrouped;
+    }
+    
     UIViewController *vc;
     // vc = [[<#DetailViewController#> alloc] initWithNibName:NSStringFromClass(<#NSString * _Nonnull aClassName#>) bundle:nil];
     switch (indexPath.section) {
@@ -331,7 +353,7 @@ NSString* deviceName() {
             switch (indexPath.row) {
                 case 0:
                 {
-                    vc = [[ThemeVC alloc] initWithStyle:UITableViewStyleGrouped];
+                    vc = [[ThemeVC alloc] initWithStyle:style];
                 }
                     break;
                 case 2:
@@ -343,10 +365,21 @@ NSString* deviceName() {
                     vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
                     break;
                 case 4:
-                    vc = [[OPMLDeckController alloc] init];
+                {
+                    if (@available(iOS 13, *)) {
+                        OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc1];
+                        nav.modalTransitionStyle = UIModalPresentationAutomatic;
+                        
+                        vc = nav;
+                    }
+                    else {
+                        vc = [[OPMLDeckController alloc] init];
+                    }
+                }
                     break;
                 case 5:
-                    vc = [[MiscVC alloc] initWithStyle:UITableViewStyleGrouped];
+                    vc = [[MiscVC alloc] initWithStyle:style];
                     break;
                 default:
                     break;
@@ -361,11 +394,19 @@ NSString* deviceName() {
                 
                 Theme *theme = YTThemeKit.theme;
                 
-                if (![theme.name isEqualToString:@"light"]) {
+                if (@available(iOS 13, *)) {
                     NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
-                    NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
+                    NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
                     
                     webVC.evalJSOnLoad = js;
+                }
+                else {
+                    if (![theme.name isEqualToString:@"light"]) {
+                        NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
+                        NSString *js = formattedString(@"darkStyle(%@,\"%@\")", [YTThemeKit.theme.name isEqualToString:@"black"] ? @0 : @1, tint);
+                        
+                        webVC.evalJSOnLoad = js;
+                    }
                 }
                 
                 vc = webVC;
@@ -387,7 +428,7 @@ NSString* deviceName() {
         [(id<SettingsNotifier>)vc setSettingsDelegate:self];
     }
     
-    if ([vc isKindOfClass:OPMLDeckController.class]) {
+    if ([vc isKindOfClass:OPMLDeckController.class] || [vc isKindOfClass:UINavigationController.class]) {
         
         [self presentViewController:vc animated:YES completion:nil];
         [tableView deselectRowAtIndexPath:indexPath animated:YES];

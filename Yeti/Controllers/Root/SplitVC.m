@@ -36,15 +36,28 @@
         
         self.delegate = self;
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-        });
+        [self loadViewIfNeeded];
+        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+//
+//            if (@available(iOS 13, *)) {
+//                self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+//            }
+//
+//        });
         
         MainNavController *nav1 = [[MainNavController alloc] init];
         
         UINavigationController *nav2 = [self emptyVC];
 
-        self.viewControllers = @[nav1, nav2];
+        if (self.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            self.viewControllers = @[nav1];
+            nav2 = nil;
+        }
+        else {
+            self.viewControllers = @[nav1, nav2];
+        }
         
     }
     
@@ -107,37 +120,50 @@
     
 }
 
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-
-    weakify(self);
-    [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-
-        // Why set the display mode in dispatch?
-        // It's a workaround: http://stackoverflow.com/a/28440974/242682
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-            strongify(self);
-            
-            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-            
-        });
-
-//        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-//
-//            if (self.viewControllers.count == 1) {
-//                UINavigationController *nav = [self emptyVC];
-//
-//                self.viewControllers = @[self.viewControllers.firstObject, nav];
-//            }
-//
+//- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+//    
+//    if (@available(iOS 13, *)) {
+//        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+//            [[NSNotificationCenter defaultCenter] postNotificationName:ThemeDidUpdate object:nil];
 //        }
-//        else {
-//            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
-//        }
+//    }
+//    
+//    [super traitCollectionDidChange:previousTraitCollection];
+//    
+//}
 
-    }];
-}
+//- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+//    weakify(self);
+//    [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+//
+//        // Why set the display mode in dispatch?
+//        // It's a workaround: http://stackoverflow.com/a/28440974/242682
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//           
+//            strongify(self);
+//            
+//            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
+//            
+//        });
+//
+////        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+////
+////            if (self.viewControllers.count == 1) {
+////                UINavigationController *nav = [self emptyVC];
+////
+////                self.viewControllers = @[self.viewControllers.firstObject, nav];
+////            }
+////
+////        }
+////        else {
+////            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
+////        }
+//
+//    }];
+//    
+//    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+//    
+//}
 
 #pragma mark -
 
@@ -158,6 +184,20 @@
     vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
     
     return nav2;
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    
+    [super traitCollectionDidChange:previousTraitCollection];
+    
+    if (@available(iOS 13, *)) {
+        
+        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+            [MyAppDelegate loadCodeTheme];
+        }
+        
+    }
+    
 }
 
 #pragma mark - Gestures
@@ -288,32 +328,32 @@
     return nav;
 }
 
-- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(YTNavigationController *)primaryViewController {
-
-    if (primaryViewController == secondaryViewController) {
-        return NO;
-    }
-
-    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class]) {
-
-        UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
-        UIViewController *topVC = [secondaryNav topViewController];
-
-        if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
-            [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
-            return YES;
-        }
-        else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
-            return YES;
-        }
-    }
-    else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
-        [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
-        return YES;
-    }
-
-    return NO;
-}
+//- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(YTNavigationController *)primaryViewController {
+//
+//    if (primaryViewController == secondaryViewController) {
+//        return NO;
+//    }
+//
+//    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class]) {
+//
+//        UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
+//        UIViewController *topVC = [secondaryNav topViewController];
+//
+//        if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
+//            [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
+//            return YES;
+//        }
+//        else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
+//            return YES;
+//        }
+//    }
+//    else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
+//        [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
+//        return YES;
+//    }
+//
+//    return NO;
+//}
 
 - (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
     
@@ -336,6 +376,24 @@
 
     return [self emptyVC];
 
+}
+
+- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
+    
+    if ([secondaryViewController isKindOfClass:[UINavigationController class]]
+        && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:[ArticleVC class]]
+        && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
+        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+        return YES;
+    }
+    else if ([secondaryViewController isKindOfClass:YTNavigationController.class]
+             && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
+        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+        return YES;
+    }
+    else {
+        return NO;
+    }
 }
 
 #pragma mark - <UIGestureRecognizerDelegate>

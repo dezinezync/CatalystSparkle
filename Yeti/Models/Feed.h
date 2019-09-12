@@ -6,7 +6,7 @@
 
 #import <DZKit/DZDatasourceModel.h>
 
-@interface Feed : DZObject <NSCoding, DZDatasourceModel, NSCopying> {
+@interface Feed : DZObject <NSSecureCoding, DZDatasourceModel, NSCopying> {
     
 }
 

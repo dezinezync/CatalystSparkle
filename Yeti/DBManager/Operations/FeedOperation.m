@@ -35,7 +35,9 @@
             if (pipeline) {
                 //  on network failure
                 // retry after one minute with backoff implemented by the framework
-                [pipeline setStatusAsPendingForOperationWithUUID:self.uuid retryDelay:60];
+                // retrying isn't available as of 2019-08-03 09:58:00
+                
+                [pipeline setStatusAsPendingForOperationWithUUID:self.uuid];
                 
                 //  in case of a conflict
                 // [pipeline suspend];

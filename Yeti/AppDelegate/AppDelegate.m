@@ -22,6 +22,10 @@
 #import "YetiConstants.h"
 #import "FeedsManager.h"
 
+#ifdef DEBUG
+#import <LinkPresentation/LinkPresentation.h>
+#endif
+
 AppDelegate *MyAppDelegate = nil;
 
 @interface AppDelegate () {
@@ -78,6 +82,9 @@ AppDelegate *MyAppDelegate = nil;
         NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
         [NSURLCache setSharedURLCache:sharedCache];
         
+//        [SharedImageLoader.cache removeAllObjects];
+//        [SharedImageLoader.cache removeAllObjectsFromDisk];
+        
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             MyAppDelegate = self;
@@ -122,7 +129,7 @@ AppDelegate *MyAppDelegate = nil;
         //    });
         //#endif
         
-        //    [self yt_log_fontnames];
+//            [self yt_log_fontnames];
         
         //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
         //    DDLogDebug(@"EX:%@", data);
@@ -157,6 +164,40 @@ AppDelegate *MyAppDelegate = nil;
             [NSUserDefaults.standardUserDefaults synchronize];
         }
         
+#ifdef DEBUG
+//        LPMetadataProvider *metadata = [[LPMetadataProvider alloc] init];
+//        [metadata startFetchingMetadataForURL:[NSURL URLWithString:@"https://twitter.com/viticci/status/1138820252970770433"] completionHandler:^(LPLinkMetadata * _Nullable metadata, NSError * _Nullable error) {
+//
+//            if (error) {
+//                DDLogError(@"Error loading metadata: %@", error);
+//            }
+//            else {
+//                DDLogDebug(@"Metadata: %@", metadata);
+//                
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                   
+//                    LPLinkView *view = [[LPLinkView alloc] initWithMetadata:metadata];
+//                    view.translatesAutoresizingMaskIntoConstraints = NO;
+//                    
+//                    NSString *url = metadata.URL.absoluteString;
+//                    url = [url stringByReplacingOccurrencesOfString:@"twitter.com" withString:@"twitter"];
+//                    url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@"yeti://"];
+//                    
+//                    metadata.URL = [NSURL URLWithString:url];
+//                    metadata.originalURL = metadata.URL;
+//                    
+//                    [self.window addSubview:view];
+//                    
+//                    [NSLayoutConstraint activateConstraints:@[[view.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
+//                                                              [view.centerYAnchor constraintEqualToAnchor:self.window.centerYAnchor]]];
+//                    
+//                });
+//                
+//            }
+//
+//        }];
+#endif
+        
     });
     
     return retval;
@@ -186,10 +227,22 @@ AppDelegate *MyAppDelegate = nil;
 #define kFeedsManager @"FeedsManager"
 
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+    
+//    // broken in iOS 13.
+////    if (@available(iOS 13, *)) {
+//        return NO;
+////    }
+    
     return YES;
 }
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+    
+//    // broken in iOS 13.
+////    if (@available(iOS 13, *)) {
+//        return NO;
+////    }
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
@@ -233,9 +286,9 @@ AppDelegate *MyAppDelegate = nil;
     DDLogDebug(@"Application did restore");
 }
 
-- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
-    return nil;
-}
+//- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
+//    return nil;
+//}
 
 #pragma mark -
 
@@ -270,7 +323,8 @@ AppDelegate *MyAppDelegate = nil;
              kDetailFeedSorting: YTSortAllDesc,
              kShowMarkReadPrompt: @YES,
              kPreviewLines: @0,
-             kShowTags: @YES
+             kShowTags: @YES,
+             kUseToolbar: @NO
              };
 }
 
@@ -290,7 +344,8 @@ AppDelegate *MyAppDelegate = nil;
     NSString *themeName = SharedPrefs.theme;
     
     YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-    [CodeParser.sharedCodeParser loadTheme:themeName];
+    
+    [self loadCodeTheme];
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     
@@ -299,6 +354,26 @@ AppDelegate *MyAppDelegate = nil;
 }
 
 #pragma mark - Theming
+
+- (void)loadCodeTheme {
+    
+    NSString *themeName = SharedPrefs.theme;
+    
+    if (@available(iOS 13, *)) {
+        
+        if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            [CodeParser.sharedCodeParser loadTheme:@"dark"];
+        }
+        else {
+            [CodeParser.sharedCodeParser loadTheme:themeName];
+        }
+        
+    }
+    else {
+        [CodeParser.sharedCodeParser loadTheme:themeName];
+    }
+    
+}
 
 // https://ngs.io/2014/10/26/refresh-ui-appearance/
 
@@ -369,7 +444,7 @@ AppDelegate *MyAppDelegate = nil;
         return;
     }
     
-    NSInteger currentCount = (MyFeedsManager.unread ?: @[]).count;
+    NSInteger currentCount = (ArticlesManager.shared.unread ?: @[]).count;
     
     [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

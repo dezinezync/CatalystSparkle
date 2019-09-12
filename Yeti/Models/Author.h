@@ -10,7 +10,7 @@
 
 #import "Content.h"
 
-@interface Author : DZObject <NSCoding, NSCopying>
+@interface Author : DZObject <NSSecureCoding, NSCopying>
 
 @property (nonatomic, copy) NSNumber *authorID;
 @property (nonatomic, copy) NSString *name;

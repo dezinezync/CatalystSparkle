@@ -37,8 +37,15 @@
 + (UINavigationController *)instanceInNavController
 {
     NewFeedVC *vc = [[NewFeedVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    UINavigationController *nav = nil;
     
-    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    if (@available(iOS 13, *)) {
+        nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.modalInPresentation = UIModalPresentationAutomatic;
+    }
+    else {
+        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    }
     
     return nav;
 }
@@ -86,7 +93,10 @@
     
     self.input.delegate = self;
     
-    self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    if (@available(iOS 13, *)) {}
+    else {
+        self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    }
     
     if (theme.isDark) {
         if ([theme.name isEqualToString:@"black"]) {
@@ -111,10 +121,10 @@
     
     [self.cancelButton.widthAnchor constraintEqualToConstant:80.f].active = YES;
     
-    UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
-    if (label) {
-        label.textColor = theme.captionColor;
-    }
+//    UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
+//    if (label) {
+//        label.textColor = theme.captionColor;
+//    }
 
 }
 
@@ -206,7 +216,7 @@
             strongify(self);
             
             if ([responseObject isKindOfClass:Feed.class]) {
-                MyFeedsManager.feeds = [[MyFeedsManager feeds] arrayByAddingObject:responseObject];
+                ArticlesManager.shared.feeds = [[ArticlesManager.shared feeds] arrayByAddingObject:responseObject];
                 
                 weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -441,7 +451,7 @@
             return;
         }
         else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
             
             weakify(self);
             

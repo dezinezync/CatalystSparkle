@@ -124,8 +124,13 @@
     }
 }
 
-- (void)setImages:(NSArray<Content *> *)images
-{
+- (void)setImages:(NSArray<Content *> *)images {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setImages:) withObject:images waitUntilDone:NO];
+        return;
+    }
+    
     _images = images;
     
     if (!_images)
@@ -183,12 +188,10 @@
         self.pageControl.numberOfPages = images.count;
     }
     
-    weakify(self);
+    [self.collectionView setNeedsUpdateConstraints];
+    [self.collectionView layoutIfNeeded];
     
-    asyncMain(^{
-        strongify(self);
-        [self.collectionView reloadData];
-    });
+    [self.collectionView reloadData];
 }
 
 - (void)setupHeight {
@@ -220,18 +223,15 @@
 
 #pragma mark - <UICollectionViewDatasource>
 
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
-{
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
 }
 
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
-{
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.images ? self.images.count : 0;
 }
 
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath
-{
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -250,7 +250,7 @@
         
         if (!self)
             return;
-        
+
         cell.backgroundColor = theme.articleBackgroundColor;
         
         if (!self->_unbounded)

@@ -16,6 +16,7 @@
 #import "PaddedLabel.h"
 
 #import "LaunchVC.h"
+#import "YetiThemeKit.h"
 
 typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateDefault,
@@ -54,6 +55,15 @@ static void * buttonStateContext = &buttonStateContext;
     }
     
     return self;
+    
+}
+
+- (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.view.backgroundColor = theme.backgroundColor;
     
 }
 

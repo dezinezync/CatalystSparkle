@@ -18,12 +18,15 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "YetiThemeKit.h"
+
 @interface TrialVC ()
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailTextLabel;
 @property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet UIButton *restoreButton;
+@property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
 
 @property (nonatomic, weak) RMStoreKeychainPersistence *persistence;
 @property (nonatomic) NSArray *purhcasedProductIdentifiers;
@@ -42,7 +45,17 @@
     self.products = @[@"com.dezinezync.elytra.free",
                       @"com.dezinezync.elytra.non.1m"];
     
+    self.view.layer.cornerRadius = 20.f;
+    
+    if (@available(iOS 13, *)) {
+        self.view.layer.cornerCurve = kCACornerCurveContinuous;
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.view.backgroundColor = theme.backgroundColor;
+    
     self.detailTextLabel.hidden = YES;
+    self.detailTextLabel.textColor = theme.subtitleColor;
     
     [self.button setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
     
@@ -57,9 +70,10 @@
     
     self.titleLabel.font = baseFont;
     
-    [attrs setAttributes:@{NSFontAttributeName: baseFont} range:NSMakeRange(0, attrs.string.length)];
+    [attrs setAttributes:@{NSFontAttributeName: baseFont, NSForegroundColorAttributeName: theme.titleColor} range:NSMakeRange(0, attrs.string.length)];
     
     self.titleLabel.attributedText = attrs;
+    self.subtitleLabel.textColor = theme.subtitleColor;
     
     [self getProducts];
 }
@@ -90,7 +104,7 @@
 
 - (IBAction)didTapRestore:(id)sender {
     
-#ifdef DEBUG
+#if defined(DEBUG) || TESTFLIGHT == 1
     dispatch_async(dispatch_get_main_queue(), ^{
         
         UICKeyChainStore *keychain = MyFeedsManager.keychain;
@@ -239,26 +253,28 @@
     
     [store requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         
-        NSString *text = self.detailTextLabel.text;
-        
-        SKProduct *oneMonth = [products rz_reduce:^id(SKProduct * prev, SKProduct * current, NSUInteger idx, NSArray *array) {
-            if ([current.productIdentifier containsString:@".non"]) {
-                return current;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *text = self.detailTextLabel.text;
+            
+            SKProduct *oneMonth = [products rz_reduce:^id(SKProduct * prev, SKProduct * current, NSUInteger idx, NSArray *array) {
+                if ([current.productIdentifier containsString:@".non"]) {
+                    return current;
+                }
+                
+                return prev;
+            }];
+            
+            if (oneMonth) {
+                text = formattedString(text, [RMStore localizedPriceOfProduct:oneMonth]);
+                self.detailTextLabel.text = text;
+                self.detailTextLabel.hidden = NO;
             }
             
-            return prev;
-        }];
-        
-        if (oneMonth) {
-            text = formattedString(text, [RMStore localizedPriceOfProduct:oneMonth]);
-            self.detailTextLabel.text = text;
-            self.detailTextLabel.hidden = NO;
-        }
-        
-        [self setButtonsState:YES];
-        
-        [[DZActivityIndicatorManager shared] decrementCount];
-        self.productsRequestFinished = YES;
+            [self setButtonsState:YES];
+            
+            [[DZActivityIndicatorManager shared] decrementCount];
+            self.productsRequestFinished = YES;
+        });
         
     } failure:^(NSError *error) {
         

@@ -7,10 +7,12 @@
 //
 
 #import "Youtube.h"
+#import <WebKit/WKWebView.h>
+#import <WebKit/WKWebViewConfiguration.h>
 
 @interface Youtube ()
 
-@property (nonatomic, weak) UIWebView *webview;
+@property (nonatomic, weak) WKWebView *webview;
 
 @end
 
@@ -35,11 +37,13 @@
         self.layer.cornerRadius = 8.f;
         self.clipsToBounds = YES;
         
-        UIWebView *webview = [[UIWebView alloc] initWithFrame:frame];
+        WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+        configuration.allowsInlineMediaPlayback = YES;
+        configuration.allowsAirPlayForMediaPlayback = YES;
+        configuration.allowsPictureInPictureMediaPlayback = YES;
+        
+        WKWebView *webview = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
         webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        webview.allowsInlineMediaPlayback = YES;
-        webview.allowsPictureInPictureMediaPlayback = YES;
-        webview.mediaPlaybackAllowsAirPlay = YES;
         
         [self addSubview:webview];
         _webview = webview;
@@ -82,7 +86,7 @@
         asyncMain(^{
             strongify(self);
             
-            [self.webview loadRequest:[NSURLRequest requestWithURL:self->_URL]];
+            __unused WKNavigation * navigation = [self.webview loadRequest:[NSURLRequest requestWithURL:self->_URL]];
         });
     }
 }

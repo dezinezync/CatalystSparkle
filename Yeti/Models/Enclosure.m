@@ -15,6 +15,10 @@
 
 @implementation Enclosure
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (NSString *)compareID
 {
     return self.url.absoluteString;
@@ -32,10 +36,10 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.length = [decoder decodeObjectForKey:@"length"];
-        self.type = [decoder decodeObjectForKey:@"type"];
-        self.url = [decoder decodeObjectForKey:@"url"];
-        self.cmtime = [decoder decodeObjectForKey:@"cmtime"];
+        self.length = [decoder decodeObjectOfClass:NSNumber.class forKey:@"length"];
+        self.type = [decoder decodeObjectOfClass:NSString.class forKey:@"type"];
+        self.url = [decoder decodeObjectOfClass:NSURL.class forKey:@"url"];
+        self.cmtime = [decoder decodeObjectOfClass:NSValue.class forKey:@"cmtime"];
     }
     return self;
 }

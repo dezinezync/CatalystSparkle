@@ -132,7 +132,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         cell.textLabel.textColor = theme.titleColor;
         
-        cell.backgroundColor = theme.cellColor;
+        if (@available(iOS 13, *)) {
+            cell.backgroundColor = theme.backgroundColor;
+        }
+        else {
+            cell.backgroundColor = theme.cellColor;
+        }
         
         if (cell.selectedBackgroundView == nil) {
             cell.selectedBackgroundView = [UIView new];
@@ -176,7 +181,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     cell.textLabel.textColor = theme.titleColor;
     
-    cell.backgroundColor = theme.cellColor;
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
+    }
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -224,6 +234,8 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         [sw setOn:SharedPrefs.useToolbar];
         [sw addTarget:self action:@selector(didChangeToolbarPref:) forControlEvents:UIControlEventValueChanged];
     }
+    
+    [sw setOnTintColor:self.view.tintColor];
     
     if ([sectionName isEqualToString:@"Preview"]) {
         cell.textLabel.text = sectionName;
@@ -299,7 +311,13 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         _showingPreview = YES;
         
-        PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:UITableViewStylePlain];
+        UITableViewStyle style = UITableViewStylePlain;
+        
+        if (@available(iOS 13, *)) {
+            style = UITableViewStyleInsetGrouped;
+        }
+        
+        PreviewLinesVC *vc = [[PreviewLinesVC alloc] initWithStyle:style];
         
         [self showViewController:vc sender:self];
         
@@ -307,13 +325,11 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     }
     
     if (indexPath.section == 0) {
-        NSString *name = [self appIconNameForIndex:indexPath.row];
+        NSString *name = indexPath.row == 0 ? nil : [self appIconNameForIndex:indexPath.row];
         
-        if (name == nil) {
-            return;
+        if (name != nil) {
+            name = name.lowercaseString;
         }
-        
-        name = name.lowercaseString;
         
         [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
             

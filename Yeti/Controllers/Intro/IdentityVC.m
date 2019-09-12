@@ -9,6 +9,7 @@
 #import "IdentityVC.h"
 #import "FeedsManager.h"
 #import "TrialVC.h"
+#import "YetiThemeKit.h"
 
 #import "UIImage+Color.h"
 
@@ -19,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITextField *input;
 @property (weak, nonatomic) IBOutlet UIButton *button;
+@property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
 
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *singleTap;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *doubleTap;
@@ -30,6 +32,8 @@
 @property (weak, nonatomic) UITextField *textField;
 @property (weak, nonatomic) UIAlertAction *confirmAction;
 
+@property (weak, nonatomic) IBOutlet UILabel *captionLabel;
+
 @end
 
 @implementation IdentityVC
@@ -39,6 +43,13 @@
     // Do any additional setup after loading the view from its nib.
     
     self.view.layer.cornerRadius = 20.f;
+    
+    if (@available(iOS 13, *)) {
+        self.view.layer.cornerCurve = kCACornerCurveContinuous;
+    }
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.view.backgroundColor = theme.backgroundColor;
     
     [self.singleTap requireGestureRecognizerToFail:self.doubleTap];
     
@@ -53,9 +64,11 @@
     
     self.titleLabel.font = baseFont;
     
-    [attrs setAttributes:@{NSFontAttributeName: baseFont} range:NSMakeRange(0, attrs.string.length)];
+    [attrs setAttributes:@{NSFontAttributeName: baseFont, NSForegroundColorAttributeName: theme.titleColor} range:NSMakeRange(0, attrs.string.length)];
     
     self.titleLabel.attributedText = attrs;
+    self.subtitleLabel.textColor = theme.subtitleColor;
+    self.captionLabel.textColor = theme.captionColor;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -91,6 +104,18 @@
 #pragma mark - Actions
 
 - (IBAction)didTapButton:(id)sender {
+    
+//#ifdef DEBUG
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        
+//        UICKeyChainStore *keychain = MyFeedsManager.keychain;
+//        [keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+//        
+//        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//    });
+//    
+//    return;
+//#endif
     
     TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
     
@@ -141,7 +166,7 @@
         self.oldUserID = MyFeedsManager.userID;
         
         MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.textField.text];
-        MyFeedsManager.userIDManager.userID = nil;
+        MyFeedsManager.userID = nil;
         
         self.textField.enabled = NO;
         
@@ -154,10 +179,10 @@
             NSDictionary *user = [responseObject valueForKey:@"user"];
             DDLogDebug(@"Got existing user: %@", user);
             
-            MyFeedsManager.userIDManager.userID = @([[user valueForKey:@"id"] integerValue]);
+            MyFeedsManager.userID = @([[user valueForKey:@"id"] integerValue]);
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
             
-            [keychain setString: MyFeedsManager.userIDManager.userID.stringValue forKey:kUserID];
+            [keychain setString: MyFeedsManager.userID.stringValue forKey:kUserID];
             [keychain setString: MyFeedsManager.userIDManager.UUID.UUIDString forKey:kAccountID];
             
             [avc dismissViewControllerAnimated:YES completion:nil];
@@ -168,7 +193,7 @@
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.oldUUID];
-            MyFeedsManager.userIDManager.userID = self.oldUserID;
+            MyFeedsManager.userID = self.oldUserID;
             
             strongify(self);
             self.oldUUID = nil;

@@ -33,4 +33,8 @@
 
 @property (nonatomic, copy) UIColor *menuTextColor;
 
+#pragma mark - 1.4
+
+@property (nonatomic, copy) UIColor *paragraphColor;
+
 @end

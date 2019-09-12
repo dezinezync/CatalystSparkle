@@ -28,5 +28,7 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
 @property (nonatomic, strong) RMStoreKeychainPersistence * persistence;
 
+- (void)loadCodeTheme;
+
 @end
 

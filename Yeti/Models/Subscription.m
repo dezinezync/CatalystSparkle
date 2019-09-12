@@ -13,6 +13,10 @@
 
 @implementation Subscription
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 + (instancetype)instanceFromDictionary:(NSDictionary *)attrs {
     
     Subscription *instance = [[Subscription alloc] initWithDictionary:attrs];

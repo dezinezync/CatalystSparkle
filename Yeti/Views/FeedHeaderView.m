@@ -172,7 +172,7 @@
             shadowImage.hidden = NO;
         }
         
-        UIImageView *copy = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:shadowImage]];
+        UIImageView *copy = [NSKeyedUnarchiver unarchivedObjectOfClass:[UIImageView class] fromData:[NSKeyedArchiver archivedDataWithRootObject:shadowImage requiringSecureCoding:NO error:nil] error:nil];
         copy.hidden = NO;
         copy.alpha = 1.f;
         copy.translatesAutoresizingMaskIntoConstraints = NO;

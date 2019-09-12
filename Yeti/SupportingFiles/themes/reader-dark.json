@@ -1,0 +1,21 @@
+{
+    "backgroundColor": "#342A19",
+    "subtitleColor": "#B08B77",
+    "captionColor": "#DEBDAB",
+    "titleColor": "#E8C3AB",
+    "borderColor": "#3C3C3C50",
+    "tableColor": "#1E1910",
+    "tintColor": "#DD6F2A",
+    "unreadBadgeColor": "#403726",
+    "unreadTextColor": "#D8BC8F",
+    "articlesBarColor": "#1E1910",
+    "cellColor": "#1E1910",
+    "subbarColor": "#E3CFAF",
+    "focusColor": "#FFF9CF",
+    "articleBackgroundColor": "#1E1910",
+    "opmlViewColor": "#2B2418",
+    "menuColor": "#2B2418",
+    "menuTextColor": "#E8C3AB",
+    "tintColorIndex": 2,
+    "paragraphColor": "#B08B77"
+}

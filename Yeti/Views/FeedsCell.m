@@ -68,8 +68,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.separatorInset = UIEdgeInsetsMake(0, 40.f, 0, 0);
 }
 
-- (void)prepareForReuse
-{
+- (void)prepareForReuse{
     [self removeObservorInfo];
     
     [super prepareForReuse];
@@ -116,40 +115,39 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     }];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [self removeObservorInfo];
 }
 
 #pragma mark - Setter
 
-- (void)setBackgroundColor:(UIColor *)backgroundColor {
-    [super setBackgroundColor:backgroundColor];
-    
-    self.contentView.backgroundColor = backgroundColor;
-    for (UIView *subview in self.contentView.subviews) {
-        if ([subview isKindOfClass:UIStackView.class]) {
-            UIColor *color = backgroundColor;
-            CGFloat alpha;
-            
-            [color getRed:nil green:nil blue:nil alpha:&alpha];
-            if (alpha < 1.f)
-                color = [UIColor clearColor];
-            
-            [[(UIStackView *)subview arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.backgroundColor = color;
-            }];
-        }
-        else {
-            subview.backgroundColor = backgroundColor;
-        }
-    }
-    
-    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
-        Theme *theme = [YTThemeKit theme];
-        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
-    }
-}
+//- (void)setBackgroundColor:(UIColor *)backgroundColor {
+//    [super setBackgroundColor:backgroundColor];
+//    
+//    self.contentView.backgroundColor = backgroundColor;
+//    for (UIView *subview in self.contentView.subviews) {
+//        if ([subview isKindOfClass:UIStackView.class]) {
+//            UIColor *color = backgroundColor;
+//            CGFloat alpha;
+//            
+//            [color getRed:nil green:nil blue:nil alpha:&alpha];
+//            if (alpha < 1.f)
+//                color = [UIColor clearColor];
+//            
+//            [[(UIStackView *)subview arrangedSubviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                obj.backgroundColor = color;
+//            }];
+//        }
+//        else {
+//            subview.backgroundColor = backgroundColor;
+//        }
+//    }
+//    
+//    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
+//        Theme *theme = [YTThemeKit theme];
+//        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
+//    }
+//}
 
 #pragma mark -
 
@@ -193,7 +191,11 @@ static void *KVO_UNREAD = &KVO_UNREAD;
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 strongify(self);
-                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
+                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                    
+                    self.faviconView.contentMode = UIViewContentModeScaleAspectFit;
+                    
+                } error:nil];
             });
         }
         @catch (NSException *exc) {

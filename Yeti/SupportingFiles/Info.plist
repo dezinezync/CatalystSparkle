@@ -137,7 +137,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -159,7 +159,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>238</string>
+	<string>259</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -226,6 +226,10 @@
 		<string>Spectral-Regular.ttf</string>
 		<string>Spectral-SemiBold.ttf</string>
 		<string>Spectral-SemiBoldItalic.ttf</string>
+		<string>OpenDyslexic-Regular.ttf</string>
+		<string>OpenDyslexic-Italic.ttf</string>
+		<string>OpenDyslexic-Bold.ttf</string>
+		<string>OpenDyslexic-BoldItalic.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

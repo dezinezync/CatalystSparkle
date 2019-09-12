@@ -31,6 +31,9 @@
     
     [self.tableView registerClass:ExternalAppsCell.class forCellReuseIdentifier:kExternalAppsCell];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
+    
     UIApplication *app = [UIApplication sharedApplication];
     
     /**
@@ -138,7 +141,12 @@
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
-    cell.backgroundColor = theme.cellColor;
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
+    }
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];

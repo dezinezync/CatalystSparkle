@@ -294,19 +294,19 @@ HTMLUtils *MyHTMLUtils;
 
 - (NSString *)decode:(NSString *)entity
 {
-    char retval = [self _decode:entity];
-    return [NSString stringWithFormat:@"%c" , retval];
+    return [self _decode:entity];
 }
 
-- (char)_decode:(NSString *)entity
+- (NSString *)_decode:(NSString *)entity
 {
-    if ([entity hasPrefix:@"&#x"] || [entity hasPrefix:@"&#X"])
-        return [self decode:[entity substringFromIndex:[entity characterAtIndex:3]] numeric:16];
+    if ([entity hasPrefix:@"&#x"] || [entity hasPrefix:@"&#X"]) {
+        return [NSString stringWithFormat:@"%c" , [self decode:[entity substringFromIndex:[entity characterAtIndex:3]] numeric:16]];
+    }
     else if ([entity hasPrefix:@"&#"]) {
-        return [self decode:[entity substringFromIndex:[entity characterAtIndex:2]] numeric:10];
+        return [NSString stringWithFormat:@"%c" , [self decode:[entity substringFromIndex:[entity characterAtIndex:2]] numeric:10]];
     }
     else
-        return (char)self.characterEntities[entity];
+        return self.characterEntities[entity];
 }
 
 - (char)decode:(NSString *)string numeric:(UInt32)base

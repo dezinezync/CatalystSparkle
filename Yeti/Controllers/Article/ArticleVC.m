@@ -201,17 +201,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
     }
     
-    if (!self.hairlineView) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        UINavigationBar *navbar = self.navigationController.navigationBar;
-        
-        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
-        hairline.backgroundColor = theme.cellColor;
-        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-        
-        [navbar addSubview:hairline];
-        self.hairlineView = hairline;
+    UINavigationBar *navbar = self.navigationController.navigationBar;
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    if (@available(iOS 13, *)) {
+        self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    }
+    else {
+        if (!self.hairlineView) {
+            
+            CGFloat height = 1.f/[[UIScreen mainScreen] scale];
+            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
+            hairline.backgroundColor = theme.cellColor;
+            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
+            
+            [navbar addSubview:hairline];
+            self.hairlineView = hairline;
+        }
     }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
@@ -290,7 +296,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.view addSubview:helperView];
     
-    if (idiom == UIUserInterfaceIdiomPad && sizeClass == UIUserInterfaceSizeClassRegular) {
+    if (idiom == UIUserInterfaceIdiomPad || sizeClass == UIUserInterfaceSizeClassRegular) {
         // on iPad, wide
         // we also push it slightly lower to around where the hands usually are on iPads
         [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;
@@ -332,7 +338,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.helperView.previousArticleButton setEnabled:previous];
     
     [self.helperView.nextArticleButton setEnabled:next];
-    
+    // UIActivityContentViewController
     self.helperView.startOfArticle.enabled = NO;
     self.helperView.endOfArticle.enabled = YES;
 }
@@ -354,8 +360,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     self.view.backgroundColor = theme.articleBackgroundColor;
     self.scrollView.backgroundColor = theme.articleBackgroundColor;
     
-    if (self.hairlineView != nil) {
-        self.hairlineView.backgroundColor = theme.articleBackgroundColor;
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.hairlineView != nil) {
+            self.hairlineView.backgroundColor = theme.articleBackgroundColor;
+        }
     }
     
     if (self.helperView != nil) {
@@ -693,8 +702,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // add Body
     [self addTitle];
     
-    if (self.item.content.count > 20) {
-        self->_deferredProcessing = YES;
+    // iOS 13 shouldn't need it and handle it well.
+    if (@available(iOS 13, *)) {}
+    else {
+        if (self.item.content.count > 20) {
+            self->_deferredProcessing = YES;
+        }
     }
     
     if (self.item.coverImage) {
@@ -709,6 +722,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             [self addImage:content];
         });
     }
+    
+    NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
     
     if (self.item.enclosures && self.item.enclosures.count) {
         
@@ -731,11 +746,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     // single image, add as cover
                     Content *content = [Content new];
                     content.type = @"image";
-                    content.url = [[[enclosures firstObject] url] absoluteString];
+                    content.url = enclosures.firstObject.url.absoluteString;
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self addImage:content];
-                    });
+                    [imagesFromEnclosures addObject:content.url];
+                    
+                    self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
                 }
             }
             else {
@@ -752,18 +767,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                         // single image, add as cover
                         Content *subcontent = [Content new];
                         subcontent.type = @"image";
-                        subcontent.url = [[enc url] absoluteString];
+                        subcontent.url = enc.url.absoluteString;
+                        
+                        [imagesFromEnclosures addObject:subcontent.url];
                         
                         [images addObject:subcontent];
                     }
                     
                 }
                 
-                content.items = images;
+                content.images = images;
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self addGallery:content];
-                });
+                self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
                 
             }
             
@@ -785,9 +800,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     subcontent.type = @"video";
                     subcontent.url = [[enc url] absoluteString];
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self addVideo:subcontent];
-                    });
+                    self.item.content = [@[subcontent] arrayByAddingObjectsFromArray:self.item.content];
                 }
                 
             } }
@@ -805,10 +818,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
          * 2. If it's an image
          * 3. The article declares a cover image
          */
-        if (idx == 0 && ([obj.type isEqualToString:@"img"] || [obj.type isEqualToString:@"image"]) && self.item.coverImage != nil) {
+        BOOL isImage = [obj.type isEqualToString:@"img"] || [obj.type isEqualToString:@"image"];
+        BOOL hasCover = self.item.coverImage != nil;
+        BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:obj.url] != NSNotFound) : NO;
+        
+        if (idx == 0 && isImage && imageFromEnclosure) {
+            return;
+        }
+        
+        if (idx == 0 && isImage && hasCover) {
             // check if the cover image and the first image
             // are the same entities
-            
             NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
             NSURLComponents *imageComponents = [NSURLComponents componentsWithString:obj.url];
             
@@ -912,7 +932,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
     
     NSString *firstLine = feed != nil ? feed.displayTitle : nil;
-    NSString *timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
+    NSString *timestamp = nil;
+    
+    if (@available(iOS 13, *)) {
+        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
+    }
+    else {
+        timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
+    }
     
     NSString *sublineText = formattedString(@"%@%@", author, timestamp);
     
@@ -921,7 +948,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
 
-    ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
     CGFloat baseFontSize = 32.f;
 
     if (self.item.articleTitle.length > 24) {
@@ -935,7 +962,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: theme.titleColor,
                                      NSParagraphStyleAttributeName: para,
-                                     NSKernAttributeName: [NSNull null],
+                                     NSKernAttributeName: @0,
                                      };
 
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
@@ -1012,7 +1039,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)processContent:(Content *)content {
+    
     if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
+        
         if ([content.items count]) {
             
             if ([self containsOnlyImages:content]) {
@@ -1037,49 +1066,75 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 idx++;
             }}
         }
+        
     }
     else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
-        if (content.content.length)
+        
+        if (content.content.length) {
             [self addParagraph:content caption:NO];
+        }
         else if (content.items) {
+            
             for (Content *subcontent in content.items) {
                 [self processContent:subcontent];
             }
+            
         }
+        
     }
     else if ([content.type isEqualToString:@"heading"]) {
+        
         if (content.content.length)
             [self addHeading:content];
+        
     }
     else if ([content.type isEqualToString:@"linebreak"]) {
+        
         [self addLinebreak];
+        
     }
     else if ([content.type isEqualToString:@"figure"] && content.items && content.items.count) {
+        
         for (Content *image in content.items) {
             [self addImage:image];
         }
+        
     }
     else if ([content.type isEqualToString:@"image"]) {
+        
         [self addImage:content];
+        
     }
     else if ([content.type isEqualToString:@"blockquote"]) {
+        
         [self addQuote:content];
+        
     }
     else if ([content.type isEqualToString:@"list"] || [content.type containsString:@"list"]) {
+        
         [self addList:content];
+        
     }
     else if ([content.type isEqualToString:@"anchor"]) {
+        
         [self addParagraph:content caption:NO];
+        
     }
     else if ([content.type isEqualToString:@"aside"]) {
+        
             [self addAside:content];
+        
     }
     else if ([content.type isEqualToString:@"youtube"]) {
+        
         [self addYoutube:content];
         [self addLinebreak];
+        
     }
     else if ([content.type isEqualToString:@"gallery"]) {
+        
         [self addGallery:content];
+        
     }
     else if (([content.type isEqualToString:@"a"] || [content.type isEqualToString:@"anchor"])
              || ([content.type isEqualToString:@"b"] || [content.type isEqualToString:@"strong"])
@@ -1111,20 +1166,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     else if ([content.type isEqualToString:@"pre"] || [content.type isEqualToString:@"code"]) {
+        
         [self addPre:content];
+        
     }
     else if ([content.type isEqualToString:@"li"]) {
+        
         Content *parent = [Content new];
         parent.type = @"orderedlist";
         parent.items = @[content];
         
         [self addList:parent];
+        
     }
     else if ([content.type isEqualToString:@"tweet"]) {
+        
         [self addTweet:content];
+        
     }
     else if ([content.type isEqualToString:@"br"]) {
+        
         [self addLinebreak];
+        
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
@@ -1133,7 +1196,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         // wont be handled at the moment
     }
     else if ([content.type isEqualToString:@"video"]) {
+        
         [self addVideo:content];
+        
     }
     else {
         DDLogWarn(@"Unhandled node: %@", content);
@@ -2168,12 +2233,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
     
     // if we're scrolling down, add the bottom offset so the bottom bar does not interfere
-    if (yOffset > self.scrollView.contentOffset.y)
+    if (yOffset > (self.scrollView.contentSize.height - self.scrollView.contentOffset.y))
         yOffset += self.scrollView.adjustedContentInset.bottom;
-    else
-        yOffset -= self.scrollView.adjustedContentInset.top;
+//    else
+//        yOffset -= self.scrollView.adjustedContentInset.top;
     
-    yOffset += (self.scrollView.bounds.size.height / 2.f);
+//    yOffset += (self.scrollView.bounds.size.height / 2.f);
     
     [self.scrollView setContentOffset:CGPointMake(0, yOffset) animated:YES];
     
@@ -2256,7 +2321,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             text = formattedString(@"%@%@", text, articleTitle);
         }
         
-        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, URL] applicationActivities:nil];
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:nil];
         
         if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
@@ -2361,8 +2426,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         searchBar.delegate = self;
         searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-        searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        if (@available(iOS 13, *)) {}
+        else {
+            searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+        }
         
         UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
         if (searchField) {

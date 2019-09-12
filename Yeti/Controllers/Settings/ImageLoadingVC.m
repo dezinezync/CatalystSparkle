@@ -14,10 +14,13 @@
 #import <DZNetworking/ImageLoader.h>
 
 NSString *const kXSwitchCell = @"cell.switch";
+NSString *const kXImageLoadingCell = @"cell.imageLoading";
 
 @interface ImageLoadingVC ()
 
 @property (nonatomic, assign) NSInteger selected, bandwidth;
+
+@property (nonatomic, strong) UILabel *footerSizingLabel;
 
 @end
 
@@ -44,13 +47,35 @@ NSString *const kXSwitchCell = @"cell.switch";
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
-    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"imageLoadingCell"];
+    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:kXImageLoadingCell];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kXSwitchCell];
+    
+    self.tableView.estimatedRowHeight = 44.f;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (UILabel *)footerSizingLabel {
+    
+    if (!_footerSizingLabel) {
+        UILabel *label = [UILabel new];
+        label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
+        label.font = TypeFactory.shared.footnoteFont;
+        label.numberOfLines = 0;
+        
+        _footerSizingLabel = label;
+        
+    }
+    
+    return _footerSizingLabel;
+    
 }
 
 #pragma mark - Table view data source
@@ -87,6 +112,18 @@ NSString *const kXSwitchCell = @"cell.switch";
     }
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    
+    self.footerSizingLabel.frame = CGRectMake(0, 0, tableView.safeAreaLayoutGuide.layoutFrame.size.width, 0.f);
+    self.footerSizingLabel.text = [self tableView:tableView titleForFooterInSection:section];
+    [self.footerSizingLabel sizeToFit];
+    
+    CGFloat height = self.footerSizingLabel.frame.size.height + 12.f;
+    
+    return height;
+    
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 2) {
         return 1;
@@ -98,7 +135,8 @@ NSString *const kXSwitchCell = @"cell.switch";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"imageLoadingCell" forIndexPath:indexPath];
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kXImageLoadingCell forIndexPath:indexPath];
     
     // Configure the cell...
     switch (indexPath.section) {
@@ -162,6 +200,7 @@ NSString *const kXSwitchCell = @"cell.switch";
             }
             
             [aSwitch setOn:pref];
+            [aSwitch setOnTintColor:self.view.tintColor];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
             cell.accessoryView = aSwitch;
@@ -173,7 +212,13 @@ NSString *const kXSwitchCell = @"cell.switch";
     
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
-    cell.backgroundColor = theme.cellColor;
+    
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
+    }
     
     if (indexPath.section != 2 && indexPath.section != 3) {
         UIView *selected = [UIView new];

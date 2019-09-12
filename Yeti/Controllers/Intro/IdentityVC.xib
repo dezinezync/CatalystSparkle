@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="ipad9_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14810.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.15"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,9 +11,11 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IdentityVC">
             <connections>
                 <outlet property="button" destination="inJ-Lu-PoU" id="KLH-rT-MgU"/>
+                <outlet property="captionLabel" destination="azl-12-wAn" id="d2g-2c-6KU"/>
                 <outlet property="doubleTap" destination="BPc-y8-kSd" id="74E-La-bFZ"/>
                 <outlet property="input" destination="5Mh-jj-RFy" id="pKi-YZ-7GB"/>
                 <outlet property="singleTap" destination="uWS-jg-Mc9" id="Jrt-dc-lC8"/>
+                <outlet property="subtitleLabel" destination="2Nt-5D-V9P" id="bi9-FO-67q"/>
                 <outlet property="titleLabel" destination="Bfg-Nw-jMa" id="4Rg-0A-IUF"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -160,6 +160,7 @@
                     <exclude reference="WNg-1N-M7X"/>
                 </mask>
             </variation>
+            <point key="canvasLocation" x="71" y="98"/>
         </view>
         <tapGestureRecognizer id="uWS-jg-Mc9">
             <connections>

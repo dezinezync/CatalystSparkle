@@ -21,12 +21,15 @@
 #import "SplitVC.h"
 
 #import "StoreVC.h"
+#import "PaddedLabel.h"
 
 @interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate> {
     UITextField *_textField;
     UIAlertAction *_okayAction;
     BOOL _didTapDone;
 }
+
+@property (nonatomic, strong) UILabel *footerSizingLabel;
 
 @end
 
@@ -42,6 +45,9 @@
     
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.tableView.backgroundColor = theme.tableColor;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -53,6 +59,29 @@
 
 #pragma mark - Table view data source
 
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
+    
+    if (section == 0) {
+        return @"If you deactivate your account and wish to activate it again, please email me on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
+    }
+    else {
+        return nil;
+    }
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    
+    self.footerSizingLabel.frame = CGRectMake(0, 0, tableView.safeAreaLayoutGuide.layoutFrame.size.width, 0.f);
+    self.footerSizingLabel.text = [self tableView:tableView titleForFooterInSection:section];
+    [self.footerSizingLabel sizeToFit];
+    
+    CGFloat height = self.footerSizingLabel.frame.size.height + 12.f;
+    
+    return height;
+    
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
 }
@@ -63,20 +92,11 @@
     return 1;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 1)
         return @"Subscription";
     
-    return @"Acount ID";
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
-    if (section == 0) {
-        return @"If you deactivate your account and wish to activate it again, please email us on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
-    }
-    
-    return nil;
+    return @"Account ID";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -99,7 +119,12 @@
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
-    cell.backgroundColor = theme.cellColor;
+    if (@available(iOS 13, *)) {
+        cell.backgroundColor = theme.backgroundColor;
+    }
+    else {
+        cell.backgroundColor = theme.cellColor;
+    }
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -182,7 +207,7 @@
         }
         
         if (indexPath.row == 2) {
-            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Deactivate your Account?" message:@"Please ensure you have cancelled your Elytra Pro subscription before continuing." preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Deactivate your Account?" message:@"If you have remaining days on your Pro Subscription, no refund can be issued for the same." preferredStyle:UIAlertControllerStyleAlert];
             
             [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
             
@@ -214,9 +239,45 @@
 
 #pragma mark - Getters
 
+- (UILabel *)footerSizingLabel {
+    
+    if (!_footerSizingLabel) {
+        UILabel *label = [UILabel new];
+        label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
+        label.font = TypeFactory.shared.footnoteFont;
+        label.numberOfLines = 0;
+        
+        _footerSizingLabel = label;
+        
+    }
+    
+    return _footerSizingLabel;
+    
+}
+
 #pragma mark - Actions
 
+- (void)deactivateFromAPI {
+    
+    [MyFeedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+#ifndef DEBUG
+        [self userDidSendEmail];
+#endif
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Error Deactivating Account" message:error.localizedDescription];
+        
+    }];
+    
+}
+
 - (void)showInterfaceToSendDeactivationEmail {
+    
+    [self deactivateFromAPI];
+    return;
+    
     NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.userIDManager.UUIDString);
     
     DZMessagingController.shared.delegate = self;
@@ -256,7 +317,6 @@
 //            }
             
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUID];
-            MyFeedsManager.userIDManager.userID = userID;
             MyFeedsManager.userID = userID;
             
             asyncMain(^{
@@ -321,13 +381,13 @@
 
 - (void)userDidSendEmail {
     
-    [DZMessagingController shared].delegate = nil;
+//    [DZMessagingController shared].delegate = nil;
     
     [MyFeedsManager resetAccount];
     
-    UINavigationController *nav = self.navigationController;
-    
     dispatch_async(dispatch_get_main_queue(), ^{
+        UINavigationController *nav = self.navigationController;
+        
         [nav popToRootViewControllerAnimated:NO];
         
         dispatch_async(dispatch_get_main_queue(), ^{

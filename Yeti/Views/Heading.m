@@ -106,8 +106,7 @@
     }
 }
 
-- (void)setLevel:(NSInteger)level
-{
+- (void)setLevel:(NSInteger)level {
     
     if (UIScreen.mainScreen.bounds.size.width <= 320.f) {
         self.font = self.level == 1 ? [UIFont preferredFontForTextStyle:UIFontTextStyleTitle1] : (self.level == 2 ? [UIFont preferredFontForTextStyle:UIFontTextStyleTitle2] : [UIFont preferredFontForTextStyle:UIFontTextStyleTitle3]);
@@ -119,7 +118,7 @@
     NSArray <NSNumber *> * const scales = @[@(2.2f), @(1.8f), @(1.6f), @(1.4f), @(1.2f), @(1.f)];
     CGFloat scale = [scales[level - 1] floatValue];
     
-    ArticleLayoutPreference fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
     CGFloat fontSize = 16 * scale;
     
     UIFont * bodyFont = [UIFont boldSystemFontOfSize:fontSize];

@@ -50,7 +50,13 @@
     [super viewDidLoad];
     
     self.title = self.folder.title;
-    self.DS.state = DZDatasourceDefault;
+    
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateDefault;
+    }
+    else {
+        self.DS.state = DZDatasourceDefault;
+    }
     
 }
 
@@ -66,6 +72,76 @@
 
 - (void)reloadHeaderView { }
 
+- (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
+    
+    // Subscribe Button appears in the navigation bar
+    if (self.isExploring == YES) {
+        return @[];
+    }
+    
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    allRead.accessibilityValue = @"Mark all articles as read";
+    allRead.accessibilityHint = @"Mark all current articles as read.";
+    allRead.width = 32.f;
+    
+    // sorting button
+    YetiSortOption option = SharedPrefs.sortingOption;
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    SEL isUnread = NSSelectorFromString(@"isUnread");
+    
+    if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
+        
+        // when the active option is either of these two, we don't need
+        // to do anything extra
+        if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
+            
+            // map it to whatever the selected option is
+            if (option == YTSortAllAsc) {
+                option = YTSortUnreadAsc;
+            }
+            else if (option == YTSortAllDesc) {
+                option = YTSortUnreadDesc;
+            }
+            
+        }
+        
+    }
+#pragma clang diagnostic pop
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.width = 32.f;
+    
+    if (!(self.feed.hubSubscribed && self.feed.hub)) {
+        NSMutableArray *buttons = @[allRead].mutableCopy;
+        
+        if ([self showsSortingButton]) {
+            [buttons addObject:sorting];
+        }
+        
+        return buttons;
+    }
+    else {
+        // push notifications are possible
+        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
+        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
+        notifications.width = 32.f;
+        
+        NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
+        
+        if ([self showsSortingButton]) {
+            [buttons addObject:sorting];
+        }
+        
+        return buttons;
+    }
+    
+}
+
 - (void)setupLayout {
     
     self->_shouldShowHeader = NO;
@@ -77,14 +153,27 @@
 - (void)loadNextPage
 {
     
-    if (self.DS.state != DZDatasourceLoaded)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.controllerState == StateLoading) {
+            return;
+        }
+    }
+    else {
+    
+        if (self.DS.state != DZDatasourceLoading)
+            return;
+    }
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    self.DS.state = DZDatasourceLoading;
+    if (@available(iOS 13, *)) {
+        self.controllerState = StateLoading;
+    }
+    else {
+        self.DS.state = DZDatasourceLoading;
+    }
     
     weakify(self);
     
@@ -101,34 +190,55 @@
         
         self.page = page;
         
-        if (![responseObject count]) {
+        if (responseObject == nil || [responseObject count] == 0) {
             self->_canLoadNext = NO;
-            self.DS.data = self.DS.data ?: @[];
-        }
-        
-        if (page == 1 || self.DS.data == nil) {
-            self.DS.data = responseObject;
         }
         else {
-            self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+            
+            if (@available(iOS 13, *)) {
+                
+                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+                
+                if (snapshot.numberOfSections == 0) {
+                    [snapshot appendSectionsWithIdentifiers:@[@0]];
+                }
+                
+                [snapshot appendItemsWithIdentifiers:responseObject];
+                
+                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                
+                self.controllerState = StateLoaded;
+            }
+            else {
+                if (page == 1 || self.DS.data == nil) {
+                    self.DS.data = responseObject;
+                }
+                else {
+                    self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
+                }
+                
+                self.DS.state = DZDatasourceLoaded;
+            }
+        
+            if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+                [self loadNextPage];
+            }
         }
-        
-        self.DS.state = DZDatasourceLoaded;
-        
-        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            [self loadNextPage];
-        }
-        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         DDLogError(@"%@", error);
         
         strongify(self);
         
-        self.DS.state = DZDatasourceError;
-        
-        if (self.DS.data == nil || [self.DS.data count] == 0) {
-            // the initial load has failed.
-            self.DS.data = @[];
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateErrored;
+        }
+        else {
+            self.DS.state = DZDatasourceError;
+            
+            if (self.DS.data == nil || [self.DS.data count] == 0) {
+                // the initial load has failed.
+                self.DS.data = @[];
+            }
         }
     
     }];
@@ -156,7 +266,13 @@
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
-    [coder encodeObject:self.DS.data forKey:kBFolderData];
+    if (@available(iOS 13, *)) {
+        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBFolderData];
+    }
+    else {
+        [coder encodeObject:self.DS.data forKey:kBFolderData];
+    }
+    
     [coder encodeObject:self.folder forKey:kBFolderObj];
 }
 
@@ -168,7 +284,16 @@
     if (items) {
         [self setupLayout];
         
-        self.DS.data = items;
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+            [snapshot appendSectionsWithIdentifiers:@[@0]];
+            [snapshot appendItemsWithIdentifiers:items];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = items;
+        }
     }
     
 }

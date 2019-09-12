@@ -41,7 +41,16 @@
 + (UINavigationController *)instanceInNavController {
     
     AddFeedVC *vc = [[AddFeedVC alloc] init];
-    NewFeedDeckController *nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    
+    UINavigationController *nav = nil;
+    
+    if (@available(iOS 13, *)) {
+        nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        nav.modalInPresentation = UIModalPresentationAutomatic;
+    }
+    else {
+        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
+    }
     
     return nav;
 }
@@ -213,7 +222,10 @@
     searchController.obscuresBackgroundDuringPresentation = NO;
     
     searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
-    searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceDefault;
+    if (@available(iOS 13, *)) {}
+    else {
+        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
+    }
     
     self.navigationItem.searchController = searchController;
     
@@ -379,7 +391,7 @@
             strongify(self);
             
             if ([responseObject isKindOfClass:Feed.class]) {
-                MyFeedsManager.feeds = [[MyFeedsManager feeds] arrayByAddingObject:responseObject];
+                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
                 
                 weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -453,6 +465,8 @@
     
     self.searchBar.placeholder = @[@"Website or Feed URL", @"Website Name", @"Keywords"][selectedScope];
     
+    UIKeyboardType existingKeyboardType = self.searchBar.keyboardType;
+    
     if (selectedScope == 0) {
         self.searchBar.keyboardType = UIKeyboardTypeURL;
         self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -475,6 +489,11 @@
     
     if (self.searchBar.text == nil || [self.searchBar.text isBlank]) {
         [self setErrorLabelForDefaultState];
+    }
+    
+    if (self.searchBar.keyboardType != existingKeyboardType) {
+        [self.searchBar resignFirstResponder];
+        [self.searchBar becomeFirstResponder];
     }
     
 }
@@ -646,7 +665,7 @@
             return;
         }
         else if (responseObject && [responseObject isKindOfClass:Feed.class]) {
-            MyFeedsManager.feeds = [MyFeedsManager.feeds arrayByAddingObject:responseObject];
+            ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
             
             weakify(self);
             

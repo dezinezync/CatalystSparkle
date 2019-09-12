@@ -64,15 +64,17 @@ YETI_EXPORT NSNotificationName _Nonnull kWillUpdateTheme;
 YETI_EXPORT NSNotificationName _Nonnull kDidUpdateTheme;
 
 typedef NSString * _Nonnull ArticleLayoutPreference NS_STRING_ENUM;
+typedef NSString * _Nonnull ArticleLayoutFont NS_STRING_ENUM;
 
 YETI_EXPORT NSString * _Nonnull const kDefaultsArticleFont;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPSerif;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPSystem;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPHelvetica;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPMerriweather;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPPlexSerif;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPPlexSans;
-YETI_EXPORT ArticleLayoutPreference _Nonnull const ALPSpectral;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPSerif;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPSystem;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPHelvetica;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPMerriweather;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSerif;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSans;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPSpectral;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPOpenDyslexic;
 
 typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType _Nonnull const YTSubscriptionMonthly;

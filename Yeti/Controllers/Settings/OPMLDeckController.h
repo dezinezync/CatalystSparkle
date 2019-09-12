@@ -7,6 +7,7 @@
 //
 
 #import <DZKit/DZKit.h>
+#import "OPMLVC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

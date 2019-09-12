@@ -163,7 +163,7 @@ NSString *const kNotificationsKey = @"notifications";
     // but it also ensures that objects coming out of the database are immutable.
     YapDatabaseDeserializer deserializer = ^(NSString *collection, NSString *key, NSData *data){
         
-        id object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        id object = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:nil];
         
         return object;
     };

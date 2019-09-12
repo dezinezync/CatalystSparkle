@@ -58,9 +58,9 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     self.backgroundColor = theme.cellColor;
     
     self.titleLabel.textColor = theme.titleColor;
-    self.titleLabel.backgroundColor = theme.cellColor;
+//    self.titleLabel.backgroundColor = theme.cellColor;
     
-    self.urlLabel.backgroundColor = theme.cellColor;
+//    self.urlLabel.backgroundColor = theme.cellColor;
     self.urlLabel.textColor = theme.subtitleColor;
     
     UIView *selected = [UIView new];
