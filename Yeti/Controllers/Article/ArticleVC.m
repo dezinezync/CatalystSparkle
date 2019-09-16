@@ -848,7 +848,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         });
         
     }];
-    
+
     dispatch_async(dispatch_get_main_queue(), ^{
         
         strongify(self);
