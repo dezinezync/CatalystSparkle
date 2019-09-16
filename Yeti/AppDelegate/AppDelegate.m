@@ -118,16 +118,17 @@ AppDelegate *MyAppDelegate = nil;
         [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
         
         // To test push notifications
-        //#ifdef DEBUG
-        //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //        strongify(self);
-        //
-        ////        [self openFeed:@(1) article:@(1293968)];  // twitter user
-        ////        [self openFeed:@(1) article:@(1273075)];  // twitter status
-        ////        [self openFeed:@(1) article:@(1149498)];  // reddit
-        //        [self showArticle:@(1831527)]; // crashing article
-        //    });
-        //#endif
+        #ifdef DEBUG
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+        
+        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
+        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
+        //        [self openFeed:@(1) article:@(1149498)];  // reddit
+//                [self openFeed:@(73) article:@(8301134)];
+//                [self showArticle:@(1831527)]; // crashing article
+            });
+        #endif
         
 //            [self yt_log_fontnames];
         

@@ -1114,8 +1114,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     } error:errorCB];
 }
 
-- (void)updateFolder:(Folder *)folder add:(NSArray<NSNumber *> *)add remove:(NSArray<NSNumber *> *)del success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)updateFolder:(Folder *)folder add:(NSArray<NSNumber *> *)add remove:(NSArray<NSNumber *> *)del success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSMutableDictionary *dict = @{}.mutableCopy;
     
@@ -1181,13 +1180,18 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 return [add indexOfObject:obj.feedID] != NSNotFound;
             }];
             
-            [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.folderID = folder.folderID;
-            }];
-            
-            if (addedFeeds != nil && [addedFeeds isKindOfClass:NSArray.class] && addedFeeds.count) {
-                [folder.feeds addObjectsFromArray:addedFeeds];
+            if (addedFeeds != nil && addedFeeds.count) {
+                    
+                [addedFeeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.folderID = folder.folderID;
+                }];
+                
+                if (addedFeeds != nil && [addedFeeds isKindOfClass:NSArray.class] && addedFeeds.count) {
+                    [folder.feeds addObjectsFromArray:addedFeeds];
+                }
+                
             }
+
         }
         
         // this pushes the update to FeedsVC

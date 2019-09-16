@@ -17,6 +17,7 @@
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSArray+Safe.h>
 
 #import "UIImage+Color.h"
 
@@ -279,9 +280,15 @@
     
     [self setButtonsState:NO];
     
-    NSString *productID = self.products[self.selectedProduct];
+    NSString *productID = [self.products safeObjectAtIndex:self.selectedProduct];
+    
+    if (productID == nil) {
+        [AlertManager showGenericAlertWithTitle:@"No Product Selected" message:@"Please select a product to purchase."];
+        return;
+    }
     
     [[DZActivityIndicatorManager shared] incrementCount];
+    
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
         
         [self setButtonsState:YES];
