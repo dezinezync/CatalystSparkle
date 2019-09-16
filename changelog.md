@@ -7,3 +7,5 @@
 - Fixed opening articles from notifications. 
 
 - Tapping buy without a valid product selected no longer crashes the app. 
+
+- Fixed a rendering bug for Youtube video cover images which did not respect the source aspect ratio.  

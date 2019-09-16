@@ -1779,19 +1779,24 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 [imageView.leadingAnchor constraintEqualToAnchor:playerController.contentOverlayView.leadingAnchor].active = YES;
                 [imageView.trailingAnchor constraintEqualToAnchor:playerController.contentOverlayView.trailingAnchor].active = YES;
 
-                NSString *thumbnail = [videoInfo.coverImage pathForImageProxy:NO maxWidth:0.f quality:0.f];
+                NSString *thumbnail = videoInfo.coverImage;
+                
+                if (thumbnail == nil || [thumbnail isBlank] == YES) {}
+                else {
 
-                [imageView il_setImageWithURL:thumbnail success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                    [imageView il_setImageWithURL:thumbnail success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
 
-//                    [playerController.player addObserver:self forKeyPath:propSel(rate) options:NSKeyValueObservingOptionNew context:KVO_PlayerRate];
+    //                    [playerController.player addObserver:self forKeyPath:propSel(rate) options:NSKeyValueObservingOptionNew context:KVO_PlayerRate];
+                        
+                        DDLogInfo(@"Video player image has been set: %@", URL);
+                        
+                    } error:^(NSError * _Nonnull error) {
+
+                        DDLogError(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
+
+                    }];
                     
-                    DDLogInfo(@"Video player image has been set: %@", URL);
-                    
-                } error:^(NSError * _Nonnull error) {
-
-                    DDLogError(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
-
-                }];
+                }
 
             }
             
