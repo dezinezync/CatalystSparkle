@@ -177,6 +177,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     self.separatorView.backgroundColor = theme.borderColor;
     
+    self.faviconView.layer.cornerRadius = 4.f;
+    self.faviconView.clipsToBounds = YES;
+    
 }
 
 - (void)showSeparator:(BOOL)showSeparator {
@@ -370,7 +373,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                             
                             NSData *jpeg = nil;
                             
-                            image = [image fastScale:width quality:1.f imageData:&jpeg];
+                            image = [image fastScale:CGSizeMake(width, width) quality:1.f cornerRadius:4.f imageDate:&jpeg];
                             
                             [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
                         }
@@ -528,37 +531,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
         
         dispatch_async(SharedImageLoader.ioQueue, ^{
-            [self.coverImage il_setImageWithURL:url mutate:^UIImage *(UIImage * _Nonnull image) {
-                
-                NSString *cacheKey = formattedString(@"%@-%@", @(maxWidth), url);
-                
-                __block UIImage *scaled = nil;
-                
-                // check cache
-                dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-                
-                [SharedImageLoader.cache objectforKey:cacheKey callback:^(UIImage * _Nullable image) {
-                    
-                    scaled = image;
-                    
-                    UNLOCK(semaphore);
-                    
-                }];
-                
-                LOCK(semaphore);
-                
-                if (scaled == nil) {
-                    
-                    NSData *imageData;
-                    
-                    scaled = [image fastScale:maxWidth quality:1.f imageData:&imageData];
-                    
-                    [SharedImageLoader.cache setObject:scaled data:imageData forKey:cacheKey];
-                }
-                
-                return scaled;
-                
-            } success:nil error:nil];
+            [self.coverImage il_setImageWithURL:url];
         });
         
     }

@@ -56,7 +56,7 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.backgroundColor = theme.cellColor;
-    
+    self.faviconView.backgroundColor = theme.articleBackgroundColor;
     self.titleLabel.textColor = theme.titleColor;
 //    self.titleLabel.backgroundColor = theme.cellColor;
     
@@ -112,7 +112,11 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 strongify(self);
-                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url)];
+                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                    
+                    self.faviconView.contentMode = UIViewContentModeScaleAspectFit;
+                    
+                } error:nil];
             });
         }
         @catch (NSException *exc) {

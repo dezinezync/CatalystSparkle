@@ -1,12 +1,22 @@
 # v1.4.1
 
-## Changes in Build 264
+##  Build 265
+
+- Fixed favicon scaling issue in the New Feed Interface
+
+- Removed some extra code for scaling images (the code checked if the image was cached, twice!).
+
+- Fixed the activity indicator not being visible when using dark mode (black backgrounds dont show black acitivty indicators easily, ya know!)
+
+- 
+
+##  Build 264
 
 - Fixed a crash that would occur on iOS 13 if you opened a folder when feeds were updating in the background. 
 
 - Uses the new Link Previews to show Tweets.
 
-## Changes in Build 262
+##  Build 262
 
 - Fixed a range overflow bug which occurred when an HTML element's text content was trimmed but the attributes range was not adjusted for the same. 
 
