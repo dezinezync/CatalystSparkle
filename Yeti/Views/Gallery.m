@@ -22,19 +22,15 @@
 
 @implementation GalleryImage
 
-- (UIViewContentMode)contentMode
-{
+- (UIViewContentMode)contentMode {
     return UIViewContentModeScaleAspectFit|UIViewContentModeCenter;
 }
 
-- (CGSize)intrinsicContentSize
-{
+- (CGSize)intrinsicContentSize {
     CGSize size = [super intrinsicContentSize];
     
-//    if (self.image) {
-        size.width = floor(self.superview.bounds.size.width);//self.image.size.width / (self.image.size.height / self.height);
-        size.height = self.height;
-//    }
+    size.width = floor(self.superview.bounds.size.width);
+    size.height = self.height;
     
     return size;
 }
@@ -58,8 +54,7 @@
 
 @implementation Gallery
 
-- (instancetype)initWithNib
-{
+- (instancetype)initWithNib {
     if (self = [super initWithNib]) {
         
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -89,8 +84,7 @@
     return self;
 }
 
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
-{
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
     
     weakify(self);
@@ -103,8 +97,7 @@
 
 #pragma mark -
 
-- (void)setLoading:(BOOL)loading
-{
+- (void)setLoading:(BOOL)loading {
     // once loading is enabled, it shouldn't be disabled.
     // the class further manages loading states of it's own child nodes
     // and it may interfere with that.
