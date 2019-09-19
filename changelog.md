@@ -1,6 +1,8 @@
 # v1.4.1
 
-##  Build 265
+##  Build 266
+
+- Fixed Galleries overflowing screen bounds on iPhones by 4pt. This caused the paging to behave unusually sometimes showing a little bit of the next image. 
 
 - Fixed favicon scaling issue in the New Feed Interface
 
