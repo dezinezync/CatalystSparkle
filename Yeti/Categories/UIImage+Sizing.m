@@ -22,49 +22,27 @@
     return [UIImage imageWithImage:image scaledToSize:newSize cornerRadius:0];
 }
 
-+ (UIImage *)imageWithImage:(UIImage *)aImage scaledToSize:(CGSize)newSize cornerRadius:(CGFloat)radius {
++ (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize cornerRadius:(CGFloat)radius {
     
-    CGImageRef image = aImage.CGImage;
-    
-    // make a bitmap context of a suitable size to draw to, forcing decode
-    size_t width = newSize.width;
-    size_t height = newSize.height;
-    
-    CGColorSpaceRef colourSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef imageContext =  CGBitmapContextCreate(NULL, width, height, 8, width*4, colourSpace,
-                                                       kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little);
-    CGColorSpaceRelease(colourSpace);
-    
-    // Add a clip before drawing anything, in the shape of an rounded rect
-    if (radius > 0.f) {
-        // multiply the radius times the screen's scale.
-        // this ensures that when it is scaled down physically
-        // the corner radius is maintained.
-        radius = (radius * UIScreen.mainScreen.scale);
-        
-        [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, newSize.width, newSize.height)
-                                    cornerRadius:radius] addClip];
-    }
-    
-    // draw the image to the context, release it
-    CGContextDrawImage(imageContext, CGRectMake(0, 0, width, height), image);
-    
-    // now get an image ref from the context
-    CGImageRef outputImage = CGBitmapContextCreateImage(imageContext);
-    
-    UIImage *cachedImage = [UIImage imageWithCGImage:outputImage];
-    
-    // clean up
-    CGImageRelease(outputImage);
-    CGContextRelease(imageContext);
-    
-    return cachedImage;
+    CALayer *imageLayer = [CALayer layer];
+    imageLayer.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+    imageLayer.contents = (id) image.CGImage;
+
+    imageLayer.masksToBounds = YES;
+    imageLayer.cornerRadius = (radius * UIScreen.mainScreen.scale);
+
+    UIGraphicsBeginImageContext(image.size);
+    [imageLayer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *roundedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return roundedImage;
 }
 
 - (UIImage *)fastScale:(CGSize)newSize
                quality:(CGFloat)quality
           cornerRadius:(CGFloat)radius
-             imageDate:(NSData **)imageData {
+             imageData:(NSData **)imageData {
     
     __block UIImage *image = nil;
     __block NSData *data = nil;
@@ -122,7 +100,7 @@
     }
     else {
         if (imageData != nil) {
-            *imageData = UIImageJPEGRepresentation(scaled, 1);
+            *imageData = UIImagePNGRepresentation(scaled);
         }
     }
     

@@ -15,7 +15,7 @@
 /// @param quality The quality of the rendered image
 /// @param radius The corner radius. Default is 0.
 /// @param imageData The image data retval.
-- (UIImage *)fastScale:(CGSize)newSize quality:(CGFloat)quality cornerRadius:(CGFloat)radius imageDate:(NSData **)imageData;
+- (UIImage *)fastScale:(CGSize)newSize quality:(CGFloat)quality cornerRadius:(CGFloat)radius imageData:(NSData **)imageData;
 
 + (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 
