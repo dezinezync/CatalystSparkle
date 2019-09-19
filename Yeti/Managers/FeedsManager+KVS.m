@@ -167,12 +167,12 @@
     [data writeToFile:path options:NSDataWritingAtomic error:&error];
     
     if (error) {
-        [AlertManager showGenericAlertWithTitle:@"App Error" message:@"Bookmarking the article failed as Yeti was unable to write the data to your device's storage. Please try again."];
+        [AlertManager showGenericAlertWithTitle:@"App Error" message:@"Bookmarking the article failed as Elytra was unable to write the data to your device's storage. Please try again."];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:item userInfo:@{@"bookmarked": @(item.isBookmarked)}];
     
-    return error == nil;
+    return error != nil;
 }
 
 - (BOOL)removeLocalBookmark:(FeedItem *)item {

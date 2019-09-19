@@ -10,6 +10,8 @@
 
 - Fixed the activity indicator not being visible when using dark mode (black backgrounds dont show black acitivty indicators easily, ya know!)
 
+- Fixed bookmarking and bookmark updating. Also fixes the incorrect states reported in the UI about the same.
+
 ##  Build 264
 
 - Fixed a crash that would occur on iOS 13 if you opened a folder when feeds were updating in the background. 

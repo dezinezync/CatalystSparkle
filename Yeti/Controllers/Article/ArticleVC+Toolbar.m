@@ -228,11 +228,11 @@
         
         BOOL errored = self.item.isBookmarked ? [MyFeedsManager addLocalBookmark:self.item] : [MyFeedsManager removeLocalBookmark:self.item];
         
-        if (!errored) {
+        if (errored == NO) {
         
             dispatch_async(dispatch_get_main_queue(), ^{
                 
-                UIImage *image = self.item.isBookmarked ? [UIImage imageNamed:@"unbookmark"] : [UIImage imageNamed:@"bookmark"];
+                UIImage *image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
                 
                 [button setImage:image];
             });

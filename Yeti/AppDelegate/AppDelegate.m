@@ -165,40 +165,6 @@ AppDelegate *MyAppDelegate = nil;
             [NSUserDefaults.standardUserDefaults synchronize];
         }
         
-#ifdef DEBUG
-//        LPMetadataProvider *metadata = [[LPMetadataProvider alloc] init];
-//        [metadata startFetchingMetadataForURL:[NSURL URLWithString:@"https://twitter.com/viticci/status/1138820252970770433"] completionHandler:^(LPLinkMetadata * _Nullable metadata, NSError * _Nullable error) {
-//
-//            if (error) {
-//                DDLogError(@"Error loading metadata: %@", error);
-//            }
-//            else {
-//                DDLogDebug(@"Metadata: %@", metadata);
-//                
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                   
-//                    LPLinkView *view = [[LPLinkView alloc] initWithMetadata:metadata];
-//                    view.translatesAutoresizingMaskIntoConstraints = NO;
-//                    
-//                    NSString *url = metadata.URL.absoluteString;
-//                    url = [url stringByReplacingOccurrencesOfString:@"twitter.com" withString:@"twitter"];
-//                    url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@"yeti://"];
-//                    
-//                    metadata.URL = [NSURL URLWithString:url];
-//                    metadata.originalURL = metadata.URL;
-//                    
-//                    [self.window addSubview:view];
-//                    
-//                    [NSLayoutConstraint activateConstraints:@[[view.centerXAnchor constraintEqualToAnchor:self.window.centerXAnchor],
-//                                                              [view.centerYAnchor constraintEqualToAnchor:self.window.centerYAnchor]]];
-//                    
-//                });
-//                
-//            }
-//
-//        }];
-#endif
-        
     });
     
     return retval;
