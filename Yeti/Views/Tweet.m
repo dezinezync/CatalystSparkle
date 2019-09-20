@@ -18,6 +18,7 @@
 #import <DZKit/NSString+Date.h>
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
+#import <LinkPresentation/LinkPresentation.h>
 
 #import "YetiThemeKit.h"
 
@@ -74,7 +75,9 @@
 
 @end
 
-@interface Tweet () <UICollectionViewDelegate, UICollectionViewDataSource>
+@interface Tweet () <UICollectionViewDelegate, UICollectionViewDataSource> {
+    BOOL _usingLinkPresentation;
+}
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout *layout;
@@ -87,11 +90,18 @@
 
 @property (weak, nonatomic) Content *content;
 
+@property (weak, nonatomic) LPLinkView *linkView API_AVAILABLE(ios(13.0));
+
 @end
 
 @implementation Tweet
 
 - (BOOL)showImage {
+        
+    if (_usingLinkPresentation) {
+        return NO;
+    }
+    
     if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
         return NO;
     
@@ -102,22 +112,35 @@
     return YES;
 }
 
-- (instancetype)initWithNib
-{
+- (instancetype)initWithNib {
     if (self = [super initWithNib]) {
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
-        [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(TweetImage.class) bundle:nil] forCellWithReuseIdentifier:kTweetCell];
-        self.collectionView.contentInset = UIEdgeInsetsZero;
-        self.collectionView.layoutMargins = UIEdgeInsetsZero;
-        self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        self.collectionView.delegate = self;
-        self.collectionView.dataSource = self;
+        if (@available(iOS 13, *)) {
+            self.collectionView.hidden = YES;
+            self.textview.hidden = YES;
+            self.avatar.hidden = YES;
+            self.usernameLabel.hidden = YES;
+            self.timeLabel.hidden = YES;
+            
+            _usingLinkPresentation = YES;
+            
+            self.backgroundColor = [UIColor clearColor];
+        }
+        else {
+            [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(TweetImage.class) bundle:nil] forCellWithReuseIdentifier:kTweetCell];
+            self.collectionView.contentInset = UIEdgeInsetsZero;
+            self.collectionView.layoutMargins = UIEdgeInsetsZero;
+            self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+            self.collectionView.delegate = self;
+            self.collectionView.dataSource = self;
+            
+            self.textview.scrollEnabled = NO;
+            
+            self.avatar.image = nil;
+        }
         
-        self.textview.scrollEnabled = NO;
-        
-        self.avatar.image = nil;
     }
     
     return self;
@@ -129,6 +152,11 @@
         return;
     
     _content = content;
+    
+    if (@available(iOS 13, *)) {
+        [self addTweetForOS13:content];
+        return;
+    }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
@@ -183,6 +211,67 @@
     [self invalidateIntrinsicContentSize];
 }
 
+- (void)addTweetForOS13:(Content *)content {
+    
+    if (content.attributes == nil) {
+        return;
+    }
+    
+    NSURL *url = formattedURL(@"https://twitter.com/%@/status/%@", content.attributes[@"username"], content.attributes[@"id"]);
+    
+    LPMetadataProvider *metadata = [[LPMetadataProvider alloc] init];
+    
+    [metadata startFetchingMetadataForURL:url completionHandler:^(LPLinkMetadata * _Nullable metadata, NSError * _Nullable error) {
+
+        if (error) {
+            DDLogError(@"Error loading metadata: %@", error);
+        }
+        else {
+            DDLogDebug(@"Metadata: %@", metadata);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                LPLinkView *view = [[LPLinkView alloc] initWithMetadata:metadata];
+                view.translatesAutoresizingMaskIntoConstraints = NO;
+                view.frame = CGRectMake(0, 0, self.bounds.size.width, 0.f);
+                
+                NSString *url = metadata.URL.absoluteString;
+                url = [url stringByReplacingOccurrencesOfString:@"twitter.com" withString:@"twitter"];
+                url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@"yeti://"];
+                
+                metadata.URL = [NSURL URLWithString:url];
+                metadata.originalURL = metadata.URL;
+                
+                [view sizeToFit];
+                [view layoutSubviews];
+                
+                [self addSubview:view];
+                
+                self.linkView = view;
+                
+                [NSLayoutConstraint activateConstraints:@[[view.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
+                                                          [view.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
+                                                          [self.widthAnchor constraintEqualToAnchor:view.widthAnchor],
+                                                          [self.heightAnchor constraintEqualToAnchor:view.heightAnchor]]];
+                
+                [UIView animateWithDuration:0.25 animations:^{
+                    
+                    [self invalidateIntrinsicContentSize];
+                    [self.superview setNeedsLayout];
+                    
+                    // this causes the scroll view to bounce.
+//                    [self.superview layoutIfNeeded];
+                    
+                }];
+                
+            });
+            
+        }
+
+    }];
+    
+}
+
 - (void)setupCollectionView {
     
     if (!self.content)
@@ -207,15 +296,31 @@
 
 #pragma mark - Overrides
 
-- (void)setFrame:(CGRect)frame
-{
+- (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
-    [self setupCollectionView];
+    if (@available(iOS 13, *)) {
+        
+    }
+    else {
+        [self setupCollectionView];
+    }
 }
 
 - (CGSize)intrinsicContentSize {
     CGSize size = CGSizeMake(self.bounds.size.width, 0.f);
+    
+    if (@available(iOS 13, *)) {
+        if (_usingLinkPresentation == YES && self.linkView != nil) {
+            CGSize linkViewSize = [self.linkView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)];
+            
+            DDLogInfo(@"Tweet view size: %@", NSStringFromCGSize(linkViewSize));
+            
+            return linkViewSize;
+        }
+        
+        return size;
+    }
     
     if (self.content == nil) {
         return size;

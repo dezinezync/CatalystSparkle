@@ -10,6 +10,13 @@
 
 @interface UIImage (Sizing)
 
+/// This is the preferred method as it uses a combination of fastscaling and normal corner radius application.
+/// @param newSize The new maximum size for the image.
+/// @param quality The quality of the rendered image
+/// @param radius The corner radius. Default is 0.
+/// @param imageData The image data retval.
+- (UIImage *)fastScale:(CGSize)newSize quality:(CGFloat)quality cornerRadius:(CGFloat)radius imageData:(NSData **)imageData;
+
 + (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 
 + (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize cornerRadius:(CGFloat)radius;

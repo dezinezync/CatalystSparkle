@@ -8,6 +8,14 @@
 
 #import "UIImage+Sizing.h"
 
+#ifndef LOCK
+#define LOCK(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#endif
+
+#ifndef UNLOCK
+#define UNLOCK(lock) dispatch_semaphore_signal(lock);
+#endif
+
 @implementation UIImage (Sizing)
 
 + (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
@@ -15,25 +23,47 @@
 }
 
 + (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize cornerRadius:(CGFloat)radius {
-    //UIGraphicsBeginImageContext(newSize);
-    // In next line, pass 0.0 to use the current device's pixel scaling factor (and thus account for Retina resolution).
-    // Pass 1.0 to force exact pixel size.
-    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
     
-    // Add a clip before drawing anything, in the shape of an rounded rect
-    if (radius > 0.f) {
-        [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, newSize.width, newSize.height)
-                                    cornerRadius:radius] addClip];
-    }
-    
-    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-    
-    
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    
+    CALayer *imageLayer = [CALayer layer];
+    imageLayer.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+    imageLayer.contents = (id) image.CGImage;
+
+    imageLayer.masksToBounds = YES;
+    imageLayer.cornerRadius = (radius * UIScreen.mainScreen.scale);
+
+    UIGraphicsBeginImageContext(image.size);
+    [imageLayer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *roundedImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+
+    return roundedImage;
+}
+
+- (UIImage *)fastScale:(CGSize)newSize
+               quality:(CGFloat)quality
+          cornerRadius:(CGFloat)radius
+             imageData:(NSData **)imageData {
     
-    return newImage;
+    __block UIImage *image = nil;
+    __block NSData *data = nil;
+    
+    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        
+        image = [self fastScale:newSize.width quality:quality imageData:&data];
+        
+        image = [UIImage imageWithImage:image scaledToSize:image.size cornerRadius:radius];
+        
+        UNLOCK(sema);
+    });
+    
+    LOCK(sema);
+    
+    *imageData = data;
+    
+    return image;
+    
 }
 
 - (UIImage *)fastScale:(CGFloat)maxWidth quality:(CGFloat)quality imageData:(NSData **)imageData {
@@ -70,7 +100,7 @@
     }
     else {
         if (imageData != nil) {
-            *imageData = UIImageJPEGRepresentation(scaled, 1);
+            *imageData = UIImagePNGRepresentation(scaled);
         }
     }
     

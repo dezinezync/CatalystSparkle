@@ -333,7 +333,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (_activityIndicatorView == nil) {
         Theme *theme = [YTThemeKit theme];
         
-        UIActivityIndicatorViewStyle style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+        UIActivityIndicatorViewStyle style;
+        
+        if (@available(iOS 13, *)) {
+            style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight ? UIActivityIndicatorViewStyleGray : UIActivityIndicatorViewStyleWhite;
+        }
+        else {
+             style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+        }
         
         UIActivityIndicatorView *view = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
         [view sizeToFit];

@@ -980,27 +980,28 @@ NSString * const kDS2Data = @"DS2Data";
     
     weakify(self);
     
-    BOOL userUpdatedButWeHaveData = YES;
-    
-    if (@available(iOS 13, *)) {
-        if ([self.DDS.snapshot numberOfItemsInSection:MainSection] == 0) {
-            userUpdatedButWeHaveData = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        BOOL userUpdatedButWeHaveData = YES;
+        
+        if (@available(iOS 13, *)) {
+            if ([self.DDS.snapshot numberOfItemsInSection:MainSection] == 0) {
+                userUpdatedButWeHaveData = NO;
+            }
         }
-    }
-    else {
-        if (self.DS2.data == nil || self.DS2.data.count == 0) {
-            userUpdatedButWeHaveData = NO;
+        else {
+            if (self.DS2.data == nil || self.DS2.data.count == 0) {
+                userUpdatedButWeHaveData = NO;
+            }
         }
-    }
-    
-    if (userUpdatedButWeHaveData == NO) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            asyncMain(^{
-                strongify(self);
-                [self beginRefreshing:self.refreshControl];
-            });
-        });
-    }
+        
+        if (userUpdatedButWeHaveData == NO) {
+            [self beginRefreshing:self.refreshControl];
+        }
+        
+    });
     
     if (MyFeedsManager.subscription == nil) {
         [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {

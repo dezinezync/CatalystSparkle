@@ -297,8 +297,10 @@
     
 }
 
-- (NSString *)faviconURI
-{
+- (NSString *)faviconURI {
+    
+    NSArray * const IMAGE_EXTENSIONS = @[@"png", @"jpg", @"jpeg", @"svg", @"bmp", @"ico", @"webp"];
+    
     if (_faviconURI == nil) {
         NSString *url = nil;
         
@@ -331,30 +333,29 @@
                 }
                 
             }
-            else if (self.extra.opengraph && [self.extra.opengraph image]) {
-                url = self.extra.opengraph.image;
-            }
             else if (self.extra.opengraph && self.extra.opengraph.image) {
                 url = self.extra.opengraph.image;
             }
         }
         
+        if (url != nil) {
+            
+            // opengraph can only contain images (samwize)
+            NSString *pathExtension = url.pathExtension;
+            
+            // the path extension can be blank for gravatar urls
+            if ([pathExtension isBlank] == NO && [IMAGE_EXTENSIONS containsObject:pathExtension] == NO) {
+                url = nil;
+            }
+            
+        }
+        
         if (url == nil && self.extra.icon != nil && [self.extra.icon isBlank] == NO) {
             url = self.extra.icon;
-            
-            if ([[url pathExtension] isEqualToString:@"ico"]) {
-                NSURLComponents *components = [NSURLComponents componentsWithString:self.extra.icon];
-                url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
-            }
         }
         
         if (url == nil && self.favicon != nil && [self.favicon isBlank] == NO) {
             url = self.favicon;
-            
-            if ([[url pathExtension] isEqualToString:@"ico"]) {
-                NSURLComponents *components = [NSURLComponents componentsWithString:self.favicon];
-                url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
-            }
         }
         
         if (url == nil && self.favicon) {
@@ -378,6 +379,11 @@
         if (components.scheme == nil) {
             components.scheme = @"https";
             url = [components URL].absoluteString;
+        }
+        
+        if (url != nil && [url.pathExtension isEqualToString:@"ico"]) {
+            NSURLComponents *components = [NSURLComponents componentsWithString:url];
+            url = formattedString(@"https://www.google.com/s2/favicons?domain=%@", components.host);
         }
         
         _faviconURI = url;
