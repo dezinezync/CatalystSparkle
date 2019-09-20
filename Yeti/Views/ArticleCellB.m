@@ -177,6 +177,9 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     self.separatorView.backgroundColor = theme.borderColor;
     
+    self.faviconView.layer.cornerRadius = 4.f;
+    self.faviconView.clipsToBounds = YES;
+    
 }
 
 - (void)showSeparator:(BOOL)showSeparator {
@@ -331,77 +334,56 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
                     attachment:(NSTextAttachment *)attachment
                            url:(NSString *)url {
     
-    dispatch_async(SharedImageLoader.ioQueue, ^{
+    if (self.faviconTask != nil) {
         
-        [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable img) {
+        // if it is running, do not interrupt it.
+        if (self.faviconTask.state == NSURLSessionTaskStateRunning) {
+            return;
+        }
+        
+        // otherwise, cancel it and move on
+        [self.faviconTask cancel];
+        self.faviconTask = nil;
+        
+    }
+    
+    self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (image != nil) {
             
-            if (img != nil) {
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    attachment.image = img;
-                    [self.titleLabel setNeedsDisplay];
-                });
-                
+            CGFloat width = 24.f * UIScreen.mainScreen.scale;
+            
+            NSData *jpeg = nil;
+            
+            image = [image fastScale:CGSizeMake(width, width) quality:1.f cornerRadius:4.f imageData:&jpeg];
+            
+//            [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (image == nil) {
+                attachment.image = [UIImage imageNamed:@"nofavicon"];
             }
             else {
-                self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    dispatch_async(SharedImageLoader.ioQueue, ^{
-                        
-                        UIImage *image = nil;
-                        
-                        if ([responseObject isKindOfClass:UIImage.class] == NO) {
-                            
-                            if ([responseObject isKindOfClass:NSData.class]) {
-                                image = [[UIImage alloc] initWithData:responseObject];
-                            }
-                            
-                            if (image == nil) {
-                                return;
-                            }
-                            
-                        }
-                        
-                        image = responseObject;
-                        
-                        if (image != nil) {
-                            
-                            CGFloat width = 24.f * UIScreen.mainScreen.scale;
-                            
-                            NSData *jpeg = nil;
-                            
-                            image = [image fastScale:width quality:1.f imageData:&jpeg];
-                            
-                            [SharedImageLoader.cache setObject:image data:jpeg forKey:key];
-                        }
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                            if (image == nil) {
-                                attachment.bounds = CGRectZero;
-                            }
-                            else {
-                                attachment.image = image;
-                            }
-                            
-                            [self.titleLabel setNeedsDisplay];
-                        });
-                    });
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        attachment.bounds = CGRectZero;
-                        
-                        [self.titleLabel setNeedsDisplay];
-                    });
-                    
-                }];
+                attachment.image = image;
             }
             
-        }];
+            [self.titleLabel setNeedsDisplay];
+        });
         
-    });
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        DDLogDebug(@"Failed to fetch favicon at: %@", url);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            attachment.image = [UIImage imageNamed:@"nofavicon"];
+            
+            [self.titleLabel setNeedsDisplay];
+        });
+        
+    }];
+    
 }
 
 - (void)configure:(FeedItem *)item customFeed:(FeedType)feedType sizeCache:(NSMutableArray *)sizeCache {
@@ -502,12 +484,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     UIStackView *stackView = (UIStackView *)[self.markerView superview];
     
-    if (!item.isRead) {
+    if (item.isBookmarked) {
+        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+    }
+    else if (!item.isRead) {
         self.markerView.tintColor = YTThemeKit.theme.tintColor;
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
-    else if (item.isBookmarked)
-        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
     else {
         self.markerView.tintColor = YTThemeKit.theme.borderColor;
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -528,37 +511,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
         
         dispatch_async(SharedImageLoader.ioQueue, ^{
-            [self.coverImage il_setImageWithURL:url mutate:^UIImage *(UIImage * _Nonnull image) {
-                
-                NSString *cacheKey = formattedString(@"%@-%@", @(maxWidth), url);
-                
-                __block UIImage *scaled = nil;
-                
-                // check cache
-                dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-                
-                [SharedImageLoader.cache objectforKey:cacheKey callback:^(UIImage * _Nullable image) {
-                    
-                    scaled = image;
-                    
-                    UNLOCK(semaphore);
-                    
-                }];
-                
-                LOCK(semaphore);
-                
-                if (scaled == nil) {
-                    
-                    NSData *imageData;
-                    
-                    scaled = [image fastScale:maxWidth quality:1.f imageData:&imageData];
-                    
-                    [SharedImageLoader.cache setObject:scaled data:imageData forKey:cacheKey];
-                }
-                
-                return scaled;
-                
-            } success:nil error:nil];
+            [self.coverImage il_setImageWithURL:url];
         });
         
     }

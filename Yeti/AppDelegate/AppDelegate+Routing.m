@@ -530,10 +530,23 @@
     
     FeedsVC *feedsVC = [[nav viewControllers] firstObject];
     
-    DZSectionedDatasource *DSS = [feedsVC valueForKeyPath:@"DS"];
-    DZBasicDatasource *DS = [[DSS datasources] lastObject];
+    NSArray *data = nil;
     
-    if (!DS.data || DS.data.count == 0) {
+    if (@available(iOS 13, *)) {
+        
+        UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
+        
+        data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+        
+    }
+    else {
+        DZSectionedDatasource *DSS = [feedsVC valueForKeyPath:@"DS"];
+        DZBasicDatasource *DS = [[DSS datasources] lastObject];
+        
+        data = DS.data;
+    }
+    
+    if (!data || !data.count) {
         weakify(self);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             strongify(self);
@@ -545,7 +558,7 @@
     
     __block NSUInteger index = NSNotFound;
     
-    [(NSArray <Feed *> *)[DS data] enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <Feed *> *)data enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj isKindOfClass:Feed.class]) {
             Feed *feed = obj;

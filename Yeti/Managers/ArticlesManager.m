@@ -98,7 +98,10 @@ static ArticlesManager * SharedArticleManager = nil;
             }
         } }
         
-        _bookmarks = [bookmarkedItems sortedArrayUsingSelector:@selector(compare:)];
+        _bookmarks = [[bookmarkedItems sortedArrayUsingSelector:@selector(compare:)] rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+            obj.bookmarked = YES;
+            return obj;
+        }];
     }
     
     return _bookmarks;

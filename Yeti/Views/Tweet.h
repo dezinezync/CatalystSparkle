@@ -26,4 +26,6 @@
 
 @property (weak, nonatomic) IBOutlet TweetPara * _Nullable textview;
 
+- (void)addTweetForOS13:(Content * _Nonnull)content API_AVAILABLE(ios(13.0));
+
 @end

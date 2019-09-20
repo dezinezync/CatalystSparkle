@@ -14,6 +14,8 @@
 
 #import "BarPositioning.h"
 
+@class Content;
+
 @interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning> {
     BOOL _showSearchBar;
     

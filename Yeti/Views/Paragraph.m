@@ -241,6 +241,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 
                 __block BOOL hasExisitingAttributes = NO;
                 
+                // length cannot be more than the total length of the string
+                NSInteger location = range.range.location;
+                NSInteger length = range.range.length;
+                
+                if ((location + length) > attrs.length) {
+                    range.range = NSMakeRange(location, attrs.length - location);
+                }
+                
                 [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
                    
                     if ([value.description containsString:@"italic"]) {
@@ -260,6 +268,14 @@ static NSParagraphStyle * _paragraphStyle = nil;
             else if ([range.element isEqualToString:@"italics"] || [range.element isEqualToString:@"em"]) {
                 
                 __block BOOL hasExisitingAttributes = NO;
+                
+                // length cannot be more than the total length of the string
+                NSInteger location = range.range.location;
+                NSInteger length = range.range.length;
+                
+                if ((location + length) > attrs.length) {
+                    range.range = NSMakeRange(location, attrs.length - location);
+                }
                 
                 [attrs enumerateAttribute:NSFontAttributeName inRange:range.range options:kNilOptions usingBlock:^(UIFont *  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
                    
