@@ -484,12 +484,13 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     UIStackView *stackView = (UIStackView *)[self.markerView superview];
     
-    if (!item.isRead) {
+    if (item.isBookmarked) {
+        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+    }
+    else if (!item.isRead) {
         self.markerView.tintColor = YTThemeKit.theme.tintColor;
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
-    if (item.isBookmarked)
-        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
     else {
         self.markerView.tintColor = YTThemeKit.theme.borderColor;
         self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
