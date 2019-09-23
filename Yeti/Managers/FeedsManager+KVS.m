@@ -153,55 +153,6 @@
     }];
 }
 
-- (BOOL)addLocalBookmark:(FeedItem *)item {
-    
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-    NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-    
-    NSString *path = [directory stringByAppendingPathComponent:formattedString(@"%@.dat", item.identifier)];
-    
-    NSError *error = nil;
-    
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:item requiringSecureCoding:NO error:&error];
-    [data writeToFile:path options:NSDataWritingAtomic error:&error];
-    
-    if (error) {
-        [AlertManager showGenericAlertWithTitle:@"App Error" message:@"Bookmarking the article failed as Elytra was unable to write the data to your device's storage. Please try again."];
-    }
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:item userInfo:@{@"bookmarked": @(item.isBookmarked)}];
-    
-    return error != nil;
-}
-
-- (BOOL)removeLocalBookmark:(FeedItem *)item {
-    
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-    NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-    
-    NSString *path = [directory stringByAppendingPathComponent:formattedString(@"%@.dat", item.identifier)];
-    
-    BOOL errored = NO;
-    
-    NSError *error = nil;
-    if (![[NSFileManager defaultManager] removeItemAtPath:path error:&error]) {
-        errored = YES;
-        
-        if (error.code == 4) {
-            errored = NO;
-        }
-        else {
-            [AlertManager showGenericAlertWithTitle:@"App Error" message:error.localizedDescription];
-        }
-    }
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:item userInfo:@{@"bookmarked": @(item.isBookmarked)}];
-    
-    return errored;
-}
-
 - (void)_removeAllLocalBookmarks {
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
