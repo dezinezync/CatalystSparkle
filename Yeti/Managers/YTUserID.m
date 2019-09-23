@@ -104,8 +104,14 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 #ifdef DEBUG
     
     if (_UUID == nil) {
+        
+        // Nikhil
         _UUID = [[NSUUID alloc] initWithUUIDString:@"815E2709-31CC-4EB8-9067-D84F224BED66"];
         _userID = @(1);
+        
+        // Anuj
+//        _UUID = [[NSUUID alloc] initWithUUIDString:@"4CE0BC0B-82E6-4B08-84F5-DE5C56774064"];
+//        _userID = @(9);
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];

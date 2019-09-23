@@ -17,6 +17,7 @@
     [encoder encodeObject:self.opengraph forKey:@"opengraph"];
     [encoder encodeObject:self.title forKey:@"title"];
     [encoder encodeObject:self.url forKey:@"url"];
+    [encoder encodeObject:self.summary forKey:@"summary"];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -31,12 +32,12 @@
         self.opengraph = [decoder decodeObjectForKey:@"opengraph"];
         self.title = [decoder decodeObjectForKey:@"title"];
         self.url = [decoder decodeObjectForKey:@"url"];
+        self.summary = [decoder decodeObjectOfClass:NSString.class forKey:@"summary"];
     }
     return self;
 }
 
-+ (FeedMeta *)instanceFromDictionary:(NSDictionary *)aDictionary
-{
++ (FeedMeta *)instanceFromDictionary:(NSDictionary *)aDictionary {
 
     FeedMeta *instance = [[FeedMeta alloc] init];
     [instance setAttributesFromDictionary:aDictionary];
@@ -145,6 +146,10 @@
 
     if (self.url) {
         [dictionary setObject:self.url forKey:@"url"];
+    }
+    
+    if (self.summary) {
+        [dictionary setObject:self.summary forKey:@"summary"];
     }
 
     return dictionary;

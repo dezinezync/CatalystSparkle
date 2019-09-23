@@ -13,6 +13,7 @@
 @property (nonatomic, strong) MetaOpenGraph *opengraph;
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *url;
+@property (nonatomic, copy) NSString *summary;
 
 + (FeedMeta *)instanceFromDictionary:(NSDictionary *)aDictionary;
 - (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;

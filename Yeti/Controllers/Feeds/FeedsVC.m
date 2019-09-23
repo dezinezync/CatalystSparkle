@@ -37,7 +37,6 @@
 #define TopSection  @0
 #define MainSection @1
 
-static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
 @interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
@@ -113,7 +112,7 @@ static void *KVO_Unread = &KVO_Unread;
         _noPreSetup = YES;
         
         if (MyFeedsManager.userID) {
-            [self userDidUpdate];
+            [self userDidUpdate:NO];
         }
         
         BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kOpenUnreadOnLaunch];
@@ -165,8 +164,7 @@ static void *KVO_Unread = &KVO_Unread;
         }];
         
         @try {
-            
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
+
             [MyFeedsManager removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
             
         }
@@ -193,10 +191,10 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
     [center addObserver:self selector:@selector(updateNotification:) name:UIDatabaseConnectionDidUpdateNotification object:nil];
     [center addObserver:self selector:@selector(hideBookmarksPreferenceChanged) name:ShowBookmarksTabPreferenceChanged object:nil];
+    [center addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdateNotification object:self.bookmarksManager];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
-    
-    [ArticlesManager.shared addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
+
     [ArticlesManager.shared addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
     
 }
@@ -443,6 +441,16 @@ static void *KVO_Unread = &KVO_Unread;
 
 #pragma mark - Getters
 
+- (BookmarksManager *)bookmarksManager {
+    
+    if (_bookmarksManager == nil && MyFeedsManager.userIDManager.UUID != nil) {
+        _bookmarksManager = [[BookmarksManager alloc] initWithUserID:MyFeedsManager.userIDManager.UUID];
+    }
+    
+    return _bookmarksManager;
+    
+}
+
 - (UISelectionFeedbackGenerator *)feedbackGenerator {
     if (!_feedbackGenerator) {
         _feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
@@ -555,12 +563,10 @@ static void *KVO_Unread = &KVO_Unread;
         cell.faviconView.image = image;
         
         if (indexPath.row == 0) {
-            
             cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
         }
         else {
-            
-            cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
+            cell.countLabel.text = formattedString(@"%@", @(self.bookmarksManager.bookmarksCount));
         }
         
         ocell = cell;
@@ -616,6 +622,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
         vc.customFeed = FeedTypeCustom;
+        vc.bookmarksManager = self.bookmarksManager;
         vc.unread = indexPath.row == 0;
         
         BOOL animated = YES;
@@ -647,10 +654,13 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (isPhone) {
             vc = [[DetailFeedVC alloc] initWithFeed:feed];
+            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
         }
         else {
             vc = [DetailFeedVC instanceWithFeed:feed];
+            
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
         }
         
         [self showDetailController:vc sender:self];
@@ -663,9 +673,13 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (isPhone) {
             vc = [[DetailFolderVC alloc] initWithFolder:folder];
+            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
         }
         else {
             vc = [DetailFolderVC instanceWithFolder:folder];
+            
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
         }
         
         [self showDetailViewController:vc sender:self];
@@ -751,9 +765,13 @@ NSString * const kDS2Data = @"DS2Data";
     
     // get a list of open folders
     NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+        
         return [obj isKindOfClass:Folder.class] && [(Folder *)obj isExpanded];
+        
     }] rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+        
         return obj.folderID;
+        
     }];
     
     // ensures search bar does not dismiss on refresh or first load
@@ -851,16 +869,6 @@ NSString * const kDS2Data = @"DS2Data";
             }
         });
     }
-    else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
-        
-       dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-            cell.countLabel.text = [@([[ArticlesManager.shared bookmarks] count]) stringValue];
-        });
-        
-    }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
@@ -914,6 +922,34 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 #pragma mark - Notifications
+
+- (void)didUpdateBookmarks {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(didUpdateBookmarks) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
+    
+    for (NSIndexPath *indexpath in visible) {
+        // check if the bookmarks row is visible
+        if (indexpath.section == 0 && indexpath.row == 1) {
+            
+            FeedsCell *cell = (FeedsCell *)[self tableView:self.tableView cellForRowAtIndexPath:indexpath];
+            
+            if (cell != nil) {
+                cell.countLabel.text = @(self.bookmarksManager.bookmarksCount).stringValue;
+                [cell.countLabel sizeToFit];
+            }
+            
+            break;
+            
+        }
+        
+    }
+    
+}
 
 - (void)unreadCountPreferenceChanged {
     
@@ -971,11 +1007,22 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)userDidUpdate {
     
+    [self userDidUpdate:YES];
+    
+}
+
+- (void)userDidUpdate:(BOOL)resetBookmarksManager {
+    
     // this function can be called multiple times
     // beginning 1.0.2
     
     if (MyFeedsManager.userID == nil || [MyFeedsManager.userID isEqualToNumber:@(0)]) {
         return;
+    }
+    
+    if (self.bookmarksManager && resetBookmarksManager == YES) {
+        [NSNotificationCenter.defaultCenter removeObserver:self name:BookmarksDidUpdateNotification object:self.bookmarksManager];
+        self.bookmarksManager = nil;
     }
     
     weakify(self);
@@ -1031,6 +1078,7 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
     }
+    
 }
 
 - (void)subscriptionExpired:(NSNotification *)note {

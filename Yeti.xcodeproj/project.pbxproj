@@ -65,6 +65,9 @@
 		F03FA5CE216F47E6009C5D96 /* TypeFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA5CD216F47E6009C5D96 /* TypeFactory.m */; };
 		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
+		F044B3BA2338985300DD8E90 /* BookmarksManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F044B3B92338985300DD8E90 /* BookmarksManager.m */; };
+		F044B3C92338A6E900DD8E90 /* BookmarksMigrationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F044B3C72338A6E900DD8E90 /* BookmarksMigrationVC.m */; };
+		F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */; };
 		F0469DF220A0514100163C4E /* dark.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF120A0514100163C4E /* dark.css */; };
 		F0469DF420A0528000163C4E /* black.css in Resources */ = {isa = PBXBuildFile; fileRef = F0469DF320A0528000163C4E /* black.css */; };
 		F046DF57216E30AC00FFDBD7 /* DetailCustomVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */; };
@@ -313,6 +316,9 @@
 		F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */; };
 		F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */; };
 		F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */; };
+		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
+		F0DA1E4823375042008FF4B1 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
+		F0DA1E49233750AA008FF4B1 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
 		F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */; };
 		F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
 		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
@@ -718,6 +724,11 @@
 		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
 		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
+		F044B3B82338985300DD8E90 /* BookmarksManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookmarksManager.h; sourceTree = "<group>"; };
+		F044B3B92338985300DD8E90 /* BookmarksManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookmarksManager.m; sourceTree = "<group>"; };
+		F044B3C62338A6E900DD8E90 /* BookmarksMigrationVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookmarksMigrationVC.h; sourceTree = "<group>"; };
+		F044B3C72338A6E900DD8E90 /* BookmarksMigrationVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookmarksMigrationVC.m; sourceTree = "<group>"; };
+		F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookmarksMigrationVC.xib; sourceTree = "<group>"; };
 		F0469DF120A0514100163C4E /* dark.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = dark.css; sourceTree = "<group>"; };
 		F0469DF320A0528000163C4E /* black.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = black.css; sourceTree = "<group>"; };
 		F046DF55216E30AC00FFDBD7 /* DetailCustomVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailCustomVC.h; sourceTree = "<group>"; };
@@ -1086,6 +1097,7 @@
 		F0D1E984216DED50009A8614 /* DetailAuthorHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailAuthorHeaderView.h; sourceTree = "<group>"; };
 		F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailAuthorHeaderView.m; sourceTree = "<group>"; };
 		F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddFeedCell.xib; sourceTree = "<group>"; };
+		F0DA1E3B23374EF9008FF4B1 /* MetaData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetaData.m; sourceTree = "<group>"; };
 		F0DDA0E920E5F71400C5D97E /* RecommendationsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecommendationsVC.h; sourceTree = "<group>"; };
 		F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecommendationsVC.m; sourceTree = "<group>"; };
 		F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecommendationsVC.xib; sourceTree = "<group>"; };
@@ -1583,6 +1595,7 @@
 				F070C2F71FBABC3600912CCF /* Info.plist */,
 				F0A589EF205A4E7E00488015 /* LinguisticSearch.m */,
 				F04E92C021B5488900AD1FB2 /* YTExtractorTests.m */,
+				F0DA1E3B23374EF9008FF4B1 /* MetaData.m */,
 			);
 			path = YetiTests;
 			sourceTree = "<group>";
@@ -1734,6 +1747,9 @@
 				F013E6E121A116EE00BAA151 /* MainNavController.h */,
 				F013E6E221A116EE00BAA151 /* MainNavController.m */,
 				F00710C6229FA1F0002943B2 /* BarPositioning.h */,
+				F044B3C62338A6E900DD8E90 /* BookmarksMigrationVC.h */,
+				F044B3C72338A6E900DD8E90 /* BookmarksMigrationVC.m */,
+				F044B3C82338A6E900DD8E90 /* BookmarksMigrationVC.xib */,
 			);
 			path = Root;
 			sourceTree = "<group>";
@@ -1953,6 +1969,8 @@
 				F05D21851FF2222F003DE813 /* YTUserID.m */,
 				F0FEC4A123085E840082C79D /* ArticlesManager.h */,
 				F0FEC4A223085E840082C79D /* ArticlesManager.m */,
+				F044B3B82338985300DD8E90 /* BookmarksManager.h */,
+				F044B3B92338985300DD8E90 /* BookmarksManager.m */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2598,6 +2616,7 @@
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
+				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
@@ -2729,6 +2748,7 @@
 			files = (
 				F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */,
 				F08808A3206B967A00ECE1E6 /* TweetImage.m in Sources */,
+				F044B3C92338A6E900DD8E90 /* BookmarksMigrationVC.m in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,
@@ -2750,6 +2770,7 @@
 				F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */,
 				F064A53F21576F5600A385AD /* TrialVC.m in Sources */,
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
+				F044B3BA2338985300DD8E90 /* BookmarksManager.m in Sources */,
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0E219442054FB83004B5FF5 /* Linebreak.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
@@ -2895,6 +2916,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0DA1E4823375042008FF4B1 /* FeedMeta.m in Sources */,
 				F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */,
 				F04E92CE21B54A6300AD1FB2 /* DTTimePeriodChain.m in Sources */,
 				F04E92CD21B54A6300AD1FB2 /* DTTimePeriodCollection.m in Sources */,
@@ -2907,7 +2929,9 @@
 				F04E92CC21B54A6300AD1FB2 /* DTError.m in Sources */,
 				F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */,
 				F070C2F61FBABC3600912CCF /* YetiTests.m in Sources */,
+				F0DA1E49233750AA008FF4B1 /* MetaOpenGraph.m in Sources */,
 				F04E92C921B54A6300AD1FB2 /* NSDate+DateTools.m in Sources */,
+				F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */,
 				F04E92C221B5489700AD1FB2 /* YTExtractor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

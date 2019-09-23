@@ -98,10 +98,10 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             [snapshot appendSectionsWithIdentifiers:@[@0]];
             
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.bookmarks.reverseObjectEnumerator.allObjects];
+                [snapshot appendItemsWithIdentifiers:self.bookmarksManager.bookmarks.reverseObjectEnumerator.allObjects];
             }
             else {
-                [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.bookmarks];
+                [snapshot appendItemsWithIdentifiers:self.bookmarksManager.bookmarks];
             }
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
@@ -118,10 +118,10 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         if (self.unread == NO) {
             
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                self.DS.data = [ArticlesManager.shared.bookmarks reverseObjectEnumerator].allObjects;
+                self.DS.data = [self.bookmarksManager.bookmarks reverseObjectEnumerator].allObjects;
             }
             else {
-                self.DS.data = ArticlesManager.shared.bookmarks;
+                self.DS.data = self.bookmarksManager.bookmarks;
             }
             
         }

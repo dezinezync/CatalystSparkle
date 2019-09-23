@@ -17,6 +17,8 @@
 #import "BarPositioning.h"
 #import "UIViewController+Stateful.h"
 
+#import "BookmarksManager.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
@@ -61,6 +63,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 @property (assign) NSInteger page;
 
 @property (atomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
+
+@property (nonatomic, weak) BookmarksManager *bookmarksManager;
 
 - (BOOL)showsSortingButton;
 

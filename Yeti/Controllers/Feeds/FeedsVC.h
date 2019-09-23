@@ -10,6 +10,8 @@
 #import "FeedsHeaderView.h"
 #import "BarPositioning.h"
 
+#import "BookmarksManager.h"
+
 @class Feed;
 @class DZSectionedDatasource;
 @class DZBasicDatasource;
@@ -34,6 +36,8 @@ extern NSString *const MainSection;
 @property (nonatomic, strong) UITableViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
 
 @property (nonatomic, copy) NSDate *sinceDate;
+
+@property (nonatomic, strong) BookmarksManager *bookmarksManager;
 
 - (void)setupData;
 

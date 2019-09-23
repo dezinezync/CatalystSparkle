@@ -115,7 +115,7 @@ AppDelegate *MyAppDelegate = nil;
         
         [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
         
-        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
+        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
         
         // To test push notifications
         #ifdef DEBUG
