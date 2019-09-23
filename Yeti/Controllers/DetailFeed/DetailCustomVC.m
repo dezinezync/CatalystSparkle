@@ -21,6 +21,8 @@
     BOOL _reloadDataset; // used for bookmarks
     BOOL _hasSetupState;
     YetiSortOption _sortingOption;
+    
+    BOOL _showingArticle;
 }
 
 @end
@@ -49,7 +51,15 @@
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     if (self.isUnread == NO) {
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdateNotification object:nil];
+        
+        weakify(self);
+        
+        [self.bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+           
+            strongify(self);
+            [self didUpdateBookmarks];
+            
+        }];
         
         [self setupData];
         
@@ -139,6 +149,20 @@
         
         [self setupData];
     }
+    
+    if (_showingArticle) {
+        _showingArticle = NO;
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    
+    [super viewDidDisappear:animated];
+    
+    if (_showingArticle == NO) {
+        [self.bookmarksManager removeObserver:self name:BookmarksDidUpdateNotification];
+    }
+    
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
@@ -147,15 +171,15 @@
     }
 }
 
-- (void)dealloc {
+#pragma mark - Overrides
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    if (self.isUnread == NO) {
-        [NSNotificationCenter.defaultCenter removeObserver:self name:BookmarksDidUpdateNotification object:nil];
-    }
+    _showingArticle = YES;
+    
+    [super collectionView:collectionView didSelectItemAtIndexPath:indexPath];
     
 }
-
-#pragma mark - Overrides
 
 - (BOOL)showsSortingButton {
     return YES;

@@ -45,6 +45,12 @@ extern NSErrorDomain const BookmarksManagerErrorDomain;
 @property (nonatomic, strong) YapDatabaseConnection *uiConnection;
 @property (nonatomic, strong) YapDatabaseConnection *bgConnection;
 
+#pragma mark - Observing
+
+- (void)addObserver:(id)object name:(NSNotificationName)name callback:(void (^)(void))callback;
+
+- (void)removeObserver:(id)object name:(NSNotificationName)name;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -8,6 +8,41 @@
 
 #import "BookmarksManager.h"
 
+@interface BookmarksObserver : NSObject
+
+@property (nonatomic, weak) id object;
+@property (nonatomic, copy) NSNotificationName notificationName;
+@property (nonatomic, copy, nonnull) void(^callback)(void);
+
+@end
+
+@implementation BookmarksObserver
+
+- (BOOL)isEqual:(id)object {
+    
+    if (object == nil) {
+        return NO;
+    }
+    
+    if ([object isKindOfClass:BookmarksObserver.class] == NO) {
+        return NO;
+    }
+    
+    if (object == self) {
+        return YES;
+    }
+    
+    if (([(BookmarksObserver *)object object] == self.object)
+        && ([[(BookmarksObserver *)object notificationName] isEqualToString:self.notificationName])) {
+        return YES;
+    }
+    
+    return NO;
+    
+}
+
+@end
+
 NSErrorDomain const BookmarksManagerErrorDomain = @"error.bookmarksManager";
 NSNotificationName const BookmarksWillUpdateNotification = @"com.elytra.note.bookmarksupdating";
 NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.bookmarksupdated";
@@ -22,6 +57,8 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 @property (nonatomic, strong) dispatch_queue_t bgQueue;
 
+@property (nonatomic, strong) NSMutableArray *observers;
+
 @end
 
 @implementation BookmarksManager
@@ -34,6 +71,7 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
     
     if (self = [super init]) {
         
+        self.observers = [NSMutableArray new];
         self.userID = UUID;
         self.bgQueue = dispatch_queue_create("com.elytra.bookmarks.bg", DISPATCH_QUEUE_SERIAL);
         
@@ -159,17 +197,15 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
             return;
         }
         
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        
         if (self->_migrating == NO) {
-            [center postNotificationName:BookmarksWillUpdateNotification object:nil];
+            [self postNotification:BookmarksWillUpdateNotification object:nil];
         }
         
         self->_bookmarks = bookmarks;
         self.bookmarksCount = self->_bookmarks.count;
         
         if (self->_migrating == NO) {
-            [center postNotificationName:BookmarksDidUpdateNotification object:nil];
+            [self postNotification:BookmarksDidUpdateNotification object:nil];
         }
     }
     
@@ -322,6 +358,52 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
     [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdateNotification
                                                         object:self
                                                       userInfo:userInfo];
+}
+
+#pragma mark - Observers
+
+- (void)addObserver:(id)object name:(NSNotificationName)name callback:(void (^)(void))callback {
+    
+    BookmarksObserver *instance = [BookmarksObserver new];
+    instance.object = object;
+    instance.callback = [callback copy];
+    instance.notificationName = name;
+    
+    NSUInteger index = [self.observers indexOfObject:instance];
+    
+    if (index == NSNotFound) {
+        [self.observers addObject:instance];
+    }
+    else {
+        instance = nil;
+    }
+    
+}
+
+- (void)removeObserver:(id)object name:(NSNotificationName)name {
+    
+    BookmarksObserver *instance = [BookmarksObserver new];
+    instance.object = object;
+    instance.notificationName = name;
+    
+    NSUInteger index = [self.observers indexOfObject:instance];
+    
+    if (index != NSNotFound) {
+        [self.observers removeObjectAtIndex:index];
+    }
+    
+}
+
+- (void)postNotification:(NSNotificationName)name object:(id)obj {
+    
+    for (BookmarksObserver *obs in self.observers) {
+        
+        if ([obs.notificationName isEqualToString:name]) {
+            obs.callback();
+        }
+        
+    }
+    
 }
 
 @end

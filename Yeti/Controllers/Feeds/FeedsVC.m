@@ -447,8 +447,14 @@ static void *KVO_Unread = &KVO_Unread;
         
         MyFeedsManager.bookmarksManager = _bookmarksManager;
         
-        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdateNotification object:nil];
-        [self didUpdateBookmarks];
+        weakify(self);
+        
+        [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+            strongify(self);
+            [self didUpdateBookmarks];
+        }];
+        
+//        [self didUpdateBookmarks];
         
     }
     
@@ -1034,7 +1040,7 @@ NSString * const kDS2Data = @"DS2Data";
         
         if ([self.bookmarksManager.userID.UUIDString isEqualToString:MyFeedsManager.userIDManager.UUIDString] == NO) {
             // user has definitely changed
-            [NSNotificationCenter.defaultCenter removeObserver:self name:BookmarksDidUpdateNotification object:nil];
+            [self.bookmarksManager removeObserver:self name:BookmarksDidUpdateNotification];
             self.bookmarksManager = nil;
             
             __unused BookmarksManager *unusedManagerInstance = [self bookmarksManager];
