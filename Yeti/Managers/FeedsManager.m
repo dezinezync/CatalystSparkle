@@ -2296,7 +2296,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
     
-    [self removeAllLocalBookmarks];
+    [self.bookmarksManager _removeAllBookmarks:nil];
     
     NSString *kAccountID = @"YTUserID";
     NSString *kUserID = @"userID";
@@ -2573,9 +2573,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                     
                     if (deletedIndex != NSNotFound) {
                         // remove the path as well
-                        if (![self removeLocalBookmark:obj]) {
-                            [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:obj userInfo:@{@"bookmarked": @(NO)}];
-                        }
+                        [self.bookmarksManager removeBookmark:obj completion:nil];
                     }
                     
                     return deletedIndex == NSNotFound;
@@ -2620,9 +2618,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                         
                         strongify(self);
                         
-                        [self addLocalBookmark:responseObject];
-                        
-                        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:responseObject userInfo:@{@"bookmarked": @(YES)}];
+                        [self.bookmarksManager addBookmark:responseObject completion:nil];
                         
                         count--;
                         

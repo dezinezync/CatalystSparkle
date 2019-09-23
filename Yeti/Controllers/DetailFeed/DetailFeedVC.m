@@ -766,6 +766,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
+    vc.bookmarksManager = self.bookmarksManager;
     
     if (self.splitViewController == nil) {
         // in a modal stack

@@ -13,8 +13,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSNotificationName const BookmarksWillUpdateNotification;
-extern NSNotificationName const BookmarksDidUpdateNotification;
+FOUNDATION_EXPORT NSNotificationName const BookmarksWillUpdateNotification;
+FOUNDATION_EXPORT NSNotificationName const BookmarksDidUpdateNotification;
 
 extern NSErrorDomain const BookmarksManagerErrorDomain;
 
@@ -26,6 +26,8 @@ extern NSErrorDomain const BookmarksManagerErrorDomain;
 }
 
 - (instancetype)initWithUserID:(NSUUID *)UUID;
+
+@property (nonatomic, copy, readonly) NSUUID *userID;
 
 @property (nonatomic, strong) NSArray <FeedItem *> *bookmarks;
 

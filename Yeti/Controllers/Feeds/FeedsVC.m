@@ -191,7 +191,6 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];
     [center addObserver:self selector:@selector(updateNotification:) name:UIDatabaseConnectionDidUpdateNotification object:nil];
     [center addObserver:self selector:@selector(hideBookmarksPreferenceChanged) name:ShowBookmarksTabPreferenceChanged object:nil];
-    [center addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdateNotification object:self.bookmarksManager];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
 
@@ -445,6 +444,12 @@ static void *KVO_Unread = &KVO_Unread;
     
     if (_bookmarksManager == nil && MyFeedsManager.userIDManager.UUID != nil) {
         _bookmarksManager = [[BookmarksManager alloc] initWithUserID:MyFeedsManager.userIDManager.UUID];
+        
+        MyFeedsManager.bookmarksManager = _bookmarksManager;
+        
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdateNotification object:nil];
+        [self didUpdateBookmarks];
+        
     }
     
     return _bookmarksManager;
@@ -939,8 +944,13 @@ NSString * const kDS2Data = @"DS2Data";
             FeedsCell *cell = (FeedsCell *)[self tableView:self.tableView cellForRowAtIndexPath:indexpath];
             
             if (cell != nil) {
-                cell.countLabel.text = @(self.bookmarksManager.bookmarksCount).stringValue;
-                [cell.countLabel sizeToFit];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    cell.countLabel.text = @(self.bookmarksManager.bookmarksCount).stringValue;
+                    [cell.countLabel sizeToFit];
+                    [cell setNeedsDisplay];
+                    
+                });
             }
             
             break;
@@ -1021,8 +1031,15 @@ NSString * const kDS2Data = @"DS2Data";
     }
     
     if (self.bookmarksManager && resetBookmarksManager == YES) {
-        [NSNotificationCenter.defaultCenter removeObserver:self name:BookmarksDidUpdateNotification object:self.bookmarksManager];
-        self.bookmarksManager = nil;
+        
+        if ([self.bookmarksManager.userID.UUIDString isEqualToString:MyFeedsManager.userIDManager.UUIDString] == NO) {
+            // user has definitely changed
+            [NSNotificationCenter.defaultCenter removeObserver:self name:BookmarksDidUpdateNotification object:nil];
+            self.bookmarksManager = nil;
+            
+            __unused BookmarksManager *unusedManagerInstance = [self bookmarksManager];
+        }
+
     }
     
     weakify(self);

@@ -124,8 +124,8 @@
     }];
 }
 
-- (void)article:(FeedItem *)item markAsBookmarked:(BOOL)bookmarked success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)article:(FeedItem *)item markAsBookmarked:(BOOL)bookmarked success:(successBlock)successCB error:(errorBlock)errorCB {
+    
     NSString *path = formattedString(@"/article/%@/bookmark", item.identifier);
     
     [self.session POST:path parameters:@{@"bookmark": @(bookmarked), @"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -202,7 +202,7 @@
     return errored;
 }
 
-- (void)removeAllLocalBookmarks {
+- (void)_removeAllLocalBookmarks {
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder

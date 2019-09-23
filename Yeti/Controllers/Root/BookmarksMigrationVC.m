@@ -145,13 +145,13 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        [MyFeedsManager removeAllLocalBookmarks];
+        [MyFeedsManager _removeAllLocalBookmarks];
         
         self.label.text = @"Migration Completed";
         
         self.bookmarksManager->_migrating = NO;
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdateNotification object:self userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdateNotification object:nil userInfo:nil];
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                

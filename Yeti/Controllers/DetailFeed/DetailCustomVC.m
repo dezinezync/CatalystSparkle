@@ -17,8 +17,6 @@
 
 #import "YetiConstants.h"
 
-static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
-
 @interface DetailCustomVC () {
     BOOL _reloadDataset; // used for bookmarks
     BOOL _hasSetupState;
@@ -51,7 +49,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     if (self.isUnread == NO) {
-        [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdateNotification object:nil];
         
         [self setupData];
         
@@ -151,15 +149,8 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 - (void)dealloc {
     
-    if (MyFeedsManager.observationInfo != nil && self.unread == NO) {
-        @try {
-        
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_DETAIL_BOOKMARKS];
-            
-        } @catch (NSException *exc) {
-            
-        }
-        
+    if (self.isUnread == NO) {
+        [NSNotificationCenter.defaultCenter removeObserver:self name:BookmarksDidUpdateNotification object:nil];
     }
     
 }
@@ -368,18 +359,6 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 - (void)didUpdateUnread {
     if (!_reloadDataset) {
         _reloadDataset = YES;
-    }
-}
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:propSel(bookmarks)] && context == KVO_DETAIL_BOOKMARKS) {
-        [self didUpdateBookmarks];
-    }
-    else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 

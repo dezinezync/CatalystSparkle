@@ -14,6 +14,8 @@
 
 #import "BarPositioning.h"
 
+#import "BookmarksManager.h"
+
 @class Content;
 
 @interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning> {
@@ -44,6 +46,8 @@
 
 @property (nonatomic, weak) UISearchBar * _Nullable searchBar;
 @property (nonatomic, weak) UIButton * _Nullable searchPrevButton, * _Nullable searchNextButton;
+
+@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 #pragma mark - Private
 

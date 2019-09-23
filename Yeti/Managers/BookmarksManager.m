@@ -16,7 +16,7 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 @interface BookmarksManager ()
 
-@property (nonatomic, copy) NSUUID *userID;
+@property (nonatomic, copy, readwrite) NSUUID *userID;
 
 @property (nonatomic, assign, readwrite) NSInteger bookmarksCount;
 
@@ -47,15 +47,6 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 - (void)addBookmark:(FeedItem *)bookmark completion:(void (^)(BOOL))completion {
     
-    if (_migrating == NO && bookmark.isBookmarked == YES) {
-        
-        if (completion) { dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES);
-        }); }
-        
-        return;
-    }
-    
     dispatch_async(self.bgQueue, ^{
        
         [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
@@ -77,15 +68,6 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 }
 
 - (void)removeBookmark:(FeedItem *)bookmark completion:(void (^)(BOOL))completion {
-    
-    if (_migrating == NO && bookmark.isBookmarked == NO) {
-        
-        if (completion) { dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES);
-        }); }
-        
-        return;
-    }
     
     dispatch_async(self.bgQueue, ^{
         
@@ -156,6 +138,10 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
     
     if (bookmarks) {
         
+        for (FeedItem *item in bookmarks) {
+            item.bookmarked = YES;
+        }
+        
         bookmarks = (NSMutableArray *)[bookmarks sortedArrayUsingSelector:@selector(compare:)];
         
     }
@@ -168,18 +154,22 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 - (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks {
     
-    if (_migrating == NO) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksWillUpdateNotification object:self];
-    }
-    
     @synchronized (self) {
-        _bookmarks = bookmarks;
-        self.bookmarksCount = _bookmarks.count;
+        if (self == nil) {
+            return;
+        }
         
-        if (_migrating == NO) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdateNotification
-              object:self
-            userInfo:nil];
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        
+        if (self->_migrating == NO) {
+            [center postNotificationName:BookmarksWillUpdateNotification object:nil];
+        }
+        
+        self->_bookmarks = bookmarks;
+        self.bookmarksCount = self->_bookmarks.count;
+        
+        if (self->_migrating == NO) {
+            [center postNotificationName:BookmarksDidUpdateNotification object:nil];
         }
     }
     

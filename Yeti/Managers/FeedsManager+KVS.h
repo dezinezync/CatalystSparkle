@@ -16,10 +16,10 @@
 
 - (void)article:(FeedItem * _Nonnull)item markAsBookmarked:(BOOL)bookmarked success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (BOOL)addLocalBookmark:(FeedItem * _Nonnull)item;
-
-- (BOOL)removeLocalBookmark:(FeedItem * _Nonnull)item;
-
-- (void)removeAllLocalBookmarks;
+//- (BOOL)addLocalBookmark:(FeedItem * _Nonnull)item;
+//
+//- (BOOL)removeLocalBookmark:(FeedItem * _Nonnull)item;
+//
+- (void)_removeAllLocalBookmarks;
 
 @end

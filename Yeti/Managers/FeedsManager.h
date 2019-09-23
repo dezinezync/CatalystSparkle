@@ -21,6 +21,7 @@
 
 #import "YetiConstants.h"
 #import "ArticlesManager.h"
+#import "BookmarksManager.h"
 
 #import <UICKeyChainStore/UICKeyChainStore.h>
 
@@ -53,6 +54,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (atomic, strong) UICKeyChainStore * _Nonnull keychain;
 
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
+
+@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 #pragma mark - Feeds
 
