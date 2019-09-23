@@ -168,7 +168,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.timeLabel.textColor          = theme.subtitleColor;
     self.secondaryTimeLabel.textColor = theme.subtitleColor;
     self.authorLabel.textColor        = theme.subtitleColor;
-    self.summaryLabel.textColor       = theme.captionColor;
+    self.summaryLabel.textColor       = theme.subtitleColor;
     
     self.backgroundColor = theme.cellColor;
     
