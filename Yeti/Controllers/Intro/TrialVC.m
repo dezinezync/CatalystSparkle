@@ -55,7 +55,7 @@
     self.view.backgroundColor = theme.backgroundColor;
     
     self.detailTextLabel.hidden = YES;
-    self.detailTextLabel.textColor = theme.subtitleColor;
+    self.detailTextLabel.textColor = theme.titleColor;
     
     [self.button setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
     
@@ -265,8 +265,22 @@
             }];
             
             if (oneMonth) {
-                text = formattedString(text, [RMStore localizedPriceOfProduct:oneMonth]);
-                self.detailTextLabel.text = text;
+                NSString *price = [RMStore localizedPriceOfProduct:oneMonth];
+                text = formattedString(text, price);
+                
+                NSMutableAttributedString *mattrs = [[NSMutableAttributedString alloc] initWithString:text attributes:@{NSFontAttributeName: self.detailTextLabel.font, NSForegroundColorAttributeName: self.detailTextLabel.textColor}];
+                
+                NSRange priceRange = [text rangeOfString:price];
+                
+                if (priceRange.location != NSNotFound) {
+                    UIFont *bold = [UIFont systemFontOfSize:self.detailTextLabel.font.pointSize weight:UIFontWeightBold];
+                    
+                    [mattrs addAttribute:NSFontAttributeName value:bold range:priceRange];
+                }
+                
+                self.detailTextLabel.attributedText = mattrs;
+                [self.detailTextLabel sizeToFit];
+                
                 self.detailTextLabel.hidden = NO;
             }
             
