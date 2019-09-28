@@ -20,7 +20,9 @@
 #import <DZKit/NSArray+Safe.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
-@interface Paragraph ()
+@interface Paragraph () <UIGestureRecognizerDelegate> {
+    BOOL _hasHookedGesturesForiOS13LinkTapBug;
+}
 
 @property (nonatomic, copy) NSAttributedString *cachedAttributedText; 
 
@@ -135,6 +137,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.opaque = YES;
         
         self.scrollEnabled = NO;
+        self.editable = NO;
         
         self.textContainer.widthTracksTextView = YES;
         self.textContainer.heightTracksTextView = YES;
@@ -145,10 +148,15 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return self;
 }
 
-- (void)setAttributedText:(NSAttributedString *)attributedText
-{
+- (void)setAttributedText:(NSAttributedString *)attributedText {
     if (self.isAppearing || self.avoidsLazyLoading) {
+
         [super setAttributedText:attributedText];
+        
+        if (@available(iOS 13, *)) {
+            [self _hookGestures];
+        }
+        
     }
     else {
         if (attributedText) {
@@ -509,6 +517,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [super layoutSubviews];
     
     if (self.superview) {
+        [self setValue:@(self.bounds.size.width) forKeyPath:@"_preferredMaxLayoutWidth"];
         [self invalidateIntrinsicContentSize];
     }
 }
@@ -721,11 +730,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return  NO;
 }
 
-- (BOOL)isEditable
-{
-    return NO;
-}
-
 - (UIScrollViewContentInsetAdjustmentBehavior)contentInsetAdjustmentBehavior
 {
     return UIScrollViewContentInsetAdjustmentNever;
@@ -830,6 +834,50 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [layoutManager characterRangeForGlyphRange:range actualGlyphRange:&glyphRange];
     
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
+}
+
+#pragma mark - Gesture Recognizers
+
+- (void)_hookGestures {
+    
+    if (_hasHookedGesturesForiOS13LinkTapBug == YES) {
+        return;
+    }
+    
+    _hasHookedGesturesForiOS13LinkTapBug = YES;
+    
+    Class longPress = UILongPressGestureRecognizer.class;
+    Class linkTap = UITapGestureRecognizer.class;
+    
+    for (UIGestureRecognizer *gesture in self.gestureRecognizers) {
+        
+        if ([gesture isKindOfClass:longPress] || [gesture isKindOfClass:linkTap]) {
+            gesture.delegate = self;
+        }
+        
+    }
+    
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    
+    Class longPress = UILongPressGestureRecognizer.class;
+    Class linkTap = UITapGestureRecognizer.class;
+    Class scrollViewPan = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
+    
+    if ([gestureRecognizer isKindOfClass:longPress] || [gestureRecognizer isKindOfClass:linkTap]) {
+#ifdef DEBUG
+        NSLog(@"Other gesture: %@", otherGestureRecognizer);
+#endif
+        if ([otherGestureRecognizer isKindOfClass:scrollViewPan]) {
+            return NO;
+        }
+        
+        return YES;
+    }
+    
+    return YES;
+    
 }
 
 @end
