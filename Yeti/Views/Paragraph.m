@@ -857,7 +857,31 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:(NSArray <UIMenuElement *> *)suggestedActions {
     
-    UIMenu *menu = [UIMenu menuWithTitle:@"" children:suggestedActions];
+    NSMutableArray <UIMenuElement *> *actions = [NSMutableArray new];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Copy" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        [[UIPasteboard generalPasteboard] setString:self.text];
+        
+    }]];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[self.text] applicationActivities:nil];
+        
+        id delegate = [self.superview.superview valueForKeyPath:@"delegate"];
+        
+        if (delegate && [delegate isKindOfClass:UIViewController.class]) {
+            [(UIViewController *)delegate presentViewController:avc animated:YES completion:nil];
+        }
+        
+    }]];
+    
+    NSString *menuTitle = self.isCaption ? @"Caption" : @"Paragraph";
+    
+    menuTitle = [menuTitle stringByAppendingString:@" Actions"];
+    
+    UIMenu *menu = [UIMenu menuWithTitle:menuTitle children:actions];
     
     return menu;
     
@@ -880,7 +904,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
 #pragma mark - Gesture Recognizers
 
 - (void)_hookGestures {
-    
+
     if (_hasHookedGesturesForiOS13LinkTapBug == YES) {
         return;
     }
@@ -897,24 +921,24 @@ static NSParagraphStyle * _paragraphStyle = nil;
         }
 
     }
-    
+
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    
+
 //    Class longPress = UILongPressGestureRecognizer.class;
     Class linkTap = UITapGestureRecognizer.class;
     Class scrollViewPan = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
-    
+
     // allowed items
     Class DragAddItemsGesture = NSClassFromString(@"_UIDragAddItemsGesture");
     Class TextTapGesture = NSClassFromString(@"UITapGestureRecognizer");
-    
+
     if ([gestureRecognizer isKindOfClass:DragAddItemsGesture]
         || [gestureRecognizer isKindOfClass:TextTapGesture]) {
         return YES;
     }
-    
+
     if ([gestureRecognizer isKindOfClass:linkTap]) {
 
         if ([otherGestureRecognizer isKindOfClass:scrollViewPan]) {
@@ -924,12 +948,12 @@ static NSParagraphStyle * _paragraphStyle = nil;
 #endif
             return NO;
         }
-        
+
         return YES;
     }
-    
+
     return YES;
-    
+
 }
 
 @end
