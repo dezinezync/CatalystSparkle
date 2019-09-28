@@ -20,9 +20,17 @@
 #import <DZKit/NSArray+Safe.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
-@interface Paragraph ()
+@interface Paragraph () <UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate> {
+    BOOL _hasHookedGesturesForiOS13LinkTapBug;
+}
 
-@property (nonatomic, copy) NSAttributedString *cachedAttributedText; 
+@property (nonatomic, copy) NSAttributedString *cachedAttributedText;
+
+- (void)addContextMenus API_AVAILABLE(ios(13.0));
+
+- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:suggestedActions API_AVAILABLE(ios(13.0));
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -135,20 +143,30 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.opaque = YES;
         
         self.scrollEnabled = NO;
+        self.editable = NO;
         
         self.textContainer.widthTracksTextView = YES;
         self.textContainer.heightTracksTextView = YES;
         
         [self updateStyle:nil];
+        
+        if (@available(iOS 13, *)) {
+            [self addContextMenus];
+        }
     }
     
     return self;
 }
 
-- (void)setAttributedText:(NSAttributedString *)attributedText
-{
+- (void)setAttributedText:(NSAttributedString *)attributedText {
     if (self.isAppearing || self.avoidsLazyLoading) {
+
         [super setAttributedText:attributedText];
+        
+        if (@available(iOS 13, *)) {
+            [self _hookGestures];
+        }
+        
     }
     else {
         if (attributedText) {
@@ -509,6 +527,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [super layoutSubviews];
     
     if (self.superview) {
+        [self setValue:@(self.bounds.size.width) forKeyPath:@"_preferredMaxLayoutWidth"];
         [self invalidateIntrinsicContentSize];
     }
 }
@@ -721,11 +740,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return  NO;
 }
 
-- (BOOL)isEditable
-{
-    return NO;
-}
-
 - (UIScrollViewContentInsetAdjustmentBehavior)contentInsetAdjustmentBehavior
 {
     return UIScrollViewContentInsetAdjustmentNever;
@@ -830,6 +844,116 @@ static NSParagraphStyle * _paragraphStyle = nil;
     [layoutManager characterRangeForGlyphRange:range actualGlyphRange:&glyphRange];
     
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
+}
+
+#pragma mark - Context Menus
+
+- (void)addContextMenus {
+    
+    UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+    [self addInteraction:interaction];
+    
+}
+
+- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:(NSArray <UIMenuElement *> *)suggestedActions {
+    
+    NSMutableArray <UIMenuElement *> *actions = [NSMutableArray new];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Copy" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        [[UIPasteboard generalPasteboard] setString:self.text];
+        
+    }]];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[self.text] applicationActivities:nil];
+        
+        id delegate = [self.superview.superview valueForKeyPath:@"delegate"];
+        
+        if (delegate && [delegate isKindOfClass:UIViewController.class]) {
+            [(UIViewController *)delegate presentViewController:avc animated:YES completion:nil];
+        }
+        
+    }]];
+    
+    NSString *menuTitle = self.isCaption ? @"Caption" : @"Paragraph";
+    
+    menuTitle = [menuTitle stringByAppendingString:@" Actions"];
+    
+    UIMenu *menu = [UIMenu menuWithTitle:menuTitle children:actions];
+    
+    return menu;
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    UIContextMenuConfiguration *configuration = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+       
+        return [self makeMenuForPoint:location suggestions:suggestedActions];
+        
+    }];
+    
+    return configuration;
+    
+}
+
+#pragma mark - Gesture Recognizers
+
+- (void)_hookGestures {
+
+    if (_hasHookedGesturesForiOS13LinkTapBug == YES) {
+        return;
+    }
+
+    _hasHookedGesturesForiOS13LinkTapBug = YES;
+
+//    Class longPress = UILongPressGestureRecognizer.class;
+    Class linkTap = UITapGestureRecognizer.class;
+
+    for (UIGestureRecognizer *gesture in self.gestureRecognizers) {
+
+        if ([gesture isKindOfClass:linkTap]) {
+            gesture.delegate = self;
+        }
+
+    }
+
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+
+//    Class longPress = UILongPressGestureRecognizer.class;
+    Class linkTap = UITapGestureRecognizer.class;
+    Class scrollViewPan = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
+
+    // allowed items
+    Class DragAddItemsGesture = NSClassFromString(@"_UIDragAddItemsGesture");
+    Class TextTapGesture = NSClassFromString(@"UITapGestureRecognizer");
+
+    if ([gestureRecognizer isKindOfClass:DragAddItemsGesture]
+        || [gestureRecognizer isKindOfClass:TextTapGesture]) {
+        return YES;
+    }
+
+    if ([gestureRecognizer isKindOfClass:linkTap]) {
+
+        if ([otherGestureRecognizer isKindOfClass:scrollViewPan]) {
+#ifdef DEBUG
+            NSLog(@"Primary gesture: %@", gestureRecognizer);
+            NSLog(@"Other gesture: %@", otherGestureRecognizer);
+#endif
+            return NO;
+        }
+
+        return YES;
+    }
+
+    return YES;
+
 }
 
 @end
