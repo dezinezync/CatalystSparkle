@@ -20,11 +20,17 @@
 #import <DZKit/NSArray+Safe.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
-@interface Paragraph () <UIGestureRecognizerDelegate> {
+@interface Paragraph () <UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate> {
     BOOL _hasHookedGesturesForiOS13LinkTapBug;
 }
 
-@property (nonatomic, copy) NSAttributedString *cachedAttributedText; 
+@property (nonatomic, copy) NSAttributedString *cachedAttributedText;
+
+- (void)addContextMenus API_AVAILABLE(ios(13.0));
+
+- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:suggestedActions API_AVAILABLE(ios(13.0));
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -143,6 +149,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.textContainer.heightTracksTextView = YES;
         
         [self updateStyle:nil];
+        
+        if (@available(iOS 13, *)) {
+            [self addContextMenus];
+        }
     }
     
     return self;
@@ -836,6 +846,37 @@ static NSParagraphStyle * _paragraphStyle = nil;
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
 }
 
+#pragma mark - Context Menus
+
+- (void)addContextMenus {
+    
+    UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+    [self addInteraction:interaction];
+    
+}
+
+- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:(NSArray <UIMenuElement *> *)suggestedActions {
+    
+    UIMenu *menu = [UIMenu menuWithTitle:@"" children:suggestedActions];
+    
+    return menu;
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    UIContextMenuConfiguration *configuration = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+       
+        return [self makeMenuForPoint:location suggestions:suggestedActions];
+        
+    }];
+    
+    return configuration;
+    
+}
+
 #pragma mark - Gesture Recognizers
 
 - (void)_hookGestures {
@@ -843,33 +884,44 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (_hasHookedGesturesForiOS13LinkTapBug == YES) {
         return;
     }
-    
+
     _hasHookedGesturesForiOS13LinkTapBug = YES;
-    
-    Class longPress = UILongPressGestureRecognizer.class;
+
+//    Class longPress = UILongPressGestureRecognizer.class;
     Class linkTap = UITapGestureRecognizer.class;
-    
+
     for (UIGestureRecognizer *gesture in self.gestureRecognizers) {
-        
-        if ([gesture isKindOfClass:longPress] || [gesture isKindOfClass:linkTap]) {
+
+        if ([gesture isKindOfClass:linkTap]) {
             gesture.delegate = self;
         }
-        
+
     }
     
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     
-    Class longPress = UILongPressGestureRecognizer.class;
+//    Class longPress = UILongPressGestureRecognizer.class;
     Class linkTap = UITapGestureRecognizer.class;
     Class scrollViewPan = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
     
-    if ([gestureRecognizer isKindOfClass:longPress] || [gestureRecognizer isKindOfClass:linkTap]) {
-#ifdef DEBUG
-        NSLog(@"Other gesture: %@", otherGestureRecognizer);
-#endif
+    // allowed items
+    Class DragAddItemsGesture = NSClassFromString(@"_UIDragAddItemsGesture");
+    Class TextTapGesture = NSClassFromString(@"UITapGestureRecognizer");
+    
+    if ([gestureRecognizer isKindOfClass:DragAddItemsGesture]
+        || [gestureRecognizer isKindOfClass:TextTapGesture]) {
+        return YES;
+    }
+    
+    if ([gestureRecognizer isKindOfClass:linkTap]) {
+
         if ([otherGestureRecognizer isKindOfClass:scrollViewPan]) {
+#ifdef DEBUG
+            NSLog(@"Primary gesture: %@", gestureRecognizer);
+            NSLog(@"Other gesture: %@", otherGestureRecognizer);
+#endif
             return NO;
         }
         
