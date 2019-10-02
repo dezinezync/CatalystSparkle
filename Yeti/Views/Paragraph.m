@@ -40,6 +40,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 #pragma mark - Class Methods
 
++ (BOOL)canPresentContextMenus {
+    return YES;
+}
+
 + (void)setParagraphStyle:(NSParagraphStyle *)paragraphStyle
 {
     _paragraphStyle = paragraphStyle;
@@ -849,6 +853,10 @@ static NSParagraphStyle * _paragraphStyle = nil;
 #pragma mark - Context Menus
 
 - (void)addContextMenus {
+    
+    if ([self.class canPresentContextMenus] == NO) {
+        return;
+    }
     
     UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
     [self addInteraction:interaction];

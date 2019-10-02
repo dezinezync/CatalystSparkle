@@ -449,6 +449,14 @@
         
     }]];
     
+    [actions addObject:[UIAction actionWithTitle:@"Save Image" image:[UIImage systemImageNamed:@"square.and.arrow.down"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIImageWriteToSavedPhotosAlbum(self.imageView.image, nil, nil, nil);
+        });
+        
+    }]];
+    
     NSString *menuTitle = @"Image Actions";
     
     UIMenu *menu = [UIMenu menuWithTitle:menuTitle children:actions];

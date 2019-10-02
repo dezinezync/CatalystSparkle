@@ -283,5 +283,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save images you select from articles to your photos.  </string>
 </dict>
 </plist>
