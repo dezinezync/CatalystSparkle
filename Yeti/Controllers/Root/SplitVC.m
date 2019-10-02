@@ -8,6 +8,7 @@
 
 #import "SplitVC.h"
 #import "YetiConstants.h"
+#import "Keychain.h"
 
 #import "YetiThemeKit.h"
 #import "CodeParser.h"
@@ -74,21 +75,21 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
-    
-    UICKeyChainStore *keychain = MyFeedsManager.keychain;
+
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
-    NSString *hasShownIntro = [keychain stringForKey:kHasShownOnboarding];
     
-    if (!hasShownIntro || [hasShownIntro boolValue] == NO) {
+    NSError *error = nil;
+    BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
+    
+    if (hasShownIntro == NO) {
         [self userNotFound];
     }
 #if TESTFLIGHT == 1
     else {
         // this ensures anyone who has already gone through the setup isn't asked to subscribe again.
         // this value should change for the production app on the App Store
-        NSString *val = [@(YES) stringValue];
-        keychain[YTSubscriptionHasAddedFirstFeed] = val;
+        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
     }
 #endif
     
@@ -157,8 +158,7 @@
 
 - (void)checkIfBookmarksShouldBeMigrated {
     
-    NSString *val = [MyFeedsManager.keychain stringForKey:BookmarksMigratedKey];
-    BOOL migrated = val ? [val boolValue] : NO;
+    BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
     
     if (migrated == YES) {
         return;
@@ -176,7 +176,7 @@
         strongify(vc);
       
         if (success == YES) {
-            [MyFeedsManager.keychain setString:@(YES).stringValue forKey:BookmarksMigratedKey];
+            [Keychain add:BookmarksMigratedKey boolean:YES];
         }
         
         [vc.navigationController dismissViewControllerAnimated:YES completion:nil];

@@ -12,6 +12,8 @@
 #import "FeedsManager.h"
 #import "ArticleVC.h"
 
+#import "Keychain.h"
+
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 #import <UserNotifications/UserNotifications.h>
@@ -336,7 +338,7 @@
                 if (granted) {
                     strongify(self);
                     
-                    MyFeedsManager.keychain[kIsSubscribingToPushNotifications] = [@YES stringValue];
+                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
                     
                     asyncMain(^{
                         [UIApplication.sharedApplication registerForRemoteNotifications];
@@ -351,8 +353,8 @@
         }
         else {
             
-            if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications] == nil) {
-                MyFeedsManager.keychain[kIsSubscribingToPushNotifications] = [@YES stringValue];
+            if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil] == NO) {
+                [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
             }
             
             asyncMain(^{

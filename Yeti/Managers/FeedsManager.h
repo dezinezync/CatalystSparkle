@@ -23,8 +23,6 @@
 #import "ArticlesManager.h"
 #import "BookmarksManager.h"
 
-#import <UICKeyChainStore/UICKeyChainStore.h>
-
 @class FeedsManager;
 
 extern FeedsManager * _Nonnull MyFeedsManager;
@@ -35,8 +33,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     Subscription * _subscription;
     
     NSNumber * _userID;
-    
-    UICKeyChainStore * _keychain;
 }
 
 @property (atomic, strong, readonly) Subscription * _Nullable subscription;
@@ -50,8 +46,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong) NSString * _Nullable pushToken;
 
 @property (nonatomic, weak) Feed * _Nullable subsribeAfterPushEnabled;
-
-@property (atomic, strong) UICKeyChainStore * _Nonnull keychain;
 
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
 

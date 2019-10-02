@@ -19,6 +19,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 #import "YetiThemeKit.h"
+#import "Keychain.h"
 
 @interface TrialVC ()
 
@@ -107,8 +108,7 @@
 #if defined(DEBUG) || TESTFLIGHT == 1
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        UICKeyChainStore *keychain = MyFeedsManager.keychain;
-        [keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+        [Keychain add:kHasShownOnboarding boolean:YES];
         
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     });
@@ -228,8 +228,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            UICKeyChainStore *keychain = MyFeedsManager.keychain;
-            [keychain setString:[@(YES) stringValue] forKey:kHasShownOnboarding];
+            [Keychain add:kHasShownOnboarding boolean:YES];
             
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         });

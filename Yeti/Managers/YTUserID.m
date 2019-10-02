@@ -11,6 +11,7 @@
 #import <DZKit/AlertManager.h>
 
 #import "YetiConstants.h"
+#import "Keychain.h"
 
 NSString *const kAccountID = @"YTUserID";
 NSString *const kUserID = @"userID";
@@ -45,8 +46,6 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     // check server
     if (self.delegate) {
         
-        UICKeyChainStore *keychain = self.delegate.keychain;
-        
         weakify(self);
         
         [self.delegate getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -59,8 +58,8 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             self->_userID = @([[user valueForKey:@"id"] integerValue]);
             self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
             
-            [keychain setString:self->_userID.stringValue forKey:kUserID];
-            [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
+            [Keychain add:kUserID string:self->_userID.stringValue];
+            [Keychain add:kAccountID string:self->_UUID.UUIDString];
             
             if (successCB) {
                 successCB(self, response, task);
@@ -71,7 +70,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             strongify(self);
             
             self->_UUID = [NSUUID UUID];
-            [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
+            [Keychain add:kAccountID string:self->_UUID.UUIDString];
             
             // let our server know about these changes
             [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -124,10 +123,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (_UUID == nil) {
         // check if the store already has one
-        UICKeyChainStore *keychain = self.delegate.keychain;
         
-        NSString *UUIDString = keychain[kAccountID];
-        NSString *userID = keychain[kUserID];
+        NSString *UUIDString = [Keychain stringFor:kAccountID error:nil];
+        NSString *userID = [Keychain stringFor:kUserID error:nil];
         
         if (_userID && _userID.integerValue == 0) {
             _userID = nil;
@@ -212,7 +210,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     _UUID = UUID;
     
     if (_UUID != nil) {
-        [self.delegate.keychain setString:UUID.UUIDString forKey:kAccountID];
+        [Keychain add:kAccountID string:UUID.UUIDString];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {
@@ -231,7 +229,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     _userID = userID;
     
     if (_userID != nil) {
-        [self.delegate.keychain setString:userID.stringValue forKey:kUserID];
+        [Keychain add:kUserID string:userID.stringValue];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {

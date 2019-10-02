@@ -1,3 +1,6 @@
 [submodule "Yeti/Vendors/RMStore"]
 	path = Yeti/Vendors/RMStore
 	url = git@github.com:dezinezync/RMStore.git
+[submodule "Yeti/Vendors/Keychain"]
+	path = Yeti/Vendors/Keychain
+	url = git@github.com:dezinezync/Keychain.git

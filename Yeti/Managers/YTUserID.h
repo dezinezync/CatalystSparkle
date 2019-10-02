@@ -8,15 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <DZNetworking/DZNetworking.h>
-#import <UICKeyChainStore/UICKeyChainStore.h>
 
 extern NSString *const kAccountID;
 extern NSString *const kUserID;
 extern NSNotificationName const YTUserNotFound;
 
 @protocol YTUserDelegate <NSObject>
-
-@property (nonatomic, strong) UICKeyChainStore *keychain;
 
 - (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB;

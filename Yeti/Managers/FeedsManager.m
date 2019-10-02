@@ -18,6 +18,7 @@
 #import <CommonCrypto/CommonHMAC.h>
 
 #import <DZKit/AlertManager.h>
+#import "Keychain.h"
 
 #ifndef DDLogError
 #import <DZKit/DZLogger.h>
@@ -163,8 +164,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
-        id firstFeedObj = self.keychain[YTSubscriptionHasAddedFirstFeed];
-        BOOL hasAddedFirstFeed = firstFeedObj ? [firstFeedObj boolValue] : NO;
+        BOOL hasAddedFirstFeed = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
         
         if (hasAddedFirstFeed == NO) {
             // check if feeds count is higher than 2
@@ -182,7 +182,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 }
             }
             
-            self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(hasAddedFirstFeed) stringValue];
+            [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:hasAddedFirstFeed];
         }
         
         if (!since || !ArticlesManager.shared.feeds.count) {
@@ -460,7 +460,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
         strongify(self);
 
-        self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
+        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
@@ -511,7 +511,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
         strongify(self);
         
-        self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
+        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
         NSArray *articlesObj = [responseObject valueForKey:@"articles"];
@@ -1894,14 +1894,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)setKeychain:(UICKeyChainStore *)keychain {
-    
-    @synchronized (self) {
-        self->_keychain = keychain;
-    }
-    
-}
-
 - (void)setUserID:(NSNumber *)userID {
     self.userIDManager.userID = userID;
 }
@@ -1919,18 +1911,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
     
     return _reachability;
-}
-
-- (UICKeyChainStore *)keychain {
-    
-    if (!_keychain) {
-        UICKeyChainStore *keychain = [UICKeyChainStore keyChainStoreWithService:@"com.dezinezync.Yeti"];
-        keychain.synchronizable = YES;
-        
-        _keychain = keychain;
-    }
-    
-    return _keychain;
 }
 
 - (DZURLSession *)session
@@ -2315,10 +2295,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [defaults synchronize];
     }
     
-    UICKeyChainStore *keychain = [self keychain];
-    keychain[kAccountID] = nil;
-    keychain[kUserID] = nil;
-    keychain[kHasShownOnboarding] = nil;
+    [Keychain remove:kAccountID];
+    [Keychain remove:kUserID];
+    [Keychain remove:kHasShownOnboarding];
+    [Keychain remove:YTSubscriptionHasAddedFirstFeed];
+    [Keychain remove:kIsSubscribingToPushNotifications];
     
     self.userIDManager.UUID = nil;
     self.userID = nil;
@@ -2511,12 +2492,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)checkConstraintsForRequestingReview {
 
-    id countVal = self.keychain[YTLaunchCount];
-    NSInteger count = [(countVal ?: @0) integerValue];
+    NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
     // trigger on 7th launch
     if (count > 6) {
-        id requestedVal = self.keychain[YTRequestedReview];
-        if ([requestedVal boolValue] == NO) {
+        BOOL requestedVal = [Keychain boolFor:YTRequestedReview error:nil];
+        if (requestedVal == NO) {
             self.shouldRequestReview = YES;
         }
     }

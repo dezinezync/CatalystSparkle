@@ -21,10 +21,7 @@
 #import "SplitVC.h"
 #import "YetiConstants.h"
 #import "FeedsManager.h"
-
-#ifdef DEBUG
-#import <LinkPresentation/LinkPresentation.h>
-#endif
+#import "Keychain.h"
 
 AppDelegate *MyAppDelegate = nil;
 
@@ -107,7 +104,7 @@ AppDelegate *MyAppDelegate = nil;
             [self setupStoreManager];
         });
         
-        if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications]) {
+        if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil]) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [application registerForRemoteNotifications];
             });
@@ -118,17 +115,17 @@ AppDelegate *MyAppDelegate = nil;
         [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
         
         // To test push notifications
-        #ifdef DEBUG
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                strongify(self);
-        
-        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
-        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
-        //        [self openFeed:@(1) article:@(1149498)];  // reddit
-//                [self openFeed:@(73) article:@(8301134)];
-//                [self showArticle:@(1831527)]; // crashing article
-            });
-        #endif
+//        #ifdef DEBUG
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                strongify(self);
+//
+//        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
+//        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
+//        //        [self openFeed:@(1) article:@(1149498)];  // reddit
+////                [self openFeed:@(73) article:@(8301134)];
+////                [self showArticle:@(1831527)]; // crashing article
+//            });
+//        #endif
         
 //            [self yt_log_fontnames];
         
@@ -142,20 +139,9 @@ AppDelegate *MyAppDelegate = nil;
         });
 #endif
 
-        id countVal = MyFeedsManager.keychain[YTLaunchCount];
+        NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
         
-        NSInteger count = [(countVal ?: @0) integerValue];
-        
-        if (count == 0) {
-            // remove the old key's items
-            if ([YTLaunchCountOldKey length] > 0 ) {
-                MyFeedsManager.keychain[YTLaunchCountOldKey] = nil;
-            }
-            
-            MyFeedsManager.keychain[YTRequestedReview] = [@(NO) stringValue];
-        }
-        
-        MyFeedsManager.keychain[YTLaunchCount] = [@(count + 1) stringValue];
+        [Keychain add:YTLaunchCount integer:(count + 1)];
         
         retval = YES;
         

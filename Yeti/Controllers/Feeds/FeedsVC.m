@@ -31,6 +31,7 @@
 #import "EmptyCell.h"
 #import "StoreVC.h"
 #import "YetiConstants.h"
+#import "Keychain.h"
 
 #import <StoreKit/SKStoreReviewController.h>
 
@@ -143,7 +144,7 @@ static void *KVO_Unread = &KVO_Unread;
         dispatch_async(dispatch_get_main_queue(), ^{
             [SKStoreReviewController requestReview];
             MyFeedsManager.shouldRequestReview = NO;
-            MyFeedsManager.keychain[YTRequestedReview] = [@(YES) stringValue];
+            [Keychain add:YTRequestedReview boolean:YES];
         });
     }
 }
@@ -908,11 +909,9 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-    UICKeyChainStore *keychain = MyFeedsManager.keychain;
 #if TESTFLIGHT == 1
     // during betas and for testflight builds, this option should be left on.
-    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
-    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
+    BOOL betaVal = [Keychain boolFor:YTSubscriptionPurchased error:nil];
 
     if (betaVal == YES) {
         DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
@@ -920,8 +919,7 @@ NSString * const kDS2Data = @"DS2Data";
     }
 #endif
     
-    id addedFirst = [keychain stringForKey:YTSubscriptionHasAddedFirstFeed];
-    BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
+    BOOL addedVal = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
     
     if (addedVal == NO) {
         DDLogWarn(@"User hasn't added their first feed yet. Ignoring.");
@@ -1119,7 +1117,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     // if the user hasn't added their first feed,
     // dont run
-    if (MyFeedsManager.keychain[YTSubscriptionHasAddedFirstFeed] == nil) {
+    if ([Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil]) {
         return;
     }
 #if TESTFLIGHT == 0
