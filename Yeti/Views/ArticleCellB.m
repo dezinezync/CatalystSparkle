@@ -453,7 +453,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 //    Feed *feed = [MyFeedsManager feedForID:item.feedID];
     
+    BOOL isMicroBlogPost = NO;
+    
     if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
+        
         // find the first paragraph
         Content *content = [item.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
             
@@ -465,6 +468,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         }];
         
         if (content) {
+            isMicroBlogPost = YES;
+            
             self.titleLabel.text = content.content;
             self.titleLabel.font = [TypeFactory.shared bodyFont];
             self.titleLabel.textColor = [[YTThemeKit theme] titleColor];
@@ -497,6 +502,22 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     _isShowingCover = NO;
+    
+    if (isMicroBlogPost == YES && item.coverImage == nil) {
+        // find the first image
+        Content *content = [item.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
+            
+            if (prev && [prev.type isEqualToString:@"image"]) {
+                return prev;
+            }
+            
+            return current;
+        }];
+        
+        if (content != nil) {
+            item.coverImage = content.url;
+        }
+    }
     
     if ([self showImage] && SharedPrefs.articleCoverImages == YES && item.coverImage != nil) {
         // user wants cover images shown
