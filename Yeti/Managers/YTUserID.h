@@ -23,12 +23,14 @@ extern NSNotificationName const YTUserNotFound;
 @interface YTUserID : NSObject {
 @public
     NSUUID * _UUID;
+    NSString *_UUIDString;
 }
 
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate;
 
-@property (nonatomic, copy) NSUUID *UUID;
-@property (nonatomic, copy) NSNumber *userID;
+@property (nonatomic, copy) NSUUID * UUID;
+@property (nonatomic, copy) NSString * UUIDString;
+@property (nonatomic, copy) NSNumber * userID;
 
 @property (nonatomic, weak) id<YTUserDelegate> delegate;
 

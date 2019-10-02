@@ -304,13 +304,10 @@
 		F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D01CCA2118683B003A01DD /* MiscVC.m */; };
 		F0D030A3205FBEF400D46B34 /* attributions.html in Resources */ = {isa = PBXBuildFile; fileRef = F0D07207205E9F6700A042CD /* attributions.html */; };
 		F0D071EF205E75D700A042CD /* AccountVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071ED205E75D700A042CD /* AccountVC.m */; };
-		F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071EE205E75D700A042CD /* AccountVC.xib */; };
 		F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F3205E76A500A042CD /* SettingsCell.m */; };
 		F0D071F7205E877A00A042CD /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F6205E877A00A042CD /* YetiConstants.m */; };
 		F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */; };
-		F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */; };
 		F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071FF205E960900A042CD /* ExternalAppsVC.m */; };
-		F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D07200205E960900A042CD /* ExternalAppsVC.xib */; };
 		F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D07204205E9EC400A042CD /* DZWebViewController.m */; };
 		F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1C5DD20DA29AD0069BDA5 /* FeedsManagerErrors.m */; };
 		F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */; };
@@ -1076,18 +1073,15 @@
 		F0D030A4205FC4DD00D46B34 /* ArticleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleProvider.h; sourceTree = "<group>"; };
 		F0D071EC205E75D700A042CD /* AccountVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccountVC.h; sourceTree = "<group>"; };
 		F0D071ED205E75D700A042CD /* AccountVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccountVC.m; sourceTree = "<group>"; };
-		F0D071EE205E75D700A042CD /* AccountVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountVC.xib; sourceTree = "<group>"; };
 		F0D071F2205E76A500A042CD /* SettingsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsCell.h; sourceTree = "<group>"; };
 		F0D071F3205E76A500A042CD /* SettingsCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsCell.m; sourceTree = "<group>"; };
 		F0D071F5205E860800A042CD /* YetiConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YetiConstants.h; sourceTree = "<group>"; };
 		F0D071F6205E877A00A042CD /* YetiConstants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiConstants.m; sourceTree = "<group>"; };
 		F0D071F8205E88AC00A042CD /* ImageLoadingVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageLoadingVC.h; sourceTree = "<group>"; };
 		F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageLoadingVC.m; sourceTree = "<group>"; };
-		F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageLoadingVC.xib; sourceTree = "<group>"; };
 		F0D071FD205E8BF800A042CD /* SettingsChanges.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsChanges.h; sourceTree = "<group>"; };
 		F0D071FE205E960900A042CD /* ExternalAppsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAppsVC.h; sourceTree = "<group>"; };
 		F0D071FF205E960900A042CD /* ExternalAppsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExternalAppsVC.m; sourceTree = "<group>"; };
-		F0D07200205E960900A042CD /* ExternalAppsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ExternalAppsVC.xib; sourceTree = "<group>"; };
 		F0D07204205E9EC400A042CD /* DZWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZWebViewController.m; sourceTree = "<group>"; };
 		F0D07205205E9EC400A042CD /* DZWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZWebViewController.h; sourceTree = "<group>"; };
 		F0D07207205E9F6700A042CD /* attributions.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributions.html; sourceTree = "<group>"; };
@@ -1378,13 +1372,10 @@
 				F0D071FD205E8BF800A042CD /* SettingsChanges.h */,
 				F0D071F8205E88AC00A042CD /* ImageLoadingVC.h */,
 				F0D071F9205E88AC00A042CD /* ImageLoadingVC.m */,
-				F0D071FA205E88AC00A042CD /* ImageLoadingVC.xib */,
 				F0D071EC205E75D700A042CD /* AccountVC.h */,
 				F0D071ED205E75D700A042CD /* AccountVC.m */,
-				F0D071EE205E75D700A042CD /* AccountVC.xib */,
 				F0D071FE205E960900A042CD /* ExternalAppsVC.h */,
 				F0D071FF205E960900A042CD /* ExternalAppsVC.m */,
-				F0D07200205E960900A042CD /* ExternalAppsVC.xib */,
 				F0519D4920848D4D00EB3FE0 /* FiltersVC.h */,
 				F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */,
 				F03A5F5F20971BAE00CE7D5E /* ThemeVC.h */,
@@ -2629,7 +2620,6 @@
 				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
-				F0D071FC205E88AC00A042CD /* ImageLoadingVC.xib in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
 				F0BD3C4222ABDD240069A8B0 /* black-dark.json in Resources */,
@@ -2653,7 +2643,6 @@
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
 				F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */,
-				F0D071F0205E75D700A042CD /* AccountVC.xib in Resources */,
 				F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */,
 				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
@@ -2662,7 +2651,6 @@
 				F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
-				F0D07202205E960900A042CD /* ExternalAppsVC.xib in Resources */,
 				F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */,
 				F08CE0AA232A590C00982823 /* AuthorBioVC.xib in Resources */,
 				F0A5AE6620C197EF00CFA1D2 /* Merriweather-BoldItalic.ttf in Resources */,

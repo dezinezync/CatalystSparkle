@@ -53,6 +53,9 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     self.tableView.estimatedRowHeight = 44.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
+    self.tableView.estimatedSectionFooterHeight = 80.f;
+    self.tableView.sectionFooterHeight = UITableViewAutomaticDimension;
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.tableView.backgroundColor = theme.tableColor;
 }
@@ -137,6 +140,8 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kXImageLoadingCell forIndexPath:indexPath];
+    
+    cell.separatorInset = UIEdgeInsetsZero;
     
     // Configure the cell...
     switch (indexPath.section) {

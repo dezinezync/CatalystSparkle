@@ -170,6 +170,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 #pragma mark - <YTUserDelegate>
 
+- (void)signInWithApple:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB API_AVAILABLE(ios(13.0));
+
 - (void)getUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)updateUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;

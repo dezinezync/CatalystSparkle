@@ -2353,8 +2353,40 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 #pragma mark - <YTUserDelegate>
 
-- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)signInWithApple:(NSString *)uuid success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (uuid == nil || [uuid isBlank] == YES) {
+        
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:FeedsManagerDomain code:402 userInfo:@{NSLocalizedDescriptionKey: @"An invalid or no user key was received."}];
+            
+            errorCB(error, nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSDictionary *sub = @{@"sub": uuid};
+    
+    __unused NSURLSessionTask *task = [self.session POST:@"/user/appleid" queryParams:@{@"userID": self.userID} parameters:sub success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        BOOL status = [([responseObject valueForKey:@"status"] ?: @(NO)) boolValue];
+        
+        if (status) {
+            self.userIDManager.UUIDString = uuid;
+        }
+        
+        if (successCB) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(successCB, response, task);
+            });
+        }
+        
+    } error:errorCB];
+    
+}
+
+- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB {
     weakify(self);
     
     NSDictionary *params;
@@ -2367,7 +2399,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         params = @{@"userID" : [MyFeedsManager.userIDManager UUIDString]};
     }
 
-    [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    __unused NSURLSessionTask *task = [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
         if (successCB) {
             successCB(responseObject, response, task);

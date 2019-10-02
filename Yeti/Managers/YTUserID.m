@@ -15,6 +15,8 @@
 
 NSString *const kAccountID = @"YTUserID";
 NSString *const kUserID = @"userID";
+NSString *const kUUIDString = @"UUIDString";
+
 NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 @interface YTUserID () {
@@ -33,7 +35,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         self.delegate = delegate;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSUUID *UUID = self.UUID;
+            NSString *UUID = self.UUID.UUIDString;
             NSNumber *userID = self.userID;
             DDLogInfo(@"Initialised with: %@ %@", UUID, userID);
         });
@@ -98,6 +100,43 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 #pragma mark -
 
+- (NSString *)UUIDString {
+    
+    if (_UUIDString == nil) {
+//#ifdef DEBUG
+//        _UUIDString = @"815E2709-31CC-4EB8-9067-D84F224BED66";
+//#else
+//#endif
+        
+        NSError *error = nil;
+        NSString *UUIDString = [Keychain stringFor:kUUIDString error:&error];
+        
+        if (error == nil) {
+            NSLog(@"Error loading UUID String from Keychain: %@", error);
+        }
+        else {
+            UUIDString = [[NSUserDefaults standardUserDefaults] stringForKey:kUUIDString];
+        }
+        
+        if (UUIDString == nil) {
+            // if the UUID String is still nil at this point
+            // the UUID has not been migrated
+            UUIDString = [Keychain stringFor:kAccountID error:nil];
+            
+            if (UUIDString == nil) {
+                UUIDString = [[NSUserDefaults standardUserDefaults] stringForKey:kAccountID];
+            }
+            
+        }
+        
+        _UUIDString = UUIDString;
+        
+    }
+    
+    return _UUIDString;
+    
+}
+
 - (NSUUID *)UUID {
     
 #ifdef DEBUG
@@ -105,7 +144,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     if (_UUID == nil) {
         
         // Nikhil
-        _UUID = [[NSUUID alloc] initWithUUIDString:@"815E2709-31CC-4EB8-9067-D84F224BED66"];
+        _UUID = [[NSUUID alloc] initWithUUIDString:self.UUIDString];
         _userID = @(1);
         
         // Anuj
@@ -124,7 +163,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     if (_UUID == nil) {
         // check if the store already has one
         
-        NSString *UUIDString = [Keychain stringFor:kAccountID error:nil];
+        NSString *UUIDString = self.UUIDString;
         NSString *userID = [Keychain stringFor:kUserID error:nil];
         
         if (_userID && _userID.integerValue == 0) {
@@ -157,6 +196,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             UUIDString = [defaults stringForKey:kAccountID];
 
             if (UUIDString) {
+                self.UUIDString = UUIDString;
                 self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
             }
 
@@ -205,27 +245,23 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     return _UUID;
 }
 
-- (void)setUUID:(NSUUID *)UUID
-{
-    _UUID = UUID;
+- (void)setUUIDString:(NSString *)UUIDString {
     
-    if (_UUID != nil) {
-        [Keychain add:kAccountID string:UUID.UUIDString];
+    _UUIDString = UUIDString;
+    
+    if (_UUIDString != nil) {
+        [Keychain add:kUUIDString string:UUIDString];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {
-            [defaults setValue:UUID.UUIDString forKey:kAccountID];
+            [defaults setValue:UUIDString forKey:kUUIDString];
             [defaults synchronize];
         }
     }
+    
 }
 
-- (NSString *)UUIDString {
-    return self.UUID.UUIDString;
-}
-
-- (void)setUserID:(NSNumber *)userID
-{
+- (void)setUserID:(NSNumber *)userID {
     _userID = userID;
     
     if (_userID != nil) {

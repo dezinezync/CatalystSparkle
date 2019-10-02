@@ -23,13 +23,18 @@
 #import "StoreVC.h"
 #import "PaddedLabel.h"
 
-@interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate> {
+#import <AuthenticationServices/AuthenticationServices.h>
+
+@interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding> {
     UITextField *_textField;
     UIAlertAction *_okayAction;
     BOOL _didTapDone;
 }
 
 @property (nonatomic, strong) UILabel *footerSizingLabel;
+@property (weak, nonatomic) ASAuthorizationAppleIDButton *signinButton API_AVAILABLE(ios(13.0));
+
+- (void)didTapSignIn:(id)sender API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -43,11 +48,18 @@
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
+    self.tableView.estimatedRowHeight = 44.f + (LayoutPadding * 2.f);
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+    self.tableView.estimatedSectionFooterHeight = 80.f;
+    self.tableView.sectionFooterHeight = UITableViewAutomaticDimension;
+    
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -64,37 +76,48 @@
     if (section == 0) {
         return @"If you deactivate your account and wish to activate it again, please email me on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
     }
+    else if (section == 2) {
+        return @"Connect your Apple ID to your Elytra account. This will enable you to sign in on other platforms as well. Elytra from v1.6 will only use the Apple ID mechanism.";
+    }
     else {
         return nil;
     }
     
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    
-    self.footerSizingLabel.frame = CGRectMake(0, 0, tableView.safeAreaLayoutGuide.layoutFrame.size.width, 0.f);
-    self.footerSizingLabel.text = [self tableView:tableView titleForFooterInSection:section];
-    [self.footerSizingLabel sizeToFit];
-    
-    CGFloat height = self.footerSizingLabel.frame.size.height + 12.f;
-    
-    return height;
-    
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    
+    if (@available(iOS 13, *)) {
+        
+        NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
+        
+        NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
+        
+        if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
+            return 2;
+        }
+        
+        return 3;
+    }
+    
     return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0)
+    if (section == 0) {
         return 3;
+    }
+    
     return 1;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 1)
+    if (section == 1) {
         return @"Subscription";
+    }
+    else if (section == 2) {
+        return nil;
+    }
     
     return @"Account ID";
 }
@@ -138,12 +161,11 @@
                 switch (indexPath.row) {
                     case 0:
                     {
-                        cell.textLabel.text = @"Acc. ID";
+                        cell.textLabel.text = nil;
                         cell.textLabel.accessibilityValue = @"Account Label";
                         
                         cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUID.UUIDString;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                        cell.separatorInset = UIEdgeInsetsZero;
                     }
                         break;
                     case 1:
@@ -151,19 +173,46 @@
                         cell.textLabel.text = @"Change Account ID";
                         cell.textLabel.textColor = theme.tintColor;
                         cell.textLabel.textAlignment = NSTextAlignmentCenter;
-                        cell.separatorInset = UIEdgeInsetsZero;
                     }
                         break;
                     default:
                         cell.textLabel.text = @"Deactivate Account";
                         cell.textLabel.textColor = UIColor.redColor;
                         cell.textLabel.textAlignment = NSTextAlignmentCenter;
-                        cell.separatorInset = UIEdgeInsetsZero;
                         break;
                 }
             }
             break;
+        case 2:
+        {
             
+            cell.textLabel.text = nil;
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.backgroundColor = self.tableView.backgroundColor;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            cell.clipsToBounds = NO;
+
+            [cell.contentView setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisVertical];
+            
+            if (@available(iOS 13, *)) {
+                ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
+                
+                ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
+                
+                [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
+                
+                button.translatesAutoresizingMaskIntoConstraints = NO;
+                
+                [cell.contentView addSubview:button];
+                
+                [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:cell.contentView.centerXAnchor],
+                                                          [cell.contentView.heightAnchor constraintEqualToAnchor:button.heightAnchor multiplier:1.f]]];
+                
+                self.signinButton = button;
+            }
+        }
+        break;
         default:
         {
             cell.textLabel.text = @"Your Subscription";
@@ -226,8 +275,9 @@
         }
         
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    }
-   else {
+       
+   }
+   else if (indexPath.section == 1) {
        
        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
 //       vc.inStack = YES;
@@ -239,21 +289,21 @@
 
 #pragma mark - Getters
 
-- (UILabel *)footerSizingLabel {
-    
-    if (!_footerSizingLabel) {
-        UILabel *label = [UILabel new];
-        label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
-        label.font = TypeFactory.shared.footnoteFont;
-        label.numberOfLines = 0;
-        
-        _footerSizingLabel = label;
-        
-    }
-    
-    return _footerSizingLabel;
-    
-}
+//- (UILabel *)footerSizingLabel {
+//    
+//    if (!_footerSizingLabel) {
+//        UILabel *label = [UILabel new];
+//        label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
+//        label.font = TypeFactory.shared.footnoteFont;
+//        label.numberOfLines = 0;
+//        
+//        _footerSizingLabel = label;
+//        
+//    }
+//    
+//    return _footerSizingLabel;
+//    
+//}
 
 #pragma mark - Actions
 
@@ -367,6 +417,26 @@
     
 }
 
+- (void)didTapSignIn:(id)sender {
+    
+    if (sender != self.signinButton) {
+        return;
+    }
+    
+    self.signinButton.enabled = NO;
+    
+    ASAuthorizationAppleIDProvider *provider = [ASAuthorizationAppleIDProvider new];
+    ASAuthorizationAppleIDRequest *request = [provider createRequest];
+    request.requestedScopes = @[];
+    
+    ASAuthorizationController *controller = [[ASAuthorizationController alloc] initWithAuthorizationRequests:@[request]];
+    controller.delegate = self;
+    controller.presentationContextProvider = self;
+    
+    [controller performRequests];
+    
+}
+
 #pragma mark - <UITextFieldDelegate>
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
@@ -404,6 +474,55 @@
 
 - (void)emailWasCancelledOrFailedToSend {
     [DZMessagingController shared].delegate = nil;
+}
+
+
+#pragma mark - <ASAuthorizationControllerDelegate>
+
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithError:(NSError *)error API_AVAILABLE(ios(13.0)) {
+    
+    self.signinButton.enabled = YES;
+    
+    if (error.code == 1001) {
+        // cancel was tapped
+    }
+    else {
+        NSLog(@"Authorization failed with error: %@", error.localizedDescription);
+    }
+    
+}
+
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithAuthorization:(ASAuthorization *)authorization  API_AVAILABLE(ios(13.0)) {
+    
+    NSLog(@"Authorized with credentials: %@", authorization);
+    
+    ASAuthorizationAppleIDCredential *credential = authorization.credential;
+    
+    if (credential) {
+        NSString * userIdentifier = credential.user;
+        
+        NSLog(@"Got %@", userIdentifier);
+        
+        [MyFeedsManager signInWithApple:userIdentifier success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [self.tableView reloadData];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
+            
+        }];
+        
+    }
+    
+}
+
+#pragma mark - <ASAuthorizationControllerPresentationContextProviding>
+
+- (ASPresentationAnchor)presentationAnchorForAuthorizationController:(ASAuthorizationController *)controller  API_AVAILABLE(ios(13.0)) {
+    
+    return self.view.window;
+    
 }
 
 @end
