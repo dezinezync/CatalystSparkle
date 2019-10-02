@@ -49,7 +49,9 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 #define kBookmarksCollection @"bookmarks"
 
-@interface BookmarksManager ()
+@interface BookmarksManager () {
+    NSArray <FeedItem *> *_bookmarks;
+}
 
 @property (nonatomic, copy, readwrite) NSUUID *userID;
 
@@ -156,35 +158,51 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 - (void)loadBookmarks {
     
-    __block NSMutableArray *bookmarks = nil;
-    
     [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
        
         NSArray <NSString *> *keys = [transaction allKeysInCollection:kBookmarksCollection];
         
-        bookmarks = [[NSMutableArray alloc] initWithCapacity:keys.count];
-        
-        for (NSString *key in keys) {
-            FeedItem *item = [transaction objectForKey:key inCollection:kBookmarksCollection];
-            
-            if (item != nil) {
-                [bookmarks addObject:item];
-            }
-        }
+        self.bookmarksCount = keys.count;
         
     }];
     
-    if (bookmarks) {
+}
+
+- (NSArray <FeedItem *> *)bookmarks {
+ 
+    if (_bookmarks == nil) {
+        __block NSMutableArray *bookmarks = nil;
         
-        for (FeedItem *item in bookmarks) {
-            item.bookmarked = YES;
+        [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+           
+            NSArray <NSString *> *keys = [transaction allKeysInCollection:kBookmarksCollection];
+            
+            bookmarks = [[NSMutableArray alloc] initWithCapacity:keys.count];
+            
+            for (NSString *key in keys) {
+                FeedItem *item = [transaction objectForKey:key inCollection:kBookmarksCollection];
+                
+                if (item != nil) {
+                    [bookmarks addObject:item];
+                }
+            }
+            
+        }];
+        
+        if (bookmarks) {
+            
+            for (FeedItem *item in bookmarks) {
+                item.bookmarked = YES;
+            }
+            
+            bookmarks = (NSMutableArray *)[bookmarks sortedArrayUsingSelector:@selector(compare:)];
+            
         }
         
-        bookmarks = (NSMutableArray *)[bookmarks sortedArrayUsingSelector:@selector(compare:)];
-        
+        _bookmarks = bookmarks ?: @[];
     }
     
-    self.bookmarks = bookmarks ?: @[];
+    return _bookmarks;
     
 }
 
