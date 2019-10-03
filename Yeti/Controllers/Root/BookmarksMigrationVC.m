@@ -98,6 +98,8 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
+        [self.progressView setProgress:(count/self->_total) animated:YES];
+        
         [UIView animateWithDuration:0.2 animations:^{
             
             self.label.text = [NSString stringWithFormat:@"Migrating %@ of %@", @(count), @(self->_total)];

@@ -159,7 +159,7 @@
 - (void)checkIfBookmarksShouldBeMigrated {
     
     BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
-    
+
     if (migrated == YES) {
         return;
     }

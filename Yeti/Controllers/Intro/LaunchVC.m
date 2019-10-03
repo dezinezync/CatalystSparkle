@@ -57,7 +57,7 @@
         [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
                                                   [button.heightAnchor constraintEqualToConstant:44.f],
                                                   [button.topAnchor constraintEqualToAnchor:self.stackView.bottomAnchor constant:40.f],
-                                                  [button.widthAnchor constraintLessThanOrEqualToConstant:320.f]]];
+                                                  [button.widthAnchor constraintEqualToConstant:(320.f - (LayoutPadding * 2.f))]]];
         
         self.signinButton = button;
     }

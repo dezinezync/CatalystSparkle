@@ -2691,7 +2691,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        __unused id retval = [self.bookmarksManager performSelector:NSSelectorFromString(@"postNotification:object:") withObject:BookmarksDidUpdateNotification withObject:nil];
+        @try {
+            __unused id retval = [self.bookmarksManager performSelector:NSSelectorFromString(@"postNotification:object:") withObject:BookmarksDidUpdateNotification withObject:nil];
+        } @catch (NSException *exception) {
+            NSLog(@"Exception when posting bookmarks notification, %@", exception);
+        } @finally {
+            
+        }
 #pragma clang diagnostic pop
     });
     

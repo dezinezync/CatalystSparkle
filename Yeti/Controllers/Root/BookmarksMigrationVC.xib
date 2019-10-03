@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -18,33 +18,37 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" layoutMarginsFollowReadableWidth="YES" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="2G6-1b-jgJ">
-                    <rect key="frame" x="12" y="412" width="390" height="72.5"/>
+                    <rect key="frame" x="12" y="370" width="351" height="72"/>
                     <subviews>
                         <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tJw-J2-MEL">
-                            <rect key="frame" x="0.0" y="0.0" width="390" height="2"/>
+                            <rect key="frame" x="0.0" y="0.0" width="351" height="2"/>
                         </progressView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oZL-QJ-Uhf">
-                            <rect key="frame" x="174" y="10" width="42" height="20.5"/>
+                            <rect key="frame" x="154.66666666666666" y="9.9999999999999982" width="41.666666666666657" height="20.333333333333329"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your bookmarks will be migrated to a more efficient system in Elytra. This shouldn't take more than a minute. " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GgY-s3-mFf">
-                            <rect key="frame" x="7" y="38.5" width="376" height="34"/>
+                            <rect key="frame" x="4.6666666666666572" y="38.333333333333314" width="342" height="33.666666666666657"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
-                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
                 </stackView>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="2G6-1b-jgJ" secondAttribute="trailing" id="WEG-yb-UV2"/>
-                <constraint firstItem="2G6-1b-jgJ" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="awx-EN-Cvd"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="2G6-1b-jgJ" secondAttribute="trailing" id="WEG-yb-UV2">
+                    <variation key="widthClass=regular" constant="180"/>
+                </constraint>
+                <constraint firstItem="2G6-1b-jgJ" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="awx-EN-Cvd">
+                    <variation key="widthClass=regular" constant="180"/>
+                </constraint>
                 <constraint firstItem="2G6-1b-jgJ" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="cX3-mH-3z6"/>
                 <constraint firstItem="2G6-1b-jgJ" firstAttribute="trailing" secondItem="Q5M-cg-NOt" secondAttribute="trailing" constant="-12" id="pQk-ud-BU1"/>
                 <constraint firstItem="2G6-1b-jgJ" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" constant="12" id="uow-ga-rV3"/>
