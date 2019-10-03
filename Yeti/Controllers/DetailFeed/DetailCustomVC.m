@@ -105,11 +105,13 @@
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@0]];
             
+            NSArray *bookmarks = self.bookmarksManager.bookmarks ?: @[];
+            
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                [snapshot appendItemsWithIdentifiers:self.bookmarksManager.bookmarks.reverseObjectEnumerator.allObjects];
+                [snapshot appendItemsWithIdentifiers:bookmarks.reverseObjectEnumerator.allObjects];
             }
             else {
-                [snapshot appendItemsWithIdentifiers:self.bookmarksManager.bookmarks];
+                [snapshot appendItemsWithIdentifiers:bookmarks];
             }
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];

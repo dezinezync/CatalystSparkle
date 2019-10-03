@@ -2272,7 +2272,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)resetAccount {
     ArticlesManager.shared.folders = nil;
     ArticlesManager.shared.feeds = nil;
-    ArticlesManager.shared.bookmarks = nil;
     ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
     
@@ -2297,6 +2296,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     [Keychain remove:kAccountID];
     [Keychain remove:kUserID];
+    [Keychain remove:kUUIDString];
     [Keychain remove:kHasShownOnboarding];
     [Keychain remove:YTSubscriptionHasAddedFirstFeed];
     [Keychain remove:kIsSubscribingToPushNotifications];
@@ -2367,8 +2367,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
     
     NSDictionary *sub = @{@"sub": uuid};
+    NSMutableDictionary *query = [NSMutableDictionary new];
     
-    __unused NSURLSessionTask *task = [self.session POST:@"/user/appleid" queryParams:@{@"userID": self.userID} parameters:sub success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (self.userID != nil) {
+        query[@"userID"] = self.userID;
+    }
+    
+    __unused NSURLSessionTask *task = [self.session POST:@"/user/appleid" queryParams:query parameters:sub success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         BOOL status = [([responseObject valueForKey:@"status"] ?: @(NO)) boolValue];
         
@@ -2460,8 +2465,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
+        NSDictionary *user = [responseObject objectForKey:@"user"];
+        
+//        BOOL appleID = [[user valueForKey:@"appleid"] boolValue];
+        
+        NSString * userID = [user valueForKey:@"id"];
+        
+        self.userIDManager.UUIDString = uuid;
+        self.userIDManager.userID = @(userID.integerValue);
+        
         if (successCB) {
-            successCB(responseObject, response, task);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(responseObject, response, task);
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -2538,8 +2554,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)updateBookmarksFromServer
 {
     
-    if (MyFeedsManager.userID == nil)
+    if (MyFeedsManager.userID == nil) {
         return;
+    }
     
     NSArray <NSString *> *existingArr = [ArticlesManager.shared.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
@@ -2598,6 +2615,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 
                 __block NSUInteger count = bookmarked.count;
                 
+                self.bookmarksManager->_migrating = YES;
+                
                 [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     __block NSUInteger index = NSNotFound;
@@ -2626,8 +2645,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                     
                     [self getArticle:obj success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         
-                        [bookmarks addObject:responseObject];
-                        
                         strongify(self);
                         
                         [self.bookmarksManager addBookmark:responseObject completion:nil];
@@ -2635,18 +2652,16 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                         count--;
                         
                         if (count == 0) {
-                            @synchronized (MyFeedsManager) {
-                                ArticlesManager.shared.bookmarks = bookmarks;
-                            }
+                            [self bookmarksUpdateFromServerCompleted];
                         }
                         
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                        
                         count--;
                         
-//                        if (count == 0) {
-//                            MyFeedsManager.bookmarks = bookmarks;
-//                        }
+                        if (count == 0) {
+                            [self bookmarksUpdateFromServerCompleted];
+                        }
                         
                     }];
                     
@@ -2667,6 +2682,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DDLogError(@"%@", error.localizedDescription);
         
     }];
+}
+
+- (void)bookmarksUpdateFromServerCompleted {
+    
+    self.bookmarksManager->_migrating = NO;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        __unused id retval = [self.bookmarksManager performSelector:NSSelectorFromString(@"postNotification:object:") withObject:BookmarksDidUpdateNotification withObject:nil];
+#pragma clang diagnostic pop
+    });
+    
 }
 
 #pragma mark - State Restoration

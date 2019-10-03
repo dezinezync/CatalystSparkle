@@ -32,13 +32,14 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate {
     if (self = [super init]) {
+        
         self.delegate = delegate;
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSString *UUID = self.UUID.UUIDString;
-            NSNumber *userID = self.userID;
-            DDLogInfo(@"Initialised with: %@ %@", UUID, userID);
-        });
+        NSString *UUID = self.UUIDString;
+        NSNumber *userID = self.userID;
+        
+        NSLog(@"Initialised with: %@ %@", UUID, userID);
+        
     }
     
     return self;
@@ -57,42 +58,18 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             NSDictionary *user = [responseObject valueForKey:@"user"];
             DDLogDebug(@"Got existing user: %@", user);
             
-            self->_userID = @([[user valueForKey:@"id"] integerValue]);
-            self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
-            
-            [Keychain add:kUserID string:self->_userID.stringValue];
-            [Keychain add:kAccountID string:self->_UUID.UUIDString];
+            self.userID = @([[user valueForKey:@"id"] integerValue]);
+            self.UUIDString = [user valueForKey:@"uuid"];
             
             if (successCB) {
                 successCB(self, response, task);
             }
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            self->_UUID = [NSUUID UUID];
-            [Keychain add:kAccountID string:self->_UUID.UUIDString];
-            
-            // let our server know about these changes
-            [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                DDLogDebug(@"created new user");
-                NSDictionary *user = [responseObject valueForKey:@"user"];
-                self.userID = @([[user valueForKey:@"id"] integerValue]);
-#ifndef SHARE_EXTENSION
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-#endif
-                if (successCB) {
-                    successCB(self, response, task);
-                }
-                
-            } error:errorCB];
-            
-        }];
+        } error:errorCB];
     }
     else {
         if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The UsernManager was not able setup correctly and therefore an account could not be created. Please restart the app to continue."}];
+            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The User Manager was not able setup correctly and therefore an account could not be created. Please restart the app to continue."}];
             errorCB(error, nil, nil);
         }
     }
@@ -174,22 +151,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         else {
             _userID = @([userID integerValue]);
         }
-        
-//        // migrate from NSUbiquitousKeyValueStore
-//        if (!UUIDString || !self.userID) {
-//            NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
-//            UUIDString = [defaults stringForKey:kAccountID];
-//
-//            if (UUIDString) {
-//                self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
-//            }
-//
-//            NSInteger userID = [defaults longLongForKey:kUserID];
-//            if (userID) {
-//                self.userID = @(userID);
-//            }
-//        }
-//
+
         // migrate from NSUserDefaults
         if (!UUIDString || !self.userID) {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -258,6 +220,23 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             [defaults synchronize];
         }
     }
+    
+}
+
+- (NSNumber *)userID {
+    
+    if (_userID == nil) {
+        NSString *userIDString = [Keychain stringFor:kUserID error:nil];
+        
+        if (userIDString) {
+            NSNumber *userID = @(userIDString.integerValue);
+            
+            _userID = userID;
+        }
+        
+    }
+    
+    return _userID;
     
 }
 

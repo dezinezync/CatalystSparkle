@@ -7,14 +7,28 @@
 //
 
 #import "LaunchVC.h"
+#import "TrialVC.h"
 #import "IdentityVC.h"
 
 #import "YetiThemeKit.h"
 
-@interface LaunchVC ()
+#import "FeedsManager.h"
+#import <DZKit/AlertManager.h>
+
+#import <AuthenticationServices/AuthenticationServices.h>
+
+@interface LaunchVC () <ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding>
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
+
+@property (weak, nonatomic) IBOutlet UIButton *getStartedButton;
+@property (weak, nonatomic) IBOutlet UIStackView *stackView;
+
+
+@property (weak, nonatomic) ASAuthorizationAppleIDButton *signinButton API_AVAILABLE(ios(13.0));
+
+- (void)didTapSignIn:(id)sender API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -28,6 +42,24 @@
 
     if (@available(iOS 13, *)) {
         self.view.layer.cornerCurve = kCACornerCurveContinuous;
+        self.getStartedButton.hidden = YES;
+        
+        ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
+        
+        ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
+        
+        [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
+        
+        button.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [self.view addSubview:button];
+        
+        [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
+                                                  [button.heightAnchor constraintEqualToConstant:44.f],
+                                                  [button.topAnchor constraintEqualToAnchor:self.stackView.bottomAnchor constant:40.f],
+                                                  [button.widthAnchor constraintLessThanOrEqualToConstant:320.f]]];
+        
+        self.signinButton = button;
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -65,5 +97,80 @@
     [self showViewController:vc sender:self];
     
 }
+
+- (void)didTapSignIn:(id)sender {
+    
+    if (sender != self.signinButton) {
+        return;
+    }
+    
+    self.signinButton.enabled = NO;
+    
+    ASAuthorizationAppleIDProvider *provider = [ASAuthorizationAppleIDProvider new];
+    ASAuthorizationAppleIDRequest *request = [provider createRequest];
+    request.requestedScopes = @[];
+    
+    ASAuthorizationController *controller = [[ASAuthorizationController alloc] initWithAuthorizationRequests:@[request]];
+    controller.delegate = self;
+    controller.presentationContextProvider = self;
+    
+    [controller performRequests];
+    
+}
+
+#pragma mark - <ASAuthorizationControllerDelegate>
+
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithError:(NSError *)error API_AVAILABLE(ios(13.0)) {
+    
+    self.signinButton.enabled = YES;
+    
+    if (error.code == 1001) {
+        // cancel was tapped
+    }
+    else {
+        NSLog(@"Authorization failed with error: %@", error.localizedDescription);
+    }
+    
+}
+
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithAuthorization:(ASAuthorization *)authorization  API_AVAILABLE(ios(13.0)) {
+    
+    self.signinButton.enabled = YES;
+    
+    NSLog(@"Authorized with credentials: %@", authorization);
+    
+    ASAuthorizationAppleIDCredential *credential = authorization.credential;
+    
+    if (credential) {
+        NSString * userIdentifier = credential.user;
+        
+        NSLog(@"Got %@", userIdentifier);
+        
+        [MyFeedsManager getUserInformationFor:userIdentifier success:^(NSDictionary *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            
+            TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+            
+            [self showViewController:vc sender:self];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
+            
+        }];
+        
+    }
+    
+}
+
+#pragma mark - <ASAuthorizationControllerPresentationContextProviding>
+
+- (ASPresentationAnchor)presentationAnchorForAuthorizationController:(ASAuthorizationController *)controller  API_AVAILABLE(ios(13.0)) {
+    
+    return self.view.window;
+    
+}
+
 
 @end

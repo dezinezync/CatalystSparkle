@@ -53,8 +53,6 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
     NSArray <FeedItem *> *_bookmarks;
 }
 
-@property (nonatomic, copy, readwrite) NSUUID *userID;
-
 @property (nonatomic, assign, readwrite) NSInteger bookmarksCount;
 
 @property (nonatomic, strong) dispatch_queue_t bgQueue;
@@ -65,16 +63,11 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 
 @implementation BookmarksManager
 
-- (instancetype)initWithUserID:(NSUUID *)UUID {
-    
-    if (UUID == nil) {
-        @throw [NSError errorWithDomain:BookmarksManagerErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"A UUID must be passed to initialise BookmarksManager"}];
-    }
+- (instancetype)init {
     
     if (self = [super init]) {
         
         self.observers = [NSMutableArray new];
-        self.userID = UUID;
         self.bgQueue = dispatch_queue_create("com.elytra.bookmarks.bg", DISPATCH_QUEUE_SERIAL);
         
         [self setupDatabase];
@@ -143,6 +136,8 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
             for (NSString *key in keys) {
                 [transaction removeObjectForKey:key inCollection:kBookmarksCollection];
             }
+            
+            self.bookmarks = @[];
             
             if (completion) { dispatch_async(dispatch_get_main_queue(), ^{
                 completion(YES);
@@ -220,7 +215,7 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
         }
         
         self->_bookmarks = bookmarks;
-        self.bookmarksCount = self->_bookmarks.count;
+        self.bookmarksCount = bookmarks.count;
         
         if (self->_migrating == NO) {
             [self postNotification:BookmarksDidUpdateNotification object:nil];
@@ -232,10 +227,10 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 #pragma mark - Database
 
 - (NSString *)databasePath {
-    NSString *databaseName = [NSString stringWithFormat:@"%@-bm-elytra.sqlite", self.userID.UUIDString];
+    NSString *databaseName = [NSString stringWithFormat:@"bookmarks-elytra.sqlite"];
     
 #ifdef DEBUG
-    databaseName = [NSString stringWithFormat:@"%@-bm-elytra-debug.sqlite", self.userID.UUIDString];
+    databaseName = [NSString stringWithFormat:@"bookmarks-elytra-debug.sqlite"];
 #endif
     
     NSURL *baseURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory

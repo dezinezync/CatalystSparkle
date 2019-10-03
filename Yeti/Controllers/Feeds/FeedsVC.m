@@ -443,8 +443,8 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (BookmarksManager *)bookmarksManager {
     
-    if (_bookmarksManager == nil && MyFeedsManager.userIDManager.UUID != nil) {
-        _bookmarksManager = [[BookmarksManager alloc] initWithUserID:MyFeedsManager.userIDManager.UUID];
+    if (_bookmarksManager == nil) {
+        _bookmarksManager = [BookmarksManager new];
         
         MyFeedsManager.bookmarksManager = _bookmarksManager;
         
@@ -1032,18 +1032,6 @@ NSString * const kDS2Data = @"DS2Data";
     
     if (MyFeedsManager.userID == nil || [MyFeedsManager.userID isEqualToNumber:@(0)]) {
         return;
-    }
-    
-    if (self.bookmarksManager && resetBookmarksManager == YES) {
-        
-        if ([self.bookmarksManager.userID.UUIDString isEqualToString:MyFeedsManager.userIDManager.UUIDString] == NO) {
-            // user has definitely changed
-            [self.bookmarksManager removeObserver:self name:BookmarksDidUpdateNotification];
-            self.bookmarksManager = nil;
-            
-            __unused BookmarksManager *unusedManagerInstance = [self bookmarksManager];
-        }
-
     }
     
     weakify(self);

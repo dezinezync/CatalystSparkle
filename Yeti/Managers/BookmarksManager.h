@@ -25,9 +25,7 @@ extern NSErrorDomain const BookmarksManagerErrorDomain;
     BOOL _migrating;
 }
 
-- (instancetype)initWithUserID:(NSUUID *)UUID;
-
-@property (nonatomic, copy, readonly) NSUUID *userID;
+- (instancetype)init;
 
 @property (nonatomic, strong) NSArray <FeedItem *> *bookmarks;
 

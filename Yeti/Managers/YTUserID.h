@@ -11,6 +11,7 @@
 
 extern NSString *const kAccountID;
 extern NSString *const kUserID;
+extern NSString *const kUUIDString;
 extern NSNotificationName const YTUserNotFound;
 
 @protocol YTUserDelegate <NSObject>
@@ -24,6 +25,7 @@ extern NSNotificationName const YTUserNotFound;
 @public
     NSUUID * _UUID;
     NSString *_UUIDString;
+    NSNumber *_userID;
 }
 
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate;
