@@ -32,6 +32,7 @@ platform :ios do
         )
 
         gym(
+            scheme: 'Yeti',
             include_bitcode: false,
             include_symbols: false,
             configuration: 'Testflight'
@@ -57,6 +58,7 @@ platform :ios do
         )
 
         gym(
+            scheme: 'Yeti',
             include_bitcode: false,
             include_symbols: false,
             configuration: 'Release'
