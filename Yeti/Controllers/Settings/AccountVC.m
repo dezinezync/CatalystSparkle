@@ -164,7 +164,7 @@
                         cell.textLabel.text = nil;
                         cell.textLabel.accessibilityValue = @"Account Label";
                         
-                        cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUID.UUIDString;
+                        cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUIDString;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
                         break;

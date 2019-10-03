@@ -35,10 +35,12 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         
         self.delegate = delegate;
         
-        NSString *UUID = self.UUIDString;
-        NSNumber *userID = self.userID;
-        
-        NSLog(@"Initialised with: %@ %@", UUID, userID);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSString *UUID = self.UUIDString;
+            NSNumber *userID = self.userID;
+            
+            NSLog(@"Initialised with: %@ %@", UUID, userID);
+        });
         
     }
     
@@ -88,10 +90,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         NSError *error = nil;
         NSString *UUIDString = [Keychain stringFor:kUUIDString error:&error];
         
-        if (error == nil) {
+        if (error != nil) {
             NSLog(@"Error loading UUID String from Keychain: %@", error);
-        }
-        else {
+            
             UUIDString = [[NSUserDefaults standardUserDefaults] stringForKey:kUUIDString];
         }
         
@@ -227,6 +228,15 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     if (_userID == nil) {
         NSString *userIDString = [Keychain stringFor:kUserID error:nil];
+        
+        if (userIDString == nil) {
+            userIDString = [NSUserDefaults.standardUserDefaults valueForKey:kUserID];
+            
+            if (userIDString) {
+                [Keychain add:kUserID string:userIDString];
+            }
+            
+        }
         
         if (userIDString) {
             NSNumber *userID = @(userIDString.integerValue);

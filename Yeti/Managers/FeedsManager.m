@@ -1086,7 +1086,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if (!status) {
             if (errorCB) {
-                NSError *error = [NSError errorWithDomain:@"TTKit" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder title. Please try again."}];
+                NSError *error = [NSError errorWithDomain:FeedsManagerDomain code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder title. Please try again."}];
                 errorCB(error, response, task);
             }
             return;
@@ -1142,7 +1142,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if (!status) {
             if (errorCB) {
-                NSError *error = [NSError errorWithDomain:@"TTKit" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder preferences. Please try again."}];
+                NSError *error = [NSError errorWithDomain:FeedsManagerDomain code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder preferences. Please try again."}];
                 errorCB(error, response, task);
             }
             return;
@@ -2523,16 +2523,16 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 //            self.userIDManager = nil;
 //        }
         
-        return [NSError errorWithDomain:@"TTKit" code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
+        return [NSError errorWithDomain:FeedsManagerDomain code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
     }
     else {
         errorString = [userInfo valueForKey:NSLocalizedDescriptionKey];
     }
     
     if (errorString)
-        return [NSError errorWithDomain:@"TTKit" code:0 userInfo:userInfo];
+        return [NSError errorWithDomain:FeedsManagerDomain code:0 userInfo:userInfo];
     
-    return [NSError errorWithDomain:@"TTKit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
+    return [NSError errorWithDomain:FeedsManagerDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
     
 }
 

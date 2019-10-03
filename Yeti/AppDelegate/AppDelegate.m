@@ -163,6 +163,10 @@ AppDelegate *MyAppDelegate = nil;
     
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
     
+//#ifdef DEBUG
+//    reset = YES;
+//#endif
+    
     if (reset) {
         [MyFeedsManager resetAccount];
         
