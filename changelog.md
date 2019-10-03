@@ -1,6 +1,8 @@
 # v1.5.0
 
-## Build 273
+## Build 275
+
+- Sign in With Apple. If you're new to Elytra, you don't need to take any additional steps. If you are new to Elytra, please head over to Settings > Account and link your account from there. 
 
 - Micro.blog posts with images now show the image as a thumbnail in the articles list when settings are enabled for it. 
 
