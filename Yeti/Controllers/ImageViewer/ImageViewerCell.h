@@ -23,6 +23,8 @@ UIKIT_EXTERN API_AVAILABLE(ios(13.0))
 
 @property (nonatomic, strong) NSURLSessionTask * _Nullable task;
 
+@property (weak, nonatomic) IBOutlet UILabel *label;
+
 - (void)setImage:(UIImage *)image;
 
 @end

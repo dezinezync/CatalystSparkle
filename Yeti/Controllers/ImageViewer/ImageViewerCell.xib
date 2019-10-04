@@ -27,17 +27,26 @@
                         <viewLayoutGuide key="contentLayoutGuide" id="de2-9l-bVU"/>
                         <viewLayoutGuide key="frameLayoutGuide" id="OCQ-yJ-f9A"/>
                     </scrollView>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dPZ-mr-eF2">
+                        <rect key="frame" x="12" y="296.5" width="229" height="14.5"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
             </view>
             <constraints>
                 <constraint firstItem="NDm-Yk-Ib1" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" id="44U-g0-2Su"/>
+                <constraint firstAttribute="trailing" secondItem="dPZ-mr-eF2" secondAttribute="trailing" constant="12" id="DPT-Th-mE3"/>
                 <constraint firstItem="NDm-Yk-Ib1" firstAttribute="height" secondItem="gTV-IL-0wX" secondAttribute="height" id="JDr-j7-yDv"/>
+                <constraint firstAttribute="bottom" secondItem="dPZ-mr-eF2" secondAttribute="bottom" constant="12" id="KtD-IC-UnW"/>
+                <constraint firstItem="dPZ-mr-eF2" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="12" id="gO5-l9-Qcs"/>
                 <constraint firstItem="NDm-Yk-Ib1" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="juZ-Nl-y0L"/>
                 <constraint firstAttribute="top" secondItem="NDm-Yk-Ib1" secondAttribute="top" id="nKA-Se-huG"/>
             </constraints>
             <size key="customSize" width="253" height="323"/>
             <connections>
                 <outlet property="imageView" destination="ziW-Bc-fu8" id="eef-91-hHA"/>
+                <outlet property="label" destination="dPZ-mr-eF2" id="39a-yg-7Jj"/>
                 <outlet property="scrollView" destination="NDm-Yk-Ib1" id="gIJ-Xm-k5l"/>
             </connections>
             <point key="canvasLocation" x="57.24637681159421" y="102.12053571428571"/>

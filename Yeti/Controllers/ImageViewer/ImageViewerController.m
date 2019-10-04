@@ -23,6 +23,10 @@
 
 @property (nonatomic, strong) NSArray <Content *> *images;
 
+@property (nonatomic, weak) UIPanGestureRecognizer *pan;
+
+@property (nonatomic, assign) CGPoint initialTouchPoint;
+
 @end
 
 @implementation ImageViewerController
@@ -35,7 +39,12 @@
     
     for (id image in images.allObjects) {
         if ([image isKindOfClass:Image.class]) {
-            [_images addObject:[(Image *)image content]];
+            
+            Content *content = [(Image *)image content];
+            
+            if (content != nil) {
+                [_images addObject:content];
+            }
         }
         else if ([image isKindOfClass:Gallery.class]) {
             
@@ -90,8 +99,6 @@
     // self.clearsSelectionOnViewWillAppear = NO;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didTapDone:)];
     
-    [self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
-    
     [self.navigationController setNavigationBarHidden:YES animated:NO];
     [self setNeedsStatusBarAppearanceUpdate];
     
@@ -107,6 +114,10 @@
     self.collectionView.directionalLockEnabled = YES;
     self.collectionView.pagingEnabled = YES;
     self.collectionView.alwaysBounceVertical = NO;
+    
+    self.collectionView.showsHorizontalScrollIndicator = NO;
+    self.collectionView.showsVerticalScrollIndicator = NO;
+    
     self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     
     self.collectionView.backgroundColor = UIColor.blackColor;
@@ -116,6 +127,13 @@
     
     __unused UICollectionViewDiffableDataSource *DS = self.DS;
     
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
+    
+    [pan requireGestureRecognizerToFail:self.collectionView.panGestureRecognizer];
+    
+    [self.collectionView addGestureRecognizer:pan];
+    
+    self.pan = pan;
 }
 
 - (void)setupData {
@@ -142,6 +160,20 @@
             ImageViewerCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kImageViewerCell forIndexPath:indexPath];
             
             cell.viewController = self;
+            
+            if (image.attributes != nil
+                && (image.attributes[@"alt"] || image.attributes[@"title"])) {
+                
+                NSString *altText = image.attributes[@"alt"] ?: image.attributes[@"title"];
+                cell.label.text = altText;
+                [cell.label sizeToFit];
+                
+                cell.label.hidden = NO;
+                
+            }
+            else {
+                cell.label.hidden = YES;
+            }
             
             NSString *url = [image urlCompliantWithUsersPreferenceForWidth:self.collectionView.bounds.size.width];
             
@@ -179,9 +211,74 @@
     
     [self.navigationController dismissViewControllerAnimated:YES completion:^{
         
-        self.images = nil;
+        if (self != nil) {
+            self.images = nil;
+            [self setupData];
+        }
         
     }];
+    
+}
+
+- (void)didPan:(UIPanGestureRecognizer *)sender {
+    
+    CGPoint touchPoint = [sender locationInView:sender.view.window];
+    
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        self.initialTouchPoint = touchPoint;
+    }
+    else if (sender.state == UIGestureRecognizerStateChanged) {
+        
+        if ((touchPoint.y - self.initialTouchPoint.y) > 0.f) {
+            
+            CGFloat diff = touchPoint.y - self.initialTouchPoint.y;
+            CGFloat scale = 1.f - (diff/200.f);
+            CGFloat alpha = MAX(0.f, scale);
+#ifdef DEBUG
+            NSLog(@"Alpha: %@", @(alpha));
+#endif
+            [UIView animateWithDuration:0.1 animations:^{
+                self.view.alpha = alpha;
+                self.view.transform = CGAffineTransformMakeScale(scale, scale);
+            }];
+        }
+        
+    }
+    else if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        if ((touchPoint.y - self.initialTouchPoint.y) > 200.f) {
+            [self didTapDone:sender];
+        }
+        else {
+            [self resetPan];
+        }
+        
+    }
+    else {
+        [self resetPan];
+    }
+    
+}
+
+- (void)resetPan {
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        self.initialTouchPoint = CGPointZero;
+        self.view.alpha = 1.f;
+        self.view.transform = CGAffineTransformIdentity;
+    }];
+    
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    
+    self.pan.enabled = NO;
+    
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    
+    self.pan.enabled = YES;
     
 }
 

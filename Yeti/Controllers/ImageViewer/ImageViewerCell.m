@@ -33,6 +33,9 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
     [super awakeFromNib];
     // Initialization code
     
+    self.label.text = nil;
+    self.label.hidden = YES;
+    
     self.scrollView.backgroundColor = UIColor.blackColor;
     self.imageView.backgroundColor = UIColor.blackColor;
     self.backgroundColor = UIColor.blackColor;
@@ -56,6 +59,8 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
     
     [self updateZoomScale];
     [self centerScrollViewContents];
+    
+    [self setupColors:YES];
 }
 
 - (void)prepareForReuse {
@@ -68,7 +73,8 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
     }
     
     self.viewController = nil;
-    
+    self.label.text = nil;
+    self.label.hidden = YES;
     self.imageView.image = nil;
     
 }
@@ -95,6 +101,7 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
     [self updateZoomScale];
     [self centerScrollViewContents];
     
+    [self setupColors:self.viewController.navigationController.isNavigationBarHidden];
 }
 
 #pragma mark -
@@ -206,12 +213,40 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
 
 - (void)didTap:(id)sender {
     
-    BOOL show = ![self.viewController.navigationController isNavigationBarHidden];
+    BOOL hide = ![self.viewController.navigationController isNavigationBarHidden];
     
-    [self.viewController.navigationController setNavigationBarHidden:show animated:YES];
-    [self.viewController setNeedsStatusBarAppearanceUpdate];
+    weakify(self);
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        
+        strongify(self);
+        
+        [self setupColors:hide];
+        
+        [self.viewController.navigationController setNavigationBarHidden:hide animated:YES];
+        [self.viewController setNeedsStatusBarAppearanceUpdate];
+        
+    }];
     
 }
 
+- (void)setupColors:(BOOL)hide {
+    
+    UIColor *color = hide ? UIColor.blackColor : UIColor.secondarySystemBackgroundColor;
+    
+    self.scrollView.backgroundColor = color;
+    self.contentView.backgroundColor = color;
+    self.viewController.collectionView.backgroundColor = color;
+    
+    if (hide == YES) {
+        self.label.hidden = hide;
+    }
+    else {
+        if (self.label.text != nil) {
+            self.label.hidden = NO;
+        }
+    }
+    
+}
 
 @end
