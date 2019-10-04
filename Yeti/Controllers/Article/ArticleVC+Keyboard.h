@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "ArticleVC.h"
+#import "ArticleVC+Photos.h"
 
 @interface ArticleVC (Keyboard)
 

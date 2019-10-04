@@ -36,9 +36,6 @@
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
 		F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; };
 		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F017F6F1234706A600810CB9 /* ImageViewerController.m in Sources */ = {isa = PBXBuildFile; fileRef = F017F6F0234706A600810CB9 /* ImageViewerController.m */; };
-		F017F701234706D700810CB9 /* ImageViewerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F017F6FF234706D700810CB9 /* ImageViewerCell.m */; };
-		F017F702234706D700810CB9 /* ImageViewerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F017F700234706D700810CB9 /* ImageViewerCell.xib */; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
@@ -331,6 +328,10 @@
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
 		F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
+		F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */; };
+		F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */; };
+		F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86490234793870089F9EF /* ArticleVC+Photos.m */; };
+		F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86493234796B80089F9EF /* ArticlePhoto.m */; };
 		F0EB27D921C20B81007E3547 /* DBManager+CloudCore.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */; };
 		F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27E821C20FF0007E3547 /* FeedOperation.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
@@ -665,11 +666,6 @@
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
 		F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = ../../DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
-		F017F6EF234706A600810CB9 /* ImageViewerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewerController.h; sourceTree = "<group>"; };
-		F017F6F0234706A600810CB9 /* ImageViewerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageViewerController.m; sourceTree = "<group>"; };
-		F017F6FE234706D700810CB9 /* ImageViewerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewerCell.h; sourceTree = "<group>"; };
-		F017F6FF234706D700810CB9 /* ImageViewerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageViewerCell.m; sourceTree = "<group>"; };
-		F017F700234706D700810CB9 /* ImageViewerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageViewerCell.xib; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
@@ -1120,6 +1116,12 @@
 		F0E71E701FD6F72200408CFF /* PaddedLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
 		F0E71E711FD6F72200408CFF /* PaddedLabel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedLabel.m; sourceTree = "<group>"; };
 		F0E71E731FD6FF7100408CFF /* Yeti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yeti.entitlements; sourceTree = "<group>"; };
+		F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewer.framework; path = Carthage/Build/iOS/NYTPhotoViewer.framework; sourceTree = SOURCE_ROOT; };
+		F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = SOURCE_ROOT; };
+		F0E8648F234793870089F9EF /* ArticleVC+Photos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Photos.h"; sourceTree = "<group>"; };
+		F0E86490234793870089F9EF /* ArticleVC+Photos.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Photos.m"; sourceTree = "<group>"; };
+		F0E86492234796B80089F9EF /* ArticlePhoto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePhoto.h; sourceTree = "<group>"; };
+		F0E86493234796B80089F9EF /* ArticlePhoto.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePhoto.m; sourceTree = "<group>"; };
 		F0EB27D721C20B81007E3547 /* DBManager+CloudCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DBManager+CloudCore.h"; sourceTree = "<group>"; };
 		F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DBManager+CloudCore.m"; sourceTree = "<group>"; };
 		F0EB27E721C20FF0007E3547 /* FeedOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedOperation.h; sourceTree = "<group>"; };
@@ -1166,7 +1168,9 @@
 				F013E6DD21A03FA700BAA151 /* DZAppdelegate.framework in Frameworks */,
 				F00E837422C485890027C45E /* libcrypto.a in Frameworks */,
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
+				F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */,
 				F055166021B4FEAA008F1F2F /* YapDatabase.framework in Frameworks */,
+				F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */,
 				F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */,
 				F0129DC922AE0FC2002C796A /* WebKit.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
@@ -1371,18 +1375,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F017F6FD234706C000810CB9 /* ImageViewer */ = {
-			isa = PBXGroup;
-			children = (
-				F017F6EF234706A600810CB9 /* ImageViewerController.h */,
-				F017F6F0234706A600810CB9 /* ImageViewerController.m */,
-				F017F6FE234706D700810CB9 /* ImageViewerCell.h */,
-				F017F6FF234706D700810CB9 /* ImageViewerCell.m */,
-				F017F700234706D700810CB9 /* ImageViewerCell.xib */,
-			);
-			path = ImageViewer;
-			sourceTree = "<group>";
-		};
 		F018A2CB205D0EF9001E682B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1449,6 +1441,10 @@
 				F0A4798020639EB000A20195 /* ArticleHandler.h */,
 				F07DCA4220C51B550068ED51 /* ArticleVC+Keyboard.h */,
 				F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */,
+				F0E8648F234793870089F9EF /* ArticleVC+Photos.h */,
+				F0E86490234793870089F9EF /* ArticleVC+Photos.m */,
+				F0E86492234796B80089F9EF /* ArticlePhoto.h */,
+				F0E86493234796B80089F9EF /* ArticlePhoto.m */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -1638,7 +1634,6 @@
 				F01D714B1FBBF51300DF84B9 /* Feed */,
 				F043430621CF433000F854E4 /* DetailFeed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
-				F017F6FD234706C000810CB9 /* ImageViewer */,
 				F018A2CB205D0EF9001E682B /* Settings */,
 				F064A52E2157632700A385AD /* Intro */,
 				F070C3121FBABC9E00912CCF /* Root */,
@@ -1845,6 +1840,8 @@
 			isa = PBXGroup;
 			children = (
 				F00E830622C4826D0027C45E /* RMStore */,
+				F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */,
+				F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */,
 				F055165421B4FEAA008F1F2F /* YapDatabase.framework */,
 				F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
@@ -2638,7 +2635,6 @@
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
-				F017F702234706D700810CB9 /* ImageViewerCell.xib in Resources */,
 				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
@@ -2716,6 +2712,8 @@
 				"$(SRCROOT)/Carthage/Build/iOS/OMGHTTPURLRQ.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FLAnimatedImage.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/YapDatabase.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/NYTPhotoViewerCore.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/NYTPhotoViewer.framework",
 			);
 			name = Carthage;
 			outputPaths = (
@@ -2724,6 +2722,8 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OMGHTTPURLRQ.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/FLAnimatedImage.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/YapDatabase.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NYTPhotoViewerCore.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NYTPhotoViewer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2871,7 +2871,6 @@
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00E836A22C4826D0027C45E /* RMStoreTransactionReceiptVerifier.m in Sources */,
-				F017F6F1234706A600810CB9 /* ImageViewerController.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F00E837022C4826D0027C45E /* RMAppReceipt.m in Sources */,
 				F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */,
@@ -2879,6 +2878,7 @@
 				F0AFAC07216C76B400AB7057 /* ArticleCellB.m in Sources */,
 				F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */,
 				F06B9F5E21CFAEBC00D452A1 /* SyncChange.m in Sources */,
+				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F00E837322C4826D0027C45E /* RMStore.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
@@ -2887,7 +2887,6 @@
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
 				F07A31292296C81000822969 /* PopMenuDefaultAction.m in Sources */,
 				F0AA8C8E216B4A5500C65DAE /* DTTimePeriodGroup.m in Sources */,
-				F017F701234706D700810CB9 /* ImageViewerCell.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
@@ -2912,6 +2911,7 @@
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
 				F0FE188622B7EB7D007DD285 /* AuthorBioVC.m in Sources */,
+				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
 				F0AA8C8D216B4A5500C65DAE /* NSDate+DateTools.m in Sources */,
 				F0AFAC14216C78D400AB7057 /* TagCell.m in Sources */,

@@ -45,8 +45,6 @@
 #import "YTExtractor.h"
 #import "NSString+ImageProxy.h"
 
-#import "ImageViewerController.h"
-
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -72,7 +70,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) UIView *last; // reference to the last setup view.
 @property (weak, nonatomic) id nextItem; // next item which will be processed
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loader;
-@property (nonatomic, strong) NSPointerArray *images;
+@property (nonatomic, strong, readwrite) NSPointerArray *images;
 
 @property (nonatomic, strong) NSPointerArray *videos;
 
@@ -1920,41 +1918,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addLinebreak];
 }
 
-#pragma mark - Actions
-
-- (void)didTapOnImage:(UITapGestureRecognizer *)sender {
-    
-    NSLog(@"Sender state: %@", @(sender.state));
-    
-    NSUInteger index = NSNotFound;
-    
-    if (self.images.count == 1) {
-        index = 0;
-    }
-    else {
-        index = [self.images indexOfObject:sender.view];
-    }
-    
-    if (index == NSNotFound) {
-        return;
-    }
-    
-    UINavigationController *vc = [ImageViewerController instanceWithImages:self.images];
-    
-    [self presentViewController:vc animated:YES completion:nil];
-    
-}
-
-- (void)didTapOnImageWithURL:(UITapGestureRecognizer *)sender {
-    
-    Image *view = (Image *)[sender view];
-    NSString *url = [[view URL] absoluteString];
-    
-    NSURL *formatted = formattedURL(@"yeti://external?link=%@", url);
-    
-    [UIApplication.sharedApplication openURL:formatted options:@{} completionHandler:nil];
-    
-}
 
 #pragma mark - <ArticleAuthorViewDelegate>
 
