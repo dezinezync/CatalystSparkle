@@ -721,7 +721,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     [super decodeRestorableStateWithCoder:coder];
     
-    _noPreSetup = YES;
+    _noPreSetup = NO;
     _hasSetupTable = NO;
 }
 

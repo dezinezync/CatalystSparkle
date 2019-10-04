@@ -102,6 +102,8 @@
     
     if (MyFeedsManager.userID) {
         [self checkIfBookmarksShouldBeMigrated];
+        
+        
     }
     
 //#ifdef DEBUG

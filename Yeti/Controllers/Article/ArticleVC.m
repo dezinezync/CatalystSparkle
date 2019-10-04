@@ -45,6 +45,8 @@
 #import "YTExtractor.h"
 #import "NSString+ImageProxy.h"
 
+#import "ImageViewerController.h"
+
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -86,6 +88,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
+
+- (void)didTapOnImage:(UITapGestureRecognizer *)sender API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -1505,10 +1509,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     NSString *url = [content urlCompliantWithUsersPreferenceForWidth:self.scrollView.bounds.size.width];
     
-    if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
+    if (@available(iOS 13, *)) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
         imageView.userInteractionEnabled = YES;
         
+        [imageView addGestureRecognizer:tap];
+    }
+    else if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
+        imageView.userInteractionEnabled = YES;
+
         [imageView addGestureRecognizer:tap];
     }
     
@@ -1527,6 +1537,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         caption.content = imageView.accessibilityValue;
         caption.isAccessibilityElement = NO; // the image itself presents the caption.
         [self addParagraph:caption caption:YES];
+        
     }
 
 }
@@ -1909,6 +1920,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 #pragma mark - Actions
 
+- (void)didTapOnImage:(UITapGestureRecognizer *)sender {
+    
+    NSLog(@"Sender state: %@", @(sender.state));
+    
+    NSUInteger index = NSNotFound;
+    
+    if (self.images.count == 1) {
+        index = 0;
+    }
+    else {
+        index = [self.images indexOfObject:sender.view];
+    }
+    
+    if (index == NSNotFound) {
+        return;
+    }
+    
+    UINavigationController *vc = [ImageViewerController instanceWithImages:self.images];
+    
+    [self presentViewController:vc animated:YES completion:nil];
+    
+}
+
 - (void)didTapOnImageWithURL:(UITapGestureRecognizer *)sender {
     
     Image *view = (Image *)[sender view];
@@ -1983,8 +2017,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if (scrollView != self.stackView.superview)
         return;

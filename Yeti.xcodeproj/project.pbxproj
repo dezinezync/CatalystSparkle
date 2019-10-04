@@ -36,6 +36,9 @@
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
 		F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; };
 		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F017F6F1234706A600810CB9 /* ImageViewerController.m in Sources */ = {isa = PBXBuildFile; fileRef = F017F6F0234706A600810CB9 /* ImageViewerController.m */; };
+		F017F701234706D700810CB9 /* ImageViewerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F017F6FF234706D700810CB9 /* ImageViewerCell.m */; };
+		F017F702234706D700810CB9 /* ImageViewerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F017F700234706D700810CB9 /* ImageViewerCell.xib */; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
@@ -662,6 +665,11 @@
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
 		F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = ../../DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
+		F017F6EF234706A600810CB9 /* ImageViewerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewerController.h; sourceTree = "<group>"; };
+		F017F6F0234706A600810CB9 /* ImageViewerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageViewerController.m; sourceTree = "<group>"; };
+		F017F6FE234706D700810CB9 /* ImageViewerCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewerCell.h; sourceTree = "<group>"; };
+		F017F6FF234706D700810CB9 /* ImageViewerCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageViewerCell.m; sourceTree = "<group>"; };
+		F017F700234706D700810CB9 /* ImageViewerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageViewerCell.xib; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
@@ -1363,6 +1371,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F017F6FD234706C000810CB9 /* ImageViewer */ = {
+			isa = PBXGroup;
+			children = (
+				F017F6EF234706A600810CB9 /* ImageViewerController.h */,
+				F017F6F0234706A600810CB9 /* ImageViewerController.m */,
+				F017F6FE234706D700810CB9 /* ImageViewerCell.h */,
+				F017F6FF234706D700810CB9 /* ImageViewerCell.m */,
+				F017F700234706D700810CB9 /* ImageViewerCell.xib */,
+			);
+			path = ImageViewer;
+			sourceTree = "<group>";
+		};
 		F018A2CB205D0EF9001E682B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1618,6 +1638,7 @@
 				F01D714B1FBBF51300DF84B9 /* Feed */,
 				F043430621CF433000F854E4 /* DetailFeed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
+				F017F6FD234706C000810CB9 /* ImageViewer */,
 				F018A2CB205D0EF9001E682B /* Settings */,
 				F064A52E2157632700A385AD /* Intro */,
 				F070C3121FBABC9E00912CCF /* Root */,
@@ -2617,6 +2638,7 @@
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
+				F017F702234706D700810CB9 /* ImageViewerCell.xib in Resources */,
 				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
@@ -2849,6 +2871,7 @@
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00E836A22C4826D0027C45E /* RMStoreTransactionReceiptVerifier.m in Sources */,
+				F017F6F1234706A600810CB9 /* ImageViewerController.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F00E837022C4826D0027C45E /* RMAppReceipt.m in Sources */,
 				F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */,
@@ -2864,6 +2887,7 @@
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
 				F07A31292296C81000822969 /* PopMenuDefaultAction.m in Sources */,
 				F0AA8C8E216B4A5500C65DAE /* DTTimePeriodGroup.m in Sources */,
+				F017F701234706D700810CB9 /* ImageViewerCell.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
@@ -3247,8 +3271,8 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=0",
+					"DBEUG_LAYOUT=0",
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
@@ -3415,8 +3439,8 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=1",
+					"DBEUG_LAYOUT=0",
 				);
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../../RMStore/RMStore/Optional/openssl-1.0.1e/include/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
