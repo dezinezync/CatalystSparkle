@@ -14,6 +14,24 @@
     return [@(self.hash) stringValue];
 }
 
+- (BOOL)isEqual:(id)object {
+    
+    if (object == nil) {
+        return NO;
+    }
+    
+    if ([object isKindOfClass:Content.class] == NO) {
+        return NO;
+    }
+    
+    if (self == object) {
+        return YES;
+    }
+    
+    return [object hash] == self.hash;
+    
+}
+
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     [super encodeWithCoder:encoder];

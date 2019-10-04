@@ -17,9 +17,11 @@ UIKIT_EXTERN API_AVAILABLE(ios(13.0))
 
 + (void)registerOn:(UICollectionView *)collectionView;
 
-@property (nonatomic, weak) UICollectionViewController *viewController;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (nonatomic, weak) UICollectionViewController * _Nullable viewController;
+@property (weak, nonatomic) IBOutlet UIScrollView * _Nullable scrollView;
+@property (weak, nonatomic) IBOutlet UIImageView * _Nullable imageView;
+
+@property (nonatomic, strong) NSURLSessionTask * _Nullable task;
 
 - (void)setImage:(UIImage *)image;
 

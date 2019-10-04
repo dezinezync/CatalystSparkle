@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Content.h"
 #import <FLAnimatedImage/FLAnimatedImageView.h>
 
 @interface SizedImage : UIImageView
@@ -37,6 +38,8 @@
 @property (nonatomic, strong) NSLayoutConstraint *aspectRatio, *leading, *trailing;
 
 @property (nonatomic, weak, readonly) SizedImage *imageView;
+
+@property (nonatomic, weak) Content *content;
 
 - (void)il_setImageWithURL:(id)url;
 

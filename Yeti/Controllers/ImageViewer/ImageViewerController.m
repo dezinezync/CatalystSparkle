@@ -8,9 +8,12 @@
 
 #import "ImageViewerController.h"
 #import "ImageViewerCell.h"
+
 #import "Image.h"
+#import "Gallery.h"
 
 #import <DZNetworking/ImageLoader.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @interface ImageViewerController ()
 
@@ -18,7 +21,7 @@
 
 @property (nonatomic, strong) UICollectionViewDiffableDataSource *DS;
 
-@property (nonatomic, weak) NSPointerArray *images;
+@property (nonatomic, strong) NSArray <Content *> *images;
 
 @end
 
@@ -28,7 +31,26 @@
     
     ImageViewerController *instance = [[ImageViewerController alloc] initWithCollectionViewLayout:[ImageViewerController layout]];
     
-    instance.images = images;
+    NSMutableArray *_images = [NSMutableArray new];
+    
+    for (id image in images.allObjects) {
+        if ([image isKindOfClass:Image.class]) {
+            [_images addObject:[(Image *)image content]];
+        }
+        else if ([image isKindOfClass:Gallery.class]) {
+            
+            for (id img in [(Gallery *)image images]) {
+                [_images addObject:img];
+            }
+                
+        }
+        else {
+            NSLog(@"Unknown class for image in ImageViewerController :%@", NSStringFromClass([image class]));
+//            [_images addObject:img];
+        }
+    }
+    
+    instance.images = [_images rz_deduped];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
     nav.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -69,7 +91,9 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didTapDone:)];
     
     [self.navigationController.navigationBar setBarStyle:UIBarStyleBlackTranslucent];
+    
     [self.navigationController setNavigationBarHidden:YES animated:NO];
+    [self setNeedsStatusBarAppearanceUpdate];
     
     // Do any additional setup after loading the view.
     [self setupCollectionView];
@@ -100,7 +124,7 @@
     [snapshot appendSectionsWithIdentifiers:@[@0]];
     
     if (self.images != nil) {
-        [snapshot appendItemsWithIdentifiers:self.images.allObjects intoSectionWithIdentifier:@0];
+        [snapshot appendItemsWithIdentifiers:self.images intoSectionWithIdentifier:@0];
     }
     
     [self.DS applySnapshot:snapshot animatingDifferences:NO];
@@ -113,17 +137,16 @@
     
     if (_DS == nil) {
         
-        _DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, Image * _Nonnull image) {
+        _DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, Content * _Nonnull image) {
             
             ImageViewerCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kImageViewerCell forIndexPath:indexPath];
             
             cell.viewController = self;
             
-            if (image.imageView.image != nil) {
-                [cell setImage:image.imageView.image];
-            }
-            else {
-                [SharedImageLoader downloadImageForURL:image.URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            NSString *url = [image urlCompliantWithUsersPreferenceForWidth:self.collectionView.bounds.size.width];
+            
+            if (url != nil) {
+                cell.task = [SharedImageLoader downloadImageForURL:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     if (cell != nil && responseObject != nil && [responseObject isKindOfClass:UIImage.class]) {
                         dispatch_async(dispatch_get_main_queue(), ^{
@@ -154,7 +177,31 @@
 
 - (void)didTapDone:(id)sender {
     
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        
+        self.images = nil;
+        
+    }];
+    
+}
+
+#pragma mark - Subclassing
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    
+    return UIStatusBarStyleDarkContent;
+    
+}
+
+- (BOOL)prefersStatusBarHidden {
+    
+    return self.navigationController.isNavigationBarHidden;
+    
+}
+
+- (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
+    
+    return UIStatusBarAnimationSlide;
     
 }
 

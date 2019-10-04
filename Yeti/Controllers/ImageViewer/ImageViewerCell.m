@@ -58,6 +58,21 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
     [self centerScrollViewContents];
 }
 
+- (void)prepareForReuse {
+    
+    [super prepareForReuse];
+    
+    if (self.task != nil) {
+        [self.task cancel];
+        self.task = nil;
+    }
+    
+    self.viewController = nil;
+    
+    self.imageView.image = nil;
+    
+}
+
 - (void)setFrame:(CGRect)frame {
     
     [super setFrame:frame];
@@ -194,6 +209,7 @@ NSString *const kImageViewerCell = @"com.elytra.cell.imageViewer";
     BOOL show = ![self.viewController.navigationController isNavigationBarHidden];
     
     [self.viewController.navigationController setNavigationBarHidden:show animated:YES];
+    [self.viewController setNeedsStatusBarAppearanceUpdate];
     
 }
 

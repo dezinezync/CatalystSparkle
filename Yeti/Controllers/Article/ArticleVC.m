@@ -1504,6 +1504,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         imageView.aspectRatio.active = YES;
     }
     
+    imageView.content = content;
+    
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
     
