@@ -362,13 +362,23 @@ static NSDateFormatter *_formatter = nil;
 
 - (BOOL)isEqual:(id)object {
     
-    if (object != nil && [object isKindOfClass:FeedItem.class]) {
-        BOOL retval = [self isEqualToItem:object];
-        
-        return retval;
+    if (object == nil) {
+        return NO;
     }
     
-    return NO;
+    if ([object isKindOfClass:FeedItem.class] == NO) {
+        return NO;
+    }
+    
+    if ([(FeedItem *)object identifier].integerValue == self.identifier.integerValue) {
+        
+        return [self isEqualToItem:object];
+        
+    }
+    else {
+        return NO;
+    }
+    
     
 }
 

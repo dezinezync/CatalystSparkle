@@ -181,6 +181,7 @@
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
 		F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */; };
+		F095F6BE234B6E780005356B /* PagingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F095F6BD234B6E780005356B /* PagingManager.m */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
@@ -825,6 +826,8 @@
 		F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePreviewVC.h; sourceTree = "<group>"; };
 		F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePreviewVC.m; sourceTree = "<group>"; };
 		F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticlePreviewVC.xib; sourceTree = "<group>"; };
+		F095F6BC234B6E780005356B /* PagingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PagingManager.h; sourceTree = "<group>"; };
+		F095F6BD234B6E780005356B /* PagingManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PagingManager.m; sourceTree = "<group>"; };
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
@@ -1765,6 +1768,8 @@
 				F0FEC4A223085E840082C79D /* ArticlesManager.m */,
 				F044B3B82338985300DD8E90 /* BookmarksManager.h */,
 				F044B3B92338985300DD8E90 /* BookmarksManager.m */,
+				F095F6BC234B6E780005356B /* PagingManager.h */,
+				F095F6BD234B6E780005356B /* PagingManager.m */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -2679,6 +2684,7 @@
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
+				F095F6BE234B6E780005356B /* PagingManager.m in Sources */,
 				F0FE188622B7EB7D007DD285 /* AuthorBioVC.m in Sources */,
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,

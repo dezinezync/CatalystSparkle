@@ -17,6 +17,8 @@
 
 #import "YetiConstants.h"
 
+#import "PagingManager.h"
+
 @interface DetailCustomVC () {
     BOOL _reloadDataset; // used for bookmarks
     BOOL _hasSetupState;
@@ -24,6 +26,8 @@
     
     BOOL _showingArticle;
 }
+
+@property (nonatomic, strong) PagingManager *unreadsManager;
 
 @end
 
@@ -73,6 +77,7 @@
         }
     }
     else {
+        
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
         
         if (@available(iOS 13, *)) {
@@ -119,7 +124,7 @@
         else {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@0]];
-            [snapshot appendItemsWithIdentifiers:(ArticlesManager.shared.unread ?: @[]) intoSectionWithIdentifier:@0];
+            [snapshot appendItemsWithIdentifiers:(self.unreadsManager.items ?: @[]) intoSectionWithIdentifier:@0];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         }
@@ -136,7 +141,7 @@
             
         }
         else {
-            self.DS.data = ArticlesManager.shared.unread;
+            self.DS.data = self.unreadsManager.items;
         }
     }
     
@@ -171,6 +176,94 @@
     if (self.isUnread) {
         [self setupData];
     }
+}
+
+#pragma mark - Getters
+
+- (PagingManager *)unreadsManager {
+    
+    if (_unreadsManager == nil) {
+        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
+        
+        params[@"sortType"] = @(_sortingOption.integerValue);
+            
+        #if TESTFLIGHT == 0
+            if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+            }
+        #endif
+        
+        weakify(self);
+        
+        PagingManager * unreadsManager = [[PagingManager alloc] initWithPath:@"/unread" queryParams:params itemsKey:@"articles"];
+        unreadsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [FeedItem instanceFromDictionary:obj];
+            }];
+            
+            return retval;
+            
+        };
+        
+        unreadsManager.successCB = ^{
+            strongify(self);
+            
+            if (!self) {
+                return;
+            }
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+                
+                if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
+            });
+            
+            [self setupData];
+        };
+        
+        unreadsManager.errorCB = ^(NSError * _Nonnull error) {
+            DDLogError(@"%@", error);
+            
+            strongify(self);
+            
+            if (!self)
+                return;
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateErrored;
+            }
+            else {
+                self.DS.state = DZDatasourceError;
+            }
+            
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+            })
+        };
+        
+        _unreadsManager = unreadsManager;
+    }
+    
+    return _unreadsManager;
+    
 }
 
 #pragma mark - Overrides
@@ -226,12 +319,12 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
+    self.unreadsManager = nil;
+    
     // this will call -[DetailFeedVC loadNextPage]
     [super setSortingOption:option];
     
     _sortingOption = option;
-    
-    [self setupData];
     
 }
 
@@ -249,6 +342,10 @@
         return;
     }
     
+    if (self.unreadsManager.hasNextPage == NO) {
+        return;
+    }
+    
     if (@available(iOS 13, *)) {
         if (self.controllerState == StateLoading) {
             return;
@@ -259,16 +356,15 @@
             return;
     }
     
-    if (self->_canLoadNext == NO) {
-        return;
-    }
-    
     if (@available(iOS 13, *)) {
         self.controllerState = StateLoading;
     }
     else {
         self.DS.state = DZDatasourceLoading;
     }
+    
+    [self.unreadsManager loadNextPage];
+    return;
     
     weakify(self);
     
@@ -326,29 +422,7 @@
             })
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            DDLogError(@"%@", error);
             
-            strongify(self);
-            
-            if (!self)
-                return;
-            
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateErrored;
-            }
-            else {
-                self.DS.state = DZDatasourceError;
-            }
-            
-            weakify(self);
-            
-            asyncMain(^{
-                strongify(self);
-                
-                if ([self.collectionView.refreshControl isRefreshing]) {
-                    [self.collectionView.refreshControl endRefreshing];
-                }
-            })
         }];
     }
     else {
@@ -368,7 +442,7 @@
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
     if ([sender isRefreshing]) {
-        self.page = 0;
+        self.unreadsManager = nil;
         _canLoadNext = YES;
         
         [self loadNextPage];

@@ -82,11 +82,11 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 - (NSString *)UUIDString {
     
     if (_UUIDString == nil) {
-//#ifdef DEBUG
+#ifdef DEBUG
 //        _UUIDString = @"815E2709-31CC-4EB8-9067-D84F224BED66";
-//#else
-//#endif
         
+        _UUIDString = @"4CE0BC0B-82E6-4B08-84F5-DE5C56774064";
+#else
         NSError *error = nil;
         NSString *UUIDString = [Keychain stringFor:kUUIDString error:&error];
         
@@ -108,7 +108,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         }
         
         _UUIDString = UUIDString;
-        
+#endif
     }
     
     return _UUIDString;
@@ -123,11 +123,11 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         
         // Nikhil
         _UUID = [[NSUUID alloc] initWithUUIDString:self.UUIDString];
-        _userID = @(1);
+//        _userID = @(1);
         
         // Anuj
 //        _UUID = [[NSUUID alloc] initWithUUIDString:@"4CE0BC0B-82E6-4B08-84F5-DE5C56774064"];
-//        _userID = @(9);
+        _userID = @(9);
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
@@ -225,6 +225,12 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 }
 
 - (NSNumber *)userID {
+    
+#ifdef DEBUG
+    
+    return @9;
+    
+#endif
     
     if (_userID == nil) {
         NSString *userIDString = [Keychain stringFor:kUserID error:nil];
