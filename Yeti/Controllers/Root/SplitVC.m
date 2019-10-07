@@ -106,9 +106,9 @@
         
     }
     
-#ifdef DEBUG
-    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
-#endif
+//#ifdef DEBUG
+//    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
+//#endif
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
