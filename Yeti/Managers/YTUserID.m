@@ -236,10 +236,14 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
                 
                 if ([userIDString isKindOfClass:NSString.class] == NO
                     && [userIDString respondsToSelector:@selector(stringValue)]) {
+                    
                     userIDString = [(NSNumber *)userIDString stringValue];
+                    
                 }
                 
-                [Keychain add:kUserID string:userIDString];
+                if (userIDString) {
+                    [Keychain add:kUserID string:userIDString];
+                }
             }
             
         }

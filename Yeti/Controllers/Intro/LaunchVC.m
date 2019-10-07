@@ -83,7 +83,15 @@
         purple = [UIColor systemIndigoColor];
     }
     
-    [attrs setAttributes:@{NSFontAttributeName: baseFont, NSForegroundColorAttributeName: theme.titleColor} range:NSMakeRange(0, attrs.string.length)];
+    if (purple == nil) {
+        purple = [UIColor purpleColor];
+    }
+    
+    [attrs setAttributes:@{
+        NSFontAttributeName: baseFont ?: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+        NSForegroundColorAttributeName: theme.titleColor ?: UIColor.blackColor}
+                   range:NSMakeRange(0, attrs.string.length)];
+    
     [attrs setAttributes:@{NSForegroundColorAttributeName: purple} range:elytra];
     
     self.titleLabel.attributedText = attrs;
