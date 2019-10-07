@@ -11,10 +11,11 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "FeedsManager.h"
+
 #import <StoreKit/StoreKit.h>
 
-#import "RMStoreAppReceiptVerifier.h"
 #import "RMStoreKeychainPersistence.h"
+#import "StoreReceiptVerifier.h"
 
 @implementation AppDelegate (Store) 
 
@@ -22,11 +23,11 @@
     
     RMStore *store = [RMStore defaultStore];
     
-    self.receiptVerifier =[[RMStoreAppReceiptVerifier alloc] init];
-    store.receiptVerifier = self.receiptVerifier;
-    
     self.persistence = [[RMStoreKeychainPersistence alloc] init];
     store.transactionPersistor = self.persistence;
+    
+    self.receiptVerifier = [StoreReceiptVerifier new];
+    store.receiptVerifier = self.receiptVerifier;
     
 }
 

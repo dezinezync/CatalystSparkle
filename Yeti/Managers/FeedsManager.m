@@ -1557,7 +1557,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            if ([[responseObject valueForKey:@"status"] boolValue]) {
+//            if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.subscription = sub;
@@ -1567,20 +1567,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                         successCB(responseObject, response, task);
                     });
                 }
-            }
-            else {
-                Subscription *sub = [Subscription new];
-                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
-                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
-                
-                self.subscription = sub;
-                
-                if (errorCB) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        errorCB(sub.error, response, task);
-                    });
-                }
-            }
+//            }
+//            else {
+//                Subscription *sub = [Subscription new];
+//                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
+//                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
+//                
+//                self.subscription = sub;
+//                
+//                if (errorCB) {
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        errorCB(sub.error, response, task);
+//                    });
+//                }
+//            }
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
