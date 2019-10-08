@@ -8,7 +8,7 @@
 
 #import "StoreVC.h"
 #import "RMStore.h"
-#import "RMStoreKeychainPersistence.h"
+#import "StoreKeychainPersistence.h"
 
 #import "YetiThemeKit.h"
 #import "StoreFooter.h"
@@ -25,7 +25,6 @@
     BOOL _sendingReceipt;
 }
 
-@property (nonatomic, weak) RMStoreKeychainPersistence *persistence;
 @property (nonatomic) NSArray *purhcasedProductIdentifiers;
 
 @property (nonatomic, strong) NSArray *products;
@@ -64,8 +63,7 @@
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
     
-    self.persistence = store.transactionPersistor;
-    self.purhcasedProductIdentifiers = [[self.persistence purchasedProductIdentifiers] allObjects];
+    self.purhcasedProductIdentifiers = [[(StoreKeychainPersistence *)[store transactionPersistor] purchasedProductIdentifiers] allObjects];
     
     [[DZActivityIndicatorManager shared] incrementCount];
     
@@ -507,7 +505,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         
-        self.purhcasedProductIdentifiers = self->_persistence.purchasedProductIdentifiers.allObjects;
+        self.purhcasedProductIdentifiers = [(StoreKeychainPersistence *)[[RMStore defaultStore] transactionPersistor] purchasedProductIdentifiers].allObjects;
         [self.tableView reloadData];
     });
 }
