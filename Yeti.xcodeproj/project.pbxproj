@@ -278,7 +278,6 @@
 		F0BF8345219AE3820047352A /* NSString+ImageProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BF8344219AE3820047352A /* NSString+ImageProxy.m */; };
 		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
 		F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
-		F0C6E040234AF9FA001EED23 /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E03F234AF9FA001EED23 /* RMStoreKeychainPersistence.m */; };
 		F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */; };
 		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
 		F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */; };
@@ -329,6 +328,7 @@
 		F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27E821C20FF0007E3547 /* FeedOperation.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
+		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
 		F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85D21ECAF8B0046BB12 /* reader.json */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
@@ -954,8 +954,6 @@
 		F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaOpenGraph.m; sourceTree = "<group>"; };
 		F0C6CA682143A17B00577D16 /* FeedMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedMeta.h; sourceTree = "<group>"; };
 		F0C6CA692143A17B00577D16 /* FeedMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedMeta.m; sourceTree = "<group>"; };
-		F0C6E03E234AF9FA001EED23 /* RMStoreKeychainPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RMStoreKeychainPersistence.h; path = Optional/RMStoreKeychainPersistence.h; sourceTree = "<group>"; };
-		F0C6E03F234AF9FA001EED23 /* RMStoreKeychainPersistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RMStoreKeychainPersistence.m; path = Optional/RMStoreKeychainPersistence.m; sourceTree = "<group>"; };
 		F0C6E047234AFCF8001EED23 /* StoreReceiptVerifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreReceiptVerifier.h; sourceTree = "<group>"; };
 		F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreReceiptVerifier.m; sourceTree = "<group>"; };
 		F0C7D79B212D3D2400F4DB9B /* StoreHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreHeaderView.h; sourceTree = "<group>"; };
@@ -1038,6 +1036,8 @@
 		F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Paragraph.m; sourceTree = "<group>"; };
 		F0EBC7DF1FBB2181004A5605 /* Heading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Heading.h; sourceTree = "<group>"; };
 		F0EBC7E01FBB2181004A5605 /* Heading.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Heading.m; sourceTree = "<group>"; };
+		F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreKeychainPersistence.h; sourceTree = "<group>"; };
+		F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreKeychainPersistence.m; sourceTree = "<group>"; };
 		F0EEC85D21ECAF8B0046BB12 /* reader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = reader.json; sourceTree = "<group>"; };
 		F0EEC85F21ECB2420046BB12 /* reader.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = reader.css; sourceTree = "<group>"; };
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
@@ -1114,8 +1114,6 @@
 			children = (
 				F00E830722C4826D0027C45E /* RMStore.h */,
 				F00E836822C4826D0027C45E /* RMStore.m */,
-				F0C6E03E234AF9FA001EED23 /* RMStoreKeychainPersistence.h */,
-				F0C6E03F234AF9FA001EED23 /* RMStoreKeychainPersistence.m */,
 			);
 			name = RMStore;
 			path = Yeti/Vendors/RMStore/RMStore;
@@ -1450,6 +1448,8 @@
 				F05A923321E71FBD0098448E /* PrefsManager.m */,
 				F0C6E047234AFCF8001EED23 /* StoreReceiptVerifier.h */,
 				F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */,
+				F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */,
+				F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -2626,6 +2626,7 @@
 				F055166321B4FF59008F1F2F /* DBManager.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */,
+				F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */,
 				F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
@@ -2700,7 +2701,6 @@
 				F07A312F2297D78800822969 /* PopMenuDismissAnimationController.m in Sources */,
 				F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */,
-				F0C6E040234AF9FA001EED23 /* RMStoreKeychainPersistence.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0315DBC20CA59FB00F5674A /* Subscription.m in Sources */,
 				F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */,

@@ -10,7 +10,7 @@
 #import "FeedItem.h"
 
 #import "RMStore.h"
-#import "RMStoreKeychainPersistence.h"
+#import "StoreKeychainPersistence.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -31,9 +31,7 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
-@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration> {
-    NSString *_receiptLastUpdatePath;
-}
+@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration>
 
 @property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
 @property (nonatomic, strong, readwrite) Reachability * _Nonnull reachability;
@@ -78,51 +76,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         if (error) {
             DDLogError(@"Error loading push token from disk: %@", error.localizedDescription);
         }
-        
-        NSString *docsDir;
-        NSArray *dirPaths;
-//        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-        
-//        if (!_feedsCachePath) {
-//            dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-//            docsDir = [dirPaths objectAtIndex:0];
-//            
-//            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-//            NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
-//            
-//            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
-//            
-//#ifdef DEBUG
-//            path = [path stringByAppendingString:@".debug"];
-//#endif
-//            
-//            _feedsCachePath = path;
-//        }
-        
-        if (_receiptLastUpdatePath == nil) {
-            if (!docsDir) {
-                dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-                docsDir = [dirPaths objectAtIndex:0];
-            }
-            
-            NSBundle *bundle = [NSBundle mainBundle];
-            
-            NSDictionary *infoDict = [bundle infoDictionary];
-            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-            NSString *filename = formattedString(@"receiptDate-%@.json", buildNumber);
-            
-            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
-            
-#ifdef DEBUG
-            path = [path stringByAppendingString:@".debug"];
-#endif
-            
-            infoDict = nil;
-            buildNumber = nil;
-            filename = nil;
-            
-            _receiptLastUpdatePath = path;
-        }
+    
     }
     
     return self;
@@ -1868,7 +1822,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         self->_subscription = subscription;
         
         if (self->_subscription
-            && [[(RMStoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
+            && [[(StoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
             self->_subscription.lifetime = YES;
         }
         
@@ -2135,34 +2089,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         strongify(self);
         [self updateBookmarksFromServer];
     });
-    
-//    if (MyFeedsManager.userID) {
-//        
-//        NSDate *lastUpdate = [NSKeyedUnarchiver unarchiveObjectWithFile:_receiptLastUpdatePath];
-//        
-//        if (lastUpdate != nil) {
-//            // check every 3 days
-//            NSTimeInterval threeDays = 86400 * 3;
-//            if ([NSDate.date timeIntervalSinceDate:lastUpdate] < threeDays) {
-//                return;
-//            }
-//        }
-//        
-//        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-//        
-//        NSData *data = [[NSData alloc] initWithContentsOfURL:receiptURL];
-//        
-//        if (data) {
-//            [self postAppReceipt:data success:nil error:nil];
-//        }
-//        
-//        lastUpdate = NSDate.date;
-//        
-//        if (![NSKeyedArchiver archiveRootObject:lastUpdate toFile:_receiptLastUpdatePath]) {
-//            DDLogError(@"Failed to archive receipt update date");
-//        }
-//        
-//    }
     
 }
 

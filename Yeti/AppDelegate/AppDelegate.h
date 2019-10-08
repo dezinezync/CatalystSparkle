@@ -26,7 +26,7 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, assign) BOOL processingTransactions;
 
 @property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
-@property (nonatomic, strong) RMStoreKeychainPersistence * persistence;
+@property (nonatomic, strong) id<RMStoreTransactionPersistor> persistence;
 
 - (void)loadCodeTheme;
 

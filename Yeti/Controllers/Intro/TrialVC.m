@@ -11,7 +11,6 @@
 #import "FeedsManager.h"
 
 #import "RMStore.h"
-#import "RMStoreKeychainPersistence.h"
 #import "UIImage+Color.h"
 #import "YetiConstants.h"
 
@@ -29,7 +28,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *restoreButton;
 @property (weak, nonatomic) IBOutlet UILabel *subtitleLabel;
 
-@property (nonatomic, weak) RMStoreKeychainPersistence *persistence;
 @property (nonatomic) NSArray *purhcasedProductIdentifiers;
 
 @property (nonatomic, copy) NSArray <NSString *> *products;

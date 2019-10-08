@@ -14,7 +14,7 @@
 
 #import <StoreKit/StoreKit.h>
 
-#import "RMStoreKeychainPersistence.h"
+#import "StoreKeychainPersistence.h"
 #import "StoreReceiptVerifier.h"
 
 @implementation AppDelegate (Store) 
@@ -23,7 +23,7 @@
     
     RMStore *store = [RMStore defaultStore];
     
-    self.persistence = [[RMStoreKeychainPersistence alloc] init];
+    self.persistence = [StoreKeychainPersistence new];
     store.transactionPersistor = self.persistence;
     
     self.receiptVerifier = [StoreReceiptVerifier new];

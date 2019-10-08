@@ -188,7 +188,7 @@
         params[@"sortType"] = @(_sortingOption.integerValue);
             
         #if TESTFLIGHT == 0
-            if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
                 params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
             }
         #endif
