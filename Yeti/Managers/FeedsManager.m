@@ -412,8 +412,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return;
         }
 
-        strongify(self);
-
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
@@ -463,8 +461,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
-        strongify(self);
-        
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
