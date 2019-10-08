@@ -4,3 +4,9 @@
 [submodule "Yeti/Vendors/Keychain"]
 	path = Yeti/Vendors/Keychain
 	url = git@github.com:dezinezync/Keychain.git
+[submodule "Yeti/Vendors/DZNetworking"]
+	path = Yeti/Vendors/DZNetworking
+	url = git@github.com:DZNS/DZNetworking.git
+[submodule "Yeti/Vendors/DZKit"]
+	path = Yeti/Vendors/DZKit
+	url = git@github.com:dezinezync/DZKit.git
