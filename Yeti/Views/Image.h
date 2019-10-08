@@ -28,6 +28,8 @@
 
 @end
 
+@class ImageLoader;
+
 @interface Image : UIView
 
 @property (nonatomic, assign) NSInteger idx;
@@ -41,7 +43,7 @@
 
 @property (nonatomic, weak) Content *content;
 
-- (void)il_setImageWithURL:(id)url;
+- (void)il_setImageWithURL:(id)url imageLoader:(ImageLoader *)imageLoader;
 
 - (void)il_cancelImageLoading;
 

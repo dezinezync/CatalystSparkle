@@ -97,8 +97,6 @@ AppDelegate *MyAppDelegate = nil;
             
             strongify(self);
             
-            [ADZLogger initialize];
-            
             [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
             
             [self setupStoreManager];

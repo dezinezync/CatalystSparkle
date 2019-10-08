@@ -87,6 +87,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
 
+@property (nonatomic, strong) ImageLoader *articlesImageLoader;
+
 - (void)didTapOnImage:(UITapGestureRecognizer *)sender API_AVAILABLE(ios(13.0));
 
 @end
@@ -115,6 +117,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.state = ArticleStateLoading;
     self.navigationItem.leftItemsSupplementBackButton = YES;
+    self.articlesImageLoader = [ImageLoader new];
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -268,10 +271,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)dealloc {
-    NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
     
-    if (cache) {
-        [cache removeAllObjects];
+    if (self.articlesImageLoader != nil) {
+        [self.articlesImageLoader.cache removeAllObjects];
     }
     
     @try {
@@ -2056,7 +2058,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 imageview.loading = YES;
                 if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
-                    [imageview il_setImageWithURL:imageview.URL];
+                    [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
                 }
             });
         }
