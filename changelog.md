@@ -1,5 +1,8 @@
 # v1.5.0
 
+## Build 281
+- Fixed some really nasty memory leaks.  
+
 ## Build 278
 
 - **NEW** Image Viewer: Tap on an image in an article to open it in a full screen image viewer. All images from the article are gathered in single place for easier viewing. 
