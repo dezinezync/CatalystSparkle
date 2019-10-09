@@ -260,7 +260,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 #pragma mark - Config
 
 - (BOOL)showImage {
-    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingNever])
         return NO;
     
     else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {

@@ -1,5 +1,10 @@
 # v1.5.0
 
+## Build 282
+- Fixed an issue with image loading preferences. "Never Load Images" now works properly in the Articles List & Article Viewer. 
+
+- Fixed an issue with 
+
 ## Build 281
 - Fixed some really nasty memory leaks.  
 

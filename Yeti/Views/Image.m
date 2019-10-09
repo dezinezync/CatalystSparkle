@@ -167,37 +167,11 @@
                 
                 self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
                 
-                self.imageView.image = nil;
-                
                 if (@available(iOS 13, *)) {
                     [self addContextMenus];
                 }
                 
             } error:nil imageLoader:imageLoader];
-            
-//            dispatch_async(SharedImageLoader.ioQueue, ^{
-//
-//                // check if we have the cached the sized image
-//                NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
-//
-//                [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
-//
-//                    if (image != nil) {
-//                        dispatch_async(dispatch_get_main_queue(), ^{
-//                            self.imageView.settingCached = YES;
-//                            self.imageView.image = image;
-//                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-//                        });
-//                    }
-//                    else {
-//                        [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-//                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-//                        } error:nil];
-//                    }
-//
-//                }];
-//
-//            });
             
         });
     }

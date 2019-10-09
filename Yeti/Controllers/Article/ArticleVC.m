@@ -707,11 +707,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addTitle];
     
     // iOS 13 shouldn't need it and handle it well.
-    if (@available(iOS 13, *)) {}
-    else {
-        if (self.item.content.count > 20) {
-            self->_deferredProcessing = YES;
-        }
+    if (self.item.content.count > 20) {
+        self->_deferredProcessing = YES;
     }
     
     if (self.item.coverImage) {
@@ -1013,7 +1010,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (BOOL)showImage {
-    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingNever])
         return NO;
     
     else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
@@ -1549,6 +1546,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+    if (content.images == nil) {
+        return;
+    }
+    
+    if (content.images.count == 1) {
+        // add this as a single image instead of a gallery
+        [self addImage:content.images.firstObject];
+        return;
+    }
+    
     if (_last && ![_last isKindOfClass:Linebreak.class]) {
         [self addLinebreak];
     }
@@ -2055,12 +2062,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         else if (!imageview.imageView.image && contains && !imageview.isLoading) {
 //            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
+                
                 imageview.loading = YES;
-                if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
-                    [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
-                }
-            });
+                
+                [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
+            }
         }
         else if (imageview.imageView.image && !contains) {
             
