@@ -1,9 +1,13 @@
 # v1.5.0
 
-## Build 282
-- Fixed an issue with image loading preferences. "Never Load Images" now works properly in the Articles List & Article Viewer. 
+## Build 283
 
-- Fixed an issue with 
+- Drastically improved managing of unread counts in the app. 
+
+- Improved behavior of the app when marking backdated articles as read. 
+
+## Build 282
+- Fixed an issue with image loading preferences. "Never Load Images" now works properly in the Articles List & Article Viewer.  
 
 ## Build 281
 - Fixed some really nasty memory leaks.  
