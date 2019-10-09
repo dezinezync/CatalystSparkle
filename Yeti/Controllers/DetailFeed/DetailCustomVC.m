@@ -225,9 +225,9 @@
                     [self.collectionView.refreshControl endRefreshing];
                 }
                 
-                if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
-                    [self loadNextPage];
-                }
+//                if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
+//                    [self loadNextPage];
+//                }
             });
             
             [self setupData];

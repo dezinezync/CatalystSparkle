@@ -57,22 +57,22 @@
     
     weakify(self);
     
-    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
-            
-            [self setupData];
-            
-        });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        DDLogError(@"Failed to fetch unread: %@", error);
-        
-    }];
+//    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
+//
+//            [self setupData];
+//
+//        });
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        DDLogError(@"Failed to fetch unread: %@", error);
+//
+//    }];
     
-    [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         

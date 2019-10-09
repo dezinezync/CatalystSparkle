@@ -120,7 +120,7 @@ static ArticlesManager * SharedArticleManager = nil;
     self.folders = [ArticlesManager.shared folders];
     
     if (ArticlesManager.shared.feeds) {
-        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:@{@"feeds" : _feeds, @"folders": ArticlesManager.shared.folders ?: @[]}];
+        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
     }
 }
 

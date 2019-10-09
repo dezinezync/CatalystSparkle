@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shared;
 
-@property (nonatomic, strong) NSArray <FeedItem *> *unread;
-
 @property (nonatomic, strong) NSArray <Folder *> *folders;
 
 @property (nonatomic, strong) NSArray <Feed *> *feeds;

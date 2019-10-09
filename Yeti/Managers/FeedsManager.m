@@ -89,13 +89,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)didReceiveMemoryWarning {
     ArticlesManager.shared.bookmarks = nil;
     ArticlesManager.shared.folders = nil;
-    ArticlesManager.shared.unread = nil;
+//    ArticlesManager.shared.unread = nil;
     ArticlesManager.shared.feeds = nil;
 }
 
 #pragma mark - Feeds
 
-- (void)getFeedsSince:(NSDate *)since success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
 {
     weakify(self);
     
@@ -118,6 +118,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
+        NSNumber *unread = [responseObject valueForKey:@"unread"];
+        self.totalUnread = unread.integerValue;
+        
         BOOL hasAddedFirstFeed = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
         
         if (hasAddedFirstFeed == NO) {
@@ -139,57 +142,8 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:hasAddedFirstFeed];
         }
         
-        if (!since || !ArticlesManager.shared.feeds.count) {
-            @synchronized (self) {
-                ArticlesManager.shared.feeds = feeds;
-            }
-        }
-        else {
-
-            if (feeds.count) {
-
-                NSArray <Feed *> *copy = [ArticlesManager.shared.feeds copy];
-
-                for (Feed *feed in feeds) {
-                    // get the corresponding feed from the memory
-                    Feed *main = [ArticlesManager.shared.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
-                        if (current.feedID.integerValue == feed.feedID.integerValue)
-                            return current;
-                        return prev;
-                    }];
-
-                    if (!main) {
-                        // this is a new feed
-                        copy = [copy arrayByAddingObject:feed];
-                    }
-                    else {
-                        NSArray <FeedItem *> *newItems = [feed.articles rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                           
-                            NSUInteger identifier = obj.identifier.integerValue;
-                            
-                            FeedItem *existing = [main.articles rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idx, NSArray *array) {
-                                return current.identifier.integerValue == identifier ? current : prev;
-                            }];
-                            
-                            return existing == nil;
-                            
-                        }];
-                        
-                        // add the new articles. We add main's article to feed so the order remains in reverse-chrono
-                        main.articles = [newItems arrayByAddingObjectsFromArray:main.articles];
-                    }
-                }
-
-                @synchronized (self) {
-                    ArticlesManager.shared.feeds = feeds;
-                }
-            }
-            else {
-                @synchronized (self) {
-                    ArticlesManager.shared.feeds = feeds;
-                }
-            }
-
+        @synchronized (self) {
+            ArticlesManager.shared.feeds = feeds;
         }
         
         if (successCB) {
@@ -664,7 +618,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 // will be available
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.totalUnread = 0;
-                    ArticlesManager.shared.unread = @[];
+//                    ArticlesManager.shared.unread = @[];
                 });
                 
                 NSInteger const newFeedUnread = 0;
@@ -851,29 +805,29 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)updateUnreadArray
 {
-    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
-    
-    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        BOOL isRead = obj.isRead;
-        if (isRead) {
-            [markedRead addObject:obj.identifier];
-        }
-        return !isRead;
-    }];
-    
-    if (!markedRead.count)
-        return;
-    
-    ArticlesManager.shared.unread = newUnread;
-    
-    // propagate changes to the feeds object as well
-    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
-    
-    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
-       
-        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
-        
-    } }
+//    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
+//    
+//    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+//        BOOL isRead = obj.isRead;
+//        if (isRead) {
+//            [markedRead addObject:obj.identifier];
+//        }
+//        return !isRead;
+//    }];
+//    
+//    if (!markedRead.count)
+//        return;
+//    
+//    ArticlesManager.shared.unread = newUnread;
+//    
+//    // propagate changes to the feeds object as well
+//    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
+//    
+//    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
+//       
+//        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
+//        
+//    } }
     
 }
 
@@ -910,67 +864,67 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-    if ([self userID] == nil) {
-        if (errorCB)
-            errorCB(nil, nil, nil);
-        
-        return;
-    }
-    
-    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10, @"sortType":  @(sorting.integerValue)}.mutableCopy;
-    
-#if TESTFLIGHT == 0
-    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
-        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-    }
-#endif
-    
-    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-      
-        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [FeedItem instanceFromDictionary:obj];
-        }];
-        
-        self.unreadLastUpdate = NSDate.date;
-        
-        if (page == 1) {
-            ArticlesManager.shared.unread = items;
-        }
-        else {
-            if (!ArticlesManager.shared.unread) {
-                ArticlesManager.shared.unread = items;
-            }
-            else {
-                NSArray *unread = ArticlesManager.shared.unread;
-                NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                    return !obj.isRead;
-                }];
-                
-                @try {
-                    prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-                    ArticlesManager.shared.unread = prefiltered;
-                }
-                @catch (NSException *exc) {}
-            }
-        }
-        // the conditional takes care of filtered article items.
-        self.totalUnread = ArticlesManager.shared.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
-        
-        if (successCB) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                successCB(items, response, task);
-            });
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
-        }
-    }];
+//    if ([self userID] == nil) {
+//        if (errorCB)
+//            errorCB(nil, nil, nil);
+//
+//        return;
+//    }
+//
+//    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10, @"sortType":  @(sorting.integerValue)}.mutableCopy;
+//
+//#if TESTFLIGHT == 0
+//    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+//        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+//    }
+//#endif
+//
+//    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [FeedItem instanceFromDictionary:obj];
+//        }];
+//
+//        self.unreadLastUpdate = NSDate.date;
+//
+//        if (page == 1) {
+//            ArticlesManager.shared.unread = items;
+//        }
+//        else {
+//            if (!ArticlesManager.shared.unread) {
+//                ArticlesManager.shared.unread = items;
+//            }
+//            else {
+//                NSArray *unread = ArticlesManager.shared.unread;
+//                NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+//                    return !obj.isRead;
+//                }];
+//
+//                @try {
+//                    prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
+//                    ArticlesManager.shared.unread = prefiltered;
+//                }
+//                @catch (NSException *exc) {}
+//            }
+//        }
+//        // the conditional takes care of filtered article items.
+//        self.totalUnread = ArticlesManager.shared.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+//
+//        if (successCB) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                successCB(items, response, task);
+//            });
+//        }
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//        error = [self errorFromResponse:error.userInfo];
+//
+//        if (errorCB)
+//            errorCB(error, response, task);
+//        else {
+//            DDLogError(@"Unhandled network error: %@", error);
+//        }
+//    }];
 }
 
 - (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
@@ -2194,7 +2148,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)resetAccount {
     ArticlesManager.shared.folders = nil;
     ArticlesManager.shared.feeds = nil;
-    ArticlesManager.shared.unread = nil;
+//    ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
     
     [self.bookmarksManager _removeAllBookmarks:nil];
@@ -2656,7 +2610,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         [coder encodeObject:ArticlesManager.shared.bookmarks forKey:kBookmarksKey];
         [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
-        [coder encodeObject:ArticlesManager.shared.unread forKey:kUnreadKey];
+//        [coder encodeObject:ArticlesManager.shared.unread forKey:kUnreadKey];
         
         if (self.unreadLastUpdate) {
             [coder encodeDouble:[self.unreadLastUpdate timeIntervalSince1970] forKey:kUnreadLastUpdateKey];
@@ -2682,7 +2636,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         ArticlesManager.shared.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
-        ArticlesManager.shared.unread = [coder decodeObjectForKey:kUnreadKey];
+//        ArticlesManager.shared.unread = [coder decodeObjectForKey:kUnreadKey];
         
         double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
         if (unreadUpdate) {

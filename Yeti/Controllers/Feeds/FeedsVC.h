@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FeedsHeaderView.h"
 #import "BarPositioning.h"
 
 #import "BookmarksManager.h"
@@ -28,14 +27,10 @@ extern NSString *const MainSection;
     NSIndexPath *_highlightedRow;
 }
 
-@property (nonatomic, weak) FeedsHeaderView *headerView;
-
 @property (nonatomic, strong, readonly) DZSectionedDatasource *DS NS_DEPRECATED_IOS(11, 13.0);
 @property (nonatomic, weak, readonly) DZBasicDatasource *DS1, *DS2 NS_DEPRECATED_IOS(11, 13.0);
 
 @property (nonatomic, strong) UITableViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
-
-@property (nonatomic, copy) NSDate *sinceDate;
 
 @property (nonatomic, strong) BookmarksManager *bookmarksManager;
 

@@ -98,17 +98,6 @@ static void *KVO_Unread = &KVO_Unread;
         [self dz_smoothlyDeselectRows:self.tableView];
     }
     
-    if (self.headerView.tableView.indexPathForSelectedRow) {
-        
-        NSIndexPath *indexpath = self.headerView.tableView.indexPathForSelectedRow;
-        if (indexpath.row == 0) {
-            // also update unread array
-            [MyFeedsManager updateUnreadArray];
-        }
-        
-        [self dz_smoothlyDeselectRows:self.headerView.tableView];
-    }
-    
     if (_noPreSetup == NO) {
         _noPreSetup = YES;
         
@@ -195,7 +184,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
 
-    [ArticlesManager.shared addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+    [MyFeedsManager addObserver:self forKeyPath:propSel(totalUnread) options:kvoOptions context:KVO_Unread];
     
 }
 
@@ -470,31 +459,6 @@ static void *KVO_Unread = &KVO_Unread;
     }
     
     return _feedbackGenerator;
-}
-
-- (NSDate *)sinceDate
-{
-    if (!_sinceDate) {
-#ifdef DEBUG
-        NSString *path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
-#else
-        NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
-#endif
-        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-            NSError *error = nil;
-            NSString *data = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-
-            if (!data) {
-                DDLogError(@"Failed to load since date for feeds. %@", error.localizedDescription);
-            }
-            else {
-                NSTimeInterval timestamp = [data doubleValue];
-                _sinceDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
-            }
-        }
-    }
-
-    return _sinceDate;
 }
 
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath {
@@ -838,6 +802,13 @@ NSString * const kDS2Data = @"DS2Data";
                 
             }
             
+            if (presentingSelf == YES) {
+                FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                if (cell != nil) {
+                    cell.countLabel.text = @(MyFeedsManager.totalUnread).stringValue;
+                }
+            }
+            
         }
         else {
             [self.DS2 resetData];
@@ -857,7 +828,7 @@ NSString * const kDS2Data = @"DS2Data";
 {
     weakify(self);
     
-    if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
+    if (context == KVO_Unread && [keyPath isEqualToString:propSel(totalUnread)]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
@@ -1003,7 +974,6 @@ NSString * const kDS2Data = @"DS2Data";
         }
     }
     
-    [[self.headerView tableView] reloadData];
     if (@available(iOS 13, *)) {}
     else {
         self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;

@@ -239,9 +239,25 @@
                 if (self != nil && [self collectionView] != nil) {
                     // if we're in the unread section
                     if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] == YES) {
-                        self.DS.state = DZDatasourceLoading;
-                        self.DS.data = @[];
-                        self.DS.state = DZDatasourceLoaded;
+                        
+                        if (@available(iOS 13, *)) {
+                            
+                            self.controllerState = StateLoading;
+                            
+                            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                            [snapshot appendSectionsWithIdentifiers:@[@0]];
+                            
+                            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                            
+                            self.controllerState = StateLoaded;
+                            
+                        }
+                        else {
+                            self.DS.state = DZDatasourceLoading;
+                            self.DS.data = @[];
+                            self.DS.state = DZDatasourceLoaded;
+                        }
+                        
                     }
                     else {
                         [self _markVisibleRowsRead];

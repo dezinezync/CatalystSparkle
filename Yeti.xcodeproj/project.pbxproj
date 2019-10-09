@@ -11,8 +11,6 @@
 		F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */; };
 		F00411051FC9960E00B513A9 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = F00411041FC9960E00B513A9 /* Image.m */; };
 		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
-		F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */; };
-		F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */; };
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
 		F00E837322C4826D0027C45E /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F00E836822C4826D0027C45E /* RMStore.m */; };
@@ -547,9 +545,6 @@
 		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
 		F005265E1FBF148E00A103CD /* Youtube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Youtube.m; sourceTree = "<group>"; };
 		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
-		F0095FAD20764130009BFFF3 /* FeedsHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsHeaderView.h; sourceTree = "<group>"; };
-		F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsHeaderView.m; sourceTree = "<group>"; };
-		F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsHeaderView.xib; sourceTree = "<group>"; };
 		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
@@ -1682,9 +1677,6 @@
 				F08808A0206B967A00ECE1E6 /* TweetImage.h */,
 				F08808A1206B967A00ECE1E6 /* TweetImage.m */,
 				F08808A2206B967A00ECE1E6 /* TweetImage.xib */,
-				F0095FAD20764130009BFFF3 /* FeedsHeaderView.h */,
-				F0095FAE20764130009BFFF3 /* FeedsHeaderView.m */,
-				F0095FB02076413B009BFFF3 /* FeedsHeaderView.xib */,
 				F0D008552081C32400EAFE3B /* FeedHeaderView.h */,
 				F0D008562081C32400EAFE3B /* FeedHeaderView.m */,
 				F0D008582081C33400EAFE3B /* FeedHeaderView.xib */,
@@ -2381,7 +2373,6 @@
 				F0AF314020D287E600E074D6 /* IntroViewDefault.xib in Resources */,
 				F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */,
 				F0A5AE9C20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
-				F0095FB12076413B009BFFF3 /* FeedsHeaderView.xib in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
 				F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */,
 				F09D12D8220D6CF800252902 /* flutter.png in Resources */,
@@ -2631,7 +2622,6 @@
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
 				F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */,
 				F05A923421E71FBD0098448E /* PrefsManager.m in Sources */,
-				F0095FAF20764130009BFFF3 /* FeedsHeaderView.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,

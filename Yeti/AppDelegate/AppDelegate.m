@@ -399,7 +399,7 @@ AppDelegate *MyAppDelegate = nil;
         return;
     }
     
-    NSInteger currentCount = (ArticlesManager.shared.unread ?: @[]).count;
+    NSInteger currentCount = MyFeedsManager.totalUnread;
     
     [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

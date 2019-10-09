@@ -54,64 +54,60 @@
     NSDictionary *params = @{@"articles": articles ?: @[], @"userID": self.userID};
     
     weakify(self);
-
+    
     [self.backgroundSession POST:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
 
         for (FeedItem *item in items) {
             item.read = read;
+        }
+        
+        if (read == YES) {
+            self.totalUnread -= items.count;
+        }
+        else {
+            self.totalUnread += items.count;
         }
         
         // only post the notification if it's affecting a feed or folder
         // this avoids reducing or incrementing the count for unsubscribed feeds
         if (feeds.count > 0) {
             
-            strongify(self);
-            
-            NSArray <FeedItem *> *unread = ArticlesManager.shared.unread;
-            
-            if (!read) {
-                unread = [unread arrayByAddingObjectsFromArray:items];
-            }
-            else {
-                unread = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                    return ![articles containsObject:obj.identifier];
+            [feeds enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(Feed *  _Nonnull feed, NSUInteger idx, BOOL * _Nonnull stop) {
+               
+                NSInteger current = [feed.unread integerValue];
+                
+                NSArray <FeedItem *> *articlesForFeed = [items rz_filter:^BOOL(FeedItem *objx, NSUInteger idxx, NSArray *array) {
+                    return objx.feedID.integerValue == feed.feedID.integerValue;
                 }];
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                // new total unread
-                NSInteger currentUnread = self.totalUnread;
-                NSInteger newUnread = currentUnread;
                 
-                if (read) {
-                    newUnread -= items.count;
-                }
-                else {
-                    newUnread += items.count;
-                }
+                NSInteger affectedArticles = articlesForFeed.count;
                 
-                self.totalUnread = MAX(0, newUnread);
-                ArticlesManager.shared.unread = unread;
-            });
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                for (Feed *feed in feeds) {
-                    NSInteger current = [feed.unread integerValue];
-                    NSInteger updated = MAX(0, current + (read ? -1 : 1));
+                NSInteger updated = MAX(0, current + (read ? (-1 * affectedArticles) : affectedArticles));
+                
+                feed.unread = @(updated);
+                
+                if (feed.folderID != nil) {
                     
-                    feed.unread = @(updated);
+                    Folder *folder = [self folderForID:feed.folderID];
                     
-                    if (feed.folderID != nil) {
-                        Folder *folder = [self folderForID:feed.folderID];
-                        if (folder != nil) {
+                    if (folder != nil) {
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                           
                             [folder willChangeValueForKey:propSel(unreadCount)];
                             // simply tell the unreadCount property that it has been updated.
                             // KVO should handle the rest for us
                             [folder didChangeValueForKey:propSel(unreadCount)];
-                        }
+                            
+                        });
+                        
                     }
                 }
-            });
+                
+            }];
+        
         }
 
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
