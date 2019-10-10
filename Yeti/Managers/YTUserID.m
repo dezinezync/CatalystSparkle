@@ -40,6 +40,10 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             NSNumber *userID = self.userID;
             
             NSLog(@"Initialised with: %@ %@", UUID, userID);
+            
+            if (UUID != nil && userID != nil) {
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            }
         });
         
     }

@@ -88,7 +88,14 @@
         
         self.restoreButton.enabled = YES;
         
-        [self processTransactions:@[transaction]];
+        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.subscription.expiry, MyFeedsManager.subscription.status.integerValue == 2 ? @"YES" : @"NO");
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [Keychain add:kHasShownOnboarding boolean:YES];
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        });
         
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         
@@ -121,7 +128,14 @@
         
         self.button.enabled = YES;
         
-        [self processTransactions:transactions];
+        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.subscription.expiry, MyFeedsManager.subscription.status.integerValue == 2 ? @"YES" : @"NO");
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [Keychain add:kHasShownOnboarding boolean:YES];
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        });
         
     } failure:^(NSError *error) {
         
@@ -141,104 +155,6 @@
 }
 
 #pragma mark - Store
-
-- (void)processTransactions:(NSArray <SKPaymentTransaction *> *)transactions {
-    
-    [[DZActivityIndicatorManager shared] decrementCount];
-    
-    NSDate *today = [NSDate date];
-    
-    // order transactions by date in descending order
-    // earliest order is first
-    // latest order is last
-    if (transactions.count > 1) {
-        transactions = [transactions sortedArrayUsingComparator:^NSComparisonResult(SKPaymentTransaction * _Nonnull obj1, SKPaymentTransaction * _Nonnull obj2) {
-            return [obj1.transactionDate compare:obj2.transactionDate];
-        }];
-        
-        NSDate *oneMonthAgo = [self date:today addDays:0 months:-1 years:0];
-        
-        // remove transactions older than 1 month
-        transactions = [transactions rz_filter:^BOOL(SKPaymentTransaction *obj, NSUInteger idx, NSArray *array) {
-            NSComparisonResult result = [obj.transactionDate compare:oneMonthAgo];
-            return result == NSOrderedDescending;
-        }];
-    }
-    
-    // only process purchased/restored transactions
-    transactions = [transactions rz_filter:^BOOL(SKPaymentTransaction *obj, NSUInteger idx, NSArray *array) {
-        return obj.transactionState == SKPaymentTransactionStatePurchased || obj.transactionState == SKPaymentTransactionStateRestored;
-    }];
-    
-    BOOL isTrial = NO;
-    NSDate *expiry = [MyFeedsManager.subscription hasExpired] == YES ? [NSDate date] : [MyFeedsManager.subscription expiry];
-    
-    // handle auto-renewing subscriptions as well
-    for (SKPaymentTransaction *transaction in transactions) {
-        SKPayment *payment = transaction.payment;
-        
-        NSString *productIdentifier = payment.productIdentifier;
-        NSDate *transactionDate = transaction.transactionDate;
-        
-        if ([productIdentifier containsString:@".pro"]) {
-            // auto-renewable subscription
-            if ([productIdentifier containsString:@"12m"]) {
-                expiry = [self date:transactionDate addDays:0 months:0 years:1];
-            }
-            else {
-                expiry = [self date:transactionDate addDays:0 months:1 years:0];
-            }
-        }
-        else if ([productIdentifier containsString:@".free"]) {
-            // free trial
-            NSDate *transactionDate = transaction.transactionDate;
-            expiry = [self date:transactionDate addDays:14 months:0 years:0];
-            isTrial = YES;
-        }
-        else {
-            // non-renewable subscription
-            NSString *durationString = [[[productIdentifier componentsSeparatedByString:@"."] lastObject] stringByReplacingOccurrencesOfString:@"m" withString:@""];
-            NSInteger duration = durationString.integerValue;
-            
-            switch (duration) {
-                case 1:
-                {
-                    expiry = [self date:expiry addDays:0 months:1 years:0];
-                }
-                    break;
-                case 3:
-                {
-                    expiry = [self date:expiry addDays:0 months:3 years:0];
-                }
-                    break;
-                default:
-                {
-                    expiry = [self date:expiry addDays:0 months:0 years:1];
-                }
-                    break;
-            }
-        }
-    }
-    
-    DDLogDebug(@"Expiry: %@, isTrial: %@", expiry, isTrial ? @"YES" : @"NO");
-    
-    [MyFeedsManager updateExpiryTo:expiry isTrial:isTrial success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [Keychain add:kHasShownOnboarding boolean:YES];
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-        });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        [AlertManager showGenericAlertWithTitle:@"Expiry Update Failed" message:error.localizedDescription];
-        
-        [self setButtonsState:YES];
-        
-    }];
-}
 
 - (void)getProducts {
     

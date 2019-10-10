@@ -156,11 +156,13 @@
         
         [MyFeedsManager getUserInformationFor:userIdentifier success:^(NSDictionary *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-            
-            TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-            
-            [self showViewController:vc sender:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+                
+                [self showViewController:vc sender:self];
+            });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            

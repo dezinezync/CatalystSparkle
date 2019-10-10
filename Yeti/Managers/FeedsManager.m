@@ -2564,7 +2564,12 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     self.bookmarksManager->_migrating = NO;
     
+    weakify(self);
+    
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         @try {

@@ -260,7 +260,7 @@
     [[DZActivityIndicatorManager shared] incrementCount];
     [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray <SKPaymentTransaction *> *transactions) {
         
-       [self setButtonsState:YES];
+        [self setButtonsState:YES];
         
         [self processTransactions:transactions];
         
