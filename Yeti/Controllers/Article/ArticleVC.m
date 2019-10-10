@@ -676,6 +676,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (feed != nil) {
         
+        MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - 1);
+        
         feed.unread = @(MAX(0, feed.unread.integerValue - 1));
         
         if (feed.folderID != nil) {
@@ -690,8 +692,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    
-    MyFeedsManager.totalUnread--;
     
 }
 
