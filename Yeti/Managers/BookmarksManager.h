@@ -45,9 +45,11 @@ extern NSErrorDomain const BookmarksManagerErrorDomain;
 
 #pragma mark - Observing
 
-- (void)addObserver:(id)object name:(NSNotificationName)name callback:(void (^)(void))callback;
+- (void)addObserver:(id _Nonnull)object name:(NSNotificationName _Nonnull)name callback:(void (^)(void))callback;
 
-- (void)removeObserver:(id)object name:(NSNotificationName)name;
+- (void)removeObserver:(id _Nonnull)object name:(NSNotificationName _Nonnull)name;
+
+- (void)postNotification:(NSNotificationName _Nonnull)name object:(id _Nullable)object;
 
 @end
 

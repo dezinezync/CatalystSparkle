@@ -2570,16 +2570,13 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         strongify(self);
         
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         @try {
-            __unused id retval = [self.bookmarksManager performSelector:NSSelectorFromString(@"postNotification:object:") withObject:BookmarksDidUpdateNotification withObject:nil];
+           [self.bookmarksManager postNotification:BookmarksDidUpdateNotification object:nil];
         } @catch (NSException *exception) {
             NSLog(@"Exception when posting bookmarks notification, %@", exception);
         } @finally {
             
         }
-#pragma clang diagnostic pop
     });
     
 }

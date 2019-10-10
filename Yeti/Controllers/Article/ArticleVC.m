@@ -691,6 +691,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     
+    MyFeedsManager.totalUnread--;
+    
 }
 
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {

@@ -111,6 +111,9 @@
             [snapshot appendSectionsWithIdentifiers:@[@0]];
             
             NSArray *bookmarks = self.bookmarksManager.bookmarks ?: @[];
+            NSSet *set = [NSSet setWithArray:bookmarks];
+            
+            bookmarks = set.allObjects;
             
             if ([_sortingOption isEqualToString:YTSortAllDesc]) {
                 [snapshot appendItemsWithIdentifiers:bookmarks.reverseObjectEnumerator.allObjects];
@@ -225,9 +228,9 @@
                     [self.collectionView.refreshControl endRefreshing];
                 }
                 
-//                if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
-//                    [self loadNextPage];
-//                }
+                if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
             });
             
             [self setupData];

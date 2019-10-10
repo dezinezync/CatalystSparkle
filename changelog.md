@@ -1,5 +1,11 @@
 # v1.5.0
 
+## Build 285
+
+- Images are loaded using the same extension from the proxy as the source image. 
+
+- Fixes a small bug with the unread count when marking read automatically from the article reader. 
+
 ## Build 283
 
 - Drastically improved managing of unread counts in the app. 
