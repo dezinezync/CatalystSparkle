@@ -196,4 +196,49 @@
     
 }
 
+#pragma mark - <NSCoding>
+
++ (BOOL)supportsSecureCoding {
+    
+    return YES;
+    
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder {
+    
+    [coder encodeObject:self.path forKey:propSel(path)];
+    
+    if (self.queryParams) {
+        [coder encodeObject:self.queryParams forKey:propSel(queryParams)];
+    }
+    
+    [coder encodeObject:self.itemsKey forKey:propSel(itemsKey)];
+    [coder encodeInteger:self.page forKey:propSel(page)];
+    [coder encodeInteger:self.total forKey:propSel(total)];
+    [coder encodeBool:self.hasNextPage forKey:propSel(hasNextPage)];
+    [coder encodeObject:self.uniqueItems forKey:propSel(uniqueItems)];
+    
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    
+    NSString *path = [coder decodeObjectOfClass:NSString.class forKey:propSel(path)];
+    NSDictionary *queryParams = [coder decodeObjectOfClass:NSDictionary.class forKey:propSel(queryParams)];
+    NSString *itemsKey = [coder decodeObjectOfClass:NSString.class forKey:propSel(itemsKey)];
+    NSInteger page = [coder decodeIntegerForKey:propSel(page)];
+    NSInteger total = [coder decodeIntegerForKey:propSel(total)];
+    BOOL hasNextPage = [coder decodeBoolForKey:propSel(hasNextPage)];
+    NSMutableOrderedSet *uniqueItems = [coder decodeObjectOfClass:NSMutableOrderedSet.class forKey:propSel(uniqueItems)];
+    
+    PagingManager *instance = [[PagingManager alloc] initWithPath:path queryParams:queryParams itemsKey:itemsKey];
+    instance.page = page;
+    instance.total = total;
+    instance.hasNextPage = hasNextPage;
+    instance.uniqueItems = uniqueItems;
+    
+    return instance;
+    
+    
+}
+
 @end

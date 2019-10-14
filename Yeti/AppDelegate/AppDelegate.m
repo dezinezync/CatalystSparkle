@@ -111,6 +111,7 @@ AppDelegate *MyAppDelegate = nil;
         [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
         
         [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
+        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)ArticlesManager.shared restorationIdentifier:NSStringFromClass(ArticlesManager.class)];
         
         // To test push notifications
 //        #ifdef DEBUG
@@ -235,6 +236,7 @@ AppDelegate *MyAppDelegate = nil;
     DDLogDebug(@"Application will save restoration data");
     
     [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
+    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
 }
 
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {

@@ -18,17 +18,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ArticlesManager;
 
-@interface ArticlesManager : NSObject
+@interface ArticlesManager : NSObject <UIStateRestoring, UIObjectRestoration, NSCoding, NSSecureCoding>
 
-+ (instancetype)shared;
+@property (class, nonatomic, nonnull) ArticlesManager * shared;
 
-@property (nonatomic, strong) NSArray <Folder *> *folders;
+@property (nonatomic, strong) NSArray <Folder *> * _Nullable folders;
 
-@property (nonatomic, strong) NSArray <Feed *> *feeds;
+@property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
 
-@property (nonatomic, strong, readonly) NSArray <Feed *> *feedsWithoutFolders;
+@property (nonatomic, strong, readonly) NSArray <Feed *> * _Nullable feedsWithoutFolders;
 
-@property (nonatomic, strong) NSArray <FeedItem *> *bookmarks;
+@property (nonatomic, strong) NSArray <FeedItem *> * _Nullable bookmarks;
 
 @end
 

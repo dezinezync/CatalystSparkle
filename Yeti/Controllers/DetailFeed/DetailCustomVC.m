@@ -196,10 +196,13 @@
             }
         #endif
         
-        weakify(self);
-        
         PagingManager * unreadsManager = [[PagingManager alloc] initWithPath:@"/unread" queryParams:params itemsKey:@"articles"];
-        unreadsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+        
+        _unreadsManager = unreadsManager;
+    }
+    
+    if (_unreadsManager.preProcessorCB == nil) {
+        _unreadsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
                 return [FeedItem instanceFromDictionary:obj];
@@ -208,8 +211,12 @@
             return retval;
             
         };
+    }
+    
+    if (_unreadsManager.successCB == nil) {
+        weakify(self);
         
-        unreadsManager.successCB = ^{
+        _unreadsManager.successCB = ^{
             strongify(self);
             
             if (!self) {
@@ -235,8 +242,12 @@
             
             [self setupData];
         };
+    }
+    
+    if (_unreadsManager.errorCB == nil) {
+        weakify(self);
         
-        unreadsManager.errorCB = ^(NSError * _Nonnull error) {
+        _unreadsManager.errorCB = ^(NSError * _Nonnull error) {
             DDLogError(@"%@", error);
             
             strongify(self);
@@ -261,8 +272,6 @@
                 }
             })
         };
-        
-        _unreadsManager = unreadsManager;
     }
     
     return _unreadsManager;
@@ -487,7 +496,11 @@
     [super encodeRestorableStateWithCoder:coder];
     
     if (@available(iOS 13, *)) {
-        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBUnreadData];
+        
+        if (self.unreadsManager) {
+            [coder encodeObject:self.unreadsManager forKey:@"unreadsManager"];
+        }
+        
     }
     else {
         [coder encodeObject:self.DS.data forKey:kBUnreadData];
@@ -501,18 +514,15 @@
     
     [super decodeRestorableStateWithCoder:coder];
     
-    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+    if (@available(iOS 13, *)) {
     
-    if (items) {
-        [self setupLayout];
+        self.unreadsManager = [coder decodeObjectOfClass:PagingManager.class forKey:@"unreadsManager"];
         
-        if (@available(iOS 13, *)) {
-            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-            [snapshot appendItemsWithIdentifiers:items];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        }
-        else {
+    }
+    else {
+        NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+        
+        if (items) {
             self.DS.data = items;
         }
     }

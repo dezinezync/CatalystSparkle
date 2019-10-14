@@ -87,10 +87,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 }
 
 - (void)didReceiveMemoryWarning {
-    ArticlesManager.shared.bookmarks = nil;
-    ArticlesManager.shared.folders = nil;
-//    ArticlesManager.shared.unread = nil;
-    ArticlesManager.shared.feeds = nil;
+    
 }
 
 #pragma mark - Feeds
@@ -2602,7 +2599,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    if (self.userID && self.userIDManager.UUID) {
+    if (self.userID != nil && (self.userIDManager.UUID != nil || self.userIDManager.UUIDString != nil)) {
         [coder encodeInteger:self.userID.integerValue forKey:kUserID];
         [coder encodeObject:self.userIDManager.UUIDString forKey:kAccountID];
         
@@ -2612,7 +2609,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         [coder encodeObject:ArticlesManager.shared.bookmarks forKey:kBookmarksKey];
         [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
-//        [coder encodeObject:ArticlesManager.shared.unread forKey:kUnreadKey];
+//        [coder encodeObject:ArticlesManager.shared forKey:NSStringFromClass(ArticlesManager.class)];
         
         if (self.unreadLastUpdate) {
             [coder encodeDouble:[self.unreadLastUpdate timeIntervalSince1970] forKey:kUnreadLastUpdateKey];
@@ -2638,7 +2635,6 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         ArticlesManager.shared.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
-//        ArticlesManager.shared.unread = [coder decodeObjectForKey:kUnreadKey];
         
         double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
         if (unreadUpdate) {

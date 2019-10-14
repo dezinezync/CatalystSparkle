@@ -16,7 +16,7 @@ typedef NSArray * _Nonnull(^preProcessorBlock)(NSArray * _Nonnull);
 typedef void (^genericSuccessBlock)(void);
 typedef void (^genericErrorBlock)(NSError *error);
 
-@interface PagingManager : NSObject
+@interface PagingManager : NSObject <NSSecureCoding>
 
 - (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams itemsKey:(NSString * _Nonnull)itemsKey;
 
