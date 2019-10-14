@@ -1461,6 +1461,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGFloat scale = content.size.height / content.size.width;
     
+    if (((NSRange)[content.url rangeOfString:@"feeds.feedburner.com"]).location != NSNotFound) {
+        // example: http://feeds.feedburner.com/~ff/abduzeedo?d=yIl2AUoC8zA
+        return;
+    }
+    
     Image *imageView = [[Image alloc] initWithFrame:frame];
     
     if (link && [link isKindOfClass:NSArray.class]) {

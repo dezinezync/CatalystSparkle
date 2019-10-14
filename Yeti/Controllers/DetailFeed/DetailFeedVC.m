@@ -1456,7 +1456,7 @@ NSString * const kSizCache = @"FeedSizesCache";
                 
                 NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
                 [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
-                [snapshot appendItemsWithIdentifiers:self.feed.articles intoSectionWithIdentifier:ArticlesSection];
+                [snapshot appendItemsWithIdentifiers:[NSSet setWithArray:self.feed.articles].allObjects intoSectionWithIdentifier:ArticlesSection];
                 
                 [self.DDS applySnapshot:snapshot animatingDifferences:NO];
             }
