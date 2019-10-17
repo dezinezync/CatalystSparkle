@@ -730,7 +730,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item.enclosures && self.item.enclosures.count) {
         
-        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
+        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png"];
         NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
         
         // check for images
