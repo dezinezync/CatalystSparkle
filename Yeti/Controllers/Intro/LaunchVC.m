@@ -137,6 +137,7 @@
     }
     else {
         NSLog(@"Authorization failed with error: %@", error.localizedDescription);
+        [AlertManager showGenericAlertWithTitle:@"Log In Failed" message:error.localizedDescription];
     }
     
 }
