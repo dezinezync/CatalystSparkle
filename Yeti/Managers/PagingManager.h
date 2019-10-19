@@ -18,7 +18,7 @@ typedef void (^genericErrorBlock)(NSError *error);
 
 @interface PagingManager : NSObject <NSSecureCoding>
 
-- (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams itemsKey:(NSString * _Nonnull)itemsKey;
+- (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams itemsKey:(NSString * _Nullable)itemsKey;
 
 /// The base path to request the data on
 @property (nonatomic, copy, readonly) NSString *path;

@@ -45,7 +45,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 @interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching, ArticleCellDelegate, UIAdaptivePresentationControllerDelegate> {
     UIImageView *_barImageView;
-    BOOL _ignoreLoadScroll;
     
     BOOL _initialSetup;
     ArticleCellB *_protoCell;
@@ -1006,8 +1005,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSArray *articles = self.pagingManager.items;
     
-    self->_ignoreLoadScroll = YES;
-    
     @try {
         
         if (@available(iOS 13, *)) {
@@ -1080,10 +1077,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {
                     [self.collectionView.refreshControl endRefreshing];
-                }
-                
-                if (self->_ignoreLoadScroll) {
-                    self->_ignoreLoadScroll = NO;
                 }
                 
                 if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {

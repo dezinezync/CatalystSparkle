@@ -105,9 +105,9 @@
         
         self.page = [params[@"page"] integerValue];
         
-        NSArray *items = [responseObject valueForKey:self.itemsKey];
+        NSArray *items = self.itemsKey ? [responseObject valueForKey:self.itemsKey] : responseObject;
         
-        NSNumber *total = [responseObject valueForKey:@"total"];
+        NSNumber *total = [responseObject isKindOfClass:NSDictionary.class] ? [responseObject valueForKey:@"total"] : nil;
         
         responseObject = nil;
         

@@ -84,6 +84,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 - (void)setupLayout;
 
+- (void)setupData;
+
 - (UIView *)viewForEmptyDataset;
 
 - (NSString *)emptyViewSubtitle;
