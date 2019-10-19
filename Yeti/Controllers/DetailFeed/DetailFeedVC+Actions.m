@@ -468,13 +468,23 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
+    _sortingOption = option;
+    
+    self.pagingManager = nil;
+    
+    _canLoadNext = YES;
+    
     [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
-    self->_canLoadNext = YES;
-    self.loadingNext = NO;
-    
-    self.page = 0;
-    [self.DS resetData];
+    if (@available(iOS 13, *)) {
+        
+        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        
+    }
+    else {
+        [self.DS resetData];
+    }
     
     [self loadNextPage];
 }

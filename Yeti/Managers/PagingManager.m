@@ -212,6 +212,7 @@
         [coder encodeObject:self.queryParams forKey:propSel(queryParams)];
     }
     
+    [coder encodeObject:self.nextPageURL forKey:propSel(nextPageURL)];
     [coder encodeObject:self.itemsKey forKey:propSel(itemsKey)];
     [coder encodeInteger:self.page forKey:propSel(page)];
     [coder encodeInteger:self.total forKey:propSel(total)];
@@ -227,6 +228,7 @@
     NSString *itemsKey = [coder decodeObjectOfClass:NSString.class forKey:propSel(itemsKey)];
     NSInteger page = [coder decodeIntegerForKey:propSel(page)];
     NSInteger total = [coder decodeIntegerForKey:propSel(total)];
+    NSString *nextPageURL = [coder decodeObjectOfClass:NSString.class forKey:propSel(nextPageURL)];
     BOOL hasNextPage = [coder decodeBoolForKey:propSel(hasNextPage)];
     NSMutableOrderedSet *uniqueItems = [coder decodeObjectOfClass:NSMutableOrderedSet.class forKey:propSel(uniqueItems)];
     
@@ -235,6 +237,7 @@
     instance.total = total;
     instance.hasNextPage = hasNextPage;
     instance.uniqueItems = uniqueItems;
+    instance.nextPageURL = nextPageURL;
     
     return instance;
     

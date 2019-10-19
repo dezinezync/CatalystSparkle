@@ -997,7 +997,152 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark - <ScrollLoading>
 
+- (void)setupData {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    NSArray *articles = self.pagingManager.items;
+    
+    self->_ignoreLoadScroll = YES;
+    
+    @try {
+        
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+            [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
+            [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = articles;
+        }
+    }
+    @catch (NSException *exc) {
+        DDLogWarn(@"Exception updating feed articles: %@", exc);
+    }
+    
+}
+
+- (PagingManager *)pagingManager {
+    
+    if (_pagingManager == nil) {
+        
+        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
+        
+        params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
+            
+        #if TESTFLIGHT == 0
+            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+            }
+        #endif
+        
+        NSString *path = [NSString stringWithFormat:@"/feeds/%@", self.feed.feedID];
+        
+        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
+        
+        _pagingManager = pagingManager;
+    }
+    
+    if (_pagingManager.preProcessorCB == nil) {
+        _pagingManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [FeedItem instanceFromDictionary:obj];
+            }];
+            
+            return retval;
+            
+        };
+    }
+    
+    if (_pagingManager.successCB == nil) {
+        weakify(self);
+        
+        _pagingManager.successCB = ^{
+            strongify(self);
+            
+            if (!self) {
+                return;
+            }
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+                
+                if (self->_ignoreLoadScroll) {
+                    self->_ignoreLoadScroll = NO;
+                }
+                
+                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
+            });
+            
+            if ([self loadOnReady] != nil) {
+                weakify(self);
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self loadArticle];
+                });
+            }
+            
+            [self setupData];
+        };
+    }
+    
+    if (_pagingManager.errorCB == nil) {
+        weakify(self);
+        
+        _pagingManager.errorCB = ^(NSError * _Nonnull error) {
+            DDLogError(@"%@", error);
+            
+            strongify(self);
+            
+            if (!self)
+                return;
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateErrored;
+            }
+            else {
+                self.DS.state = DZDatasourceError;
+            }
+            
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+            })
+        };
+    }
+    
+    return _pagingManager;
+    
+}
+
 - (void)loadNextPage {
+    
+    if (self.pagingManager.hasNextPage == NO) {
+        return;
+    }
     
     if (@available(iOS 13, *)) {
         if (self.controllerState == StateLoading) {
@@ -1005,16 +1150,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         }
     }
     else {
-        if (self.DS.state == DZDatasourceLoading) {
+        if (self.DS.state == DZDatasourceLoading)
             return;
-        }
-    }
-    
-    if (self->_ignoreLoadScroll)
-        return;
-    
-    if (self->_canLoadNext == NO) {
-        return;
     }
     
     if (@available(iOS 13, *)) {
@@ -1024,99 +1161,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.DS.state = DZDatasourceLoading;
     }
     
-    weakify(self);
+    [self.pagingManager loadNextPage];
     
-    NSInteger page = self->_page + 1;
-    
-    YetiSortOption sorting = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
-    
-    [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        if (!self)
-            return;
-        
-        self->_page = page;
-        
-        if (responseObject == nil || responseObject.count == 0) {
-            self->_canLoadNext = NO;
-        }
-        else {
-            weakify(self);
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                
-                NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
-                articles = [articles arrayByAddingObjectsFromArray:responseObject];
-                self.feed.articles = articles;
-                self->_ignoreLoadScroll = YES;
-                
-                @try {
-                    
-                    if (@available(iOS 13, *)) {
-                        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                        [snapshot appendItemsWithIdentifiers:responseObject intoSectionWithIdentifier:ArticlesSection];
-                        
-                        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-                    }
-                    else {
-                        self.DS.data = self.feed.articles;
-                    }
-                }
-                @catch (NSException *exc) {
-                    DDLogWarn(@"Exception updating feed articles: %@", exc);
-                }
-                
-            });
-        }
-        
-        self->_page = page;
-        
-        if ([self loadOnReady] != nil) {
-            weakify(self);
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self loadArticle];
-            });
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            if (self->_ignoreLoadScroll) {
-                self->_ignoreLoadScroll = NO;
-            }
-            
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
-        });
-        
-        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            [self loadNextPage];
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        DDLogError(@"%@", error);
-        
-        strongify(self);
-        
-        if (!self)
-            return;
-        
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateErrored;
-        }
-        else {
-            self.DS.state = DZDatasourceError;
-        }
-    }];
 }
 
 - (BOOL)cantLoadNext
@@ -1433,6 +1479,10 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     [super encodeRestorableStateWithCoder:coder];
     
+    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == NO) {
+        [coder encodeObject:self.pagingManager forKey:@"pagingManager"];
+    }
+    
     [coder encodeObject:self.feed forKey:kBFeedData];
     [coder encodeInteger:_page forKey:kBCurrentPage];
     [coder encodeObject:self.sizeCache forKey:kSizCache];
@@ -1451,21 +1501,21 @@ NSString * const kSizCache = @"FeedSizesCache";
             [self setupLayout];
             
             self.feed = feed;
-            
-            if (@available(iOS 13, *)) {
-                
-                NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-                [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
-                [snapshot appendItemsWithIdentifiers:[NSSet setWithArray:self.feed.articles].allObjects intoSectionWithIdentifier:ArticlesSection];
-                
-                [self.DDS applySnapshot:snapshot animatingDifferences:NO];
-            }
-            else {
-                [self.DS resetData];
-                self.DS.data = self.feed.articles;
-            }
-            
         }
+    }
+    
+    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == NO) {
+        
+        self.pagingManager = [coder decodeObjectForKey:@"pagingManager"];
+        
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateLoaded;
+        }
+        else {
+            self.DS.state = DZDatasourceLoaded;
+        }
+        
+        [self setupData];
     }
     
     _page = [coder decodeIntegerForKey:kBCurrentPage];

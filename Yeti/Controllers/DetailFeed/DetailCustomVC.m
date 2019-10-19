@@ -183,6 +183,12 @@
 
 #pragma mark - Getters
 
+- (PagingManager *)pagingManager {
+    
+    return self.unreadsManager;
+    
+}
+
 - (PagingManager *)unreadsManager {
     
     if (_unreadsManager == nil) {
@@ -329,16 +335,16 @@
     
 }
 
-- (void)setSortingOption:(YetiSortOption)option {
-    
-    self.unreadsManager = nil;
-    
-    // this will call -[DetailFeedVC loadNextPage]
-    [super setSortingOption:option];
-    
-    _sortingOption = option;
-    
-}
+//- (void)setSortingOption:(YetiSortOption)option {
+//
+//    self.unreadsManager = nil;
+//
+//    // this will call -[DetailFeedVC loadNextPage]
+//    [super setSortingOption:option];
+//
+//    _sortingOption = option;
+//
+//}
 
 - (NSString *)emptyViewSubtitle {
     if (self.isUnread) {
@@ -354,99 +360,7 @@
         return;
     }
     
-    if (self.unreadsManager.hasNextPage == NO) {
-        return;
-    }
-    
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoading) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.state == DZDatasourceLoading)
-            return;
-    }
-    
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateLoading;
-    }
-    else {
-        self.DS.state = DZDatasourceLoading;
-    }
-    
-    [self.unreadsManager loadNextPage];
-    return;
-    
-    weakify(self);
-    
-    if (self.isUnread) {
-        NSInteger page = self.page + 1;
-        YetiSortOption sorting = SharedPrefs.sortingOption;
-        
-        [MyFeedsManager getUnreadForPage:page sorting:sorting success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            if (!self)
-                return;
-            
-            self.page = page;
-            
-            BOOL canLoadNext = YES;
-            
-            if (responseObject == nil || [responseObject count] == 0) {
-                canLoadNext = NO;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self->_canLoadNext = canLoadNext;
-                    self.loadingNext = NO;
-                });
-                
-            }
-            else {
-                [self setupData];
-            }
-            
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
-            
-            self.page = page;
-            
-            self.loadingNext = NO;
-            
-            weakify(self);
-            
-            asyncMain(^{
-                strongify(self);
-                
-                if ([self.collectionView.refreshControl isRefreshing]) {
-                    [self.collectionView.refreshControl endRefreshing];
-                }
-                
-                if (page == 1 && canLoadNext) {
-                    [self loadNextPage];
-                }
-            })
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-        }];
-    }
-    else {
-        
-        [self setupData];
-        
-        asyncMain(^{
-            if ([self.collectionView.refreshControl isRefreshing]) {
-                [self.collectionView.refreshControl endRefreshing];
-            }
-        })
-    }
+    [super loadNextPage];
 }
 
 #pragma mark - Notifications
@@ -517,6 +431,7 @@
     if (@available(iOS 13, *)) {
     
         self.unreadsManager = [coder decodeObjectOfClass:PagingManager.class forKey:@"unreadsManager"];
+        self.controllerState = StateLoaded;
         
     }
     else {
@@ -524,6 +439,7 @@
         
         if (items) {
             self.DS.data = items;
+            self.DS.state = DZDatasourceLoaded;
         }
     }
     
