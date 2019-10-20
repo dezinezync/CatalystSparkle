@@ -1,7 +1,11 @@
 # v1.5.0
 
 ## Build 289
-- 
+- fixed linked images which would not render if they were contained inside an anchor blog with multiple other elements. These other elements were usually linebreaks preventing the entire block from rendering properly. Affected blog: Saturday Morning Breakfast Cereal.
+
+- The app now shows an alert when Sign in with Apple fails with the relevant error message from the OS. 
+
+- Removed webp support. 
 
 ## Build 285
 
