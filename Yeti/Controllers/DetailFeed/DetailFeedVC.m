@@ -1828,6 +1828,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 {
     DetailAuthorVC *vc = [[DetailAuthorVC alloc] initWithFeed:self.feed];
     vc.author = author;
+    vc.feed = self.feed;
     vc.customFeed = self.customFeed;
     
     [self showViewController:vc sender:self];
