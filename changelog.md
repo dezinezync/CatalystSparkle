@@ -7,6 +7,8 @@
 
 - Removed webp support. 
 
+- The Author Interface now shows the author's name prominently and defers the blog's name to the subtitle.  
+
 ## Build 285
 
 - Images are loaded using the same extension from the proxy as the source image. 
