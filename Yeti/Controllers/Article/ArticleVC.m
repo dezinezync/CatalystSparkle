@@ -1120,6 +1120,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"anchor"]) {
         
+        NSArray <Content *> *subcontent = [content.items rz_filter:^BOOL(Content *obj, NSUInteger idx, NSArray *array) {
+            return [obj.type isEqualToString:@"linebreak"] == NO;
+        }];
+        
+        if (subcontent.count == 1 && [subcontent[0].type isEqualToString:@"image"]) {
+            [self addImage:subcontent.firstObject link:content.url];
+            return;
+        }
+        
         [self addParagraph:content caption:NO];
         
     }
