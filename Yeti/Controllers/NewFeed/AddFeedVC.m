@@ -70,6 +70,8 @@
     
     self.selected = NSNotFound;
     
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
     
@@ -193,6 +195,10 @@
         
     }
     
+    if (self.searchBar.isFirstResponder == YES) {
+        [self.searchBar resignFirstResponder];
+    }
+    
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     if (feed) {
@@ -218,11 +224,15 @@
     
     searchController.searchResultsUpdater = self;
     searchController.delegate = self;
-    searchController.hidesNavigationBarDuringPresentation = NO;
+    searchController.hidesNavigationBarDuringPresentation = YES;
     searchController.obscuresBackgroundDuringPresentation = NO;
+    searchController.definesPresentationContext = YES;
     
     searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
-    if (@available(iOS 13, *)) {}
+    
+    if (@available(iOS 13, *)) {
+        searchController.automaticallyShowsScopeBar = YES;
+    }
     else {
         searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
     }
@@ -536,6 +546,12 @@
     self.DS.state = DZDatasourceLoading;
     
     [self loadNextPage];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 #pragma mark - <ScrollLoading>
