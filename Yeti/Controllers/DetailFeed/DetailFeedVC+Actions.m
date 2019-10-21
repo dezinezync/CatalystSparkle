@@ -416,6 +416,8 @@
         
         ArticlesManager.shared.feeds = feeds;
         
+        MyFeedsManager.totalUnread = MyFeedsManager.totalUnread + [[(Feed *)responseObject unread] integerValue];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
