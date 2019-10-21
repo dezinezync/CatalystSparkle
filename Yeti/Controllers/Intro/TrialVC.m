@@ -69,7 +69,17 @@
     
     self.titleLabel.font = baseFont;
     
-    [attrs setAttributes:@{NSFontAttributeName: baseFont, NSForegroundColorAttributeName: theme.titleColor} range:NSMakeRange(0, attrs.string.length)];
+    NSMutableDictionary *attributes = [NSMutableDictionary new];
+    
+    if (baseFont) {
+        [attributes setObject:baseFont forKey:NSFontAttributeName];
+    }
+    
+    if (theme.titleColor) {
+        [attributes setObject:theme.titleColor forKey:NSForegroundColorAttributeName];
+    }
+    
+    [attrs setAttributes:attributes range:NSMakeRange(0, attrs.string.length)];
     
     self.titleLabel.attributedText = attrs;
     self.subtitleLabel.textColor = theme.subtitleColor;
