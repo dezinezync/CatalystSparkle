@@ -1,5 +1,17 @@
 # v1.5.0
 
+## Build 291
+
+- Adding a new feed from the search interface now increments the unread count. 
+
+- Removing a feed now decrements the unread count. 
+
+- Fixed an issue that would cause a corrupted navigation bar in iOS 13. Solution: Hide the navigation bar altogether. *shrug*
+
+## Build 290
+
+- Fixes a crash which could occur when the Trial Interface was presented. 
+
 ## Build 289
 - fixed linked images which would not render if they were contained inside an anchor blog with multiple other elements. These other elements were usually linebreaks preventing the entire block from rendering properly. Affected blog: Saturday Morning Breakfast Cereal.
 
