@@ -328,6 +328,7 @@
             }];
             
             ArticlesManager.shared.feeds = feeds;
+            MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - feed.unread.integerValue);
             
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{
