@@ -229,6 +229,12 @@
                 return;
             }
             
+            if (self->_unreadsManager.page == 1) {
+                MyFeedsManager.unreadLastUpdate = NSDate.date;
+            }
+            
+            [self setupData];
+            
             if (@available(iOS 13, *)) {
                 self.controllerState = StateLoaded;
             }
@@ -246,7 +252,6 @@
                 }
             });
             
-            [self setupData];
         };
     }
     

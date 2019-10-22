@@ -349,6 +349,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
+        if ([image isKindOfClass:UIImage.class] == NO) {
+            image = nil;
+        }
+        
         if (image != nil) {
             
             CGFloat width = 24.f * UIScreen.mainScreen.scale;

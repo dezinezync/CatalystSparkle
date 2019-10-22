@@ -79,6 +79,9 @@
         if (self == nil) {
             return;
         }
+        
+        MyFeedsManager.unreadLastUpdate = NSDate.date;
+        self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([responseObject integerValue] == 2) {

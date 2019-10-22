@@ -1,5 +1,11 @@
 # v1.5.0
 
+## Build 292
+
+- Fixes loading of unsupported image formats. Loading an SVG image would cause the app to crash. 
+
+- Fixes last updated date not matching the actual refresh date when manually refreshing through the User Interface. This only updated when fetching via background refresh.  
+
 ## Build 291
 
 - Adding a new feed from the search interface now increments the unread count. 
