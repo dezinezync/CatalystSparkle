@@ -112,6 +112,7 @@
 		F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53A21576E7200A385AD /* UIImage+Color.m */; };
 		F064A53F21576F5600A385AD /* TrialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A53D21576F5600A385AD /* TrialVC.m */; };
 		F064A54021576F5600A385AD /* TrialVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A53E21576F5600A385AD /* TrialVC.xib */; };
+		F0650657236036A90015F2C4 /* PushVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0650656236036A90015F2C4 /* PushVC.m */; };
 		F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0673AFF20C6A1EB00C42062 /* OPMLVC.m */; };
 		F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
 		F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */; };
@@ -696,6 +697,8 @@
 		F064A53C21576F5600A385AD /* TrialVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrialVC.h; sourceTree = "<group>"; };
 		F064A53D21576F5600A385AD /* TrialVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrialVC.m; sourceTree = "<group>"; };
 		F064A53E21576F5600A385AD /* TrialVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrialVC.xib; sourceTree = "<group>"; };
+		F0650655236036A90015F2C4 /* PushVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PushVC.h; sourceTree = "<group>"; };
+		F0650656236036A90015F2C4 /* PushVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushVC.m; sourceTree = "<group>"; };
 		F0673AFE20C6A1EB00C42062 /* OPMLVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLVC.h; sourceTree = "<group>"; };
 		F0673AFF20C6A1EB00C42062 /* OPMLVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLVC.m; sourceTree = "<group>"; };
 		F0673B0020C6A1EB00C42062 /* OPMLVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OPMLVC.xib; sourceTree = "<group>"; };
@@ -1169,6 +1172,8 @@
 				F0D01CCA2118683B003A01DD /* MiscVC.m */,
 				F085785221D1EAE200CC2B95 /* PreviewLinesVC.h */,
 				F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */,
+				F0650655236036A90015F2C4 /* PushVC.h */,
+				F0650656236036A90015F2C4 /* PushVC.m */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2591,6 +2596,7 @@
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
 				F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */,
 				F0AA8C92216B4A5500C65DAE /* DTTimePeriodChain.m in Sources */,
+				F0650657236036A90015F2C4 /* PushVC.m in Sources */,
 				F064A5372157678900A385AD /* IdentityVC.m in Sources */,
 				F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */,
 				F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */,

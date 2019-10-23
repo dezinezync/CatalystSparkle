@@ -1354,6 +1354,34 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
+- (void)getAllWebSubWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    [self.session GET:@"/user/subscriptions" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (!successCB) {
+            return;
+        }
+        
+        NSArray <Feed *> *feeds = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [Feed instanceFromDictionary:obj];
+        }];
+        
+        successCB(feeds, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 - (void)subsribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
 {
     [self.session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1724,6 +1752,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)setPushToken:(NSString *)pushToken
 {
+    
     _pushToken = pushToken;
     
     if (_pushToken) {
@@ -1838,7 +1867,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

@@ -104,7 +104,9 @@ AppDelegate *MyAppDelegate = nil;
         
         if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil]) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [application registerForRemoteNotifications];
+                if ([application isRegisteredForRemoteNotifications] == YES) {
+                    [application registerForRemoteNotifications];
+                }
             });
         }
         
@@ -134,7 +136,13 @@ AppDelegate *MyAppDelegate = nil;
         // did finish launching
 #if !(TARGET_IPHONE_SIMULATOR)
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [application registerForRemoteNotifications];
+            
+            if ([application isRegisteredForRemoteNotifications] == YES) {
+                
+                [application registerForRemoteNotifications];
+                
+            }
+        
         });
 #endif
 

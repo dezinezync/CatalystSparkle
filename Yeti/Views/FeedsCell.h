@@ -18,6 +18,8 @@ extern NSString *const _Nonnull kFeedsCell;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel * _Nullable countLabel;
 
++ (void)registerOn:(UITableView * _Nonnull)tableView;
+
 - (void)configure:(Feed * _Nonnull)feed;
 
 @end

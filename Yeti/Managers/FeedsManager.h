@@ -137,6 +137,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addPushToken:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)getAllWebSubWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)subsribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)unsubscribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
