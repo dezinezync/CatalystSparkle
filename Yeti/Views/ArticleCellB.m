@@ -347,6 +347,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
     }
     
+    if (url == nil) {
+        return;
+    }
+    
     self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([image isKindOfClass:UIImage.class] == NO) {

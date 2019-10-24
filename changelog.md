@@ -10,6 +10,8 @@
 
 - Fixed the activity indicator persisting on screen when only one or no page exists for unread items. 
 
+- Fixed a potential crash when opening new feed interface.
+
 ## Build 292
 
 - Push Settings: View a list of publishers you've subscribed to receive push notifications from. 
