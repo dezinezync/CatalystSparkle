@@ -686,19 +686,27 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         NSMutableDictionary *dict = [responseObject mutableCopy];
         
         NSArray <Feed *> *trending = [dict[@"trending"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         NSArray <Feed *> *subs = [dict[@"highestSubs"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         NSArray <Feed *> *read = [dict[@"mostRead"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         NSArray <Feed *> *similar = [dict[@"similar"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         dict[@"trending"] = trending;

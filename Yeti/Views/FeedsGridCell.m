@@ -38,7 +38,7 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
         return;
     }
     
-    self.titleLabel.text = feed.title;
+    self.titleLabel.text = feed.displayTitle;
     self.imageView.layer.cornerRadius = 8.f;
     self.imageView.clipsToBounds = YES;
     
