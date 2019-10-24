@@ -754,6 +754,8 @@ NSString * const kDS2Data = @"DS2Data";
     @try {
         NSArray *folders = (ArticlesManager.shared.folders ?: @[]);
         
+        NSSortDescriptor *alphaSort = [NSSortDescriptor sortDescriptorWithKey:@"displayTitle" ascending:YES];
+        
         if (openFolders.count) {
             [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([openFolders containsObject:obj.folderID]) {
@@ -769,12 +771,17 @@ NSString * const kDS2Data = @"DS2Data";
             [data addObject:obj];
             
             if (obj.isExpanded) {
-                [data addObjectsFromArray:obj.feeds.allObjects];
+                
+                NSArray <Feed *> *feeds = obj.feeds.allObjects;
+                
+                feeds = [feeds sortedArrayUsingDescriptors:@[alphaSort]];
+                
+                [data addObjectsFromArray:feeds];
             }
             
         }];
         
-        [data addObjectsFromArray:ArticlesManager.shared.feedsWithoutFolders];
+        [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
         
         if (@available(iOS 13, *)) {
             
