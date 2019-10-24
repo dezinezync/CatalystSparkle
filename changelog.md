@@ -1,5 +1,11 @@
 # v1.5.0
 
+## Build 293
+
+- Fixed the Settings icon for the Push Notifications row not showing up on some devices. 
+
+- Fixed the activity indicator persisting on screen when only one or no page exists for unread items.
+
 ## Build 292
 
 - Push Settings: View a list of publishers you've subscribed to receive push notifications from. 
