@@ -190,7 +190,9 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
                 item.bookmarked = YES;
             }
             
-            bookmarks = (NSMutableArray *)[bookmarks sortedArrayUsingSelector:@selector(compare:)];
+            NSSortDescriptor *dateDesc = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:YES];
+            
+            bookmarks = (NSMutableArray *)[bookmarks sortedArrayUsingDescriptors:@[dateDesc]];
             
         }
         

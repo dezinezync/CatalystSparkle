@@ -35,9 +35,9 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    [super viewWillAppear:animated];
+    _sortingOption = YTSortUnreadDesc;
     
-    _sortingOption = YTSortAllDesc;
+    [super viewWillAppear:animated];
     
     [self setupState];
     
@@ -111,11 +111,11 @@
             [snapshot appendSectionsWithIdentifiers:@[@0]];
             
             NSArray *bookmarks = self.bookmarksManager.bookmarks ?: @[];
-            NSSet *set = [NSSet setWithArray:bookmarks];
+            NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:bookmarks];
             
-            bookmarks = set.allObjects;
+            bookmarks = set.array;
             
-            if ([_sortingOption isEqualToString:YTSortAllDesc]) {
+            if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
                 [snapshot appendItemsWithIdentifiers:bookmarks.reverseObjectEnumerator.allObjects];
             }
             else {
@@ -135,7 +135,7 @@
     else {
         if (self.unread == NO) {
             
-            if ([_sortingOption isEqualToString:YTSortAllDesc]) {
+            if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
                 self.DS.data = [self.bookmarksManager.bookmarks reverseObjectEnumerator].allObjects;
             }
             else {
@@ -307,11 +307,17 @@
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
+    weakify(self);
+    
     UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
         
-        [self setSortingOption:YTSortAllDesc];
+        strongify(self);
+        
+        self->_sortingOption = YTSortUnreadDesc;
+        
+        [self setSortingOption:self->_sortingOption];
         
     }];
     
@@ -319,7 +325,11 @@
         
         sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
         
-        [self setSortingOption:YTSortAllAsc];
+        strongify(self);
+        
+        self->_sortingOption = YTSortUnreadAsc;
+        
+        [self setSortingOption:self->_sortingOption];
         
     }];
     
@@ -362,6 +372,7 @@
 - (void)loadNextPage {
     
     if (self.isUnread == NO) {
+        [self setupData];
         return;
     }
     

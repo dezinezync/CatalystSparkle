@@ -1547,30 +1547,27 @@ NSString * const kSizCache = @"FeedSizesCache";
     // sorting button
     YetiSortOption option = SharedPrefs.sortingOption;
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    SEL isUnread = NSSelectorFromString(@"isUnread");
-    
-    if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
+    if (self.customFeed == FeedTypeCustom) {
         
         // when the active option is either of these two, we don't need
         // to do anything extra
-        if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
+        if ([option isEqualToString:YTSortUnreadAsc] == NO && [option isEqualToString:YTSortUnreadDesc] == NO) {
             
             // map it to whatever the selected option is
-            if (option == YTSortAllAsc) {
+            if ([option isEqualToString:YTSortAllAsc]) {
                 option = YTSortUnreadAsc;
             }
-            else if (option == YTSortAllDesc) {
+            else if ([option isEqualToString:YTSortAllDesc]) {
                 option = YTSortUnreadDesc;
             }
             
         }
         
     }
-#pragma clang diagnostic pop
     
-    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option];
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
     sorting.width = 32.f;
     
     if (!(self.feed.hubSubscribed && self.feed.hub)) {
