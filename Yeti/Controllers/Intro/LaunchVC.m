@@ -166,6 +166,37 @@
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if ([error.localizedDescription isEqualToString:@"User not found"]) {
+                // create the new user.
+                
+                MyFeedsManager.userIDManager.UUIDString = userIdentifier;
+                
+                [MyFeedsManager updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    
+                    NSLog(@"%@", responseObject);
+                    
+                    NSDictionary *user = [responseObject objectForKey:@"user"];
+                    NSNumber *userID = [user objectForKey:@"id"];
+                    
+                    MyFeedsManager.userIDManager.userID = userID;
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                        
+                        TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+                        
+                        [self showViewController:vc sender:self];
+                    });
+                    
+                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                   
+                    [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
+                    
+                }];
+                
+                return;
+            }
            
             [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
             

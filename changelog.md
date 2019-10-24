@@ -12,6 +12,8 @@
 
 - Fixed a potential crash when opening new feed interface.
 
+- Fixed the sign up flow for new accounts.
+
 ## Build 292
 
 - Push Settings: View a list of publishers you've subscribed to receive push notifications from. 

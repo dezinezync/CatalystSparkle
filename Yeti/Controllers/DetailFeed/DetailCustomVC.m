@@ -233,14 +233,14 @@
                 MyFeedsManager.unreadLastUpdate = NSDate.date;
             }
             
+            [self setupData];
+            
             if (@available(iOS 13, *)) {
                 self.controllerState = StateLoaded;
             }
             else {
                 self.DS.state = DZDatasourceLoaded;
             }
-            
-            [self setupData];
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {

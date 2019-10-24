@@ -2202,6 +2202,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     NSString *kAccountID = @"YTUserID";
     NSString *kUserID = @"userID";
+    NSString *kUUIDString = @"UUIDString";
     
     NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
     if (store) {
@@ -2350,9 +2351,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
 {
-    if (!MyFeedsManager.userIDManager.UUID) {
+    if (!MyFeedsManager.userIDManager.UUIDString) {
         if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user ID currently present"}];
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"A User ID is not currently present"}];
             errorCB(error, nil, nil);
         }
         

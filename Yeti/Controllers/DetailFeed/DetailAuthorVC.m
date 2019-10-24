@@ -117,6 +117,8 @@
                 return;
             }
             
+            [self setupData];
+            
             if (@available(iOS 13, *)) {
                 self.controllerState = StateLoaded;
             }
@@ -133,8 +135,7 @@
                     [self loadNextPage];
                 }
             });
-            
-            [self setupData];
+
         };
     }
     

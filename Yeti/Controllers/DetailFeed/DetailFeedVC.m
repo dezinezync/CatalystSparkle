@@ -1067,13 +1067,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 return;
             }
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
-            
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {
                     [self.collectionView.refreshControl endRefreshing];
@@ -1084,6 +1077,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 }
             });
             
+            [self setupData];
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
+            
             if ([self loadOnReady] != nil) {
                 weakify(self);
                 
@@ -1092,8 +1094,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                     [self loadArticle];
                 });
             }
-            
-            [self setupData];
+
         };
     }
     
