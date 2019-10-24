@@ -4,7 +4,9 @@
 
 - Fixed the Settings icon for the Push Notifications row not showing up on some devices. 
 
-- Fixed the activity indicator persisting on screen when only one or no page exists for unread items.
+- Push Notifications interface now correctly shows the custom Feed name if one is set. 
+
+- Fixed the activity indicator persisting on screen when only one or no page exists for unread items. 
 
 ## Build 292
 

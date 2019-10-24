@@ -161,23 +161,33 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
+- (void)updateFeedWithLocalName:(Feed *)feed {
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
+    
+    __block NSString *localName = nil;
+    
+    [MyDBManager.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        
+        localName = [transaction objectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        
+    }];
+    
+    feed.localName = localName;
+    
+}
+
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
     
     NSMutableArray <Feed *> *feeds = [[[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
         
         Feed *feed = [Feed instanceFromDictionary:obj];
         
-        NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
-        
-        __block NSString *localName = nil;
-        
-        [MyDBManager.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-            
-            localName = [transaction objectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-            
-        }];
-        
-        feed.localName = localName;
+        [self updateFeedWithLocalName:feed];
         
         return feed;
         
@@ -1363,7 +1373,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         }
         
         NSArray <Feed *> *feeds = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            
+            return feed;
         }];
         
         successCB(feeds, response, task);
