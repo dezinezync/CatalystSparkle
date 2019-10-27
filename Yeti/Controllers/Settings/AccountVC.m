@@ -105,7 +105,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return 3;
+        return 2;
     }
     
     return 1;
@@ -168,13 +168,13 @@
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
                         break;
-                    case 1:
-                    {
-                        cell.textLabel.text = @"Change Account ID";
-                        cell.textLabel.textColor = theme.tintColor;
-                        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-                    }
-                        break;
+//                    case 1:
+//                    {
+//                        cell.textLabel.text = @"Change Account ID";
+//                        cell.textLabel.textColor = theme.tintColor;
+//                        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+//                    }
+//                        break;
                     default:
                         cell.textLabel.text = @"Deactivate Account";
                         cell.textLabel.textColor = UIColor.redColor;
@@ -250,11 +250,11 @@
     
    if (indexPath.section == 0) {
         
-        if (indexPath.row == 1) {
-            [self showReplaceIDController];
-        }
+//        if (indexPath.row == 1) {
+//            [self showReplaceIDController];
+//        }
         
-        if (indexPath.row == 2) {
+        if (indexPath.row == 1) {
             UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Deactivate your Account?" message:@"If you have remaining days on your Pro Subscription, no refund can be issued for the same." preferredStyle:UIAlertControllerStyleAlert];
             
             [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
