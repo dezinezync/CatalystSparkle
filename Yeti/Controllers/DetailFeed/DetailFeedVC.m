@@ -179,20 +179,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.DS.data = @[];
     }
     
-    _page = 0;
-    _canLoadNext = YES;
+    self.pagingManager = nil;
     
-    if (self.feed) {
-        self.feed.articles = @[];
-    }
-    
-    [AlertManager showGenericAlertWithTitle:@"Memory Warning" message:@"The app received a memory warning and to prevent unexpected crashes, it had to clear articles from the current feed. Please reload the feed to continue viewing."];
+//    [AlertManager showGenericAlertWithTitle:@"Memory Warning" message:@"The app received a memory warning and to prevent unexpected crashes, it had to clear articles from the current feed. Please reload the feed to continue viewing."];
 }
 
 - (void)dealloc {
-    if (self.feed) {
-        self.feed.articles = @[];
-    }
     
     @try {
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -1274,11 +1266,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         
-        FeedItem *articleInFeed = [self.feed.articles safeObjectAtIndex:index];
-        if (articleInFeed) {
-            articleInFeed.read = read;
-        }
-        
         FeedItem *articleInDS = [self itemForIndexPath:indexPath];
         
         if (@available(iOS 13, *)) {
@@ -1343,11 +1330,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        
-        FeedItem *articleInFeed = [self.feed.articles safeObjectAtIndex:index];
-        if (articleInFeed) {
-            articleInFeed.bookmarked = bookmarked;
-        }
         
         FeedItem *articleInDS = [self itemForIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
         

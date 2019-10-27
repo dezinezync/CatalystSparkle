@@ -1,5 +1,11 @@
 # v1.5.0
 
+## Build 294
+
+- Improves how the app handles & reacts to memory pressure warnings from the OS.
+
+- Fixes a bug where the app would re-sync all bookmarks even if they existed locally. 
+
 ## Build 293
 
 - Fixed the Settings icon for the Push Notifications row not showing up on some devices. 

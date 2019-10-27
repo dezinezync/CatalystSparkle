@@ -68,14 +68,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-        
-        NSError *error = nil;
-        
-        if (error) {
-            DDLogError(@"Error loading push token from disk: %@", error.localizedDescription);
-        }
     
     }
     
@@ -84,10 +76,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (NSNumber *)userID {
     return self.userIDManager.userID;
-}
-
-- (void)didReceiveMemoryWarning {
-    
 }
 
 #pragma mark - Feeds
@@ -376,14 +364,14 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
-        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
+//        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         
-        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [FeedItem instanceFromDictionary:obj];
-        }];
+//        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [FeedItem instanceFromDictionary:obj];
+//        }];
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
-        feed.articles = articles;
+//        feed.articles = articles;
         
         if (successCB)
             successCB(feed, response, task);
@@ -418,21 +406,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
 
-    weakify(self);
-
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
-        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
+//        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         
-        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [FeedItem instanceFromDictionary:obj];
-        }];
+//        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [FeedItem instanceFromDictionary:obj];
+//        }];
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
-        feed.articles = articles;
+//        feed.articles = articles;
         
         if (successCB)
             successCB(feed, response, task);

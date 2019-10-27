@@ -40,14 +40,6 @@ static ArticlesManager * SharedArticleManager = nil;
     
 }
 
-- (void)didReceiveMemoryWarning {
-    
-    self.folders = nil;
-    self.feeds = nil;
-    self.feedsWithoutFolders = nil;
-    
-}
-
 #pragma mark - Getters
 
 - (NSArray <Feed *> *)feedsWithoutFolders {

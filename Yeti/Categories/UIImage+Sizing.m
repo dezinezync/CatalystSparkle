@@ -93,8 +93,6 @@
     CGImageRef scaledImageRef = CGImageSourceCreateThumbnailAtIndex(src, 0, options);
     scaled = [UIImage imageWithCGImage:scaledImageRef];
     
-    CGImageRelease(scaledImageRef);
-    
     if (scaled == nil) {
         scaled = self;
     }
@@ -105,6 +103,9 @@
     }
     
     data = nil;
+    
+    CGImageRelease(scaledImageRef);
+    CFBridgingRelease(src);
     
     return scaled;
     
