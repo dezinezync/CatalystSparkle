@@ -7,6 +7,7 @@
 //
 
 #import "BookmarksManager.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @interface BookmarksObserver : NSObject
 
@@ -120,6 +121,35 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
             }); }
             
         }];
+        
+    });
+    
+}
+
+- (void)removeBookmarkForID:(NSNumber *)articleID completion:(void (^)(BOOL))completion {
+    
+    dispatch_async(self.bgQueue, ^{
+        
+        FeedItem * existing = [self.bookmarks rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idx, NSArray *array) {
+           
+            if ([current.identifier isEqualToNumber:articleID] == YES) {
+                return current;
+            }
+            
+            return prev;
+            
+        }];
+        
+        if (existing != nil) {
+            [self removeBookmark:existing completion:completion];
+        }
+        else {
+            
+            if (completion) { dispatch_async(dispatch_get_main_queue(), ^{
+                completion(YES);
+            }); }
+            
+        }
         
     });
     

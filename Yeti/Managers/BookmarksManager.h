@@ -35,6 +35,8 @@ extern NSErrorDomain const BookmarksManagerErrorDomain;
 
 - (void)removeBookmark:(FeedItem *)bookmark completion:(void (^ _Nullable)(BOOL success))completion;
 
+- (void)removeBookmarkForID:(NSNumber *)articleID completion:(void (^ _Nullable)(BOOL success))completion;
+
 - (void)_removeAllBookmarks:(void (^ _Nullable)(BOOL success))completion;
 
 #pragma mark - Database

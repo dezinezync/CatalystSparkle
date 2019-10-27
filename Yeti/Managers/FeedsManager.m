@@ -2482,7 +2482,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return;
     }
     
-    NSArray <NSString *> *existingArr = [ArticlesManager.shared.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <NSString *> *existingArr = [self.bookmarksManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
     }];
     
@@ -2516,52 +2516,29 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if ((bookmarked && bookmarked.count) || (deleted && deleted.count)) {
             
-            NSMutableArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks.mutableCopy;
-         
+            self.bookmarksManager->_migrating = YES;
+            
             if (deleted && deleted.count) {
                 
-                bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                   
-                    NSUInteger deletedIndex = [deleted indexOfObject:obj.identifier];
+                for (NSNumber *articleID in deleted) {
                     
-                    if (deletedIndex != NSNotFound) {
-                        // remove the path as well
-                        [self.bookmarksManager removeBookmark:obj completion:nil];
-                    }
+                    [self.bookmarksManager removeBookmarkForID:articleID completion:nil];
                     
-                    return deletedIndex == NSNotFound;
-                    
-                }].mutableCopy;
+                }
                 
             }
             
             if (bookmarked && bookmarked.count) {
                 
+                bookmarked = [bookmarked rz_filter:^BOOL(NSNumber *obj, NSUInteger idx, NSArray *array) {
+                   
+                    return [existingArr indexOfObject:obj.stringValue] == NSNotFound;
+                    
+                }];
+                
                 __block NSUInteger count = bookmarked.count;
                 
-                self.bookmarksManager->_migrating = YES;
-                
                 [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    
-                    __block NSUInteger index = NSNotFound;
-                    
-                    __unused FeedItem *item = [bookmarks rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idxx, NSArray *array) {
-                        
-                        if ([current.identifier isEqualToNumber:obj]) {
-                            index = idxx;
-                            return current;
-                        }
-                        
-                        return prev;
-                        
-                    }];
-                    
-//                    DDLogDebug(@"Index of bookmark: %@", @(index));
-                    
-                    if (index != NSNotFound) {
-                        count--;
-                        return;
-                    }
                     
                     // this article needs to be downloaded and cached
                     
@@ -2591,11 +2568,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                     
                 }];
                 
-            }
-            else {
-                @synchronized (self) {
-                    ArticlesManager.shared.bookmarks = bookmarks;
-                }
             }
             
         }
