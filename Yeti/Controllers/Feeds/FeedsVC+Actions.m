@@ -838,6 +838,21 @@
     
     UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
     
+    if (feed.folderID != nil) {
+        
+        for (Folder *folder in ArticlesManager.shared.folders) {
+            
+            if ([folder.folderID isEqualToNumber:feed.folderID] && folder.expanded == YES) {
+                folder.expanded = NO;
+                
+                [self setupData];
+                break;
+            }
+            
+        }
+        
+    }
+    
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
 }

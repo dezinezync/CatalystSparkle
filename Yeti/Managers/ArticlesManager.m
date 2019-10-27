@@ -157,7 +157,9 @@ static ArticlesManager * SharedArticleManager = nil;
                     [ArticlesManager.shared.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
                         
                         if ([feed.feedID isEqualToNumber:objx]) {
+                            
                             feed.folderID = folder.folderID;
+                            
                             if ([folder.feeds containsObject:feed] == NO) {
                                 [folder.feeds addPointer:(__bridge void *)feed];
                             }

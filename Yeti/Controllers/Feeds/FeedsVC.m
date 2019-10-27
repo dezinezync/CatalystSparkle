@@ -741,13 +741,13 @@ NSString * const kDS2Data = @"DS2Data";
     
     // get a list of open folders
     NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-        
+
         return [obj isKindOfClass:Folder.class] && [(Folder *)obj isExpanded];
-        
+
     }] rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
-        
+
         return obj.folderID;
-        
+
     }];
     
     // ensures search bar does not dismiss on refresh or first load

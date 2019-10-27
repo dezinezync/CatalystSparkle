@@ -99,7 +99,7 @@
 
 - (BOOL)isEqual:(id)object {
     
-    if ([object isKindOfClass:Feed.class]) {
+    if (object != nil && [object isKindOfClass:Feed.class]) {
         return [self isEqualToFeed:object];
     }
     

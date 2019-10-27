@@ -209,7 +209,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         }
         
         // it has been removed from this folder only
-        if (self.feed.folderID != nil) {
+        if (self.feed.folderID == nil) {
             Folder *folder = [MyFeedsManager folderForID:self.originalFolderID];
             
             [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
