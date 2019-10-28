@@ -6,6 +6,8 @@
 
 - Fixes push notifications not opening the article on iOS 13. 
 
+- Added settings Sync to work in tandem with the web app. 
+
 ## Build 294
 
 - Improves how the app handles & reacts to memory pressure warnings from the OS.
