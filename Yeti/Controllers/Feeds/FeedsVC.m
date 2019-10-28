@@ -998,6 +998,8 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)userDidUpdate {
     
+    [MyFeedsManager syncSettings];
+    
     [self userDidUpdate:YES];
     
 }

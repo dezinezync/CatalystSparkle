@@ -157,6 +157,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getSync:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)syncSettings;
+
 #pragma mark - Search
 
 - (NSURLSessionTask * _Nullable)search:(NSString * _Nonnull)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;

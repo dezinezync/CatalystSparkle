@@ -1695,6 +1695,183 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+- (void)syncSettings {
+    
+    NSDictionary *allSettings = [NSUserDefaults.standardUserDefaults dictionaryRepresentation];
+    
+    // refine the scope to only our keys
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:allSettings.allKeys.count];
+    
+    NSArray <NSString *> * const keys = @[kDefaultsArticleFont, kDefaultsBackgroundRefresh, kShowMarkReadPrompt, kShowUnreadCounts, kDetailFeedSorting, kPreviewLines, kUseImageProxy, kDefaultsImageBandwidth, kDefaultsImageLoading, kShowArticleCoverImages, kDefaultsTheme, @"theme-light-color"];
+    
+    NSMutableDictionary *existingKeys = [NSMutableDictionary new];
+    
+    for (NSString *key in keys) {
+        
+        if (allSettings[key] != nil) {
+            [arr addObject:@[key, allSettings[key]]];
+            existingKeys[key] = [arr.lastObject lastObject];
+        }
+        
+    }
+    
+#if TESTFLIGHT == 1
+    NSLog(@"Current Settings: %@", arr);
+#endif
+    
+    // Get the existing items
+    [self.session GET:@"/user/settings" parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+#ifdef DEBUG
+        NSLog(@"Exsiting settings: %@", responseObject);
+#endif
+        
+        if ([(NSArray *)responseObject count] == 0) {
+            [self _putSyncSettings:arr];
+        }
+        else {
+            
+            NSMutableArray *settings = [NSMutableArray new];
+            
+            for (NSDictionary *dict in responseObject) {
+                
+                NSString *key = dict[@"name"];
+                id value = dict[@"value"];
+                NSString *type = dict[@"type"];
+                
+                if ([type isEqualToString:@"boolean"]) {
+                    value = @([(NSNumber *)value boolValue]);
+                }
+                else if ([type isEqualToString:@"integer"]) {
+                    value = @([(NSNumber *)value integerValue]);
+                }
+                else if ([type isEqualToString:@"double"]) {
+                    value = @([(NSNumber *)value doubleValue]);
+                }
+                else if ([type isEqualToString:@"data"]) {
+                    value = [NSJSONSerialization JSONObjectWithData:value options:kNilOptions error:nil];
+                }
+                else {}
+                
+                [settings addObject:@[key, value]];
+                
+            }
+            
+            NSSet <NSArray *> * existing = [NSSet setWithArray:arr];
+            NSSet <NSArray *> * newKeys = [NSSet setWithArray:settings];
+            
+            NSMutableSet <NSArray *> * newToLocal = newKeys.mutableCopy;
+            [newToLocal minusSet:existing];
+            
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            
+            // update newToLocal to the sever
+            for (NSArray *newItem in newToLocal) {
+//                [defaults set]
+                [defaults setObject:newItem.lastObject forKey:newItem.firstObject];
+            }
+            
+            [defaults synchronize];
+            
+            NSMutableSet <NSArray *> * newToServer = existing.mutableCopy;
+            [newToServer minusSet:newKeys];
+            
+            for (NSArray *newItem in newToServer) {
+                [self _postSyncSetting:newItem];
+            }
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error fetching sync defaults: %@", error);
+        
+    }];
+    
+}
+
+- (NSArray <NSDictionary *> *)_formatSettings:(NSArray <NSArray *> *)settings {
+    
+    NSMutableArray *formatted = [NSMutableArray arrayWithCapacity:settings.count];
+    
+    for (NSArray *item in settings) {
+        
+        NSMutableDictionary * retItem = [NSMutableDictionary new];
+        retItem[@"userID"] = self.userID;
+        retItem[@"name"] = item.firstObject;
+        
+        id value = item.lastObject;
+        NSString *type = @"string";
+        
+        if ([value isKindOfClass:NSArray.class] || [value isKindOfClass:NSDictionary.class]) {
+            
+            value = [NSJSONSerialization dataWithJSONObject:value options:kNilOptions error:nil];
+            value = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+            type = @"data";
+            
+        }
+        else if ([value isKindOfClass:NSNumber.class]) {
+            
+            NSNumber *number = value;
+            
+            CFNumberType numberType = CFNumberGetType((CFNumberRef)number);
+            
+            if (numberType == kCFNumberCharType) {
+                type = @"boolean";
+            }
+            else if (numberType == kCFNumberFloat32Type || numberType == kCFNumberFloat64Type || numberType == kCFNumberLongType || numberType == kCFNumberLongLongType || numberType == kCFNumberFloatType || numberType == kCFNumberDoubleType || numberType == kCFNumberCGFloatType) {
+                type = @"double";
+            }
+            else {
+                type = @"integer";
+            }
+            
+        }
+        
+        retItem[@"type"] = type;
+        retItem[@"value"] = value;
+        
+        [formatted addObject:retItem];
+        
+    }
+    
+    return formatted;
+    
+}
+
+- (void)_putSyncSettings:(NSArray <NSArray *> *)settings {
+    
+    NSArray <NSDictionary *> * settingItems = [self _formatSettings:settings];
+    
+    [self.session PUT:@"/user/settings" queryParams:nil parameters:@{@"settings": settingItems} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Added sync defaults with response: %@", responseObject);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error updating sync defaults: %@", error);
+        
+    }];
+    
+}
+
+- (void)_postSyncSetting:(NSArray *)setting {
+    
+    NSArray *items = [self _formatSettings:@[setting]];
+    NSDictionary *item = items.firstObject;
+    
+    [self.session POST:@"/user/settings" queryParams:nil parameters:item success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Added sync default with response: %@", responseObject);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error updating sync default: %@", error);
+        
+    }];
+    
+}
+
 #pragma mark - Search
 
 - (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
