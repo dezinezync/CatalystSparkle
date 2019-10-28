@@ -2226,7 +2226,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return;
     }
     
-    NSString *path = formattedString(@"/1.4/%@/deactivate", self.userIDManager.UUID.UUIDString);
+    NSString *path = formattedString(@"/1.4/%@/deactivate", self.userIDManager.UUIDString);
     
     [self.session POST:path queryParams:nil parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
