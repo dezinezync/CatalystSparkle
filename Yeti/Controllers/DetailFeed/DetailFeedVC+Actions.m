@@ -84,8 +84,15 @@
     if (self.loadOnReady == nil)
         return;
     
-    if (!self.DS.data.count)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.DDS.snapshot.numberOfItems == 0) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.data.count == 0)
+            return;
+    }
     
     __block NSUInteger index = NSNotFound;
     

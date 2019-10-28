@@ -1078,14 +1078,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 self.DS.state = DZDatasourceLoaded;
             }
             
-            if ([self loadOnReady] != nil) {
-                weakify(self);
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self loadArticle];
-                });
-            }
+//            if ([self loadOnReady] != nil) {
+//                weakify(self);
+//                
+//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//                    [self loadArticle];
+//                });
+//            }
 
         };
     }

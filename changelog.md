@@ -1,5 +1,11 @@
 # v1.5.0
 
+## Build 295
+
+- Fixes push notifications opening the wrong feed.
+
+- Fixes push notifications not opening the article on iOS 13. 
+
 ## Build 294
 
 - Improves how the app handles & reacts to memory pressure warnings from the OS.

@@ -492,7 +492,7 @@
     if (![NSThread isMainThread]) {
         weakify(self);
         
-        asyncMain(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             [self openFeed:feedID article:articleID];
         });
@@ -515,7 +515,7 @@
         if ([[[(DetailFeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
             
             if (articleID != nil) {
-                asyncMain(^{
+                dispatch_async(dispatch_get_main_queue(), ^{
                     strongify(self);
                     
                     [self showArticle:articleID];
@@ -612,7 +612,7 @@
     
     // if it is a folder, it's expanded at this point
     if (isFolder) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(index + folderIndex + 1) inSection:1];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(index + folderIndex) inSection:1];
         
         dispatch_async(dispatch_get_main_queue(), ^{
 //            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
@@ -631,8 +631,9 @@
 
 - (void)showArticle:(NSNumber *)articleID {
     
-    if (articleID == nil)
+    if (articleID == nil) {
         return;
+    }
     
     if (![articleID integerValue]) {
         return;
