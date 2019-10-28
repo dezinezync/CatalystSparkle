@@ -1,5 +1,7 @@
 # v1.5.0
 
+This the Release Candiate Build of Elytra v1.5.0. As of now, no known bugs exist. If you find anything, please report immediately. I'll be submitting this build in the first week of November. ;)  
+
 ## Build 295
 
 - Fixes push notifications opening the wrong feed.
