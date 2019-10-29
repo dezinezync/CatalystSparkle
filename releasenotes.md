@@ -10,7 +10,7 @@ Winter is coming... soon. The Elytra Winter 2019 update is already here though. 
 
 - Push Settings: View a list of publishers you've subscribed to receive push notifications from. 
 
-- Added settings Sync to work in tandem with the web app. More on this soon.
+- Added Settings Sync to work in tandem with the web app. More on this soon.
 
 ## Improvements
 
