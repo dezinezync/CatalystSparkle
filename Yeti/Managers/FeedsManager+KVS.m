@@ -169,84 +169,84 @@
 
 #pragma mark -
 
-+ (void)load {
-    if([NSUbiquitousKeyValueStore defaultStore]) {  // is iCloud enabled
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateFromiCloud:)
-                                                     name:NSUbiquitousKeyValueStoreDidChangeExternallyNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateToiCloud:)
-                                                     name:NSUserDefaultsDidChangeNotification
-                                                   object:nil];
-    } else {
-        DDLogWarn(@"iCloud not enabled");
-    }
-}
-
-+ (void) updateToiCloud:(NSNotification*) notificationObject {
-    
-    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-    
-    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-    
-    @try {
-        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { @autoreleasepool {
-            [store setObject:obj forKey:key];
-        } }];
-    }
-    @catch (NSException *exc) {
-        DDLogError(@"updateToiCloud: %@", exc);
-    }
-    
-    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
-}
-
-+ (void) updateFromiCloud:(NSNotification*) notificationObject {
-    
-    NSUbiquitousKeyValueStore *iCloudStore = [NSUbiquitousKeyValueStore defaultStore];
-    NSDictionary *dict = [iCloudStore dictionaryRepresentation];
-    
-    // prevent NSUserDefaultsDidChangeNotification from being posted while we update from iCloud
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSUserDefaultsDidChangeNotification
-                                                  object:nil];
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    @try {
-        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { @autoreleasepool {
-            [defaults setObject:obj forKey:key];
-        } }];
-    }
-    @catch (NSException *exc) {
-        DDLogError(@"updateToiCloud: %@", exc);
-    }
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    // enable NSUserDefaultsDidChangeNotification notifications again
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateToiCloud:)
-                                                 name:NSUserDefaultsDidChangeNotification
-                                               object:nil];
-    
-//    [[NSNotificationCenter defaultCenter] postNotificationName:kMKiCloudSyncNotification object:nil];
-}
-
-+ (void) dealloc {
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSUbiquitousKeyValueStoreDidChangeExternallyNotification
-                                                  object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSUserDefaultsDidChangeNotification
-                                                  object:nil];
-}
+//+ (void)load {
+//    if([NSUbiquitousKeyValueStore defaultStore]) {  // is iCloud enabled
+//        
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(updateFromiCloud:)
+//                                                     name:NSUbiquitousKeyValueStoreDidChangeExternallyNotification
+//                                                   object:nil];
+//        
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(updateToiCloud:)
+//                                                     name:NSUserDefaultsDidChangeNotification
+//                                                   object:nil];
+//    } else {
+//        DDLogWarn(@"iCloud not enabled");
+//    }
+//}
+//
+//+ (void) updateToiCloud:(NSNotification*) notificationObject {
+//    
+//    NSDictionary *dict = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+//    
+//    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
+//    
+//    @try {
+//        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { @autoreleasepool {
+//            [store setObject:obj forKey:key];
+//        } }];
+//    }
+//    @catch (NSException *exc) {
+//        DDLogError(@"updateToiCloud: %@", exc);
+//    }
+//    
+//    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
+//}
+//
+//+ (void) updateFromiCloud:(NSNotification*) notificationObject {
+//    
+//    NSUbiquitousKeyValueStore *iCloudStore = [NSUbiquitousKeyValueStore defaultStore];
+//    NSDictionary *dict = [iCloudStore dictionaryRepresentation];
+//    
+//    // prevent NSUserDefaultsDidChangeNotification from being posted while we update from iCloud
+//    
+//    [[NSNotificationCenter defaultCenter] removeObserver:self
+//                                                    name:NSUserDefaultsDidChangeNotification
+//                                                  object:nil];
+//    
+//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//    
+//    @try {
+//        [dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) { @autoreleasepool {
+//            [defaults setObject:obj forKey:key];
+//        } }];
+//    }
+//    @catch (NSException *exc) {
+//        DDLogError(@"updateToiCloud: %@", exc);
+//    }
+//    
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//    
+//    // enable NSUserDefaultsDidChangeNotification notifications again
+//    
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(updateToiCloud:)
+//                                                 name:NSUserDefaultsDidChangeNotification
+//                                               object:nil];
+//    
+////    [[NSNotificationCenter defaultCenter] postNotificationName:kMKiCloudSyncNotification object:nil];
+//}
+//
+//+ (void) dealloc {
+//    
+//    [[NSNotificationCenter defaultCenter] removeObserver:self
+//                                                    name:NSUbiquitousKeyValueStoreDidChangeExternallyNotification
+//                                                  object:nil];
+//    
+//    [[NSNotificationCenter defaultCenter] removeObserver:self
+//                                                    name:NSUserDefaultsDidChangeNotification
+//                                                  object:nil];
+//}
 
 @end

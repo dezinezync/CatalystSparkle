@@ -31,6 +31,8 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
+NSArray <NSString *> * _defaultsKeys;
+
 @interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration>
 
 @property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
@@ -52,6 +54,16 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             }
         });
     });
+}
+
++ (NSArray <NSString *> *)defaultsKeys {
+    
+    if (_defaultsKeys == nil) {
+        _defaultsKeys = @[kDefaultsArticleFont, kDefaultsBackgroundRefresh, kShowMarkReadPrompt, kShowUnreadCounts, kDetailFeedSorting, kPreviewLines, kUseImageProxy, kDefaultsImageBandwidth, kDefaultsImageLoading, kShowArticleCoverImages, kDefaultsTheme, @"theme-light-color"];
+    }
+    
+    return _defaultsKeys;
+    
 }
 
 #pragma mark -
@@ -1702,11 +1714,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     // refine the scope to only our keys
     NSMutableArray *arr = [NSMutableArray arrayWithCapacity:allSettings.allKeys.count];
     
-    NSArray <NSString *> * const keys = @[kDefaultsArticleFont, kDefaultsBackgroundRefresh, kShowMarkReadPrompt, kShowUnreadCounts, kDetailFeedSorting, kPreviewLines, kUseImageProxy, kDefaultsImageBandwidth, kDefaultsImageLoading, kShowArticleCoverImages, kDefaultsTheme, @"theme-light-color"];
-    
     NSMutableDictionary *existingKeys = [NSMutableDictionary new];
     
-    for (NSString *key in keys) {
+    for (NSString *key in self.class.defaultsKeys) {
         
         if (allSettings[key] != nil) {
             [arr addObject:@[key, allSettings[key]]];
@@ -2367,19 +2377,23 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     NSString *kUserID = @"userID";
     NSString *kUUIDString = @"UUIDString";
     
-    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-    if (store) {
-        [store removeObjectForKey:kAccountID];
-        [store removeObjectForKey:kUserID];
-        [store synchronize];
-    }
-    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (defaults) {
         [defaults removeObjectForKey:kAccountID];
         [defaults removeObjectForKey:kUserID];
-        [defaults synchronize];
+        [defaults removeObjectForKey:kUUIDString];
     }
+    
+    for (NSString *key in self.class.defaultsKeys) {
+        
+        @try {
+            [defaults removeObjectForKey:key];
+        }
+        @catch (NSException * exc) {}
+        
+    }
+    
+    [defaults synchronize];
     
     [Keychain remove:kAccountID];
     [Keychain remove:kUserID];
