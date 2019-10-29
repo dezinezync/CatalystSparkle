@@ -27,7 +27,7 @@ Winter is coming... soon. The Elytra Winter 2019 update is already here though. 
 
 - Drastically improved managing of unread counts in the app. 
 
-- Improved behavior of the app when marking backdated articles as read. 
+- Improved behaviour of the app when marking backdated articles as read. 
 
 ## Fixes
 
@@ -51,7 +51,7 @@ Winter is coming... soon. The Elytra Winter 2019 update is already here though. 
 
 - Fixes a crash which could occur when the Trial Interface was presented. 
 
-- Fixed linked images which would not render if they were contained inside an anchor blog with multiple other elements. These other elements were usually linebreaks preventing the entire block from rendering properly. Affected blog: Saturday Morning Breakfast Cereal.. 
+- Fixed linked images which would not render if they were contained inside an anchor blog with multiple other elements. These other elements were usually line-breaks preventing the entire block from rendering properly. Affected blog: Saturday Morning Breakfast Cereal.. 
 
 - Removed webp support. 
 
