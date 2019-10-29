@@ -21,8 +21,7 @@
 
 #import "YetiConstants.h"
 #import "ArticlesManager.h"
-
-#import <UICKeyChainStore/UICKeyChainStore.h>
+#import "BookmarksManager.h"
 
 @class FeedsManager;
 
@@ -34,8 +33,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     Subscription * _subscription;
     
     NSNumber * _userID;
-    
-    UICKeyChainStore * _keychain;
 }
 
 @property (atomic, strong, readonly) Subscription * _Nullable subscription;
@@ -50,9 +47,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, weak) Feed * _Nullable subsribeAfterPushEnabled;
 
-@property (atomic, strong) UICKeyChainStore * _Nonnull keychain;
-
 @property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
+
+@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 #pragma mark - Feeds
 
@@ -72,7 +69,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 #pragma mark Networking APIs
 #pragma mark - Feeds
 
-- (void)getFeedsSince:(NSDate * _Nullable)since success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getFeedsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
 
@@ -140,6 +137,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addPushToken:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)getAllWebSubWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)subsribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)unsubscribe:(Feed * _Nonnull)feed success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
@@ -158,6 +157,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getSync:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)syncSettings;
+
 #pragma mark - Search
 
 - (NSURLSessionTask * _Nullable)search:(NSString * _Nonnull)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
@@ -172,6 +173,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)resetAccount;
 
 #pragma mark - <YTUserDelegate>
+
+- (void)signInWithApple:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB API_AVAILABLE(ios(13.0));
 
 - (void)getUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 

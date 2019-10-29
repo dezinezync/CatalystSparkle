@@ -53,6 +53,9 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     self.tableView.estimatedRowHeight = 44.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
+    self.tableView.estimatedSectionFooterHeight = 80.f;
+    self.tableView.sectionFooterHeight = UITableViewAutomaticDimension;
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.tableView.backgroundColor = theme.tableColor;
 }
@@ -112,17 +115,17 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    
-    self.footerSizingLabel.frame = CGRectMake(0, 0, tableView.safeAreaLayoutGuide.layoutFrame.size.width, 0.f);
-    self.footerSizingLabel.text = [self tableView:tableView titleForFooterInSection:section];
-    [self.footerSizingLabel sizeToFit];
-    
-    CGFloat height = self.footerSizingLabel.frame.size.height + 12.f;
-    
-    return height;
-    
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+//
+//    self.footerSizingLabel.frame = CGRectMake(0, 0, tableView.safeAreaLayoutGuide.layoutFrame.size.width, 0.f);
+//    self.footerSizingLabel.text = [self tableView:tableView titleForFooterInSection:section];
+//    [self.footerSizingLabel sizeToFit];
+//
+//    CGFloat height = self.footerSizingLabel.frame.size.height + 12.f;
+//
+//    return height;
+//
+//}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 2) {
@@ -137,6 +140,8 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kXImageLoadingCell forIndexPath:indexPath];
+    
+    cell.separatorInset = UIEdgeInsetsZero;
     
     // Configure the cell...
     switch (indexPath.section) {

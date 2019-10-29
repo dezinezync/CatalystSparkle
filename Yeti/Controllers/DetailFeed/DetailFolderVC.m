@@ -11,6 +11,8 @@
 
 @interface DetailFolderVC ()
 
+@property (nonatomic, strong) PagingManager *folderFeedsManager;
+
 @end
 
 @implementation DetailFolderVC
@@ -150,98 +152,118 @@
     
 }
 
-- (void)loadNextPage
-{
+- (PagingManager *)pagingManager {
     
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoading) {
-            return;
-        }
-    }
-    else {
+    return self.folderFeedsManager;
     
-        if (self.DS.state != DZDatasourceLoading)
-            return;
-    }
+}
+
+- (PagingManager *)folderFeedsManager {
     
-    if (self->_canLoadNext == NO) {
-        return;
-    }
-    
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateLoading;
-    }
-    else {
-        self.DS.state = DZDatasourceLoading;
-    }
-    
-    weakify(self);
-    
-    NSInteger page = self.page + 1;
-    
-    YetiSortOption sorting = SharedPrefs.sortingOption;
-    
-    [MyFeedsManager folderFeedFor:self.folder sorting:sorting page:page success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (_folderFeedsManager == nil) {
         
-        strongify(self);
+        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
-        if (!self)
-            return;
+        params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
+            
+        #if TESTFLIGHT == 0
+            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+            }
+        #endif
         
-        self.page = page;
+        NSString *path = formattedString(@"/1.1/folder/%@/feed", self.folder.folderID);
         
-        if (responseObject == nil || [responseObject count] == 0) {
-            self->_canLoadNext = NO;
-        }
-        else {
+        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:nil];
+        
+        _folderFeedsManager = pagingManager;
+    }
+    
+    if (_folderFeedsManager.preProcessorCB == nil) {
+        _folderFeedsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [FeedItem instanceFromDictionary:obj];
+            }];
+            
+            return retval;
+            
+        };
+    }
+    
+    if (_folderFeedsManager.successCB == nil) {
+        weakify(self);
+        
+        _folderFeedsManager.successCB = ^{
+            strongify(self);
+            
+            if (!self) {
+                return;
+            }
+            
+            [self setupData];
             
             if (@available(iOS 13, *)) {
-                
-                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                
-                if (snapshot.numberOfSections == 0) {
-                    [snapshot appendSectionsWithIdentifiers:@[@0]];
-                }
-                
-                [snapshot appendItemsWithIdentifiers:responseObject];
-                
-                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-                
                 self.controllerState = StateLoaded;
             }
             else {
-                if (page == 1 || self.DS.data == nil) {
-                    self.DS.data = responseObject;
-                }
-                else {
-                    self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
-                }
-                
                 self.DS.state = DZDatasourceLoaded;
             }
-        
-            if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-                [self loadNextPage];
-            }
-        }
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        DDLogError(@"%@", error);
-        
-        strongify(self);
-        
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateErrored;
-        }
-        else {
-            self.DS.state = DZDatasourceError;
             
-            if (self.DS.data == nil || [self.DS.data count] == 0) {
-                // the initial load has failed.
-                self.DS.data = @[];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+                
+                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
+            });
+            
+            if ([self loadOnReady] != nil) {
+                weakify(self);
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self loadArticle];
+                });
             }
-        }
+        
+        };
+    }
     
-    }];
+    if (_folderFeedsManager.errorCB == nil) {
+        weakify(self);
+        
+        _folderFeedsManager.errorCB = ^(NSError * _Nonnull error) {
+            DDLogError(@"%@", error);
+            
+            strongify(self);
+            
+            if (!self)
+                return;
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateErrored;
+            }
+            else {
+                self.DS.state = DZDatasourceError;
+            }
+            
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+            })
+        };
+    }
+    
+    return _folderFeedsManager;
+    
 }
 
 #pragma mark - State Restoration
@@ -266,35 +288,16 @@
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
-    if (@available(iOS 13, *)) {
-        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBFolderData];
-    }
-    else {
-        [coder encodeObject:self.DS.data forKey:kBFolderData];
-    }
-    
     [coder encodeObject:self.folder forKey:kBFolderObj];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    Folder *folder = [coder decodeObjectOfClass:Folder.class forKey:kBFolderObj];
+    
+    self.folder = folder;
+    
     [super decodeRestorableStateWithCoder:coder];
-    
-    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBFolderData];
-    
-    if (items) {
-        [self setupLayout];
-        
-        if (@available(iOS 13, *)) {
-            NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-            [snapshot appendSectionsWithIdentifiers:@[@0]];
-            [snapshot appendItemsWithIdentifiers:items];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        }
-        else {
-            self.DS.data = items;
-        }
-    }
     
 }
 

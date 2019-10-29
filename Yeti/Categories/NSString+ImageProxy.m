@@ -81,7 +81,10 @@
         copy = formattedString(@"https://images.weserv.nl/?url=%@", copy);
         
         if (usedSRCSet == NO) {
-            copy = formattedString(@"%@&w=%@&dpr=%@&output=jpeg&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), @(quality));
+            
+            NSString *extension = [self pathExtension] ?: @"jpeg";
+            
+            copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality));
         }
         
 //        DDLogInfo(@"weserv.nl proxy URL: %@", copy);

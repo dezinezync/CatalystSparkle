@@ -8,4 +8,5 @@
 
 #import <Foundation/Foundation.h>
 
+FOUNDATION_EXTERN NSErrorDomain FeedsManagerDomain;
 FOUNDATION_EXTERN NSInteger const kFMErrorExisting;

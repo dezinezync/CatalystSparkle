@@ -226,38 +226,45 @@
         
         strongify(self);
         
-        BOOL errored = self.item.isBookmarked ? [MyFeedsManager addLocalBookmark:self.item] : [MyFeedsManager removeLocalBookmark:self.item];
-        
-        if (errored == NO) {
-        
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                UIImage *image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
-                
-                [button setImage:image];
-            });
+        void (^bookmarkCallback)(BOOL success) = ^void(BOOL success) {
+            if (success == YES) {
+               
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       
+                       UIImage *image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+                       
+                       [button setImage:image];
+                   });
+                   
+               }
+               else {
+                   self.item.bookmarked = !self.item.bookmarked;
+               }
+               
+               if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:bookmarked:)]) {
+                   [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
+               }
             
+               weakify(self);
+               
+               dispatch_async(dispatch_get_main_queue(), ^{
+                  
+                   strongify(self);
+                   
+                   button.enabled = YES;
+                   
+                   [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+                   [[self notificationGenerator] prepare];
+                   
+               });
+        };
+        
+        if (self.item.isBookmarked) {
+            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
         }
         else {
-            self.item.bookmarked = !self.item.bookmarked;
+            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
         }
-        
-        if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:bookmarked:)]) {
-            [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
-        }
-     
-        weakify(self);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-            strongify(self);
-            
-            button.enabled = YES;
-            
-            [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
-            [[self notificationGenerator] prepare];
-            
-        });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        

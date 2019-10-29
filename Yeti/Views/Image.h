@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Content.h"
 #import <FLAnimatedImage/FLAnimatedImageView.h>
 
 @interface SizedImage : UIImageView
@@ -27,6 +28,8 @@
 
 @end
 
+@class ImageLoader;
+
 @interface Image : UIView
 
 @property (nonatomic, assign) NSInteger idx;
@@ -38,7 +41,9 @@
 
 @property (nonatomic, weak, readonly) SizedImage *imageView;
 
-- (void)il_setImageWithURL:(id)url;
+@property (nonatomic, weak) Content *content;
+
+- (void)il_setImageWithURL:(id)url imageLoader:(ImageLoader *)imageLoader;
 
 - (void)il_cancelImageLoading;
 

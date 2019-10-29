@@ -40,7 +40,10 @@
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
+    self.label.numberOfLines = 0;
+    
     self.backgroundColor = theme.cellColor;
+    self.label.textColor = theme.tintColor;
     self.textview.backgroundColor = theme.cellColor;
     
     if (self.author) {
@@ -69,6 +72,10 @@
     
     size.width = self.bounds.size.width - 32.f;
     size.height += self.textview.contentSize.height;
+    
+    size.height += 8.f;
+    
+    size.height += self.label.bounds.size.height;
     
     size.height += 8.f;
     
@@ -102,6 +109,17 @@
     else {
         _shadowImage = shadowImage;
     }
+}
+
+- (void)setFeed:(Feed *)feed {
+    
+    _feed = feed;
+    
+    if (_feed) {
+        self.label.text = [feed displayTitle];
+        [self.label sizeToFit];
+    }
+    
 }
 
 - (void)setAuthor:(Author *)author

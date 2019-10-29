@@ -13,7 +13,6 @@
 
 #import "YetiThemeKit.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
-#import <DZNetworking/WebPImageSerialization.h>
 
 #import <DZKit/AlertManager.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
@@ -125,7 +124,7 @@
     return [self.imageView isAnimating];
 }
 
-- (void)il_setImageWithURL:(id)url
+- (void)il_setImageWithURL:(id)url imageLoader:(ImageLoader *)imageLoader
 {
     BOOL isGIF = NO;
     
@@ -156,7 +155,15 @@
             
             [self _setupImage];
             
-            [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+            CGFloat width = self.imageView.bounds.size.width;
+            
+            [self.imageView il_setImageWithURL:url mutate:^UIImage * _Nonnull(UIImage * _Nonnull image) {
+              
+                image = [image fastScale:width quality:1.f imageData:nil];
+                
+                return image;
+                
+            } success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
                 
                 self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
                 
@@ -164,31 +171,7 @@
                     [self addContextMenus];
                 }
                 
-            } error:nil];
-            
-//            dispatch_async(SharedImageLoader.ioQueue, ^{
-//
-//                // check if we have the cached the sized image
-//                NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
-//
-//                [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
-//
-//                    if (image != nil) {
-//                        dispatch_async(dispatch_get_main_queue(), ^{
-//                            self.imageView.settingCached = YES;
-//                            self.imageView.image = image;
-//                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-//                        });
-//                    }
-//                    else {
-//                        [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-//                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-//                        } error:nil];
-//                    }
-//
-//                }];
-//
-//            });
+            } error:nil imageLoader:imageLoader];
             
         });
     }
@@ -449,6 +432,14 @@
         
     }]];
     
+    [actions addObject:[UIAction actionWithTitle:@"Save Image" image:[UIImage systemImageNamed:@"square.and.arrow.down"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIImageWriteToSavedPhotosAlbum(self.imageView.image, nil, nil, nil);
+        });
+        
+    }]];
+    
     NSString *menuTitle = @"Image Actions";
     
     UIMenu *menu = [UIMenu menuWithTitle:menuTitle children:actions];
@@ -538,9 +529,6 @@
                         }
                         else if ([extension isEqualToString:@"png"]) {
                             data = UIImagePNGRepresentation(image);
-                        }
-                        else if ([extension isEqualToString:@"webp"]) {
-                            data = [image dataWebPLossless];
                         }
                         
                         [SharedImageLoader.cache setObject:scaled data:data forKey:key];

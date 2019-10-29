@@ -70,7 +70,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) UIView *last; // reference to the last setup view.
 @property (weak, nonatomic) id nextItem; // next item which will be processed
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loader;
-@property (nonatomic, strong) NSPointerArray *images;
+@property (nonatomic, strong, readwrite) NSPointerArray *images;
 
 @property (nonatomic, strong) NSPointerArray *videos;
 
@@ -86,6 +86,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
+
+@property (nonatomic, strong) ImageLoader *articlesImageLoader;
+
+- (void)didTapOnImage:(UITapGestureRecognizer *)sender API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -113,6 +117,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.state = ArticleStateLoading;
     self.navigationItem.leftItemsSupplementBackButton = YES;
+    self.articlesImageLoader = [ImageLoader new];
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -266,10 +271,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)dealloc {
-    NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
     
-    if (cache) {
-        [cache removeAllObjects];
+    if (self.articlesImageLoader != nil) {
+        [self.articlesImageLoader.cache removeAllObjects];
     }
     
     @try {
@@ -672,6 +676,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (feed != nil) {
         
+        MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - 1);
+        
         feed.unread = @(MAX(0, feed.unread.integerValue - 1));
         
         if (feed.folderID != nil) {
@@ -703,11 +709,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addTitle];
     
     // iOS 13 shouldn't need it and handle it well.
-    if (@available(iOS 13, *)) {}
-    else {
-        if (self.item.content.count > 20) {
-            self->_deferredProcessing = YES;
-        }
+    if (self.item.content.count > 20) {
+        self->_deferredProcessing = YES;
     }
     
     if (self.item.coverImage) {
@@ -727,7 +730,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item.enclosures && self.item.enclosures.count) {
         
-        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
+        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png"];
         NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
         
         // check for images
@@ -1009,7 +1012,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (BOOL)showImage {
-    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingNever])
         return NO;
     
     else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
@@ -1116,6 +1119,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     else if ([content.type isEqualToString:@"anchor"]) {
+        
+        NSArray <Content *> *subcontent = [content.items rz_filter:^BOOL(Content *obj, NSUInteger idx, NSArray *array) {
+            return [obj.type isEqualToString:@"linebreak"] == NO;
+        }];
+        
+        if (subcontent.count == 1 && [subcontent[0].type isEqualToString:@"image"]) {
+            [self addImage:subcontent.firstObject link:content.url];
+            return;
+        }
         
         [self addParagraph:content caption:NO];
         
@@ -1458,6 +1470,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGFloat scale = content.size.height / content.size.width;
     
+    if (((NSRange)[content.url rangeOfString:@"feeds.feedburner.com"]).location != NSNotFound) {
+        // example: http://feeds.feedburner.com/~ff/abduzeedo?d=yIl2AUoC8zA
+        return;
+    }
+    
     Image *imageView = [[Image alloc] initWithFrame:frame];
     
     if (link && [link isKindOfClass:NSArray.class]) {
@@ -1500,15 +1517,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         imageView.aspectRatio.active = YES;
     }
     
+    imageView.content = content;
+    
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
     
     NSString *url = [content urlCompliantWithUsersPreferenceForWidth:self.scrollView.bounds.size.width];
     
-    if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
+    if (@available(iOS 13, *)) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
         imageView.userInteractionEnabled = YES;
         
+        [imageView addGestureRecognizer:tap];
+    }
+    else if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
+        imageView.userInteractionEnabled = YES;
+
         [imageView addGestureRecognizer:tap];
     }
     
@@ -1527,6 +1552,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         caption.content = imageView.accessibilityValue;
         caption.isAccessibilityElement = NO; // the image itself presents the caption.
         [self addParagraph:caption caption:YES];
+        
     }
 
 }
@@ -1535,6 +1561,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (![self showImage])
         return;
+    
+    if (content.images == nil) {
+        return;
+    }
+    
+    if (content.images.count == 1) {
+        // add this as a single image instead of a gallery
+        [self addImage:content.images.firstObject];
+        return;
+    }
     
     if (_last && ![_last isKindOfClass:Linebreak.class]) {
         [self addLinebreak];
@@ -1907,18 +1943,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addLinebreak];
 }
 
-#pragma mark - Actions
-
-- (void)didTapOnImageWithURL:(UITapGestureRecognizer *)sender {
-    
-    Image *view = (Image *)[sender view];
-    NSString *url = [[view URL] absoluteString];
-    
-    NSURL *formatted = formattedURL(@"yeti://external?link=%@", url);
-    
-    [UIApplication.sharedApplication openURL:formatted options:@{} completionHandler:nil];
-    
-}
 
 #pragma mark - <ArticleAuthorViewDelegate>
 
@@ -1983,8 +2007,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
     if (scrollView != self.stackView.superview)
         return;
@@ -2055,12 +2078,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         else if (!imageview.imageView.image && contains && !imageview.isLoading) {
 //            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
+                
                 imageview.loading = YES;
-                if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
-                    [imageview il_setImageWithURL:imageview.URL];
-                }
-            });
+                
+                [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
+            }
         }
         else if (imageview.imageView.image && !contains) {
             

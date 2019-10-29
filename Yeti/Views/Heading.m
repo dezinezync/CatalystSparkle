@@ -25,6 +25,10 @@
     return YES;
 }
 
++ (BOOL)canPresentContextMenus {
+    return NO;
+}
+
 #pragma mark -
 
 - (instancetype)initWithFrame:(CGRect)frame

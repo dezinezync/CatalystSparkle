@@ -11,7 +11,17 @@
 
 static ArticlesManager * SharedArticleManager = nil;
 
+@interface ArticlesManager ()
+
+@property (nonatomic, strong, readwrite) NSArray <Feed *> * _Nullable feedsWithoutFolders;
+
+@end
+
 @implementation ArticlesManager
+
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
 
 + (instancetype)shared {
     
@@ -21,6 +31,12 @@ static ArticlesManager * SharedArticleManager = nil;
     });
     
     return SharedArticleManager;
+    
+}
+
++ (void)setShared:(ArticlesManager *)shared {
+    
+    SharedArticleManager = shared;
     
 }
 
@@ -120,7 +136,7 @@ static ArticlesManager * SharedArticleManager = nil;
     self.folders = [ArticlesManager.shared folders];
     
     if (ArticlesManager.shared.feeds) {
-        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:@{@"feeds" : _feeds, @"folders": ArticlesManager.shared.folders ?: @[]}];
+        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
     }
 }
 
@@ -141,7 +157,9 @@ static ArticlesManager * SharedArticleManager = nil;
                     [ArticlesManager.shared.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull feed, NSUInteger idxx, BOOL * _Nonnull stopx) {
                         
                         if ([feed.feedID isEqualToNumber:objx]) {
+                            
                             feed.folderID = folder.folderID;
+                            
                             if ([folder.feeds containsObject:feed] == NO) {
                                 [folder.feeds addPointer:(__bridge void *)feed];
                             }
@@ -154,6 +172,56 @@ static ArticlesManager * SharedArticleManager = nil;
             
         }];
     }
+    
+}
+
+#pragma mark - <UIStateRestoring>
+
+- (Class)objectRestorationClass {
+    return ArticlesManager.class;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [coder encodeObject:(self.feeds ?: @[]) forKey:propSel(feeds)];
+    [coder encodeObject:(self.folders ?: @[]) forKey:propSel(folders)];
+    [coder encodeObject:(self.feedsWithoutFolders ?: @[]) forKey:propSel(feedsWithoutFolders)];
+    
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    self.feeds = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feeds)];
+    self.folders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Folder.class]] forKey:propSel(folders)];
+    self.feedsWithoutFolders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feedsWithoutFolders)];
+    
+}
+
+- (void)encodeWithCoder:(nonnull NSCoder *)coder {
+    [coder encodeObject:(self.feeds ?: @[]) forKey:propSel(feeds)];
+    [coder encodeObject:(self.folders ?: @[]) forKey:propSel(folders)];
+    [coder encodeObject:(self.feedsWithoutFolders ?: @[]) forKey:propSel(feedsWithoutFolders)];
+}
+
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder {
+
+    if (self = [super init]) {
+        self.feeds = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feeds)];
+        self.folders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Folder.class]] forKey:propSel(folders)];
+        self.feedsWithoutFolders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feedsWithoutFolders)];
+    }
+    
+    return self;
+
+}
+
++ (nullable id<UIStateRestoring>) objectWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
+    
+    ArticlesManager *shared = [[ArticlesManager alloc] initWithCoder:coder];
+    
+    ArticlesManager.shared = shared;
+    
+    return shared;
     
 }
 

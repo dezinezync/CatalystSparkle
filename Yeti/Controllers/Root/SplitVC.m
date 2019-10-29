@@ -8,6 +8,7 @@
 
 #import "SplitVC.h"
 #import "YetiConstants.h"
+#import "Keychain.h"
 
 #import "YetiThemeKit.h"
 #import "CodeParser.h"
@@ -20,6 +21,8 @@
 #import "AppDelegate.h"
 #import "TwoFingerPanGestureRecognizer.h"
 #import "MainNavController.h"
+
+#import "BookmarksMigrationVC.h"
 
 @interface SplitVC () <UISplitViewControllerDelegate, UIGestureRecognizerDelegate>
 
@@ -37,15 +40,6 @@
         self.delegate = self;
         
         [self loadViewIfNeeded];
-        
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-//
-//            if (@available(iOS 13, *)) {
-//                self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
-//            }
-//
-//        });
         
         MainNavController *nav1 = [[MainNavController alloc] init];
         
@@ -81,21 +75,21 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
-    
-    UICKeyChainStore *keychain = MyFeedsManager.keychain;
+
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
-    NSString *hasShownIntro = [keychain stringForKey:kHasShownOnboarding];
     
-    if (!hasShownIntro || [hasShownIntro boolValue] == NO) {
+    NSError *error = nil;
+    BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
+    
+    if (hasShownIntro == NO) {
         [self userNotFound];
     }
 #if TESTFLIGHT == 1
     else {
         // this ensures anyone who has already gone through the setup isn't asked to subscribe again.
         // this value should change for the production app on the App Store
-        NSString *val = [@(YES) stringValue];
-        keychain[YTSubscriptionHasAddedFirstFeed] = val;
+        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
     }
 #endif
     
@@ -103,7 +97,12 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    
     [super viewDidAppear:animated];
+    
+    if (MyFeedsManager.userID) {
+        [self checkIfBookmarksShouldBeMigrated];
+    }
     
 //#ifdef DEBUG
 //    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
@@ -119,51 +118,6 @@
     return lightTheme ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
     
 }
-
-//- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-//    
-//    if (@available(iOS 13, *)) {
-//        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-//            [[NSNotificationCenter defaultCenter] postNotificationName:ThemeDidUpdate object:nil];
-//        }
-//    }
-//    
-//    [super traitCollectionDidChange:previousTraitCollection];
-//    
-//}
-
-//- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-//    weakify(self);
-//    [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-//
-//        // Why set the display mode in dispatch?
-//        // It's a workaround: http://stackoverflow.com/a/28440974/242682
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//           
-//            strongify(self);
-//            
-//            self.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
-//            
-//        });
-//
-////        if (self.view.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-////
-////            if (self.viewControllers.count == 1) {
-////                UINavigationController *nav = [self emptyVC];
-////
-////                self.viewControllers = @[self.viewControllers.firstObject, nav];
-////            }
-////
-////        }
-////        else {
-////            DDLogDebug(@"New Compact Size: %@", NSStringFromCGRect(self.view.bounds));
-////        }
-//
-//    }];
-//    
-//    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-//    
-//}
 
 #pragma mark -
 
@@ -197,6 +151,41 @@
         }
         
     }
+    
+}
+
+#define BookmarksMigratedKey @"bookmarksMigrated"
+
+- (void)checkIfBookmarksShouldBeMigrated {
+    
+    BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
+
+    if (migrated == YES) {
+        return;
+    }
+    
+    BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
+    
+    FeedsVC *feedsVC = [[(UINavigationController *)[self.viewControllers firstObject] viewControllers] firstObject];
+    vc.bookmarksManager = feedsVC.bookmarksManager;
+    
+    weakify(vc);
+    
+    vc.completionBlock = ^(BOOL success) {
+        
+        strongify(vc);
+      
+        if (success == YES) {
+            [Keychain add:BookmarksMigratedKey boolean:YES];
+        }
+        
+        [vc.navigationController dismissViewControllerAnimated:YES completion:nil];
+        
+    };
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    
+    [self presentViewController:nav animated:YES completion:nil];
     
 }
 
@@ -327,33 +316,6 @@
 
     return nav;
 }
-
-//- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(YTNavigationController *)primaryViewController {
-//
-//    if (primaryViewController == secondaryViewController) {
-//        return NO;
-//    }
-//
-//    if (secondaryViewController != nil && [secondaryViewController isKindOfClass:UINavigationController.class]) {
-//
-//        UINavigationController *secondaryNav = (UINavigationController *)secondaryViewController;
-//        UIViewController *topVC = [secondaryNav topViewController];
-//
-//        if (topVC != nil && [topVC isKindOfClass:ArticleVC.class]) {
-//            [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
-//            return YES;
-//        }
-//        else if (topVC != nil && [topVC isKindOfClass:EmptyVC.class]) {
-//            return YES;
-//        }
-//    }
-//    else if ([secondaryViewController isKindOfClass:ArticleVC.class]) {
-//        [primaryViewController collapseSecondaryViewController:secondaryViewController forSplitViewController:splitViewController];
-//        return YES;
-//    }
-//
-//    return NO;
-//}
 
 - (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
     

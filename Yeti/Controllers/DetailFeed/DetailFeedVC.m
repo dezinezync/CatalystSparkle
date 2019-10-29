@@ -45,7 +45,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 @interface DetailFeedVC () <DZDatasource, ArticleProvider, FeedHeaderViewDelegate, UIViewControllerRestoration, UICollectionViewDataSourcePrefetching, ArticleCellDelegate, UIAdaptivePresentationControllerDelegate> {
     UIImageView *_barImageView;
-    BOOL _ignoreLoadScroll;
     
     BOOL _initialSetup;
     ArticleCellB *_protoCell;
@@ -180,20 +179,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.DS.data = @[];
     }
     
-    _page = 0;
-    _canLoadNext = YES;
+    self.pagingManager = nil;
     
-    if (self.feed) {
-        self.feed.articles = @[];
-    }
-    
-    [AlertManager showGenericAlertWithTitle:@"Memory Warning" message:@"The app received a memory warning and to prevent unexpected crashes, it had to clear articles from the current feed. Please reload the feed to continue viewing."];
+//    [AlertManager showGenericAlertWithTitle:@"Memory Warning" message:@"The app received a memory warning and to prevent unexpected crashes, it had to clear articles from the current feed. Please reload the feed to continue viewing."];
 }
 
 - (void)dealloc {
-    if (self.feed) {
-        self.feed.articles = @[];
-    }
     
     @try {
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -766,6 +757,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
+    vc.bookmarksManager = self.bookmarksManager;
     
     if (self.splitViewController == nil) {
         // in a modal stack
@@ -996,7 +988,147 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
 #pragma mark - <ScrollLoading>
 
+- (void)setupData {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    NSArray *articles = self.pagingManager.items;
+    
+    @try {
+        
+        if (@available(iOS 13, *)) {
+            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+            [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
+            [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        }
+        else {
+            self.DS.data = articles;
+        }
+    }
+    @catch (NSException *exc) {
+        DDLogWarn(@"Exception updating feed articles: %@", exc);
+    }
+    
+}
+
+- (PagingManager *)pagingManager {
+    
+    if (_pagingManager == nil) {
+        
+        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
+        
+        params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
+            
+        #if TESTFLIGHT == 0
+            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+            }
+        #endif
+        
+        NSString *path = [NSString stringWithFormat:@"/feeds/%@", self.feed.feedID];
+        
+        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
+        
+        _pagingManager = pagingManager;
+    }
+    
+    if (_pagingManager.preProcessorCB == nil) {
+        _pagingManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [FeedItem instanceFromDictionary:obj];
+            }];
+            
+            return retval;
+            
+        };
+    }
+    
+    if (_pagingManager.successCB == nil) {
+        weakify(self);
+        
+        _pagingManager.successCB = ^{
+            strongify(self);
+            
+            if (!self) {
+                return;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+                
+                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
+            });
+            
+            [self setupData];
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateLoaded;
+            }
+            else {
+                self.DS.state = DZDatasourceLoaded;
+            }
+            
+//            if ([self loadOnReady] != nil) {
+//                weakify(self);
+//                
+//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//                    [self loadArticle];
+//                });
+//            }
+
+        };
+    }
+    
+    if (_pagingManager.errorCB == nil) {
+        weakify(self);
+        
+        _pagingManager.errorCB = ^(NSError * _Nonnull error) {
+            DDLogError(@"%@", error);
+            
+            strongify(self);
+            
+            if (!self)
+                return;
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateErrored;
+            }
+            else {
+                self.DS.state = DZDatasourceError;
+            }
+            
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+            })
+        };
+    }
+    
+    return _pagingManager;
+    
+}
+
 - (void)loadNextPage {
+    
+    if (self.pagingManager.hasNextPage == NO) {
+        return;
+    }
     
     if (@available(iOS 13, *)) {
         if (self.controllerState == StateLoading) {
@@ -1004,16 +1136,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         }
     }
     else {
-        if (self.DS.state == DZDatasourceLoading) {
+        if (self.DS.state == DZDatasourceLoading)
             return;
-        }
-    }
-    
-    if (self->_ignoreLoadScroll)
-        return;
-    
-    if (self->_canLoadNext == NO) {
-        return;
     }
     
     if (@available(iOS 13, *)) {
@@ -1023,99 +1147,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         self.DS.state = DZDatasourceLoading;
     }
     
-    weakify(self);
+    [self.pagingManager loadNextPage];
     
-    NSInteger page = self->_page + 1;
-    
-    YetiSortOption sorting = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
-    
-    [MyFeedsManager getFeed:self.feed sorting:sorting page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        if (!self)
-            return;
-        
-        self->_page = page;
-        
-        if (responseObject == nil || responseObject.count == 0) {
-            self->_canLoadNext = NO;
-        }
-        else {
-            weakify(self);
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                
-                NSArray *articles = page == 1 ? @[] : (self.feed.articles ?: @[]);
-                articles = [articles arrayByAddingObjectsFromArray:responseObject];
-                self.feed.articles = articles;
-                self->_ignoreLoadScroll = YES;
-                
-                @try {
-                    
-                    if (@available(iOS 13, *)) {
-                        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                        [snapshot appendItemsWithIdentifiers:responseObject intoSectionWithIdentifier:ArticlesSection];
-                        
-                        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-                    }
-                    else {
-                        self.DS.data = self.feed.articles;
-                    }
-                }
-                @catch (NSException *exc) {
-                    DDLogWarn(@"Exception updating feed articles: %@", exc);
-                }
-                
-            });
-        }
-        
-        self->_page = page;
-        
-        if ([self loadOnReady] != nil) {
-            weakify(self);
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self loadArticle];
-            });
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            if (self->_ignoreLoadScroll) {
-                self->_ignoreLoadScroll = NO;
-            }
-            
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
-        });
-        
-        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            [self loadNextPage];
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        DDLogError(@"%@", error);
-        
-        strongify(self);
-        
-        if (!self)
-            return;
-        
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateErrored;
-        }
-        else {
-            self.DS.state = DZDatasourceError;
-        }
-    }];
 }
 
 - (BOOL)cantLoadNext
@@ -1233,11 +1266,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
         
-        FeedItem *articleInFeed = [self.feed.articles safeObjectAtIndex:index];
-        if (articleInFeed) {
-            articleInFeed.read = read;
-        }
-        
         FeedItem *articleInDS = [self itemForIndexPath:indexPath];
         
         if (@available(iOS 13, *)) {
@@ -1302,11 +1330,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        
-        FeedItem *articleInFeed = [self.feed.articles safeObjectAtIndex:index];
-        if (articleInFeed) {
-            articleInFeed.bookmarked = bookmarked;
-        }
         
         FeedItem *articleInDS = [self itemForIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
         
@@ -1432,6 +1455,10 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     [super encodeRestorableStateWithCoder:coder];
     
+    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == NO) {
+        [coder encodeObject:self.pagingManager forKey:@"pagingManager"];
+    }
+    
     [coder encodeObject:self.feed forKey:kBFeedData];
     [coder encodeInteger:_page forKey:kBCurrentPage];
     [coder encodeObject:self.sizeCache forKey:kSizCache];
@@ -1450,21 +1477,21 @@ NSString * const kSizCache = @"FeedSizesCache";
             [self setupLayout];
             
             self.feed = feed;
-            
-            if (@available(iOS 13, *)) {
-                
-                NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-                [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
-                [snapshot appendItemsWithIdentifiers:self.feed.articles intoSectionWithIdentifier:ArticlesSection];
-                
-                [self.DDS applySnapshot:snapshot animatingDifferences:NO];
-            }
-            else {
-                [self.DS resetData];
-                self.DS.data = self.feed.articles;
-            }
-            
         }
+    }
+    
+    if ([NSStringFromClass(self.class) isEqualToString:@"DetailCustomVC"] == NO) {
+        
+        self.pagingManager = [coder decodeObjectForKey:@"pagingManager"];
+        
+        if (@available(iOS 13, *)) {
+            self.controllerState = StateLoaded;
+        }
+        else {
+            self.DS.state = DZDatasourceLoaded;
+        }
+        
+        [self setupData];
     }
     
     _page = [coder decodeIntegerForKey:kBCurrentPage];
@@ -1503,30 +1530,27 @@ NSString * const kSizCache = @"FeedSizesCache";
     // sorting button
     YetiSortOption option = SharedPrefs.sortingOption;
     
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    SEL isUnread = NSSelectorFromString(@"isUnread");
-    
-    if (self.customFeed == FeedTypeCustom && [self respondsToSelector:isUnread] && (BOOL)[self performSelector:isUnread] == YES) {
+    if (self.customFeed == FeedTypeCustom) {
         
         // when the active option is either of these two, we don't need
         // to do anything extra
-        if (option != YTSortUnreadAsc && option != YTSortUnreadDesc) {
+        if ([option isEqualToString:YTSortUnreadAsc] == NO && [option isEqualToString:YTSortUnreadDesc] == NO) {
             
             // map it to whatever the selected option is
-            if (option == YTSortAllAsc) {
+            if ([option isEqualToString:YTSortAllAsc]) {
                 option = YTSortUnreadAsc;
             }
-            else if (option == YTSortAllDesc) {
+            else if ([option isEqualToString:YTSortAllDesc]) {
                 option = YTSortUnreadDesc;
             }
             
         }
         
     }
-#pragma clang diagnostic pop
     
-    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option];
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
     sorting.width = 32.f;
     
     if (!(self.feed.hubSubscribed && self.feed.hub)) {
@@ -1784,6 +1808,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 {
     DetailAuthorVC *vc = [[DetailAuthorVC alloc] initWithFeed:self.feed];
     vc.author = author;
+    vc.feed = self.feed;
     vc.customFeed = self.customFeed;
     
     [self showViewController:vc sender:self];

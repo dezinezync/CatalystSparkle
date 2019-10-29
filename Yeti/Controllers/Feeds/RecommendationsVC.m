@@ -77,12 +77,12 @@ static NSString * const reuseIdentifier = @"Cell";
     
     [self dz_smoothlyDeselectCells:self.collectionView];
     
-    [self _updateMetrics];
-    
     self.navigationController.toolbarHidden = YES;
     
     if (self.state == ReccoStateLoaded)
         return;
+    
+    [self _updateMetrics];
     
     NSInteger count = 9;
     
@@ -90,13 +90,19 @@ static NSString * const reuseIdentifier = @"Cell";
         count = 20;
     }
     
+    weakify(self);
+    
     [MyFeedsManager getRecommendations:count success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
         
         self.recommendations = responseObject;
         
         self.state = ReccoStateLoaded;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
         
         self.loadError = error;
         
