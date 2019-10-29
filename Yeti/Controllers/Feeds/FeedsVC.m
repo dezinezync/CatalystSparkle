@@ -31,13 +31,13 @@
 #import "EmptyCell.h"
 #import "StoreVC.h"
 #import "YetiConstants.h"
+#import "Keychain.h"
 
 #import <StoreKit/SKStoreReviewController.h>
 
 #define TopSection  @0
 #define MainSection @1
 
-static void *KVO_Bookmarks = &KVO_Bookmarks;
 static void *KVO_Unread = &KVO_Unread;
 
 @interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
@@ -98,22 +98,11 @@ static void *KVO_Unread = &KVO_Unread;
         [self dz_smoothlyDeselectRows:self.tableView];
     }
     
-    if (self.headerView.tableView.indexPathForSelectedRow) {
-        
-        NSIndexPath *indexpath = self.headerView.tableView.indexPathForSelectedRow;
-        if (indexpath.row == 0) {
-            // also update unread array
-            [MyFeedsManager updateUnreadArray];
-        }
-        
-        [self dz_smoothlyDeselectRows:self.headerView.tableView];
-    }
-    
     if (_noPreSetup == NO) {
         _noPreSetup = YES;
         
         if (MyFeedsManager.userID) {
-            [self userDidUpdate];
+            [self userDidUpdate:NO];
         }
         
         BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kOpenUnreadOnLaunch];
@@ -144,7 +133,7 @@ static void *KVO_Unread = &KVO_Unread;
         dispatch_async(dispatch_get_main_queue(), ^{
             [SKStoreReviewController requestReview];
             MyFeedsManager.shouldRequestReview = NO;
-            MyFeedsManager.keychain[YTRequestedReview] = [@(YES) stringValue];
+            [Keychain add:YTRequestedReview boolean:YES];
         });
     }
 }
@@ -165,8 +154,7 @@ static void *KVO_Unread = &KVO_Unread;
         }];
         
         @try {
-            
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_Bookmarks];
+
             [MyFeedsManager removeObserver:self forKeyPath:propSel(unread) context:KVO_Unread];
             
         }
@@ -195,9 +183,8 @@ static void *KVO_Unread = &KVO_Unread;
     [center addObserver:self selector:@selector(hideBookmarksPreferenceChanged) name:ShowBookmarksTabPreferenceChanged object:nil];
     
     NSKeyValueObservingOptions kvoOptions = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
-    
-    [ArticlesManager.shared addObserver:self forKeyPath:propSel(bookmarks) options:kvoOptions context:KVO_Bookmarks];
-    [ArticlesManager.shared addObserver:self forKeyPath:propSel(unread) options:kvoOptions context:KVO_Unread];
+
+    [MyFeedsManager addObserver:self forKeyPath:propSel(totalUnread) options:kvoOptions context:KVO_Unread];
     
 }
 
@@ -443,6 +430,28 @@ static void *KVO_Unread = &KVO_Unread;
 
 #pragma mark - Getters
 
+- (BookmarksManager *)bookmarksManager {
+    
+    if (_bookmarksManager == nil) {
+        _bookmarksManager = [BookmarksManager new];
+        
+        MyFeedsManager.bookmarksManager = _bookmarksManager;
+        
+        weakify(self);
+        
+        [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+            strongify(self);
+            [self didUpdateBookmarks];
+        }];
+        
+//        [self didUpdateBookmarks];
+        
+    }
+    
+    return _bookmarksManager;
+    
+}
+
 - (UISelectionFeedbackGenerator *)feedbackGenerator {
     if (!_feedbackGenerator) {
         _feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
@@ -450,31 +459,6 @@ static void *KVO_Unread = &KVO_Unread;
     }
     
     return _feedbackGenerator;
-}
-
-- (NSDate *)sinceDate
-{
-    if (!_sinceDate) {
-#ifdef DEBUG
-        NSString *path = [@"~/Documents/feeds.since.debug.txt" stringByExpandingTildeInPath];
-#else
-        NSString *path = [@"~/Documents/feeds.since.txt" stringByExpandingTildeInPath];
-#endif
-        if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-            NSError *error = nil;
-            NSString *data = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
-
-            if (!data) {
-                DDLogError(@"Failed to load since date for feeds. %@", error.localizedDescription);
-            }
-            else {
-                NSTimeInterval timestamp = [data doubleValue];
-                _sinceDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
-            }
-        }
-    }
-
-    return _sinceDate;
 }
 
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath {
@@ -555,12 +539,10 @@ static void *KVO_Unread = &KVO_Unread;
         cell.faviconView.image = image;
         
         if (indexPath.row == 0) {
-            
             cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
         }
         else {
-            
-            cell.countLabel.text = formattedString(@"%@", MyFeedsManager.bookmarksCount);
+            cell.countLabel.text = formattedString(@"%@", @(self.bookmarksManager.bookmarksCount));
         }
         
         ocell = cell;
@@ -616,6 +598,7 @@ static void *KVO_Unread = &KVO_Unread;
         
         DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
         vc.customFeed = FeedTypeCustom;
+        vc.bookmarksManager = self.bookmarksManager;
         vc.unread = indexPath.row == 0;
         
         BOOL animated = YES;
@@ -647,10 +630,13 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (isPhone) {
             vc = [[DetailFeedVC alloc] initWithFeed:feed];
+            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
         }
         else {
             vc = [DetailFeedVC instanceWithFeed:feed];
+            
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
         }
         
         [self showDetailController:vc sender:self];
@@ -663,9 +649,13 @@ static void *KVO_Unread = &KVO_Unread;
         
         if (isPhone) {
             vc = [[DetailFolderVC alloc] initWithFolder:folder];
+            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
         }
         else {
             vc = [DetailFolderVC instanceWithFolder:folder];
+            
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
+            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
         }
         
         [self showDetailViewController:vc sender:self];
@@ -695,7 +685,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     [super decodeRestorableStateWithCoder:coder];
     
-    _noPreSetup = YES;
+    _noPreSetup = NO;
     _hasSetupTable = NO;
 }
 
@@ -751,14 +741,20 @@ NSString * const kDS2Data = @"DS2Data";
     
     // get a list of open folders
     NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
+
         return [obj isKindOfClass:Folder.class] && [(Folder *)obj isExpanded];
+
     }] rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+
         return obj.folderID;
+
     }];
     
     // ensures search bar does not dismiss on refresh or first load
     @try {
         NSArray *folders = (ArticlesManager.shared.folders ?: @[]);
+        
+        NSSortDescriptor *alphaSort = [NSSortDescriptor sortDescriptorWithKey:@"displayTitle" ascending:YES];
         
         if (openFolders.count) {
             [folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -775,12 +771,17 @@ NSString * const kDS2Data = @"DS2Data";
             [data addObject:obj];
             
             if (obj.isExpanded) {
-                [data addObjectsFromArray:obj.feeds.allObjects];
+                
+                NSArray <Feed *> *feeds = obj.feeds.allObjects;
+                
+                feeds = [feeds sortedArrayUsingDescriptors:@[alphaSort]];
+                
+                [data addObjectsFromArray:feeds];
             }
             
         }];
         
-        [data addObjectsFromArray:ArticlesManager.shared.feedsWithoutFolders];
+        [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
         
         if (@available(iOS 13, *)) {
             
@@ -808,6 +809,13 @@ NSString * const kDS2Data = @"DS2Data";
                 
             }
             
+            if (presentingSelf == YES) {
+                FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                if (cell != nil) {
+                    cell.countLabel.text = @(MyFeedsManager.totalUnread).stringValue;
+                }
+            }
+            
         }
         else {
             [self.DS2 resetData];
@@ -827,7 +835,7 @@ NSString * const kDS2Data = @"DS2Data";
 {
     weakify(self);
     
-    if (context == KVO_Unread && [keyPath isEqualToString:propSel(unread)]) {
+    if (context == KVO_Unread && [keyPath isEqualToString:propSel(totalUnread)]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
@@ -850,16 +858,6 @@ NSString * const kDS2Data = @"DS2Data";
                 cell.countLabel.text = [@([MyFeedsManager totalUnread]) stringValue];
             }
         });
-    }
-    else if (context == KVO_Bookmarks && [keyPath isEqualToString:propSel(bookmarks)]) {
-        
-       dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
-            cell.countLabel.text = [@([[ArticlesManager.shared bookmarks] count]) stringValue];
-        });
-        
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -889,11 +887,9 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-    UICKeyChainStore *keychain = MyFeedsManager.keychain;
 #if TESTFLIGHT == 1
     // during betas and for testflight builds, this option should be left on.
-    id betaCheck = [keychain stringForKey:YTSubscriptionPurchased];
-    BOOL betaVal = betaCheck ? [betaCheck boolValue] : NO;
+    BOOL betaVal = [Keychain boolFor:YTSubscriptionPurchased error:nil];
 
     if (betaVal == YES) {
         DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
@@ -901,8 +897,7 @@ NSString * const kDS2Data = @"DS2Data";
     }
 #endif
     
-    id addedFirst = [keychain stringForKey:YTSubscriptionHasAddedFirstFeed];
-    BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
+    BOOL addedVal = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
     
     if (addedVal == NO) {
         DDLogWarn(@"User hasn't added their first feed yet. Ignoring.");
@@ -914,6 +909,39 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 #pragma mark - Notifications
+
+- (void)didUpdateBookmarks {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(didUpdateBookmarks) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
+    
+    for (NSIndexPath *indexpath in visible) {
+        // check if the bookmarks row is visible
+        if (indexpath.section == 0 && indexpath.row == 1) {
+            
+            FeedsCell *cell = (FeedsCell *)[self tableView:self.tableView cellForRowAtIndexPath:indexpath];
+            
+            if (cell != nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    cell.countLabel.text = @(self.bookmarksManager.bookmarksCount).stringValue;
+                    [cell.countLabel sizeToFit];
+                    [cell setNeedsDisplay];
+                    
+                });
+            }
+            
+            break;
+            
+        }
+        
+    }
+    
+}
 
 - (void)unreadCountPreferenceChanged {
     
@@ -953,7 +981,6 @@ NSString * const kDS2Data = @"DS2Data";
         }
     }
     
-    [[self.headerView tableView] reloadData];
     if (@available(iOS 13, *)) {}
     else {
         self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
@@ -970,6 +997,14 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 - (void)userDidUpdate {
+    
+    [MyFeedsManager syncSettings];
+    
+    [self userDidUpdate:YES];
+    
+}
+
+- (void)userDidUpdate:(BOOL)resetBookmarksManager {
     
     // this function can be called multiple times
     // beginning 1.0.2
@@ -1031,6 +1066,7 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
     }
+    
 }
 
 - (void)subscriptionExpired:(NSNotification *)note {
@@ -1048,7 +1084,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     // if the user hasn't added their first feed,
     // dont run
-    if (MyFeedsManager.keychain[YTSubscriptionHasAddedFirstFeed] == nil) {
+    if ([Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil]) {
         return;
     }
 #if TESTFLIGHT == 0

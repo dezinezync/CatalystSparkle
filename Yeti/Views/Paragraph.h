@@ -37,6 +37,8 @@
 
 - (void)updateStyle:(id _Nullable)animated;
 
++ (BOOL)canPresentContextMenus API_AVAILABLE(ios(13.0));
+
 /**
  Process the given text and ranges and returns an Attributed String. Processes on the thread it is called on. Returns on the same thread.
 

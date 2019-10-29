@@ -59,7 +59,7 @@ static NSDateFormatter *_formatter = nil;
         self.articleURL = [decoder decodeObjectOfClass:[NSString class] forKey:@"articleURL"];
         self.author = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSString.class, nil] forKey:@"author"];
         self.blogTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"blogTitle"];
-        self.bookmarked = [[decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] boolValue];
+        self.bookmarked = [([decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] ?: @0) boolValue];
         self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
         self.coverImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"coverImage"];
         self.guid = [decoder decodeObjectOfClass:[NSString class] forKey:@"guid"];
@@ -362,13 +362,23 @@ static NSDateFormatter *_formatter = nil;
 
 - (BOOL)isEqual:(id)object {
     
-    if (object != nil && [object isKindOfClass:FeedItem.class]) {
-        BOOL retval = [self isEqualToItem:object];
-        
-        return retval;
+    if (object == nil) {
+        return NO;
     }
     
-    return NO;
+    if ([object isKindOfClass:FeedItem.class] == NO) {
+        return NO;
+    }
+    
+    if ([(FeedItem *)object identifier].integerValue == self.identifier.integerValue) {
+        
+        return [self isEqualToItem:object];
+        
+    }
+    else {
+        return NO;
+    }
+    
     
 }
 

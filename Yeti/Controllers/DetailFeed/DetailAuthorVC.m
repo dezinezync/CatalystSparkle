@@ -14,6 +14,7 @@
 @interface DetailAuthorVC ()
 
 @property (nonatomic, weak) AuthorHeaderView *headerView;
+@property (nonatomic, strong) PagingManager *authorPagingManager;
 
 @end
 
@@ -31,6 +32,7 @@
     _author = author;
     
     if (author) {
+        self.title = author.name;
         self.restorationIdentifier = NSStringFromClass(self.class);
     }
 }
@@ -51,7 +53,7 @@
     if (self.headerView == nil)
         return;
     
-    
+    self.headerView.feed = self.feed;
     self.headerView.author = self.author;
     
 }
@@ -66,88 +68,109 @@
     
 }
 
-- (void)loadNextPage {
+- (PagingManager *)pagingManager {
     
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoading) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.state == DZDatasourceLoading) {
-            return;
-        }
-    }
+    return self.authorPagingManager;
     
-    if (self->_canLoadNext == NO) {
-        return;
-    }
+}
+
+- (PagingManager *)authorPagingManager {
     
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateLoading;
-    }
-    else {
-        self.DS.state = DZDatasourceLoading;
-    }
-    
-    weakify(self);
-    
-    NSInteger page = self.page + 1;
-    
-    [MyFeedsManager articlesByAuthor:self.author.authorID feedID:self.feed.feedID page:page success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if (_authorPagingManager == nil) {
         
-        strongify(self);
+        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
-        if (!self)
-            return;
+        params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
+            
+        #if TESTFLIGHT == 0
+            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+            }
+        #endif
         
-        self.page = page;
+        NSString *path = formattedString(@"/feeds/%@/author/%@", self.feed.feedID, self.author.authorID);
         
-        if (responseObject == nil || responseObject.count == 0) {
-            self->_canLoadNext = NO;
-        }
-        else {
+        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
+        
+        _authorPagingManager = pagingManager;
+    }
+    
+    if (_authorPagingManager.preProcessorCB == nil) {
+        _authorPagingManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [FeedItem instanceFromDictionary:obj];
+            }];
+            
+            return retval;
+            
+        };
+    }
+    
+    if (_authorPagingManager.successCB == nil) {
+        weakify(self);
+        
+        _authorPagingManager.successCB = ^{
+            strongify(self);
+            
+            if (!self) {
+                return;
+            }
+            
+            [self setupData];
             
             if (@available(iOS 13, *)) {
-                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                [snapshot appendItemsWithIdentifiers:responseObject];
-                
-                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                self.controllerState = StateLoaded;
             }
             else {
-                if (page == 1 && self.DS.data.count) {
-                    self.DS.data = responseObject;
-                }
-                else {
-                    self.DS.data = [self.DS.data arrayByAddingObjectsFromArray:responseObject];
-                }
+                self.DS.state = DZDatasourceLoaded;
             }
             
-        }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+                
+                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
+            });
+
+        };
+    }
+    
+    if (_authorPagingManager.errorCB == nil) {
+        weakify(self);
         
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateLoaded;
-        }
-        else {
-            self.DS.state = DZDatasourceLoaded;
-        }
-        
-        if (page == 1 && self.splitViewController.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            [self loadNextPage];
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        DDLogError(@"%@", error);
-        
-        strongify(self);
-        
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateErrored;
-        }
-        else {
-            self.DS.state = DZDatasourceError;
-        }
-    }];
+        _authorPagingManager.errorCB = ^(NSError * _Nonnull error) {
+            DDLogError(@"%@", error);
+            
+            strongify(self);
+            
+            if (!self)
+                return;
+            
+            if (@available(iOS 13, *)) {
+                self.controllerState = StateErrored;
+            }
+            else {
+                self.DS.state = DZDatasourceError;
+            }
+            
+            weakify(self);
+            
+            asyncMain(^{
+                strongify(self);
+                
+                if ([self.collectionView.refreshControl isRefreshing]) {
+                    [self.collectionView.refreshControl endRefreshing];
+                }
+            })
+        };
+    }
+    
+    return _authorPagingManager;
+    
 }
 
 #pragma mark - State Restoration
@@ -177,38 +200,14 @@
     [coder encodeObject:self.author forKey:kBAuthorData];
     
     [coder encodeObject:self.feed forKey:kBAuthorFeed];
-    
-    if (@available(iOS 13, *)) {
-        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBAuthorDS];
-    }
-    else {
-        [coder encodeObject:self.DS.data forKey:kBAuthorDS];
-    }
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    self.feed = [coder decodeObjectForKey:kBAuthorFeed];
+    self.author = [coder decodeObjectForKey:kBAuthorData];
+    
     [super decodeRestorableStateWithCoder:coder];
-    
-    NSArray *data = [coder decodeObjectForKey:kBAuthorDS];
-    
-    if (data) {
-        [self setupLayout];
-        
-        if (@available(iOS 13, *)) {
-            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-            
-            if (snapshot.numberOfSections == 0) {
-                [snapshot appendSectionsWithIdentifiers:@[@0]];
-            }
-            
-            [snapshot appendItemsWithIdentifiers:data];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        }
-        else {
-            self.DS.data = data;
-        }
-    }
     
 }
 

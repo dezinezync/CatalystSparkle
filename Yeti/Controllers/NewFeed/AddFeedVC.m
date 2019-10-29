@@ -70,6 +70,8 @@
     
     self.selected = NSNotFound;
     
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    
     self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
     self.DS.delegate = self;
     
@@ -102,8 +104,11 @@
 #pragma mark - <UITableViewDelegate>
 
 - (void)setErrorLabelForDefaultState {
-    self.errorTitle = @[@"Enter URL to Begin", @"Begin Your Search", @"Begin Your Search"][self.searchBar.selectedScopeButtonIndex];
-    self.errorBody = @[@"Enter the website or feed URL to add it to your list.", @"Begin by typing the name of the website you want to search for.", @"Begin by typing a keyword. Separate multiple keywords with a space."][self.searchBar.selectedScopeButtonIndex];
+    
+    NSUInteger index = self.searchBar.selectedScopeButtonIndex ?: 0;
+    
+    self.errorTitle = @[@"Enter URL to Begin", @"Begin Your Search", @"Begin Your Search"][index];
+    self.errorBody = @[@"Enter the website or feed URL to add it to your list.", @"Begin by typing the name of the website you want to search for.", @"Begin by typing a keyword. Separate multiple keywords with a space."][index];
     
     [self setupErrorLabel];
 }
@@ -193,6 +198,10 @@
         
     }
     
+    if (self.searchBar.isFirstResponder == YES) {
+        [self.searchBar resignFirstResponder];
+    }
+    
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     if (feed) {
@@ -218,11 +227,15 @@
     
     searchController.searchResultsUpdater = self;
     searchController.delegate = self;
-    searchController.hidesNavigationBarDuringPresentation = NO;
+    searchController.hidesNavigationBarDuringPresentation = YES;
     searchController.obscuresBackgroundDuringPresentation = NO;
+    searchController.definesPresentationContext = YES;
     
     searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
-    if (@available(iOS 13, *)) {}
+    
+    if (@available(iOS 13, *)) {
+        searchController.automaticallyShowsScopeBar = YES;
+    }
     else {
         searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
     }
@@ -275,10 +288,21 @@
     para.lineHeightMultiple = 1.4f;
     para.alignment = self.errorLabel.textAlignment;
     
-    NSDictionary *attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
-                                 NSForegroundColorAttributeName: theme.subtitleColor,
-                                 NSParagraphStyleAttributeName: para
-                                 };
+    NSMutableDictionary *attributes = [NSMutableDictionary new];
+    
+    UIFont *font = TypeFactory.shared.bodyFont;
+    
+    if (font != nil) {
+        [attributes setObject:font forKey:NSFontAttributeName];
+    }
+    
+    if (theme.subtitleColor != nil) {
+        [attributes setObject:theme.subtitleColor forKey:NSForegroundColorAttributeName];
+    }
+    
+    if (para != nil) {
+        [attributes setObject:para forKey:NSParagraphStyleAttributeName];
+    }
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
@@ -288,10 +312,21 @@
         para = [para mutableCopy];
         para.lineHeightMultiple = 1.2f;
         
-        attributes = @{NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
-                       NSForegroundColorAttributeName: theme.titleColor,
-                       NSParagraphStyleAttributeName: para
-                       };
+        attributes = [NSMutableDictionary new];
+        
+        font = TypeFactory.shared.titleFont;
+        
+        if (font != nil) {
+            [attributes setObject:font forKey:NSFontAttributeName];
+        }
+        
+        if (theme.titleColor != nil) {
+            [attributes setObject:theme.titleColor forKey:NSForegroundColorAttributeName];
+        }
+        
+        if (para != nil) {
+            [attributes setObject:para forKey:NSParagraphStyleAttributeName];
+        }
         
         [attrs addAttributes:attributes range:range];
     }
@@ -536,6 +571,12 @@
     self.DS.state = DZDatasourceLoading;
     
     [self loadNextPage];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 #pragma mark - <ScrollLoading>

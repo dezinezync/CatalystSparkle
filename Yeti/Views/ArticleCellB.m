@@ -168,7 +168,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.timeLabel.textColor          = theme.subtitleColor;
     self.secondaryTimeLabel.textColor = theme.subtitleColor;
     self.authorLabel.textColor        = theme.subtitleColor;
-    self.summaryLabel.textColor       = theme.captionColor;
+    self.summaryLabel.textColor       = theme.subtitleColor;
     
     self.backgroundColor = theme.cellColor;
     
@@ -260,7 +260,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
 #pragma mark - Config
 
 - (BOOL)showImage {
-    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingNever])
         return NO;
     
     else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
@@ -347,7 +347,15 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
     }
     
+    if (url == nil) {
+        return;
+    }
+    
     self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([image isKindOfClass:UIImage.class] == NO) {
+            image = nil;
+        }
         
         if (image != nil) {
             
@@ -453,7 +461,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
 //    Feed *feed = [MyFeedsManager feedForID:item.feedID];
     
+    BOOL isMicroBlogPost = NO;
+    
     if ([([item articleTitle] ?: @"") isBlank] && item.content && item.content.count) {
+        
         // find the first paragraph
         Content *content = [item.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
             
@@ -465,6 +476,8 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         }];
         
         if (content) {
+            isMicroBlogPost = YES;
+            
             self.titleLabel.text = content.content;
             self.titleLabel.font = [TypeFactory.shared bodyFont];
             self.titleLabel.textColor = [[YTThemeKit theme] titleColor];
@@ -497,6 +510,22 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     _isShowingCover = NO;
+    
+    if (isMicroBlogPost == YES && item.coverImage == nil) {
+        // find the first image
+        Content *content = [item.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
+            
+            if (prev && [prev.type isEqualToString:@"image"]) {
+                return prev;
+            }
+            
+            return current;
+        }];
+        
+        if (content != nil) {
+            item.coverImage = content.url;
+        }
+    }
     
     if ([self showImage] && SharedPrefs.articleCoverImages == YES && item.coverImage != nil) {
         // user wants cover images shown
@@ -564,65 +593,66 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     _isShowingTags = NO;
+    self.tagsStack.hidden = YES;
     
-    if (SharedPrefs.showTags == YES && feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
-        
-        self.tagsStack.hidden = NO;
-        
-        if (item.keywords.count > 4) {
-            item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];
-        }
-        
-//        DDLogDebug(@"Keywords: %@", item.keywords);
-        
-        NSArray <UIColor *> * tagColors = nil;
-        
-        if (@available(iOS 13, *)) {
-            tagColors = @[[UIColor systemRedColor],
-                          [UIColor systemIndigoColor],
-                          [UIColor systemGreenColor],
-                          [UIColor systemOrangeColor]];
-        }
-        else {
-            tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
-                          [UIColor colorFromHexString:@"#7441FF"],
-                          [UIColor colorFromHexString:@"#558B2F"],
-                          [UIColor colorFromHexString:@"#E8883A"]];
-        }
-        
-        [item.keywords enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-           
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-            [button setTitle:obj forState:UIControlStateNormal];
-            
-            button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
-            button.titleLabel.adjustsFontForContentSizeCategory = YES;
-            [button setTitleColor:tagColors[idx] forState:UIControlStateNormal];
-            
-            [button sizeToFit];
-            
-            [button setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
-            
-            [button addTarget:self action:@selector(didTapTag:) forControlEvents:UIControlEventTouchUpInside];
-            
-            [self.tagsStack addArrangedSubview:button];
-            
-        }];
-        
-        // https://gist.github.com/morishin/639f5ff12c544eac9d7c64acbca54270
-        UIView *spacer = [[UIView alloc] init];
-        [spacer setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        
-        [self.tagsStack addArrangedSubview:spacer];
-        
-        [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
-        
-        _isShowingTags = YES;
-        
-    }
-    else {
-        self.tagsStack.hidden = YES;
-    }
+//    if (SharedPrefs.showTags == YES && feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
+//        
+//        self.tagsStack.hidden = NO;
+//        
+//        if (item.keywords.count > 4) {
+//            item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];
+//        }
+//        
+////        DDLogDebug(@"Keywords: %@", item.keywords);
+//        
+//        NSArray <UIColor *> * tagColors = nil;
+//        
+//        if (@available(iOS 13, *)) {
+//            tagColors = @[[UIColor systemRedColor],
+//                          [UIColor systemIndigoColor],
+//                          [UIColor systemGreenColor],
+//                          [UIColor systemOrangeColor]];
+//        }
+//        else {
+//            tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
+//                          [UIColor colorFromHexString:@"#7441FF"],
+//                          [UIColor colorFromHexString:@"#558B2F"],
+//                          [UIColor colorFromHexString:@"#E8883A"]];
+//        }
+//        
+//        [item.keywords enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//           
+//            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+//            [button setTitle:obj forState:UIControlStateNormal];
+//            
+//            button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+//            button.titleLabel.adjustsFontForContentSizeCategory = YES;
+//            [button setTitleColor:tagColors[idx] forState:UIControlStateNormal];
+//            
+//            [button sizeToFit];
+//            
+//            [button setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
+//            
+//            [button addTarget:self action:@selector(didTapTag:) forControlEvents:UIControlEventTouchUpInside];
+//            
+//            [self.tagsStack addArrangedSubview:button];
+//            
+//        }];
+//        
+//        // https://gist.github.com/morishin/639f5ff12c544eac9d7c64acbca54270
+//        UIView *spacer = [[UIView alloc] init];
+//        [spacer setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+//        
+//        [self.tagsStack addArrangedSubview:spacer];
+//        
+//        [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
+//        
+//        _isShowingTags = YES;
+//        
+//    }
+//    else {
+//        self.tagsStack.hidden = YES;
+//    }
     
     UILabel *timeLabel = nil;
     

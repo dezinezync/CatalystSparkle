@@ -12,6 +12,8 @@
 #import "FeedsManager.h"
 #import "ArticleVC.h"
 
+#import "Keychain.h"
+
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 #import <UserNotifications/UserNotifications.h>
@@ -82,8 +84,15 @@
     if (self.loadOnReady == nil)
         return;
     
-    if (!self.DS.data.count)
-        return;
+    if (@available(iOS 13, *)) {
+        if (self.DDS.snapshot.numberOfItems == 0) {
+            return;
+        }
+    }
+    else {
+        if (self.DS.data.count == 0)
+            return;
+    }
     
     __block NSUInteger index = NSNotFound;
     
@@ -237,9 +246,25 @@
                 if (self != nil && [self collectionView] != nil) {
                     // if we're in the unread section
                     if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] == YES) {
-                        self.DS.state = DZDatasourceLoading;
-                        self.DS.data = @[];
-                        self.DS.state = DZDatasourceLoaded;
+                        
+                        if (@available(iOS 13, *)) {
+                            
+                            self.controllerState = StateLoading;
+                            
+                            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                            [snapshot appendSectionsWithIdentifiers:@[@0]];
+                            
+                            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                            
+                            self.controllerState = StateLoaded;
+                            
+                        }
+                        else {
+                            self.DS.state = DZDatasourceLoading;
+                            self.DS.data = @[];
+                            self.DS.state = DZDatasourceLoaded;
+                        }
+                        
                     }
                     else {
                         [self _markVisibleRowsRead];
@@ -336,7 +361,7 @@
                 if (granted) {
                     strongify(self);
                     
-                    MyFeedsManager.keychain[kIsSubscribingToPushNotifications] = [@YES stringValue];
+                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
                     
                     asyncMain(^{
                         [UIApplication.sharedApplication registerForRemoteNotifications];
@@ -351,8 +376,8 @@
         }
         else {
             
-            if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications] == nil) {
-                MyFeedsManager.keychain[kIsSubscribingToPushNotifications] = [@YES stringValue];
+            if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil] == NO) {
+                [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
             }
             
             asyncMain(^{
@@ -397,6 +422,8 @@
         feeds = [feeds arrayByAddingObject:responseObject];
         
         ArticlesManager.shared.feeds = feeds;
+        
+        MyFeedsManager.totalUnread = MyFeedsManager.totalUnread + [[(Feed *)responseObject unread] integerValue];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -450,13 +477,23 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
+    _sortingOption = option;
+    
+    self.pagingManager = nil;
+    
+    _canLoadNext = YES;
+    
     [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
-    self->_canLoadNext = YES;
-    self.loadingNext = NO;
-    
-    self.page = 0;
-    [self.DS resetData];
+    if (@available(iOS 13, *)) {
+        
+        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        
+    }
+    else {
+        [self.DS resetData];
+    }
     
     [self loadNextPage];
 }

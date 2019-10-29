@@ -17,13 +17,17 @@
 
 #import "YetiConstants.h"
 
-static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
+#import "PagingManager.h"
 
 @interface DetailCustomVC () {
     BOOL _reloadDataset; // used for bookmarks
     BOOL _hasSetupState;
     YetiSortOption _sortingOption;
+    
+    BOOL _showingArticle;
 }
+
+@property (nonatomic, strong) PagingManager *unreadsManager;
 
 @end
 
@@ -31,9 +35,9 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    [super viewWillAppear:animated];
+    _sortingOption = YTSortUnreadDesc;
     
-    _sortingOption = YTSortAllDesc;
+    [super viewWillAppear:animated];
     
     [self setupState];
     
@@ -51,7 +55,15 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     self.title = self.isUnread ? @"Unread" : @"Bookmarks";
     
     if (self.isUnread == NO) {
-        [MyFeedsManager addObserver:self forKeyPath:propSel(bookmarks) options:(NSKeyValueObservingOptionNew) context:KVO_DETAIL_BOOKMARKS];
+        
+        weakify(self);
+        
+        [self.bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+           
+            strongify(self);
+            [self didUpdateBookmarks];
+            
+        }];
         
         [self setupData];
         
@@ -65,6 +77,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         }
     }
     else {
+        
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
         
         if (@available(iOS 13, *)) {
@@ -97,11 +110,16 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@0]];
             
-            if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.bookmarks.reverseObjectEnumerator.allObjects];
+            NSArray *bookmarks = self.bookmarksManager.bookmarks ?: @[];
+            NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:bookmarks];
+            
+            bookmarks = set.array;
+            
+            if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
+                [snapshot appendItemsWithIdentifiers:bookmarks.reverseObjectEnumerator.allObjects];
             }
             else {
-                [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.bookmarks];
+                [snapshot appendItemsWithIdentifiers:bookmarks];
             }
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
@@ -109,7 +127,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         else {
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [snapshot appendSectionsWithIdentifiers:@[@0]];
-            [snapshot appendItemsWithIdentifiers:(ArticlesManager.shared.unread ?: @[]) intoSectionWithIdentifier:@0];
+            [snapshot appendItemsWithIdentifiers:(self.unreadsManager.items ?: @[]) intoSectionWithIdentifier:@0];
             
             [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         }
@@ -117,16 +135,16 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     else {
         if (self.unread == NO) {
             
-            if ([_sortingOption isEqualToString:YTSortAllDesc]) {
-                self.DS.data = [ArticlesManager.shared.bookmarks reverseObjectEnumerator].allObjects;
+            if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
+                self.DS.data = [self.bookmarksManager.bookmarks reverseObjectEnumerator].allObjects;
             }
             else {
-                self.DS.data = ArticlesManager.shared.bookmarks;
+                self.DS.data = self.bookmarksManager.bookmarks;
             }
             
         }
         else {
-            self.DS.data = ArticlesManager.shared.unread;
+            self.DS.data = self.unreadsManager.items;
         }
     }
     
@@ -141,6 +159,20 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
         
         [self setupData];
     }
+    
+    if (_showingArticle) {
+        _showingArticle = NO;
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    
+    [super viewDidDisappear:animated];
+    
+    if (_showingArticle == NO) {
+        [self.bookmarksManager removeObserver:self name:BookmarksDidUpdateNotification];
+    }
+    
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
@@ -149,139 +181,59 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     }
 }
 
-- (void)dealloc {
+#pragma mark - Getters
+
+- (PagingManager *)pagingManager {
     
-    if (MyFeedsManager.observationInfo != nil && self.unread == NO) {
-        @try {
+    return self.unreadsManager;
+    
+}
+
+- (PagingManager *)unreadsManager {
+    
+    if (_unreadsManager == nil) {
+        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
-            [MyFeedsManager removeObserver:self forKeyPath:propSel(bookmarks) context:KVO_DETAIL_BOOKMARKS];
+        params[@"sortType"] = @(_sortingOption.integerValue);
             
-        } @catch (NSException *exc) {
+        #if TESTFLIGHT == 0
+            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+            }
+        #endif
+        
+        PagingManager * unreadsManager = [[PagingManager alloc] initWithPath:@"/unread" queryParams:params itemsKey:@"articles"];
+        
+        _unreadsManager = unreadsManager;
+    }
+    
+    if (_unreadsManager.preProcessorCB == nil) {
+        _unreadsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                return [FeedItem instanceFromDictionary:obj];
+            }];
             
-        }
-        
-    }
-    
-}
-
-#pragma mark - Overrides
-
-- (BOOL)showsSortingButton {
-    return YES;
-}
-
-- (void)didTapSortOptions:(UIBarButtonItem *)sender {
-    
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
-        
-        [self setSortingOption:YTSortAllDesc];
-        
-    }];
-    
-    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
-        
-        [self setSortingOption:YTSortAllAsc];
-        
-    }];
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    @try {
-        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
-        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
-    }
-    @catch (NSException *exc) {
-        
-    }
-    
-    [avc addAction:allDesc];
-    [avc addAction:allAsc];
-    
-    [self presentAllReadController:avc fromSender:sender];
-    
-}
-
-- (void)setSortingOption:(YetiSortOption)option {
-    
-    // this will call -[DetailFeedVC loadNextPage]
-    [super setSortingOption:option];
-    
-    _sortingOption = option;
-    
-    [self setupData];
-    
-}
-
-- (NSString *)emptyViewSubtitle {
-    if (self.isUnread) {
-        return @"No Unread Articles are available.";
-    }
-    
-    return @"You dont have any bookmarks. Bookmarks are a great way to save articles for offline reading.";
-}
-
-- (void)loadNextPage {
-    
-    if (self.isUnread == NO) {
-        return;
-    }
-    
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoading) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.state == DZDatasourceLoading)
-            return;
-    }
-    
-    if (self->_canLoadNext == NO) {
-        return;
-    }
-    
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateLoading;
-    }
-    else {
-        self.DS.state = DZDatasourceLoading;
-    }
-    
-    weakify(self);
-    
-    if (self.isUnread) {
-        NSInteger page = self.page + 1;
-        YetiSortOption sorting = SharedPrefs.sortingOption;
-        
-        [MyFeedsManager getUnreadForPage:page sorting:sorting success:^(NSArray * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            return retval;
             
+        };
+    }
+    
+    if (_unreadsManager.successCB == nil) {
+        weakify(self);
+        
+        _unreadsManager.successCB = ^{
             strongify(self);
             
-            if (!self)
+            if (!self) {
                 return;
-            
-            self.page = page;
-            
-            BOOL canLoadNext = YES;
-            
-            if (responseObject == nil || [responseObject count] == 0) {
-                canLoadNext = NO;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self->_canLoadNext = canLoadNext;
-                    self.loadingNext = NO;
-                });
-                
             }
-            else {
-                [self setupData];
+            
+            if (self->_unreadsManager.page == 1) {
+                MyFeedsManager.unreadLastUpdate = NSDate.date;
             }
+            
+            [self setupData];
             
             if (@available(iOS 13, *)) {
                 self.controllerState = StateLoaded;
@@ -290,25 +242,23 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                 self.DS.state = DZDatasourceLoaded;
             }
             
-            self.page = page;
-            
-            self.loadingNext = NO;
-            
-            weakify(self);
-            
-            asyncMain(^{
-                strongify(self);
-                
+            dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {
                     [self.collectionView.refreshControl endRefreshing];
                 }
                 
-                if (page == 1 && canLoadNext) {
+                if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
                     [self loadNextPage];
                 }
-            })
+            });
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        };
+    }
+    
+    if (_unreadsManager.errorCB == nil) {
+        weakify(self);
+        
+        _unreadsManager.errorCB = ^(NSError * _Nonnull error) {
             DDLogError(@"%@", error);
             
             strongify(self);
@@ -332,18 +282,101 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
                     [self.collectionView.refreshControl endRefreshing];
                 }
             })
-        }];
+        };
     }
-    else {
+    
+    return _unreadsManager;
+    
+}
+
+#pragma mark - Overrides
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    _showingArticle = YES;
+    
+    [super collectionView:collectionView didSelectItemAtIndexPath:indexPath];
+    
+}
+
+- (BOOL)showsSortingButton {
+    return YES;
+}
+
+- (void)didTapSortOptions:(UIBarButtonItem *)sender {
+    
+    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    weakify(self);
+    
+    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
+        
+        strongify(self);
+        
+        self->_sortingOption = YTSortUnreadDesc;
+        
+        [self setSortingOption:self->_sortingOption];
+        
+    }];
+    
+    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
+        
+        strongify(self);
+        
+        self->_sortingOption = YTSortUnreadAsc;
+        
+        [self setSortingOption:self->_sortingOption];
+        
+    }];
+    
+    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    @try {
+        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
+        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
+    }
+    @catch (NSException *exc) {
+        
+    }
+    
+    [avc addAction:allDesc];
+    [avc addAction:allAsc];
+    
+    [self presentAllReadController:avc fromSender:sender];
+    
+}
+
+//- (void)setSortingOption:(YetiSortOption)option {
+//
+//    self.unreadsManager = nil;
+//
+//    // this will call -[DetailFeedVC loadNextPage]
+//    [super setSortingOption:option];
+//
+//    _sortingOption = option;
+//
+//}
+
+- (NSString *)emptyViewSubtitle {
+    if (self.isUnread) {
+        return @"No Unread Articles are available.";
+    }
+    
+    return @"You dont have any bookmarks. Bookmarks are a great way to save articles for offline reading.";
+}
+
+- (void)loadNextPage {
+    
+    if (self.isUnread == NO) {
         [self setupData];
-        
-        asyncMain(^{
-            if ([self.collectionView.refreshControl isRefreshing]) {
-                [self.collectionView.refreshControl endRefreshing];
-            }
-        })
+        return;
     }
+    
+    [super loadNextPage];
 }
 
 #pragma mark - Notifications
@@ -351,7 +384,7 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
     if ([sender isRefreshing]) {
-        self.page = 0;
+        self.unreadsManager = nil;
         _canLoadNext = YES;
         
         [self loadNextPage];
@@ -368,18 +401,6 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
 - (void)didUpdateUnread {
     if (!_reloadDataset) {
         _reloadDataset = YES;
-    }
-}
-
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:propSel(bookmarks)] && context == KVO_DETAIL_BOOKMARKS) {
-        [self didUpdateBookmarks];
-    }
-    else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
@@ -405,7 +426,11 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     [super encodeRestorableStateWithCoder:coder];
     
     if (@available(iOS 13, *)) {
-        [coder encodeObject:self.DDS.snapshot.itemIdentifiers forKey:kBUnreadData];
+        
+        if (self.unreadsManager) {
+            [coder encodeObject:self.unreadsManager forKey:@"unreadsManager"];
+        }
+        
     }
     else {
         [coder encodeObject:self.DS.data forKey:kBUnreadData];
@@ -419,19 +444,18 @@ static void *KVO_DETAIL_BOOKMARKS = &KVO_DETAIL_BOOKMARKS;
     
     [super decodeRestorableStateWithCoder:coder];
     
-    NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+    if (@available(iOS 13, *)) {
     
-    if (items) {
-        [self setupLayout];
+        self.unreadsManager = [coder decodeObjectOfClass:PagingManager.class forKey:@"unreadsManager"];
+        self.controllerState = StateLoaded;
         
-        if (@available(iOS 13, *)) {
-            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-            [snapshot appendItemsWithIdentifiers:items];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        }
-        else {
+    }
+    else {
+        NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
+        
+        if (items) {
             self.DS.data = items;
+            self.DS.state = DZDatasourceLoaded;
         }
     }
     

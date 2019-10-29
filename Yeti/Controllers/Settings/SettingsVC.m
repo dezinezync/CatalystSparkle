@@ -18,6 +18,7 @@
 #import "ThemeVC.h"
 #import "OPMLDeckController.h"
 #import "MiscVC.h"
+#import "PushVC.h"
 
 #import <DZKit/DZView.h>
 #import "DZWebViewController.h"
@@ -147,7 +148,14 @@ NSString* deviceName() {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return 2;
+        {
+            if (@available(iOS 13, *)) {
+                return 3;
+            }
+            else {
+                return 2;
+            }
+        }
             break;
         case 1:
             return 6;
@@ -197,9 +205,11 @@ NSString* deviceName() {
                 case 0:
                     cell.textLabel.text = @"Your Account";
                     break;
-                    
-                default:
+                case 1:
                     cell.textLabel.text = @"Filters";
+                    break;
+                default:
+                    cell.textLabel.text = @"Push Notifications";
                     break;
             }
             
@@ -341,11 +351,13 @@ NSString* deviceName() {
         case 0:
             switch (indexPath.row) {
                 case 0:
-                    vc = [[AccountVC alloc] initWithNibName:NSStringFromClass(AccountVC.class) bundle:nil];
+                    vc = [[AccountVC alloc] initWithStyle:style];
                     break;
-                    
+                case 1:
+                    vc = [[FiltersVC alloc] initWithStyle:style];
+                    break;
                 default:
-                    vc = [[FiltersVC alloc] initWithStyle:UITableViewStyleGrouped];
+                    vc = [[PushVC alloc] initWithStyle:UITableViewStylePlain];
                     break;
             }
             break;
@@ -358,11 +370,11 @@ NSString* deviceName() {
                     break;
                 case 2:
                 {
-                    vc = [[ImageLoadingVC alloc] initWithNibName:NSStringFromClass(ImageLoadingVC.class) bundle:nil];
+                    vc = [[ImageLoadingVC alloc] initWithStyle:style];
                 }
                     break;
                 case 3:
-                    vc = [[ExternalAppsVC alloc] initWithNibName:NSStringFromClass(ExternalAppsVC.class) bundle:nil];
+                    vc = [[ExternalAppsVC alloc] initWithStyle:style];
                     break;
                 case 4:
                 {

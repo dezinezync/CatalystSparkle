@@ -12,6 +12,7 @@
 #import "YetiThemeKit.h"
 
 #import "UIImage+Color.h"
+#import "Keychain.h"
 
 #import <DZKit/AlertManager.h>
 
@@ -174,16 +175,14 @@
         
         [MyFeedsManager getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            UICKeyChainStore *keychain = MyFeedsManager.keychain;
-            
             NSDictionary *user = [responseObject valueForKey:@"user"];
             DDLogDebug(@"Got existing user: %@", user);
             
             MyFeedsManager.userID = @([[user valueForKey:@"id"] integerValue]);
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
             
-            [keychain setString: MyFeedsManager.userID.stringValue forKey:kUserID];
-            [keychain setString: MyFeedsManager.userIDManager.UUID.UUIDString forKey:kAccountID];
+            [Keychain add:kUserID string:MyFeedsManager.userID.stringValue];
+            [Keychain add:kAccountID string:MyFeedsManager.userIDManager.UUID.UUIDString];
             
             [avc dismissViewControllerAnimated:YES completion:nil];
             

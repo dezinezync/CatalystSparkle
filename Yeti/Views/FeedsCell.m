@@ -32,6 +32,16 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 
 @implementation FeedsCell
 
++ (void)registerOn:(UITableView *)tableView {
+    
+    if (tableView == nil) {
+        return;
+    }
+    
+    [tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
+    
+}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code

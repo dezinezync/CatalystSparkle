@@ -8,15 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <DZNetworking/DZNetworking.h>
-#import <UICKeyChainStore/UICKeyChainStore.h>
 
 extern NSString *const kAccountID;
 extern NSString *const kUserID;
+extern NSString *const kUUIDString;
 extern NSNotificationName const YTUserNotFound;
 
 @protocol YTUserDelegate <NSObject>
-
-@property (nonatomic, strong) UICKeyChainStore *keychain;
 
 - (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB;
@@ -26,12 +24,15 @@ extern NSNotificationName const YTUserNotFound;
 @interface YTUserID : NSObject {
 @public
     NSUUID * _UUID;
+    NSString *_UUIDString;
+    NSNumber *_userID;
 }
 
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate;
 
-@property (nonatomic, copy) NSUUID *UUID;
-@property (nonatomic, copy) NSNumber *userID;
+@property (nonatomic, copy) NSUUID * UUID;
+@property (nonatomic, copy) NSString * UUIDString;
+@property (nonatomic, copy) NSNumber * userID;
 
 @property (nonatomic, weak) id<YTUserDelegate> delegate;
 

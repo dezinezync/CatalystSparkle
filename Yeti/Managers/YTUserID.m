@@ -11,9 +11,12 @@
 #import <DZKit/AlertManager.h>
 
 #import "YetiConstants.h"
+#import "Keychain.h"
 
 NSString *const kAccountID = @"YTUserID";
 NSString *const kUserID = @"userID";
+NSString *const kUUIDString = @"UUIDString";
+
 NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 @interface YTUserID () {
@@ -29,13 +32,20 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 - (instancetype)initWithDelegate:(id<YTUserDelegate>)delegate {
     if (self = [super init]) {
+        
         self.delegate = delegate;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSUUID *UUID = self.UUID;
+            NSString *UUID = self.UUIDString;
             NSNumber *userID = self.userID;
-            DDLogInfo(@"Initialised with: %@ %@", UUID, userID);
+            
+            NSLog(@"Initialised with: %@ %@", UUID, userID);
+            
+            if (UUID != nil && userID != nil) {
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            }
         });
+        
     }
     
     return self;
@@ -44,8 +54,6 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 - (void)setupAccountWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
     // check server
     if (self.delegate) {
-        
-        UICKeyChainStore *keychain = self.delegate.keychain;
         
         weakify(self);
         
@@ -56,42 +64,18 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             NSDictionary *user = [responseObject valueForKey:@"user"];
             DDLogDebug(@"Got existing user: %@", user);
             
-            self->_userID = @([[user valueForKey:@"id"] integerValue]);
-            self->_UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
-            
-            [keychain setString:self->_userID.stringValue forKey:kUserID];
-            [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
+            self.userID = @([[user valueForKey:@"id"] integerValue]);
+            self.UUIDString = [user valueForKey:@"uuid"];
             
             if (successCB) {
                 successCB(self, response, task);
             }
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            self->_UUID = [NSUUID UUID];
-            [keychain setString:self->_UUID.UUIDString forKey:kAccountID];
-            
-            // let our server know about these changes
-            [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                DDLogDebug(@"created new user");
-                NSDictionary *user = [responseObject valueForKey:@"user"];
-                self.userID = @([[user valueForKey:@"id"] integerValue]);
-#ifndef SHARE_EXTENSION
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-#endif
-                if (successCB) {
-                    successCB(self, response, task);
-                }
-                
-            } error:errorCB];
-            
-        }];
+        } error:errorCB];
     }
     else {
         if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The UsernManager was not able setup correctly and therefore an account could not be created. Please restart the app to continue."}];
+            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The User Manager was not able setup correctly and therefore an account could not be created. Please restart the app to continue."}];
             errorCB(error, nil, nil);
         }
     }
@@ -99,29 +83,70 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 
 #pragma mark -
 
-- (NSUUID *)UUID {
+- (NSString *)UUIDString {
     
-#ifdef DEBUG
-    
-    if (_UUID == nil) {
-        _UUID = [[NSUUID alloc] initWithUUIDString:@"815E2709-31CC-4EB8-9067-D84F224BED66"];
-        _userID = @(1);
+    if (_UUIDString == nil) {
+//#ifdef DEBUG
+////        _UUIDString = @"815E2709-31CC-4EB8-9067-D84F224BED66";
+//
+//        _UUIDString = @"4CE0BC0B-82E6-4B08-84F5-DE5C56774064";
+//#else
+        NSError *error = nil;
+        NSString *UUIDString = [Keychain stringFor:kUUIDString error:&error];
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-        });
+        if (error != nil) {
+            NSLog(@"Error loading UUID String from Keychain: %@", error);
+            
+            UUIDString = [[NSUserDefaults standardUserDefaults] stringForKey:kUUIDString];
+        }
+        
+        if (UUIDString == nil) {
+            // if the UUID String is still nil at this point
+            // the UUID has not been migrated
+            UUIDString = [Keychain stringFor:kAccountID error:nil];
+            
+            if (UUIDString == nil) {
+                UUIDString = [[NSUserDefaults standardUserDefaults] stringForKey:kAccountID];
+            }
+            
+        }
+        
+        _UUIDString = UUIDString;
+//#endif
     }
     
-    return _UUID;
+    return _UUIDString;
     
-#endif
+}
+
+- (NSUUID *)UUID {
+    
+//#ifdef DEBUG
+//
+//    if (_UUID == nil) {
+//
+//        // Nikhil
+//        _UUID = [[NSUUID alloc] initWithUUIDString:self.UUIDString];
+////        _userID = @(1);
+//
+//        // Anuj
+////        _UUID = [[NSUUID alloc] initWithUUIDString:@"4CE0BC0B-82E6-4B08-84F5-DE5C56774064"];
+//        _userID = @(9);
+//
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+//        });
+//    }
+//
+//    return _UUID;
+//
+//#endif
     
     if (_UUID == nil) {
         // check if the store already has one
-        UICKeyChainStore *keychain = self.delegate.keychain;
         
-        NSString *UUIDString = keychain[kAccountID];
-        NSString *userID = keychain[kUserID];
+        NSString *UUIDString = self.UUIDString;
+        NSString *userID = [Keychain stringFor:kUserID error:nil];
         
         if (_userID && _userID.integerValue == 0) {
             _userID = nil;
@@ -131,28 +156,14 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         else {
             _userID = @([userID integerValue]);
         }
-        
-//        // migrate from NSUbiquitousKeyValueStore
-//        if (!UUIDString || !self.userID) {
-//            NSUbiquitousKeyValueStore *defaults = [NSUbiquitousKeyValueStore defaultStore];
-//            UUIDString = [defaults stringForKey:kAccountID];
-//
-//            if (UUIDString) {
-//                self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
-//            }
-//
-//            NSInteger userID = [defaults longLongForKey:kUserID];
-//            if (userID) {
-//                self.userID = @(userID);
-//            }
-//        }
-//
+
         // migrate from NSUserDefaults
         if (!UUIDString || !self.userID) {
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             UUIDString = [defaults stringForKey:kAccountID];
 
             if (UUIDString) {
+                self.UUIDString = UUIDString;
                 self.UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
             }
 
@@ -201,31 +212,69 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     return _UUID;
 }
 
-- (void)setUUID:(NSUUID *)UUID
-{
-    _UUID = UUID;
+- (void)setUUIDString:(NSString *)UUIDString {
     
-    if (_UUID != nil) {
-        [self.delegate.keychain setString:UUID.UUIDString forKey:kAccountID];
+    _UUIDString = UUIDString;
+    
+    if (_UUIDString != nil) {
+        [Keychain add:kUUIDString string:UUIDString];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {
-            [defaults setValue:UUID.UUIDString forKey:kAccountID];
+            [defaults setValue:UUIDString forKey:kUUIDString];
             [defaults synchronize];
         }
     }
+    
 }
 
-- (NSString *)UUIDString {
-    return self.UUID.UUIDString;
+- (NSNumber *)userID {
+    
+//#ifdef DEBUG
+//
+//    return @9;
+//
+//#endif
+    
+    if (_userID == nil) {
+        NSString *userIDString = [Keychain stringFor:kUserID error:nil];
+        
+        if (userIDString == nil) {
+            userIDString = [NSUserDefaults.standardUserDefaults valueForKey:kUserID];
+            
+            if (userIDString) {
+                
+                if ([userIDString isKindOfClass:NSString.class] == NO
+                    && [userIDString respondsToSelector:@selector(stringValue)]) {
+                    
+                    userIDString = [(NSNumber *)userIDString stringValue];
+                    
+                }
+                
+                if (userIDString) {
+                    [Keychain add:kUserID string:userIDString];
+                }
+            }
+            
+        }
+        
+        if (userIDString) {
+            NSNumber *userID = @(userIDString.integerValue);
+            
+            _userID = userID;
+        }
+        
+    }
+    
+    return _userID;
+    
 }
 
-- (void)setUserID:(NSNumber *)userID
-{
+- (void)setUserID:(NSNumber *)userID {
     _userID = userID;
     
     if (_userID != nil) {
-        [self.delegate.keychain setString:userID.stringValue forKey:kUserID];
+        [Keychain add:kUserID string:userID.stringValue];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         if (defaults) {

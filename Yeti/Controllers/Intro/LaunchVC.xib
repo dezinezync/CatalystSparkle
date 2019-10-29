@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14810.12" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_5" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.15"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LaunchVC">
             <connections>
+                <outlet property="getStartedButton" destination="Ukj-UL-3eg" id="Q76-Qh-jP0"/>
+                <outlet property="stackView" destination="m4D-jU-Tcw" id="7B0-66-tDJ"/>
                 <outlet property="subtitleLabel" destination="oUC-rq-M6x" id="6pU-5m-C0f"/>
                 <outlet property="titleLabel" destination="3mX-fI-DmP" id="PAz-T5-38P"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -55,7 +57,7 @@
                     <rect key="frame" x="257" y="678" width="320" height="46"/>
                     <color key="backgroundColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="46" id="LAf-zm-AE1"/>
+                        <constraint firstAttribute="height" priority="999" constant="46" id="LAf-zm-AE1"/>
                         <constraint firstAttribute="width" priority="999" constant="320" id="uB4-JG-shX"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>

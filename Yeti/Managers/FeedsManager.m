@@ -10,7 +10,7 @@
 #import "FeedItem.h"
 
 #import "RMStore.h"
-#import "RMStoreKeychainPersistence.h"
+#import "StoreKeychainPersistence.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -18,6 +18,7 @@
 #import <CommonCrypto/CommonHMAC.h>
 
 #import <DZKit/AlertManager.h>
+#import "Keychain.h"
 
 #ifndef DDLogError
 #import <DZKit/DZLogger.h>
@@ -30,9 +31,9 @@
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
-@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration> {
-    NSString *_receiptLastUpdatePath;
-}
+NSArray <NSString *> * _defaultsKeys;
+
+@interface FeedsManager () <YTUserDelegate, UIStateRestoring, UIObjectRestoration>
 
 @property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
 @property (nonatomic, strong, readwrite) Reachability * _Nonnull reachability;
@@ -55,6 +56,16 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     });
 }
 
++ (NSArray <NSString *> *)defaultsKeys {
+    
+    if (_defaultsKeys == nil) {
+        _defaultsKeys = @[kDefaultsArticleFont, kDefaultsBackgroundRefresh, kShowMarkReadPrompt, kShowUnreadCounts, kDetailFeedSorting, kPreviewLines, kUseImageProxy, kDefaultsImageBandwidth, kDefaultsImageLoading, kShowArticleCoverImages, kDefaultsTheme, @"theme-light-color"];
+    }
+    
+    return _defaultsKeys;
+    
+}
+
 #pragma mark -
 
 - (instancetype)init {
@@ -69,59 +80,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-        
-        NSError *error = nil;
-        
-        if (error) {
-            DDLogError(@"Error loading push token from disk: %@", error.localizedDescription);
-        }
-        
-        NSString *docsDir;
-        NSArray *dirPaths;
-//        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
-        
-//        if (!_feedsCachePath) {
-//            dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-//            docsDir = [dirPaths objectAtIndex:0];
-//            
-//            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-//            NSString *filename = formattedString(@"feedscache-%@.json", buildNumber);
-//            
-//            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
-//            
-//#ifdef DEBUG
-//            path = [path stringByAppendingString:@".debug"];
-//#endif
-//            
-//            _feedsCachePath = path;
-//        }
-        
-        if (_receiptLastUpdatePath == nil) {
-            if (!docsDir) {
-                dirPaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-                docsDir = [dirPaths objectAtIndex:0];
-            }
-            
-            NSBundle *bundle = [NSBundle mainBundle];
-            
-            NSDictionary *infoDict = [bundle infoDictionary];
-            NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
-            NSString *filename = formattedString(@"receiptDate-%@.json", buildNumber);
-            
-            NSString *path = [[NSString alloc] initWithString: [docsDir stringByAppendingPathComponent:filename]];
-            
-#ifdef DEBUG
-            path = [path stringByAppendingString:@".debug"];
-#endif
-            
-            infoDict = nil;
-            buildNumber = nil;
-            filename = nil;
-            
-            _receiptLastUpdatePath = path;
-        }
+    
     }
     
     return self;
@@ -131,16 +90,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     return self.userIDManager.userID;
 }
 
-- (void)didReceiveMemoryWarning {
-    ArticlesManager.shared.bookmarks = nil;
-    ArticlesManager.shared.folders = nil;
-    ArticlesManager.shared.unread = nil;
-    ArticlesManager.shared.feeds = nil;
-}
-
 #pragma mark - Feeds
 
-- (void)getFeedsSince:(NSDate *)since success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
 {
     weakify(self);
     
@@ -163,8 +115,10 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
-        id firstFeedObj = self.keychain[YTSubscriptionHasAddedFirstFeed];
-        BOOL hasAddedFirstFeed = firstFeedObj ? [firstFeedObj boolValue] : NO;
+        NSNumber *unread = [responseObject valueForKey:@"unread"];
+        self.totalUnread = unread.integerValue;
+        
+        BOOL hasAddedFirstFeed = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
         
         if (hasAddedFirstFeed == NO) {
             // check if feeds count is higher than 2
@@ -182,60 +136,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 }
             }
             
-            self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(hasAddedFirstFeed) stringValue];
+            [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:hasAddedFirstFeed];
         }
         
-        if (!since || !ArticlesManager.shared.feeds.count) {
-            @synchronized (self) {
-                ArticlesManager.shared.feeds = feeds;
-            }
-        }
-        else {
-
-            if (feeds.count) {
-
-                NSArray <Feed *> *copy = [ArticlesManager.shared.feeds copy];
-
-                for (Feed *feed in feeds) {
-                    // get the corresponding feed from the memory
-                    Feed *main = [ArticlesManager.shared.feeds rz_reduce:^id(Feed *prev, Feed *current, NSUInteger idx, NSArray *array) {
-                        if (current.feedID.integerValue == feed.feedID.integerValue)
-                            return current;
-                        return prev;
-                    }];
-
-                    if (!main) {
-                        // this is a new feed
-                        copy = [copy arrayByAddingObject:feed];
-                    }
-                    else {
-                        NSArray <FeedItem *> *newItems = [feed.articles rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                           
-                            NSUInteger identifier = obj.identifier.integerValue;
-                            
-                            FeedItem *existing = [main.articles rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idx, NSArray *array) {
-                                return current.identifier.integerValue == identifier ? current : prev;
-                            }];
-                            
-                            return existing == nil;
-                            
-                        }];
-                        
-                        // add the new articles. We add main's article to feed so the order remains in reverse-chrono
-                        main.articles = [newItems arrayByAddingObjectsFromArray:main.articles];
-                    }
-                }
-
-                @synchronized (self) {
-                    ArticlesManager.shared.feeds = feeds;
-                }
-            }
-            else {
-                @synchronized (self) {
-                    ArticlesManager.shared.feeds = feeds;
-                }
-            }
-
+        @synchronized (self) {
+            ArticlesManager.shared.feeds = feeds;
         }
         
         if (successCB) {
@@ -256,23 +161,33 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
+- (void)updateFeedWithLocalName:(Feed *)feed {
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
+    
+    __block NSString *localName = nil;
+    
+    [MyDBManager.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        
+        localName = [transaction objectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        
+    }];
+    
+    feed.localName = localName;
+    
+}
+
 - (NSArray <Feed *> *)parseFeedResponse:(NSArray <NSDictionary *> *)responseObject {
     
     NSMutableArray <Feed *> *feeds = [[[responseObject valueForKey:@"feeds"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
         
         Feed *feed = [Feed instanceFromDictionary:obj];
         
-        NSString *localNameKey = formattedString(@"feed-%@", feed.feedID);
-        
-        __block NSString *localName = nil;
-        
-        [MyDBManager.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-            
-            localName = [transaction objectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-            
-        }];
-        
-        feed.localName = localName;
+        [self updateFeedWithLocalName:feed];
         
         return feed;
         
@@ -458,19 +373,17 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
             return;
         }
 
-        strongify(self);
-
-        self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
+        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
         
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"];
-        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
+//        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         
-        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [FeedItem instanceFromDictionary:obj];
-        }];
+//        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [FeedItem instanceFromDictionary:obj];
+//        }];
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
-        feed.articles = articles;
+//        feed.articles = articles;
         
         if (successCB)
             successCB(feed, response, task);
@@ -505,23 +418,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         params = @{@"feedID": feedID, @"userID": [self userID]};
     }
 
-    weakify(self);
-
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 
-        strongify(self);
-        
-        self.keychain[YTSubscriptionHasAddedFirstFeed] = [@(YES) stringValue];
+        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
         NSDictionary *feedObj = [responseObject valueForKey:@"feed"] ?: responseObject;
-        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
+//        NSArray *articlesObj = [responseObject valueForKey:@"articles"];
         
-        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [FeedItem instanceFromDictionary:obj];
-        }];
+//        NSArray <FeedItem *> *articles = [articlesObj rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [FeedItem instanceFromDictionary:obj];
+//        }];
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
-        feed.articles = articles;
+//        feed.articles = articles;
         
         if (successCB)
             successCB(feed, response, task);
@@ -714,7 +623,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                 // will be available
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.totalUnread = 0;
-                    ArticlesManager.shared.unread = @[];
+//                    ArticlesManager.shared.unread = @[];
                 });
                 
                 NSInteger const newFeedUnread = 0;
@@ -775,19 +684,27 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         NSMutableDictionary *dict = [responseObject mutableCopy];
         
         NSArray <Feed *> *trending = [dict[@"trending"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         NSArray <Feed *> *subs = [dict[@"highestSubs"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         NSArray <Feed *> *read = [dict[@"mostRead"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         NSArray <Feed *> *similar = [dict[@"similar"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [Feed instanceFromDictionary:obj];
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            return feed;
         }];
         
         dict[@"trending"] = trending;
@@ -901,29 +818,29 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)updateUnreadArray
 {
-    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
-    
-    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        BOOL isRead = obj.isRead;
-        if (isRead) {
-            [markedRead addObject:obj.identifier];
-        }
-        return !isRead;
-    }];
-    
-    if (!markedRead.count)
-        return;
-    
-    ArticlesManager.shared.unread = newUnread;
-    
-    // propagate changes to the feeds object as well
-    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
-    
-    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
-       
-        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
-        
-    } }
+//    NSMutableArray <NSNumber *> * markedRead = @[].mutableCopy;
+//    
+//    NSArray <FeedItem *> *newUnread = [ArticlesManager.shared.unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+//        BOOL isRead = obj.isRead;
+//        if (isRead) {
+//            [markedRead addObject:obj.identifier];
+//        }
+//        return !isRead;
+//    }];
+//    
+//    if (!markedRead.count)
+//        return;
+//    
+//    ArticlesManager.shared.unread = newUnread;
+//    
+//    // propagate changes to the feeds object as well
+//    [self updateFeedsReadCount:ArticlesManager.shared.feeds markedRead:markedRead];
+//    
+//    for (Folder *folder in ArticlesManager.shared.folders) { @autoreleasepool {
+//       
+//        [self updateFeedsReadCount:folder.feeds.allObjects markedRead:markedRead];
+//        
+//    } }
     
 }
 
@@ -960,67 +877,67 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-    if ([self userID] == nil) {
-        if (errorCB)
-            errorCB(nil, nil, nil);
-        
-        return;
-    }
-    
-    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10, @"sortType":  @(sorting.integerValue)}.mutableCopy;
-    
-#if TESTFLIGHT == 0
-    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
-        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-    }
-#endif
-    
-    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-      
-        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-            return [FeedItem instanceFromDictionary:obj];
-        }];
-        
-        self.unreadLastUpdate = NSDate.date;
-        
-        if (page == 1) {
-            ArticlesManager.shared.unread = items;
-        }
-        else {
-            if (!ArticlesManager.shared.unread) {
-                ArticlesManager.shared.unread = items;
-            }
-            else {
-                NSArray *unread = ArticlesManager.shared.unread;
-                NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                    return !obj.isRead;
-                }];
-                
-                @try {
-                    prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-                    ArticlesManager.shared.unread = prefiltered;
-                }
-                @catch (NSException *exc) {}
-            }
-        }
-        // the conditional takes care of filtered article items.
-        self.totalUnread = ArticlesManager.shared.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
-        
-        if (successCB) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                successCB(items, response, task);
-            });
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            DDLogError(@"Unhandled network error: %@", error);
-        }
-    }];
+//    if ([self userID] == nil) {
+//        if (errorCB)
+//            errorCB(nil, nil, nil);
+//
+//        return;
+//    }
+//
+//    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10, @"sortType":  @(sorting.integerValue)}.mutableCopy;
+//
+//#if TESTFLIGHT == 0
+//    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+//        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+//    }
+//#endif
+//
+//    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+//            return [FeedItem instanceFromDictionary:obj];
+//        }];
+//
+//        self.unreadLastUpdate = NSDate.date;
+//
+//        if (page == 1) {
+//            ArticlesManager.shared.unread = items;
+//        }
+//        else {
+//            if (!ArticlesManager.shared.unread) {
+//                ArticlesManager.shared.unread = items;
+//            }
+//            else {
+//                NSArray *unread = ArticlesManager.shared.unread;
+//                NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+//                    return !obj.isRead;
+//                }];
+//
+//                @try {
+//                    prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
+//                    ArticlesManager.shared.unread = prefiltered;
+//                }
+//                @catch (NSException *exc) {}
+//            }
+//        }
+//        // the conditional takes care of filtered article items.
+//        self.totalUnread = ArticlesManager.shared.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
+//
+//        if (successCB) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                successCB(items, response, task);
+//            });
+//        }
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//        error = [self errorFromResponse:error.userInfo];
+//
+//        if (errorCB)
+//            errorCB(error, response, task);
+//        else {
+//            DDLogError(@"Unhandled network error: %@", error);
+//        }
+//    }];
 }
 
 - (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
@@ -1086,7 +1003,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if (!status) {
             if (errorCB) {
-                NSError *error = [NSError errorWithDomain:@"TTKit" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder title. Please try again."}];
+                NSError *error = [NSError errorWithDomain:FeedsManagerDomain code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder title. Please try again."}];
                 errorCB(error, response, task);
             }
             return;
@@ -1142,7 +1059,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if (!status) {
             if (errorCB) {
-                NSError *error = [NSError errorWithDomain:@"TTKit" code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder preferences. Please try again."}];
+                NSError *error = [NSError errorWithDomain:FeedsManagerDomain code:-1 userInfo:@{NSLocalizedDescriptionKey:@"Failed to update the folder preferences. Please try again."}];
                 errorCB(error, response, task);
             }
             return;
@@ -1453,6 +1370,37 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }];
 }
 
+- (void)getAllWebSubWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    [self.session GET:@"/user/subscriptions" parameters:@{@"userID": self.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (!successCB) {
+            return;
+        }
+        
+        NSArray <Feed *> *feeds = [responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            Feed * feed = [Feed instanceFromDictionary:obj];
+            [self updateFeedWithLocalName:feed];
+            
+            return feed;
+        }];
+        
+        successCB(feeds, response, task);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 - (void)subsribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
 {
     [self.session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1557,7 +1505,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            if ([[responseObject valueForKey:@"status"] boolValue]) {
+//            if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.subscription = sub;
@@ -1567,20 +1515,20 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                         successCB(responseObject, response, task);
                     });
                 }
-            }
-            else {
-                Subscription *sub = [Subscription new];
-                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
-                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
-                
-                self.subscription = sub;
-                
-                if (errorCB) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        errorCB(sub.error, response, task);
-                    });
-                }
-            }
+//            }
+//            else {
+//                Subscription *sub = [Subscription new];
+//                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
+//                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
+//                
+//                self.subscription = sub;
+//                
+//                if (errorCB) {
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        errorCB(sub.error, response, task);
+//                    });
+//                }
+//            }
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -1759,6 +1707,181 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
+- (void)syncSettings {
+    
+    NSDictionary *allSettings = [NSUserDefaults.standardUserDefaults dictionaryRepresentation];
+    
+    // refine the scope to only our keys
+    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:allSettings.allKeys.count];
+    
+    NSMutableDictionary *existingKeys = [NSMutableDictionary new];
+    
+    for (NSString *key in self.class.defaultsKeys) {
+        
+        if (allSettings[key] != nil) {
+            [arr addObject:@[key, allSettings[key]]];
+            existingKeys[key] = [arr.lastObject lastObject];
+        }
+        
+    }
+    
+#if TESTFLIGHT == 1
+    NSLog(@"Current Settings: %@", arr);
+#endif
+    
+    // Get the existing items
+    [self.session GET:@"/user/settings" parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+#ifdef DEBUG
+        NSLog(@"Exsiting settings: %@", responseObject);
+#endif
+        
+        if ([(NSArray *)responseObject count] == 0) {
+            [self _putSyncSettings:arr];
+        }
+        else {
+            
+            NSMutableArray *settings = [NSMutableArray new];
+            
+            for (NSDictionary *dict in responseObject) {
+                
+                NSString *key = dict[@"name"];
+                id value = dict[@"value"];
+                NSString *type = dict[@"type"];
+                
+                if ([type isEqualToString:@"boolean"]) {
+                    value = @([(NSNumber *)value boolValue]);
+                }
+                else if ([type isEqualToString:@"integer"]) {
+                    value = @([(NSNumber *)value integerValue]);
+                }
+                else if ([type isEqualToString:@"double"]) {
+                    value = @([(NSNumber *)value doubleValue]);
+                }
+                else if ([type isEqualToString:@"data"]) {
+                    value = [NSJSONSerialization JSONObjectWithData:value options:kNilOptions error:nil];
+                }
+                else {}
+                
+                [settings addObject:@[key, value]];
+                
+            }
+            
+            NSSet <NSArray *> * existing = [NSSet setWithArray:arr];
+            NSSet <NSArray *> * newKeys = [NSSet setWithArray:settings];
+            
+            NSMutableSet <NSArray *> * newToLocal = newKeys.mutableCopy;
+            [newToLocal minusSet:existing];
+            
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            
+            // update newToLocal to the sever
+            for (NSArray *newItem in newToLocal) {
+//                [defaults set]
+                [defaults setObject:newItem.lastObject forKey:newItem.firstObject];
+            }
+            
+            [defaults synchronize];
+            
+            NSMutableSet <NSArray *> * newToServer = existing.mutableCopy;
+            [newToServer minusSet:newKeys];
+            
+            for (NSArray *newItem in newToServer) {
+                [self _postSyncSetting:newItem];
+            }
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error fetching sync defaults: %@", error);
+        
+    }];
+    
+}
+
+- (NSArray <NSDictionary *> *)_formatSettings:(NSArray <NSArray *> *)settings {
+    
+    NSMutableArray *formatted = [NSMutableArray arrayWithCapacity:settings.count];
+    
+    for (NSArray *item in settings) {
+        
+        NSMutableDictionary * retItem = [NSMutableDictionary new];
+        retItem[@"userID"] = self.userID;
+        retItem[@"name"] = item.firstObject;
+        
+        id value = item.lastObject;
+        NSString *type = @"string";
+        
+        if ([value isKindOfClass:NSArray.class] || [value isKindOfClass:NSDictionary.class]) {
+            
+            value = [NSJSONSerialization dataWithJSONObject:value options:kNilOptions error:nil];
+            value = [[NSString alloc] initWithData:value encoding:NSUTF8StringEncoding];
+            type = @"data";
+            
+        }
+        else if ([value isKindOfClass:NSNumber.class]) {
+            
+            NSNumber *number = value;
+            
+            CFNumberType numberType = CFNumberGetType((CFNumberRef)number);
+            
+            if (numberType == kCFNumberCharType) {
+                type = @"boolean";
+            }
+            else if (numberType == kCFNumberFloat32Type || numberType == kCFNumberFloat64Type || numberType == kCFNumberLongType || numberType == kCFNumberLongLongType || numberType == kCFNumberFloatType || numberType == kCFNumberDoubleType || numberType == kCFNumberCGFloatType) {
+                type = @"double";
+            }
+            else {
+                type = @"integer";
+            }
+            
+        }
+        
+        retItem[@"type"] = type;
+        retItem[@"value"] = value;
+        
+        [formatted addObject:retItem];
+        
+    }
+    
+    return formatted;
+    
+}
+
+- (void)_putSyncSettings:(NSArray <NSArray *> *)settings {
+    
+    NSArray <NSDictionary *> * settingItems = [self _formatSettings:settings];
+    
+    [self.session PUT:@"/user/settings" queryParams:nil parameters:@{@"settings": settingItems} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Added sync defaults with response: %@", responseObject);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error updating sync defaults: %@", error);
+        
+    }];
+    
+}
+
+- (void)_postSyncSetting:(NSArray *)setting {
+    
+    NSArray *items = [self _formatSettings:@[setting]];
+    NSDictionary *item = items.firstObject;
+    
+    [self.session POST:@"/user/settings" queryParams:nil parameters:item success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Added sync default with response: %@", responseObject);
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error updating sync default: %@", error);
+        
+    }];
+    
+}
+
 #pragma mark - Search
 
 - (NSURLSessionTask *)search:(NSString *)query scope:(NSInteger)scope page:(NSInteger)page success:(successBlock)successCB error:(errorBlock)errorCB {
@@ -1823,6 +1946,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)setPushToken:(NSString *)pushToken
 {
+    
     _pushToken = pushToken;
     
     if (_pushToken) {
@@ -1868,7 +1992,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         self->_subscription = subscription;
         
         if (self->_subscription
-            && [[(RMStoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
+            && [[(StoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
             self->_subscription.lifetime = YES;
         }
         
@@ -1894,14 +2018,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
 }
 
-- (void)setKeychain:(UICKeyChainStore *)keychain {
-    
-    @synchronized (self) {
-        self->_keychain = keychain;
-    }
-    
-}
-
 - (void)setUserID:(NSNumber *)userID {
     self.userIDManager.userID = userID;
 }
@@ -1919,18 +2035,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     }
     
     return _reachability;
-}
-
-- (UICKeyChainStore *)keychain {
-    
-    if (!_keychain) {
-        UICKeyChainStore *keychain = [UICKeyChainStore keyChainStoreWithService:@"com.dezinezync.Yeti"];
-        keychain.synchronizable = YES;
-        
-        _keychain = keychain;
-    }
-    
-    return _keychain;
 }
 
 - (DZURLSession *)session
@@ -2156,34 +2260,6 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         [self updateBookmarksFromServer];
     });
     
-//    if (MyFeedsManager.userID) {
-//        
-//        NSDate *lastUpdate = [NSKeyedUnarchiver unarchiveObjectWithFile:_receiptLastUpdatePath];
-//        
-//        if (lastUpdate != nil) {
-//            // check every 3 days
-//            NSTimeInterval threeDays = 86400 * 3;
-//            if ([NSDate.date timeIntervalSinceDate:lastUpdate] < threeDays) {
-//                return;
-//            }
-//        }
-//        
-//        NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
-//        
-//        NSData *data = [[NSData alloc] initWithContentsOfURL:receiptURL];
-//        
-//        if (data) {
-//            [self postAppReceipt:data success:nil error:nil];
-//        }
-//        
-//        lastUpdate = NSDate.date;
-//        
-//        if (![NSKeyedArchiver archiveRootObject:lastUpdate toFile:_receiptLastUpdatePath]) {
-//            DDLogError(@"Failed to archive receipt update date");
-//        }
-//        
-//    }
-    
 }
 
 - (void)_updateSubscriptionStateWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
@@ -2292,33 +2368,39 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)resetAccount {
     ArticlesManager.shared.folders = nil;
     ArticlesManager.shared.feeds = nil;
-    ArticlesManager.shared.bookmarks = nil;
-    ArticlesManager.shared.unread = nil;
+//    ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
     
-    [self removeAllLocalBookmarks];
+    [self.bookmarksManager _removeAllBookmarks:nil];
     
     NSString *kAccountID = @"YTUserID";
     NSString *kUserID = @"userID";
-    
-    NSUbiquitousKeyValueStore *store = [NSUbiquitousKeyValueStore defaultStore];
-    if (store) {
-        [store removeObjectForKey:kAccountID];
-        [store removeObjectForKey:kUserID];
-        [store synchronize];
-    }
+    NSString *kUUIDString = @"UUIDString";
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (defaults) {
         [defaults removeObjectForKey:kAccountID];
         [defaults removeObjectForKey:kUserID];
-        [defaults synchronize];
+        [defaults removeObjectForKey:kUUIDString];
     }
     
-    UICKeyChainStore *keychain = [self keychain];
-    keychain[kAccountID] = nil;
-    keychain[kUserID] = nil;
-    keychain[kHasShownOnboarding] = nil;
+    for (NSString *key in self.class.defaultsKeys) {
+        
+        @try {
+            [defaults removeObjectForKey:key];
+        }
+        @catch (NSException * exc) {}
+        
+    }
+    
+    [defaults synchronize];
+    
+    [Keychain remove:kAccountID];
+    [Keychain remove:kUserID];
+    [Keychain remove:kUUIDString];
+    [Keychain remove:kHasShownOnboarding];
+    [Keychain remove:YTSubscriptionHasAddedFirstFeed];
+    [Keychain remove:kIsSubscribingToPushNotifications];
     
     self.userIDManager.UUID = nil;
     self.userID = nil;
@@ -2335,7 +2417,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         return;
     }
     
-    NSString *path = formattedString(@"/1.4/%@/deactivate", self.userIDManager.UUID.UUIDString);
+    NSString *path = formattedString(@"/1.4/%@/deactivate", self.userIDManager.UUIDString);
     
     [self.session POST:path queryParams:nil parameters:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2372,8 +2454,45 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 #pragma mark - <YTUserDelegate>
 
-- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)signInWithApple:(NSString *)uuid success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (uuid == nil || [uuid isBlank] == YES) {
+        
+        if (errorCB) {
+            NSError *error = [NSError errorWithDomain:FeedsManagerDomain code:402 userInfo:@{NSLocalizedDescriptionKey: @"An invalid or no user key was received."}];
+            
+            errorCB(error, nil, nil);
+        }
+        
+        return;
+    }
+    
+    NSDictionary *sub = @{@"sub": uuid};
+    NSMutableDictionary *query = [NSMutableDictionary new];
+    
+    if (self.userID != nil) {
+        query[@"userID"] = self.userID;
+    }
+    
+    __unused NSURLSessionTask *task = [self.session POST:@"/user/appleid" queryParams:query parameters:sub success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        BOOL status = [([responseObject valueForKey:@"status"] ?: @(NO)) boolValue];
+        
+        if (status) {
+            self.userIDManager.UUIDString = uuid;
+        }
+        
+        if (successCB) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(successCB, response, task);
+            });
+        }
+        
+    } error:errorCB];
+    
+}
+
+- (void)getUserInformation:(successBlock)successCB error:(errorBlock)errorCB {
     weakify(self);
     
     NSDictionary *params;
@@ -2386,7 +2505,7 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         params = @{@"userID" : [MyFeedsManager.userIDManager UUIDString]};
     }
 
-    [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    __unused NSURLSessionTask *task = [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
      
         if (successCB) {
             successCB(responseObject, response, task);
@@ -2409,9 +2528,9 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
 {
-    if (!MyFeedsManager.userIDManager.UUID) {
+    if (!MyFeedsManager.userIDManager.UUIDString) {
         if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"No user ID currently present"}];
+            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"A User ID is not currently present"}];
             errorCB(error, nil, nil);
         }
         
@@ -2447,8 +2566,19 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
     
     [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
+        NSDictionary *user = [responseObject objectForKey:@"user"];
+        
+//        BOOL appleID = [[user valueForKey:@"appleid"] boolValue];
+        
+        NSString * userID = [user valueForKey:@"id"];
+        
+        self.userIDManager.UUIDString = uuid;
+        self.userIDManager.userID = @(userID.integerValue);
+        
         if (successCB) {
-            successCB(responseObject, response, task);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(responseObject, response, task);
+            });
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -2494,16 +2624,16 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 //            self.userIDManager = nil;
 //        }
         
-        return [NSError errorWithDomain:@"TTKit" code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
+        return [NSError errorWithDomain:FeedsManagerDomain code:status userInfo:@{NSLocalizedDescriptionKey: errorString}];
     }
     else {
         errorString = [userInfo valueForKey:NSLocalizedDescriptionKey];
     }
     
     if (errorString)
-        return [NSError errorWithDomain:@"TTKit" code:0 userInfo:userInfo];
+        return [NSError errorWithDomain:FeedsManagerDomain code:0 userInfo:userInfo];
     
-    return [NSError errorWithDomain:@"TTKit" code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
+    return [NSError errorWithDomain:FeedsManagerDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"An unknown error has occurred."}];
     
 }
 
@@ -2511,12 +2641,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 
 - (void)checkConstraintsForRequestingReview {
 
-    id countVal = self.keychain[YTLaunchCount];
-    NSInteger count = [(countVal ?: @0) integerValue];
+    NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
     // trigger on 7th launch
     if (count > 6) {
-        id requestedVal = self.keychain[YTRequestedReview];
-        if ([requestedVal boolValue] == NO) {
+        BOOL requestedVal = [Keychain boolFor:YTRequestedReview error:nil];
+        if (requestedVal == NO) {
             self.shouldRequestReview = YES;
         }
     }
@@ -2526,10 +2655,11 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
 - (void)updateBookmarksFromServer
 {
     
-    if (MyFeedsManager.userID == nil)
+    if (MyFeedsManager.userID == nil) {
         return;
+    }
     
-    NSArray <NSString *> *existingArr = [ArticlesManager.shared.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+    NSArray <NSString *> *existingArr = [self.bookmarksManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
     }];
     
@@ -2563,52 +2693,29 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         
         if ((bookmarked && bookmarked.count) || (deleted && deleted.count)) {
             
-            NSMutableArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks.mutableCopy;
-         
+            self.bookmarksManager->_migrating = YES;
+            
             if (deleted && deleted.count) {
                 
-                bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                   
-                    NSUInteger deletedIndex = [deleted indexOfObject:obj.identifier];
+                for (NSNumber *articleID in deleted) {
                     
-                    if (deletedIndex != NSNotFound) {
-                        // remove the path as well
-                        if (![self removeLocalBookmark:obj]) {
-                            [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:obj userInfo:@{@"bookmarked": @(NO)}];
-                        }
-                    }
+                    [self.bookmarksManager removeBookmarkForID:articleID completion:nil];
                     
-                    return deletedIndex == NSNotFound;
-                    
-                }].mutableCopy;
+                }
                 
             }
             
             if (bookmarked && bookmarked.count) {
                 
+                bookmarked = [bookmarked rz_filter:^BOOL(NSNumber *obj, NSUInteger idx, NSArray *array) {
+                   
+                    return [existingArr indexOfObject:obj.stringValue] == NSNotFound;
+                    
+                }];
+                
                 __block NSUInteger count = bookmarked.count;
                 
                 [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    
-                    __block NSUInteger index = NSNotFound;
-                    
-                    __unused FeedItem *item = [bookmarks rz_reduce:^id(FeedItem *prev, FeedItem *current, NSUInteger idxx, NSArray *array) {
-                        
-                        if ([current.identifier isEqualToNumber:obj]) {
-                            index = idxx;
-                            return current;
-                        }
-                        
-                        return prev;
-                        
-                    }];
-                    
-//                    DDLogDebug(@"Index of bookmark: %@", @(index));
-                    
-                    if (index != NSNotFound) {
-                        count--;
-                        return;
-                    }
                     
                     // this article needs to be downloaded and cached
                     
@@ -2616,39 +2723,28 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
                     
                     [self getArticle:obj success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         
-                        [bookmarks addObject:responseObject];
-                        
                         strongify(self);
                         
-                        [self addLocalBookmark:responseObject];
-                        
-                        [[NSNotificationCenter defaultCenter] postNotificationName:BookmarksDidUpdate object:responseObject userInfo:@{@"bookmarked": @(YES)}];
+                        [self.bookmarksManager addBookmark:responseObject completion:nil];
                         
                         count--;
                         
                         if (count == 0) {
-                            @synchronized (MyFeedsManager) {
-                                ArticlesManager.shared.bookmarks = bookmarks;
-                            }
+                            [self bookmarksUpdateFromServerCompleted];
                         }
                         
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                        
                         count--;
                         
-//                        if (count == 0) {
-//                            MyFeedsManager.bookmarks = bookmarks;
-//                        }
+                        if (count == 0) {
+                            [self bookmarksUpdateFromServerCompleted];
+                        }
                         
                     }];
                     
                 }];
                 
-            }
-            else {
-                @synchronized (self) {
-                    ArticlesManager.shared.bookmarks = bookmarks;
-                }
             }
             
         }
@@ -2659,6 +2755,27 @@ FeedsManager * _Nonnull MyFeedsManager = nil;
         DDLogError(@"%@", error.localizedDescription);
         
     }];
+}
+
+- (void)bookmarksUpdateFromServerCompleted {
+    
+    self.bookmarksManager->_migrating = NO;
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        @try {
+           [self.bookmarksManager postNotification:BookmarksDidUpdateNotification object:nil];
+        } @catch (NSException *exception) {
+            NSLog(@"Exception when posting bookmarks notification, %@", exception);
+        } @finally {
+            
+        }
+    });
+    
 }
 
 #pragma mark - State Restoration
@@ -2682,7 +2799,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    if (self.userID && self.userIDManager.UUID) {
+    if (self.userID != nil && (self.userIDManager.UUID != nil || self.userIDManager.UUIDString != nil)) {
         [coder encodeInteger:self.userID.integerValue forKey:kUserID];
         [coder encodeObject:self.userIDManager.UUIDString forKey:kAccountID];
         
@@ -2692,7 +2809,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         [coder encodeObject:ArticlesManager.shared.bookmarks forKey:kBookmarksKey];
         [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
-        [coder encodeObject:ArticlesManager.shared.unread forKey:kUnreadKey];
+//        [coder encodeObject:ArticlesManager.shared forKey:NSStringFromClass(ArticlesManager.class)];
         
         if (self.unreadLastUpdate) {
             [coder encodeDouble:[self.unreadLastUpdate timeIntervalSince1970] forKey:kUnreadLastUpdateKey];
@@ -2718,7 +2835,6 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         ArticlesManager.shared.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
         self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
-        ArticlesManager.shared.unread = [coder decodeObjectForKey:kUnreadKey];
         
         double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];
         if (unreadUpdate) {

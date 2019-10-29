@@ -8,4 +8,5 @@
 
 #import "FeedsManagerErrors.h"
 
+NSErrorDomain FeedsManagerDomain = @"FeedManagerErrorDomain";
 NSInteger const kFMErrorExisting = 9304;

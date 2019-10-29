@@ -21,10 +21,7 @@
 #import "SplitVC.h"
 #import "YetiConstants.h"
 #import "FeedsManager.h"
-
-#ifdef DEBUG
-#import <LinkPresentation/LinkPresentation.h>
-#endif
+#import "Keychain.h"
 
 AppDelegate *MyAppDelegate = nil;
 
@@ -100,35 +97,36 @@ AppDelegate *MyAppDelegate = nil;
             
             strongify(self);
             
-            [ADZLogger initialize];
-            
             [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
             
             [self setupStoreManager];
         });
         
-        if (MyFeedsManager.keychain[kIsSubscribingToPushNotifications]) {
+        if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil]) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [application registerForRemoteNotifications];
+                if ([application isRegisteredForRemoteNotifications] == YES) {
+                    [application registerForRemoteNotifications];
+                }
             });
         }
         
         [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
         
-        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(MyFeedsManager.class)];
+        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
+        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)ArticlesManager.shared restorationIdentifier:NSStringFromClass(ArticlesManager.class)];
         
-        // To test push notifications
-        #ifdef DEBUG
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                strongify(self);
-        
-        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
-        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
-        //        [self openFeed:@(1) article:@(1149498)];  // reddit
-//                [self openFeed:@(73) article:@(8301134)];
-//                [self showArticle:@(1831527)]; // crashing article
-            });
-        #endif
+//         To test push notifications
+//        #ifdef DEBUG
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                strongify(self);
+//
+//        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
+//        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
+//        //        [self openFeed:@(1) article:@(1149498)];  // reddit
+//                [self openFeed:@(1553) article:@(9542440)];
+////                [self showArticle:@(1831527)]; // crashing article
+//            });
+//        #endif
         
 //            [self yt_log_fontnames];
         
@@ -137,25 +135,25 @@ AppDelegate *MyAppDelegate = nil;
         
         // did finish launching
 #if !(TARGET_IPHONE_SIMULATOR)
+        
+        weakify(application);
+        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [application registerForRemoteNotifications];
+            
+            strongify(application);
+            
+            if ([application isRegisteredForRemoteNotifications] == YES) {
+                
+                [application registerForRemoteNotifications];
+                
+            }
+        
         });
 #endif
 
-        id countVal = MyFeedsManager.keychain[YTLaunchCount];
+        NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
         
-        NSInteger count = [(countVal ?: @0) integerValue];
-        
-        if (count == 0) {
-            // remove the old key's items
-            if ([YTLaunchCountOldKey length] > 0 ) {
-                MyFeedsManager.keychain[YTLaunchCountOldKey] = nil;
-            }
-            
-            MyFeedsManager.keychain[YTRequestedReview] = [@(NO) stringValue];
-        }
-        
-        MyFeedsManager.keychain[YTLaunchCount] = [@(count + 1) stringValue];
+        [Keychain add:YTLaunchCount integer:(count + 1)];
         
         retval = YES;
         
@@ -176,6 +174,10 @@ AppDelegate *MyAppDelegate = nil;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
+    
+//#ifdef DEBUG
+//    reset = YES;
+//#endif
     
     if (reset) {
         [MyFeedsManager resetAccount];
@@ -247,6 +249,7 @@ AppDelegate *MyAppDelegate = nil;
     DDLogDebug(@"Application will save restoration data");
     
     [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
+    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
 }
 
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -411,7 +414,7 @@ AppDelegate *MyAppDelegate = nil;
         return;
     }
     
-    NSInteger currentCount = (ArticlesManager.shared.unread ?: @[]).count;
+    NSInteger currentCount = MyFeedsManager.totalUnread;
     
     [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

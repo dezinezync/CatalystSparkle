@@ -13,7 +13,6 @@
 
 #import "YetiThemeKit.h"
 #import <DZNetworking/UIImageView+ImageLoading.h>
-#import <DZNetworking/WebPImageSerialization.h>
 
 #import <DZKit/AlertManager.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
@@ -21,10 +20,16 @@
 #import "UIImage+Sizing.h"
 #import "YetiConstants.h"
 
-@interface Image ()
+@interface Image () <UIContextMenuInteractionDelegate>
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
 @property (nonatomic, weak) UITapGestureRecognizer *tap;
+
+- (void)addContextMenus API_AVAILABLE(ios(13.0));
+
+- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:suggestedActions API_AVAILABLE(ios(13.0));
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -119,7 +124,7 @@
     return [self.imageView isAnimating];
 }
 
-- (void)il_setImageWithURL:(id)url
+- (void)il_setImageWithURL:(id)url imageLoader:(ImageLoader *)imageLoader
 {
     BOOL isGIF = NO;
     
@@ -150,29 +155,23 @@
             
             [self _setupImage];
             
-            dispatch_async(SharedImageLoader.ioQueue, ^{
+            CGFloat width = self.imageView.bounds.size.width;
+            
+            [self.imageView il_setImageWithURL:url mutate:^UIImage * _Nonnull(UIImage * _Nonnull image) {
+              
+                image = [image fastScale:width quality:1.f imageData:nil];
                 
-                // check if we have the cached the sized image
-                NSString *key = [self.imageView.baseURL stringByAppendingString:@"-sized"];
+                return image;
                 
-                [SharedImageLoader.cache objectforKey:key callback:^(UIImage * _Nullable image) {
-                    
-                    if (image != nil) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            self.imageView.settingCached = YES;
-                            self.imageView.image = image;
-                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-                        });
-                    }
-                    else {
-                        [self.imageView il_setImageWithURL:url success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-                            self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
-                        } error:nil];
-                    }
-                    
-                }];
+            } success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
                 
-            });
+                self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
+                
+                if (@available(iOS 13, *)) {
+                    [self addContextMenus];
+                }
+                
+            } error:nil imageLoader:imageLoader];
             
         });
     }
@@ -359,6 +358,110 @@
     
 }
 
+#pragma mark - Context Menus
+
+- (void)addContextMenus {
+    
+    UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+    [self addInteraction:interaction];
+    
+}
+
+- (NSURL *)sanitizedImageURL {
+    
+    if (self.URL) {
+        
+        NSURLComponents *components = [NSURLComponents componentsWithURL:self.URL resolvingAgainstBaseURL:nil];
+        
+        NSArray *queryItems = components.queryItems;
+        
+        NSURL *url = nil;
+        
+        for (NSURLQueryItem *item in queryItems) {
+            if ([item.name isEqualToString:@"url"]) {
+                url = [NSURL URLWithString:item.value];
+                break;
+            }
+        }
+        
+        return url;
+        
+    }
+    
+    return self.URL;
+    
+}
+
+- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:(NSArray <UIMenuElement *> *)suggestedActions {
+    
+    NSMutableArray <UIMenuElement *> *actions = [NSMutableArray new];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Copy Image" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        [[UIPasteboard generalPasteboard] setImage:self.imageView.image];
+        
+    }]];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Copy Image URL" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        [[UIPasteboard generalPasteboard] setURL:[self sanitizedImageURL]];
+        
+    }]];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Share Image" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[self.imageView.image] applicationActivities:nil];
+        
+        id delegate = [self.superview.superview valueForKeyPath:@"delegate"];
+        
+        if (delegate && [delegate isKindOfClass:UIViewController.class]) {
+            [(UIViewController *)delegate presentViewController:avc animated:YES completion:nil];
+        }
+        
+    }]];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Share Image URL" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[[self sanitizedImageURL]] applicationActivities:nil];
+        
+        id delegate = [self.superview.superview valueForKeyPath:@"delegate"];
+        
+        if (delegate && [delegate isKindOfClass:UIViewController.class]) {
+            [(UIViewController *)delegate presentViewController:avc animated:YES completion:nil];
+        }
+        
+    }]];
+    
+    [actions addObject:[UIAction actionWithTitle:@"Save Image" image:[UIImage systemImageNamed:@"square.and.arrow.down"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIImageWriteToSavedPhotosAlbum(self.imageView.image, nil, nil, nil);
+        });
+        
+    }]];
+    
+    NSString *menuTitle = @"Image Actions";
+    
+    UIMenu *menu = [UIMenu menuWithTitle:menuTitle children:actions];
+    
+    return menu;
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    UIContextMenuConfiguration *configuration = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+       
+        return [self makeMenuForPoint:location suggestions:suggestedActions];
+        
+    }];
+    
+    return configuration;
+    
+}
+
 @end
 
 @implementation SizedImage
@@ -426,9 +529,6 @@
                         }
                         else if ([extension isEqualToString:@"png"]) {
                             data = UIImagePNGRepresentation(image);
-                        }
-                        else if ([extension isEqualToString:@"webp"]) {
-                            data = [image dataWebPLossless];
                         }
                         
                         [SharedImageLoader.cache setObject:scaled data:data forKey:key];

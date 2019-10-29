@@ -57,28 +57,31 @@
     
     weakify(self);
     
-    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
-            
-            [self setupData];
-            
-        });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        DDLogError(@"Failed to fetch unread: %@", error);
-        
-    }];
+//    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
+//
+//            [self setupData];
+//
+//        });
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        DDLogError(@"Failed to fetch unread: %@", error);
+//
+//    }];
     
-    [MyFeedsManager getFeedsSince:self.sinceDate success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
         if (self == nil) {
             return;
         }
+        
+        MyFeedsManager.unreadLastUpdate = NSDate.date;
+        self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if ([responseObject integerValue] == 2) {
@@ -328,6 +331,7 @@
             }];
             
             ArticlesManager.shared.feeds = feeds;
+            MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - feed.unread.integerValue);
             
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -833,6 +837,21 @@
 - (void)feed_didTapMove:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
     
     UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+    
+    if (feed.folderID != nil) {
+        
+        for (Folder *folder in ArticlesManager.shared.folders) {
+            
+            if ([folder.folderID isEqualToNumber:feed.folderID] && folder.expanded == YES) {
+                folder.expanded = NO;
+                
+                [self setupData];
+                break;
+            }
+            
+        }
+        
+    }
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
     

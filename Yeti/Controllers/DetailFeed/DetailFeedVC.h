@@ -17,6 +17,9 @@
 #import "BarPositioning.h"
 #import "UIViewController+Stateful.h"
 
+#import "PagingManager.h"
+#import "BookmarksManager.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
@@ -30,6 +33,7 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
     
     @public
     StateType _controllerState NS_AVAILABLE_IOS(13.0);
+    YetiSortOption _sortingOption;
 }
 
 + (UINavigationController *)instanceWithFeed:(Feed * _Nullable)feed;
@@ -62,6 +66,10 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (atomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
 
+@property (nonatomic, weak) BookmarksManager *bookmarksManager;
+
+@property (nonatomic, strong) PagingManager * _Nullable pagingManager;
+
 - (BOOL)showsSortingButton;
 
 - (void)setupHeaderView;
@@ -75,6 +83,8 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 @property (nonatomic, strong) NSMutableArray <NSValue *> *sizeCache;
 
 - (void)setupLayout;
+
+- (void)setupData;
 
 - (UIView *)viewForEmptyDataset;
 
