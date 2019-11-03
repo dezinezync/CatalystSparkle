@@ -107,6 +107,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.title = [self.feed displayTitle];
     
+    _sortingOption = SharedPrefs.sortingOption;;
+    
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
     if (@available(iOS 13, *)) {
