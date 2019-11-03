@@ -2395,12 +2395,14 @@ NSArray <NSString *> * _defaultsKeys;
     
     [defaults synchronize];
     
-    [Keychain remove:kAccountID];
-    [Keychain remove:kUserID];
-    [Keychain remove:kUUIDString];
-    [Keychain remove:kHasShownOnboarding];
-    [Keychain remove:YTSubscriptionHasAddedFirstFeed];
-    [Keychain remove:kIsSubscribingToPushNotifications];
+//    [Keychain remove:kAccountID];
+//    [Keychain remove:kUserID];
+//    [Keychain remove:kUUIDString];
+//    [Keychain remove:kHasShownOnboarding];
+//    [Keychain remove:YTSubscriptionHasAddedFirstFeed];
+//    [Keychain remove:kIsSubscribingToPushNotifications];
+    
+    [Keychain removeAllItems];
     
     self.userIDManager.UUID = nil;
     self.userID = nil;

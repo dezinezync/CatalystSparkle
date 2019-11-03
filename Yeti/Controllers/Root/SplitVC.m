@@ -122,6 +122,12 @@
 #pragma mark -
 
 - (void)userNotFound {
+    
+    if (self.presentedViewController != nil) {
+        // we're already presenting something.
+        return;
+    }
+    
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
     IntroVC *vc = [[IntroVC alloc] init];
