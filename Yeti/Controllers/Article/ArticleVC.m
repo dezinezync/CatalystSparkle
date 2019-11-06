@@ -728,6 +728,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
     
+    if (self.item.coverImage != nil) {
+        [imagesFromEnclosures addObject:self.item.coverImage];
+    }
+    
     if (self.item.enclosures && self.item.enclosures.count) {
         
         NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png"];
@@ -750,10 +754,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     Content *content = [Content new];
                     content.type = @"image";
                     content.url = enclosures.firstObject.url.absoluteString;
+                    content.fromEnclosure = YES;
                     
-                    [imagesFromEnclosures addObject:content.url];
+                    // only add to the gallery if the image hasn't already been included.
+                    if ([imagesFromEnclosures indexOfObject:content.url] == NSNotFound) {
+
+                        [imagesFromEnclosures addObject:content.url];
+                        
+                        self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
+                        
+                    }
                     
-                    self.item.content = [@[content] arrayByAddingObjectsFromArray:self.item.content];
                 }
             }
             else {
@@ -761,6 +772,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 Content *content = [Content new];
                 content.type = @"gallery";
+                content.fromEnclosure = YES;
                 
                 NSMutableArray *images = [NSMutableArray arrayWithCapacity:enclosures.count];
                 
@@ -771,10 +783,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                         Content *subcontent = [Content new];
                         subcontent.type = @"image";
                         subcontent.url = enc.url.absoluteString;
+                        subcontent.fromEnclosure = YES;
                         
-                        [imagesFromEnclosures addObject:subcontent.url];
-                        
-                        [images addObject:subcontent];
+                        // only add to the gallery if the image hasn't already been included.
+                        if ([imagesFromEnclosures indexOfObject:subcontent.url] == NSNotFound) {
+
+                            [imagesFromEnclosures addObject:subcontent.url];
+                            
+                            [images addObject:subcontent];
+                            
+                        }
+                    
                     }
                     
                 }
@@ -814,39 +833,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.item.content enumerateObjectsUsingBlock:^(Content *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        strongify(self);
-        
-        /**
-         * 1. Check the first item in the list
-         * 2. If it's an image
-         * 3. The article declares a cover image
-         */
-        BOOL isImage = [obj.type isEqualToString:@"img"] || [obj.type isEqualToString:@"image"];
-        BOOL hasCover = self.item.coverImage != nil;
-        BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:obj.url] != NSNotFound) : NO;
-        
-        if (idx == 0 && isImage && imageFromEnclosure) {
-            return;
-        }
-        
-        if (idx == 0 && isImage && hasCover) {
-            // check if the cover image and the first image
-            // are the same entities
-            NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
-            NSURLComponents *imageComponents = [NSURLComponents componentsWithString:obj.url];
-            
-            if ([coverComponents.path isEqualToString:imageComponents.path]) {
-                return;
-            }
-        }
-       
-        weakify(self);
-        
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
             @autoreleasepool {
-                [self processContent:obj];
+                [self processContent:obj index:idx imagesFromEnclosures:imagesFromEnclosures];
             }
         });
         
@@ -1041,7 +1032,37 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return NO;
 }
 
-- (void)processContent:(Content *)content {
+- (void)processContent:(Content *)content index:(NSUInteger)idx imagesFromEnclosures:(NSArray <NSString *> *)imagesFromEnclosures {
+    
+    /**
+     * 1. Check the first item in the list
+     * 2. If it's an image
+     * 3. The article declares a cover image
+     */
+    BOOL isImage = [content.type isEqualToString:@"img"] || [content.type isEqualToString:@"image"];
+    BOOL hasCover = self.item.coverImage != nil;
+    BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:content.url] != NSNotFound) : NO;
+    
+    if (idx == 0 && isImage && imageFromEnclosure) {
+       return;
+    }
+   
+    if (idx == 0 && isImage && hasCover) {
+       // check if the cover image and the first image
+       // are the same entities
+       NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
+       NSURLComponents *imageComponents = [NSURLComponents componentsWithString:content.url];
+       
+       if ([coverComponents.path isEqualToString:imageComponents.path]) {
+           return;
+       }
+    }
+    
+#ifdef DEBUG
+    if (content.url) {
+        NSLog(@"URL: %@", content.url);
+    }
+#endif
     
     if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
         
@@ -1064,7 +1085,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             for (Content *subcontent in [content items]) { @autoreleasepool {
                 
-                [self processContent:subcontent];
+                [self processContent:subcontent index:idx imagesFromEnclosures:imagesFromEnclosures];
                 
                 idx++;
             }}
@@ -1079,7 +1100,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         else if (content.items) {
             
             for (Content *subcontent in content.items) {
-                [self processContent:subcontent];
+                [self processContent:subcontent index:idx imagesFromEnclosures:imagesFromEnclosures];
             }
             
         }
@@ -1164,13 +1185,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                     [self addImage:item link:content.url];
                 }
                 else {
-                    [self processContent:item];
+                    [self processContent:item index:idx imagesFromEnclosures:imagesFromEnclosures];
                 }
             }
             else {
                 for (Content *sub in content.items) { @autoreleasepool {
                     
-                    [self processContent:sub];
+                    [self processContent:sub index:idx imagesFromEnclosures:imagesFromEnclosures];
                     
                 } }
             }
@@ -1459,6 +1480,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
+    // 9mac ads
+    if (content.url && (
+            ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
+            || ([content.url containsString:@"deal"])
+            || ([content.url containsString:@"amaz"]
+            || [content.url containsString:@"i2.wp.com/9to5mac.com"])
+        )) {
+        return;
+    }
+    
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     
@@ -1572,7 +1603,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    if (_last && ![_last isKindOfClass:Linebreak.class]) {
+    if (_last == nil || (_last && ![_last isKindOfClass:Linebreak.class])) {
         [self addLinebreak];
     }
     
@@ -1736,7 +1767,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     if (content.items && content.items.count) {
         for (Content *item in content.items) { @autoreleasepool {
-            [self processContent:item];
+            [self processContent:item index:0 imagesFromEnclosures:@[]];
         } }
         return;
     }
@@ -1884,7 +1915,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else {
         for (Content *item in content.items) { @autoreleasepool {
-            [self processContent:item];
+            [self processContent:item index:0 imagesFromEnclosures:@[]];
         } }
     }
     

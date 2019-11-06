@@ -1,6 +1,10 @@
 # v1.5.0
 
-This the Release Candiate Build of Elytra v1.5.0. As of now, no known bugs exist. If you find anything, please report immediately. I'll be submitting this build in the first week of November. ;)  
+## Build 301
+
+- Added a linebreak before showing embedded images from posts as a gallery when it is the first item. 
+
+- Fixed duplicate items being rendered by the Article Reader. This could happen when the same image is embedded as the cover image, as an enclosure on the post and then again within the post's body. 
 
 ## Build 295
 
