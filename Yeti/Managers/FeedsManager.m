@@ -326,9 +326,22 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    NSDictionary *params = @{@"URL" : url};
+    NSString *urlString = [url absoluteString];
+    
+    if (!urlString) {
+        
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:@"FeedsManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Please check the URL you have entered."}], nil, nil);
+        }
+        
+        return;
+        
+    }
+    
+    NSDictionary *params = @{@"URL" : urlString};
+    
     if ([self userID] != nil) {
-        params = @{@"URL": url, @"userID": [self userID]}; // test/demo user: 93
+        params = @{@"URL": urlString, @"userID": [self userID]}; // test/demo user: 93
     }
 
     weakify(self);

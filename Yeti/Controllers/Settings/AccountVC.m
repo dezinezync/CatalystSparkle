@@ -165,6 +165,7 @@
                         cell.textLabel.accessibilityValue = @"Account Label";
                         
                         cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUIDString;
+                        cell.detailTextLabel.textAlignment = NSTextAlignmentCenter;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
                         break;
