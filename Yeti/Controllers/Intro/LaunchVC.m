@@ -203,6 +203,9 @@
         }];
         
     }
+    else {
+        [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:@"No Login information was received from Sign In with Apple."];
+    }
     
 }
 

@@ -18,6 +18,9 @@
 @property (nonatomic, strong) NSDictionary *attributes;
 @property (nonatomic, copy) NSString *videoID;
 
+/// Determines if this Content block was programatically created from the enclosures. 
+@property (nonatomic, assign) BOOL fromEnclosure;
+
 // for images
 @property (nonatomic, assign) CGSize size;
 @property (nonatomic, strong) NSDictionary *srcset;
