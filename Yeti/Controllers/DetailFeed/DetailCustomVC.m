@@ -185,7 +185,7 @@
 
 - (PagingManager *)pagingManager {
     
-    return _unreadsManager;
+    return self.unreadsManager;
     
 }
 

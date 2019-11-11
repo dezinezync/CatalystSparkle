@@ -165,7 +165,7 @@
 
 - (PagingManager *)pagingManager {
     
-    return _folderFeedsManager;
+    return self.folderFeedsManager;
     
 }
 

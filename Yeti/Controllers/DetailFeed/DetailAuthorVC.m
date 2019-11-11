@@ -80,7 +80,7 @@
 
 - (PagingManager *)pagingManager {
     
-    return _authorPagingManager;
+    return self.authorPagingManager;
     
 }
 
