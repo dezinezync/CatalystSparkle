@@ -185,7 +185,13 @@
 
 - (PagingManager *)pagingManager {
     
-    return self.unreadsManager;
+    return _unreadsManager;
+    
+}
+
+- (void)setPagingManager:(PagingManager *)pagingManager {
+    
+    _unreadsManager = pagingManager;
     
 }
 

@@ -495,7 +495,17 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 }
 
 - (NSString *)emptyViewSubtitle {
-    return formattedString(@"No recent articles are available from %@", self.feed.title);
+    
+    NSString *subtitle = nil;
+    
+    if ([_sortingOption isEqualToString:YTSortAllDesc] || [_sortingOption isEqualToString:YTSortAllAsc]) {
+        subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+    }
+    else {
+        subtitle = formattedString(@"No recent unread articles are available from %@", self.feed.title);
+    }
+    
+    return subtitle;
 }
 
 - (UIView *)viewForEmptyDataset {
