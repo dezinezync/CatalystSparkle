@@ -59,7 +59,17 @@
 }
 
 - (NSString *)emptyViewSubtitle {
-    return formattedString(@"No recent articles are available from %@", self.author.name);
+    
+    NSString *subtitle = nil;
+    
+    if ([_sortingOption isEqualToString:YTSortAllDesc] || [_sortingOption isEqualToString:YTSortAllAsc]) {
+        subtitle = formattedString(@"No recent articles are available from %@", self.author.name);
+    }
+    else {
+        subtitle = formattedString(@"No recent unread articles are available from %@", self.author.name);
+    }
+    
+    return subtitle;
 }
 
 - (void)reloadHeaderView {
@@ -71,6 +81,12 @@
 - (PagingManager *)pagingManager {
     
     return self.authorPagingManager;
+    
+}
+
+- (void)setPagingManager:(PagingManager *)pagingManager {
+    
+    _authorPagingManager = pagingManager;
     
 }
 
