@@ -361,19 +361,23 @@
         
         NSURL *selectedURL = [host.absoluteString containsString:@"yeti://"] ? host : [NSURL URLWithString:[NSString stringWithFormat:@"yeti://addFeed?URL=%@", host]];
         
-        // Get "UIApplication" class name through ASCII Character codes.
-        NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
-        if (NSClassFromString(className)) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
-                [object performSelector:@selector(openURL:) withObject:selectedURL];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.extensionContext completeRequestReturningItems:nil completionHandler:^(BOOL expired) {
+                
+                // Get "UIApplication" class name through ASCII Character codes.
+                NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
+                if (NSClassFromString(className)) {
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
+                        [object performSelector:@selector(openURL:) withObject:selectedURL];
+                    }];
+                }
+                
             }];
-        }
-    }
+        });
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.extensionContext completeRequestReturningItems:nil completionHandler:nil];
-    });
+    }
+
 }
 
 @end

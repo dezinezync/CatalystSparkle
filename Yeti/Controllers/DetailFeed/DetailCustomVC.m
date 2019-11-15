@@ -189,6 +189,12 @@
     
 }
 
+- (void)setPagingManager:(PagingManager *)pagingManager {
+    
+    _unreadsManager = pagingManager;
+    
+}
+
 - (PagingManager *)unreadsManager {
     
     if (_unreadsManager == nil) {

@@ -63,8 +63,19 @@
 }
 
 - (NSString *)emptyViewSubtitle {
-    return formattedString(@"No recent articles are available in %@", self.folder.title);
+    
+    NSString *subtitle = nil;
+    
+    if ([_sortingOption isEqualToString:YTSortAllDesc] || [_sortingOption isEqualToString:YTSortAllAsc]) {
+        subtitle = formattedString(@"No recent articles are available from %@", self.folder.title);
+    }
+    else {
+        subtitle = formattedString(@"No recent unread articles are available from %@", self.folder.title);
+    }
+    
+    return subtitle;
 }
+
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     return nil;
@@ -155,6 +166,12 @@
 - (PagingManager *)pagingManager {
     
     return self.folderFeedsManager;
+    
+}
+
+- (void)setPagingManager:(PagingManager *)pagingManager {
+    
+    _folderFeedsManager = pagingManager;
     
 }
 
