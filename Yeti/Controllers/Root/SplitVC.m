@@ -150,12 +150,8 @@
     
     [super traitCollectionDidChange:previousTraitCollection];
     
-    if (@available(iOS 13, *)) {
-        
-        if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-            [MyAppDelegate loadCodeTheme];
-        }
-        
+    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+        [MyAppDelegate loadCodeTheme];
     }
     
 }

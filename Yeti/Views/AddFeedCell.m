@@ -125,10 +125,10 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
         }
     }
     
-    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
-        Theme *theme = [YTThemeKit theme];
-        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
-    }
+//    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
+//        Theme *theme = [YTThemeKit theme];
+//        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
+//    }
     
 }
 

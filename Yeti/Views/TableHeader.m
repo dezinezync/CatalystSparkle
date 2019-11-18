@@ -15,8 +15,6 @@
     if (self.superview) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         self.backgroundColor = theme.cellColor;
-        
-        self.label.textColor = theme.isDark ? theme.captionColor : theme.titleColor;
     }
 }
 

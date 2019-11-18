@@ -215,57 +215,28 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.tableView.tableFooterView = [UIView new];
     
-    if (@available(iOS 13, *)) {
+    UITableViewDiffableDataSource *DDS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull obj) {
         
-        UITableViewDiffableDataSource *DDS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull obj) {
-            
-            return [self tableView:tableView cellForRowAtIndexPath:indexPath];
-            
-        }];
+        return [self tableView:tableView cellForRowAtIndexPath:indexPath];
         
-        self.DDS = DDS;
-        
-    }
-    else {
-        self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
-        
-        self.DS.addAnimation = UITableViewRowAnimationFade;
-        self.DS.deleteAnimation = UITableViewRowAnimationFade;
-        self.DS.reloadAnimation = UITableViewRowAnimationFade;
-        
-        DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-        NSArray *DS1Data = @[@"Unread"];
-        
-        if (PrefsManager.sharedInstance.hideBookmarks == NO) {
-            DS1Data = @[@"Unread", @"Bookmarks"];
-        }
-        
-        DS1.data = DS1Data;
-        
-        DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
-        
-        self.DS.datasources = @[DS1, DS2];
-        self.DS1 = [self.DS.datasources firstObject];
-        self.DS2 = [self.DS.datasources lastObject];
-        
-        self.DS.delegate = self;
-    }
+    }];
+    
+    self.DDS = DDS;
     
     [self setupData];
+
+    // @TODO this is not tested on iOS 13
     
-    if (@available(iOS 13, *)) {}
-    else {
-        if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-            UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
-            [self.tableView addGestureRecognizer:longPress];
-        }
-        else {
-            // enable drag and drop on iPad
-            // crashes on iOS 13 Beta 5
-            self.tableView.dragDelegate = self;
-            self.tableView.dropDelegate = self;
-        }
-    }
+//    if ([[[[UIApplication sharedApplication] delegate] window] traitCollection].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+//        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongTapOnCell:)];
+//        [self.tableView addGestureRecognizer:longPress];
+//    }
+//    else {
+//        // enable drag and drop on iPad
+//        // crashes on iOS 13 Beta 5
+//        self.tableView.dragDelegate = self;
+//        self.tableView.dropDelegate = self;
+//    }
 }
 
 - (UIBarButtonItem *)leftBarButtonItem {
@@ -313,15 +284,6 @@ static void *KVO_Unread = &KVO_Unread;
     UIRefreshControl *control = [[UIRefreshControl alloc] init];
     control.attributedTitle = [self lastUpdateAttributedString];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        if (theme.isDark) {
-            control.tintColor = [theme captionColor];
-        }
-    }
-    
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     [self.tableView addSubview:control];
@@ -342,24 +304,7 @@ static void *KVO_Unread = &KVO_Unread;
         searchController.searchBar.placeholder = @"Search Feeds";
         searchController.searchBar.accessibilityHint = @"Search your feeds";
         
-        if (@available(iOS 13, *)) {}
-        else {
-            searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-        }
-        
         searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
-        
-        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        
-        if (@available(iOS 13, *)) {}
-        else {
-            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, searchController.searchBar.bounds.size.height, searchController.searchBar.bounds.size.width, height)];
-            hairline.backgroundColor = theme.cellColor;
-            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-            
-            [searchController.searchBar addSubview:hairline];
-            self.hairlineView = hairline;
-        }
         
         self.navigationItem.searchController = searchController;
     }
@@ -463,14 +408,7 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath {
     
-    id obj = nil;
-    
-    if (@available(iOS 13, *)) {
-        obj = [self.DDS itemIdentifierForIndexPath:indexPath];
-    }
-    else {
-        obj = [self.DS objectAtIndexPath:indexPath];
-    }
+    id obj = [self.DDS itemIdentifierForIndexPath:indexPath];
     
     return obj;
     
@@ -479,20 +417,10 @@ static void *KVO_Unread = &KVO_Unread;
 - (NSUInteger)indexOfObject:(id)obj indexPath:(NSIndexPath *)outIndexPath {
     
     NSUInteger index = NSNotFound;
-    NSIndexPath *indexPath = nil;
+    NSIndexPath *indexPath = [self.DDS indexPathForItemIdentifier:obj];
     
-    if (@available(iOS 13, *)) {
-        indexPath = [self.DDS indexPathForItemIdentifier:obj];
-        
-        if (indexPath != nil) {
-            index = indexPath.row;
-        }
-    }
-    else {
-        index = [self.DS2.data indexOfObject:obj];
-        if (index != NSNotFound) {
-            indexPath = [NSIndexPath indexPathForRow:index inSection:1];
-        }
+    if (indexPath != nil) {
+        index = indexPath.row;
     }
     
     outIndexPath = [indexPath copy];
@@ -567,18 +495,6 @@ static void *KVO_Unread = &KVO_Unread;
                 ocell = (FeedsCell *)cell;
             }
         }
-    }
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        ocell.faviconView.backgroundColor = theme.cellColor;
-        ocell.titleLabel.backgroundColor = theme.cellColor;
-        ocell.titleLabel.textColor = theme.titleColor;
-        
-        ocell.countLabel.backgroundColor = theme.unreadBadgeColor;
-        ocell.countLabel.textColor = theme.unreadTextColor;
     }
     
     ocell.countLabel.hidden = !showUnreadCounter;
@@ -731,13 +647,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     self->_highlightedRow = nil;
     
-    NSArray *data = nil;
-    if (@available(iOS 13, *)) {
-        data = [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection];
-    }
-    else {
-        data = self.DS2.data;
-    }
+    NSArray *data = [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection];
     
     // get a list of open folders
     NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
@@ -783,45 +693,35 @@ NSString * const kDS2Data = @"DS2Data";
         
         [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
         
-        if (@available(iOS 13, *)) {
-            
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];
-            
-            BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
-            
-            if (pref) {
-                [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
-            }
-            else {
-                [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
-            }
-            
-            [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
-            
-            BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
-            
-            @try {
-                [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
-            } @catch (NSException *exception) {
-                DDLogError(@"Exception updating Feeds DS: %@", exception);
-            } @finally {
-                
-            }
-            
-            if (presentingSelf == YES) {
-                FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-                if (cell != nil) {
-                    cell.countLabel.text = @(MyFeedsManager.totalUnread).stringValue;
-                }
-            }
-            
+        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];
+        
+        BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
+        
+        if (pref) {
+            [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
         }
         else {
-            [self.DS2 resetData];
-            [self.tableView reloadData];
+            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+        }
+        
+        [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
+        
+        BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
+        
+        @try {
+            [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
+        } @catch (NSException *exception) {
+            DDLogError(@"Exception updating Feeds DS: %@", exception);
+        } @finally {
             
-            [self.DS setData:data section:1];
+        }
+        
+        if (presentingSelf == YES) {
+            FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            if (cell != nil) {
+                cell.countLabel.text = @(MyFeedsManager.totalUnread).stringValue;
+            }
         }
         
     } @catch (NSException *exc) {
@@ -945,14 +845,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)unreadCountPreferenceChanged {
     
-    if (@available(iOS 13, *)) {
-        [self setupData];
-    }
-    else {
-        NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
-        
-        [self.tableView reloadRowsAtIndexPaths:visible withRowAnimation:UITableViewRowAnimationFade];
-    }
+    [self setupData];
     
 }
 
@@ -972,19 +865,6 @@ NSString * const kDS2Data = @"DS2Data";
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.refreshControl.tintColor = [theme captionColor];
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        if (self.hairlineView != nil) {
-            self.hairlineView.backgroundColor = theme.cellColor;
-            [self.hairlineView setNeedsDisplay];
-        }
-    }
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        self.navigationItem.searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-    }
     
     [self.tableView reloadData];
     
@@ -1021,15 +901,8 @@ NSString * const kDS2Data = @"DS2Data";
         
         BOOL userUpdatedButWeHaveData = YES;
         
-        if (@available(iOS 13, *)) {
-            if ([self.DDS.snapshot numberOfItemsInSection:MainSection] == 0) {
-                userUpdatedButWeHaveData = NO;
-            }
-        }
-        else {
-            if (self.DS2.data == nil || self.DS2.data.count == 0) {
-                userUpdatedButWeHaveData = NO;
-            }
+        if ([self.DDS.snapshot numberOfItemsInSection:MainSection] == 0) {
+            userUpdatedButWeHaveData = NO;
         }
         
         if (userUpdatedButWeHaveData == NO) {
@@ -1090,9 +963,7 @@ NSString * const kDS2Data = @"DS2Data";
 #if TESTFLIGHT == 0
     StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
     
-    if (@available(iOS 13, *)) {
-        vc.modalInPresentation = YES;
-    }
+    vc.modalInPresentation = YES;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -1138,8 +1009,6 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
     
-    __block Folder * actionableFolder = folder;
- 
     NSIndexPath *indexPath = nil;
     __block NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
     
@@ -1150,73 +1019,15 @@ NSString * const kDS2Data = @"DS2Data";
     
     CGPoint contentOffset = self.tableView.contentOffset;
     
-    if (@available(iOS 13, *)) {
-        
-        if (indexPath == nil) {
-            indexPath = [NSIndexPath indexPathForRow:index inSection:1];
-        }
-        
-        Folder *folderFromDS = [self.DDS itemIdentifierForIndexPath:indexPath];
-        
-        folderFromDS.expanded = folderFromDS.isExpanded ? NO : YES;
-        
-        [self setupData];
+    if (indexPath == nil) {
+        indexPath = [NSIndexPath indexPathForRow:index inSection:1];
     }
-    else {
-        if (actionableFolder.isExpanded) {
-            
-            DDLogDebug(@"Closing index: %@", @(index));
-            actionableFolder.expanded = NO;
-            
-            // remove these feeds from the datasource
-            NSArray *data = [self.DS2.data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                
-                if ([obj isKindOfClass:Folder.class])
-                    return YES;
-                
-                if ([(Feed *)obj folderID] && [[obj folderID] isEqualToNumber:actionableFolder.folderID]) {
-                    return NO;
-                }
-                
-                return YES;
-                
-            }];
-            
-            [self.DS setData:data section:1];
-            
-        }
-        else {
-            actionableFolder.expanded = YES;
-            DDLogDebug(@"Opening index: %@", @(index));
-            
-            // add these feeds to the datasource after the above index
-            NSMutableArray * data = [self.DS2.data mutableCopy];
-            
-            // data shouldn't contain any object with this folder ID
-            data = [data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {
-                if ([obj isKindOfClass:Feed.class]) {
-                    Feed *feed = obj;
-                    if ([feed.folderID isEqualToNumber:actionableFolder.folderID]) {
-                        return NO;
-                    }
-                }
-                
-                return YES;
-            }].mutableCopy;
-            
-            NSIndexSet *set = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index+1, actionableFolder.feeds.allObjects.count)];
-            
-            [data insertObjects:actionableFolder.feeds.allObjects atIndexes:set];
-            
-            @try {
-                [self.DS setData:data section:1];
-            }
-            @catch (NSException *exc) {
-                DDLogWarn(@"Exception updating feeds: %@", exc);
-            }
-            
-        }
-    }
+    
+    Folder *folderFromDS = [self.DDS itemIdentifierForIndexPath:indexPath];
+    
+    folderFromDS.expanded = folderFromDS.isExpanded ? NO : YES;
+    
+    [self setupData];
     
     [self.feedbackGenerator selectionChanged];
     [self.feedbackGenerator prepare];

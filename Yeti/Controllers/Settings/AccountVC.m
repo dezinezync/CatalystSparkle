@@ -87,20 +87,16 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     
-    if (@available(iOS 13, *)) {
-        
-        NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
-        
-        NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
-        
-        if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
-            return 2;
-        }
-        
-        return 3;
+    NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
+    
+    NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
+    
+    if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
+        return 2;
     }
     
-    return 2;
+    return 3;
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -142,12 +138,7 @@
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
-    if (@available(iOS 13, *)) {
-        cell.backgroundColor = theme.backgroundColor;
-    }
-    else {
-        cell.backgroundColor = theme.cellColor;
-    }
+    cell.backgroundColor = theme.backgroundColor;
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -196,22 +187,20 @@
 
             [cell.contentView setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisVertical];
             
-            if (@available(iOS 13, *)) {
-                ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
-                
-                ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
-                
-                [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
-                
-                button.translatesAutoresizingMaskIntoConstraints = NO;
-                
-                [cell.contentView addSubview:button];
-                
-                [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:cell.contentView.centerXAnchor],
-                                                          [cell.contentView.heightAnchor constraintEqualToAnchor:button.heightAnchor multiplier:1.f]]];
-                
-                self.signinButton = button;
-            }
+            ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
+            
+            ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
+            
+            [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
+            
+            button.translatesAutoresizingMaskIntoConstraints = NO;
+            
+            [cell.contentView addSubview:button];
+            
+            [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:cell.contentView.centerXAnchor],
+                                                      [cell.contentView.heightAnchor constraintEqualToAnchor:button.heightAnchor multiplier:1.f]]];
+            
+            self.signinButton = button;
         }
         break;
         default:

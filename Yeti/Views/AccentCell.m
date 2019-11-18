@@ -33,10 +33,10 @@ NSString *const kAccentCell = @"com.yeti.cell.accentColour";
 - (void)prepareForReuse {
     [super prepareForReuse];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    BOOL isDark = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
     
     [self.stackView.arrangedSubviews enumerateObjectsUsingBlock:^(__kindof AccentButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        obj.borderLayer.fillColor = theme.isDark ? [UIColor whiteColor].CGColor : [UIColor blackColor].CGColor;
+        obj.borderLayer.fillColor = isDark ? [UIColor whiteColor].CGColor : [UIColor blackColor].CGColor;
     }];
 }
 

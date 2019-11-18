@@ -46,9 +46,7 @@
     
     self.view.layer.cornerRadius = 20.f;
     
-    if (@available(iOS 13, *)) {
-        self.view.layer.cornerCurve = kCACornerCurveContinuous;
-    }
+    self.view.layer.cornerCurve = kCACornerCurveContinuous;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.view.backgroundColor = theme.backgroundColor;

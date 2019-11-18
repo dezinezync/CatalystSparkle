@@ -31,15 +31,8 @@
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
-    UINavigationController *nav = nil;
-    
-    if (@available(iOS 13, *)) {
-        nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.modalInPresentation = UIModalPresentationAutomatic;
-    }
-    else {
-        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
-    }
+    UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalInPresentation = UIModalPresentationAutomatic;
     
     return nav;
 }
@@ -51,15 +44,8 @@
     vc.feedsVC = feedsVC;
     vc.folderIndexPath = indexPath;
     
-    UINavigationController *nav = nil;
-    
-    if (@available(iOS 13, *)) {
-        nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.modalInPresentation = UIModalPresentationAutomatic;
-    }
-    else {
-        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
-    }
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalInPresentation = UIModalPresentationAutomatic;
     
     return nav;
 }
@@ -121,12 +107,7 @@
                 
                 self->_isUpdating = NO;
                 
-                if (@available(iOS 13, *)) {
-                    [self.feedsVC setupData];
-                }
-                else {
-                    [self.feedsVC.tableView reloadRowsAtIndexPaths:@[self.folderIndexPath] withRowAnimation:UITableViewRowAnimationFade];
-                }
+                [self.feedsVC setupData];
                 
                 self.cancelButton.enabled = YES;
                 

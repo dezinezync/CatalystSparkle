@@ -88,11 +88,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    return theme.isDark ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-}
-
 #pragma mark - State
 
 - (void)setState:(OPMLState)state {

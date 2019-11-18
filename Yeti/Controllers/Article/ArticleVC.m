@@ -189,7 +189,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
-    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+//    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
@@ -209,21 +209,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     UINavigationBar *navbar = self.navigationController.navigationBar;
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    if (@available(iOS 13, *)) {
-        self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    }
-    else {
-        if (!self.hairlineView) {
-            
-            CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
-            hairline.backgroundColor = theme.cellColor;
-            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-            
-            [navbar addSubview:hairline];
-            self.hairlineView = hairline;
-        }
-    }
+    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
     
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
@@ -363,13 +349,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.view.backgroundColor = theme.articleBackgroundColor;
     self.scrollView.backgroundColor = theme.articleBackgroundColor;
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        if (self.hairlineView != nil) {
-            self.hairlineView.backgroundColor = theme.articleBackgroundColor;
-        }
-    }
     
     if (self.helperView != nil) {
         self.helperView.backgroundColor = theme.articlesBarColor;
@@ -928,12 +907,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSString *firstLine = feed != nil ? feed.displayTitle : nil;
     NSString *timestamp = nil;
     
-    if (@available(iOS 13, *)) {
-        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
-    }
-    else {
-        timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
-    }
+    timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
     
     NSString *sublineText = formattedString(@"%@%@", author, timestamp);
     
@@ -1555,18 +1529,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     NSString *url = [content urlCompliantWithUsersPreferenceForWidth:self.scrollView.bounds.size.width];
     
-    if (@available(iOS 13, *)) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
-        imageView.userInteractionEnabled = YES;
-        
-        [imageView addGestureRecognizer:tap];
-    }
-    else if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
-        imageView.userInteractionEnabled = YES;
-
-        [imageView addGestureRecognizer:tap];
-    }
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+    imageView.userInteractionEnabled = YES;
+    
+    [imageView addGestureRecognizer:tap];
     
     imageView.URL = [NSURL URLWithString:url];
     
@@ -2486,11 +2452,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        
-        if (@available(iOS 13, *)) {}
-        else {
-            searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-        }
         
         UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
         if (searchField) {

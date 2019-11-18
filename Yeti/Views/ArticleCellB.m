@@ -595,83 +595,10 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     _isShowingTags = NO;
     self.tagsStack.hidden = YES;
     
-//    if (SharedPrefs.showTags == YES && feedType != FeedTypeTag && item.keywords != nil && [item.keywords count] > 0) {
-//        
-//        self.tagsStack.hidden = NO;
-//        
-//        if (item.keywords.count > 4) {
-//            item.keywords = [item.keywords subarrayWithRange:NSMakeRange(0, 4)];
-//        }
-//        
-////        DDLogDebug(@"Keywords: %@", item.keywords);
-//        
-//        NSArray <UIColor *> * tagColors = nil;
-//        
-//        if (@available(iOS 13, *)) {
-//            tagColors = @[[UIColor systemRedColor],
-//                          [UIColor systemIndigoColor],
-//                          [UIColor systemGreenColor],
-//                          [UIColor systemOrangeColor]];
-//        }
-//        else {
-//            tagColors = @[[UIColor colorFromHexString:@"#FF283E"],
-//                          [UIColor colorFromHexString:@"#7441FF"],
-//                          [UIColor colorFromHexString:@"#558B2F"],
-//                          [UIColor colorFromHexString:@"#E8883A"]];
-//        }
-//        
-//        [item.keywords enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//           
-//            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-//            [button setTitle:obj forState:UIControlStateNormal];
-//            
-//            button.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
-//            button.titleLabel.adjustsFontForContentSizeCategory = YES;
-//            [button setTitleColor:tagColors[idx] forState:UIControlStateNormal];
-//            
-//            [button sizeToFit];
-//            
-//            [button setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
-//            
-//            [button addTarget:self action:@selector(didTapTag:) forControlEvents:UIControlEventTouchUpInside];
-//            
-//            [self.tagsStack addArrangedSubview:button];
-//            
-//        }];
-//        
-//        // https://gist.github.com/morishin/639f5ff12c544eac9d7c64acbca54270
-//        UIView *spacer = [[UIView alloc] init];
-//        [spacer setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-//        
-//        [self.tagsStack addArrangedSubview:spacer];
-//        
-//        [self.tagsStack setContentHuggingPriority:999 forAxis:UILayoutConstraintAxisVertical];
-//        
-//        _isShowingTags = YES;
-//        
-//    }
-//    else {
-//        self.tagsStack.hidden = YES;
-//    }
-    
     UILabel *timeLabel = nil;
     
-    if (@available(iOS 13, *)) {
-        self.menuButton.hidden = YES;
-        self.secondaryMenuButton.hidden = YES;
-    }
-    else {
-        if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
-            self.secondaryMenuButton.hidden = YES;
-            
-            self.menuButton.hidden = NO;
-        }
-        else {
-            self.secondaryMenuButton.hidden = NO;
-            
-            self.menuButton.hidden = YES;
-        }
-    }
+    self.menuButton.hidden = YES;
+    self.secondaryMenuButton.hidden = YES;
     
     if ((_isShowingCover && _isShowingTags) || _isShowingCover) {
         timeLabel = self.timeLabel;
@@ -686,14 +613,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         self.secondaryTimeLabel.hidden = NO;
     }
     
-    NSString *timestamp = nil;
-    
-    if (@available(iOS 13, *)) {
-        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
-    }
-    else {
-        timestamp = [item.timestamp timeAgoSinceNow];
-    }
+    NSString *timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
     
     timeLabel.text = timestamp;
     timeLabel.accessibilityLabel = timestamp;

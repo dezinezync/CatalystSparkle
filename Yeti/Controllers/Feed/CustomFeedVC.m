@@ -69,15 +69,6 @@ static void *KVO_BOOKMARKS = &KVO_BOOKMARKS;
     else {
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
         
-        if (@available(iOS 13, *)) {}
-        else {
-            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-            
-            if (theme.isDark) {
-                refresh.tintColor = [theme captionColor];
-            }
-        }
-        
         [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
         self.tableView.refreshControl = refresh;
         

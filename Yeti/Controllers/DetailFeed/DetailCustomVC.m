@@ -69,35 +69,17 @@
         
         self.navigationItem.rightBarButtonItem = nil;
         
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateLoaded;
-        }
-        else {
-            self.DS.state = DZDatasourceLoaded;
-        }
+        self.controllerState = StateLoaded;
     }
     else {
         
         UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
         
-        if (@available(iOS 13, *)) {
-            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-            
-            if (theme.isDark) {
-                refresh.tintColor = [theme captionColor];
-            }
-        }
-        
         [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
         self.collectionView.refreshControl = refresh;
         
         [self setupData];
-        
-        if (self.DS.data.count > 0) {
-            self.page = floor([self.DS.data count]/10.f);
-        }
 
-        
         [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     }
     
@@ -105,47 +87,30 @@
 
 - (void)setupData {
     
-    if (@available(iOS 13, *)) {
-        if (self.unread == NO) {
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [snapshot appendSectionsWithIdentifiers:@[@0]];
-            
-            NSArray *bookmarks = self.bookmarksManager.bookmarks ?: @[];
-            NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:bookmarks];
-            
-            bookmarks = set.array;
-            
-            if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
-                [snapshot appendItemsWithIdentifiers:bookmarks.reverseObjectEnumerator.allObjects];
-            }
-            else {
-                [snapshot appendItemsWithIdentifiers:bookmarks];
-            }
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+    if (self.unread == NO) {
+        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        [snapshot appendSectionsWithIdentifiers:@[@0]];
+        
+        NSArray *bookmarks = self.bookmarksManager.bookmarks ?: @[];
+        NSOrderedSet *set = [NSOrderedSet orderedSetWithArray:bookmarks];
+        
+        bookmarks = set.array;
+        
+        if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
+            [snapshot appendItemsWithIdentifiers:bookmarks.reverseObjectEnumerator.allObjects];
         }
         else {
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [snapshot appendSectionsWithIdentifiers:@[@0]];
-            [snapshot appendItemsWithIdentifiers:(self.unreadsManager.items ?: @[]) intoSectionWithIdentifier:@0];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+            [snapshot appendItemsWithIdentifiers:bookmarks];
         }
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     }
     else {
-        if (self.unread == NO) {
-            
-            if ([_sortingOption isEqualToString:YTSortUnreadDesc]) {
-                self.DS.data = [self.bookmarksManager.bookmarks reverseObjectEnumerator].allObjects;
-            }
-            else {
-                self.DS.data = self.bookmarksManager.bookmarks;
-            }
-            
-        }
-        else {
-            self.DS.data = self.unreadsManager.items;
-        }
+        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        [snapshot appendSectionsWithIdentifiers:@[@0]];
+        [snapshot appendItemsWithIdentifiers:(self.unreadsManager.items ?: @[]) intoSectionWithIdentifier:@0];
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     }
     
 }
@@ -235,12 +200,7 @@
             
             [self setupData];
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
+            self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {
@@ -266,12 +226,7 @@
             if (!self)
                 return;
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateErrored;
-            }
-            else {
-                self.DS.state = DZDatasourceError;
-            }
+            self.controllerState = StateErrored;
             
             weakify(self);
             
@@ -425,15 +380,8 @@
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     [super encodeRestorableStateWithCoder:coder];
     
-    if (@available(iOS 13, *)) {
-        
-        if (self.unreadsManager) {
-            [coder encodeObject:self.unreadsManager forKey:@"unreadsManager"];
-        }
-        
-    }
-    else {
-        [coder encodeObject:self.DS.data forKey:kBUnreadData];
+    if (self.unreadsManager) {
+        [coder encodeObject:self.unreadsManager forKey:@"unreadsManager"];
     }
     
     [coder encodeBool:self.unread forKey:kBIsUnread];
@@ -444,20 +392,8 @@
     
     [super decodeRestorableStateWithCoder:coder];
     
-    if (@available(iOS 13, *)) {
-    
-        self.unreadsManager = [coder decodeObjectOfClass:PagingManager.class forKey:@"unreadsManager"];
-        self.controllerState = StateLoaded;
-        
-    }
-    else {
-        NSArray <FeedItem *> *items = [coder decodeObjectForKey:kBUnreadData];
-        
-        if (items) {
-            self.DS.data = items;
-            self.DS.state = DZDatasourceLoaded;
-        }
-    }
+    self.unreadsManager = [coder decodeObjectOfClass:PagingManager.class forKey:@"unreadsManager"];
+    self.controllerState = StateLoaded;
     
 }
 
