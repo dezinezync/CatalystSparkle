@@ -2417,8 +2417,10 @@ NSArray <NSString *> * _defaultsKeys;
     
     [Keychain removeAllItems];
     
+    self.userIDManager.UUIDString = nil;
     self.userIDManager.UUID = nil;
-    self.userID = nil;
+    self.userIDManager.userID = nil;
+    
 }
 
 - (void)deactivateAccountWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
