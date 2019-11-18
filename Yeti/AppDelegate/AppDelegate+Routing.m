@@ -221,7 +221,7 @@
     
     [alert dz_configureContentView:^(UIView *contentView) {
         
-        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
         activity.color = UIColor.lightGrayColor;
         [activity sizeToFit];
         activity.translatesAutoresizingMaskIntoConstraints = NO;
@@ -530,21 +530,9 @@
     
     FeedsVC *feedsVC = [[nav viewControllers] firstObject];
     
-    NSArray *data = nil;
+    UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
     
-    if (@available(iOS 13, *)) {
-        
-        UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
-        
-        data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-        
-    }
-    else {
-        DZSectionedDatasource *DSS = [feedsVC valueForKeyPath:@"DS"];
-        DZBasicDatasource *DS = [[DSS datasources] lastObject];
-        
-        data = DS.data;
-    }
+    NSArray * data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
     
     if (!data || !data.count) {
         weakify(self);

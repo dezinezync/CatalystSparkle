@@ -86,20 +86,14 @@ static ArticlesManager * SharedArticleManager = nil;
                 
                 if (fileData != nil) {
                     
-                    if (@available(iOS 13, *)) {
-                        item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:&error];
-                        
-                        if (error != nil) {
-                            DDLogError(@"Error loading bookmark file from: %@\n%@", filePath, error);
-                        }
-                        
-                        if (item == nil) {
-                            // it could be archived using the old API. Try that.
-                            item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
-                        }
-                        
+                    item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:&error];
+                    
+                    if (error != nil) {
+                        DDLogError(@"Error loading bookmark file from: %@\n%@", filePath, error);
                     }
-                    else {
+                    
+                    if (item == nil) {
+                        // it could be archived using the old API. Try that.
                         item = [NSKeyedUnarchiver unarchiveObjectWithData:fileData];
                     }
                     

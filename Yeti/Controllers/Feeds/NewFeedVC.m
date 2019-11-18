@@ -37,15 +37,8 @@
 + (UINavigationController *)instanceInNavController
 {
     NewFeedVC *vc = [[NewFeedVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
-    UINavigationController *nav = nil;
-    
-    if (@available(iOS 13, *)) {
-        nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.modalInPresentation = UIModalPresentationAutomatic;
-    }
-    else {
-        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
-    }
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalInPresentation = UIModalPresentationAutomatic;
     
     return nav;
 }
@@ -93,25 +86,20 @@
     
     self.input.delegate = self;
     
-    if (@available(iOS 13, *)) {}
-    else {
-        self.input.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-    }
-    
-    if (theme.isDark) {
-        if ([theme.name isEqualToString:@"black"]) {
-            [self.toolbar setBarStyle:UIBarStyleBlack];
-            self.toolbar.translucent = NO;
-        }
-        else {
-            [self.toolbar setBarStyle:UIBarStyleBlack];
-            self.toolbar.translucent = YES;
-        }
-    }
-    else {
-        [self.toolbar setBarStyle:UIBarStyleDefault];
-        self.toolbar.translucent = YES;
-    }
+//    if (theme.isDark) {
+//        if ([theme.name isEqualToString:@"black"]) {
+//            [self.toolbar setBarStyle:UIBarStyleBlack];
+//            self.toolbar.translucent = NO;
+//        }
+//        else {
+//            [self.toolbar setBarStyle:UIBarStyleBlack];
+//            self.toolbar.translucent = YES;
+//        }
+//    }
+//    else {
+//        [self.toolbar setBarStyle:UIBarStyleDefault];
+//        self.toolbar.translucent = YES;
+//    }
     
     self.input.backgroundColor = theme.unreadBadgeColor;
     self.input.textColor = theme.titleColor;

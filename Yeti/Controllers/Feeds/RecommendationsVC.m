@@ -305,7 +305,7 @@ static NSString * const reuseIdentifier = @"Cell";
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     header.backgroundColor = theme.backgroundColor;
-    header.label.textColor = theme.isDark ? theme.captionColor : theme.titleColor;
+//    header.label.textColor = theme.isDark ? theme.captionColor : theme.titleColor;
     
     return header;
 }
@@ -368,7 +368,7 @@ static NSString * const reuseIdentifier = @"Cell";
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        activity.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+//        activity.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
         
         [activity sizeToFit];
         [activity.widthAnchor constraintEqualToConstant:activity.bounds.size.width].active = YES;

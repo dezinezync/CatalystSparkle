@@ -84,7 +84,7 @@
     
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:self.layer.cornerRadius];
     
-    BOOL dark = theme.isDark || self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+    BOOL dark = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
     
     self.layer.shadowPath = path.CGPath;
     self.layer.shadowColor = dark ? [UIColor.blackColor colorWithAlphaComponent:0.35f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;

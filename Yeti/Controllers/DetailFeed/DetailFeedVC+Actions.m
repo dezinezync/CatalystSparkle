@@ -84,19 +84,13 @@
     if (self.loadOnReady == nil)
         return;
     
-    if (@available(iOS 13, *)) {
-        if (self.DDS.snapshot.numberOfItems == 0) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.data.count == 0)
-            return;
+    if (self.DDS.snapshot.numberOfItems == 0) {
+        return;
     }
     
     __block NSUInteger index = NSNotFound;
     
-    [(NSArray <FeedItem *> *)[self.DS data] enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <FeedItem *> *)[[self.DDS snapshot] itemIdentifiers] enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj.identifier isEqualToNumber:self.loadOnReady]) {
             index = idx;
@@ -147,14 +141,7 @@
         
         ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
         
-        FeedItem *item = nil;
-        
-        if (@available(iOS 13, *)) {
-            item = [[self.DDS.snapshot itemIdentifiers] objectAtIndex:indexPath.item];
-        }
-        else {
-            item = [self.DS objectAtIndexPath:indexPath];
-        }
+        FeedItem * item = [[self.DDS.snapshot itemIdentifiers] objectAtIndex:indexPath.item];
         
         if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
             cell.markerView.image = nil;
@@ -170,14 +157,8 @@
     
     void(^markReadInline)(void) = ^(void) {
         
-        NSArray <FeedItem *> *data = nil;
-        
-        if (@available(iOS 13, *)) {
-            data = self.DDS.snapshot.itemIdentifiers;
-        }
-        else {
-            data = (NSArray <FeedItem *> *)self.DS.data;
-        }
+        NSArray <FeedItem *> * data = self.DDS.snapshot.itemIdentifiers;
+
         
         NSArray <FeedItem *> *unread = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return !obj.isRead;
@@ -198,7 +179,7 @@
                 if (self.cantLoadNext == NO) {
                     
                     self.page = 0;
-                    self.DS.state = DZDatasourceLoading;
+                    self.controllerState = StateLoading;
                     
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                         [self loadNextPage];
@@ -247,23 +228,14 @@
                     // if we're in the unread section
                     if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] == YES) {
                         
-                        if (@available(iOS 13, *)) {
-                            
-                            self.controllerState = StateLoading;
-                            
-                            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-                            [snapshot appendSectionsWithIdentifiers:@[@0]];
-                            
-                            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-                            
-                            self.controllerState = StateLoaded;
-                            
-                        }
-                        else {
-                            self.DS.state = DZDatasourceLoading;
-                            self.DS.data = @[];
-                            self.DS.state = DZDatasourceLoaded;
-                        }
+                        self.controllerState = StateLoading;
+                        
+                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                        [snapshot appendSectionsWithIdentifiers:@[@0]];
+                        
+                        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                        
+                        self.controllerState = StateLoaded;
                         
                     }
                     else {
@@ -485,15 +457,8 @@
     
     [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
-    if (@available(iOS 13, *)) {
-        
-        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        
-    }
-    else {
-        [self.DS resetData];
-    }
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     
     [self loadNextPage];
 }

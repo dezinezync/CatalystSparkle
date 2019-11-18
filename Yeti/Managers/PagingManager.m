@@ -145,12 +145,7 @@
     
     NSString *links = nil;
     
-    if (@available(iOS 13, *)) {
-        links = [response valueForHTTPHeaderField:@"link"];
-    }
-    else {
-        links = [response.allHeaderFields valueForKey:@"link"];
-    }
+    links = [response valueForHTTPHeaderField:@"link"];
     
     if (links != nil) {
         NSMutableDictionary <NSString *, NSString *> *linkItems = [NSMutableDictionary new];

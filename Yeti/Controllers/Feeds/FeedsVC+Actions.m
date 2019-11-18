@@ -149,14 +149,9 @@
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    if (@available(iOS 13, *)) {
-        YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
-        
-        [self presentViewController:nav animated:YES completion:nil];
-    }
-    else {
-        [self showViewController:vc sender:self];
-    }
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
+    
+    [self presentViewController:nav animated:YES completion:nil];
 
 }
 

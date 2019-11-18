@@ -53,12 +53,7 @@
     
     self.title = self.folder.title;
     
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateDefault;
-    }
-    else {
-        self.DS.state = DZDatasourceDefault;
-    }
+    self.controllerState = StateDefault;
     
 }
 
@@ -220,12 +215,7 @@
             
             [self setupData];
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
+            self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {
@@ -260,12 +250,7 @@
             if (!self)
                 return;
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateErrored;
-            }
-            else {
-                self.DS.state = DZDatasourceError;
-            }
+            self.controllerState = StateErrored;
             
             weakify(self);
             

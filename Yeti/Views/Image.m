@@ -167,9 +167,7 @@
                 
                 self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
                 
-                if (@available(iOS 13, *)) {
-                    [self addContextMenus];
-                }
+                [self addContextMenus];
                 
             } error:nil imageLoader:imageLoader];
             

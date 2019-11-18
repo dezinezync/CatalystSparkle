@@ -20,7 +20,7 @@
         
         CAShapeLayer *borderLayer = [CAShapeLayer layer];
         borderLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectInset(self.bounds, -2.f, -2.f) cornerRadius:14.f].CGPath;
-        borderLayer.strokeColor = [(theme.isDark ? [UIColor whiteColor] : [UIColor blackColor]) colorWithAlphaComponent:0.5].CGColor;
+//        borderLayer.strokeColor = [(theme.isDark ? [UIColor whiteColor] : [UIColor blackColor]) colorWithAlphaComponent:0.5].CGColor;
         borderLayer.fillColor = UIColor.clearColor.CGColor;
         borderLayer.hidden = YES;
         borderLayer.lineWidth = 2.f;

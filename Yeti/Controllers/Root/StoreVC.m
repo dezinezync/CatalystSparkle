@@ -138,8 +138,6 @@
     footer.footerLabel.backgroundColor = theme.articleBackgroundColor;
     footer.footerLabel.textColor = theme.captionColor;
     footer.footerLabel.textAlignment = NSTextAlignmentCenter;
-    
-    footer.activityIndicator.activityIndicatorViewStyle = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
 }
 
 - (void)updateFooterView {

@@ -26,10 +26,7 @@
     
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         self.modalPresentationStyle = UIModalPresentationFormSheet;
-        
-        if (@available(iOS 13, *)) {
-            self.modalInPresentation = YES;
-        }
+        self.modalInPresentation = YES;
         
         self.navigationController.navigationBar.prefersLargeTitles = NO;
         self.title = @"Bookmarks Migration";

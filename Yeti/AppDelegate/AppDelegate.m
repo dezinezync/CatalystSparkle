@@ -200,20 +200,13 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
     
-//    // broken in iOS 13.
-////    if (@available(iOS 13, *)) {
-//        return NO;
-////    }
-    
     return YES;
+    
 }
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
     
-//    // broken in iOS 13.
-////    if (@available(iOS 13, *)) {
-//        return NO;
-////    }
+    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
     
     if (_resetting) {
         return NO;
@@ -316,7 +309,7 @@ AppDelegate *MyAppDelegate = nil;
     
     [self loadCodeTheme];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
+//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     
     [self refreshViews];
     
@@ -328,15 +321,8 @@ AppDelegate *MyAppDelegate = nil;
     
     NSString *themeName = SharedPrefs.theme;
     
-    if (@available(iOS 13, *)) {
-        
-        if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-            [CodeParser.sharedCodeParser loadTheme:@"dark"];
-        }
-        else {
-            [CodeParser.sharedCodeParser loadTheme:themeName];
-        }
-        
+    if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        [CodeParser.sharedCodeParser loadTheme:@"dark"];
     }
     else {
         [CodeParser.sharedCodeParser loadTheme:themeName];

@@ -218,12 +218,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
-    if (@available(iOS 13, *)) {
-        cell.backgroundColor = theme.backgroundColor;
-    }
-    else {
-        cell.backgroundColor = theme.cellColor;
-    }
+    cell.backgroundColor = theme.backgroundColor;
     
     if (indexPath.section != 2 && indexPath.section != 3) {
         UIView *selected = [UIView new];
