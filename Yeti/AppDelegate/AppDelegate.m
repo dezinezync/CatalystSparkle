@@ -27,6 +27,7 @@ AppDelegate *MyAppDelegate = nil;
 
 @interface AppDelegate () {
     BOOL _restoring;
+    BOOL _resetting;
 }
 
 - (BOOL)commonInit:(UIApplication *)application;
@@ -175,6 +176,8 @@ AppDelegate *MyAppDelegate = nil;
     
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
     
+    _resetting = reset;
+    
 //#ifdef DEBUG
 //    reset = YES;
 //#endif
@@ -212,11 +215,7 @@ AppDelegate *MyAppDelegate = nil;
 //        return NO;
 ////    }
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
-    
-    if (reset) {
+    if (_resetting) {
         return NO;
     }
     

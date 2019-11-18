@@ -36,7 +36,16 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
         self.delegate = delegate;
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSString *UUID = self.UUIDString;
+            
+            id UUID = nil;
+            
+            if (@available(iOS 13, *)) {
+                UUID = self.UUIDString;
+            }
+            else {
+                UUID = self.UUID;
+            }
+            
             NSNumber *userID = self.userID;
             
             NSLog(@"Initialised with: %@ %@", UUID, userID);
@@ -65,20 +74,58 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             DDLogDebug(@"Got existing user: %@", user);
             
             self.userID = @([[user valueForKey:@"id"] integerValue]);
-            self.UUIDString = [user valueForKey:@"uuid"];
+            
+            if (@available(iOS 13, *)) {
+                self.UUIDString = [user valueForKey:@"uuid"];
+            }
+            else {
+                self.UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];
+            }
             
             if (successCB) {
                 successCB(self, response, task);
             }
             
-        } error:errorCB];
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if ([error.localizedDescription containsString:@"pass a valid user"]) {
+                
+                return [self createNewUser:successCB errorBlock:errorCB];
+                
+            }
+            
+            if (errorCB) {
+                errorCB(error, response, task);
+            }
+            
+        }];
     }
     else {
-        if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"UserManager" code:404 userInfo:@{NSLocalizedDescriptionKey: @"The User Manager was not able setup correctly and therefore an account could not be created. Please restart the app to continue."}];
-            errorCB(error, nil, nil);
-        }
+        
+        [self createNewUser:successCB errorBlock:errorCB];
+    
     }
+}
+
+- (void)createNewUser:(successBlock)successCB errorBlock:(errorBlock)errorCB {
+    
+    self->_UUID = [NSUUID UUID];
+    self.UUIDString = _UUID.UUIDString;
+    
+    // let our server know about these changes
+    [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        DDLogDebug(@"created new user");
+        NSDictionary *user = [responseObject valueForKey:@"user"];
+        self.userID = @([[user valueForKey:@"id"] integerValue]);
+#ifndef SHARE_EXTENSION
+        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+#endif
+        if (successCB) {
+            successCB(self, response, task);
+        }
+        
+    } error:errorCB];
+    
 }
 
 #pragma mark -
@@ -173,6 +220,10 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             }
         }
         
+        if (UUIDString == nil) {
+            UUIDString = [NSUUID UUID].UUIDString;
+        }
+        
         if (UUIDString) {
             // we have one.
             _UUID = [[NSUUID alloc] initWithUUIDString:UUIDString];
@@ -188,7 +239,14 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
                         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
                         
                     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        if ([error.localizedDescription containsString:@"pass a valid user ID"] == YES) {
+                            // user is most likely setting up the account.
+                            return;
+                        }
+                        
                         [AlertManager showGenericAlertWithTitle:@"Error Loading User" message:error.localizedDescription];
+                        
                     }];
                     
                 }
