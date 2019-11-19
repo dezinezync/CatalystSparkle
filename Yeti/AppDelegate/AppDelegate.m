@@ -206,6 +206,8 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
     
     if (_resetting) {
