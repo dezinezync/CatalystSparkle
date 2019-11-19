@@ -37,13 +37,13 @@
     
 #ifndef SHARE_EXTENSION
     
-//    for (UIWindow *window in [UIApplication.sharedApplication windows]) {
-//        if (window.rootViewController && ![NSStringFromClass(window.class) hasPrefix:@"UIText"]) {
-//            window.rootViewController.view.backgroundColor = self.isDark ? self.cellColor : self.borderColor;
-//            window.tintColor = self.tintColor;
-//        }
-//
-//    };
+    for (UIWindow *window in [UIApplication.sharedApplication windows]) {
+        if (window.rootViewController && ![NSStringFromClass(window.class) hasPrefix:@"UIText"]) {
+            window.rootViewController.view.backgroundColor = self.backgroundColor;
+            window.tintColor = self.tintColor;
+        }
+
+    };
 
 #endif
     
