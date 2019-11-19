@@ -158,8 +158,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     }
     
     if (UIAccessibilityIsInvertColorsEnabled() == YES) {
-        Theme *theme = [YTThemeKit theme];
-        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
+        self.faviconView.backgroundColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) ? UIColor.whiteColor : UIColor.blackColor;
     }
 }
 

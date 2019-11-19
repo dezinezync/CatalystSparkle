@@ -20,7 +20,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 @property (nonatomic, strong) DZSectionedDatasource *DS;
 @property (nonatomic, weak) DZBasicDatasource *DS2;
 
-@property (nonatomic, copy, readwrite) Feed *feed;
+@property (nonatomic, weak, readwrite) Feed *feed;
 @property (nonatomic, copy) NSNumber *originalFolderID;
 
 @end
@@ -88,9 +88,9 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     }
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
+//}
 
 #pragma mark - Table view data source
 

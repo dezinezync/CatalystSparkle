@@ -23,6 +23,7 @@
 #import "YetiConstants.h"
 
 #import <PopMenu/PopMenu.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @implementation ArticleVC (Toolbar)
 
@@ -159,7 +160,7 @@
     }
     
     if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.splitViewController != nil) {
-        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.sharedApplication.keyWindow rootViewController] displayModeButtonItem];
+        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.keyWindow rootViewController] displayModeButtonItem];
         self.navigationItem.leftBarButtonItem = displayButton;
     }
     else {
