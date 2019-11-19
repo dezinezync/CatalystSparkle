@@ -185,7 +185,7 @@ AppDelegate *MyAppDelegate = nil;
     if (reset) {
         [MyFeedsManager resetAccount];
         
-        SplitVC *v = (SplitVC *)[[application keyWindow] rootViewController];
+        SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
         [v userNotFound];
         
         [defaults setBool:NO forKey:kResetAccountSettingsPref];
@@ -205,10 +205,6 @@ AppDelegate *MyAppDelegate = nil;
 }
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
     
     if (_resetting) {
         return NO;

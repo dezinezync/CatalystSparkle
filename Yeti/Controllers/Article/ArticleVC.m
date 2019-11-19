@@ -206,7 +206,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
     }
     
-    UINavigationBar *navbar = self.navigationController.navigationBar;
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.navigationController.view.backgroundColor = theme.articleBackgroundColor;

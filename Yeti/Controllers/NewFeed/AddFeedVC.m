@@ -214,7 +214,6 @@
 #pragma mark - Setups
 
 - (void)setupSearchController {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     
@@ -339,7 +338,6 @@
 - (UIActivityIndicatorView *)loaderView {
     
     if (_loaderView == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         UIActivityIndicatorViewStyle style = UIActivityIndicatorViewStyleMedium;
         

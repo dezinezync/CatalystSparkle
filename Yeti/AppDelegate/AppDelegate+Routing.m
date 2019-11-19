@@ -29,7 +29,7 @@
 
 - (void)popToRoot
 {
-    UISplitViewController *splitVC = (UISplitViewController *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+    UISplitViewController *splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
     YTNavigationController *nav = (YTNavigationController *)[[splitVC viewControllers] firstObject];
     
     if ([[nav viewControllers] count] > 1) {
@@ -238,7 +238,7 @@
         
     }];
     
-    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    UIViewController *vc = [UIApplication.keyWindow rootViewController];
     
     while (vc.presentedViewController != nil) {
         vc = vc.presentedViewController;
@@ -508,7 +508,7 @@
     __block Folder *checkFolder = nil;
     
     // get the primary navigation controller
-    YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    YTNavigationController *nav = [[(UISplitViewController *)[UIApplication.keyWindow rootViewController] viewControllers] firstObject];
     
     if ([[nav topViewController] isKindOfClass:DetailFeedVC.class]) {
         // check if the current topVC is the same feed
@@ -633,7 +633,7 @@
     UINavigationController *nav;
     
     @try {
-        splitVC = (UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController];
+        splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
         
         if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             nav = [[splitVC viewControllers] lastObject];

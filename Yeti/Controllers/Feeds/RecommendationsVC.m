@@ -365,10 +365,8 @@ static NSString * const reuseIdentifier = @"Cell";
 
 - (UIActivityIndicatorView *)activity {
     if (_activity == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-//        activity.color = theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor];
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
         
         [activity sizeToFit];
         [activity.widthAnchor constraintEqualToConstant:activity.bounds.size.width].active = YES;

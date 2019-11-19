@@ -175,7 +175,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     [center addObserver:self selector:@selector(updateNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
-    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+//    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [center addObserver:self selector:@selector(subscriptionExpired:) name:YTSubscriptionHasExpiredOrIsInvalid object:nil];
     [center addObserver:self selector:@selector(didPurchaseSubscription:) name:YTUserPurchasedSubscription object:nil];
     [center addObserver:self selector:@selector(unreadCountPreferenceChanged) name:ShowUnreadCountsPreferenceChanged object:nil];

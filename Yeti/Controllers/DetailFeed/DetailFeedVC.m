@@ -15,7 +15,6 @@
 
 #import "ArticleVC.h"
 #import "DetailAuthorVC.h"
-#import "TagFeedVC.h"
 
 #import "FeedsManager.h"
 
@@ -286,7 +285,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (_activityIndicatorView == nil) {
         
-        UIActivityIndicatorViewStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight ? UIActivityIndicatorViewStyleGray : UIActivityIndicatorViewStyleWhite;
+        UIActivityIndicatorViewStyle style = UIActivityIndicatorViewStyleMedium;
         
         UIActivityIndicatorView *view = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
         [view sizeToFit];
@@ -513,7 +512,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     // Configure the cell
-    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+    FeedItem *item = [self.DDS itemIdentifierForIndexPath:indexPath];
     
     return [self collectionView:collectionView cellForItemAtIndexPath:indexPath item:item];
     
@@ -560,14 +559,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 }
 
 #pragma mark - <ArticleCellDelegate>
-
-- (void)didTapTag:(NSString *)tag {
-    
-    TagFeedVC *vc = [[TagFeedVC alloc] initWithTag:tag];
-    
-    [self showViewController:vc sender:self];
-    
-}
 
 - (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
     

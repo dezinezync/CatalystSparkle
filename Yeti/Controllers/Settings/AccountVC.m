@@ -24,6 +24,7 @@
 #import "PaddedLabel.h"
 
 #import <AuthenticationServices/AuthenticationServices.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding> {
     UITextField *_textField;
@@ -217,22 +218,30 @@
 
 #pragma mark - Table view delegate
 
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
-{
-    return indexPath.section == 0 && indexPath.row == 0;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(nonnull SEL)action forRowAtIndexPath:(nonnull NSIndexPath *)indexPath withSender:(nullable id)sender
-{
-    return [NSStringFromSelector(action) isEqualToString:@"copy:"] && (indexPath.row == 0 && indexPath.section == 0);
-}
-
-- (void)tableView:(UITableView *)tableView performAction:(nonnull SEL)action forRowAtIndexPath:(nonnull NSIndexPath *)indexPath withSender:(nullable id)sender {
-    if ([NSStringFromSelector(action) isEqualToString:@"copy:"] && (indexPath.row == 0 && indexPath.section == 0)) {
+-(UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+    
+    UIContextMenuConfiguration *config = nil;
+    
+    if (indexPath.row == 0 && indexPath.section == 0) {
         
-        [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
-        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:@"copyUUID" previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+               
+                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
+                
+            }];
+            
+            UIMenu *menu = [UIMenu menuWithTitle:@"Account ID" children:@[copyItem]];
+            
+            return menu;
+            
+        }];
+
     }
+    
+    return config;
+    
 }
 
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
@@ -452,7 +461,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [nav dismissViewControllerAnimated:YES completion:^{
                 
-                SplitVC *v = (SplitVC *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+                SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
                 [v userNotFound];
                 
             }];

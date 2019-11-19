@@ -19,6 +19,7 @@
 
 #import <DZKit/NSArray+Safe.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface Paragraph () <UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate> {
     BOOL _hasHookedGesturesForiOS13LinkTapBug;
@@ -230,7 +231,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         para.minimumLineHeight = self.bodyFont.pointSize * 1.3f;
         
         CGFloat offset = 48.f;
-        if (UIApplication.sharedApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        if (UIApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
             offset = offset/3.f;
         }
 

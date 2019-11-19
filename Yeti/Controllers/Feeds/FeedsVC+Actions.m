@@ -36,10 +36,8 @@
     
     NSString *formatted = formattedString(@"Last update: %@", dateString);
     
-    Theme *theme = [YTThemeKit theme];
-    
     NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:11.f],
-                                 NSForegroundColorAttributeName: theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor]
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor
                                  };
     
     NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:formatted attributes:attributes];
