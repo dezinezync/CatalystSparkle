@@ -35,9 +35,6 @@
 
 #import <StoreKit/SKStoreReviewController.h>
 
-#define TopSection  @0
-#define MainSection @1
-
 static void *KVO_Unread = &KVO_Unread;
 
 @interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {

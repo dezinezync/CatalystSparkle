@@ -15,8 +15,8 @@
 @class DZSectionedDatasource;
 @class DZBasicDatasource;
 
-extern NSString *const TopSection;
-extern NSString *const MainSection;
+#define TopSection  @0
+#define MainSection @1
 
 @interface FeedsVC : UITableViewController <UIViewControllerRestoration, BarPositioning> {
     BOOL _refreshing;
