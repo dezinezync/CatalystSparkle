@@ -1,5 +1,7 @@
-# v1.5.2
+# v1.6
 
-## Build 307
+## Build 309
 
-- Fixes a crash on launch bug in iOS 12. Devices running iOS 13 are unaffected.  
+- Deprecated support for iOS 12. 
+
+- fixes iOS 13 link tap bug: when scrolling in the article reader, if your finger scrolls by dragging a link, iOS would tell the app to open that link. 
