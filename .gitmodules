@@ -10,3 +10,6 @@
 [submodule "Yeti/Vendors/DZKit"]
 	path = Yeti/Vendors/DZKit
 	url = git@github.com:dezinezync/DZKit.git
+[submodule "Yeti/Vendors/DZAppDelegate"]
+	path = Yeti/Vendors/DZAppDelegate
+	url = git@github.com:DZNS/DZAppDelegate.git
