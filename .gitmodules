@@ -13,3 +13,6 @@
 [submodule "Yeti/Vendors/DZAppDelegate"]
 	path = Yeti/Vendors/DZAppDelegate
 	url = git@github.com:DZNS/DZAppDelegate.git
+[submodule "Yeti/Vendors/DZThemeKit"]
+	path = Yeti/Vendors/DZThemeKit
+	url = git@github.com:DZNS/DZThemeKit.git

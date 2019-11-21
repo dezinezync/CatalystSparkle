@@ -18,8 +18,6 @@
 		F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */; };
 		F01285C323436D8D00B8C277 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
-		F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; };
-		F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F017F600216677AA00C514BB /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
@@ -80,7 +78,6 @@
 		F04E92CD21B54A6300AD1FB2 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AA8C87216B4A5500C65DAE /* DTTimePeriodCollection.m */; };
 		F04E92CE21B54A6300AD1FB2 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AA8C89216B4A5500C65DAE /* DTTimePeriodChain.m */; };
 		F04E92CF21B54A6600AD1FB2 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0AA8C7B216B4A5500C65DAE /* DateTools.bundle */; };
-		F04E92D221B54A9700AD1FB2 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
 		F050E0B22154C16600225C6A /* StoreFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = F050E0B02154C16500225C6A /* StoreFooter.m */; };
 		F050E0B32154C16600225C6A /* StoreFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = F050E0B12154C16600225C6A /* StoreFooter.xib */; };
 		F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
@@ -171,6 +168,17 @@
 		F08808A3206B967A00ECE1E6 /* TweetImage.m in Sources */ = {isa = PBXBuildFile; fileRef = F08808A1206B967A00ECE1E6 /* TweetImage.m */; };
 		F08808A4206B967A00ECE1E6 /* TweetImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = F08808A2206B967A00ECE1E6 /* TweetImage.xib */; };
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
+		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
+		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08C5E04238656880055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
+		F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
+		F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08C5E36238657EE0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
+		F08C5E3923865A8A0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
+		F08C5E3A23865A8A0055946F /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08C5E3C23865AF30055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E23238657580055946F /* DZThemeKit.framework */; };
+		F08C5E3D23865AF30055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E23238657580055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08CE0AA232A590C00982823 /* AuthorBioVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
@@ -268,15 +276,11 @@
 		F0BD3C4222ABDD240069A8B0 /* black-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0BD3C4122ABDD240069A8B0 /* black-dark.json */; };
 		F0BD3C4422ABDD2A0069A8B0 /* reader-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0BD3C4322ABDD2A0069A8B0 /* reader-dark.json */; };
 		F0BF8345219AE3820047352A /* NSString+ImageProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BF8344219AE3820047352A /* NSString+ImageProxy.m */; };
-		F0C4F8D5234C6B6200D57C18 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
-		F0C4F8D6234C6B6200D57C18 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
 		F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
 		F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */; };
 		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
 		F0C7E3D320627809001E4BE4 /* NewFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */; };
-		F0C9F3DA2149151A007EF1E8 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
-		F0C9F3DB2149151A007EF1E8 /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0C9F7D6215250980078FB8F /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C9F7D5215250980078FB8F /* FeedCell.m */; };
 		F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */; };
 		F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
@@ -306,8 +310,6 @@
 		F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
 		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
 		F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
-		F0DFD38C23864CE900B8EA69 /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0DFD38723864CCE00B8EA69 /* DZAppdelegate.framework */; };
-		F0DFD38D23864CE900B8EA69 /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0DFD38723864CCE00B8EA69 /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0E06099205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */; };
 		F0E0609C205A4423003FFD18 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E0609B205A4423003FFD18 /* NSString+HTML.m */; };
 		F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0DBB122AE0F46006A2D93 /* WebKit.framework */; };
@@ -315,7 +317,6 @@
 		F0E656872063EF0D00450959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F0E71E6F1FD6F2D400408CFF /* FeedsManager+KVS.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */; };
 		F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E71E711FD6F72200408CFF /* PaddedLabel.m */; };
-		F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C9F3D0214914CB007EF1E8 /* DZKit.framework */; };
 		F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */; };
 		F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */; };
 		F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86490234793870089F9EF /* ArticleVC+Photos.m */; };
@@ -345,41 +346,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F017F5FF216677AA00C514BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6F861FB0698900D3A819;
-			remoteInfo = DZThemeKit;
-		};
-		F017F601216677AA00C514BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6F8F1FB0698900D3A819;
-			remoteInfo = DZThemeKitTests;
-		};
-		F017F603216677AA00C514BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
-			remoteInfo = ThemeKitTestApp;
-		};
-		F017F605216677B100C514BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F06A6F851FB0698900D3A819;
-			remoteInfo = DZThemeKit;
-		};
-		F017F609216677C700C514BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F06A6F851FB0698900D3A819;
-			remoteInfo = DZThemeKit;
-		};
 		F035A21E20617EC3005A88EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
@@ -387,19 +353,117 @@
 			remoteGlobalIDString = F035A21420617EC3005A88EE;
 			remoteInfo = YetiShare;
 		};
-		F04E92D021B54A9200AD1FB2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
-			remoteInfo = DZKit;
-		};
 		F070C2FD1FBABC3600912CCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F070C2D81FBABC3500912CCF;
 			remoteInfo = Yeti;
+		};
+		F08C5DDC238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F056B9B21F04F55D0041BB0C;
+			remoteInfo = DZKit;
+		};
+		F08C5DDE238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F056B9BB1F04F55D0041BB0C;
+			remoteInfo = DZKitTests;
+		};
+		F08C5DE0238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0A18EDC1F0504F300DC5E8B;
+			remoteInfo = DZKitTestApp;
+		};
+		F08C5DE2238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0E7CC3E1F0B7C6D00A6ECBC;
+			remoteInfo = ColumnApp;
+		};
+		F08C5DF7238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0F9492E1B15A06400014A4B;
+			remoteInfo = DZAppDelegate;
+		};
+		F08C5DF9238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0F949471B15A06400014A4B;
+			remoteInfo = DZAppDelegateTests;
+		};
+		F08C5DFB238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0634F9E1B6B4C950025C347;
+			remoteInfo = DZAppdelegate;
+		};
+		F08C5DFD238656620055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0634FA81B6B4C950025C347;
+			remoteInfo = DZAppdelegateTests;
+		};
+		F08C5E0C238656AE0055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
+			remoteInfo = DZNetworking;
+		};
+		F08C5E22238657580055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6F861FB0698900D3A819;
+			remoteInfo = DZThemeKit;
+		};
+		F08C5E24238657580055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6F8F1FB0698900D3A819;
+			remoteInfo = DZThemeKitTests;
+		};
+		F08C5E26238657580055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
+			remoteInfo = ThemeKitTestApp;
+		};
+		F08C5E2E2386579C0055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0634F9D1B6B4C950025C347;
+			remoteInfo = DZAppdelegate;
+		};
+		F08C5E30238657A10055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
+			remoteInfo = DZKit;
+		};
+		F08C5E3723865A840055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
+			remoteInfo = DZKit;
 		};
 		F0C4F8CB234C69B900D57C18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -429,83 +493,6 @@
 			remoteGlobalIDString = F031962A2075FDC400A50D17;
 			remoteInfo = DZNetworkingWatchOS;
 		};
-		F0C4F8D3234C69C900D57C18 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
-			remoteInfo = DZNetworking;
-		};
-		F0C9F3CF214914CB007EF1E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F056B9B21F04F55D0041BB0C;
-			remoteInfo = DZKit;
-		};
-		F0C9F3D1214914CB007EF1E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F056B9BB1F04F55D0041BB0C;
-			remoteInfo = DZKitTests;
-		};
-		F0C9F3D3214914CB007EF1E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0A18EDC1F0504F300DC5E8B;
-			remoteInfo = DZKitTestApp;
-		};
-		F0C9F3D5214914CB007EF1E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0E7CC3E1F0B7C6D00A6ECBC;
-			remoteInfo = ColumnApp;
-		};
-		F0C9F3DC2149151A007EF1E8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
-			remoteInfo = DZKit;
-		};
-		F0DFD38223864CCE00B8EA69 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0F9492E1B15A06400014A4B;
-			remoteInfo = DZAppDelegate;
-		};
-		F0DFD38423864CCE00B8EA69 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0F949471B15A06400014A4B;
-			remoteInfo = DZAppDelegateTests;
-		};
-		F0DFD38623864CCE00B8EA69 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0634F9E1B6B4C950025C347;
-			remoteInfo = DZAppdelegate;
-		};
-		F0DFD38823864CCE00B8EA69 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0634FA81B6B4C950025C347;
-			remoteInfo = DZAppdelegateTests;
-		};
-		F0DFD38A23864CDC00B8EA69 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F0634F9D1B6B4C950025C347;
-			remoteInfo = DZAppdelegate;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -520,16 +507,27 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F0711EB620CBB459009F413A /* Embed Frameworks */ = {
+		F08C5E012386567F0055946F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F0C4F8D6234C6B6200D57C18 /* DZNetworking.framework in Embed Frameworks */,
-				F0DFD38D23864CE900B8EA69 /* DZAppdelegate.framework in Embed Frameworks */,
-				F017F608216677C700C514BB /* DZThemeKit.framework in Embed Frameworks */,
-				F0C9F3DB2149151A007EF1E8 /* DZKit.framework in Embed Frameworks */,
+				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
+				F08C5E3D23865AF30055946F /* DZThemeKit.framework in Embed Frameworks */,
+				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
+				F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F08C5E3B23865A8A0055946F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F08C5E3A23865A8A0055946F /* DZKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -559,7 +557,6 @@
 		F01341AD21DC905400854DE1 /* TagFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TagFeedVC.m; sourceTree = "<group>"; };
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
-		F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = ../../DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		F018A2CD205D0F0B001E682B /* SettingsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		F018A2CE205D0F0B001E682B /* SettingsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsVC.xib; sourceTree = "<group>"; };
@@ -816,6 +813,9 @@
 		F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+DragDrop.h"; sourceTree = "<group>"; };
 		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
+		F08C5DD5238656620055946F /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = ../../../DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
+		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
+		F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePreviewVC.h; sourceTree = "<group>"; };
 		F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePreviewVC.m; sourceTree = "<group>"; };
@@ -956,7 +956,6 @@
 		F0C7E3CF20627809001E4BE4 /* NewFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedVC.h; sourceTree = "<group>"; };
 		F0C7E3D020627809001E4BE4 /* NewFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedVC.m; sourceTree = "<group>"; };
 		F0C7E3D120627809001E4BE4 /* NewFeedVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFeedVC.xib; sourceTree = "<group>"; };
-		F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = ../../DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
 		F0C9F7D4215250980078FB8F /* FeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedCell.h; sourceTree = "<group>"; };
 		F0C9F7D5215250980078FB8F /* FeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedCell.m; sourceTree = "<group>"; };
 		F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark~ipad@2x.png"; sourceTree = "<group>"; };
@@ -1003,7 +1002,6 @@
 		F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsGridCell.h; sourceTree = "<group>"; };
 		F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsGridCell.m; sourceTree = "<group>"; };
 		F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsGridCell.xib; sourceTree = "<group>"; };
-		F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Yeti/Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F0E06097205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+GTMNSStringHTMLAdditions.h"; sourceTree = "<group>"; };
 		F0E06098205A43C3003FFD18 /* NSString+GTMNSStringHTMLAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+GTMNSStringHTMLAdditions.m"; sourceTree = "<group>"; };
 		F0E0609A205A4423003FFD18 /* NSString+HTML.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+HTML.h"; sourceTree = "<group>"; };
@@ -1059,7 +1057,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0E7FA332149283000DB963A /* DZKit.framework in Frameworks */,
+				F08C5E3923865A8A0055946F /* DZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1068,18 +1066,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
+				F08C5E3C23865AF30055946F /* DZThemeKit.framework in Frameworks */,
+				F08C5E36238657EE0055946F /* DZKit.framework in Frameworks */,
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */,
+				F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */,
 				F055166021B4FEAA008F1F2F /* YapDatabase.framework in Frameworks */,
 				F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */,
-				F017F607216677C700C514BB /* DZThemeKit.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
+				F08C5E04238656880055946F /* DZKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
-				F0DFD38C23864CE900B8EA69 /* DZAppdelegate.framework in Frameworks */,
-				F0C9F3DA2149151A007EF1E8 /* DZKit.framework in Frameworks */,
+				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
-				F0C4F8D5234C6B6200D57C18 /* DZNetworking.framework in Frameworks */,
 				F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1088,7 +1087,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F04E92D221B54A9700AD1FB2 /* DZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1120,16 +1118,6 @@
 			);
 			name = Keychain;
 			path = Vendors/Keychain;
-			sourceTree = "<group>";
-		};
-		F017F5FA216677AA00C514BB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F017F600216677AA00C514BB /* DZThemeKit.framework */,
-				F017F602216677AA00C514BB /* DZThemeKitTests.xctest */,
-				F017F604216677AA00C514BB /* ThemeKitTestApp.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		F018A2CB205D0EF9001E682B /* Settings */ = {
@@ -1766,13 +1754,42 @@
 			path = OpenDyslexic;
 			sourceTree = "<group>";
 		};
+		F08C5DD6238656620055946F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F08C5DDD238656620055946F /* DZKit.framework */,
+				F08C5DDF238656620055946F /* DZKitTests.xctest */,
+				F08C5DE1238656620055946F /* DZKitTestApp.app */,
+				F08C5DE3238656620055946F /* ColumnApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F08C5DF1238656620055946F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F08C5DF8238656620055946F /* DZAppDelegate.app */,
+				F08C5DFA238656620055946F /* DZAppDelegateTests.xctest */,
+				F08C5DFC238656620055946F /* DZAppdelegate.framework */,
+				F08C5DFE238656620055946F /* DZAppdelegateTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F08C5E1D238657580055946F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F08C5E23238657580055946F /* DZThemeKit.framework */,
+				F08C5E25238657580055946F /* DZThemeKitTests.xctest */,
+				F08C5E27238657580055946F /* ThemeKitTestApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */,
 				F0E0DBB122AE0F46006A2D93 /* WebKit.framework */,
-				F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */,
-				F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */,
 				F099465F20AD86BE00E5520F /* StoreKit.framework */,
 				F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */,
 			);
@@ -1931,17 +1948,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F0C9F3C9214914CA007EF1E8 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F0C9F3D0214914CB007EF1E8 /* DZKit.framework */,
-				F0C9F3D2214914CB007EF1E8 /* DZKitTests.xctest */,
-				F0C9F3D4214914CB007EF1E8 /* DZKitTestApp.app */,
-				F0C9F3D6214914CB007EF1E8 /* ColumnApp.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F0D01CBD211867E9003A01DD /* Icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -1968,23 +1974,15 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */,
+				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
+				F08C5DD5238656620055946F /* DZKit.xcodeproj */,
 				F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */,
 				F01285BE23436D8D00B8C277 /* Keychain */,
 				F0AA8C7A216B4A5500C65DAE /* DateTools */,
 				F0AA8C79216B4A4E00C65DAE /* RMStore */,
 			);
 			name = Vendors;
-			sourceTree = "<group>";
-		};
-		F0DFD37C23864CCE00B8EA69 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F0DFD38323864CCE00B8EA69 /* DZAppDelegate.app */,
-				F0DFD38523864CCE00B8EA69 /* DZAppDelegateTests.xctest */,
-				F0DFD38723864CCE00B8EA69 /* DZAppdelegate.framework */,
-				F0DFD38923864CCE00B8EA69 /* DZAppdelegateTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		F0EB27E521C20EBC007E3547 /* DBManager */ = {
@@ -2047,10 +2045,12 @@
 				F035A21120617EC3005A88EE /* Sources */,
 				F035A21220617EC3005A88EE /* Frameworks */,
 				F035A21320617EC3005A88EE /* Resources */,
+				F08C5E3B23865A8A0055946F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F08C5E3823865A840055946F /* PBXTargetDependency */,
 			);
 			name = YetiShare;
 			productName = YetiShare;
@@ -2066,17 +2066,15 @@
 				F070C2D71FBABC3500912CCF /* Resources */,
 				F070C31D1FBAC00000912CCF /* Carthage */,
 				F035A22420617EC3005A88EE /* Embed App Extensions */,
-				F0711EB620CBB459009F413A /* Embed Frameworks */,
+				F08C5E012386567F0055946F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				F0DFD38B23864CDC00B8EA69 /* PBXTargetDependency */,
-				F0C4F8D4234C69C900D57C18 /* PBXTargetDependency */,
-				F017F606216677B100C514BB /* PBXTargetDependency */,
-				F0C9F3DD2149151A007EF1E8 /* PBXTargetDependency */,
+				F08C5E31238657A10055946F /* PBXTargetDependency */,
+				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
+				F08C5E0D238656AE0055946F /* PBXTargetDependency */,
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
-				F017F60A216677C700C514BB /* PBXTargetDependency */,
 			);
 			name = Yeti;
 			productName = Yeti;
@@ -2095,7 +2093,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F04E92D121B54A9200AD1FB2 /* PBXTargetDependency */,
 			);
 			name = YetiTests;
 			productName = YetiTests;
@@ -2176,20 +2173,20 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = F0DFD37C23864CCE00B8EA69 /* Products */;
-					ProjectRef = F0DFD37B23864CCE00B8EA69 /* DZAppDelegate.xcodeproj */;
+					ProductGroup = F08C5DF1238656620055946F /* Products */;
+					ProjectRef = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
 				},
 				{
-					ProductGroup = F0C9F3C9214914CA007EF1E8 /* Products */;
-					ProjectRef = F0C9F3C8214914CA007EF1E8 /* DZKit.xcodeproj */;
+					ProductGroup = F08C5DD6238656620055946F /* Products */;
+					ProjectRef = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
 				},
 				{
 					ProductGroup = F0C4F8C5234C69B900D57C18 /* Products */;
 					ProjectRef = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
 				},
 				{
-					ProductGroup = F017F5FA216677AA00C514BB /* Products */;
-					ProjectRef = F017F5F9216677AA00C514BB /* DZThemeKit.xcodeproj */;
+					ProductGroup = F08C5E1D238657580055946F /* Products */;
+					ProjectRef = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -2203,25 +2200,81 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		F017F600216677AA00C514BB /* DZThemeKit.framework */ = {
+		F08C5DDD238656620055946F /* DZKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZKit.framework;
+			remoteRef = F08C5DDC238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DDF238656620055946F /* DZKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZKitTests.xctest;
+			remoteRef = F08C5DDE238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DE1238656620055946F /* DZKitTestApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DZKitTestApp.app;
+			remoteRef = F08C5DE0238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DE3238656620055946F /* ColumnApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ColumnApp.app;
+			remoteRef = F08C5DE2238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DF8238656620055946F /* DZAppDelegate.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DZAppDelegate.app;
+			remoteRef = F08C5DF7238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DFA238656620055946F /* DZAppDelegateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZAppDelegateTests.xctest;
+			remoteRef = F08C5DF9238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DFC238656620055946F /* DZAppdelegate.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZAppdelegate.framework;
+			remoteRef = F08C5DFB238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5DFE238656620055946F /* DZAppdelegateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZAppdelegateTests.xctest;
+			remoteRef = F08C5DFD238656620055946F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08C5E23238657580055946F /* DZThemeKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = DZThemeKit.framework;
-			remoteRef = F017F5FF216677AA00C514BB /* PBXContainerItemProxy */;
+			remoteRef = F08C5E22238657580055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F017F602216677AA00C514BB /* DZThemeKitTests.xctest */ = {
+		F08C5E25238657580055946F /* DZThemeKitTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = DZThemeKitTests.xctest;
-			remoteRef = F017F601216677AA00C514BB /* PBXContainerItemProxy */;
+			remoteRef = F08C5E24238657580055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F017F604216677AA00C514BB /* ThemeKitTestApp.app */ = {
+		F08C5E27238657580055946F /* ThemeKitTestApp.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = ThemeKitTestApp.app;
-			remoteRef = F017F603216677AA00C514BB /* PBXContainerItemProxy */;
+			remoteRef = F08C5E26238657580055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */ = {
@@ -2250,62 +2303,6 @@
 			fileType = wrapper.framework;
 			path = DZNetworking.framework;
 			remoteRef = F0C4F8D1234C69B900D57C18 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0C9F3D0214914CB007EF1E8 /* DZKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DZKit.framework;
-			remoteRef = F0C9F3CF214914CB007EF1E8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0C9F3D2214914CB007EF1E8 /* DZKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DZKitTests.xctest;
-			remoteRef = F0C9F3D1214914CB007EF1E8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0C9F3D4214914CB007EF1E8 /* DZKitTestApp.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DZKitTestApp.app;
-			remoteRef = F0C9F3D3214914CB007EF1E8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0C9F3D6214914CB007EF1E8 /* ColumnApp.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ColumnApp.app;
-			remoteRef = F0C9F3D5214914CB007EF1E8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0DFD38323864CCE00B8EA69 /* DZAppDelegate.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DZAppDelegate.app;
-			remoteRef = F0DFD38223864CCE00B8EA69 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0DFD38523864CCE00B8EA69 /* DZAppDelegateTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DZAppDelegateTests.xctest;
-			remoteRef = F0DFD38423864CCE00B8EA69 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0DFD38723864CCE00B8EA69 /* DZAppdelegate.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DZAppdelegate.framework;
-			remoteRef = F0DFD38623864CCE00B8EA69 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0DFD38923864CCE00B8EA69 /* DZAppdelegateTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DZAppdelegateTests.xctest;
-			remoteRef = F0DFD38823864CCE00B8EA69 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2734,45 +2731,35 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		F017F606216677B100C514BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZThemeKit;
-			targetProxy = F017F605216677B100C514BB /* PBXContainerItemProxy */;
-		};
-		F017F60A216677C700C514BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZThemeKit;
-			targetProxy = F017F609216677C700C514BB /* PBXContainerItemProxy */;
-		};
 		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F035A21420617EC3005A88EE /* YetiShare */;
 			targetProxy = F035A21E20617EC3005A88EE /* PBXContainerItemProxy */;
-		};
-		F04E92D121B54A9200AD1FB2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZKit;
-			targetProxy = F04E92D021B54A9200AD1FB2 /* PBXContainerItemProxy */;
 		};
 		F070C2FE1FBABC3600912CCF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F070C2D81FBABC3500912CCF /* Yeti */;
 			targetProxy = F070C2FD1FBABC3600912CCF /* PBXContainerItemProxy */;
 		};
-		F0C4F8D4234C69C900D57C18 /* PBXTargetDependency */ = {
+		F08C5E0D238656AE0055946F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DZNetworking;
-			targetProxy = F0C4F8D3234C69C900D57C18 /* PBXContainerItemProxy */;
+			targetProxy = F08C5E0C238656AE0055946F /* PBXContainerItemProxy */;
 		};
-		F0C9F3DD2149151A007EF1E8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZKit;
-			targetProxy = F0C9F3DC2149151A007EF1E8 /* PBXContainerItemProxy */;
-		};
-		F0DFD38B23864CDC00B8EA69 /* PBXTargetDependency */ = {
+		F08C5E2F2386579C0055946F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DZAppdelegate;
-			targetProxy = F0DFD38A23864CDC00B8EA69 /* PBXContainerItemProxy */;
+			targetProxy = F08C5E2E2386579C0055946F /* PBXContainerItemProxy */;
+		};
+		F08C5E31238657A10055946F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZKit;
+			targetProxy = F08C5E30238657A10055946F /* PBXContainerItemProxy */;
+		};
+		F08C5E3823865A840055946F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZKit;
+			targetProxy = F08C5E3723865A840055946F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2808,13 +2795,13 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/../../DZNetworking/**",
+					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"TARGET_IS_EXTENSION=1",
 				);
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Vendors/RMStore/RMStore/**";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2839,10 +2826,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/../../DZNetworking/**",
+					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Vendors/RMStore/RMStore/**";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2987,6 +2974,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2994,7 +2982,7 @@
 					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=1",
 				);
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -3029,6 +3017,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -3036,7 +3025,7 @@
 					"TESTFLIGHT=0",
 					"DBEUG_LAYOUT=0",
 				);
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -3193,6 +3182,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -3200,7 +3190,7 @@
 					"TESTFLIGHT=1",
 					"DBEUG_LAYOUT=0",
 				);
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -3263,10 +3253,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)/../../DZNetworking/**",
+					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Vendors/RMStore/RMStore/**";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
