@@ -23,8 +23,9 @@
 #import "MainNavController.h"
 
 #import "BookmarksMigrationVC.h"
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
-@interface SplitVC () <UISplitViewControllerDelegate, UIGestureRecognizerDelegate>
+@interface SplitVC () <TOSplitViewControllerDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) TwoFingerPanGestureRecognizer *twoFingerPan;
 
@@ -33,25 +34,28 @@
 @implementation SplitVC
 
 - (instancetype)init {
-    if (self = [super init]) {
+    
+    NSArray <UIViewController *> * controllers = nil;
+    MainNavController *nav1 = [[MainNavController alloc] init];
+    
+    if (UIApplication.sharedApplication.windows.firstObject.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        controllers = @[nav1];
+    }
+    else {
+        UINavigationController *nav2 = [self emptyVC];
+        controllers = @[nav1, nav2];
+    }
+    
+    if (self = [super initWithViewControllers:controllers]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
         
+        self.separatorStrokeColor = UIColor.separatorColor;
         self.delegate = self;
+        self.primaryColumnMaximumWidth = 298.f;
+        self.secondaryColumnMaximumWidth = 375.f;
         
         [self loadViewIfNeeded];
-        
-        MainNavController *nav1 = [[MainNavController alloc] init];
-        
-        UINavigationController *nav2 = [self emptyVC];
-
-        if (self.view.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-            self.viewControllers = @[nav1];
-            nav2 = nil;
-        }
-        else {
-            self.viewControllers = @[nav1, nav2];
-        }
         
     }
     
@@ -141,7 +145,7 @@
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
     YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
     nav2.restorationIdentifier = @"emptyNav";
-    vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
+//    vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
     
     return nav2;
 }
@@ -330,7 +334,7 @@
     else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
 
         ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
-        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
+//        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
 
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
         nav.restorationIdentifier = @"ArticleDetailNav";
@@ -358,6 +362,37 @@
     else {
         return NO;
     }
+}
+
+#pragma mark - <TOSplitViewControllerDelegate>
+
+- (BOOL)splitViewController:(TOSplitViewController *)splitViewController
+     collapseViewController:(UIViewController *)auxiliaryViewController
+                     ofType:(TOSplitViewControllerType)controllerType
+  ontoPrimaryViewController:(UIViewController *)primaryViewController
+              shouldAnimate:(BOOL)animate
+{
+    // Return YES when you've manually handled the collapse logic
+    return NO;
+}
+
+- (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
+                      separateViewControllerOfType:(TOSplitViewControllerType)type
+                         fromPrimaryViewController:(UIViewController *)primaryViewController
+{
+    return nil;
+}
+
+- (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
+        primaryViewControllerForCollapsingFromType:(TOSplitViewControllerType)type
+{
+    return nil;
+}
+
+- (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
+           primaryViewControllerForExpandingToType:(TOSplitViewControllerType)type
+{
+    return nil;
 }
 
 #pragma mark - <UIGestureRecognizerDelegate>

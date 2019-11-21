@@ -236,6 +236,25 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
+            
+            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
+        }
+        else {
+            self.navigationItem.leftBarButtonItem = nil;
+        }
+        
+    } completion:nil];
+    
+}
+
 - (void)_setToolbarHidden {
     self.navigationController.toolbarHidden = YES;
 }
@@ -532,7 +551,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [cell setupAppearance];
     
-    BOOL showSeparator = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    BOOL showSeparator = YES; //self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     [cell showSeparator:showSeparator];
     
@@ -677,27 +696,33 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     vc.providerDelegate = self;
     vc.bookmarksManager = self.bookmarksManager;
     
-    if (self.splitViewController == nil) {
+    if (self.to_splitViewController == nil) {
         // in a modal stack
         [self.navigationController pushViewController:vc animated:YES];
     }
-    else if (self.splitViewController != nil) {
+    else if (self.to_splitViewController != nil) {
         
-        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
-            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
-                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                
-                [self.splitViewController showDetailViewController:nav sender:self];
-            }
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+
+            [self to_showDetailViewController:nav sender:self];
+            
+//            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+//                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
+//
+//                [self.navigationController pushViewController:vc animated:YES];
+//
+//            }
+//            else {
+//                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//
+//                [self.splitViewController showDetailViewController:nav sender:self];
+//            }
             
         }
         else {
-            [self showViewController:vc sender:self];
+            [self.navigationController pushViewController:vc animated:YES];
         }
         
     }
@@ -1449,7 +1474,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 
 - (void)setupNavigationBar {
     
-    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+//    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     if (self.isExploring) {

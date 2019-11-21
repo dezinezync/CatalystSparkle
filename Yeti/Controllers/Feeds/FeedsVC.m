@@ -34,6 +34,7 @@
 #import "Keychain.h"
 
 #import <StoreKit/SKStoreReviewController.h>
+#import "SplitVC.h"
 
 static void *KVO_Unread = &KVO_Unread;
 
@@ -524,13 +525,13 @@ static void *KVO_Unread = &KVO_Unread;
         }
         
         if (isPhone) {
-            [self showDetailController:vc sender:self];
+            [self to_showSecondaryViewController:vc sender:self];
         }
         else {
             UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
             nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
             
-            [self showDetailController:nav sender:self];
+            [self to_showSecondaryViewController:nav setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
         }
         
         return;
@@ -544,15 +545,18 @@ static void *KVO_Unread = &KVO_Unread;
         if (isPhone) {
             vc = [[DetailFeedVC alloc] initWithFeed:feed];
             [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
+            
+            [self to_showSecondaryViewController:vc sender:self];
         }
         else {
             vc = [DetailFeedVC instanceWithFeed:feed];
             
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+            
+            [self to_showSecondaryViewController:vc setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
         }
         
-        [self showDetailController:vc sender:self];
     }
     else {
         // it's a folder
@@ -563,15 +567,17 @@ static void *KVO_Unread = &KVO_Unread;
         if (isPhone) {
             vc = [[DetailFolderVC alloc] initWithFolder:folder];
             [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
+            
+            [self to_showSecondaryViewController:vc sender:self];
         }
         else {
             vc = [DetailFolderVC instanceWithFolder:folder];
             
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+            
+            [self to_showSecondaryViewController:vc setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
         }
-        
-        [self showDetailViewController:vc sender:self];
         
     }
     
