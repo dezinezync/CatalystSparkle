@@ -170,15 +170,14 @@
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F08C5E04238656880055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
 		F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
 		F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F08C5E36238657EE0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
 		F08C5E3923865A8A0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
 		F08C5E3A23865A8A0055946F /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F08C5E3C23865AF30055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E23238657580055946F /* DZThemeKit.framework */; };
-		F08C5E3D23865AF30055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E23238657580055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
+		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
 		F08CE0AA232A590C00982823 /* AuthorBioVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
@@ -423,27 +422,6 @@
 			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
 			remoteInfo = DZNetworking;
 		};
-		F08C5E22238657580055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6F861FB0698900D3A819;
-			remoteInfo = DZThemeKit;
-		};
-		F08C5E24238657580055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6F8F1FB0698900D3A819;
-			remoteInfo = DZThemeKitTests;
-		};
-		F08C5E26238657580055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
-			remoteInfo = ThemeKitTestApp;
-		};
 		F08C5E2E2386579C0055946F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
@@ -464,6 +442,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
 			remoteInfo = DZKit;
+		};
+		F08C5E5C238660A90055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6F861FB0698900D3A819;
+			remoteInfo = DZThemeKit;
+		};
+		F08C5E5E238660A90055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6F8F1FB0698900D3A819;
+			remoteInfo = DZThemeKitTests;
+		};
+		F08C5E60238660A90055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F06A6FB21FB07FCF00D3A819;
+			remoteInfo = ThemeKitTestApp;
+		};
+		F08C5E64238660B60055946F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F06A6F851FB0698900D3A819;
+			remoteInfo = DZThemeKit;
 		};
 		F0C4F8CB234C69B900D57C18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -514,7 +520,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
-				F08C5E3D23865AF30055946F /* DZThemeKit.framework in Embed Frameworks */,
+				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 				F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */,
 			);
@@ -815,7 +821,7 @@
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F08C5DD5238656620055946F /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = ../../../DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
-		F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
+		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePreviewVC.h; sourceTree = "<group>"; };
 		F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePreviewVC.m; sourceTree = "<group>"; };
@@ -1065,16 +1071,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
-				F08C5E3C23865AF30055946F /* DZThemeKit.framework in Frameworks */,
-				F08C5E36238657EE0055946F /* DZKit.framework in Frameworks */,
+				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */,
 				F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */,
 				F055166021B4FEAA008F1F2F /* YapDatabase.framework in Frameworks */,
 				F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
-				F08C5E04238656880055946F /* DZKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
@@ -1776,12 +1781,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F08C5E1D238657580055946F /* Products */ = {
+		F08C5E57238660A90055946F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F08C5E23238657580055946F /* DZThemeKit.framework */,
-				F08C5E25238657580055946F /* DZThemeKitTests.xctest */,
-				F08C5E27238657580055946F /* ThemeKitTestApp.app */,
+				F08C5E5D238660A90055946F /* DZThemeKit.framework */,
+				F08C5E5F238660A90055946F /* DZThemeKitTests.xctest */,
+				F08C5E61238660A90055946F /* ThemeKitTestApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1974,7 +1979,7 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
-				F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */,
+				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
 				F08C5DD5238656620055946F /* DZKit.xcodeproj */,
 				F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */,
@@ -2071,6 +2076,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F08C5E65238660B60055946F /* PBXTargetDependency */,
 				F08C5E31238657A10055946F /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
 				F08C5E0D238656AE0055946F /* PBXTargetDependency */,
@@ -2185,8 +2191,8 @@
 					ProjectRef = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
 				},
 				{
-					ProductGroup = F08C5E1D238657580055946F /* Products */;
-					ProjectRef = F08C5E1C238657580055946F /* DZThemeKit.xcodeproj */;
+					ProductGroup = F08C5E57238660A90055946F /* Products */;
+					ProjectRef = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -2256,25 +2262,25 @@
 			remoteRef = F08C5DFD238656620055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F08C5E23238657580055946F /* DZThemeKit.framework */ = {
+		F08C5E5D238660A90055946F /* DZThemeKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = DZThemeKit.framework;
-			remoteRef = F08C5E22238657580055946F /* PBXContainerItemProxy */;
+			remoteRef = F08C5E5C238660A90055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F08C5E25238657580055946F /* DZThemeKitTests.xctest */ = {
+		F08C5E5F238660A90055946F /* DZThemeKitTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = DZThemeKitTests.xctest;
-			remoteRef = F08C5E24238657580055946F /* PBXContainerItemProxy */;
+			remoteRef = F08C5E5E238660A90055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F08C5E27238657580055946F /* ThemeKitTestApp.app */ = {
+		F08C5E61238660A90055946F /* ThemeKitTestApp.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = ThemeKitTestApp.app;
-			remoteRef = F08C5E26238657580055946F /* PBXContainerItemProxy */;
+			remoteRef = F08C5E60238660A90055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */ = {
@@ -2761,6 +2767,11 @@
 			name = DZKit;
 			targetProxy = F08C5E3723865A840055946F /* PBXContainerItemProxy */;
 		};
+		F08C5E65238660B60055946F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZThemeKit;
+			targetProxy = F08C5E64238660B60055946F /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -2787,6 +2798,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = ShareIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -2801,7 +2813,7 @@
 					"$(inherited)",
 					"TARGET_IS_EXTENSION=1",
 				);
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2818,6 +2830,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = ShareIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -2829,7 +2842,7 @@
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -2961,6 +2974,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -2973,7 +2987,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -2982,7 +2995,7 @@
 					"DEBUG_LAYOUT=0",
 					"TESTFLIGHT=1",
 				);
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -3005,6 +3018,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -3016,7 +3030,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -3025,7 +3038,7 @@
 					"TESTFLIGHT=0",
 					"DBEUG_LAYOUT=0",
 				);
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -3170,6 +3183,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Yeti/Yeti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -3181,7 +3195,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -3190,7 +3203,7 @@
 					"TESTFLIGHT=1",
 					"DBEUG_LAYOUT=0",
 				);
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -3245,6 +3258,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = ShareIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -3256,7 +3270,7 @@
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "TARGET_IS_EXTENSION=1";
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/**";
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
