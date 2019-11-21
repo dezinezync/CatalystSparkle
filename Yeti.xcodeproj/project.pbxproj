@@ -32,6 +32,8 @@
 		F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459C72058FFF1002906C3 /* FeedsVC+Search.m */; };
 		F02459CB20590E6D002906C3 /* SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CA20590E6D002906C3 /* SearchResults.m */; };
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
+		F02EB7BF2386C15E00DB8E72 /* TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */; };
+		F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */; };
 		F0315DBC20CA59FB00F5674A /* Subscription.m in Sources */ = {isa = PBXBuildFile; fileRef = F0315DBB20CA59FB00F5674A /* Subscription.m */; };
 		F035A21920617EC3005A88EE /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F035A21820617EC3005A88EE /* ActionViewController.m */; };
 		F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F035A21A20617EC3005A88EE /* MainInterface.storyboard */; };
@@ -583,6 +585,10 @@
 		F02459D020591224002906C3 /* FeedSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedSearchResults.m; sourceTree = "<group>"; };
 		F02459D22059135E002906C3 /* FeedVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Search.h"; sourceTree = "<group>"; };
 		F02459D32059135E002906C3 /* FeedVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Search.m"; sourceTree = "<group>"; };
+		F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSplitViewController.m; sourceTree = "<group>"; };
+		F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TOSplitViewController.h; sourceTree = "<group>"; };
+		F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+TOSplitViewController.m"; sourceTree = "<group>"; };
+		F02EB7B32386C15E00DB8E72 /* UINavigationController+TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+TOSplitViewController.h"; sourceTree = "<group>"; };
 		F0315DBA20CA59FB00F5674A /* Subscription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subscription.h; sourceTree = "<group>"; };
 		F0315DBB20CA59FB00F5674A /* Subscription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Subscription.m; sourceTree = "<group>"; };
 		F035A21520617EC3005A88EE /* YetiShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YetiShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1187,6 +1193,26 @@
 				F0E86493234796B80089F9EF /* ArticlePhoto.m */,
 			);
 			path = Article;
+			sourceTree = "<group>";
+		};
+		F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */ = {
+			isa = PBXGroup;
+			children = (
+				F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */,
+				F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */,
+				F02EB7B12386C15E00DB8E72 /* Categories */,
+			);
+			name = TOSplitViewController;
+			path = Vendors/TOSplitViewController/TOSplitViewController;
+			sourceTree = "<group>";
+		};
+		F02EB7B12386C15E00DB8E72 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */,
+				F02EB7B32386C15E00DB8E72 /* UINavigationController+TOSplitViewController.h */,
+			);
+			path = Categories;
 			sourceTree = "<group>";
 		};
 		F035A21620617EC3005A88EE /* YetiShare */ = {
@@ -1967,6 +1993,7 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */,
 				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
 				F08C5DD5238656620055946F /* DZKit.xcodeproj */,
@@ -2533,6 +2560,7 @@
 				F0B69C9021B916F50032FD5A /* VideoInfo.m in Sources */,
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F0869B592099CE6600A5D723 /* YetiTheme.m in Sources */,
+				F02EB7BF2386C15E00DB8E72 /* TOSplitViewController.m in Sources */,
 				F0AFAC1D216C8AEA00AB7057 /* DetailFeedVC+Actions.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F05E0C0F2174AFA70042FC38 /* DetailFolderVC.m in Sources */,
@@ -2615,6 +2643,7 @@
 				F0AA8C90216B4A5500C65DAE /* DTError.m in Sources */,
 				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
+				F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */,
 				F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */,
 				F05A923421E71FBD0098448E /* PrefsManager.m in Sources */,
 				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
