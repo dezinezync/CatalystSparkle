@@ -115,8 +115,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.state = ArticleStateLoading;
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        self.loader.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
+    }
+    
     self.navigationItem.leftItemsSupplementBackButton = YES;
+    
+    self.state = ArticleStateLoading;
     self.articlesImageLoader = [ImageLoader new];
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);

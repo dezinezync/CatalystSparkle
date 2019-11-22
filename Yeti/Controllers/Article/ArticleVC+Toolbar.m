@@ -159,13 +159,13 @@
         self.navigationController.toolbarHidden = NO;
     }
     
-    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
-        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.keyWindow rootViewController] displayModeButtonItem];
-        self.navigationItem.leftBarButtonItem = displayButton;
-    }
-    else {
-        self.navigationItem.leftBarButtonItems = nil;
-    }
+//    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
+//        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.keyWindow rootViewController] displayModeButtonItem];
+//        self.navigationItem.leftBarButtonItem = displayButton;
+//    }
+//    else {
+//        self.navigationItem.leftBarButtonItems = nil;
+//    }
 }
 
 #pragma mark - Actions
