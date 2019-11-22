@@ -21,7 +21,6 @@
 #import <DZKit/AlertManager.h>
 
 #import "FeedsSearchResults.h"
-#import "CustomFeedVC.h"
 #import "UIViewController+Hairline.h"
 
 #import "YetiThemeKit.h"
@@ -506,7 +505,7 @@ static void *KVO_Unread = &KVO_Unread;
 {
     
     BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
-                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+                    && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     if (indexPath.section == 0) {
         
@@ -986,7 +985,7 @@ NSString * const kDS2Data = @"DS2Data";
     weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        [self.splitViewController presentViewController:nav animated:YES completion:nil];
+        [self.to_splitViewController presentViewController:nav animated:YES completion:nil];
     });
 #endif
 }

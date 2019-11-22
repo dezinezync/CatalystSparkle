@@ -47,6 +47,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     BOOL _initialSetup;
     ArticleCellB *_protoCell;
+    
+    // This determines if the VC has the Feeds ref when it was loaded. If not, it observes for the notifications and updates the datasource when they become available
+    BOOL _hadFeedsWhenLoaded;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
@@ -106,7 +109,18 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.title = [self.feed displayTitle];
     
-    _sortingOption = SharedPrefs.sortingOption;;
+    _sortingOption = SharedPrefs.sortingOption;
+    
+    if (ArticlesManager.shared.feeds != nil && ArticlesManager.shared.feeds.count) {
+        _hadFeedsWhenLoaded = YES;
+    }
+    else {
+        _hadFeedsWhenLoaded = NO;
+        
+        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+        
+        [center addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
+    }
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
@@ -320,6 +334,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     return _activityIndicatorView;
 }
 
+#pragma mark - Setters
+
 - (void)setRestorationIdentifier:(NSString *)restorationIdentifier {
     [super setRestorationIdentifier:restorationIdentifier];
     
@@ -327,8 +343,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.collectionView.restorationIdentifier = [restorationIdentifier stringByAppendingString:@"-collectionView"];
 }
-
-#pragma mark - Setters
 
 - (void)setLoadOnReady:(NSNumber *)loadOnReady
 {
@@ -353,6 +367,19 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         // we are visible
         [self loadArticle];
     }
+}
+
+- (void)updatedFeedsNotification:(id)sender {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+    });
+    
 }
 
 #pragma mark - <UICollectionViewDataSource>

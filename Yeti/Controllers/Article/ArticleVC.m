@@ -121,8 +121,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        || self.splitViewController.view.bounds.size.height < 814.f) {
+    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        || self.to_splitViewController.view.bounds.size.height < 814.f) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
@@ -134,8 +134,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if (self.splitViewController.view.bounds.size.height > 814.f
-             && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    else if (self.to_splitViewController.view.bounds.size.height > 814.f
+             && self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
@@ -2454,7 +2454,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (!_searchView) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
+        CGRect frame = CGRectMake(0, 0, self.to_splitViewController.view.bounds.size.width, 52.f);
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
