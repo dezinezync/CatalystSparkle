@@ -2359,7 +2359,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             // open the link externally since it's not available in headings
             // or the link appears to be different from the article's URL.
-            [self openLinkExternally:absolute];
+            if ([self textView:textView shouldOpenURL:URL] == YES) {
+                [self openLinkExternally:absolute];
+            }
+            
             return NO;
             
         }
@@ -2395,11 +2398,35 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else {
         
-        [self openLinkExternally:absolute];
+        if ([self textView:textView shouldOpenURL:URL] == YES) {
+            [self openLinkExternally:absolute];
+        }
         
     }
     
     return NO;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldOpenURL:(NSURL *)url {
+    // https://stackoverflow.com/questions/58189447/ios-13-1-uitextview-delegate-method-shouldinteract-called-when-scrolling-on-atta
+    BOOL recognizedTapGesture = NO;
+    
+    for (UIGestureRecognizer *recognizer in textView.gestureRecognizers) {
+        if ([recognizer isKindOfClass:UITapGestureRecognizer.class] && recognizer.state == UIGestureRecognizerStateEnded) {
+            recognizedTapGesture = YES;
+            break;
+        }
+    }
+    
+    if (!recognizedTapGesture) {
+        // Tap gesture is not being recognized, this must be an early
+        // check when touches begin. Leave the link handling alone.
+        return NO;
+    }
+
+    // Do custom action here
+    return YES;
+    
 }
 
 - (void)openLinkExternally:(NSString *)link {
