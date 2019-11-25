@@ -429,9 +429,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         }
         else {
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.collectionView reloadItemsAtIndexPaths:self.collectionView.indexPathsForVisibleItems];
-            });
+            [self.collectionView reloadItemsAtIndexPaths:self.collectionView.indexPathsForVisibleItems];
             
         }
         
