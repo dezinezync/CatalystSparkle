@@ -20,17 +20,9 @@
 #import <DZKit/NSArray+Safe.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 
-@interface Paragraph () <UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate> {
-    BOOL _hasHookedGesturesForiOS13LinkTapBug;
-}
+@interface Paragraph () <UIContextMenuInteractionDelegate> {}
 
 @property (nonatomic, copy) NSAttributedString *cachedAttributedText;
-
-- (void)addContextMenus API_AVAILABLE(ios(13.0));
-
-- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:suggestedActions API_AVAILABLE(ios(13.0));
-
-- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -153,10 +145,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.textContainer.heightTracksTextView = YES;
         
         [self updateStyle:nil];
-        
-        if (@available(iOS 13, *)) {
-            [self addContextMenus];
-        }
     }
     
     return self;
@@ -166,10 +154,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     if (self.isAppearing || self.avoidsLazyLoading) {
 
         [super setAttributedText:attributedText];
-        
-        if (@available(iOS 13, *)) {
-            [self _hookGestures];
-        }
         
     }
     else {
@@ -910,58 +894,5 @@ static NSParagraphStyle * _paragraphStyle = nil;
 }
 
 #pragma mark - Gesture Recognizers
-
-- (void)_hookGestures {
-
-    if (_hasHookedGesturesForiOS13LinkTapBug == YES) {
-        return;
-    }
-
-    _hasHookedGesturesForiOS13LinkTapBug = YES;
-
-//    Class longPress = UILongPressGestureRecognizer.class;
-    Class linkTap = UITapGestureRecognizer.class;
-
-    for (UIGestureRecognizer *gesture in self.gestureRecognizers) {
-
-        if ([gesture isKindOfClass:linkTap]) {
-            gesture.delegate = self;
-        }
-
-    }
-
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-
-//    Class longPress = UILongPressGestureRecognizer.class;
-    Class linkTap = UITapGestureRecognizer.class;
-    Class scrollViewPan = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
-
-    // allowed items
-    Class DragAddItemsGesture = NSClassFromString(@"_UIDragAddItemsGesture");
-    Class TextTapGesture = NSClassFromString(@"UITapGestureRecognizer");
-
-    if ([gestureRecognizer isKindOfClass:DragAddItemsGesture]
-        || [gestureRecognizer isKindOfClass:TextTapGesture]) {
-        return YES;
-    }
-
-    if ([gestureRecognizer isKindOfClass:linkTap]) {
-
-        if ([otherGestureRecognizer isKindOfClass:scrollViewPan]) {
-#ifdef DEBUG
-            NSLog(@"Primary gesture: %@", gestureRecognizer);
-            NSLog(@"Other gesture: %@", otherGestureRecognizer);
-#endif
-            return NO;
-        }
-
-        return YES;
-    }
-
-    return YES;
-
-}
 
 @end

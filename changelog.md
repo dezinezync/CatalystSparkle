@@ -1,5 +1,9 @@
-# v1.5.2
+# v1.5.4
 
-## Build 307
+## Build 309
 
-- Fixes a crash on launch bug in iOS 12. Devices running iOS 13 are unaffected.  
+- Fixed the iOS 13 Link tap bug when  scrolling in the Article Reader. 
+
+- Fixed loading of articles in list view when feeds load after the articles so titles would be empty
+
+
