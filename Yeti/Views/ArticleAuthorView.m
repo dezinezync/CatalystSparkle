@@ -44,7 +44,10 @@
             label.adjustsFontForContentSizeCategory = YES;
         }
         
-        UIImage *image = [[UIImage imageNamed:@"mercury"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
+        
+        UIImage *image = [[UIImage systemImageNamed:@"m.square" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        
         [self.mercurialButton setImage:image forState:UIControlStateNormal];
         
         self.mercurialButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -83,6 +86,12 @@
     _mercurialed = mercurialed;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
+    
+    UIImage *image = [[UIImage systemImageNamed:@"m.square.fill" withConfiguration:imageConfig] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    [self.mercurialButton setImage:image forState:UIControlStateNormal];
     
     self.mercurialButton.tintColor = mercurialed ? [theme tintColor] : [theme borderColor];
     

@@ -86,7 +86,7 @@
         return @[];
     }
     
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
@@ -124,32 +124,15 @@
     sorting.tintColor = tintColor;
     sorting.width = 32.f;
     
-    if (!(self.feed.hubSubscribed && self.feed.hub)) {
-        NSMutableArray *buttons = @[allRead].mutableCopy;
-        
-        if ([self showsSortingButton]) {
-            [buttons addObject:sorting];
-        }
-        
-        return buttons;
+    NSMutableArray *buttons = [NSMutableArray new];
+    
+    [buttons addObject:allRead];
+    
+    if ([self showsSortingButton]) {
+        [buttons addObject:sorting];
     }
-    else {
-        // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
-        
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
-        notifications.width = 32.f;
-        
-        NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
-        
-        if ([self showsSortingButton]) {
-            [buttons addObject:sorting];
-        }
-        
-        return buttons;
-    }
+    
+    return buttons;
     
 }
 

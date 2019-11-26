@@ -604,111 +604,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-#pragma mark - <ArticleCellDelegate>
-
-- (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
-    
-    [self _os12_didTapMenuButton:sender forArticle:article cell:cell];
-    
-}
-
-- (void)didTapTest:(id)sender {
-    
-}
-
-- (void)_os12_didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
-    
-    if (article == nil) {
-        
-        NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
-        
-        if (indexPath == nil) {
-            return;
-        }
-        
-    }
-    
-    NSMutableArray *actions = [NSMutableArray arrayWithCapacity:3];
-    
-    if (article.isRead) {
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Unread" image:[UIImage imageNamed:@"menu-unread"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article read:NO];
-            
-        }]];
-    }
-    else {
-        
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Read" image:[UIImage imageNamed:@"menu-read"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article read:YES];
-            
-        }]];
-        
-    }
-    
-    if (article.isBookmarked) {
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Unbookmark" image:[UIImage imageNamed:@"menu-unbookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article bookmarked:NO];
-            
-        }]];
-    }
-    else {
-        
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Bookmark" image:[UIImage imageNamed:@"menu-bookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article bookmarked:YES];
-            
-        }]];
-        
-    }
-    
-    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Browser" image:[UIImage imageNamed:@"open_in_browser"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-        
-        NSURL *URL = formattedURL(@"yeti://external?link=%@", article.articleURL);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
-            
-        });
-        
-    }]];
-    
-    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Share" image:[UIImage imageNamed:@"menu-share"] color:[UIColor blueColor] didSelect:^(id  _Nonnull action) {
-        
-        NSString *title = article.articleTitle;
-        NSURL *URL = formattedURL(@"%@", article.articleURL);
-        
-        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
-        
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.sourceView = sender;
-        pvc.sourceRect = [(UIView *)sender frame];
-        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
-        
-        [self presentViewController:avc animated:YES completion:nil];
-        
-    }]];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    PopMenuAppearance *appearance = [PopMenuAppearance new];
-    appearance.popMenuCornerRadius = 12.f;
-    appearance.popMenuColor = theme.menuColor;
-    appearance.popMenuTextColor = theme.menuTextColor;
-    
-    appearance.popMenuFont = [TypeFactory.shared boldBodyFont];
-    
-    PopMenuViewController *vc = [[PopMenuViewController alloc] initWithAppearance:appearance sourceView:sender actions:actions];
-    
-    DDLogDebug(@"Button:%@\nArticle:%@\nCell:%@", sender, article.articleTitle, [self.collectionView indexPathForCell:cell]);
-    
-    [self presentViewController:vc animated:YES completion:nil];
-    
-}
-
 #pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -1225,12 +1120,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
                 if (cell != nil && article.isBookmarked == NO) {
                     
-                    cell.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                    
                     if (read == YES) {
+                        cell.markerView.image = [[UIImage systemImageNamed:@"circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                        
                         cell.markerView.tintColor = [[YTThemeKit theme] borderColor];
                     }
                     else {
+                        cell.markerView.image = [[UIImage systemImageNamed:@"largecircle.fill.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                        
                         cell.markerView.tintColor = [[YTThemeKit theme] tintColor];
                     }
                 }
@@ -1291,7 +1188,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                         cell.markerView.image = nil;
                     }
                     else {
-                        cell.markerView.image = [UIImage imageNamed:@"mbookmark"];
+                        cell.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
                     }
                 }
             }
@@ -1483,9 +1380,9 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     else {
         // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        NSString *imageString = self.feed.isSubscribed ? @"bell.fill" : @"bell.slash";
         
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
         notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
         notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         notifications.width = 32.f;

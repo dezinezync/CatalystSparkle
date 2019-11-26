@@ -311,7 +311,7 @@
             
             asyncMain(^{
                 sender.enabled = YES;
-                sender.image = [UIImage imageNamed:@"notifications_off"];
+                sender.image = [UIImage systemImageNamed:@"bell.slash"];
                 sender.accessibilityValue = @"Subscribe to notifications";
             });
             
@@ -385,7 +385,7 @@
         
         asyncMain(^{
             sender.enabled = YES;
-            sender.image = [UIImage imageNamed:@"notifications_on"];
+            sender.image = [UIImage systemImageNamed:@"bell.fill"];
             sender.accessibilityValue = @"Unsubscribe from notifications";
         });
         
@@ -457,7 +457,7 @@
         
         UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems lastObject];
         
-        sender.image = [UIImage imageNamed:@"notifications_on"];
+        sender.image = [UIImage systemImageNamed:@"bell.fill"];
         sender.accessibilityValue = @"Unsubscribe from notifications";
         
     });

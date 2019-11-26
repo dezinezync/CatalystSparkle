@@ -47,7 +47,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     // Initialization code
     
     self.faviconView.contentMode = UIViewContentModeCenter;
-    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.faviconView.image = [[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
@@ -90,7 +90,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.cacheImage = NO;
     self.faviconView.cachedSuffix = nil;
-    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.faviconView.image = [[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     

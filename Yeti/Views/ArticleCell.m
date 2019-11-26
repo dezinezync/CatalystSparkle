@@ -140,9 +140,9 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
     
     if (!isCustomFeed) {
         if (!item.isRead)
-            self.markerView.image = [UIImage imageNamed:@"munread"];
+            self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
         else if (item.isBookmarked)
-            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+            self.markerView.image = [UIImage systemImageNamed:@"bookmark"];
         else
             self.markerView.image = nil;
     }
