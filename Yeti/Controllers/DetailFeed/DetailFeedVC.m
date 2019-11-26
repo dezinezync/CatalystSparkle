@@ -1433,12 +1433,12 @@ NSString * const kSizCache = @"FeedSizesCache";
         return @[];
     }
  
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
     
-    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all_bd"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
+    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
     allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
     allReadBackDated.width = 32.f;
@@ -1465,9 +1465,11 @@ NSString * const kSizCache = @"FeedSizesCache";
         
     }
     
-    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option];
+    UIColor *tintColor = nil;
+    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
     
     UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.tintColor = tintColor;
     sorting.width = 32.f;
     
     if (!(self.feed.hubSubscribed && self.feed.hub)) {

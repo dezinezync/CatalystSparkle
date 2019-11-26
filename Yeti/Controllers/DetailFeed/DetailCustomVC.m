@@ -264,6 +264,20 @@
     return YES;
 }
 
+- (void)updateSortingOptionTo:(YetiSortOption)option sender:(UIBarButtonItem *)sender {
+    
+    self->_sortingOption = option;
+    
+    [self setSortingOption:self->_sortingOption];
+    
+    UIColor *tintColor = nil;
+    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+    
+    sender.image = image;
+    sender.tintColor = tintColor;
+    
+}
+
 - (void)didTapSortOptions:(UIBarButtonItem *)sender {
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
@@ -272,33 +286,37 @@
     
     UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
-        
         strongify(self);
         
-        self->_sortingOption = YTSortUnreadDesc;
-        
-        [self setSortingOption:self->_sortingOption];
+        [self updateSortingOptionTo:YTSortAllDesc sender:sender];
         
     }];
     
     UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
-        
         strongify(self);
         
-        self->_sortingOption = YTSortUnreadAsc;
-        
-        [self setSortingOption:self->_sortingOption];
+        [self updateSortingOptionTo:YTSortUnreadAsc sender:sender];
         
     }];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     @try {
-        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
-        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
+        
+        UIColor *tintColor = nil;
+        UIImage * image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:&tintColor];
+        
+        [allDesc setValue:image forKeyPath:@"image"];
+//        [allDesc setValue:tintColor forKeyPath:@"tintColor"];
+        
+        tintColor = nil;
+        image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:&tintColor];
+        
+        [allAsc setValue:image forKeyPath:@"image"];
+//        [allAsc setValue:tintColor forKeyPath:@"tintColor"];
+
+
     }
     @catch (NSException *exc) {
         

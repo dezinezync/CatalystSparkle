@@ -158,20 +158,53 @@ BOOL canSupportOLED (void) {
 
 @implementation SortImageProvider
 
-+ (UIImage *)imageForSortingOption:(YetiSortOption)option {
++ (UIImage *)imageForSortingOption:(YetiSortOption)option tintColor:(UIColor **)returnColor {
+    
+    UIColor *tintColor = [SortImageProvider tintColorForSortingOption:option];
+    
+    NSString *imageName = nil;
+    
+    if (returnColor != NULL) {
+        *returnColor = tintColor;
+    }
     
     if ([option isEqualToString:YTSortAllDesc]) {
-        return [[UIImage imageNamed:@"sort_all_desc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        imageName = @"calendar";
     }
     else if ([option isEqualToString:YTSortAllAsc]) {
-        return [[UIImage imageNamed:@"sort_all_asc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        imageName = @"calendar";
     }
     else if ([option isEqualToString:YTSortUnreadDesc]) {
-        return [[UIImage imageNamed:@"sort_unread_desc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        imageName = @"exclamationmark.octagon";
     }
     else {
-        return [[UIImage imageNamed:@"sort_unread_asc"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+        imageName = @"exclamationmark.octagon";
     }
+    
+    UIImage * image = [[[UIImage systemImageNamed:imageName] imageWithTintColor:tintColor renderingMode:UIImageRenderingModeAlwaysTemplate] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    return image;
+    
+}
+
++ (UIColor *)tintColorForSortingOption:(YetiSortOption)option {
+    
+    UIColor *color = nil;
+    
+    if ([option isEqualToString:YTSortAllDesc]) {
+        color = UIColor.systemRedColor;
+    }
+    else if ([option isEqualToString:YTSortAllAsc]) {
+        color = UIColor.systemGreenColor;
+    }
+    else if ([option isEqualToString:YTSortUnreadDesc]) {
+        color = UIColor.systemIndigoColor;
+    }
+    else {
+        color = UIColor.systemOrangeColor;
+    }
+    
+    return color;
     
 }
 

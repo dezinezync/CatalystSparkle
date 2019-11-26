@@ -22,49 +22,67 @@
 
 #pragma mark - Actions
 
+- (void)updateSortingOptionTo:(YetiSortOption)option sender:(UIBarButtonItem *)sender {
+    
+    [self setSortingOption:option];
+    
+    UIColor *tintColor = nil;
+    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+    
+    sender.image = image;
+    sender.tintColor = tintColor;
+    
+}
+
 - (void)didTapSortOptions:(UIBarButtonItem *)sender {
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"All - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortAllDesc];
-        
-        [self setSortingOption:YTSortAllDesc];
+        [self updateSortingOptionTo:YTSortAllDesc sender:sender];
         
     }];
     
     UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"All - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortAllAsc];
-        
-        [self setSortingOption:YTSortAllAsc];
+        [self updateSortingOptionTo:YTSortAllAsc sender:sender];
+
         
     }];
     
     UIAlertAction *unreadDesc = [UIAlertAction actionWithTitle:@"Unread - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
-        
-        [self setSortingOption:YTSortUnreadDesc];
+        [self updateSortingOptionTo:YTSortUnreadDesc sender:sender];
         
     }];
     
     UIAlertAction *unreadAsc = [UIAlertAction actionWithTitle:@"Unread - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
-        
-        [self setSortingOption:YTSortUnreadAsc];
+        [self updateSortingOptionTo:YTSortUnreadAsc sender:sender];
         
     }];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     @try {
-        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortAllDesc] forKeyPath:@"image"];
-        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortAllAsc] forKeyPath:@"image"];
-        [unreadDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
-        [unreadAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
+        
+        UIImage * image = [SortImageProvider imageForSortingOption:YTSortAllDesc tintColor:nil];
+        
+        [allDesc setValue:image forKeyPath:@"image"];
+        
+        image = [SortImageProvider imageForSortingOption:YTSortAllAsc tintColor:nil];
+        
+        [allAsc setValue:image forKeyPath:@"image"];
+        
+        image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:nil];
+        
+        [unreadDesc setValue:image forKeyPath:@"image"];
+        
+        image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:nil];
+        
+        [unreadAsc setValue:image forKeyPath:@"image"];
+
     }
     @catch (NSException *exc) {
         
@@ -465,6 +483,8 @@
     
     NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
     [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+    
+    self.controllerState = StateLoaded;
     
     [self loadNextPage];
 }

@@ -62,6 +62,10 @@
     return self;
 }
 
+- (BOOL)shouldAutomaticallyForwardAppearanceMethods {
+    return YES;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     

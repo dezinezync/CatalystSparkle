@@ -214,7 +214,70 @@ static void *KVO_Unread = &KVO_Unread;
     
     UITableViewDiffableDataSource *DDS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull obj) {
         
-        return [self tableView:tableView cellForRowAtIndexPath:indexPath];
+        FeedsCell *ocell = nil;
+        
+        BOOL showUnreadCounter = SharedPrefs.showUnreadCounts;
+        
+        if (indexPath.section == 0) {
+            FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+            
+            cell.titleLabel.text = [self objectAtIndexPath:indexPath];
+            
+            NSString *imageName = nil;
+            UIColor *tintColor = nil;
+            
+            if (indexPath.row == 0) {
+                imageName = @"largecircle.fill.circle";
+                tintColor = UIColor.systemBlueColor;
+            }
+            else if (indexPath.row == 1) {
+                imageName = @"bookmark.fill";
+                tintColor = UIColor.systemOrangeColor;
+            }
+            else {
+                imageName = @"calendar";
+                tintColor = UIColor.systemRedColor;
+            }
+            
+            UIImage *image = [[UIImage systemImageNamed:imageName] imageWithTintColor:tintColor renderingMode:UIImageRenderingModeAlwaysTemplate];
+            
+            cell.faviconView.image = image;
+            cell.faviconView.tintColor = tintColor;
+            
+            if (indexPath.row == 0) {
+                cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
+            }
+            else {
+                cell.countLabel.text = formattedString(@"%@", @(self.bookmarksManager.bookmarksCount));
+            }
+            
+            ocell = cell;
+            
+        }
+        else {
+            
+            // Configure the cell...
+            id obj = [self objectAtIndexPath:indexPath];
+            if (obj) {
+                if ([obj isKindOfClass:Feed.class]) {
+                    FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
+                    [cell configure:obj];
+                    
+                    ocell = cell;
+                }
+                else {
+                    // folder
+                    FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
+                    [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
+                    cell.interactionDelegate = self;
+                    ocell = (FeedsCell *)cell;
+                }
+            }
+        }
+        
+        ocell.countLabel.hidden = !showUnreadCounter;
+        
+        return ocell;
         
     }];
     
@@ -238,7 +301,7 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (UIBarButtonItem *)leftBarButtonItem {
     
-    UIImage *settingsImage = [UIImage imageNamed:@"settings"];
+    UIImage *settingsImage = [UIImage systemImageNamed:@"gear"];
     
     UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     settings.accessibilityLabel = @"Settings";
@@ -250,9 +313,9 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
-    UIImage * newFolderImage = [UIImage imageNamed:@"create_new_folder"],
-            * recommendationsImage = [UIImage imageNamed:@"whatshot"],
-            * newFeedImage = [UIImage imageNamed:@"new"];
+    UIImage * newFolderImage = [UIImage systemImageNamed:@"folder.badge.plus"],
+            * recommendationsImage = [UIImage systemImageNamed:@"flame"],
+            * newFeedImage = [UIImage systemImageNamed:@"plus"];
     
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithImage:newFeedImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAdd:)];
     add.accessibilityLabel = @"New Feed";
@@ -445,58 +508,6 @@ static void *KVO_Unread = &KVO_Unread;
     
     return view;
     
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    FeedsCell *ocell = nil;
-    
-    BOOL showUnreadCounter = SharedPrefs.showUnreadCounts;
-    
-    if (indexPath.section == 0) {
-        FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
-        
-        cell.titleLabel.text = [self objectAtIndexPath:indexPath];
-        
-        NSString *imageName = [@"l" stringByAppendingString:cell.titleLabel.text.lowercaseString];
-        UIImage *image = [UIImage imageNamed:imageName];
-        
-        cell.faviconView.image = image;
-        
-        if (indexPath.row == 0) {
-            cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
-        }
-        else {
-            cell.countLabel.text = formattedString(@"%@", @(self.bookmarksManager.bookmarksCount));
-        }
-        
-        ocell = cell;
-        
-    }
-    else {
-        
-        // Configure the cell...
-        id obj = [self objectAtIndexPath:indexPath];
-        if (obj) {
-            if ([obj isKindOfClass:Feed.class]) {
-                FeedsCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
-                [cell configure:obj];
-                
-                ocell = cell;
-            }
-            else {
-                // folder
-                FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
-                [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
-                cell.interactionDelegate = self;
-                ocell = (FeedsCell *)cell;
-            }
-        }
-    }
-    
-    ocell.countLabel.hidden = !showUnreadCounter;
-    
-    return ocell;
 }
 
 #pragma mark - <UITableViewDelegate>
@@ -1036,7 +1047,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     UIImage *image = nil;
     
-    image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     cell.faviconView.image = image;
     

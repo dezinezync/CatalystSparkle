@@ -1162,8 +1162,8 @@
 		F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */ = {
 			isa = PBXGroup;
 			children = (
-				F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */,
 				F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */,
+				F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */,
 				F02EB7B12386C15E00DB8E72 /* Categories */,
 			);
 			name = TOSplitViewController;

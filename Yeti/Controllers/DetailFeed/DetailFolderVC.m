@@ -117,7 +117,11 @@
     }
 #pragma clang diagnostic pop
     
-    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    UIColor *tintColor = nil;
+    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.tintColor = tintColor;
     sorting.width = 32.f;
     
     if (!(self.feed.hubSubscribed && self.feed.hub)) {

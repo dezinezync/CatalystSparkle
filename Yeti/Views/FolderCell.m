@@ -180,7 +180,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    UIImage *image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.faviconView.image = image;
     
