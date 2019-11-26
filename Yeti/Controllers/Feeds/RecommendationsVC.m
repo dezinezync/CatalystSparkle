@@ -14,7 +14,6 @@
 #import "CollectionHeader.h"
 
 #import "FeedsVC.h"
-#import "FeedVC.h"
 #import "DetailFeedVC.h"
 
 #import "YetiConstants.h"
@@ -332,7 +331,7 @@ static NSString * const reuseIdentifier = @"Cell";
     }
     
     BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
-                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+                    && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     if (feed) {
         UIViewController *vcc;

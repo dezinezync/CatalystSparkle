@@ -13,8 +13,9 @@
 #import "EmptyVC.h"
 #import "YTNavigationController.h"
 #import "ArticleVC.h"
+#import "TOSplitViewController.h"
 
-@interface SplitVC : UISplitViewController <UIViewControllerRestoration>
+@interface SplitVC : TOSplitViewController <UIViewControllerRestoration>
 
 - (void)userNotFound;
 

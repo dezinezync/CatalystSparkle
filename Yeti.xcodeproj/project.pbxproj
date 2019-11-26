@@ -179,7 +179,6 @@
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
-		F08CE0AA232A590C00982823 /* AuthorBioVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */; };
 		F0919F651FD7C1A80098F48A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */; };
 		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
 		F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */; };
@@ -331,6 +330,8 @@
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
+		F0F51B8223880B59001B3CFC /* AuthorBioVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */; };
+		F0F51B8323880B59001B3CFC /* AuthorBioVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F51B8023880B59001B3CFC /* AuthorBioVC.m */; };
 		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBE215170B70076156D /* YetiConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D071F6205E877A00A042CD /* YetiConstants.m */; };
@@ -341,7 +342,6 @@
 		F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22822112CD100EE67F8 /* flutter-dark@3x.png */; };
 		F0FDB22D22112CD200EE67F8 /* flutter-dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22922112CD100EE67F8 /* flutter-dark@2x.png */; };
 		F0FDB22E22112CD200EE67F8 /* flutter-dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0FDB22A22112CD100EE67F8 /* flutter-dark~ipad@2x.png */; };
-		F0FE188622B7EB7D007DD285 /* AuthorBioVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC07920832DB5009029E1 /* AuthorBioVC.m */; };
 		F0FEC4A323085E840082C79D /* ArticlesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FEC4A223085E840082C79D /* ArticlesManager.m */; };
 /* End PBXBuildFile section */
 
@@ -549,8 +549,6 @@
 		F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleAuthorView.xib; sourceTree = "<group>"; };
 		F01285BF23436D8D00B8C277 /* Keychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keychain.h; sourceTree = "<group>"; };
 		F01285C123436D8D00B8C277 /* Keychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Keychain.m; sourceTree = "<group>"; };
-		F01341AC21DC905400854DE1 /* TagFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagFeedVC.h; sourceTree = "<group>"; };
-		F01341AD21DC905400854DE1 /* TagFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TagFeedVC.m; sourceTree = "<group>"; };
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
@@ -573,18 +571,12 @@
 		F022B0DE20DC30DE00030185 /* AccentButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AccentButton.m; sourceTree = "<group>"; };
 		F022F0481FBD4BFF006A0036 /* Aside.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aside.h; sourceTree = "<group>"; };
 		F022F0491FBD4BFF006A0036 /* Aside.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Aside.m; sourceTree = "<group>"; };
-		F023E5592076900E00FF513C /* CustomFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeedVC.h; sourceTree = "<group>"; };
-		F023E55A2076900E00FF513C /* CustomFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeedVC.m; sourceTree = "<group>"; };
 		F02459C62058FFF1002906C3 /* FeedsVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Search.h"; sourceTree = "<group>"; };
 		F02459C72058FFF1002906C3 /* FeedsVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Search.m"; sourceTree = "<group>"; };
 		F02459C920590E6D002906C3 /* SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchResults.h; sourceTree = "<group>"; };
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
 		F02459CC20590F03002906C3 /* FeedsSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsSearchResults.h; sourceTree = "<group>"; };
 		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
-		F02459CF20591224002906C3 /* FeedSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedSearchResults.h; sourceTree = "<group>"; };
-		F02459D020591224002906C3 /* FeedSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedSearchResults.m; sourceTree = "<group>"; };
-		F02459D22059135E002906C3 /* FeedVC+Search.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Search.h"; sourceTree = "<group>"; };
-		F02459D32059135E002906C3 /* FeedVC+Search.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Search.m"; sourceTree = "<group>"; };
 		F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSplitViewController.m; sourceTree = "<group>"; };
 		F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TOSplitViewController.h; sourceTree = "<group>"; };
 		F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+TOSplitViewController.m"; sourceTree = "<group>"; };
@@ -670,14 +662,9 @@
 		F05C7AA220D8E203007D6B5C /* TableHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableHeader.xib; sourceTree = "<group>"; };
 		F05D21841FF2222F003DE813 /* YTUserID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTUserID.h; sourceTree = "<group>"; };
 		F05D21851FF2222F003DE813 /* YTUserID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YTUserID.m; sourceTree = "<group>"; };
-		F05DC06E20831FD3009029E1 /* AuthorVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorVC.h; sourceTree = "<group>"; };
-		F05DC06F20831FD3009029E1 /* AuthorVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorVC.m; sourceTree = "<group>"; };
 		F05DC071208328EC009029E1 /* AuthorHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorHeaderView.h; sourceTree = "<group>"; };
 		F05DC072208328EC009029E1 /* AuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorHeaderView.m; sourceTree = "<group>"; };
 		F05DC075208328FB009029E1 /* AuthorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorHeaderView.xib; sourceTree = "<group>"; };
-		F05DC07820832DB5009029E1 /* AuthorBioVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthorBioVC.h; sourceTree = "<group>"; };
-		F05DC07920832DB5009029E1 /* AuthorBioVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AuthorBioVC.m; sourceTree = "<group>"; };
-		F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorBioVC.xib; sourceTree = "<group>"; };
 		F05E0C0D2174AFA70042FC38 /* DetailFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailFolderVC.h; sourceTree = "<group>"; };
 		F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailFolderVC.m; sourceTree = "<group>"; };
 		F0647BE92099D2A9002291B9 /* dark.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dark.json; sourceTree = "<group>"; };
@@ -756,8 +743,6 @@
 		F070C34E1FBAE2F200912CCF /* ArticleCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ArticleCell.h; path = Yeti/Views/ArticleCell.h; sourceTree = SOURCE_ROOT; };
 		F070C34F1FBAE2F200912CCF /* ArticleCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ArticleCell.m; path = Yeti/Views/ArticleCell.m; sourceTree = SOURCE_ROOT; };
 		F070C3501FBAE2F200912CCF /* ArticleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ArticleCell.xib; path = Yeti/Views/ArticleCell.xib; sourceTree = SOURCE_ROOT; };
-		F070C3531FBAE52300912CCF /* FeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedVC.h; sourceTree = "<group>"; };
-		F070C3541FBAE52300912CCF /* FeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedVC.m; sourceTree = "<group>"; };
 		F070C3561FBAE7A200912CCF /* ArticleVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleVC.h; sourceTree = "<group>"; };
 		F070C3571FBAE7A200912CCF /* ArticleVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleVC.m; sourceTree = "<group>"; };
 		F070C3581FBAE7A200912CCF /* ArticleVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleVC.xib; sourceTree = "<group>"; };
@@ -791,8 +776,6 @@
 		F07CD38822B266E9005BCDE7 /* OpenDyslexic-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Bold.ttf"; sourceTree = "<group>"; };
 		F07DCA3920C517D20068ED51 /* UITableViewController+KeyboardScroll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UITableViewController+KeyboardScroll.h"; path = "Yeti/Categories/UITableViewController+KeyboardScroll.h"; sourceTree = SOURCE_ROOT; };
 		F07DCA3A20C517D20068ED51 /* UITableViewController+KeyboardScroll.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "UITableViewController+KeyboardScroll.m"; path = "Yeti/Categories/UITableViewController+KeyboardScroll.m"; sourceTree = SOURCE_ROOT; };
-		F07DCA3E20C51AF30068ED51 /* FeedVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Keyboard.h"; sourceTree = "<group>"; };
-		F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Keyboard.m"; sourceTree = "<group>"; };
 		F07DCA4220C51B550068ED51 /* ArticleVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Keyboard.h"; sourceTree = "<group>"; };
 		F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Keyboard.m"; sourceTree = "<group>"; };
 		F08011E22167345300F0CE81 /* OPMLDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLDeckController.h; sourceTree = "<group>"; };
@@ -1038,6 +1021,9 @@
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
+		F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AuthorBioVC.xib; path = Yeti/Controllers/Feed/AuthorBioVC.xib; sourceTree = SOURCE_ROOT; };
+		F0F51B8023880B59001B3CFC /* AuthorBioVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AuthorBioVC.m; path = Yeti/Controllers/Feed/AuthorBioVC.m; sourceTree = SOURCE_ROOT; };
+		F0F51B8123880B59001B3CFC /* AuthorBioVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuthorBioVC.h; path = Yeti/Controllers/Feed/AuthorBioVC.h; sourceTree = SOURCE_ROOT; };
 		F0F8DBB921516EE80076156D /* NSPointerArray+AbstractionHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPointerArray+AbstractionHelpers.h"; sourceTree = "<group>"; };
 		F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPointerArray+AbstractionHelpers.m"; sourceTree = "<group>"; };
 		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
@@ -1153,28 +1139,6 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		F01D714B1FBBF51300DF84B9 /* Feed */ = {
-			isa = PBXGroup;
-			children = (
-				F070C3531FBAE52300912CCF /* FeedVC.h */,
-				F070C3541FBAE52300912CCF /* FeedVC.m */,
-				F05DC06E20831FD3009029E1 /* AuthorVC.h */,
-				F05DC06F20831FD3009029E1 /* AuthorVC.m */,
-				F02459CF20591224002906C3 /* FeedSearchResults.h */,
-				F02459D020591224002906C3 /* FeedSearchResults.m */,
-				F02459D22059135E002906C3 /* FeedVC+Search.h */,
-				F02459D32059135E002906C3 /* FeedVC+Search.m */,
-				F07DCA3E20C51AF30068ED51 /* FeedVC+Keyboard.h */,
-				F07DCA3F20C51AF30068ED51 /* FeedVC+Keyboard.m */,
-				F023E5592076900E00FF513C /* CustomFeedVC.h */,
-				F023E55A2076900E00FF513C /* CustomFeedVC.m */,
-				F05DC07820832DB5009029E1 /* AuthorBioVC.h */,
-				F05DC07920832DB5009029E1 /* AuthorBioVC.m */,
-				F05DC07A20832DB5009029E1 /* AuthorBioVC.xib */,
-			);
-			path = Feed;
-			sourceTree = "<group>";
-		};
 		F01D714C1FBBF51B00DF84B9 /* Article */ = {
 			isa = PBXGroup;
 			children = (
@@ -1198,8 +1162,8 @@
 		F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */ = {
 			isa = PBXGroup;
 			children = (
-				F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */,
 				F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */,
+				F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */,
 				F02EB7B12386C15E00DB8E72 /* Categories */,
 			);
 			name = TOSplitViewController;
@@ -1256,11 +1220,12 @@
 				F046DF56216E30AC00FFDBD7 /* DetailCustomVC.m */,
 				F05E0C0D2174AFA70042FC38 /* DetailFolderVC.h */,
 				F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */,
-				F01341AC21DC905400854DE1 /* TagFeedVC.h */,
-				F01341AD21DC905400854DE1 /* TagFeedVC.m */,
 				F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */,
 				F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */,
 				F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */,
+				F0F51B8123880B59001B3CFC /* AuthorBioVC.h */,
+				F0F51B8023880B59001B3CFC /* AuthorBioVC.m */,
+				F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */,
 			);
 			path = DetailFeed;
 			sourceTree = "<group>";
@@ -1397,7 +1362,6 @@
 			children = (
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F0A0501921F07BD600A46524 /* NewFeed */,
-				F01D714B1FBBF51300DF84B9 /* Feed */,
 				F043430621CF433000F854E4 /* DetailFeed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
 				F018A2CB205D0EF9001E682B /* Settings */,
@@ -2362,6 +2326,7 @@
 				F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F0A5AE9020C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
+				F0F51B8223880B59001B3CFC /* AuthorBioVC.xib in Resources */,
 				F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */,
 				F0A5AE9A20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
 				F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */,
@@ -2457,7 +2422,6 @@
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */,
-				F08CE0AA232A590C00982823 /* AuthorBioVC.xib in Resources */,
 				F0A5AE6620C197EF00CFA1D2 /* Merriweather-BoldItalic.ttf in Resources */,
 				F064A5382157678900A385AD /* IdentityVC.xib in Resources */,
 				F0542E36211DBFD700D66878 /* black@3x.png in Resources */,
@@ -2617,6 +2581,7 @@
 				F064A5372157678900A385AD /* IdentityVC.m in Sources */,
 				F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */,
 				F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */,
+				F0F51B8323880B59001B3CFC /* AuthorBioVC.m in Sources */,
 				F0AA8C91216B4A5500C65DAE /* DTTimePeriodCollection.m in Sources */,
 				F03BC4E920C9016A007B574F /* EmptyView.m in Sources */,
 				F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */,
@@ -2696,7 +2661,6 @@
 				F070C3481FBAD4B200912CCF /* Enclosure.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
 				F095F6BE234B6E780005356B /* PagingManager.m in Sources */,
-				F0FE188622B7EB7D007DD285 /* AuthorBioVC.m in Sources */,
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
 				F0AA8C8D216B4A5500C65DAE /* NSDate+DateTools.m in Sources */,
@@ -2818,7 +2782,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2850,7 +2814,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2904,7 +2868,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2964,7 +2928,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -2996,7 +2960,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3040,7 +3004,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3074,7 +3038,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3093,7 +3057,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3112,7 +3076,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3128,7 +3092,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3173,7 +3137,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3205,7 +3169,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3239,7 +3203,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3258,7 +3222,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3278,7 +3242,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 310;
+				CURRENT_PROJECT_VERSION = 312;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

@@ -40,7 +40,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     self.faviconView.contentMode = UIViewContentModeCenter;
     
-    self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.faviconView.image = [[UIImage systemImageNamed:@"folder.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
@@ -91,7 +91,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     self.titleLabel.text = nil;
     self.countLabel.text = nil;
     
-    self.faviconView.image = [[UIImage imageNamed:@"folder"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.faviconView.image = [[UIImage systemImageNamed:@"folder.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.selectionStyle = UITableViewCellSelectionStyleDefault;
     self.indentationLevel = 0;
@@ -180,7 +180,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    UIImage *image = [[UIImage imageNamed:([folder isExpanded] ? @"folder_open" : @"folder")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIImage *image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.faviconView.image = image;
     

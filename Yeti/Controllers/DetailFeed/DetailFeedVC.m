@@ -47,6 +47,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     BOOL _initialSetup;
     ArticleCellB *_protoCell;
+    
+    // This determines if the VC has the Feeds ref when it was loaded. If not, it observes for the notifications and updates the datasource when they become available
+    BOOL _hadFeedsWhenLoaded;
 }
 
 @property (nonatomic, weak) UIView *hairlineView;
@@ -106,7 +109,18 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.title = [self.feed displayTitle];
     
-    _sortingOption = SharedPrefs.sortingOption;;
+    _sortingOption = SharedPrefs.sortingOption;
+    
+    if (ArticlesManager.shared.feeds != nil && ArticlesManager.shared.feeds.count) {
+        _hadFeedsWhenLoaded = YES;
+    }
+    else {
+        _hadFeedsWhenLoaded = NO;
+        
+        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+        
+        [center addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
+    }
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
@@ -236,6 +250,25 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
+            
+            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
+        }
+        else {
+            self.navigationItem.leftBarButtonItem = nil;
+        }
+        
+    } completion:nil];
+    
+}
+
 - (void)_setToolbarHidden {
     self.navigationController.toolbarHidden = YES;
 }
@@ -301,6 +334,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     return _activityIndicatorView;
 }
 
+#pragma mark - Setters
+
 - (void)setRestorationIdentifier:(NSString *)restorationIdentifier {
     [super setRestorationIdentifier:restorationIdentifier];
     
@@ -308,8 +343,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.collectionView.restorationIdentifier = [restorationIdentifier stringByAppendingString:@"-collectionView"];
 }
-
-#pragma mark - Setters
 
 - (void)setLoadOnReady:(NSNumber *)loadOnReady
 {
@@ -334,6 +367,19 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         // we are visible
         [self loadArticle];
     }
+}
+
+- (void)updatedFeedsNotification:(id)sender {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+    });
+    
 }
 
 #pragma mark - <UICollectionViewDataSource>
@@ -532,7 +578,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [cell setupAppearance];
     
-    BOOL showSeparator = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    BOOL showSeparator = YES; //self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     [cell showSeparator:showSeparator];
     
@@ -558,111 +604,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-#pragma mark - <ArticleCellDelegate>
-
-- (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
-    
-    [self _os12_didTapMenuButton:sender forArticle:article cell:cell];
-    
-}
-
-- (void)didTapTest:(id)sender {
-    
-}
-
-- (void)_os12_didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
-    
-    if (article == nil) {
-        
-        NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
-        
-        if (indexPath == nil) {
-            return;
-        }
-        
-    }
-    
-    NSMutableArray *actions = [NSMutableArray arrayWithCapacity:3];
-    
-    if (article.isRead) {
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Unread" image:[UIImage imageNamed:@"menu-unread"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article read:NO];
-            
-        }]];
-    }
-    else {
-        
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Read" image:[UIImage imageNamed:@"menu-read"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article read:YES];
-            
-        }]];
-        
-    }
-    
-    if (article.isBookmarked) {
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Unbookmark" image:[UIImage imageNamed:@"menu-unbookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article bookmarked:NO];
-            
-        }]];
-    }
-    else {
-        
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Bookmark" image:[UIImage imageNamed:@"menu-bookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article bookmarked:YES];
-            
-        }]];
-        
-    }
-    
-    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Browser" image:[UIImage imageNamed:@"open_in_browser"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-        
-        NSURL *URL = formattedURL(@"yeti://external?link=%@", article.articleURL);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
-            
-        });
-        
-    }]];
-    
-    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Share" image:[UIImage imageNamed:@"menu-share"] color:[UIColor blueColor] didSelect:^(id  _Nonnull action) {
-        
-        NSString *title = article.articleTitle;
-        NSURL *URL = formattedURL(@"%@", article.articleURL);
-        
-        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
-        
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.sourceView = sender;
-        pvc.sourceRect = [(UIView *)sender frame];
-        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
-        
-        [self presentViewController:avc animated:YES completion:nil];
-        
-    }]];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    PopMenuAppearance *appearance = [PopMenuAppearance new];
-    appearance.popMenuCornerRadius = 12.f;
-    appearance.popMenuColor = theme.menuColor;
-    appearance.popMenuTextColor = theme.menuTextColor;
-    
-    appearance.popMenuFont = [TypeFactory.shared boldBodyFont];
-    
-    PopMenuViewController *vc = [[PopMenuViewController alloc] initWithAppearance:appearance sourceView:sender actions:actions];
-    
-    DDLogDebug(@"Button:%@\nArticle:%@\nCell:%@", sender, article.articleTitle, [self.collectionView indexPathForCell:cell]);
-    
-    [self presentViewController:vc animated:YES completion:nil];
-    
-}
-
 #pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -677,27 +618,33 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     vc.providerDelegate = self;
     vc.bookmarksManager = self.bookmarksManager;
     
-    if (self.splitViewController == nil) {
+    if (self.to_splitViewController == nil) {
         // in a modal stack
         [self.navigationController pushViewController:vc animated:YES];
     }
-    else if (self.splitViewController != nil) {
+    else if (self.to_splitViewController != nil) {
         
-        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
-            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
-                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                
-                [self.splitViewController showDetailViewController:nav sender:self];
-            }
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+
+            [self to_showDetailViewController:nav sender:self];
+            
+//            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+//                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
+//
+//                [self.navigationController pushViewController:vc animated:YES];
+//
+//            }
+//            else {
+//                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//
+//                [self.splitViewController showDetailViewController:nav sender:self];
+//            }
             
         }
         else {
-            [self showViewController:vc sender:self];
+            [self.navigationController pushViewController:vc animated:YES];
         }
         
     }
@@ -1173,12 +1120,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
                 if (cell != nil && article.isBookmarked == NO) {
                     
-                    cell.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                    
                     if (read == YES) {
+                        cell.markerView.image = [[UIImage systemImageNamed:@"circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                        
                         cell.markerView.tintColor = [[YTThemeKit theme] borderColor];
                     }
                     else {
+                        cell.markerView.image = [[UIImage systemImageNamed:@"largecircle.fill.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                        
                         cell.markerView.tintColor = [[YTThemeKit theme] tintColor];
                     }
                 }
@@ -1239,7 +1188,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                         cell.markerView.image = nil;
                     }
                     else {
-                        cell.markerView.image = [UIImage imageNamed:@"mbookmark"];
+                        cell.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
                     }
                 }
             }
@@ -1381,12 +1330,12 @@ NSString * const kSizCache = @"FeedSizesCache";
         return @[];
     }
  
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
     
-    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all_bd"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
+    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
     allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
     allReadBackDated.width = 32.f;
@@ -1413,9 +1362,11 @@ NSString * const kSizCache = @"FeedSizesCache";
         
     }
     
-    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option];
+    UIColor *tintColor = nil;
+    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
     
     UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.tintColor = tintColor;
     sorting.width = 32.f;
     
     if (!(self.feed.hubSubscribed && self.feed.hub)) {
@@ -1429,9 +1380,9 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     else {
         // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        NSString *imageString = self.feed.isSubscribed ? @"bell.fill" : @"bell.slash";
         
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
         notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
         notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         notifications.width = 32.f;
@@ -1449,7 +1400,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 
 - (void)setupNavigationBar {
     
-    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+//    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     if (self.isExploring) {

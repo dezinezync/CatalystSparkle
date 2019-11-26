@@ -115,14 +115,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.state = ArticleStateLoading;
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        self.loader.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
+    }
+    
     self.navigationItem.leftItemsSupplementBackButton = YES;
+    
+    self.state = ArticleStateLoading;
     self.articlesImageLoader = [ImageLoader new];
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        || self.splitViewController.view.bounds.size.height < 814.f) {
+    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        || self.to_splitViewController.view.bounds.size.height < 814.f) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
@@ -134,8 +139,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if (self.splitViewController.view.bounds.size.height > 814.f
-             && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    else if (self.to_splitViewController.view.bounds.size.height > 814.f
+             && self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
@@ -2451,10 +2456,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (UIInputView *)searchView
 {
-    if (!_searchView) {
+    if (_searchView == nil) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
+        CGRect frame = CGRectMake(0, 0, self.to_splitViewController.view.bounds.size.width, 52.f);
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
@@ -2497,7 +2502,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
         
         UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
-        [prev setImage:[UIImage imageNamed:@"arrow_up"] forState:UIControlStateNormal];
+        [prev setImage:[UIImage systemImageNamed:@"chevron.up"] forState:UIControlStateNormal];
         prev.bounds = CGRectMake(0, 0, 24.f, 24.f);
         prev.translatesAutoresizingMaskIntoConstraints = NO;
         [prev addTarget:self action:@selector(didTapSearchPrevious) forControlEvents:UIControlEventTouchUpInside];
@@ -2513,7 +2518,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [prev.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
         
         UIButton *next = [UIButton buttonWithType:UIButtonTypeSystem];
-        [next setImage:[UIImage imageNamed:@"arrow_down"] forState:UIControlStateNormal];
+        [next setImage:[UIImage systemImageNamed:@"chevron.down"] forState:UIControlStateNormal];
         next.bounds = CGRectMake(0, 0, 24.f, 24.f);
         next.translatesAutoresizingMaskIntoConstraints = NO;
         [next addTarget:self action:@selector(didTapSearchNext) forControlEvents:UIControlEventTouchUpInside];

@@ -371,7 +371,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         dispatch_async(dispatch_get_main_queue(), ^{
             
             if (image == nil) {
-                attachment.image = [UIImage imageNamed:@"nofavicon"];
+                attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
             }
             else {
                 attachment.image = image;
@@ -385,7 +385,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         DDLogDebug(@"Failed to fetch favicon at: %@", url);
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            attachment.image = [UIImage imageNamed:@"nofavicon"];
+            attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
             
             [self.titleLabel setNeedsDisplay];
         });
@@ -498,15 +498,15 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     UIStackView *stackView = (UIStackView *)[self.markerView superview];
     
     if (item.isBookmarked) {
-        self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+        self.markerView.image = [UIImage systemImageNamed:@"bookmark"];
     }
     else if (!item.isRead) {
         self.markerView.tintColor = YTThemeKit.theme.tintColor;
-        self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        self.markerView.image = [[UIImage systemImageNamed:@"largecircle.fill.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     else {
         self.markerView.tintColor = YTThemeKit.theme.borderColor;
-        self.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        self.markerView.image = [[UIImage systemImageNamed:@"largecircle.fill.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     
     _isShowingCover = NO;
