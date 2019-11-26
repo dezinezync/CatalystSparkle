@@ -2456,7 +2456,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (UIInputView *)searchView
 {
-    if (!_searchView) {
+    if (_searchView == nil) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         CGRect frame = CGRectMake(0, 0, self.to_splitViewController.view.bounds.size.width, 52.f);
@@ -2502,7 +2502,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
         
         UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
-        [prev setImage:[UIImage imageNamed:@"arrow_up"] forState:UIControlStateNormal];
+        [prev setImage:[UIImage systemImageNamed:@"chevron.up"] forState:UIControlStateNormal];
         prev.bounds = CGRectMake(0, 0, 24.f, 24.f);
         prev.translatesAutoresizingMaskIntoConstraints = NO;
         [prev addTarget:self action:@selector(didTapSearchPrevious) forControlEvents:UIControlEventTouchUpInside];
@@ -2518,7 +2518,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [prev.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
         
         UIButton *next = [UIButton buttonWithType:UIButtonTypeSystem];
-        [next setImage:[UIImage imageNamed:@"arrow_down"] forState:UIControlStateNormal];
+        [next setImage:[UIImage systemImageNamed:@"chevron.down"] forState:UIControlStateNormal];
         next.bounds = CGRectMake(0, 0, 24.f, 24.f);
         next.translatesAutoresizingMaskIntoConstraints = NO;
         [next addTarget:self action:@selector(didTapSearchNext) forControlEvents:UIControlEventTouchUpInside];
