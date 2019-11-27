@@ -9,8 +9,7 @@
 #import "FeedsVC+Keyboard.h"
 #import "FeedsVC+Actions.h"
 #import "UITableViewController+KeyboardScroll.h"
-
-#import <DZKit/DZBasicDatasource.h>
+#import "FolderCell.h"
 
 @implementation FeedsVC (Keyboard)
 
@@ -25,15 +24,51 @@
 - (NSArray <UIKeyCommand *> *)keyCommands {
     
     // New Feed
-    UIKeyCommand *newFeed = [UIKeyCommand keyCommandWithInput:@"N" modifierFlags:UIKeyModifierCommand action:@selector(didTapAdd:) discoverabilityTitle:@"New Feed"];
-    UIKeyCommand *newFolder = [UIKeyCommand keyCommandWithInput:@"F" modifierFlags:UIKeyModifierCommand action:@selector(didTapAddFolder:) discoverabilityTitle:@"New Folder"];
-    UIKeyCommand *settings = [UIKeyCommand keyCommandWithInput:@"," modifierFlags:UIKeyModifierCommand action:@selector(didTapSettings) discoverabilityTitle:@"Settings"];
+    UIKeyCommand *newFeed = [UIKeyCommand keyCommandWithInput:@"N" modifierFlags:UIKeyModifierCommand action:@selector(didTapAdd:)];
+    newFeed.title = @"New Feed";
+    newFeed.discoverabilityTitle = newFeed.title;
     
-    UIKeyCommand *upItem = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(didTapPrev) discoverabilityTitle:@"Previous Item"];
-    UIKeyCommand *downItem = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(didTapNext) discoverabilityTitle:@"Next Item"];
-    UIKeyCommand *returnItem = [UIKeyCommand keyCommandWithInput:@"\r" modifierFlags:0 action:@selector(didTapEnter) discoverabilityTitle:@"Confirm Selection"];
+    UIKeyCommand *newFolder = [UIKeyCommand keyCommandWithInput:@"F" modifierFlags:UIKeyModifierCommand action:@selector(didTapAddFolder:)];
+    newFolder.title = @"New Folder";
+    newFolder.discoverabilityTitle = newFolder.title;
     
-    return @[newFeed, newFolder, settings, upItem, downItem, returnItem];
+    UIKeyCommand *settings = [UIKeyCommand keyCommandWithInput:@"," modifierFlags:UIKeyModifierCommand action:@selector(didTapSettings)];
+    settings.title = @"Settings";
+    settings.discoverabilityTitle = settings.title;
+    
+    UIKeyCommand *upItem = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(didTapPrev)];
+    upItem.title = @"Previous Item";
+    upItem.discoverabilityTitle = upItem.title;
+    
+    UIKeyCommand *downItem = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(didTapNext)];
+    downItem.title = @"Next Item";
+    downItem.discoverabilityTitle = downItem.title;
+    
+    UIKeyCommand *returnItem = [UIKeyCommand keyCommandWithInput:@"\r" modifierFlags:0 action:@selector(didTapEnter)];
+    returnItem.title = @"Select";
+    returnItem.discoverabilityTitle = returnItem.title;
+    
+    UIKeyCommand *toggleItem = [UIKeyCommand keyCommandWithInput:@" " modifierFlags:0 action:@selector(didTapSpace)];
+    toggleItem.title = @"Toggle";
+    toggleItem.discoverabilityTitle = @"Toggle";
+    
+    return @[newFeed, newFolder, settings, upItem, downItem, returnItem, toggleItem];
+    
+}
+
+- (void)didTapSpace {
+    
+    if (!self.highlightedRow) {
+        return;
+    }
+    
+    FolderCell *cell = (id)[self.DDS tableView:self.tableView cellForRowAtIndexPath:self.highlightedRow];
+    
+    if ([cell isKindOfClass:FolderCell.class] == NO) {
+        return;
+    }
+    
+    [cell performSelectorOnMainThread:@selector(didTapIcon:) withObject:nil waitUntilDone:NO];
     
 }
 

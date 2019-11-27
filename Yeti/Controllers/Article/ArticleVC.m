@@ -207,6 +207,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
+    [self becomeFirstResponder];
+    
     if (!_hasRendered) {
         [self.loader startAnimating];
     }

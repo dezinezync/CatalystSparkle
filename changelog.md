@@ -2,6 +2,8 @@
 
 ## Build 314
 
+- Keyboard commands are now available once again. **KNOWN ISSUE**: Once you open an article, the keyboard commands for the Feeds Interface may not work in certain cases. 
+
 - Fixed the default sorting option for Unread showing the wrong icon. 
 
 - Improved legibility and visibility of a couple of icons. 

@@ -47,19 +47,6 @@
     [self.navigationController setNavigationBarHidden:YES animated:NO];
 }
 
-//- (void)viewDidAppear:(BOOL)animated
-//{
-//    [super viewDidAppear:animated];
-//    
-//    if (!_showPrimaryOnce) {
-//        _showPrimaryOnce = YES;
-//        
-//        // show the primary controller
-//        UIBarButtonItem *item = [self.to_splitViewController displayModeButtonItem];
-//        [UIApplication.sharedApplication sendAction:item.action to:item.target from:nil forEvent:nil];
-//    }
-//}
-
 - (void)didUpdateTheme {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     

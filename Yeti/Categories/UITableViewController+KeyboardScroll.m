@@ -32,16 +32,46 @@ static char highlightedRowKey;
     SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
     
     NSIndexPath *indexPath = self.highlightedRow;
+    NSInteger section = indexPath ? indexPath.section : 0;
     
     if (!indexPath) {
-        indexPath = [NSIndexPath indexPathForRow:(self.data.count - 1) inSection:0];
+        indexPath = [NSIndexPath indexPathForRow:(self.data.count - 1) inSection:section];
     }
     else {
-        indexPath = [NSIndexPath indexPathForRow:(indexPath.row - 1) inSection:0];
+        indexPath = [NSIndexPath indexPathForRow:(indexPath.row - 1) inSection:section];
     }
     
+    UITableViewDiffableDataSource *DDS = [self valueForKeyPath:@"DDS"];
+    
     if (indexPath.row < 0) {
-        indexPath = nil;
+        
+        if (indexPath.section != 0) {
+            section = indexPath.section - 1;
+            
+            if (section < 0) {
+                indexPath = nil;
+            }
+            else {
+                id sectionIdentifier = [DDS.snapshot sectionIdentifiers][section];
+                    
+                if (DDS != nil) {
+                    
+                    NSInteger numberOfItems = [[DDS snapshot] itemIdentifiersInSectionWithIdentifier:sectionIdentifier].count;
+                    
+                    indexPath = [NSIndexPath indexPathForRow:(numberOfItems - 1) inSection:section];
+                    
+                }
+                else {
+                    indexPath = nil;
+                }
+                
+            }
+            
+        }
+        else {
+            indexPath = nil;
+        }
+        
     }
     
     if (indexPath) {
@@ -63,16 +93,36 @@ static char highlightedRowKey;
 }
 
 - (void)didTapNext {
+    
     SEL unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"dW5oaWdobGlnaHRSb3dBdEluZGV4UGF0aDphbmltYXRlZDo=" options:kNilOptions] encoding:NSUTF8StringEncoding]);
     SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
     
     NSIndexPath *indexPath = self.highlightedRow;
+    NSInteger section = indexPath ? indexPath.section : 0;
     
     if (!indexPath) {
-        indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        indexPath = [NSIndexPath indexPathForRow:0 inSection:section];
     }
     else {
-        indexPath = [NSIndexPath indexPathForRow:(indexPath.row + 1) inSection:0];
+        indexPath = [NSIndexPath indexPathForRow:(indexPath.row + 1) inSection:section];
+    }
+    
+    UITableViewDiffableDataSource *DDS = [self valueForKeyPath:@"DDS"];
+    
+    if (DDS != nil && [DDS itemIdentifierForIndexPath:indexPath] == nil) {
+        
+        if (indexPath.section == 0 && indexPath.row == 2) {
+            indexPath = [NSIndexPath indexPathForRow:0 inSection:1];
+            
+            if ([DDS itemIdentifierForIndexPath:indexPath] == nil) {
+                indexPath = nil;
+            }
+            
+        }
+        else {
+            indexPath = nil;
+        }
+        
     }
     
     if (indexPath.row > (self.data.count - 1)) {
@@ -138,7 +188,10 @@ static char highlightedRowKey;
         index++;
     }
     
-    [inv invoke];
+    @try {
+        [inv invoke];
+    }
+    @catch (NSException *exc) {}
     
 }
 

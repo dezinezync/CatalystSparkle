@@ -126,6 +126,8 @@ static void *KVO_Unread = &KVO_Unread;
     
     [self setupTableView];
     
+    [self becomeFirstResponder];
+    
     if (MyFeedsManager.shouldRequestReview == YES) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [SKStoreReviewController requestReview];
@@ -1045,16 +1047,18 @@ NSString * const kDS2Data = @"DS2Data";
     [self.feedbackGenerator selectionChanged];
     [self.feedbackGenerator prepare];
     
-    UIImage *image = nil;
-    
-    image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    
-    cell.faviconView.image = image;
-    
     weakify(self);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
+            
+        UIImage *image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        
+        cell.faviconView.image = image;
+        
+        [cell.faviconView setNeedsDisplay];
+        [cell setNeedsDisplay];
+        
         [self.tableView.layer removeAllAnimations];
         [self.tableView setContentOffset:contentOffset animated:NO];
     });
