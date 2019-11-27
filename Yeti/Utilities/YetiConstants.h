@@ -132,9 +132,9 @@ extern BOOL canSupportOLED (void);
 
 @interface SortImageProvider : NSObject
 
-+ (UIImage *)imageForSortingOption:(YetiSortOption)option tintColor:(UIColor **)returnColor;
++ (UIImage * _Nullable)imageForSortingOption:(YetiSortOption _Nonnull)option tintColor:(UIColor *_Nullable* _Nullable)returnColor;
 
-+ (UIColor *)tintColorForSortingOption:(YetiSortOption)option;
++ (UIColor * _Nullable)tintColorForSortingOption:(YetiSortOption _Nonnull)option;
 
 @end
 

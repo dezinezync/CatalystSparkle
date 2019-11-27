@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14810.11" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_5" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14766.13"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -40,40 +39,24 @@
                                                 <rect key="frame" x="0.0" y="49.5" width="217" height="30.5"/>
                                                 <subviews>
                                                     <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CEI-O5-9z9">
-                                                        <rect key="frame" x="0.0" y="11.5" width="8" height="8"/>
+                                                        <rect key="frame" x="0.0" y="8.5" width="14" height="14"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" priority="999" constant="8" id="hme-o9-FVw"/>
-                                                            <constraint firstAttribute="width" priority="999" constant="8" id="tYG-lL-uOy"/>
+                                                            <constraint firstAttribute="height" priority="999" constant="14" id="hme-o9-FVw"/>
+                                                            <constraint firstAttribute="width" priority="999" constant="14" id="tYG-lL-uOy"/>
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" text="Author Name - Website Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ohl-9C-34v">
-                                                        <rect key="frame" x="16" y="0.0" width="54.5" height="30.5"/>
+                                                        <rect key="frame" x="22" y="0.0" width="72.5" height="30.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e7v-66-3sl">
-                                                        <rect key="frame" x="78.5" y="8" width="110.5" height="14.5"/>
+                                                        <rect key="frame" x="102.5" y="8" width="114.5" height="14.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BTC-RG-bLe">
-                                                        <rect key="frame" x="197" y="4.5" width="20" height="22"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="20" id="4Qn-3K-2Bw"/>
-                                                            <constraint firstAttribute="height" constant="20" id="ihJ-jz-A4r"/>
-                                                        </constraints>
-                                                        <state key="normal" image="menu-vert"/>
-                                                        <variation key="default">
-                                                            <mask key="constraints">
-                                                                <exclude reference="ihJ-jz-A4r"/>
-                                                            </mask>
-                                                        </variation>
-                                                        <connections>
-                                                            <action selector="didTapMenuButton:" destination="gTV-IL-0wX" eventType="touchUpInside" id="RDa-KP-lSM"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                             </stackView>
                                         </subviews>
@@ -88,7 +71,7 @@
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sB2-5s-gGw">
-                                <rect key="frame" x="0.0" y="88" width="309" height="4"/>
+                                <rect key="frame" x="0.0" y="88" width="309" height="11.5"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" id="QCR-G3-SLq"/>
                                 </constraints>
@@ -97,33 +80,17 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="heb-TO-Hty">
-                                <rect key="frame" x="0.0" y="100" width="309" height="22"/>
+                                <rect key="frame" x="0.0" y="107.5" width="309" height="14.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="ACR-1G-aB6">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="22"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="14.5"/>
                                     </stackView>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" text="10h ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WJ8-ig-8Gv">
-                                        <rect key="frame" x="58" y="4" width="223" height="14.5"/>
+                                        <rect key="frame" x="58" y="0.0" width="251" height="14.5"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="999" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ofP-5q-ac2">
-                                        <rect key="frame" x="289" y="0.0" width="20" height="22"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="HDA-a4-q9T"/>
-                                            <constraint firstAttribute="height" constant="20" id="dks-Rh-1Ua"/>
-                                        </constraints>
-                                        <state key="normal" image="menu-vert"/>
-                                        <variation key="default">
-                                            <mask key="constraints">
-                                                <exclude reference="dks-Rh-1Ua"/>
-                                            </mask>
-                                        </variation>
-                                        <connections>
-                                            <action selector="didTapMenuButton:" destination="gTV-IL-0wX" eventType="touchUpInside" id="aqb-Mt-L6j"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -149,8 +116,6 @@
                 <outlet property="coverImage" destination="2Gi-zH-JaP" id="byV-41-Rn6"/>
                 <outlet property="mainStackView" destination="qkY-n6-DZZ" id="V1l-kz-xbY"/>
                 <outlet property="markerView" destination="CEI-O5-9z9" id="upq-AL-BuF"/>
-                <outlet property="menuButton" destination="ofP-5q-ac2" id="0ea-hu-xex"/>
-                <outlet property="secondaryMenuButton" destination="BTC-RG-bLe" id="4il-qs-UyS"/>
                 <outlet property="secondaryTimeLabel" destination="e7v-66-3sl" id="E8o-Pj-r7D"/>
                 <outlet property="summaryLabel" destination="sB2-5s-gGw" id="01s-xE-LWH"/>
                 <outlet property="tagsStack" destination="ACR-1G-aB6" id="UqG-of-zTj"/>
@@ -161,7 +126,4 @@
             <point key="canvasLocation" x="-955" y="183"/>
         </collectionViewCell>
     </objects>
-    <resources>
-        <image name="menu-vert" width="20" height="20"/>
-    </resources>
 </document>

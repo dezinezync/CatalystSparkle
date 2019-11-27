@@ -1,6 +1,14 @@
 # v1.6
 
-## Build 309
+## Build 314
+
+- Fixed the default sorting option for Unread showing the wrong icon. 
+
+- Improved legibility and visibility of a couple of icons. 
+
+- Fixed rendering on the launch splash screen. 
+
+## Build 313
 
 - Introduces the new triple column layout for iPads in Landscape mode. 
 

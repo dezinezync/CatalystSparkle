@@ -288,7 +288,7 @@
         
         strongify(self);
         
-        [self updateSortingOptionTo:YTSortAllDesc sender:sender];
+        [self updateSortingOptionTo:YTSortUnreadDesc sender:sender];
         
     }];
     

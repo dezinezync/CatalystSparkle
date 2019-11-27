@@ -177,7 +177,7 @@
     UINavigationController *emptyVC = [vc emptyVC];
     [vc showDetailViewController:emptyVC sender:self];
     
-    UINavigationController *nav = vc.viewControllers.firstObject;
+    UINavigationController *nav = (id)(vc.viewControllers.firstObject);
     DetailFeedVC *top = (DetailFeedVC *)[nav topViewController];
     
     if (top != nil && ([top isKindOfClass:DetailFeedVC.class] || [top.class isSubclassOfClass:DetailFeedVC.class])) {

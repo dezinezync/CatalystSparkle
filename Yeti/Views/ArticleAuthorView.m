@@ -120,7 +120,7 @@
     }
     
     self.backgroundColor = theme.articleBackgroundColor;
-    self.mercurialButton.backgroundColor = theme.backgroundColor;
+//    self.mercurialButton.backgroundColor = theme.backgroundColor;
     self.mercurialButton.opaque = YES;
     
 }
