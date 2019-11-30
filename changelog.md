@@ -10,6 +10,8 @@
 
 - Fixed rendering on the launch splash screen. 
 
+- Fixed displaying article helper view on larger iPhones.
+
 ## Build 313
 
 - Introduces the new triple column layout for iPads in Landscape mode. 

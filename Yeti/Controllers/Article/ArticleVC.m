@@ -286,18 +286,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (idiom == UIUserInterfaceIdiomPad || sizeClass == UIUserInterfaceSizeClassRegular) {
         // on iPad, wide
         // we also push it slightly lower to around where the hands usually are on iPads
-        [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;
-        [helperView.heightAnchor constraintEqualToConstant:190.f].active = YES;
-        [helperView.widthAnchor constraintEqualToConstant:44.f].active = YES;
-        helperView.bottomConstraint = [helperView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-LayoutPadding];
-        
-        helperView.bottomConstraint.active = YES;
-        helperView.stackView.axis = UILayoutConstraintAxisVertical;
+        if (idiom == UIUserInterfaceIdiomPad) {
+            [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;
+            [helperView.heightAnchor constraintEqualToConstant:190.f].active = YES;
+            [helperView.widthAnchor constraintEqualToConstant:44.f].active = YES;
+            helperView.bottomConstraint = [helperView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-LayoutPadding];
+            
+            helperView.bottomConstraint.active = YES;
+            helperView.stackView.axis = UILayoutConstraintAxisVertical;
+        }
+        else {
+            [helperView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
+            [helperView.widthAnchor constraintEqualToConstant:190.f].active = YES;
+            [helperView.heightAnchor constraintEqualToConstant:44.f].active = YES;
+            helperView.bottomConstraint = [helperView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-32.f];
+            helperView.bottomConstraint.active = YES;
+        }
         
         // since we're modifying the bounds, update the shadow path
         [helperView setNeedsUpdateConstraints];
         [helperView layoutIfNeeded];
         [helperView updateShadowPath];
+        
     }
     else {
         // in compact mode
