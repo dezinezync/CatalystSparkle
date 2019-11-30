@@ -207,8 +207,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
-    [self becomeFirstResponder];
-    
     if (!_hasRendered) {
         [self.loader startAnimating];
     }
@@ -220,22 +218,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
 
-//- (void)viewDidLayoutSubviews
-//{
-//    [super viewDidLayoutSubviews];
-//
-//    if (_hasRendered == YES)
-//        return;
-//
-//    _hasRendered = YES;
-//
-//    if (self.item.content == nil || [self.item.content count] == 0) {
-//        [self setupArticle:self.item];
-//    }
-//    else {
-//        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
-//    }
-//}
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    if ([self canBecomeFirstResponder] == YES) {
+        [self becomeFirstResponder];
+    }
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "DetailFeedVC+Actions.h"
+#import "DetailFeedVC+Keyboard.h"
 #import "ArticlePreviewVC.h"
 
 #import "ArticleCellB.h"

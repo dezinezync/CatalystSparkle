@@ -17,6 +17,12 @@
     return [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection];
 }
 
+- (id)datasource {
+    
+    return self.DDS;
+    
+}
+
 - (BOOL)canBecomeFirstResponder {
     return YES;
 }

@@ -159,25 +159,35 @@
         self.navigationController.toolbarHidden = NO;
     }
     
-//    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
-//        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.keyWindow rootViewController] displayModeButtonItem];
-//        self.navigationItem.leftBarButtonItem = displayButton;
-//    }
-//    else {
-//        self.navigationItem.leftBarButtonItems = nil;
-//    }
+    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
+        
+        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose)];
+        
+        self.navigationItem.leftBarButtonItem = close;
+        
+    }
+    else {
+        self.navigationItem.leftBarButtonItems = nil;
+    }
 }
 
 #pragma mark - Actions
 
 - (void)didTapClose {
     
-    SplitVC *vc = (SplitVC *)[self splitViewController];
+    SplitVC *vc = (SplitVC *)[self to_splitViewController];
     
-    UINavigationController *emptyVC = [vc emptyVC];
-    [vc showDetailViewController:emptyVC sender:self];
+    [vc to_showDetailViewController:[vc emptyVC] sender:self];
     
-    UINavigationController *nav = (id)(vc.viewControllers.firstObject);
+    UINavigationController *nav = nil;
+    
+    if (vc.viewControllers.count > 2) {
+        nav = (id)[vc.viewControllers objectAtIndex:1];
+    }
+    else {
+        nav = (id)(vc.viewControllers.firstObject);
+    }
+    
     DetailFeedVC *top = (DetailFeedVC *)[nav topViewController];
     
     if (top != nil && ([top isKindOfClass:DetailFeedVC.class] || [top.class isSubclassOfClass:DetailFeedVC.class])) {

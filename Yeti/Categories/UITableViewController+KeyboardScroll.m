@@ -11,7 +11,7 @@
 
 static char highlightedRowKey;
 
-@implementation UITableViewController (KeyboardScroll)
+@implementation UIViewController (KeyboardScroll)
 
 - (NSIndexPath *)highlightedRow {
     return objc_getAssociatedObject(self, &highlightedRowKey);
@@ -27,8 +27,24 @@ static char highlightedRowKey;
     return @[];
 }
 
+- (UITableView *)tableView {
+    return nil;
+}
+
+- (UICollectionView *)collectionView {
+    return nil;
+}
+
+- (id)datasource {
+    return nil;
+}
+
+#pragma mark - Implemented
+
 - (void)didTapPrev {
+    
     SEL unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"dW5oaWdobGlnaHRSb3dBdEluZGV4UGF0aDphbmltYXRlZDo=" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+    
     SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
     
     NSIndexPath *indexPath = self.highlightedRow;
@@ -41,7 +57,7 @@ static char highlightedRowKey;
         indexPath = [NSIndexPath indexPathForRow:(indexPath.row - 1) inSection:section];
     }
     
-    UITableViewDiffableDataSource *DDS = [self valueForKeyPath:@"DDS"];
+    id DDS = [self datasource];
     
     if (indexPath.row < 0) {
         
@@ -52,7 +68,7 @@ static char highlightedRowKey;
                 indexPath = nil;
             }
             else {
-                id sectionIdentifier = [DDS.snapshot sectionIdentifiers][section];
+                id sectionIdentifier = [((UITableViewDiffableDataSource *)DDS).snapshot sectionIdentifiers][section];
                     
                 if (DDS != nil) {
                     
@@ -74,28 +90,13 @@ static char highlightedRowKey;
         
     }
     
-    if (indexPath) {
-        weakify(self);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            if (self.highlightedRow != nil) {
-                [self invoke:unhighlight object:self.tableView param1:self.highlightedRow param2:@(YES) param3:nil];
-            }
-            
-            [self invoke:highlight object:self.tableView param1:indexPath param2:@(YES) param3:@(UITableViewScrollPositionMiddle)];
-            
-            self.highlightedRow = indexPath;
-        });
+    if (indexPath != nil) {
+        [self changeHighlightToIndexPath:indexPath];
     }
     
 }
 
 - (void)didTapNext {
-    
-    SEL unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"dW5oaWdobGlnaHRSb3dBdEluZGV4UGF0aDphbmltYXRlZDo=" options:kNilOptions] encoding:NSUTF8StringEncoding]);
-    SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
     
     NSIndexPath *indexPath = self.highlightedRow;
     NSInteger section = indexPath ? indexPath.section : 0;
@@ -107,9 +108,9 @@ static char highlightedRowKey;
         indexPath = [NSIndexPath indexPathForRow:(indexPath.row + 1) inSection:section];
     }
     
-    UITableViewDiffableDataSource *DDS = [self valueForKeyPath:@"DDS"];
+    id DDS = [self datasource];
     
-    if (DDS != nil && [DDS itemIdentifierForIndexPath:indexPath] == nil) {
+    if (DDS != nil && [(UITableViewDiffableDataSource *)DDS itemIdentifierForIndexPath:indexPath] == nil) {
         
         if (indexPath.section == 0 && indexPath.row == 2) {
             indexPath = [NSIndexPath indexPathForRow:0 inSection:1];
@@ -129,21 +130,46 @@ static char highlightedRowKey;
         indexPath = nil;
     }
     
-    if (indexPath) {
-        weakify(self);
+    if (indexPath != nil) {
+        [self changeHighlightToIndexPath:indexPath];
+    }
+}
+
+- (void)changeHighlightToIndexPath:(NSIndexPath *)indexPath {
+    
+    SEL unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"dW5oaWdobGlnaHRSb3dBdEluZGV4UGF0aDphbmltYXRlZDo=" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+    
+    SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+    
+    weakify(self);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            
+        if (self.tableView != nil) {
             if (self.highlightedRow != nil) {
                 [self invoke:unhighlight object:self.tableView param1:self.highlightedRow param2:@(YES) param3:nil];
             }
             
             [self invoke:highlight object:self.tableView param1:indexPath param2:@(YES) param3:@(UITableViewScrollPositionMiddle)];
+        }
+        else if (self.collectionView != nil) {
             
-            self.highlightedRow = indexPath;
-        });
-    }
+            SEL col_unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"ZGVzZWxlY3RJdGVtQXRJbmRleFBhdGg6YW5pbWF0ZWQ6" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+            
+            if (self.highlightedRow != nil) {
+                [self invoke:col_unhighlight object:self.collectionView param1:self.highlightedRow param2:@(YES) param3:nil];
+            }
+            
+            SEL col_highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"c2VsZWN0SXRlbUF0SW5kZXhQYXRoOmFuaW1hdGVkOnNjcm9sbFBvc2l0aW9uOg==" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+            
+            [self invoke:col_highlight object:self.collectionView param1:indexPath param2:@(YES) param3:@(UICollectionViewScrollPositionCenteredVertically)];
+            
+        }
+        
+        self.highlightedRow = indexPath;
+    });
+    
 }
 
 - (void)didTapEnter {
@@ -151,12 +177,24 @@ static char highlightedRowKey;
         return;
     }
     
-    SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+    if (self.tableView != nil) {
+        [self.tableView selectRowAtIndexPath:self.highlightedRow animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+        [(id<UITableViewDelegate>)self tableView:self.tableView didSelectRowAtIndexPath:self.highlightedRow];
+        
+        SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+        
+        [self invoke:highlight object:self.tableView param1:self.highlightedRow param2:@(NO) param3:@(UITableViewScrollPositionMiddle)];
+    }
+    else if (self.collectionView != nil) {
+        [self.collectionView selectItemAtIndexPath:self.highlightedRow animated:YES scrollPosition:UICollectionViewScrollPositionCenteredVertically];
+        [(id<UICollectionViewDelegate>)self collectionView:self.collectionView didSelectItemAtIndexPath:self.highlightedRow];
+        
+        SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"c2VsZWN0SXRlbUF0SW5kZXhQYXRoOmFuaW1hdGVkOnNjcm9sbFBvc2l0aW9uOg==" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+        
+        [self invoke:highlight object:self.collectionView param1:self.highlightedRow param2:@(NO) param3:@(UICollectionViewScrollPositionCenteredVertically)];
+    }
     
-    [self.tableView selectRowAtIndexPath:self.highlightedRow animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-    [self tableView:self.tableView didSelectRowAtIndexPath:self.highlightedRow];
     
-    [self invoke:highlight object:self.tableView param1:self.highlightedRow param2:@(NO) param3:@(UITableViewScrollPositionMiddle)];
 }
 
 #pragma mark -
