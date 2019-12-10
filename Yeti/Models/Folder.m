@@ -61,21 +61,19 @@
 
 - (BOOL)isEqualToFolder:(Folder *)object {
     
-    if (object == nil || [object isKindOfClass:Folder.class] == NO) {
+    if (object == nil) {
         return NO;
     }
     
-    BOOL checkOne = ([[object folderID] isEqualToNumber:self.folderID]
-                     && [[object title] isEqualToString:self.title]
-                     && [object.feedIDs isEqualToSet:self.feedIDs]);
-    
-    BOOL checkTwo = YES;
-    
-    if (object.feeds != nil && self.feeds != nil) {
-        checkTwo = object.hash == self.hash;
+    if ([object isKindOfClass:Folder.class] == NO) {
+        return NO;
     }
     
-    return checkOne && checkTwo && object.isExpanded == self.isExpanded;
+    BOOL checkOne = object.hash == self.hash;
+    
+    BOOL checkTwo = object.isExpanded == self.isExpanded;
+    
+    return checkOne && checkTwo;
 }
 
 - (BOOL)isEqual:(id)object {

@@ -22,6 +22,7 @@
     BOOL _refreshing;
     BOOL _preCommitLoading;
     BOOL _noPreSetup;
+    BOOL _presentingKnown;
     
     NSDate *_sinceDate;
     NSIndexPath *_highlightedRow;

@@ -12,8 +12,6 @@
 #import "FeedsManager.h"
 #import "SettingsVC.h"
 
-#import "MoveFoldersVC.h"
-
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 
@@ -184,11 +182,9 @@
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Move to Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
-            UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
-            
             strongify(self);
             
-            [self.to_splitViewController presentViewController:nav animated:YES completion:nil];
+            [self feed_didTapMove:feed indexPath:indexPath];
             
         }]];
         
@@ -829,24 +825,78 @@
 
 - (void)feed_didTapMove:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
     
-    UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+    UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed delegate:self];
     
-    if (feed.folderID != nil) {
+//    if (feed.folderID != nil) {
+//        
+//        for (Folder *folder in ArticlesManager.shared.folders) {
+//            
+//            if ([folder.folderID isEqualToNumber:feed.folderID] && folder.expanded == YES) {
+//                folder.expanded = NO;
+//                
+//                [self setupData];
+//                break;
+//            }
+//            
+//        }
+//        
+//    }
+    
+    [self.to_splitViewController presentViewController:nav animated:YES completion:^{
         
-        for (Folder *folder in ArticlesManager.shared.folders) {
+        self->_presentingKnown = YES;
+        
+    }];
+    
+}
+
+#pragma mark - <MoveFoldersDelegate>
+
+- (void)feed:(Feed *)feed didMoveFromFolder:(Folder *)sourceFolder toFolder:(Folder *)destinationFolder {
+    
+    if (sourceFolder == nil && destinationFolder == nil) {
+        // no change occurred.
+        return;
+    }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_presentingKnown = NO;
+    });
+ 
+#ifdef DEBUG
+    NSLog(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
+#endif
+    
+    NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+    
+    if (sourceFolder != nil && sourceFolder.isExpanded == YES) {
+     
+        if (destinationFolder != nil) {
             
-            if ([folder.folderID isEqualToNumber:feed.folderID] && folder.expanded == YES) {
-                folder.expanded = NO;
-                
-                [self setupData];
-                break;
+            NSIndexPath *indexPathOfFolder = [self.DDS indexPathForItemIdentifier:destinationFolder];
+            
+            if (indexPathOfFolder == nil) {
+                return;
+            }
+            
+            if (destinationFolder.isExpanded == YES) {
+                [snapshot moveItemWithIdentifier:feed afterItemWithIdentifier:destinationFolder];
+            }
+            else {
+                [snapshot deleteItemsWithIdentifiers:@[feed]];
             }
             
         }
+        else {
+            [snapshot deleteItemsWithIdentifiers:@[feed]];
+        }
         
     }
+    else {
+        [snapshot deleteItemsWithIdentifiers:@[feed]];
+    }
     
-    [self.to_splitViewController presentViewController:nav animated:YES completion:nil];
+    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     
 }
 

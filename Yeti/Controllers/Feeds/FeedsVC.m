@@ -285,7 +285,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     self.DDS = DDS;
     
-    [self setupData];
+//    [self setupData];
 
     // @TODO this is not tested on iOS 13
     
@@ -655,6 +655,12 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)setupData {
     
+    if (self->_presentingKnown == YES) {
+        return;
+    }
+    
+    BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
+    
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
         return;
@@ -722,15 +728,7 @@ NSString * const kDS2Data = @"DS2Data";
         
         [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
         
-        BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
-        
-        @try {
-            [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
-        } @catch (NSException *exception) {
-            DDLogError(@"Exception updating Feeds DS: %@", exception);
-        } @finally {
-            
-        }
+        [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
         
         if (presentingSelf == YES) {
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];

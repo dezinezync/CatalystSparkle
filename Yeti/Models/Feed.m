@@ -17,10 +17,6 @@
     return YES;
 }
 
-- (NSString *)compareID {
-    return [self.feedID stringValue];
-}
-
 - (void)encodeWithCoder:(NSCoder *)encoder {
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.authors forKey:@"authors"];
@@ -75,6 +71,8 @@
     return [self copy];
 }
 
+#pragma mark - Equality
+
 - (NSUInteger)hash {
     
     NSUInteger hash = 0;
@@ -88,13 +86,15 @@
 
 - (BOOL)isEqualToFeed:(Feed *)object {
     
-    if (object == nil || [object isKindOfClass:Feed.class] == NO) {
+    if (object == nil) {
         return NO;
     }
     
-    return ([[object feedID] isEqualToNumber:self.feedID]
-            && [[object title] isEqualToString:self.title]
-            && [[object folderID] isEqualToNumber:self.folderID]);
+    if ([object isKindOfClass:Feed.class] == NO) {
+        return NO;
+    }
+    
+    return object.hash == self.hash;
 }
 
 - (BOOL)isEqual:(id)object {

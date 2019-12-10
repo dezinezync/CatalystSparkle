@@ -4,9 +4,7 @@
 #import "Author.h"
 #import "FeedMeta.h"
 
-#import <DZKit/DZDatasourceModel.h>
-
-@interface Feed : DZObject <NSSecureCoding, DZDatasourceModel, NSCopying> {
+@interface Feed : DZObject <NSSecureCoding, NSCopying> {
     
 }
 
