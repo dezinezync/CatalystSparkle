@@ -1,6 +1,9 @@
 # v1.6
 
-## Build 314
+## Build 316
+- Moving from open to open folder no longer crashes the app. 
+
+## Build 315
 
 - Keyboard commands are now available once again. **KNOWN ISSUE**: Once you open an article, the keyboard commands for the Feeds Interface may not work in certain cases. 
 
