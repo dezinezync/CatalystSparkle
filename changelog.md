@@ -1,5 +1,19 @@
 # v1.6
 
+## Build 317 
+
+- Re-add WebP Images support.
+ 
+- Improved handling of opening articles from push notifications.  
+
+- Blog Names below the Article's title are now tappable. They open the blog's article's list. When you open an article from the blog's own article list, this behaviour is disabled to prevent a rabbit hole situation. 
+
+- Minor QoL adjustments and rendering improvements. 
+
+- Fixed opening an Feed from the search results. 
+
+- Improved loading Youtube Videos. The HLS Manifest of the video is now loaded when available. If this is absent, then the mp4 file is checked for and loaded if available. Using the HLS Manifest improves battery usage, performance and lowers data usage. The HLS Manifest is directly handled by the OS and hence also respects Low Data modes on your WiFi or Cellular connections.  
+
 ## Build 316
 - Moving from open to open folder no longer crashes the app. 
 

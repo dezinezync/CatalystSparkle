@@ -528,6 +528,16 @@
     
     [self popToRoot];
     
+    FeedItem *item = [[FeedItem alloc] init];
+    item.feedID = feedID;
+    item.identifier = articleID;
+    
+    ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
+    
+    [nav pushViewController:articleVC animated:YES];
+    
+    return;
+    
     FeedsVC *feedsVC = [[nav viewControllers] firstObject];
     
     UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];

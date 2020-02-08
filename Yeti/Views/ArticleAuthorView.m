@@ -106,7 +106,7 @@
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.titleLabel.textColor = theme.titleColor;
-    self.blogLabel.textColor = theme.tintColor;
+    self.blogLabel.textColor = theme.subtitleColor;
     self.authorLabel.textColor = theme.captionColor;
     
     for (UILabel *label in @[self.titleLabel, self.blogLabel, self.authorLabel]) {

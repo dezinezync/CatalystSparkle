@@ -49,7 +49,7 @@
     
     UIViewController *presenting = self.presentingViewController;
     
-    [presenting showDetailViewController:vc sender:self];
+    [presenting to_showDetailViewController:vc sender:self];
 }
 
 @end

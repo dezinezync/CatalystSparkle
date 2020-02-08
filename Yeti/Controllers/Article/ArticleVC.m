@@ -9,6 +9,7 @@
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
 #import "Content.h"
+#import "DetailFeedVC.h"
 
 #import "Paragraph.h"
 #import "Heading.h"
@@ -88,8 +89,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (nonatomic, strong) YTExtractor *ytExtractor;
 
 @property (nonatomic, strong) ImageLoader *articlesImageLoader;
-
-- (void)didTapOnImage:(UITapGestureRecognizer *)sender API_AVAILABLE(ios(13.0));
 
 @end
 
@@ -720,7 +719,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item.enclosures && self.item.enclosures.count) {
         
-        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png"];
+        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
         NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
         
         // check for images
@@ -978,6 +977,24 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     [self.stackView addArrangedSubview:authorView];
+    
+    // came from a push notification
+    // or the providerDelegate is a non-base-DetailFeedVC (eg. DetailCustomVC)
+    if (self.providerDelegate == nil ||
+        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:NSClassFromString(@"DetailFeedVC")] == NO)) {
+        
+        // the blog label should redirect to the blog
+        authorView.blogLabel.textColor = authorView.tintColor;
+        [authorView.blogLabel setNeedsDisplay];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
+        tap.numberOfTapsRequired = 1;
+        tap.delaysTouchesBegan = YES;
+        tap.delaysTouchesEnded = NO;
+        
+        [authorView.blogLabel addGestureRecognizer:tap];
+        
+    }
     
 }
 
@@ -1947,6 +1964,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addLinebreak];
 }
 
+#pragma mark - Actions
+
+- (void)didTapOnBlogLabel:(UITapGestureRecognizer *)sender {
+    
+    if (sender.state != UIGestureRecognizerStateEnded) {
+        return;
+    }
+    
+    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+    
+    if (feed == nil) {
+        
+        [(UILabel *)sender.view setTextColor:UIColor.secondaryLabelColor];
+        [sender.view removeGestureRecognizer:sender];
+        
+        return;
+    }
+    
+    DetailFeedVC *feedVC = [[DetailFeedVC alloc] initWithFeed:feed];
+    
+    [self.navigationController pushViewController:feedVC animated:YES];
+    
+}
 
 #pragma mark - <ArticleAuthorViewDelegate>
 

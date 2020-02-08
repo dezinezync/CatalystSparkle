@@ -117,17 +117,18 @@ AppDelegate *MyAppDelegate = nil;
         [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)ArticlesManager.shared restorationIdentifier:NSStringFromClass(ArticlesManager.class)];
         
 //         To test push notifications
-//        #ifdef DEBUG
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                strongify(self);
-//
-//        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
-//        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
-//        //        [self openFeed:@(1) article:@(1149498)];  // reddit
-//                [self openFeed:@(1553) article:@(9542440)];
-////                [self showArticle:@(1831527)]; // crashing article
-//            });
-//        #endif
+        #ifdef DEBUG
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                strongify(self);
+
+        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
+        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
+//                [self openFeed:@(1) article:@(1149498)];  // reddit
+//                [self openFeed:@(11139) article:@(11288965)]; //webp image
+//                [self showArticle:@(1831527)]; // crashing article
+                [self openFeed:@(11750) article:@(11311036)]; // youtube video
+            });
+        #endif
         
 //            [self yt_log_fontnames];
         
