@@ -65,26 +65,15 @@
 - (void)loadNextPage
 {
     
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoading) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.state != DZDatasourceLoading)
-            return;
+    if (self.controllerState == StateLoading) {
+        return;
     }
     
     if (self->_canLoadNext == NO) {
         return;
     }
     
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateLoading;
-    }
-    else {
-        self.DS.state = DZDatasourceLoading;
-    }
+    self.controllerState = StateLoading;
     
     NSInteger page = self.page + 1;
     

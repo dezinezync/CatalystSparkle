@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)subscribedToFeed:(NSNotification *)note;
 
+- (void)didTapSidebarButton:(UIBarButtonItem *)sender;
+
 #pragma mark - 
 
 - (void)didTapSortOptions:(UIBarButtonItem *)sender;

@@ -20,6 +20,8 @@
 #import "UIImage+Sizing.h"
 #import "YetiConstants.h"
 
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
+
 @interface Image () <UIContextMenuInteractionDelegate>
 
 @property (nonatomic, assign, getter=isAnimatable, readwrite) BOOL animatable;
@@ -167,9 +169,7 @@
                 
                 self.imageView.backgroundColor = [(YetiTheme *)[YTThemeKit theme] articleBackgroundColor];
                 
-                if (@available(iOS 13, *)) {
-                    [self addContextMenus];
-                }
+                [self addContextMenus];
                 
             } error:nil imageLoader:imageLoader];
             
@@ -237,7 +237,7 @@
     [self addSubview:gifButton];
     [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
     
-    if (UIApplication.sharedApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
+    if (UIApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
         [gifButton.leadingAnchor constraintEqualToAnchor:self.trailingAnchor constant:8.f].active = YES;
     }
     else {
@@ -274,7 +274,7 @@
     [self addSubview:startStopButton];
     [startStopButton.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-8.f].active = YES;
     
-    if (UIApplication.sharedApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
+    if (UIApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
         [startStopButton.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:0.f].active = YES;
     }
     else {

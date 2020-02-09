@@ -20,7 +20,7 @@
         return nil;
     }
     
-    id obj = [self.DS objectAtIndexPath:indexPath];
+    id obj = [self.DDS itemIdentifierForIndexPath:indexPath];
     
     if (!obj)
         return nil;
@@ -112,7 +112,7 @@
             __block Feed *feed = nil;
             __block Folder *source = nil;
             
-            [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [[self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 
                 if ([obj isKindOfClass:Folder.class]) {
                     
@@ -142,7 +142,7 @@
             // check for preceeding open folder
             __block Folder *intoFolder = nil;
             
-            NSArray *data = [self.DS2.data subarrayWithRange:NSMakeRange(0, indexPath.row)];
+            NSArray *data = [[self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection] subarrayWithRange:NSMakeRange(0, indexPath.row)];
             
             [data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 
@@ -173,7 +173,7 @@
             }];
             
             if (intoFolder == nil) {
-                if (indexPath.row == data.count && (indexPath.row != self.DS2.data.count)) {
+                if (indexPath.row == data.count && (indexPath.row != [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection].count)) {
                     intoFolder = [data lastObject];
                 }
             }
@@ -193,7 +193,7 @@
     __block Feed *feed = nil;
     __block Folder *source = nil;
     
-    [self.DS2.data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [[self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
         if ([obj isKindOfClass:Folder.class]) {
             

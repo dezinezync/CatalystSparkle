@@ -9,6 +9,7 @@
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
 #import "Content.h"
+#import "DetailFeedVC.h"
 
 #import "Paragraph.h"
 #import "Heading.h"
@@ -89,8 +90,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 @property (nonatomic, strong) ImageLoader *articlesImageLoader;
 
-- (void)didTapOnImage:(UITapGestureRecognizer *)sender API_AVAILABLE(ios(13.0));
-
 @end
 
 @implementation ArticleVC
@@ -115,14 +114,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.state = ArticleStateLoading;
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        self.loader.activityIndicatorViewStyle = UIActivityIndicatorViewStyleLarge;
+    }
+    
     self.navigationItem.leftItemsSupplementBackButton = YES;
+    
+    self.state = ArticleStateLoading;
     self.articlesImageLoader = [ImageLoader new];
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        || self.splitViewController.view.bounds.size.height < 814.f) {
+    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        || self.to_splitViewController.view.bounds.size.height < 814.f) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
@@ -134,8 +138,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if (self.splitViewController.view.bounds.size.height > 814.f
-             && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    else if (self.to_splitViewController.view.bounds.size.height > 814.f
+             && self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
@@ -189,7 +193,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
-    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+//    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
@@ -206,44 +210,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self.loader startAnimating];
     }
     
-    UINavigationBar *navbar = self.navigationController.navigationBar;
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    if (@available(iOS 13, *)) {
-        self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    }
-    else {
-        if (!self.hairlineView) {
-            
-            CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-            UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, navbar.bounds.size.height, navbar.bounds.size.width, height)];
-            hairline.backgroundColor = theme.cellColor;
-            hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-            
-            [navbar addSubview:hairline];
-            self.hairlineView = hairline;
-        }
-    }
+    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
     
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
 
-//- (void)viewDidLayoutSubviews
-//{
-//    [super viewDidLayoutSubviews];
-//
-//    if (_hasRendered == YES)
-//        return;
-//
-//    _hasRendered = YES;
-//
-//    if (self.item.content == nil || [self.item.content count] == 0) {
-//        [self setupArticle:self.item];
-//    }
-//    else {
-//        [self _setupArticle:self.item start:[NSDate date] isChangingArticle:NO];
-//    }
-//}
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    if ([self canBecomeFirstResponder] == YES) {
+        [self becomeFirstResponder];
+    }
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -303,18 +285,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (idiom == UIUserInterfaceIdiomPad || sizeClass == UIUserInterfaceSizeClassRegular) {
         // on iPad, wide
         // we also push it slightly lower to around where the hands usually are on iPads
-        [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;
-        [helperView.heightAnchor constraintEqualToConstant:190.f].active = YES;
-        [helperView.widthAnchor constraintEqualToConstant:44.f].active = YES;
-        helperView.bottomConstraint = [helperView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-LayoutPadding];
-        
-        helperView.bottomConstraint.active = YES;
-        helperView.stackView.axis = UILayoutConstraintAxisVertical;
+        if (idiom == UIUserInterfaceIdiomPad) {
+            [helperView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor constant:(self.view.bounds.size.height / 4.f)].active = YES;
+            [helperView.heightAnchor constraintEqualToConstant:190.f].active = YES;
+            [helperView.widthAnchor constraintEqualToConstant:44.f].active = YES;
+            helperView.bottomConstraint = [helperView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-LayoutPadding];
+            
+            helperView.bottomConstraint.active = YES;
+            helperView.stackView.axis = UILayoutConstraintAxisVertical;
+        }
+        else {
+            [helperView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
+            [helperView.widthAnchor constraintEqualToConstant:190.f].active = YES;
+            [helperView.heightAnchor constraintEqualToConstant:44.f].active = YES;
+            helperView.bottomConstraint = [helperView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-32.f];
+            helperView.bottomConstraint.active = YES;
+        }
         
         // since we're modifying the bounds, update the shadow path
         [helperView setNeedsUpdateConstraints];
         [helperView layoutIfNeeded];
         [helperView updateShadowPath];
+        
     }
     else {
         // in compact mode
@@ -363,13 +355,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.view.backgroundColor = theme.articleBackgroundColor;
     self.scrollView.backgroundColor = theme.articleBackgroundColor;
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        if (self.hairlineView != nil) {
-            self.hairlineView.backgroundColor = theme.articleBackgroundColor;
-        }
-    }
     
     if (self.helperView != nil) {
         self.helperView.backgroundColor = theme.articlesBarColor;
@@ -734,7 +719,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.item.enclosures && self.item.enclosures.count) {
         
-        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png"];
+        NSArray *const IMAGE_TYPES = @[@"image", @"image/jpeg", @"image/jpg", @"image/png", @"image/webp"];
         NSArray *const VIDEO_TYPES = @[@"video", @"video/h264", @"video/mp4", @"video/webm"];
         
         // check for images
@@ -928,12 +913,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSString *firstLine = feed != nil ? feed.displayTitle : nil;
     NSString *timestamp = nil;
     
-    if (@available(iOS 13, *)) {
-        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
-    }
-    else {
-        timestamp = [(NSDate *)(self.item.timestamp) timeAgoSinceDate:NSDate.date numericDates:YES numericTimes:YES];
-    }
+    timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:self.item.timestamp relativeToDate:NSDate.date];
     
     NSString *sublineText = formattedString(@"%@%@", author, timestamp);
     
@@ -997,6 +977,24 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     [self.stackView addArrangedSubview:authorView];
+    
+    // came from a push notification
+    // or the providerDelegate is a non-base-DetailFeedVC (eg. DetailCustomVC)
+    if (self.providerDelegate == nil ||
+        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:NSClassFromString(@"DetailFeedVC")] == NO)) {
+        
+        // the blog label should redirect to the blog
+        authorView.blogLabel.textColor = authorView.tintColor;
+        [authorView.blogLabel setNeedsDisplay];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
+        tap.numberOfTapsRequired = 1;
+        tap.delaysTouchesBegan = YES;
+        tap.delaysTouchesEnded = NO;
+        
+        [authorView.blogLabel addGestureRecognizer:tap];
+        
+    }
     
 }
 
@@ -1553,20 +1551,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
     
-    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:self.scrollView.bounds.size.width];
+    CGFloat width = self.scrollView.bounds.size.width;
     
-    if (@available(iOS 13, *)) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
-        imageView.userInteractionEnabled = YES;
-        
-        [imageView addGestureRecognizer:tap];
-    }
-    else if ([url containsString:@"feedburner.com"] && [([url pathExtension] ?: @"") isBlank]) {
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageWithURL:)];
-        imageView.userInteractionEnabled = YES;
-
-        [imageView addGestureRecognizer:tap];
-    }
+    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:width];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+    imageView.userInteractionEnabled = YES;
+    
+    [imageView addGestureRecognizer:tap];
     
     imageView.URL = [NSURL URLWithString:url];
     
@@ -1974,6 +1966,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addLinebreak];
 }
 
+#pragma mark - Actions
+
+- (void)didTapOnBlogLabel:(UITapGestureRecognizer *)sender {
+    
+    if (sender.state != UIGestureRecognizerStateEnded) {
+        return;
+    }
+    
+    Feed *feed = [MyFeedsManager feedForID:self.item.feedID];
+    
+    if (feed == nil) {
+        
+        [(UILabel *)sender.view setTextColor:UIColor.secondaryLabelColor];
+        [sender.view removeGestureRecognizer:sender];
+        
+        return;
+    }
+    
+    DetailFeedVC *feedVC = [[DetailFeedVC alloc] initWithFeed:feed];
+    
+    [self.navigationController pushViewController:feedVC animated:YES];
+    
+}
 
 #pragma mark - <ArticleAuthorViewDelegate>
 
@@ -2435,7 +2450,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    NSURL *formatted = formattedURL(@"yeti://external?link=%@", link);
+    NSURL *formatted;
+    
+    if ([link containsString:@"/feed"]) {
+        
+        // handle internally
+        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", link);
+        
+    }
+    else {
+        formatted = formattedURL(@"yeti://external?link=%@", link);
+    }
     
     asyncMain(^{
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
@@ -2486,10 +2511,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (UIInputView *)searchView
 {
-    if (!_searchView) {
+    if (_searchView == nil) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
+        CGRect frame = CGRectMake(0, 0, self.to_splitViewController.view.bounds.size.width, 52.f);
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
@@ -2514,11 +2539,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
-        if (@available(iOS 13, *)) {}
-        else {
-            searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-        }
-        
         UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
         if (searchField) {
             searchField.textColor = theme.titleColor;
@@ -2537,7 +2557,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
         
         UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
-        [prev setImage:[UIImage imageNamed:@"arrow_up"] forState:UIControlStateNormal];
+        [prev setImage:[UIImage systemImageNamed:@"chevron.up"] forState:UIControlStateNormal];
         prev.bounds = CGRectMake(0, 0, 24.f, 24.f);
         prev.translatesAutoresizingMaskIntoConstraints = NO;
         [prev addTarget:self action:@selector(didTapSearchPrevious) forControlEvents:UIControlEventTouchUpInside];
@@ -2553,7 +2573,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [prev.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
         
         UIButton *next = [UIButton buttonWithType:UIButtonTypeSystem];
-        [next setImage:[UIImage imageNamed:@"arrow_down"] forState:UIControlStateNormal];
+        [next setImage:[UIImage systemImageNamed:@"chevron.down"] forState:UIControlStateNormal];
         next.bounds = CGRectMake(0, 0, 24.f, 24.f);
         next.translatesAutoresizingMaskIntoConstraints = NO;
         [next addTarget:self action:@selector(didTapSearchNext) forControlEvents:UIControlEventTouchUpInside];

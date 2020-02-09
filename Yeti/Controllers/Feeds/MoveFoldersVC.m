@@ -15,22 +15,25 @@
 
 static NSString *const kMoveFolderCell = @"movefoldercell";
 
-@interface MoveFoldersVC () <DZSDatasource>
+@interface MoveFoldersVC () <DZSDatasource> {
+    BOOL _hasCalledDelegate;
+}
 
 @property (nonatomic, strong) DZSectionedDatasource *DS;
 @property (nonatomic, weak) DZBasicDatasource *DS2;
 
-@property (nonatomic, copy, readwrite) Feed *feed;
+@property (nonatomic, weak, readwrite) Feed *feed;
 @property (nonatomic, copy) NSNumber *originalFolderID;
 
 @end
 
 @implementation MoveFoldersVC
 
-+ (UINavigationController *)instanceForFeed:(Feed *)feed
++ (UINavigationController *)instanceForFeed:(Feed *)feed delegate:(id<MoveFoldersDelegate>)delegate
 {
     MoveFoldersVC *vc = [[MoveFoldersVC alloc] initWithStyle:UITableViewStyleGrouped];
     vc.feed = feed;
+    vc.delegate = delegate;
     
     YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:vc];
     navVC.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -88,9 +91,9 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     }
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
+//}
 
 #pragma mark - Table view data source
 
@@ -191,6 +194,13 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         return;
     }
     
+    if (self.delegate != nil && _hasCalledDelegate == NO) {
+        
+        Folder *source = self.feed.folderID ? [MyFeedsManager folderForID:self.feed.folderID] : nil;
+        
+        [self.delegate feed:self.feed didMoveFromFolder:source toFolder:nil];
+    }
+    
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -215,6 +225,11 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
             [MyFeedsManager updateFolder:folder add:nil remove:@[self.feed.feedID] success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 strongify(self);
+                
+                if (self.delegate != nil) {
+                    [self.delegate feed:self.feed didMoveFromFolder:folder toFolder:nil];
+                    self->_hasCalledDelegate = YES;
+                }
                 
                 [self didTapCancel];
                 
@@ -245,6 +260,11 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
                 [MyFeedsManager updateFolder:newFolder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
                     strongify(self);
+                    
+                    if (self.delegate != nil) {
+                        [self.delegate feed:self.feed didMoveFromFolder:folder toFolder:newFolder];
+                        self->_hasCalledDelegate = YES;
+                    }
                     
                     [self didTapCancel];
                     
@@ -277,9 +297,15 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         
         // it didn't belong to a folder but now it does
         Folder *folder = [MyFeedsManager folderForID:self.feed.folderID];
+        
         [MyFeedsManager updateFolder:folder add:@[self.feed.feedID] remove:nil success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             strongify(self);
+            
+            if (self.delegate != nil) {
+                [self.delegate feed:self.feed didMoveFromFolder:nil toFolder:folder];
+                self->_hasCalledDelegate = YES;
+            }
             
             [self didTapCancel];
             

@@ -46,7 +46,7 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     [self.mainStackView.trailingAnchor constraintEqualToAnchor:layoutGuide.trailingAnchor constant:8.f].active = YES;
     
     self.faviconView.contentMode = UIViewContentModeCenter;
-    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.faviconView.image = [[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     self.titleLabel.text = nil;
     self.urlLabel.text = nil;
     
@@ -75,7 +75,7 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.cacheImage = NO;
     self.faviconView.cachedSuffix = nil;
-    self.faviconView.image = [[UIImage imageNamed:@"nofavicon"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.faviconView.image = [[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     
     self.titleLabel.text = nil;
     self.urlLabel.text = nil;
@@ -97,7 +97,7 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     self.urlLabel.text = url;
     self.urlLabel.lineBreakMode = NSLineBreakByTruncatingHead;
     
-    self.faviconView.image = [UIImage imageNamed:@"nofavicon"];
+    self.faviconView.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
 
     url = [feed faviconURI];
 
@@ -125,10 +125,10 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
         }
     }
     
-    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
-        Theme *theme = [YTThemeKit theme];
-        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
-    }
+//    if (UIAccessibilityIsInvertColorsEnabled() == YES) {
+//        Theme *theme = [YTThemeKit theme];
+//        self.faviconView.backgroundColor = theme.isDark ? UIColor.whiteColor : UIColor.blackColor;
+//    }
     
 }
 

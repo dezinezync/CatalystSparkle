@@ -22,49 +22,67 @@
 
 #pragma mark - Actions
 
+- (void)updateSortingOptionTo:(YetiSortOption)option sender:(UIBarButtonItem *)sender {
+    
+    [self setSortingOption:option];
+    
+    UIColor *tintColor = nil;
+    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+    
+    sender.image = image;
+    sender.tintColor = tintColor;
+    
+}
+
 - (void)didTapSortOptions:(UIBarButtonItem *)sender {
     
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"All - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortAllDesc];
-        
-        [self setSortingOption:YTSortAllDesc];
+        [self updateSortingOptionTo:YTSortAllDesc sender:sender];
         
     }];
     
     UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"All - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortAllAsc];
-        
-        [self setSortingOption:YTSortAllAsc];
+        [self updateSortingOptionTo:YTSortAllAsc sender:sender];
+
         
     }];
     
     UIAlertAction *unreadDesc = [UIAlertAction actionWithTitle:@"Unread - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc];
-        
-        [self setSortingOption:YTSortUnreadDesc];
+        [self updateSortingOptionTo:YTSortUnreadDesc sender:sender];
         
     }];
     
     UIAlertAction *unreadAsc = [UIAlertAction actionWithTitle:@"Unread - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        sender.image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc];
-        
-        [self setSortingOption:YTSortUnreadAsc];
+        [self updateSortingOptionTo:YTSortUnreadAsc sender:sender];
         
     }];
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     @try {
-        [allDesc setValue:[SortImageProvider imageForSortingOption:YTSortAllDesc] forKeyPath:@"image"];
-        [allAsc setValue:[SortImageProvider imageForSortingOption:YTSortAllAsc] forKeyPath:@"image"];
-        [unreadDesc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadDesc] forKeyPath:@"image"];
-        [unreadAsc setValue:[SortImageProvider imageForSortingOption:YTSortUnreadAsc] forKeyPath:@"image"];
+        
+        UIImage * image = [SortImageProvider imageForSortingOption:YTSortAllDesc tintColor:nil];
+        
+        [allDesc setValue:image forKeyPath:@"image"];
+        
+        image = [SortImageProvider imageForSortingOption:YTSortAllAsc tintColor:nil];
+        
+        [allAsc setValue:image forKeyPath:@"image"];
+        
+        image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:nil];
+        
+        [unreadDesc setValue:image forKeyPath:@"image"];
+        
+        image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:nil];
+        
+        [unreadAsc setValue:image forKeyPath:@"image"];
+
     }
     @catch (NSException *exc) {
         
@@ -84,19 +102,13 @@
     if (self.loadOnReady == nil)
         return;
     
-    if (@available(iOS 13, *)) {
-        if (self.DDS.snapshot.numberOfItems == 0) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.data.count == 0)
-            return;
+    if (self.DDS.snapshot.numberOfItems == 0) {
+        return;
     }
     
     __block NSUInteger index = NSNotFound;
     
-    [(NSArray <FeedItem *> *)[self.DS data] enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [(NSArray <FeedItem *> *)[[self.DDS snapshot] itemIdentifiers] enumerateObjectsUsingBlock:^(FeedItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         if ([obj.identifier isEqualToNumber:self.loadOnReady]) {
             index = idx;
@@ -147,14 +159,7 @@
         
         ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
         
-        FeedItem *item = nil;
-        
-        if (@available(iOS 13, *)) {
-            item = [[self.DDS.snapshot itemIdentifiers] objectAtIndex:indexPath.item];
-        }
-        else {
-            item = [self.DS objectAtIndexPath:indexPath];
-        }
+        FeedItem * item = [[self.DDS.snapshot itemIdentifiers] objectAtIndex:indexPath.item];
         
         if (cell.markerView.image != nil && (item != nil && item.isBookmarked == NO)) {
             cell.markerView.image = nil;
@@ -170,14 +175,8 @@
     
     void(^markReadInline)(void) = ^(void) {
         
-        NSArray <FeedItem *> *data = nil;
-        
-        if (@available(iOS 13, *)) {
-            data = self.DDS.snapshot.itemIdentifiers;
-        }
-        else {
-            data = (NSArray <FeedItem *> *)self.DS.data;
-        }
+        NSArray <FeedItem *> * data = self.DDS.snapshot.itemIdentifiers;
+
         
         NSArray <FeedItem *> *unread = [data rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
             return !obj.isRead;
@@ -198,7 +197,7 @@
                 if (self.cantLoadNext == NO) {
                     
                     self.page = 0;
-                    self.DS.state = DZDatasourceLoading;
+                    self.controllerState = StateLoading;
                     
                     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                         [self loadNextPage];
@@ -247,23 +246,14 @@
                     // if we're in the unread section
                     if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] == YES) {
                         
-                        if (@available(iOS 13, *)) {
-                            
-                            self.controllerState = StateLoading;
-                            
-                            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-                            [snapshot appendSectionsWithIdentifiers:@[@0]];
-                            
-                            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-                            
-                            self.controllerState = StateLoaded;
-                            
-                        }
-                        else {
-                            self.DS.state = DZDatasourceLoading;
-                            self.DS.data = @[];
-                            self.DS.state = DZDatasourceLoaded;
-                        }
+                        self.controllerState = StateLoading;
+                        
+                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                        [snapshot appendSectionsWithIdentifiers:@[@0]];
+                        
+                        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+                        
+                        self.controllerState = StateLoaded;
                         
                     }
                     else {
@@ -321,7 +311,7 @@
             
             asyncMain(^{
                 sender.enabled = YES;
-                sender.image = [UIImage imageNamed:@"notifications_off"];
+                sender.image = [UIImage systemImageNamed:@"bell.slash"];
                 sender.accessibilityValue = @"Subscribe to notifications";
             });
             
@@ -395,7 +385,7 @@
         
         asyncMain(^{
             sender.enabled = YES;
-            sender.image = [UIImage imageNamed:@"notifications_on"];
+            sender.image = [UIImage systemImageNamed:@"bell.fill"];
             sender.accessibilityValue = @"Unsubscribe from notifications";
         });
         
@@ -467,10 +457,16 @@
         
         UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems lastObject];
         
-        sender.image = [UIImage imageNamed:@"notifications_on"];
+        sender.image = [UIImage systemImageNamed:@"bell.fill"];
         sender.accessibilityValue = @"Unsubscribe from notifications";
         
     });
+}
+
+- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
+    
+    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
+    
 }
 
 #pragma mark -
@@ -485,22 +481,17 @@
     
     [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
-    if (@available(iOS 13, *)) {
-        
-        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        
-    }
-    else {
-        [self.DS resetData];
-    }
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+    
+    self.controllerState = StateLoaded;
     
     [self loadNextPage];
 }
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         

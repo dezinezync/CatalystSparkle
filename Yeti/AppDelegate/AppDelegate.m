@@ -118,14 +118,15 @@ AppDelegate *MyAppDelegate = nil;
         
 //         To test push notifications
 //        #ifdef DEBUG
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //                strongify(self);
 //
 //        //        [self openFeed:@(1) article:@(1293968)];  // twitter user
 //        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
-//        //        [self openFeed:@(1) article:@(1149498)];  // reddit
-//                [self openFeed:@(1553) article:@(9542440)];
+////                [self openFeed:@(1) article:@(1149498)];  // reddit
+////                [self openFeed:@(11139) article:@(11288965)]; //webp image
 ////                [self showArticle:@(1831527)]; // crashing article
+//                [self openFeed:@(11750) article:@(11311036)]; // youtube video
 //            });
 //        #endif
         
@@ -185,7 +186,7 @@ AppDelegate *MyAppDelegate = nil;
     if (reset) {
         [MyFeedsManager resetAccount];
         
-        SplitVC *v = (SplitVC *)[[application keyWindow] rootViewController];
+        SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
         [v userNotFound];
         
         [defaults setBool:NO forKey:kResetAccountSettingsPref];
@@ -200,20 +201,11 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
     
-//    // broken in iOS 13.
-////    if (@available(iOS 13, *)) {
-//        return NO;
-////    }
-    
     return YES;
+    
 }
 
 - (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-    
-//    // broken in iOS 13.
-////    if (@available(iOS 13, *)) {
-//        return NO;
-////    }
     
     if (_resetting) {
         return NO;
@@ -316,7 +308,7 @@ AppDelegate *MyAppDelegate = nil;
     
     [self loadCodeTheme];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
+//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     
     [self refreshViews];
     
@@ -328,15 +320,8 @@ AppDelegate *MyAppDelegate = nil;
     
     NSString *themeName = SharedPrefs.theme;
     
-    if (@available(iOS 13, *)) {
-        
-        if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-            [CodeParser.sharedCodeParser loadTheme:@"dark"];
-        }
-        else {
-            [CodeParser.sharedCodeParser loadTheme:themeName];
-        }
-        
+    if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        [CodeParser.sharedCodeParser loadTheme:@"dark"];
     }
     else {
         [CodeParser.sharedCodeParser loadTheme:themeName];

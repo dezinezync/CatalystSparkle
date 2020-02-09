@@ -84,7 +84,7 @@
             
             NSString *extension = [self pathExtension] ?: @"jpeg";
             
-            copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality));
+            copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@&we", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality));
         }
         
 //        DDLogInfo(@"weserv.nl proxy URL: %@", copy);

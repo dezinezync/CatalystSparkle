@@ -12,6 +12,8 @@
 #import "PopMenuPresentAnimationController.h"
 #import "PopMenuDismissAnimationController.h"
 
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
+
 @interface PopMenuViewController ()
 
 @property (nonatomic, strong) NSArray <id<PopMenuAction>> * actions;
@@ -371,7 +373,7 @@
     CGPoint origin = CGPointMake(desiredOrigin.x, desiredOrigin.y + contentSize.height);
     
     if (@available(iOS 11.0, *)) {
-        edgePadding = UIApplication.sharedApplication.keyWindow ? UIApplication.sharedApplication.keyWindow.safeAreaInsets.bottom : 8.f;
+        edgePadding = UIApplication.keyWindow ? UIApplication.keyWindow.safeAreaInsets.bottom : 8.f;
     }
     else {
         edgePadding = 8.f;

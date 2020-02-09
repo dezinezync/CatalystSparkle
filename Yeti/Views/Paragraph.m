@@ -19,8 +19,9 @@
 
 #import <DZKit/NSArray+Safe.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
-@interface Paragraph () <UIContextMenuInteractionDelegate> {}
+@interface Paragraph () <UIGestureRecognizerDelegate>
 
 @property (nonatomic, copy) NSAttributedString *cachedAttributedText;
 
@@ -155,6 +156,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
         [super setAttributedText:attributedText];
         
+//        [self _hookGestures];
     }
     else {
         if (attributedText) {
@@ -218,7 +220,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         para.minimumLineHeight = self.bodyFont.pointSize * 1.3f;
         
         CGFloat offset = 48.f;
-        if (UIApplication.sharedApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        if (UIApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
             offset = offset/3.f;
         }
 
@@ -439,55 +441,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
     }];
     
 }
-
-//- (void)copy:(id)sender {
-//    
-//    // calling the following crashes the app instantly
-//    // due to a possible bug in iOS 12.1.4.
-//    
-//    if (@available(iOS 13, *)) {
-//        [super copy:sender];
-//        return;
-//    }
-//    
-//    NSRange range = self.selectedRange;
-//    
-//    if (range.location != NSNotFound && range.length > 0) {
-//        
-//        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-//        
-//        @try {
-//        
-//            if (self.attributedText.length >= (range.length - range.location)) {
-//                
-//                NSError *error = nil;
-//                
-//                NSData *rtf = [self.attributedText dataFromRange:range
-//                                              documentAttributes:@{NSDocumentTypeDocumentAttribute: NSRTFTextDocumentType}
-//                                                           error:&error];
-//                
-//                if (error != nil) {
-//                    DDLogError(@"Error creating NSData from attributed text for copying to pasteboard: %@", error);
-//                    
-//                    return;
-//                }
-//                
-//                pasteboard.items = @[@{(id)kUTTypeRTF: [[NSString alloc] initWithData:rtf encoding:NSUTF8StringEncoding],
-//                                       (id)kUTTypeUTF8PlainText: self.attributedText.string}];
-//                
-//            }
-//            
-//        }
-//        
-//        @catch (NSException *exc) {
-//            DDLogWarn(@"Exception when copying attributed text: %@", exc);
-//            
-//            pasteboard.string = [[self text] substringWithRange:range];
-//        }
-//        
-//    }
-//    
-//}
 
 #pragma mark - Overrides
 
@@ -833,66 +786,5 @@ static NSParagraphStyle * _paragraphStyle = nil;
     
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
 }
-
-#pragma mark - Context Menus
-
-- (void)addContextMenus {
-    
-    if ([self.class canPresentContextMenus] == NO) {
-        return;
-    }
-    
-    UIContextMenuInteraction *interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
-    [self addInteraction:interaction];
-    
-}
-
-- (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:(NSArray <UIMenuElement *> *)suggestedActions {
-    
-    NSMutableArray <UIMenuElement *> *actions = [NSMutableArray new];
-    
-    [actions addObject:[UIAction actionWithTitle:@"Copy" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-        
-        [[UIPasteboard generalPasteboard] setString:self.text];
-        
-    }]];
-    
-    [actions addObject:[UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-        
-        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[self.text] applicationActivities:nil];
-        
-        id delegate = [self.superview.superview valueForKeyPath:@"delegate"];
-        
-        if (delegate && [delegate isKindOfClass:UIViewController.class]) {
-            [(UIViewController *)delegate presentViewController:avc animated:YES completion:nil];
-        }
-        
-    }]];
-    
-    NSString *menuTitle = self.isCaption ? @"Caption" : @"Paragraph";
-    
-    menuTitle = [menuTitle stringByAppendingString:@" Actions"];
-    
-    UIMenu *menu = [UIMenu menuWithTitle:menuTitle children:actions];
-    
-    return menu;
-    
-}
-
-#pragma mark - <UIContextMenuInteractionDelegate>
-
-- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
-    
-    UIContextMenuConfiguration *configuration = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
-       
-        return [self makeMenuForPoint:location suggestions:suggestedActions];
-        
-    }];
-    
-    return configuration;
-    
-}
-
-#pragma mark - Gesture Recognizers
 
 @end

@@ -10,3 +10,12 @@
 [submodule "Yeti/Vendors/DZKit"]
 	path = Yeti/Vendors/DZKit
 	url = git@github.com:dezinezync/DZKit.git
+[submodule "Yeti/Vendors/DZAppDelegate"]
+	path = Yeti/Vendors/DZAppDelegate
+	url = git@github.com:DZNS/DZAppDelegate.git
+[submodule "Yeti/Vendors/DZThemeKit"]
+	path = Yeti/Vendors/DZThemeKit
+	url = git@github.com:DZNS/DZThemeKit.git
+[submodule "Yeti/Vendors/TOSplitViewController"]
+	path = Yeti/Vendors/TOSplitViewController
+	url = git@github.com:dezinezync/TOSplitViewController.git

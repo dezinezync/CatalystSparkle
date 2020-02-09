@@ -29,7 +29,7 @@
 
 - (void)popToRoot
 {
-    UISplitViewController *splitVC = (UISplitViewController *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+    UISplitViewController *splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
     YTNavigationController *nav = (YTNavigationController *)[[splitVC viewControllers] firstObject];
     
     if ([[nav viewControllers] count] > 1) {
@@ -55,6 +55,54 @@
         NSURL *url = [NSURL URLWithString:[[[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"feed:" withString:@""]];
         
         return [self addFeed:url];
+        
+    }];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/addFeedConfirm" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
+       
+        strongify(self);
+        
+        NSString *path = [parameters valueForKey:@"URL"];
+        
+        if (path) {
+            NSURL *url = [NSURL URLWithString:path];
+            
+            if (!url) {
+                [AlertManager showGenericAlertWithTitle:@"Invalid Link" message:@"The link seems to be invalid or Yeti was unable to process it correctly."];
+                return YES;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                weakify(self);
+                
+                UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Add Feed?" message:path preferredStyle:UIAlertControllerStyleAlert];
+                
+                [avc addAction:[UIAlertAction actionWithTitle:@"Add" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    
+                    strongify(self);
+                    
+                    [self addFeed:url];
+                    
+                }]];
+                
+                [avc addAction:[UIAlertAction actionWithTitle:@"Open in Browser" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    
+                    strongify(self);
+                    
+                    [self openURL:path];
+                    
+                }]];
+                
+                [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                
+                [self.window.rootViewController presentViewController:avc animated:YES completion:nil];
+                
+            });
+            
+        }
+        
+        return YES;
         
     }];
     
@@ -221,7 +269,7 @@
     
     [alert dz_configureContentView:^(UIView *contentView) {
         
-        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
         activity.color = UIColor.lightGrayColor;
         [activity sizeToFit];
         activity.translatesAutoresizingMaskIntoConstraints = NO;
@@ -238,7 +286,7 @@
         
     }];
     
-    UIViewController *vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+    UIViewController *vc = [UIApplication.keyWindow rootViewController];
     
     while (vc.presentedViewController != nil) {
         vc = vc.presentedViewController;
@@ -508,7 +556,7 @@
     __block Folder *checkFolder = nil;
     
     // get the primary navigation controller
-    YTNavigationController *nav = [[(UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController] viewControllers] firstObject];
+    YTNavigationController *nav = [[(UISplitViewController *)[UIApplication.keyWindow rootViewController] viewControllers] firstObject];
     
     if ([[nav topViewController] isKindOfClass:DetailFeedVC.class]) {
         // check if the current topVC is the same feed
@@ -528,23 +576,21 @@
     
     [self popToRoot];
     
+    FeedItem *item = [[FeedItem alloc] init];
+    item.feedID = feedID;
+    item.identifier = articleID;
+    
+    ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
+    
+    [nav pushViewController:articleVC animated:YES];
+    
+    return;
+    
     FeedsVC *feedsVC = [[nav viewControllers] firstObject];
     
-    NSArray *data = nil;
+    UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
     
-    if (@available(iOS 13, *)) {
-        
-        UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
-        
-        data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-        
-    }
-    else {
-        DZSectionedDatasource *DSS = [feedsVC valueForKeyPath:@"DS"];
-        DZBasicDatasource *DS = [[DSS datasources] lastObject];
-        
-        data = DS.data;
-    }
+    NSArray * data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
     
     if (!data || !data.count) {
         weakify(self);
@@ -645,7 +691,7 @@
     UINavigationController *nav;
     
     @try {
-        splitVC = (UISplitViewController *)[[UIApplication.sharedApplication keyWindow] rootViewController];
+        splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
         
         if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
             nav = [[splitVC viewControllers] lastObject];

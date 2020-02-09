@@ -8,6 +8,7 @@
 
 #import "AuthorBioVC.h"
 #import "YetiThemeKit.h"
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface AuthorBioVC () 
 
@@ -36,7 +37,7 @@
 - (CGSize)preferredContentSize {
     
     CGFloat width = UIScreen.mainScreen.bounds.size.width;
-    CGFloat height = [[UIApplication sharedApplication].keyWindow.rootViewController view].bounds.size.height;
+    CGFloat height = [UIApplication.keyWindow.rootViewController view].bounds.size.height;
     
     width = MIN(375, width);
     

@@ -112,11 +112,6 @@ NSString *const kFiltersCell = @"filterCell";
     
     cell.textField.textColor = theme.titleColor;
     cell.textField.backgroundColor = theme.backgroundColor;
-
-    if (@available(iOS 13, *)) {}
-    else {
-        cell.textField.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-    }
     
     cell.backgroundColor = theme.cellColor;
     

@@ -53,12 +53,7 @@
     
     self.title = self.folder.title;
     
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateDefault;
-    }
-    else {
-        self.DS.state = DZDatasourceDefault;
-    }
+    self.controllerState = StateDefault;
     
 }
 
@@ -76,7 +71,6 @@
     return subtitle;
 }
 
-
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     return nil;
 }
@@ -92,7 +86,7 @@
         return @[];
     }
     
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
@@ -123,35 +117,22 @@
     }
 #pragma clang diagnostic pop
     
-    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:[SortImageProvider imageForSortingOption:option] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    UIColor *tintColor = nil;
+    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.tintColor = tintColor;
     sorting.width = 32.f;
     
-    if (!(self.feed.hubSubscribed && self.feed.hub)) {
-        NSMutableArray *buttons = @[allRead].mutableCopy;
-        
-        if ([self showsSortingButton]) {
-            [buttons addObject:sorting];
-        }
-        
-        return buttons;
+    NSMutableArray *buttons = [NSMutableArray new];
+    
+    [buttons addObject:allRead];
+    
+    if ([self showsSortingButton]) {
+        [buttons addObject:sorting];
     }
-    else {
-        // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
-        
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
-        notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
-        notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
-        notifications.width = 32.f;
-        
-        NSMutableArray *buttons = @[allRead, notifications].mutableCopy;
-        
-        if ([self showsSortingButton]) {
-            [buttons addObject:sorting];
-        }
-        
-        return buttons;
-    }
+    
+    return buttons;
     
 }
 
@@ -220,12 +201,7 @@
             
             [self setupData];
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
+            self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if ([self.collectionView.refreshControl isRefreshing]) {
@@ -260,12 +236,7 @@
             if (!self)
                 return;
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateErrored;
-            }
-            else {
-                self.DS.state = DZDatasourceError;
-            }
+            self.controllerState = StateErrored;
             
             weakify(self);
             

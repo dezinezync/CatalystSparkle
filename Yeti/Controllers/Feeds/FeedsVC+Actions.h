@@ -7,8 +7,9 @@
 //
 
 #import "FeedsVC+Search.h"
+#import "MoveFoldersVC.h"
 
-@interface FeedsVC (Actions) <UITextFieldDelegate>
+@interface FeedsVC (Actions) <UITextFieldDelegate, MoveFoldersDelegate>
 
 - (NSAttributedString * _Nullable)lastUpdateAttributedString;
 

@@ -13,6 +13,7 @@
 #import "YetiThemeKit.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface FeedHeaderView () <UIScrollViewDelegate>
 
@@ -103,7 +104,7 @@
     
     UIFont *font = nil;
     
-    if ([[[UIApplication sharedApplication] keyWindow] rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if ([UIApplication.keyWindow rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     }
     else {

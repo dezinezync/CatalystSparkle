@@ -23,14 +23,15 @@
 #import "YetiConstants.h"
 
 #import <PopMenu/PopMenu.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @implementation ArticleVC (Toolbar)
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
-    UIImage * readImage = [UIImage imageNamed:@"read"],
-            * bookmarkImage = [UIImage imageNamed:(self.item.isBookmarked ? @"bookmark" : @"unbookmark")],
-            * searchImage = [UIImage imageNamed:@"search"];
+    UIImage * readImage = [UIImage systemImageNamed:@"circle"],
+            * bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")],
+            * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
     read.accessibilityValue = @"Mark article unread";
@@ -65,10 +66,10 @@
         return @[];
     }
     
-    UIBarButtonItem *prevArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_upward"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapPreviousArticle:)];
+    UIBarButtonItem *prevArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"arrow.up"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapPreviousArticle:)];
     prevArticle.accessibilityValue = @"Previous article";
     
-    UIBarButtonItem *nextArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"arrow_downward"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNextArticle:)];
+    UIBarButtonItem *nextArticle = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"arrow.down"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNextArticle:)];
     nextArticle.accessibilityValue = @"Next article";
     
     BOOL next = [self.providerDelegate hasPreviousArticleForArticle:self.item];
@@ -93,8 +94,8 @@
 
 - (NSArray <UIBarButtonItem *> *)commonNavBarItems {
     
-    UIImage * shareImage = [UIImage imageNamed:@"share"],
-            * browserImage = [UIImage imageNamed:@"open_in_browser"];
+    UIImage * shareImage = [UIImage systemImageNamed:@"square.and.arrow.up"],
+            * browserImage = [UIImage systemImageNamed:@"safari"];
     
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:shareImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
@@ -158,9 +159,12 @@
         self.navigationController.toolbarHidden = NO;
     }
     
-    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.splitViewController != nil) {
-        UIBarButtonItem *displayButton = [(UISplitViewController *)[UIApplication.sharedApplication.keyWindow rootViewController] displayModeButtonItem];
-        self.navigationItem.leftBarButtonItem = displayButton;
+    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
+        
+        UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose)];
+        
+        self.navigationItem.leftBarButtonItem = close;
+        
     }
     else {
         self.navigationItem.leftBarButtonItems = nil;
@@ -171,12 +175,19 @@
 
 - (void)didTapClose {
     
-    SplitVC *vc = (SplitVC *)[self splitViewController];
+    SplitVC *vc = (SplitVC *)[self to_splitViewController];
     
-    UINavigationController *emptyVC = [vc emptyVC];
-    [vc showDetailViewController:emptyVC sender:self];
+    [vc to_showDetailViewController:[vc emptyVC] sender:self];
     
-    UINavigationController *nav = vc.viewControllers.firstObject;
+    UINavigationController *nav = nil;
+    
+    if (vc.viewControllers.count > 2) {
+        nav = (id)[vc.viewControllers objectAtIndex:1];
+    }
+    else {
+        nav = (id)(vc.viewControllers.firstObject);
+    }
+    
     DetailFeedVC *top = (DetailFeedVC *)[nav topViewController];
     
     if (top != nil && ([top isKindOfClass:DetailFeedVC.class] || [top.class isSubclassOfClass:DetailFeedVC.class])) {
@@ -231,7 +242,7 @@
                
                    dispatch_async(dispatch_get_main_queue(), ^{
                        
-                       UIImage *image = self.item.isBookmarked ? [UIImage imageNamed:@"bookmark"] : [UIImage imageNamed:@"unbookmark"];
+                       UIImage *image = self.item.isBookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
                        
                        [button setImage:image];
                    });
@@ -295,7 +306,7 @@
     [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
     self.item.read = !self.item.isRead;
     
-    button.image = self.item.isRead ? [UIImage imageNamed:@"read"] : [UIImage imageNamed:@"unread"];
+    button.image = self.item.isRead ? [UIImage systemImageNamed:@"circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
     
     if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
         
@@ -332,9 +343,13 @@
         return;
     }
     
+    [self becomeFirstResponder];
+    
     _showSearchBar = YES;
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self reloadInputViews];
+        [self.view setNeedsLayout];
     });
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -563,7 +578,7 @@
         else
             self.searchNextButton.enabled = YES;
         
-        self.searchPrevButton.enabled = YES;
+//        self.searchPrevButton.enabled = YES;
     }
     
     /* actual search ops */
@@ -611,7 +626,7 @@
     
     if (_searchingRects.count > 1) {
         self.searchNextButton.enabled = YES;
-        self.searchPrevButton.enabled = YES;
+//        self.searchPrevButton.enabled = YES;
     }
     
     if (!_searchHighlightingRect) {

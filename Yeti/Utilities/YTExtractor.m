@@ -19,7 +19,7 @@ NSString * const ERROR_cantExtractFmtStreamMap = @"Couldn't extract url_encoded_
 NSString * const ERROR_unknown = @"Unknown error occured";
 
 #define infoBasePrefix @"https://www.youtube.com/get_video_info?video_id=%@"
-#define userAgent @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/604.5.6 (KHTML, like Gecko) Version/11.0.3 Safari/604.5.6"
+#define userAgent @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/604.5.6 (KHTML, like Gecko) Version/13.4 Safari/604.5.6"
 
 @implementation YTExtractor
 
@@ -115,6 +115,12 @@ NSString * const ERROR_unknown = @"Unknown error occured";
         VideoInfo *videoInfo = [[VideoInfo alloc] init];
         videoInfo.coverImage = thumbnail;
         
+        if ([rawDict isKindOfClass:NSURL.class] == YES) {
+            videoInfo.url = (NSURL *)rawDict;
+            
+            return successCB(videoInfo);
+        }
+        
         NSString *URI = nil;
         
         for (NSDictionary *dict in rawDict) {
@@ -191,9 +197,31 @@ NSString * const ERROR_unknown = @"Unknown error occured";
         thumbnail = [thumbnail stringByReplacingOccurrencesOfString:@"/default.jpg" withString:@"/maxresdefault.jpg"];
     }
     
+    NSString *playerResponseString = pairs[@"player_response"];
+    
+    if (playerResponseString != nil) {
+        
+        NSData *playerResponseData = [playerResponseString dataUsingEncoding:NSUTF8StringEncoding];
+        
+        NSDictionary *playerResponse = [NSJSONSerialization JSONObjectWithData:playerResponseData options:kNilOptions error:nil];
+        
+        if (playerResponse != nil) {
+            
+            NSString *hlsManifest = [playerResponse valueForKeyPath:@"streamingData.hlsManifestUrl"];
+            
+            if (hlsManifest != nil) {
+             
+                return @[thumbnail, [NSURL URLWithString:hlsManifest]];
+                
+            }
+            
+        }
+        
+    }
+    
     NSString * streamsMap = pairs[@"url_encoded_fmt_stream_map"];
     
-    if (!streamsMap) {
+    if (streamsMap == nil) {
         NSString *errorString = pairs[@"reason"];
         NSString *errorCodeString = pairs[@"errorcode"];
         

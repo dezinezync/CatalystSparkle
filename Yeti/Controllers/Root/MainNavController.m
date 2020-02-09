@@ -54,4 +54,28 @@
     
 }
 
+- (BOOL)canBecomeFirstResponder {
+    
+    return [self.visibleViewController canBecomeFirstResponder];
+    
+}
+
+- (BOOL)canResignFirstResponder {
+    
+    return [self.visibleViewController canResignFirstResponder];
+    
+}
+
+- (BOOL)becomeFirstResponder {
+    
+    return [self.visibleViewController becomeFirstResponder];
+    
+}
+
+- (BOOL)resignFirstResponder {
+    
+    return [self.visibleViewController resignFirstResponder];
+    
+}
+
 @end

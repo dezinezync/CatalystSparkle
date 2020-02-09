@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "DetailFeedVC+Actions.h"
+#import "DetailFeedVC+Keyboard.h"
 #import "ArticlePreviewVC.h"
 
 #import "ArticleCellB.h"
@@ -15,7 +15,6 @@
 
 #import "ArticleVC.h"
 #import "DetailAuthorVC.h"
-#import "TagFeedVC.h"
 
 #import "FeedsManager.h"
 
@@ -125,41 +124,28 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     self.flowLayout = (UICollectionViewFlowLayout *)[self collectionViewLayout];
     
-    if (@available(iOS 13, *)) {
+    weakify(self);
+    
+    self.DDS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, FeedItem * _Nonnull item) {
         
-        weakify(self);
+        strongify(self);
+    
+        return [self collectionView:self.collectionView cellForItemAtIndexPath:indexPath item:item];
         
-        self.DDS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, FeedItem * _Nonnull item) {
-            
-            strongify(self);
+    }];
+    
+    self.DDS.supplementaryViewProvider = ^UICollectionReusableView * _Nullable(UICollectionView * _Nonnull collectionView, NSString * _Nonnull type, NSIndexPath * _Nonnull indexPath) {
         
-            return [self collectionView:self.collectionView cellForItemAtIndexPath:indexPath item:item];
-            
-        }];
+        strongify(self);
+      
+        return [self collectionView:collectionView viewForSupplementaryElementOfKind:type atIndexPath:indexPath];
         
-        self.DDS.supplementaryViewProvider = ^UICollectionReusableView * _Nullable(UICollectionView * _Nonnull collectionView, NSString * _Nonnull type, NSIndexPath * _Nonnull indexPath) {
-            
-            strongify(self);
-          
-            return [self collectionView:collectionView viewForSupplementaryElementOfKind:type atIndexPath:indexPath];
-            
-        };
-        
-        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-        [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
-        
-        [self.DDS applySnapshot:snapshot animatingDifferences:NO];
-        
-    }
-    else {
-        self.DS = [[DZBasicDatasource alloc] initWithView:self.collectionView];
-        self.DS.delegate = self;
-        self.DS.data = @[];
-        
-        self.DS.addAnimation = UITableViewRowAnimationNone;
-        self.DS.deleteAnimation = UITableViewRowAnimationFade;
-        self.DS.reloadAnimation = UITableViewRowAnimationNone;
-    }
+    };
+    
+    NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+    [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
+    
+    [self.DDS applySnapshot:snapshot animatingDifferences:NO];
     
     self.collectionView.prefetchDataSource = self;
     
@@ -186,14 +172,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
     
-    if (@available(iOS 13, *)) {
-        NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
-        [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
-        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-    }
-    else {
-        self.DS.data = @[];
-    }
+    NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];
+    [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
+    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     
     self.pagingManager = nil;
     
@@ -234,17 +215,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [self dz_smoothlyDeselectCells:self.collectionView];
     
-    if (@available(iOS 13, *)) {
-        if (self.DDS.snapshot.numberOfItems == 0) {
-            self.controllerState = StateLoaded;
-            [self loadNextPage];
-        }
-    }
-    else {
-        if (self.DS.data == nil || self.DS.data.count == 0) {
-            self.DS.state = DZDatasourceLoaded;
-            [self loadNextPage];
-        }
+    if (self.DDS.snapshot.numberOfItems == 0) {
+        self.controllerState = StateLoaded;
+        [self loadNextPage];
     }
     
 }
@@ -277,6 +250,25 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
+- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        
+        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
+            
+            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
+        }
+        else {
+            self.navigationItem.leftBarButtonItem = nil;
+        }
+        
+    } completion:nil];
+    
+}
+
 - (void)_setToolbarHidden {
     self.navigationController.toolbarHidden = YES;
 }
@@ -299,18 +291,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     NSUInteger index = NSNotFound;
     
     if (item != nil && [item isKindOfClass:FeedItem.class]) {
-        if (@available(iOS 13, *)) {
-            NSIndexPath *indexPath = [self.DDS indexPathForItemIdentifier:item];
+        NSIndexPath *indexPath = [self.DDS indexPathForItemIdentifier:item];
+        
+        if (indexPath != nil) {
+            index = indexPath.item;
             
-            if (indexPath != nil) {
-                index = indexPath.item;
-                
-                outIndexPath = indexPath;
-            }
-            
-        }
-        else {
-            index = [(NSArray <FeedItem *> *)self.DS.data indexOfObject:item];
+            outIndexPath = indexPath;
         }
     }
     
@@ -324,30 +310,15 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return nil;
     }
     
-    FeedItem *article = nil;
-    
-    if (@available(iOS 13, *)) {
-        article = [self.DDS itemIdentifierForIndexPath:indexPath];
-    }
-    else {
-        article = [self.DS objectAtIndexPath:indexPath];
-    }
+    FeedItem *article = [self.DDS itemIdentifierForIndexPath:indexPath];
     
     return article;
 }
 
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (_activityIndicatorView == nil) {
-        Theme *theme = [YTThemeKit theme];
         
-        UIActivityIndicatorViewStyle style;
-        
-        if (@available(iOS 13, *)) {
-            style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight ? UIActivityIndicatorViewStyleGray : UIActivityIndicatorViewStyleWhite;
-        }
-        else {
-             style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
-        }
+        UIActivityIndicatorViewStyle style = UIActivityIndicatorViewStyleMedium;
         
         UIActivityIndicatorView *view = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
         [view sizeToFit];
@@ -363,6 +334,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     return _activityIndicatorView;
 }
 
+#pragma mark - Setters
+
 - (void)setRestorationIdentifier:(NSString *)restorationIdentifier {
     [super setRestorationIdentifier:restorationIdentifier];
     
@@ -371,8 +344,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     self.collectionView.restorationIdentifier = [restorationIdentifier stringByAppendingString:@"-collectionView"];
 }
 
-#pragma mark - Setters
-
 - (void)setLoadOnReady:(NSNumber *)loadOnReady
 {
     if (loadOnReady == nil) {
@@ -380,29 +351,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    if (@available(iOS 13, *)) {
+    if (self.DDS == nil || self.DDS.snapshot.numberOfItems == 0) {
+        weakify(self);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self setLoadOnReady:loadOnReady];
+        });
         
-        if (self.DDS == nil || self.DDS.snapshot.numberOfItems == 0) {
-            weakify(self);
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self setLoadOnReady:loadOnReady];
-            });
-            
-            return;
-        }
-        
-    }
-    else {
-        if (self.DS == nil || self.DS.data == nil || self.DS.data.count == 0) {
-            weakify(self);
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self setLoadOnReady:loadOnReady];
-            });
-            
-            return;
-        }
+        return;
     }
     
     _loadOnReady = loadOnReady;
@@ -418,21 +374,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
         
-        if (@available(iOS 13, *)) {
-            
-            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-            [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:NO];
-            
-        }
-        else {
-            
-            [self.collectionView reloadItemsAtIndexPaths:self.collectionView.indexPathsForVisibleItems];
-            
-        }
-        
+        [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+
     });
     
 }
@@ -550,14 +497,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    BOOL dataCheck = NO;
-    
-    if (@available(iOS 13, *)) {
-        dataCheck = self.controllerState == StateLoading && _page == 0;
-    }
-    else {
-        dataCheck = self.DS.state == DZDatasourceLoading && _page == 0;
-    }
+    BOOL dataCheck = self.controllerState == StateLoading && _page == 0;
     
     if (dataCheck) {
         self.activityIndicatorView.hidden = NO;
@@ -566,23 +506,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return self.activityIndicatorView;
     }
     
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateDefault) {
-            return nil;
-        }
-        
-        if (self.DDS.snapshot.numberOfItems > 0) {
-            return nil;
-        }
+    if (self.controllerState == StateDefault) {
+        return nil;
     }
-    else {
-        if (self.DS.state == DZDatasourceDefault) {
-            return nil;
-        }
-        
-        if (self.DS.data.count > 0) {
-            return nil;
-        }
+    
+    if (self.DDS.snapshot.numberOfItems > 0) {
+        return nil;
     }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -631,7 +560,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
     // Configure the cell
-    FeedItem *item = [self.DS objectAtIndexPath:indexPath];
+    FeedItem *item = [self.DDS itemIdentifierForIndexPath:indexPath];
     
     return [self collectionView:collectionView cellForItemAtIndexPath:indexPath item:item];
     
@@ -651,7 +580,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     [cell setupAppearance];
     
-    BOOL showSeparator = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    BOOL showSeparator = YES; //self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     [cell showSeparator:showSeparator];
     
@@ -677,124 +606,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
 }
 
-#pragma mark - <ArticleCellDelegate>
-
-- (void)didTapTag:(NSString *)tag {
-    
-    TagFeedVC *vc = [[TagFeedVC alloc] initWithTag:tag];
-    
-    [self showViewController:vc sender:self];
-    
-}
-
-- (void)didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
-    
-    if(@available(iOS 13, *)) {
-        [self _os12_didTapMenuButton:sender forArticle:article cell:cell];
-    }
-    else {
-        [self _os12_didTapMenuButton:sender forArticle:article cell:cell];
-    }
-    
-}
-
-- (void)didTapTest:(id)sender {
-    
-}
-
-- (void)_os12_didTapMenuButton:(id)sender forArticle:(FeedItem *)article cell:(ArticleCellB *)cell {
-    
-    if (article == nil) {
-        
-        NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
-        
-        if (indexPath == nil) {
-            return;
-        }
-        
-    }
-    
-    NSMutableArray *actions = [NSMutableArray arrayWithCapacity:3];
-    
-    if (article.isRead) {
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Unread" image:[UIImage imageNamed:@"menu-unread"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article read:NO];
-            
-        }]];
-    }
-    else {
-        
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Mark Read" image:[UIImage imageNamed:@"menu-read"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article read:YES];
-            
-        }]];
-        
-    }
-    
-    if (article.isBookmarked) {
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Unbookmark" image:[UIImage imageNamed:@"menu-unbookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article bookmarked:NO];
-            
-        }]];
-    }
-    else {
-        
-        [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Bookmark" image:[UIImage imageNamed:@"menu-bookmark"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-            
-            [self userMarkedArticle:article bookmarked:YES];
-            
-        }]];
-        
-    }
-    
-    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Browser" image:[UIImage imageNamed:@"open_in_browser"] color:[UIColor greenColor] didSelect:^(id<PopMenuAction> _Nonnull action) {
-        
-        NSURL *URL = formattedURL(@"yeti://external?link=%@", article.articleURL);
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-           
-            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
-            
-        });
-        
-    }]];
-    
-    [actions addObject:[[PopMenuDefaultAction alloc] initWithTitle:@"Share" image:[UIImage imageNamed:@"menu-share"] color:[UIColor blueColor] didSelect:^(id  _Nonnull action) {
-        
-        NSString *title = article.articleTitle;
-        NSURL *URL = formattedURL(@"%@", article.articleURL);
-        
-        UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
-        
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.sourceView = sender;
-        pvc.sourceRect = [(UIView *)sender frame];
-        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
-        
-        [self presentViewController:avc animated:YES completion:nil];
-        
-    }]];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    PopMenuAppearance *appearance = [PopMenuAppearance new];
-    appearance.popMenuCornerRadius = 12.f;
-    appearance.popMenuColor = theme.menuColor;
-    appearance.popMenuTextColor = theme.menuTextColor;
-    
-    appearance.popMenuFont = [TypeFactory.shared boldBodyFont];
-    
-    PopMenuViewController *vc = [[PopMenuViewController alloc] initWithAppearance:appearance sourceView:sender actions:actions];
-    
-    DDLogDebug(@"Button:%@\nArticle:%@\nCell:%@", sender, article.articleTitle, [self.collectionView indexPathForCell:cell]);
-    
-    [self presentViewController:vc animated:YES completion:nil];
-    
-}
-
 #pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -809,27 +620,33 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     vc.providerDelegate = self;
     vc.bookmarksManager = self.bookmarksManager;
     
-    if (self.splitViewController == nil) {
+    if (self.to_splitViewController == nil) {
         // in a modal stack
         [self.navigationController pushViewController:vc animated:YES];
     }
-    else if (self.splitViewController != nil) {
+    else if (self.to_splitViewController != nil) {
         
-        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
             
-            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
-                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-            else {
-                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                
-                [self.splitViewController showDetailViewController:nav sender:self];
-            }
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+
+            [self to_showDetailViewController:nav sender:self];
+            
+//            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+//                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
+//
+//                [self.navigationController pushViewController:vc animated:YES];
+//
+//            }
+//            else {
+//                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//
+//                [self.splitViewController showDetailViewController:nav sender:self];
+//            }
             
         }
         else {
-            [self showViewController:vc sender:self];
+            [self.navigationController pushViewController:vc animated:YES];
         }
         
     }
@@ -1049,16 +866,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     @try {
         
-        if (@available(iOS 13, *)) {
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
-            [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
-            
-            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        }
-        else {
-            self.DS.data = articles;
-        }
+        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+        [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
+        [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        
     }
     @catch (NSException *exc) {
         DDLogWarn(@"Exception updating feed articles: %@", exc);
@@ -1121,12 +934,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
             [self setupData];
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateLoaded;
-            }
-            else {
-                self.DS.state = DZDatasourceLoaded;
-            }
+            self.controllerState = StateLoaded;
             
 //            if ([self loadOnReady] != nil) {
 //                weakify(self);
@@ -1151,12 +959,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             if (!self)
                 return;
             
-            if (@available(iOS 13, *)) {
-                self.controllerState = StateErrored;
-            }
-            else {
-                self.DS.state = DZDatasourceError;
-            }
+            self.controllerState = StateErrored;
             
             weakify(self);
             
@@ -1180,22 +983,11 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         return;
     }
     
-    if (@available(iOS 13, *)) {
-        if (self.controllerState == StateLoading) {
-            return;
-        }
-    }
-    else {
-        if (self.DS.state == DZDatasourceLoading)
-            return;
+    if (self.controllerState == StateLoading) {
+        return;
     }
     
-    if (@available(iOS 13, *)) {
-        self.controllerState = StateLoading;
-    }
-    else {
-        self.DS.state = DZDatasourceLoading;
-    }
+    self.controllerState = StateLoading;
     
     [self.pagingManager loadNextPage];
     
@@ -1236,14 +1028,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     if (index == NSNotFound)
         return NO;
     
-    NSInteger count = 0;
-    
-    if (@available(iOS 13, *)) {
-        count = self.DDS.snapshot.numberOfItems;
-    }
-    else {
-        count = ((NSArray <FeedItem *> *)self.DS.data).count;
-    }
+    NSInteger count = self.DDS.snapshot.numberOfItems;
     
     return (index < (count - 1));
 }
@@ -1273,14 +1058,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSUInteger index = [self indexOfItem:item retIndexPath:indexPath];
     
-    NSInteger count = 0;
-    
-    if (@available(iOS 13, *)) {
-        count = self.DDS.snapshot.numberOfItems;
-    }
-    else {
-        count = ((NSArray <FeedItem *> *)self.DS.data).count;
-    }
+    NSInteger count = self.DDS.snapshot.numberOfItems;
     
     if (index < (count - 1)) {
         index++;
@@ -1318,10 +1096,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         FeedItem *articleInDS = [self itemForIndexPath:indexPath];
         
-        if (@available(iOS 13, *)) {
-            if (articleInDS == nil) {
-                articleInDS = [self.DDS.snapshot.itemIdentifiers objectAtIndex:index];
-            }
+        if (articleInDS == nil) {
+            articleInDS = [self.DDS.snapshot.itemIdentifiers objectAtIndex:index];
         }
         
         if (articleInDS != nil) {
@@ -1346,12 +1122,14 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                 // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
                 if (cell != nil && article.isBookmarked == NO) {
                     
-                    cell.markerView.image = [[UIImage imageNamed:@"munread"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                    
                     if (read == YES) {
+                        cell.markerView.image = [[UIImage systemImageNamed:@"circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                        
                         cell.markerView.tintColor = [[YTThemeKit theme] borderColor];
                     }
                     else {
+                        cell.markerView.image = [[UIImage systemImageNamed:@"largecircle.fill.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                        
                         cell.markerView.tintColor = [[YTThemeKit theme] tintColor];
                     }
                 }
@@ -1383,10 +1161,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         FeedItem *articleInDS = [self itemForIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
         
-        if (@available(iOS 13, *)) {
-            if (articleInDS == nil) {
-                articleInDS = [self.DDS.snapshot.itemIdentifiers objectAtIndex:index];
-            }
+        if (articleInDS == nil) {
+            articleInDS = [self.DDS.snapshot.itemIdentifiers objectAtIndex:index];
         }
         
         if (articleInDS != nil) {
@@ -1414,7 +1190,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
                         cell.markerView.image = nil;
                     }
                     else {
-                        cell.markerView.image = [UIImage imageNamed:@"mbookmark"];
+                        cell.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
                     }
                 }
             }
@@ -1465,12 +1241,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
      * We're expecting the equation below to result 6 (20-14)
      * Which actually would state that 5 articles are remaining.
      */
-    if (@available(iOS 13, *)) {
-        loadNextPage = (self.DDS.snapshot.numberOfItems - index) < 6;
-    }
-    else {
-        loadNextPage = (self.DS.data.count - index) < 6;
-    }
+    loadNextPage = (self.DDS.snapshot.numberOfItems - index) < 6;
     
     if (loadNextPage) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1534,12 +1305,7 @@ NSString * const kSizCache = @"FeedSizesCache";
         
         self.pagingManager = [coder decodeObjectForKey:@"pagingManager"];
         
-        if (@available(iOS 13, *)) {
-            self.controllerState = StateLoaded;
-        }
-        else {
-            self.DS.state = DZDatasourceLoaded;
-        }
+        self.controllerState = StateLoaded;
         
         [self setupData];
     }
@@ -1566,12 +1332,12 @@ NSString * const kSizCache = @"FeedSizesCache";
         return @[];
     }
  
-    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
+    UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
     allRead.width = 32.f;
     
-    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"done_all_bd"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
+    UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
     allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
     allReadBackDated.width = 32.f;
@@ -1598,9 +1364,11 @@ NSString * const kSizCache = @"FeedSizesCache";
         
     }
     
-    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option];
+    UIColor *tintColor = nil;
+    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
     
     UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
+    sorting.tintColor = tintColor;
     sorting.width = 32.f;
     
     if (!(self.feed.hubSubscribed && self.feed.hub)) {
@@ -1614,9 +1382,9 @@ NSString * const kSizCache = @"FeedSizesCache";
     }
     else {
         // push notifications are possible
-        NSString *imageString = self.feed.isSubscribed ? @"notifications_on" : @"notifications_off";
+        NSString *imageString = self.feed.isSubscribed ? @"bell.fill" : @"bell.slash";
         
-        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
+        UIBarButtonItem *notifications = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:imageString] style:UIBarButtonItemStylePlain target:self action:@selector(didTapNotifications:)];
         notifications.accessibilityValue = self.feed.isSubscribed ? @"Subscribe" : @"Unsubscribe";
         notifications.accessibilityHint = self.feed.isSubscribed ? @"Unsubscribe from notifications" : @"Subscribe to notifications";
         notifications.width = 32.f;
@@ -1634,7 +1402,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 
 - (void)setupNavigationBar {
     
-    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
+//    self.navigationItem.leftBarButtonItem = self.splitViewController.displayModeButtonItem;
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     if (self.isExploring) {
@@ -1666,19 +1434,6 @@ NSString * const kSizCache = @"FeedSizesCache";
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     self.navigationController.navigationBar.translucent = NO;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    if (@available(iOS 13, *)) {}
-    else {
-        CGFloat height = 1.f/[[UIScreen mainScreen] scale];
-        UIView *hairline = [[UIView alloc] initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height, self.navigationController.navigationBar.bounds.size.width, height)];
-        hairline.backgroundColor = theme.cellColor;
-        hairline.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-        
-        [self.navigationController.navigationBar addSubview:hairline];
-        self.hairlineView = hairline;
-    }
-    
 }
 
 - (NSArray <UIBarButtonItem *> *)toolbarItems {
@@ -1709,118 +1464,50 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     BOOL isCompact = [[[self.collectionView valueForKeyPath:@"delegate"] traitCollection] horizontalSizeClass] == UIUserInterfaceSizeClassCompact;
     
-    CGFloat padding = isCompact ? 0 : [self.flowLayout minimumInteritemSpacing];
+    NSCollectionLayoutSize *layoutSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
     
-    if (@available(iOS 13, *)) {
-        
-        NSCollectionLayoutSize *layoutSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
-        
-        NSCollectionLayoutItem *layoutItem = [NSCollectionLayoutItem itemWithLayoutSize:layoutSize];
-        
-        if (isCompact == NO) {
-            
-            layoutItem.edgeSpacing = [NSCollectionLayoutEdgeSpacing spacingForLeading:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] top:nil trailing:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] bottom:nil];
-            
-        }
-        
-        NSCollectionLayoutSize *groupSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
-        
-        NSInteger columnCount = isCompact ? 1 : 2;
-        
-        NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:groupSize subitem:layoutItem count:columnCount];
-        
-        if (isCompact == NO) {
-            layoutGroup.interItemSpacing = [NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding];
-        }
-        
-        NSCollectionLayoutSection *layoutSection = [NSCollectionLayoutSection sectionWithGroup:layoutGroup];
-        
-        if (isCompact == NO) {
-            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
-        }
-        
-        if (self->_shouldShowHeader == YES) {
-            
-            NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
-
-            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
-            
-            boundryItem.zIndex = 10;
-
-            layoutSection.boundarySupplementaryItems = @[boundryItem];
-            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(90.f, 0, 0, 0);
-            
-        }
-
-        UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
-        
-        [self.collectionView setCollectionViewLayout:compLayout animated:NO];
-        
-        self.compLayout = (UICollectionViewCompositionalLayout *)[self.collectionView collectionViewLayout];
-        
-        return;
-    }
+    NSCollectionLayoutItem *layoutItem = [NSCollectionLayoutItem itemWithLayoutSize:layoutSize];
     
-    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+    if (isCompact == NO) {
         
-        self.flowLayout.sectionInset = UIEdgeInsetsMake(12.f, 0.f, 12.f, 0.f);
-        self.flowLayout.minimumLineSpacing = 0.1f;
-        self.flowLayout.minimumInteritemSpacing = 0.1f;
-        
-    }
-    else {
-        
-        self.flowLayout.sectionInset = UIEdgeInsetsMake(padding, padding, padding, padding);
-        self.flowLayout.minimumLineSpacing = padding;
-        self.flowLayout.minimumInteritemSpacing = padding;
+        layoutItem.edgeSpacing = [NSCollectionLayoutEdgeSpacing spacingForLeading:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] top:nil trailing:[NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding] bottom:nil];
         
     }
     
-    self.collectionView.layoutMargins = UIEdgeInsetsZero;
-
-    CGSize contentSize = self.collectionView.bounds.size;
-
-    if (CGSizeEqualToSize(contentSize, CGSizeZero)) {
-        contentSize = [UIScreen mainScreen].bounds.size;
-    }
-
-    CGFloat width = contentSize.width;
-
-    /*
-     On iPads (Regular)
-     |- 16 - (cell) - 16 - (cell) - 16 -|
-     */
-
-    /*
-     On iPhones (Compact)
-     |- 0 - (cell) - 0 -|
-     */
-
-    CGFloat totalPadding =  padding * 3.f;
-
-    CGFloat usableWidth = width - totalPadding;
-
-    CGFloat cellWidth = usableWidth;
-
-    if (usableWidth > 601.f) {
-        // the remainder will be absorbed by the interimSpacing
-        cellWidth = floor(usableWidth / 2.f);
-    }
-    else {
-        cellWidth = width - (padding * 2.f);
-    }
-
-    self.flowLayout.estimatedItemSize = CGSizeMake(cellWidth, 90.f);
-    self.flowLayout.itemSize = UICollectionViewFlowLayoutAutomaticSize;
-
-    if (self->_shouldShowHeader) {
-        self.flowLayout.headerReferenceSize = CGSizeMake(CGRectGetWidth(self.collectionView.bounds), 80.f);
-    }
-    else {
-        self.flowLayout.headerReferenceSize = CGSizeZero;
+    NSCollectionLayoutSize *groupSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:90.f]];
+    
+    NSInteger columnCount = isCompact ? 1 : 2;
+    
+    NSCollectionLayoutGroup *layoutGroup = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:groupSize subitem:layoutItem count:columnCount];
+    
+    if (isCompact == NO) {
+        layoutGroup.interItemSpacing = [NSCollectionLayoutSpacing flexibleSpacing:LayoutPadding];
     }
     
-    [self.flowLayout invalidateLayout];
+    NSCollectionLayoutSection *layoutSection = [NSCollectionLayoutSection sectionWithGroup:layoutGroup];
+    
+    if (isCompact == NO) {
+        layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+    }
+    
+    if (self->_shouldShowHeader == YES) {
+        
+        NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
+
+        NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
+        
+        boundryItem.zIndex = 10;
+
+        layoutSection.boundarySupplementaryItems = @[boundryItem];
+        layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(90.f, 0, 0, 0);
+        
+    }
+
+    UICollectionViewCompositionalLayout *compLayout = [[UICollectionViewCompositionalLayout alloc] initWithSection:layoutSection];
+    
+    [self.collectionView setCollectionViewLayout:compLayout animated:NO];
+    
+    self.compLayout = (UICollectionViewCompositionalLayout *)[self.collectionView collectionViewLayout];
     
 }
 
@@ -1873,16 +1560,6 @@ NSString * const kSizCache = @"FeedSizesCache";
     self.view.backgroundColor = theme.cellColor;
     self.collectionView.backgroundColor = theme.cellColor;
     
-    if (@available(iOS 13, *)) {}
-    else {
-        
-        
-        
-        if (self.hairlineView != nil) {
-            self.hairlineView.backgroundColor = theme.cellColor;
-        }
-    }
-    
     [self reloadHeaderView];
     
 }
@@ -1903,14 +1580,9 @@ NSString * const kSizCache = @"FeedSizesCache";
     if ([[self.collectionView indexPathsForVisibleItems] count]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            if (@available(iOS 13, *)) {
-                NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-                
-                [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-            }
-            else {
-                [self.collectionView reloadItemsAtIndexPaths:[self.collectionView indexPathsForVisibleItems]];
-            }
+            NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+            
+            [self.DDS applySnapshot:snapshot animatingDifferences:YES];
             
         });
     }

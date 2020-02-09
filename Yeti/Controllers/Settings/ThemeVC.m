@@ -101,10 +101,7 @@ NSString *const kBasicCell = @"cell.theme";
         
         cell.textLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
         
-        NSInteger differenceInRowCount = 0;
-        if (@available(iOS 13, *)) {
-            differenceInRowCount = 1;
-        }
+        NSInteger differenceInRowCount = 1;
         
         if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
             || ([theme isEqualToString:DarkTheme] && indexPath.row == (1 - differenceInRowCount))
@@ -196,12 +193,7 @@ NSString *const kBasicCell = @"cell.theme";
         cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
     }
     
-    if (@available(iOS 13, *)) {
-        cell.backgroundColor = theme.backgroundColor;
-    }
-    else {
-        cell.backgroundColor = theme.cellColor;
-    }
+    cell.backgroundColor = theme.backgroundColor;
     
     return cell;
 }
@@ -316,7 +308,7 @@ NSString *const kBasicCell = @"cell.theme";
             window.tintColor = selectedColor;
         };
         
-        [NSNotificationCenter.defaultCenter postNotificationName:ThemeDidUpdate object:nil];
+//        [NSNotificationCenter.defaultCenter postNotificationName:ThemeDidUpdate object:nil];
         
         NSIndexSet * reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)];;
         

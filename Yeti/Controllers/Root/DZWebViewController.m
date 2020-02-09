@@ -69,7 +69,7 @@
 {
     if (!_webview) {
         _webview = [[WKWebView alloc] initWithFrame:UIScreen.mainScreen.bounds];
-        _webview.backgroundColor = [UIColor groupTableViewBackgroundColor];
+        _webview.backgroundColor = [UIColor systemGroupedBackgroundColor];
         _webview.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         
         _webview.scrollView.showsVerticalScrollIndicator = NO;

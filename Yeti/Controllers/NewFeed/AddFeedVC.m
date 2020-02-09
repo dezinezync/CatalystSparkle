@@ -42,15 +42,8 @@
     
     AddFeedVC *vc = [[AddFeedVC alloc] init];
     
-    UINavigationController *nav = nil;
-    
-    if (@available(iOS 13, *)) {
-        nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.modalInPresentation = UIModalPresentationAutomatic;
-    }
-    else {
-        nav = [[NewFeedDeckController alloc] initWithRootViewController:vc];
-    }
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalInPresentation = UIModalPresentationAutomatic;
     
     return nav;
 }
@@ -221,7 +214,6 @@
 #pragma mark - Setups
 
 - (void)setupSearchController {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     
@@ -233,12 +225,7 @@
     
     searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
     
-    if (@available(iOS 13, *)) {
-        searchController.automaticallyShowsScopeBar = YES;
-    }
-    else {
-        searchController.searchBar.keyboardAppearance = theme.isDark ? UIKeyboardAppearanceDark : UIKeyboardAppearanceLight;
-    }
+    searchController.automaticallyShowsScopeBar = YES;
     
     self.navigationItem.searchController = searchController;
     
@@ -351,9 +338,8 @@
 - (UIActivityIndicatorView *)loaderView {
     
     if (_loaderView == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        UIActivityIndicatorViewStyle style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+        UIActivityIndicatorViewStyle style = UIActivityIndicatorViewStyleMedium;
         
         UIActivityIndicatorView *loader = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
         [loader sizeToFit];
