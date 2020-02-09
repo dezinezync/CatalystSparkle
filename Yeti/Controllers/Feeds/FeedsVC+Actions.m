@@ -12,8 +12,6 @@
 #import "FeedsManager.h"
 #import "SettingsVC.h"
 
-#import "MoveFoldersVC.h"
-
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 
@@ -36,10 +34,8 @@
     
     NSString *formatted = formattedString(@"Last update: %@", dateString);
     
-    Theme *theme = [YTThemeKit theme];
-    
     NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:11.f],
-                                 NSForegroundColorAttributeName: theme.isDark ? [UIColor lightGrayColor] : [UIColor darkGrayColor]
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor
                                  };
     
     NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:formatted attributes:attributes];
@@ -142,21 +138,16 @@
     
     YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:settingsVC];
     
-    [self.splitViewController presentViewController:navVC animated:YES completion:nil];
+    [self.to_splitViewController presentViewController:navVC animated:YES completion:nil];
 }
 
 - (void)didTapRecommendations:(UIBarButtonItem *)sender
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    if (@available(iOS 13, *)) {
-        YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
-        
-        [self presentViewController:nav animated:YES completion:nil];
-    }
-    else {
-        [self showViewController:vc sender:self];
-    }
+    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
+    
+    [self presentViewController:nav animated:YES completion:nil];
 
 }
 
@@ -191,11 +182,9 @@
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Move to Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
-            UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
-            
             strongify(self);
             
-            [self.splitViewController presentViewController:nav animated:YES completion:nil];
+            [self feed_didTapMove:feed indexPath:indexPath];
             
         }]];
         
@@ -727,7 +716,7 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+    if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         
         pvc.sourceView = self.tableView;
@@ -788,7 +777,7 @@
 
 - (void)showActivityController:(UIActivityViewController *)avc indexPath:(NSIndexPath *)indexPath {
     
-    if (indexPath != nil && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (indexPath != nil && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         pvc.sourceView = self.tableView;
@@ -819,7 +808,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
                 UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
                 
                 pvc.sourceView = self.tableView;
@@ -836,24 +825,78 @@
 
 - (void)feed_didTapMove:(Feed *)feed indexPath:(NSIndexPath *)indexPath {
     
-    UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed];
+    UINavigationController *nav = [MoveFoldersVC instanceForFeed:feed delegate:self];
     
-    if (feed.folderID != nil) {
+//    if (feed.folderID != nil) {
+//        
+//        for (Folder *folder in ArticlesManager.shared.folders) {
+//            
+//            if ([folder.folderID isEqualToNumber:feed.folderID] && folder.expanded == YES) {
+//                folder.expanded = NO;
+//                
+//                [self setupData];
+//                break;
+//            }
+//            
+//        }
+//        
+//    }
+    
+    [self.to_splitViewController presentViewController:nav animated:YES completion:^{
         
-        for (Folder *folder in ArticlesManager.shared.folders) {
+        self->_presentingKnown = YES;
+        
+    }];
+    
+}
+
+#pragma mark - <MoveFoldersDelegate>
+
+- (void)feed:(Feed *)feed didMoveFromFolder:(Folder *)sourceFolder toFolder:(Folder *)destinationFolder {
+    
+    if (sourceFolder == nil && destinationFolder == nil) {
+        // no change occurred.
+        return;
+    }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_presentingKnown = NO;
+    });
+ 
+#ifdef DEBUG
+    NSLog(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
+#endif
+    
+    NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+    
+    if (sourceFolder != nil && sourceFolder.isExpanded == YES) {
+     
+        if (destinationFolder != nil) {
             
-            if ([folder.folderID isEqualToNumber:feed.folderID] && folder.expanded == YES) {
-                folder.expanded = NO;
-                
-                [self setupData];
-                break;
+            NSIndexPath *indexPathOfFolder = [self.DDS indexPathForItemIdentifier:destinationFolder];
+            
+            if (indexPathOfFolder == nil) {
+                return;
+            }
+            
+            if (destinationFolder.isExpanded == YES) {
+                [snapshot moveItemWithIdentifier:feed afterItemWithIdentifier:destinationFolder];
+            }
+            else {
+                [snapshot deleteItemsWithIdentifiers:@[feed]];
             }
             
         }
+        else {
+            [snapshot deleteItemsWithIdentifiers:@[feed]];
+        }
         
     }
+    else {
+        [snapshot deleteItemsWithIdentifiers:@[feed]];
+    }
     
-    [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
     
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "IntroViewDefault.h"
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface IntroViewDefault ()
 
@@ -31,7 +32,7 @@
     
     NSArray <UIView *> *activeViews = @[self.card1, self.card2];
     
-    if ([[UIApplication sharedApplication] keyWindow].bounds.size.height > 568.f) {
+    if (UIApplication.keyWindow.bounds.size.height > 568.f) {
         activeViews = [activeViews arrayByAddingObject:self.card3];
     }
     else {
@@ -42,11 +43,11 @@
         self.card3.hidden = YES;
     }
     
-    if ([[UIApplication sharedApplication] keyWindow].bounds.size.height <= 667.f) {
+    if (UIApplication.keyWindow.bounds.size.height <= 667.f) {
         self.buttonBottom.constant += 87.f;
     }
     
-    if ([[UIApplication sharedApplication] keyWindow].bounds.size.width >= 768.f) {
+    if (UIApplication.keyWindow.bounds.size.width >= 768.f) {
         activeViews = [activeViews arrayByAddingObject:self.card3];
         
         CGFloat const space = 80.f;

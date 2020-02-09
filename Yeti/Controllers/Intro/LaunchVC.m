@@ -40,27 +40,25 @@
     
     self.view.layer.cornerRadius = 20.f;
 
-    if (@available(iOS 13, *)) {
-        self.view.layer.cornerCurve = kCACornerCurveContinuous;
-        self.getStartedButton.hidden = YES;
-        
-        ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
-        
-        ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
-        
-        [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
-        
-        button.translatesAutoresizingMaskIntoConstraints = NO;
-        
-        [self.view addSubview:button];
-        
-        [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
-                                                  [button.heightAnchor constraintEqualToConstant:44.f],
-                                                  [button.topAnchor constraintEqualToAnchor:self.stackView.bottomAnchor constant:40.f],
-                                                  [button.widthAnchor constraintEqualToConstant:(320.f - (LayoutPadding * 2.f))]]];
-        
-        self.signinButton = button;
-    }
+    self.view.layer.cornerCurve = kCACornerCurveContinuous;
+    self.getStartedButton.hidden = YES;
+    
+    ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
+    
+    ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
+    
+    [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
+    
+    button.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.view addSubview:button];
+    
+    [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
+                                              [button.heightAnchor constraintEqualToConstant:44.f],
+                                              [button.topAnchor constraintEqualToAnchor:self.stackView.bottomAnchor constant:40.f],
+                                              [button.widthAnchor constraintEqualToConstant:(320.f - (LayoutPadding * 2.f))]]];
+    
+    self.signinButton = button;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.view.backgroundColor = theme.backgroundColor;
@@ -77,11 +75,7 @@
     self.titleLabel.font = baseFont;
     
     NSRange elytra = [attrs.string rangeOfString:@"Elytra"];
-    UIColor *purple = [UIColor colorWithDisplayP3Red:42.f/255.f green:0.f blue:1.f alpha:1.f];
-    
-    if (@available(iOS 13, *)) {
-        purple = [UIColor systemIndigoColor];
-    }
+    UIColor *purple = [UIColor systemIndigoColor];
     
     if (purple == nil) {
         purple = [UIColor purpleColor];

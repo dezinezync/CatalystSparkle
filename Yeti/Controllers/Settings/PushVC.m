@@ -350,16 +350,8 @@
 
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (_activityIndicatorView == nil) {
-        Theme *theme = [YTThemeKit theme];
         
-        UIActivityIndicatorViewStyle style;
-        
-        if (@available(iOS 13, *)) {
-            style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight ? UIActivityIndicatorViewStyleGray : UIActivityIndicatorViewStyleWhite;
-        }
-        else {
-             style = theme.isDark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
-        }
+        UIActivityIndicatorViewStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight ? UIActivityIndicatorViewStyleMedium : UIActivityIndicatorViewStyleMedium;
         
         UIActivityIndicatorView *view = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:style];
         [view sizeToFit];

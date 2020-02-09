@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)configureFolder:(Folder * _Nonnull)folder dropDelegate:(id <FolderDrop> _Nullable)dropDelegate;
 
+- (void)didTapIcon:(id)sender;
+
 @end
 
 NS_ASSUME_NONNULL_END

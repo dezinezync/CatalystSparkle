@@ -37,12 +37,7 @@ NSArray <NSString *> * _themeNames;
         dispatch_once(&onceToken, ^{
             NSArray *themes = nil;
             
-            if (@available(iOS 13, *)) {
-                themes = @[@"light", @"reader"];
-            }
-            else {
-                themes = @[@"light", @"dark", @"reader"];
-            }
+            themes = @[@"light", @"reader"];
             
             if (canSupportOLED()) {
                 // black should always be last
@@ -80,16 +75,6 @@ NSArray <NSString *> * _themeNames;
                 
                 if (tintIndex != NSNotFound) {
                     theme.tintColor = colours[tintIndex];
-                }
-                
-                if (@available(iOS 13, *)) {}
-                else {
-                    if ([obj isEqualToString:@"dark"]
-                        || [obj isEqualToString:@"black"]) {
-                        
-                        theme.dark = YES;
-                        
-                    }
                 }
                 
             }];

@@ -7,7 +7,7 @@
 //
 
 #import "TypeFactory.h"
-
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 BOOL IS_PAD (UIViewController *viewController) {
     return viewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad;
@@ -146,7 +146,7 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
 - (UIViewController *)rootController {
     
     if (!_rootController) {
-        _rootController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+        _rootController = [UIApplication.keyWindow rootViewController];
     }
     
     return _rootController;

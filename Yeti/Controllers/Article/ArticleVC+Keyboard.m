@@ -18,21 +18,49 @@
 
 - (NSArray <UIKeyCommand *> *)keyCommands {
     
-    UIKeyCommand *close = [UIKeyCommand keyCommandWithInput:@"w" modifierFlags:UIKeyModifierCommand action:@selector(didTapClose) discoverabilityTitle:@"Close Article"];
-    UIKeyCommand *bookmark = [UIKeyCommand keyCommandWithInput:@"b" modifierFlags:UIKeyModifierCommand action:@selector(didTapBookmark:) discoverabilityTitle:(self.item.isBookmarked ? @"Unbookmark Article" : @"Bookmark Article")];
-    UIKeyCommand *read = [UIKeyCommand keyCommandWithInput:@"r" modifierFlags:UIKeyModifierCommand action:@selector(didTapRead:) discoverabilityTitle:(self.item.isRead ? @"Mark as Unread" : @"Mark as Read")];
+    UIKeyCommand *close = [UIKeyCommand keyCommandWithInput:@"w" modifierFlags:UIKeyModifierCommand action:@selector(didTapClose)];
+    close.title = @"Close";
+    close.discoverabilityTitle = close.title;
     
-    UIKeyCommand *search = [UIKeyCommand keyCommandWithInput:@"f" modifierFlags:UIKeyModifierCommand action:@selector(didTapSearch) discoverabilityTitle:@"Search article"];
+    UIKeyCommand *bookmark = [UIKeyCommand keyCommandWithInput:@"b" modifierFlags:UIKeyModifierCommand action:@selector(didTapBookmark:)];
+    bookmark.title = self.item.isBookmarked ? @"Unbookmark" : @"Bookmark";
+    bookmark.discoverabilityTitle = bookmark.title;
     
-    UIKeyCommand *scrollUp = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(scrollUp) discoverabilityTitle:@"Scroll Up"];
-    UIKeyCommand *scrollDown = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(scrollDown) discoverabilityTitle:@"Scroll Down"];
-    UIKeyCommand *previousArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapPreviousArticle:) discoverabilityTitle:@"Previous Article"];
-    UIKeyCommand *nextArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapNextArticle:) discoverabilityTitle:@"Next article"];
+    UIKeyCommand *read = [UIKeyCommand keyCommandWithInput:@"r" modifierFlags:UIKeyModifierCommand action:@selector(didTapRead:)];
+    read.title = self.item.isRead ? @"Mark Unread" : @"Mark Read";
+    read.discoverabilityTitle = read.title;
     
-    UIKeyCommand *galleryLeft = [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:0 action:@selector(navLeft) discoverabilityTitle:@"Previous Image"];
-    UIKeyCommand *galleryRight = [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:0 action:@selector(navRight) discoverabilityTitle:@"Next Image"];
+    UIKeyCommand *search = [UIKeyCommand keyCommandWithInput:@"f" modifierFlags:UIKeyModifierCommand action:@selector(didTapSearch)];
+    search.title = @"Search";
+    search.discoverabilityTitle = search.title;
+    
+    UIKeyCommand *scrollUp = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(scrollUp)];
+    scrollUp.title = @"Scroll Up";
+    scrollUp.discoverabilityTitle = scrollUp.title;
+    
+    UIKeyCommand *scrollDown = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(scrollDown)];
+    scrollDown.title = @"Scroll Down";
+    scrollDown.discoverabilityTitle = scrollDown.title;
+    
+    UIKeyCommand *previousArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapPreviousArticle:)];
+    previousArticle.title = @"Previous Article";
+    previousArticle.discoverabilityTitle = previousArticle.title;
+    
+    UIKeyCommand *nextArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapNextArticle:)];
+    nextArticle.title = @"Next Article";
+    nextArticle.discoverabilityTitle = nextArticle.title;
+    
+    UIKeyCommand *galleryLeft = [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:0 action:@selector(navLeft)];
+    galleryLeft.title = @"Previous Image";
+    galleryLeft.discoverabilityTitle = galleryLeft.title;
+    
+    UIKeyCommand *galleryRight = [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:0 action:@selector(navRight)];
+    galleryRight.title = @"Next Image";
+    galleryRight.discoverabilityTitle = galleryRight.title;
     
     UIKeyCommand *esc = [UIKeyCommand keyCommandWithInput:UIKeyInputEscape modifierFlags:0 action:@selector(didTapSearchDone)];
+    esc.title = @"Dismiss Search";
+    esc.discoverabilityTitle = esc.title;
     
     NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc];
     

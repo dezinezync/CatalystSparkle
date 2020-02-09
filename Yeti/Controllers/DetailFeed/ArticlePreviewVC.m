@@ -66,9 +66,7 @@
           
             self.imageView.image = image;
             
-            if (@available(iOS 13.0, *)) {
-                self.imageView.layer.cornerCurve = kCACornerCurveContinuous;
-            }
+            self.imageView.layer.cornerCurve = kCACornerCurveContinuous;
             
             self.imageView.layer.cornerRadius = 8.f;
             self.imageView.layer.masksToBounds = YES;

@@ -56,6 +56,10 @@
 
 @property (nonatomic, strong) NYTPhotoViewerArrayDataSource * _Nullable photosDS;
 
+#pragma mark - Opening URLs
+
+- (void)openLinkExternally:(NSString *)link;
+
 #pragma mark - Private
 
 - (CGRect)boundingRectIn:(UITextView * _Nonnull)textview forCharacterRange:(NSRange)range;

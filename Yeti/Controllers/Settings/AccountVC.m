@@ -24,6 +24,7 @@
 #import "PaddedLabel.h"
 
 #import <AuthenticationServices/AuthenticationServices.h>
+#import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface AccountVC () <UITextFieldDelegate, DZMessagingDelegate, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding> {
     UITextField *_textField;
@@ -87,20 +88,16 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     
-    if (@available(iOS 13, *)) {
-        
-        NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
-        
-        NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
-        
-        if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
-            return 2;
-        }
-        
-        return 3;
+    NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
+    
+    NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
+    
+    if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
+        return 2;
     }
     
-    return 2;
+    return 3;
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -142,12 +139,7 @@
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
-    if (@available(iOS 13, *)) {
-        cell.backgroundColor = theme.backgroundColor;
-    }
-    else {
-        cell.backgroundColor = theme.cellColor;
-    }
+    cell.backgroundColor = theme.backgroundColor;
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
@@ -196,22 +188,20 @@
 
             [cell.contentView setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisVertical];
             
-            if (@available(iOS 13, *)) {
-                ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
-                
-                ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
-                
-                [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
-                
-                button.translatesAutoresizingMaskIntoConstraints = NO;
-                
-                [cell.contentView addSubview:button];
-                
-                [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:cell.contentView.centerXAnchor],
-                                                          [cell.contentView.heightAnchor constraintEqualToAnchor:button.heightAnchor multiplier:1.f]]];
-                
-                self.signinButton = button;
-            }
+            ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
+            
+            ASAuthorizationAppleIDButton *button = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeContinue style:style];
+            
+            [button addTarget:self action:@selector(didTapSignIn:) forControlEvents:UIControlEventTouchUpInside];
+            
+            button.translatesAutoresizingMaskIntoConstraints = NO;
+            
+            [cell.contentView addSubview:button];
+            
+            [NSLayoutConstraint activateConstraints:@[[button.centerXAnchor constraintEqualToAnchor:cell.contentView.centerXAnchor],
+                                                      [cell.contentView.heightAnchor constraintEqualToAnchor:button.heightAnchor multiplier:1.f]]];
+            
+            self.signinButton = button;
         }
         break;
         default:
@@ -228,22 +218,30 @@
 
 #pragma mark - Table view delegate
 
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(nonnull NSIndexPath *)indexPath
-{
-    return indexPath.section == 0 && indexPath.row == 0;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(nonnull SEL)action forRowAtIndexPath:(nonnull NSIndexPath *)indexPath withSender:(nullable id)sender
-{
-    return [NSStringFromSelector(action) isEqualToString:@"copy:"] && (indexPath.row == 0 && indexPath.section == 0);
-}
-
-- (void)tableView:(UITableView *)tableView performAction:(nonnull SEL)action forRowAtIndexPath:(nonnull NSIndexPath *)indexPath withSender:(nullable id)sender {
-    if ([NSStringFromSelector(action) isEqualToString:@"copy:"] && (indexPath.row == 0 && indexPath.section == 0)) {
+-(UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+    
+    UIContextMenuConfiguration *config = nil;
+    
+    if (indexPath.row == 0 && indexPath.section == 0) {
         
-        [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
-        
+        config = [UIContextMenuConfiguration configurationWithIdentifier:@"copyUUID" previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+           
+            UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+               
+                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
+                
+            }];
+            
+            UIMenu *menu = [UIMenu menuWithTitle:@"Account ID" children:@[copyItem]];
+            
+            return menu;
+            
+        }];
+
     }
+    
+    return config;
+    
 }
 
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
@@ -463,7 +461,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [nav dismissViewControllerAnimated:YES completion:^{
                 
-                SplitVC *v = (SplitVC *)[[[UIApplication sharedApplication] keyWindow] rootViewController];
+                SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
                 [v userNotFound];
                 
             }];

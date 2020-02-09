@@ -133,23 +133,16 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
         self.authorLabel.text = @"Unknown";
     }
     
-    NSString *timestamp = nil;
-    
-    if (@available(iOS 13, *)) {
-        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
-    }
-    else {
-        timestamp = [item.timestamp timeAgoSinceNow];
-    }
+    NSString * timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:item.timestamp relativeToDate:NSDate.date];
     
     self.timeLabel.text = timestamp;
     self.timeLabel.accessibilityLabel = timestamp;
     
     if (!isCustomFeed) {
         if (!item.isRead)
-            self.markerView.image = [UIImage imageNamed:@"munread"];
+            self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
         else if (item.isBookmarked)
-            self.markerView.image = [UIImage imageNamed:@"mbookmark"];
+            self.markerView.image = [UIImage systemImageNamed:@"bookmark"];
         else
             self.markerView.image = nil;
     }

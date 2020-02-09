@@ -23,9 +23,9 @@
     return NO;
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
+//}
 
 - (UIViewController *)childViewControllerForStatusBarStyle {
     if (self.presentedViewController) {

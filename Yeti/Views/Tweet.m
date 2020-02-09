@@ -117,29 +117,15 @@
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
-        if (@available(iOS 13, *)) {
-            self.collectionView.hidden = YES;
-            self.textview.hidden = YES;
-            self.avatar.hidden = YES;
-            self.usernameLabel.hidden = YES;
-            self.timeLabel.hidden = YES;
-            
-            _usingLinkPresentation = YES;
-            
-            self.backgroundColor = [UIColor clearColor];
-        }
-        else {
-            [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(TweetImage.class) bundle:nil] forCellWithReuseIdentifier:kTweetCell];
-            self.collectionView.contentInset = UIEdgeInsetsZero;
-            self.collectionView.layoutMargins = UIEdgeInsetsZero;
-            self.collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-            self.collectionView.delegate = self;
-            self.collectionView.dataSource = self;
-            
-            self.textview.scrollEnabled = NO;
-            
-            self.avatar.image = nil;
-        }
+        self.collectionView.hidden = YES;
+        self.textview.hidden = YES;
+        self.avatar.hidden = YES;
+        self.usernameLabel.hidden = YES;
+        self.timeLabel.hidden = YES;
+        
+        _usingLinkPresentation = YES;
+        
+        self.backgroundColor = [UIColor clearColor];
         
     }
     
@@ -153,62 +139,7 @@
     
     _content = content;
     
-    if (@available(iOS 13, *)) {
-        [self addTweetForOS13:content];
-        return;
-    }
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.backgroundColor = theme.isDark ? [UIColor colorWithRed:51/255.f green:53/255.f blue:55/255.f alpha:1.f] : [UIColor colorWithRed:235/255.f green:247/255.f blue:255/255.f alpha:1.f];
-    self.textview.backgroundColor = self.backgroundColor;
-    
-    self.collectionView.backgroundColor = self.backgroundColor;
-    
-    [self.textview setText:content.content ranges:content.ranges attributes:content.attributes];
-    self.textview.contentSize = [[self.textview attributedText] boundingRectWithSize:self.textview.bounds.size options:NSStringDrawingUsesFontLeading|NSStringDrawingUsesLineFragmentOrigin context:nil].size;
-    
-    self.usernameLabel.text = formattedString(@"@%@", [content.attributes valueForKey:@"username"]);
-    self.usernameLabel.textColor = theme.isDark ? [UIColor colorWithRed:184/255.f green:208/255.f blue:230/255.f alpha:1.f] : [UIColor colorWithRed:77/255.f green:104/255.f blue:128/255.f alpha:1.f];
-    
-    weakify(self);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        strongify(self);
-        
-        NSString *avatarURI = [content.attributes valueForKey:@"avatar"];
-        
-        [self.avatar il_setImageWithURL:formattedURL(@"%@", avatarURI)];
-    });
-    
-    NSString *timestamp = nil;
-    NSDate *date = [[(NSString *)content.attributes valueForKey:@"created"] dateFromTimestamp];
-    
-    if (@available(iOS 13, *)) {
-        timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:date relativeToDate:NSDate.date];
-    }
-    else {
-        timestamp = [date timeAgoSinceNow];
-    }
-    
-    self.timeLabel.text = timestamp;
-    self.timeLabel.accessibilityLabel = timestamp;
-    
-    if (!content.images || !content.images.count || ![self showImage]) {
-        self.collectionView.hidden = YES;
-        self.collectionViewHeight.constant = 0.f;
-        self.collectionPadding.constant = 0.f;
-    }
-    else {
-        
-        [self setupCollectionView];
-        
-    }
-    
-    [self.textview layoutIfNeeded];
-    [self.collectionView layoutIfNeeded];
-    [self layoutIfNeeded];
-    
-    [self invalidateIntrinsicContentSize];
+    [self addTweetForOS13:content];
 }
 
 - (void)addTweetForOS13:(Content *)content {
@@ -296,48 +227,19 @@
 
 #pragma mark - Overrides
 
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
-    
-    if (@available(iOS 13, *)) {
-        
-    }
-    else {
-        [self setupCollectionView];
-    }
-}
-
 - (CGSize)intrinsicContentSize {
     CGSize size = CGSizeMake(self.bounds.size.width, 0.f);
     
-    if (@available(iOS 13, *)) {
-        if (_usingLinkPresentation == YES && self.linkView != nil) {
-            CGSize linkViewSize = [self.linkView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)];
-            
-            DDLogInfo(@"Tweet view size: %@", NSStringFromCGSize(linkViewSize));
-            
-            return linkViewSize;
-        }
+    if (_usingLinkPresentation == YES && self.linkView != nil) {
+        CGSize linkViewSize = [self.linkView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)];
         
-        return size;
+        DDLogInfo(@"Tweet view size: %@", NSStringFromCGSize(linkViewSize));
+        
+        return linkViewSize;
     }
-    
-    if (self.content == nil) {
-        return size;
-    }
-    
-    if (self.collectionView.isHidden == NO) {
-        size.height += self.collectionView.bounds.size.height;
-    }
-    
-    size.height += [self.textview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
-//    size.height += self.textview.layoutMargins.top + self.textview.layoutMargins.bottom + 16.f;
-    
-    size.height += [self.avatar.superview sizeThatFits:CGSizeMake(size.width - (LayoutPadding * 2), CGFLOAT_MAX)].height;
-    // add the inter-elements padding
-    size.height += LayoutPadding * (self.collectionView.isHidden ? 2 : 3);
     
     return size;
+    
 }
 
 #pragma mark - <UICollectionViewDatasource>

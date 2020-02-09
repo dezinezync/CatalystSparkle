@@ -33,7 +33,7 @@
     
     [self didUpdateTheme];
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
 }
 
@@ -45,19 +45,6 @@
     [super viewWillAppear:animated];
     
     [self.navigationController setNavigationBarHidden:YES animated:NO];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    if (!_showPrimaryOnce) {
-        _showPrimaryOnce = YES;
-        
-        // show the primary controller
-        UIBarButtonItem *item = [self.splitViewController displayModeButtonItem];
-        [UIApplication.sharedApplication sendAction:item.action to:item.target from:nil forEvent:nil];
-    }
 }
 
 - (void)didUpdateTheme {

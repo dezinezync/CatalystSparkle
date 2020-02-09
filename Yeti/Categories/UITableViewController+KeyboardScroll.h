@@ -8,11 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UITableViewController (KeyboardScroll)
+@interface UIViewController (KeyboardScroll)
 
-@property (nonatomic, copy) NSIndexPath *highlightedRow;
+@property (nonatomic, copy) NSIndexPath * _Nullable highlightedRow;
 
-- (NSArray *)data;
+#pragma mark - Implement in VC
+
+- (NSArray * _Nonnull)data;
+
+- (UITableView * _Nullable)tableView;
+
+- (UICollectionView * _Nullable)collectionView;
+
+- (id _Nonnull)datasource;
+
+#pragma mark - Implemented
 
 - (void)didTapPrev;
 - (void)didTapNext;
