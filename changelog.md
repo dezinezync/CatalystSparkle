@@ -1,5 +1,9 @@
 # v1.6
 
+## Build 318
+
+- Fixed a 14 month old bug which could cause a crash when reloading feeds with one or more folders open. 
+
 ## Build 317 
 
 - Re-add WebP Images support.

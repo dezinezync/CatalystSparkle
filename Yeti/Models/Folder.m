@@ -47,13 +47,12 @@
 
 - (NSUInteger)hash {
     
-    __block NSUInteger hash = 20;
-    hash += self.folderID.hash;
-    hash += self.title.hash;
+    NSUInteger hash = 50000;
+    hash += self.folderID.unsignedIntegerValue;
     
-    [self.feedIDs enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
-        hash += [obj hash];
-    }];
+    for (NSNumber *feedID in self.feedIDs) {
+        hash += feedID.unsignedIntegerValue;
+    }
     
     return hash;
     
@@ -72,6 +71,10 @@
     BOOL checkOne = object.hash == self.hash;
     
     BOOL checkTwo = object.isExpanded == self.isExpanded;
+    
+#ifdef DEBUG
+    NSLog(@"Folder %@ equality with %@ > %@ : %@", self.title, object.title, @(checkOne), @(checkTwo));
+#endif
     
     return checkOne && checkTwo;
 }

@@ -76,9 +76,7 @@
 - (NSUInteger)hash {
     
     NSUInteger hash = 0;
-    hash += self.feedID.hash;
-    hash += self.title.hash;
-    hash += self.folderID.hash;
+    hash += self.feedID.unsignedIntegerValue;
     
     return hash;
     
