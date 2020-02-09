@@ -330,29 +330,18 @@ static NSString * const reuseIdentifier = @"Cell";
             break;
     }
     
-    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
-                    && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+//    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+//                    && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     if (feed) {
-        UIViewController *vcc;
         
-        if (isPhone) {
-            DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
-            vc.customFeed = NO;
-            vc.exploring = YES;
-            vc.customFeed = FeedTypeFeed;
-            
-            vcc = vc;
-        }
-        else {
-            UINavigationController *nav = [DetailFeedVC instanceWithFeed:feed];
-            [(DetailFeedVC *)[nav topViewController] setCustomFeed:NO];
-            [(DetailFeedVC *)[nav topViewController] setExploring:YES];
-            
-            vcc = nav;
-        }
+        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+        vc.customFeed = NO;
+        vc.exploring = YES;
+        vc.customFeed = FeedTypeFeed;
         
-        [self showDetailViewController:vcc sender:self];
+        [self.navigationController pushViewController:vc animated:YES];
+        
     }
     else {
         [collectionView deselectItemAtIndexPath:indexPath animated:YES];
