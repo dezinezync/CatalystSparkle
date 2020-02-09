@@ -19,7 +19,18 @@
 
 - (void)didTapOnImage:(UITapGestureRecognizer *)sender {
     
-    NSLog(@"Sender state: %@", @(sender.state));
+    if (sender.state != UIGestureRecognizerStateEnded) {
+        return;
+    }
+    
+    Image *image = (Image *)[sender view];
+    
+    if (image.link != nil) {
+        
+        [self openLinkExternally:image.link.absoluteString];
+        return;
+        
+    }
     
     NSArray *images = self.images.allObjects;
     

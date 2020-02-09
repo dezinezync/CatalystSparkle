@@ -58,6 +58,54 @@
         
     }];
     
+    [[JLRoutes globalRoutes] addRoute:@"/addFeedConfirm" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
+       
+        strongify(self);
+        
+        NSString *path = [parameters valueForKey:@"URL"];
+        
+        if (path) {
+            NSURL *url = [NSURL URLWithString:path];
+            
+            if (!url) {
+                [AlertManager showGenericAlertWithTitle:@"Invalid Link" message:@"The link seems to be invalid or Yeti was unable to process it correctly."];
+                return YES;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                weakify(self);
+                
+                UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Add Feed?" message:path preferredStyle:UIAlertControllerStyleAlert];
+                
+                [avc addAction:[UIAlertAction actionWithTitle:@"Add" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    
+                    strongify(self);
+                    
+                    [self addFeed:url];
+                    
+                }]];
+                
+                [avc addAction:[UIAlertAction actionWithTitle:@"Open in Browser" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    
+                    strongify(self);
+                    
+                    [self openURL:path];
+                    
+                }]];
+                
+                [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                
+                [self.window.rootViewController presentViewController:avc animated:YES completion:nil];
+                
+            });
+            
+        }
+        
+        return YES;
+        
+    }];
+    
     [[JLRoutes globalRoutes] addRoute:@"/addFeed" handler:^BOOL(NSDictionary *parameters) {
        
         strongify(self);

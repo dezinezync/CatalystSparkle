@@ -1,5 +1,10 @@
 # v1.6
 
+## Build 319
+- Fixed recommendations not displaying the feed correctly
+
+- Fixed issue with loading images where narrower images would be enlarged to fix the max width as determined by the app. 
+
 ## Build 318
 
 - Fixed a 14 month old bug which could cause a crash when reloading feeds with one or more folders open. 

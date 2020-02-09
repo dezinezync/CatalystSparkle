@@ -2450,7 +2450,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    NSURL *formatted = formattedURL(@"yeti://external?link=%@", link);
+    NSURL *formatted;
+    
+    if ([link containsString:@"/feed"]) {
+        
+        // handle internally
+        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", link);
+        
+    }
+    else {
+        formatted = formattedURL(@"yeti://external?link=%@", link);
+    }
     
     asyncMain(^{
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];

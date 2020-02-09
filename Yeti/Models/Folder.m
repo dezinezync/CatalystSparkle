@@ -72,10 +72,6 @@
     
     BOOL checkTwo = object.isExpanded == self.isExpanded;
     
-#ifdef DEBUG
-    NSLog(@"Folder %@ equality with %@ > %@ : %@", self.title, object.title, @(checkOne), @(checkTwo));
-#endif
-    
     return checkOne && checkTwo;
 }
 
