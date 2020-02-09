@@ -374,10 +374,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
         NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
         [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
         
         [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+
     });
     
 }

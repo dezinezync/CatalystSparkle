@@ -157,7 +157,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
         [super setAttributedText:attributedText];
         
 //        [self _hookGestures];
-        
     }
     else {
         if (attributedText) {
