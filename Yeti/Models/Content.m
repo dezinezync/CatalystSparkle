@@ -355,7 +355,7 @@
         }
     }
     
-    url = [url pathForImageProxy:usedSRCSet maxWidth:0.f quality:0.f];
+    url = [url pathForImageProxy:usedSRCSet maxWidth:width quality:0.f];
     
     return url;
 }

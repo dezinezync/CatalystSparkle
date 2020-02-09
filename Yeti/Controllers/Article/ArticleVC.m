@@ -1551,7 +1551,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.images addPointer:(__bridge void *)imageView];
     imageView.idx = self.images.count - 1;
     
-    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:self.scrollView.bounds.size.width];
+    CGFloat width = self.scrollView.bounds.size.width;
+    
+    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:width];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
     imageView.userInteractionEnabled = YES;
