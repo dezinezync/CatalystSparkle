@@ -19,10 +19,10 @@
 #import "DetailFeedVC.h"
 #import "EmptyVC.h"
 #import "SplitVC.h"
+#import "CustomizeVC.h"
 
 #import "YetiConstants.h"
 
-#import <PopMenu/PopMenu.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @implementation ArticleVC (Toolbar)
@@ -95,7 +95,8 @@
 - (NSArray <UIBarButtonItem *> *)commonNavBarItems {
     
     UIImage * shareImage = [UIImage systemImageNamed:@"square.and.arrow.up"],
-            * browserImage = [UIImage systemImageNamed:@"safari"];
+            * browserImage = [UIImage systemImageNamed:@"safari"],
+            * customizeImage = [UIImage systemImageNamed:@"doc.richtext"];
     
     UIBarButtonItem *share = [[UIBarButtonItem alloc] initWithImage:shareImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapShare:)];
     
@@ -106,7 +107,11 @@
     browser.accessibilityValue = @"Open the article in the browser";
     browser.accessibilityLabel = @"Browser";
     
-    return @[share, browser];
+    UIBarButtonItem *customize = [[UIBarButtonItem alloc] initWithImage:customizeImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapCustomize:)];
+    browser.accessibilityValue = @"Customize the Article Reader Interface";
+    browser.accessibilityLabel = @"Customize";
+    
+    return @[share, browser, customize];
     
 }
 
@@ -492,6 +497,19 @@
         strongify(self);
         self->_searchHighlightingRect.frame = frame;
     });
+}
+
+- (void)didTapCustomize:(UIBarButtonItem *)sender {
+    
+    CustomizeVC *instance = [[CustomizeVC alloc] initWithStyle:UITableViewStyleGrouped];
+    instance.modalPresentationStyle = UIModalPresentationPopover;
+    
+    UIPopoverPresentationController *pvc = instance.popoverPresentationController;
+    pvc.barButtonItem = sender;
+    pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+    
+    [self presentViewController:instance animated:YES completion:nil];
+    
 }
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>

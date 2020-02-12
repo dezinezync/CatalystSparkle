@@ -27,7 +27,6 @@
 #import "ArticleProvider.h"
 
 #import "YetiThemeKit.h"
-#import "PopMenuViewController.h"
 #import "PrefsManager.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>

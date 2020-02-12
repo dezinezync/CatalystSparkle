@@ -11,6 +11,9 @@
 		F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0026F2F1FED2D7A00F3AB85 /* Gallery.xib */; };
 		F00411051FC9960E00B513A9 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = F00411041FC9960E00B513A9 /* Image.m */; };
 		F005265F1FBF148E00A103CD /* Youtube.m in Sources */ = {isa = PBXBuildFile; fileRef = F005265E1FBF148E00A103CD /* Youtube.m */; };
+		F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1623F432CA002BCF41 /* CustomizeVC.m */; };
+		F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */; };
+		F00B0C1D23F4390B002BCF41 /* CustomizeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */; };
 		F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0F9E20F487090012EB03 /* EmptyCell.m */; };
 		F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0F9F20F487090012EB03 /* EmptyCell.xib */; };
 		F00E837322C4826D0027C45E /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F00E836822C4826D0027C45E /* RMStore.m */; };
@@ -111,6 +114,7 @@
 		F0650657236036A90015F2C4 /* PushVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0650656236036A90015F2C4 /* PushVC.m */; };
 		F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0673AFF20C6A1EB00C42062 /* OPMLVC.m */; };
 		F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0673B0020C6A1EB00C42062 /* OPMLVC.xib */; };
+		F067D35D23F43B350034B968 /* Customization.m in Sources */ = {isa = PBXBuildFile; fileRef = F067D35C23F43B350034B968 /* Customization.m */; };
 		F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */; };
 		F069ABA7206DFCB200021ABF /* GalleryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F069ABA5206DFCB200021ABF /* GalleryCell.m */; };
 		F069ABA8206DFCB200021ABF /* GalleryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F069ABA6206DFCB200021ABF /* GalleryCell.xib */; };
@@ -146,11 +150,6 @@
 		F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F074D802208DC2B4002F22CB /* WebP.framework */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
-		F07A31232296BEC900822969 /* PopMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31222296BEC900822969 /* PopMenuViewController.m */; };
-		F07A31262296C28700822969 /* PopMenuAppearance.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31252296C28700822969 /* PopMenuAppearance.m */; };
-		F07A31292296C81000822969 /* PopMenuDefaultAction.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31282296C81000822969 /* PopMenuDefaultAction.m */; };
-		F07A312C2297D5BE00822969 /* PopMenuPresentAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A312B2297D5BE00822969 /* PopMenuPresentAnimationController.m */; };
-		F07A312F2297D78800822969 /* PopMenuDismissAnimationController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A312E2297D78800822969 /* PopMenuDismissAnimationController.m */; };
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
 		F07A66582055539D00BA2D9F /* UIColor+HEX.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A66572055539D00BA2D9F /* UIColor+HEX.m */; };
 		F07A665B205554FF00BA2D9F /* Code.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A665A205554FF00BA2D9F /* Code.m */; };
@@ -540,6 +539,11 @@
 		F005265D1FBF148E00A103CD /* Youtube.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Youtube.h; sourceTree = "<group>"; };
 		F005265E1FBF148E00A103CD /* Youtube.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Youtube.m; sourceTree = "<group>"; };
 		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
+		F00B0C1523F432CA002BCF41 /* CustomizeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeVC.h; sourceTree = "<group>"; };
+		F00B0C1623F432CA002BCF41 /* CustomizeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizeVC.m; sourceTree = "<group>"; };
+		F00B0C1923F4390B002BCF41 /* CustomizeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeCell.h; sourceTree = "<group>"; };
+		F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizeCell.m; sourceTree = "<group>"; };
+		F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomizeCell.xib; sourceTree = "<group>"; };
 		F00B0F9D20F487090012EB03 /* EmptyCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCell.h; sourceTree = "<group>"; };
 		F00B0F9E20F487090012EB03 /* EmptyCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCell.m; sourceTree = "<group>"; };
 		F00B0F9F20F487090012EB03 /* EmptyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyCell.xib; sourceTree = "<group>"; };
@@ -685,6 +689,8 @@
 		F0673AFE20C6A1EB00C42062 /* OPMLVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLVC.h; sourceTree = "<group>"; };
 		F0673AFF20C6A1EB00C42062 /* OPMLVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLVC.m; sourceTree = "<group>"; };
 		F0673B0020C6A1EB00C42062 /* OPMLVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OPMLVC.xib; sourceTree = "<group>"; };
+		F067D35B23F43B350034B968 /* Customization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Customization.h; sourceTree = "<group>"; };
+		F067D35C23F43B350034B968 /* Customization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Customization.m; sourceTree = "<group>"; };
 		F0695B1E20CE6B7600517AF8 /* UIViewController+Hairline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Hairline.h"; sourceTree = "<group>"; };
 		F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Hairline.m"; sourceTree = "<group>"; };
 		F069ABA4206DFCB200021ABF /* GalleryCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GalleryCell.h; sourceTree = "<group>"; };
@@ -755,16 +761,6 @@
 		F078B635206637B40048DBEA /* EmptyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyVC.h; sourceTree = "<group>"; };
 		F078B636206637B40048DBEA /* EmptyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyVC.m; sourceTree = "<group>"; };
 		F078B637206637B40048DBEA /* EmptyVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyVC.xib; sourceTree = "<group>"; };
-		F07A31212296BEC900822969 /* PopMenuViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuViewController.h; sourceTree = "<group>"; };
-		F07A31222296BEC900822969 /* PopMenuViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuViewController.m; sourceTree = "<group>"; };
-		F07A31242296C28700822969 /* PopMenuAppearance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopMenuAppearance.h; sourceTree = "<group>"; };
-		F07A31252296C28700822969 /* PopMenuAppearance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopMenuAppearance.m; sourceTree = "<group>"; };
-		F07A31272296C81000822969 /* PopMenuDefaultAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuDefaultAction.h; sourceTree = "<group>"; };
-		F07A31282296C81000822969 /* PopMenuDefaultAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuDefaultAction.m; sourceTree = "<group>"; };
-		F07A312A2297D5BE00822969 /* PopMenuPresentAnimationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuPresentAnimationController.h; sourceTree = "<group>"; };
-		F07A312B2297D5BE00822969 /* PopMenuPresentAnimationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuPresentAnimationController.m; sourceTree = "<group>"; };
-		F07A312D2297D78800822969 /* PopMenuDismissAnimationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopMenuDismissAnimationController.h; sourceTree = "<group>"; };
-		F07A312E2297D78800822969 /* PopMenuDismissAnimationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PopMenuDismissAnimationController.m; sourceTree = "<group>"; };
 		F07A31302297FC9D00822969 /* UIView+Anchoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Anchoring.h"; sourceTree = "<group>"; };
 		F07A31312297FC9D00822969 /* UIView+Anchoring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Anchoring.m"; sourceTree = "<group>"; };
 		F07A66562055539D00BA2D9F /* UIColor+HEX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HEX.h"; sourceTree = "<group>"; };
@@ -1088,6 +1084,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F00B0C1823F438F5002BCF41 /* CustomizeVC */ = {
+			isa = PBXGroup;
+			children = (
+				F00B0C1523F432CA002BCF41 /* CustomizeVC.h */,
+				F00B0C1623F432CA002BCF41 /* CustomizeVC.m */,
+				F00B0C1923F4390B002BCF41 /* CustomizeCell.h */,
+				F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */,
+				F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */,
+				F067D35B23F43B350034B968 /* Customization.h */,
+				F067D35C23F43B350034B968 /* Customization.m */,
+			);
+			path = CustomizeVC;
+			sourceTree = "<group>";
+		};
 		F00E830622C4826D0027C45E /* RMStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -1158,6 +1168,7 @@
 				F0E86490234793870089F9EF /* ArticleVC+Photos.m */,
 				F0E86492234796B80089F9EF /* ArticlePhoto.h */,
 				F0E86493234796B80089F9EF /* ArticlePhoto.m */,
+				F00B0C1823F438F5002BCF41 /* CustomizeVC */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -1263,23 +1274,6 @@
 			path = black;
 			sourceTree = "<group>";
 		};
-		F057811222968D800066081B /* PopMenu */ = {
-			isa = PBXGroup;
-			children = (
-				F07A31272296C81000822969 /* PopMenuDefaultAction.h */,
-				F07A31282296C81000822969 /* PopMenuDefaultAction.m */,
-				F07A31242296C28700822969 /* PopMenuAppearance.h */,
-				F07A31252296C28700822969 /* PopMenuAppearance.m */,
-				F07A31212296BEC900822969 /* PopMenuViewController.h */,
-				F07A31222296BEC900822969 /* PopMenuViewController.m */,
-				F07A312A2297D5BE00822969 /* PopMenuPresentAnimationController.h */,
-				F07A312B2297D5BE00822969 /* PopMenuPresentAnimationController.m */,
-				F07A312D2297D78800822969 /* PopMenuDismissAnimationController.h */,
-				F07A312E2297D78800822969 /* PopMenuDismissAnimationController.m */,
-			);
-			path = PopMenu;
-			sourceTree = "<group>";
-		};
 		F064A52E2157632700A385AD /* Intro */ = {
 			isa = PBXGroup;
 			children = (
@@ -1379,7 +1373,6 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				F057811222968D800066081B /* PopMenu */,
 				F09BE12720F1C370000D1EB9 /* Settings.bundle */,
 				F03AC02D205533C200FB111A /* CodeParser */,
 				F0E219412054F846004B5FF5 /* LayoutConstants.h */,
@@ -2388,6 +2381,7 @@
 				F0026F301FED2D7A00F3AB85 /* Gallery.xib in Resources */,
 				F050E0B32154C16600225C6A /* StoreFooter.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
+				F00B0C1D23F4390B002BCF41 /* CustomizeCell.xib in Resources */,
 				F047F4E620C25FB900626968 /* Spectral-MediumItalic.ttf in Resources */,
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
@@ -2553,7 +2547,6 @@
 				F0EB27D921C20B81007E3547 /* DBManager+CloudCore.m in Sources */,
 				F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
-				F07A31262296C28700822969 /* PopMenuAppearance.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
 				F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */,
 				F01D71551FBC232200DF84B9 /* List.m in Sources */,
@@ -2601,7 +2594,6 @@
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
-				F07A312C2297D5BE00822969 /* PopMenuPresentAnimationController.m in Sources */,
 				F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F055166321B4FF59008F1F2F /* DBManager.m in Sources */,
@@ -2622,6 +2614,7 @@
 				F01D714F1FBC11F100DF84B9 /* Blockquote.m in Sources */,
 				F05D21861FF2222F003DE813 /* YTUserID.m in Sources */,
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
+				F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */,
 				F00411051FC9960E00B513A9 /* Image.m in Sources */,
 				F0AFAC19216C7A5200AB7057 /* DetailFeedVC.m in Sources */,
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
@@ -2642,7 +2635,6 @@
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
 				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
-				F07A31292296C81000822969 /* PopMenuDefaultAction.m in Sources */,
 				F0AA8C8E216B4A5500C65DAE /* DTTimePeriodGroup.m in Sources */,
 				F070C3391FBAC3CC00912CCF /* FeedsManager.m in Sources */,
 				F070C3431FBACD2C00912CCF /* FeedItem.m in Sources */,
@@ -2653,6 +2645,7 @@
 				F0E71E721FD6F72200408CFF /* PaddedLabel.m in Sources */,
 				F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F0869B622099CFE100A5D723 /* YetiThemeKit.m in Sources */,
+				F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */,
 				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,
 				F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
@@ -2672,13 +2665,12 @@
 				F0AA8C8D216B4A5500C65DAE /* NSDate+DateTools.m in Sources */,
 				F0AFAC14216C78D400AB7057 /* TagCell.m in Sources */,
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
-				F07A31232296BEC900822969 /* PopMenuViewController.m in Sources */,
+				F067D35D23F43B350034B968 /* Customization.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
 				F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
-				F07A312F2297D78800822969 /* PopMenuDismissAnimationController.m in Sources */,
 				F0D1C5DE20DA29AD0069BDA5 /* FeedsManagerErrors.m in Sources */,
 				F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
@@ -2803,7 +2795,7 @@
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.6.2;
+				MARKETING_VERSION = 1.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2832,7 +2824,7 @@
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.6.2;
+				MARKETING_VERSION = 1.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2987,7 +2979,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.6.2;
+				MARKETING_VERSION = 1.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -3031,7 +3023,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.6.2;
+				MARKETING_VERSION = 1.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3197,7 +3189,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.6.2;
+				MARKETING_VERSION = 1.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3263,7 +3255,7 @@
 				INFOPLIST_FILE = YetiShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 1.6.2;
+				MARKETING_VERSION = 1.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
