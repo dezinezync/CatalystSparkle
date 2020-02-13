@@ -130,6 +130,11 @@ NSString * const IAPLifetime     = @"com.dezinezync.elytra.life";
 
 NSString * const kPreviewLines = @"com.dezinezync.elytra.summaryPreviewLines";
 
+NSString * _Nonnull const kUseSystemFontSize = @"com.dezinezync.elytra.useSystemFontSize";
+NSString * _Nonnull const kFontSize = @"com.dezinezync.elytra.fontSize";
+NSString * _Nonnull const kParagraphTitleFont = @"com.dezinezync.elytra.paragraphTitleFont";
+NSString * _Nonnull const kLineSpacing = @"com.dezinezync.elytra.lineSpacing";
+
 #pragma mark -
 
 NSString * modelIdentifier (void) {

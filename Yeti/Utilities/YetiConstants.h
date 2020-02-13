@@ -103,6 +103,11 @@ YETI_EXPORT NSString * _Nonnull const kUseToolbar;
 
 YETI_EXPORT NSString * _Nonnull const kPreviewLines;
 
+YETI_EXPORT NSString * _Nonnull const kUseSystemFontSize;
+YETI_EXPORT NSString * _Nonnull const kFontSize;
+YETI_EXPORT NSString * _Nonnull const kParagraphTitleFont;
+YETI_EXPORT NSString * _Nonnull const kLineSpacing;
+
 typedef NS_ENUM(NSInteger, FeedType) {
     FeedTypeFeed,
     FeedTypeCustom,

@@ -18,32 +18,32 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Xo2-fB-8a8">
-                        <rect key="frame" x="24" y="8" width="284" height="38"/>
+                        <rect key="frame" x="24" y="8" width="284" height="55"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tk2-U1-uXv">
-                                <rect key="frame" x="0.0" y="0.0" width="284" height="14.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="284" height="26.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T9V-dG-aeg">
-                                <rect key="frame" x="0.0" y="22.5" width="284" height="15.5"/>
+                                <rect key="frame" x="0.0" y="34.5" width="284" height="20.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="height" secondItem="Xo2-fB-8a8" secondAttribute="height" multiplier="1.65116" constant="8" id="BzU-q4-8iW"/>
+                    <constraint firstAttribute="height" secondItem="Xo2-fB-8a8" secondAttribute="height" priority="999" constant="16" id="BzU-q4-8iW"/>
                     <constraint firstItem="Xo2-fB-8a8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="24" id="FPz-As-aXA"/>
-                    <constraint firstItem="Xo2-fB-8a8" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="FYH-lB-Nce"/>
+                    <constraint firstItem="Xo2-fB-8a8" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Ih6-lF-6SY"/>
                     <constraint firstAttribute="trailing" secondItem="Xo2-fB-8a8" secondAttribute="trailing" constant="12" id="fWk-0L-TVc"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
+                <outlet property="labelStackLeading" destination="FPz-As-aXA" id="K5R-vl-eio"/>
                 <outlet property="labelStackView" destination="Xo2-fB-8a8" id="RT7-O1-2wB"/>
                 <outlet property="valueLabel" destination="T9V-dG-aeg" id="Ksl-Sq-h8p"/>
                 <outlet property="valueTitleLabel" destination="Tk2-U1-uXv" id="yqo-2h-IqJ"/>
