@@ -305,6 +305,10 @@
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DA1E4823375042008FF4B1 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
 		F0DA1E49233750AA008FF4B1 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
+		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
+		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
+		F0DB58FF23F578E20008D871 /* CustomizationThemeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58FD23F578E20008D871 /* CustomizationThemeCell.m */; };
+		F0DB590023F578E20008D871 /* CustomizationThemeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FE23F578E20008D871 /* CustomizationThemeCell.xib */; };
 		F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */; };
 		F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
 		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
@@ -978,6 +982,12 @@
 		F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailAuthorHeaderView.m; sourceTree = "<group>"; };
 		F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddFeedCell.xib; sourceTree = "<group>"; };
 		F0DA1E3B23374EF9008FF4B1 /* MetaData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetaData.m; sourceTree = "<group>"; };
+		F0DB58F723F575250008D871 /* CustomizationHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizationHeader.h; sourceTree = "<group>"; };
+		F0DB58F823F575250008D871 /* CustomizationHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizationHeader.m; sourceTree = "<group>"; };
+		F0DB58FA23F575400008D871 /* CustomizationHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomizationHeader.xib; sourceTree = "<group>"; };
+		F0DB58FC23F578E20008D871 /* CustomizationThemeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizationThemeCell.h; sourceTree = "<group>"; };
+		F0DB58FD23F578E20008D871 /* CustomizationThemeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizationThemeCell.m; sourceTree = "<group>"; };
+		F0DB58FE23F578E20008D871 /* CustomizationThemeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomizationThemeCell.xib; sourceTree = "<group>"; };
 		F0DDA0E920E5F71400C5D97E /* RecommendationsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecommendationsVC.h; sourceTree = "<group>"; };
 		F0DDA0EA20E5F71400C5D97E /* RecommendationsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecommendationsVC.m; sourceTree = "<group>"; };
 		F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecommendationsVC.xib; sourceTree = "<group>"; };
@@ -1092,8 +1102,14 @@
 				F00B0C1923F4390B002BCF41 /* CustomizeCell.h */,
 				F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */,
 				F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */,
+				F0DB58FC23F578E20008D871 /* CustomizationThemeCell.h */,
+				F0DB58FD23F578E20008D871 /* CustomizationThemeCell.m */,
+				F0DB58FE23F578E20008D871 /* CustomizationThemeCell.xib */,
 				F067D35B23F43B350034B968 /* Customization.h */,
 				F067D35C23F43B350034B968 /* Customization.m */,
+				F0DB58F723F575250008D871 /* CustomizationHeader.h */,
+				F0DB58F823F575250008D871 /* CustomizationHeader.m */,
+				F0DB58FA23F575400008D871 /* CustomizationHeader.xib */,
 			);
 			path = CustomizeVC;
 			sourceTree = "<group>";
@@ -2386,6 +2402,7 @@
 				F0A5AEB620C19DA200CFA1D2 /* IBMPlexSans-Regular.ttf in Resources */,
 				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
+				F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */,
 				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
@@ -2422,6 +2439,7 @@
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
 				F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */,
 				F0A5AE6620C197EF00CFA1D2 /* Merriweather-BoldItalic.ttf in Resources */,
+				F0DB590023F578E20008D871 /* CustomizationThemeCell.xib in Resources */,
 				F064A5382157678900A385AD /* IdentityVC.xib in Resources */,
 				F0542E36211DBFD700D66878 /* black@3x.png in Resources */,
 				F0542E38211DBFD700D66878 /* black.png in Resources */,
@@ -2520,6 +2538,7 @@
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,
+				F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */,
 				F0B69C9021B916F50032FD5A /* VideoInfo.m in Sources */,
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
 				F0869B592099CE6600A5D723 /* YetiTheme.m in Sources */,
@@ -2606,6 +2625,7 @@
 				F0AA8C90216B4A5500C65DAE /* DTError.m in Sources */,
 				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
+				F0DB58FF23F578E20008D871 /* CustomizationThemeCell.m in Sources */,
 				F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */,
 				F06B9F5021CFAE8300D452A1 /* ChangeSet.m in Sources */,
 				F05A923421E71FBD0098448E /* PrefsManager.m in Sources */,

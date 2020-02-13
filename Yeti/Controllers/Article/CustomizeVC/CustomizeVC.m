@@ -8,7 +8,10 @@
 
 #import "CustomizeVC.h"
 #import "CustomizeCell.h"
+#import "CustomizationThemeCell.h"
 #import "Customization.h"
+#import "CustomizationHeader.h"
+
 #import "YetiThemeKit.h"
 #import "PrefsManager.h"
 
@@ -36,7 +39,15 @@
     [super viewDidLoad];
     
     [self setupTableView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateTheme) name:kDidUpdateTheme object:nil];
 
+}
+
+- (void)dealloc {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
 }
 
 #pragma mark - Getters
@@ -73,10 +84,17 @@
     self.tableView.estimatedRowHeight = 40;
     
     [CustomizeCell registerOnTableView:self.tableView];
+    [CustomizationThemeCell registerOnTableView:self.tableView];
     
     self.DDS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, Customization * _Nonnull customization) {
         
         CustomizeCell *cell = [tableView dequeueReusableCellWithIdentifier:kCustomizeCell forIndexPath:indexPath];
+        
+        YetiTheme *theme = (id)[YTThemeKit theme];
+        
+        cell.valueTitleLabel.textColor = theme.subtitleColor;
+        cell.valueLabel.textColor = theme.titleColor;
+        cell.backgroundColor = theme.cellColor;
         
         if (indexPath.section != CUSTOMIZE_SECTION_THEME.integerValue) {
             
@@ -244,8 +262,15 @@
         }
         else {
             
-            cell.valueTitleLabel.hidden = YES;
-            cell.valueLabel.hidden = YES;
+            CustomizationThemeCell * themeCell = (id)[tableView dequeueReusableCellWithIdentifier:kCustomizeThemeCell forIndexPath:indexPath];
+            
+            themeCell.backgroundColor = theme.cellColor;
+            
+            NSUInteger active = [@[@"light", @"reader", @"black"] indexOfObject:SharedPrefs.theme];
+            
+            [themeCell setActive:active];
+            
+            cell = (id)themeCell;
             
         }
         
@@ -278,6 +303,94 @@
     [snapshot appendItemsWithIdentifiers:@[theme] intoSectionWithIdentifier:CUSTOMIZE_SECTION_THEME];
     
     [self.DDS applySnapshot:snapshot animatingDifferences:NO];
+    
+}
+
+- (void)didUpdateTheme {
+    
+    NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+    
+    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
+    
+    NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity:visible.count];
+    
+    for (NSIndexPath *indexPath in visible) {
+        
+        id obj = [self.DDS itemIdentifierForIndexPath:indexPath];
+        
+        [identifiers addObject:obj];
+        
+    }
+    
+    [snapshot reloadItemsWithIdentifiers:identifiers];
+    
+    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+    
+    NSInteger idx=0;
+    
+    for (UIView *subview in self.tableView.subviews) {
+        
+        if ([subview isKindOfClass:CustomizationHeader.class] == NO) {
+            continue;
+        }
+        
+        [self configureHeader:(id)subview section:idx];
+        idx++;
+        
+    }
+    
+}
+
+#pragma mark - <UITableViewDatasource>
+
+- (void)configureHeader:(CustomizationHeader *)header section:(NSInteger)section {
+    
+    NSString *label = nil, *symbolName = nil;
+    
+    switch (section) {
+        case 0:
+        {
+            label = @"Text";
+            symbolName = @"textformat";
+        }
+            break;
+        case 1:
+        {
+            label = @"Paragraphs";
+            symbolName = @"paragraph";
+        }
+            break;
+        default:
+        {
+            label = @"Theme";
+            symbolName = @"paintbrush";
+        }
+            break;
+    }
+    
+    YetiTheme *theme = (id)[YTThemeKit theme];
+    
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleHeadline];
+    
+    header.imageView.tintColor = theme.subtitleColor;
+    header.imageView.image = [[[UIImage systemImageNamed:symbolName withConfiguration:config] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] imageWithTintColor:header.imageView.tintColor];
+    
+    header.label.text = label;
+    header.label.textColor = theme.titleColor;
+    
+    header.backgroundColor = theme.articleBackgroundColor;
+    
+    [header sizeToFit];
+    
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    
+    CustomizationHeader *header = [[CustomizationHeader alloc] initWithNib];
+    
+    [self configureHeader:header section:section];
+    
+    return header;
     
 }
 
