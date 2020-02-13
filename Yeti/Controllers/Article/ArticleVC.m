@@ -387,6 +387,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    self.view.backgroundColor = theme.articleBackgroundColor;
+    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    
     [self setupArticle:self.currentArticle];
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1347,34 +1353,34 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-//    if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
-//        
-//        para = nil;
-//        
-//        // since the last one is a paragraph as well, simlpy append to it.
-//        Paragraph *last = (Paragraph *)_last;
-//        
-//        NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
-//        
-//        NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
-//        
-//        if (newAttrs) {
-//            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
-//            
-//            [attrs appendAttributedString:accessory];
-//            [attrs appendAttributedString:newAttrs];
-//            
-//            if (!rangeAdded) {
-//                last.bigContainer = YES;
-//            }
-//            
-//            last.attributedText = attrs.copy;
-//        }
-//        
-//        attrs = nil;
-//        newAttrs = nil;
-//        return;
-//    }
+    if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
+        
+        para = nil;
+        
+        // since the last one is a paragraph as well, simlpy append to it.
+        Paragraph *last = (Paragraph *)_last;
+        
+        NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
+        
+        NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
+        
+        if (newAttrs) {
+            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+            
+            [attrs appendAttributedString:accessory];
+            [attrs appendAttributedString:newAttrs];
+            
+            if (!rangeAdded) {
+                last.bigContainer = YES;
+            }
+            
+            last.attributedText = attrs.copy;
+        }
+        
+        attrs = nil;
+        newAttrs = nil;
+        return;
+    }
     
     [para setText:content.content ranges:content.ranges attributes:content.attributes];
     

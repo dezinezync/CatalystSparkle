@@ -51,6 +51,7 @@
     
     [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
+    [navBar setBackgroundColor:self.articleBackgroundColor];
     
 //    textField.keyboardAppearance = textView.keyboardAppearance;z
     
