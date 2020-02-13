@@ -97,6 +97,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)renameFeed:(Feed * _Nonnull)feed title:(NSString * _Nullable)title success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)getYoutubeCanonicalID:(NSURL * _Nonnull)originalURL success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray;

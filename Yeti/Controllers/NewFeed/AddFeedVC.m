@@ -650,6 +650,64 @@
     
     url = components.URL;
     
+    // check if it's a Youtube URL
+    if ([components.host containsString:@"youtube.com"]) {
+        
+        NSRange pathRange = NSMakeRange(0, components.path.length);
+        NSString *pattern = @"\\/c(hannel)?\\/(.+)";
+        NSRegularExpression *youtubeChannelURL = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
+        
+        if ([youtubeChannelURL numberOfMatchesInString:components.path options:kNilOptions range:pathRange] > 0) {
+            
+            __block NSString *youtubeChannelID;
+            __block BOOL isChannelID = NO;
+            
+            [youtubeChannelURL enumerateMatchesInString:components.path options:kNilOptions range:pathRange usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL * _Nonnull stop) {
+                
+                NSRange matchingGroupRange = [result rangeAtIndex:result.numberOfRanges - 1];
+                
+                youtubeChannelID = [components.path substringWithRange:matchingGroupRange];
+                isChannelID = [result rangeAtIndex:1].location != NSNotFound;
+                
+    #ifdef DEBUG
+                NSLog(@"Youtube Channel ID: %@", youtubeChannelID);
+    #endif
+                
+                *stop = YES;
+                
+            }];
+            
+            if (youtubeChannelID != nil) {
+                
+                if (isChannelID == NO) {
+                    
+                    weakify(self);
+                    
+                    // get it from the canonical head tag
+                    [MyFeedsManager getYoutubeCanonicalID:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        strongify(self);
+                        
+                        [self searchByURL:responseObject];
+                        
+                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                       
+                        [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube Canonical URL."];
+                        
+                    }];
+                    
+                    return;
+                    
+                }
+                
+                url = [NSURL URLWithFormat:@"https://www.youtube.com/feeds/videos.xml?channel_id=%@", youtubeChannelID];
+                
+            }
+            
+        }
+        
+    }
+    
 //    [MyAppDelegate _showAddingFeedDialog];
     
     self.DS.state = DZDatasourceLoading;
