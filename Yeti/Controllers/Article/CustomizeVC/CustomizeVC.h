@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ThemeVC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

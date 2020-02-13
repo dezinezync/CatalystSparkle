@@ -22,6 +22,8 @@ extern PrefsManager * SharedPrefs;
  */
 @interface PrefsManager : NSObject
 
+@property (nonatomic, weak, readonly) NSUserDefaults *defaults;
+
 + (instancetype)sharedInstance;
 
 @property (copy) NSString *theme; // kDefaultsTheme
@@ -42,6 +44,11 @@ extern PrefsManager * SharedPrefs;
 @property (assign) BOOL showTags; // kShowTags
 @property (assign) BOOL useToolbar; // kUseToolbar
 
+@property (assign) BOOL useSystemSize; // kUseSystemFontSize
+@property (assign) NSInteger fontSize; // kFontSize
+@property (copy) ArticleLayoutFont paraTitleFont; // kParagraphTitleFont
+@property (assign) CGFloat lineSpacing; // kLineSpacing
+ 
 @end
 
 NS_ASSUME_NONNULL_END

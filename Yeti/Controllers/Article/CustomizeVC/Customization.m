@@ -7,6 +7,7 @@
 //
 
 #import "Customization.h"
+#import "PrefsManager.h"
 
 NSErrorDomain CustomizationDomain = @"com.elytra.errorDomain.customization";
 
@@ -26,11 +27,11 @@ NSErrorDomain CustomizationDomain = @"com.elytra.errorDomain.customization";
     
     if (self = [super init]) {
         
-        self.name = name;
-        self.displayName = displayName;
+        _name = name;
+        _displayName = displayName;
         
         // check if the defaults have an existing value.
-        NSNumber *value = [[NSUserDefaults standardUserDefaults] valueForKey:self.defaultsKey];
+        NSNumber *value = [SharedPrefs.defaults valueForKey:self.name];
         
         if (value != nil) {
             
@@ -38,20 +39,12 @@ NSErrorDomain CustomizationDomain = @"com.elytra.errorDomain.customization";
             NSLog(@"Found exisiting value for %@: %@", self.name, value);
 #endif
             
-            self.value = value;
+            _value = value;
         }
         
     }
     
     return self;
-    
-}
-
-#pragma mark - Getters
-
-- (NSString *)defaultsKey {
-    
-    return [NSString stringWithFormat:@"elytra.customization.%@", self.name];
     
 }
 
@@ -61,16 +54,7 @@ NSErrorDomain CustomizationDomain = @"com.elytra.errorDomain.customization";
     
     _value = value;
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    if (value == nil) {
-        [defaults removeObjectForKey:self.defaultsKey];
-    }
-    else {
-        [defaults setValue:value forKey:self.defaultsKey];
-    }
-    
-    [defaults synchronize];
+    [SharedPrefs setValue:_value forKey:self.name];
     
 }
 

@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UILabel *valueTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *valueLabel;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *labelStackLeading;
+
 + (void)registerOnTableView:(UITableView *)tableView;
 
 @end

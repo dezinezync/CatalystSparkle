@@ -12,7 +12,7 @@ PrefsManager * SharedPrefs = nil;
 
 @interface PrefsManager ()
 
-@property (nonatomic, weak) NSUserDefaults *defaults;
+@property (nonatomic, weak, readwrite) NSUserDefaults *defaults;
 
 @end
 
@@ -50,6 +50,11 @@ PrefsManager * SharedPrefs = nil;
     self.previewLines = [self.defaults integerForKey:kPreviewLines];
     self.showTags = ([self.defaults valueForKey:kShowTags] ? [[self.defaults valueForKey:kShowTags] boolValue] : YES);
     self.useToolbar = ([self.defaults valueForKey:kUseToolbar] ? [[self.defaults valueForKey:kUseToolbar] boolValue] : NO);
+    
+    self.useSystemSize = ([self.defaults valueForKey:kUseSystemFontSize] ? [[self.defaults valueForKey:kUseSystemFontSize] boolValue] : YES);
+    self.fontSize = ([self.defaults valueForKey:kFontSize] ? [[self.defaults valueForKey:kFontSize] integerValue] : [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize);
+    self.paraTitleFont = [self.defaults valueForKey:kParagraphTitleFont];
+    self.lineSpacing = ([self.defaults floatForKey:kLineSpacing] ?: 1.4f);
 }
 
 - (NSString *)mappingForKey:(NSString *)key {
@@ -105,6 +110,18 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(useToolbar)]) {
         return kUseToolbar;
     }
+    else if ([key isEqualToString:propSel(useSystemSize)]) {
+        return kUseSystemFontSize;
+    }
+    else if ([key isEqualToString:propSel(fontSize)]) {
+        return kFontSize;
+    }
+    else if ([key isEqualToString:propSel(paraTitleFont)]) {
+        return kParagraphTitleFont;
+    }
+    else if ([key isEqualToString:propSel(lineSpacing)]) {
+        return kLineSpacing;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -132,7 +149,14 @@ PrefsManager * SharedPrefs = nil;
             [self.defaults setValue:value forKey:mapping];
         }
         else if ([value isKindOfClass:NSNumber.class]) {
-            [self.defaults setInteger:[(NSNumber *)value integerValue] forKey:mapping];
+            
+            if ([mapping isEqualToString:kLineSpacing]) {
+                [self.defaults setFloat:[(NSNumber *)value floatValue] forKey:mapping];
+            }
+            else {
+                [self.defaults setInteger:[(NSNumber *)value integerValue] forKey:mapping];
+            }
+            
         }
         else if ([NSStringFromClass([value class]) containsString:@"Boolean"]) {
             [self.defaults setBool:value forKey:mapping];

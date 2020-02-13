@@ -26,6 +26,11 @@ NSString * _Nonnull const kCustomizeCell = @"com.dezinezync.elytra.cell.customiz
     [super awakeFromNib];
     // Initialization code
     
+    self.indentationWidth = 24.f;
+    self.indentationLevel = 1;
+
+    self.labelStackView.translatesAutoresizingMaskIntoConstraints = NO;
+    
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
 }
@@ -42,6 +47,20 @@ NSString * _Nonnull const kCustomizeCell = @"com.dezinezync.elytra.cell.customiz
     }
     
     self.accessoryView = nil;
+    self.accessoryType = UITableViewCellAccessoryNone;
+    
+    self.indentationWidth = 24.f;
+    self.indentationLevel = 1;
+    self.valueLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    
+}
+
+- (void)setIndentationLevel:(NSInteger)indentationLevel {
+    
+    [super setIndentationLevel:indentationLevel];
+    
+    self.separatorInset = UIEdgeInsetsMake(0, self.indentationLevel * self.indentationWidth, 0, 0);
+    self.labelStackLeading.constant = self.separatorInset.left;
     
 }
 
