@@ -374,7 +374,34 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Paragraph.paragraphStyle = nil;
     
+    UIGraphicsBeginImageContextWithOptions(self.scrollView.superview.bounds.size, YES, 0.0);
+    [self.scrollView drawViewHierarchyInRect:self.scrollView.superview.bounds afterScreenUpdates:NO];
+    UIImage * snapshot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    CGRect frame = self.scrollView.superview.bounds;
+    
+    UIImageView *snapshotView = [[UIImageView alloc] initWithFrame:frame];
+    snapshotView.image = snapshot;
+    snapshotView.alpha = 1;
+    
+    [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
+    
     [self setupArticle:self.currentArticle];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [UIView animateKeyframesWithDuration:0.3 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeCubicPaced|UIViewKeyframeAnimationOptionBeginFromCurrentState animations:^{
+            
+            snapshotView.alpha = 0;
+            
+        } completion:^(BOOL finished) {
+            
+            [snapshotView removeFromSuperview];
+            
+        }];
+        
+    });
     
 }
 
@@ -922,7 +949,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
 
-    ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    ArticleLayoutFont fontPref = SharedPrefs.paraTitleFont ?: SharedPrefs.articleFont;
     CGFloat baseFontSize = 32.f;
 
     if (self.item.articleTitle.length > 24) {

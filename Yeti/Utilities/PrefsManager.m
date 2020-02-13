@@ -180,6 +180,13 @@ PrefsManager * SharedPrefs = nil;
         });
         
     }
+    else if ([@[propSel(lineSpacing), propSel(fontSize), propSel(useSystemSize), propSel(paraTitleFont), propSel(articleFont)] indexOfObject:key] != NSNotFound) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
+        });
+        
+    }
     
 }
 
