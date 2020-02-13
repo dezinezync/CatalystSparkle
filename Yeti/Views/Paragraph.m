@@ -51,13 +51,13 @@ static NSParagraphStyle * _paragraphStyle = nil;
         UIFont *font = [[TypeFactory shared] bodyFont];
         
         if (![fontPref isEqualToString:ALPSystem]) {
-            font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:18.f]];
+            font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:SharedPrefs.fontSize]];
         }
         
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        style.lineHeightMultiple = font.pointSize * 1.4f;
-        style.maximumLineHeight = font.pointSize * 1.55f;
-        style.minimumLineHeight = font.pointSize * 1.3f;
+        style.lineHeightMultiple = font.pointSize * SharedPrefs.lineSpacing;
+        style.maximumLineHeight = font.pointSize * (SharedPrefs.lineSpacing + 0.1f);
+        style.minimumLineHeight = font.pointSize * (SharedPrefs.lineSpacing - 0.1f);
         
         style.paragraphSpacing = 0.f;
         style.paragraphSpacingBefore = 0.f;
@@ -542,7 +542,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
             return _bodyFont;
         }
         
-        ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+        ArticleLayoutFont fontPref = SharedPrefs.articleFont;
         
         UIFont *defaultBodyFont = [[TypeFactory shared] bodyFont];
         
@@ -558,7 +558,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 suffix = @"-Bold";
             }
             
-            bodyFont = [UIFont fontWithName:[fontName stringByAppendingString:suffix] size:bodyFont.pointSize];
+            bodyFont = [UIFont fontWithName:[fontName stringByAppendingString:suffix] size:SharedPrefs.fontSize];
         }
         
         __block UIFont * baseFont;

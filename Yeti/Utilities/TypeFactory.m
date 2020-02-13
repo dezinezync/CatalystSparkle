@@ -8,14 +8,13 @@
 
 #import "TypeFactory.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
+#import "YetiConstants.h"
 
 BOOL IS_PAD (UIViewController *viewController) {
     return viewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad;
 }
 
 static TypeFactory * sharedTypeFactory;
-
-NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userUpdatedPreferredFontMetrics";
 
 @interface TypeFactory ()
 

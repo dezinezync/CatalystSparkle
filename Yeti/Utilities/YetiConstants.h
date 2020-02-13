@@ -108,6 +108,8 @@ YETI_EXPORT NSString * _Nonnull const kFontSize;
 YETI_EXPORT NSString * _Nonnull const kParagraphTitleFont;
 YETI_EXPORT NSString * _Nonnull const kLineSpacing;
 
+extern NSNotificationName _Nonnull UserUpdatedPreferredFontMetrics;
+
 typedef NS_ENUM(NSInteger, FeedType) {
     FeedTypeFeed,
     FeedTypeCustom,

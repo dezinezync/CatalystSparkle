@@ -135,6 +135,8 @@ NSString * _Nonnull const kFontSize = @"com.dezinezync.elytra.fontSize";
 NSString * _Nonnull const kParagraphTitleFont = @"com.dezinezync.elytra.paragraphTitleFont";
 NSString * _Nonnull const kLineSpacing = @"com.dezinezync.elytra.lineSpacing";
 
+NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userUpdatedPreferredFontMetrics";
+
 #pragma mark -
 
 NSString * modelIdentifier (void) {

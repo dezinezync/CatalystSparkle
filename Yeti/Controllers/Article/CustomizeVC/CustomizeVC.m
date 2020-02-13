@@ -376,7 +376,7 @@
             if (current != nil) {
                 NSUInteger currentIndex = [ThemeVC.fonts indexOfObject:current];
                 
-                NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:(2 + currentIndex) inSection:CUSTOMIZE_SECTION_PARA.integerValue];
+                NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:(1 + currentIndex) inSection:CUSTOMIZE_SECTION_PARA.integerValue];
                 UITableViewCell *currentCell = [tableView cellForRowAtIndexPath:currentIndexPath];
                 currentCell.accessoryType = UITableViewCellAccessoryNone;
             }
