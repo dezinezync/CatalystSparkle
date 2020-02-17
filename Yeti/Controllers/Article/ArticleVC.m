@@ -1954,6 +1954,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     Code *code = [[Code alloc] initWithFrame:frame];
+    code.backgroundColor = CodeParser.sharedCodeParser.theme.backgroundColor;
     
     if (content.content) {
         code.attributedText = [CodeParser.sharedCodeParser parse:content.content];

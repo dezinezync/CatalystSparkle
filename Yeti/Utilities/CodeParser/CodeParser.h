@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
+#import "CodeTheme.h"
+
 @class CodeParser;
 
 extern CodeParser * _Nonnull MyCodeParser;
@@ -21,5 +23,7 @@ extern CodeParser * _Nonnull MyCodeParser;
 - (NSAttributedString * _Nullable)parse:(NSString * _Nonnull)code;
 
 - (void)loadTheme:(NSString * _Nonnull)name;
+
+@property (nonatomic, strong, readonly) CodeTheme * _Nullable theme;
 
 @end

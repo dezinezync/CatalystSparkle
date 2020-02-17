@@ -27,7 +27,7 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
 @property (nonatomic, strong) ThemeStringDict * strippedTheme;
 
 // default background colour for the theme.
-@property (nonatomic, copy) UIColor *backgroundColor;
+@property (nonatomic, copy, readwrite) UIColor *backgroundColor;
 
 @property (nonatomic, strong) NSString *theme;
 

@@ -23,9 +23,9 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        self.backgroundColor = theme.articleBackgroundColor;
+//        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//        
+//        self.backgroundColor = theme.articleBackgroundColor;
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.clipsToBounds = NO;
@@ -36,7 +36,7 @@
         scrollView.scrollEnabled = YES;
         scrollView.alwaysBounceVertical = NO;
         scrollView.clipsToBounds = NO;
-        scrollView.contentInset = UIEdgeInsetsMake(0, LayoutPadding, 0, LayoutPadding);
+        scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding, LayoutPadding, 0, LayoutPadding);
         scrollView.opaque = YES;
         
         scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -45,8 +45,8 @@
         
         [scrollView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:-LayoutImageMargin].active = YES;
         [scrollView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:(LayoutImageMargin * 2)].active = YES;
-        [scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:LayoutPadding].active = YES;
-        [scrollView.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:-LayoutPadding].active = YES;
+        [scrollView.topAnchor constraintEqualToAnchor:self.topAnchor constant:0].active = YES;
+        [scrollView.heightAnchor constraintEqualToAnchor:self.heightAnchor constant:0].active = YES;
         
         PaddedLabel *label = [[PaddedLabel alloc] initWithFrame:scrollView.bounds];
         label.numberOfLines = 0;
@@ -70,13 +70,15 @@
 #pragma mark - Overrides
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
+    
     [super setBackgroundColor:backgroundColor];
     
-    self.scrollView.backgroundColor = UIColor.redColor;
-    
+    self.scrollView.backgroundColor = backgroundColor;
+
     for (UIView *view in self.scrollView.subviews) {
-        view.backgroundColor = UIColor.redColor;
+        view.backgroundColor = backgroundColor;
     }
+    
 }
 
 - (NSString *)accessibilityLabel {
