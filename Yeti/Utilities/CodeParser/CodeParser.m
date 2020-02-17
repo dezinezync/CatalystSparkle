@@ -7,7 +7,6 @@
 //
 
 #import "CodeParser.h"
-#import "CodeTheme.h"
 #import "HTMLUtils.h"
 
 CodeParser *MyCodeParser;
@@ -15,7 +14,7 @@ CodeParser *MyCodeParser;
 @interface CodeParser ()
 
 @property (nonatomic, strong) NSBundle *bundle;
-@property (nonatomic, strong) CodeTheme *theme;
+@property (nonatomic, strong, readwrite) CodeTheme *theme;
 @property (nonatomic, strong) NSRegularExpression *htmlEscape;
 @property (nonatomic, copy) NSString *script;
 

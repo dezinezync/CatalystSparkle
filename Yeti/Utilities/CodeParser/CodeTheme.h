@@ -16,4 +16,6 @@
 
 - (NSAttributedString * _Nonnull)applyStyle:(NSArray <NSString *> * _Nonnull)styleList toString:(NSString * _Nonnull)string;
 
+@property (nonatomic, copy, readonly) UIColor * _Nullable backgroundColor;
+
 @end
