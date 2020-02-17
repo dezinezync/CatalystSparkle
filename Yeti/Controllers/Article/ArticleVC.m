@@ -723,6 +723,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.item = responseObject;
     
+    BOOL isYoutubeVideo = [self.item.articleURL containsString:@"youtube.com/watch"];
+    
     // add Body
     [self addTitle];
     
@@ -731,7 +733,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self->_deferredProcessing = YES;
     }
     
-    if (self.item.coverImage) {
+    /*
+     * In the event of a Youtube video, we add the video itself
+     * instead of the cover and then the video.
+     */
+    if (isYoutubeVideo == NO && self.item.coverImage) {
         Content *content = [Content new];
         content.type = @"image";
         content.url = self.item.coverImage;
@@ -742,6 +748,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             strongify(self);
             [self addImage:content];
         });
+    }
+    
+    if (isYoutubeVideo == YES) {
+        
+        Content *content = [Content new];
+        content.type = @"youtube";
+        content.url = self.item.articleURL;
+        
+        [self addYoutube:content];
+        
     }
     
     NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
@@ -1824,6 +1840,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     
     NSString *videoID = [[content url] lastPathComponent];
+    
+    if ([videoID containsString:@"watch?v="] == YES) {
+        videoID = [videoID stringByReplacingOccurrencesOfString:@"watch?v=" withString:@""];
+    }
     
     DDLogDebug(@"Extracting YT info for: %@", videoID);
     
