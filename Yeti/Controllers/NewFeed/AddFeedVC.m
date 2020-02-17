@@ -657,7 +657,27 @@
         NSString *pattern = @"\\/c(hannel)?\\/(.+)";
         NSRegularExpression *youtubeChannelURL = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
         
-        if ([youtubeChannelURL numberOfMatchesInString:components.path options:kNilOptions range:pathRange] > 0) {
+        if ([components.path containsString:@"/user/"] == YES) {
+            
+            weakify(self);
+            
+            // get it from the canonical head tag
+            [MyFeedsManager getYoutubeCanonicalID:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                strongify(self);
+                
+                [self searchByURL:responseObject];
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube Canonical URL."];
+                
+            }];
+            
+            return;
+            
+        }
+        else if ([youtubeChannelURL numberOfMatchesInString:components.path options:kNilOptions range:pathRange] > 0) {
             
             __block NSString *youtubeChannelID;
             __block BOOL isChannelID = NO;
