@@ -914,7 +914,10 @@ NSString * const kDS2Data = @"DS2Data";
         
         BOOL userUpdatedButWeHaveData = YES;
         
-        if ([self.DDS.snapshot numberOfSections] == 1 || [self.DDS.snapshot numberOfItemsInSection:MainSection] == 0) {
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS ? self.DDS.snapshot : nil;
+               
+        if (snapshot == nil || ([snapshot numberOfSections] == 0 || (snapshot.numberOfSections > 1 && [snapshot numberOfItemsInSection:MainSection] == 0))) {
+
             userUpdatedButWeHaveData = NO;
         }
         

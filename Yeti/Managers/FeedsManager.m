@@ -17,6 +17,8 @@
 
 #import <CommonCrypto/CommonHMAC.h>
 
+#import "NSPointerArray+AbstractionHelpers.h"
+
 #import <DZKit/AlertManager.h>
 #import "Keychain.h"
 
@@ -827,6 +829,37 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
+- (void)getYoutubeCanonicalID:(NSURL *)originalURL success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:originalURL];
+    
+    [self.session GET:request success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        NSString *canonical = nil;
+        
+        // HTML
+        NSString *startString = @"<link rel=\"canonical\" href=\"";
+        
+        NSScanner *scanner = [[NSScanner alloc] initWithString:html];
+        
+        [scanner scanUpToString:startString intoString:nil];
+        
+        scanner.scanLocation += startString.length;
+        
+        [scanner scanUpToString:@"\"" intoString:&canonical];
+        
+        scanner = nil;
+        html = nil;
+        
+        if (successCB) {
+            successCB(canonical, response, task);
+        }
+        
+    } error:errorCB];
+    
+}
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray
@@ -1117,7 +1150,9 @@ NSArray <NSString *> * _defaultsKeys;
                 }];
                 
                 if (addedFeeds != nil && [addedFeeds isKindOfClass:NSArray.class] && addedFeeds.count) {
+                    
                     [folder.feeds addObjectsFromArray:addedFeeds];
+                    
                 }
                 
             }

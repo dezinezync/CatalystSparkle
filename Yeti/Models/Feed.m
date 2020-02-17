@@ -302,6 +302,14 @@
     if (_faviconURI == nil) {
         NSString *url = nil;
         
+        BOOL isYoutubeChannel = [self.url containsString:@"/feeds/videos.xml?channel_id="];
+        
+        if (isYoutubeChannel && [self valueForKeyPath:@"extra.opengraph.image"] != nil) {
+            _faviconURI = [self valueForKeyPath:@"extra.opengraph.image"];
+            
+            return _faviconURI;
+        }
+        
         if (self.favicon && [self.favicon containsString:@".twimg"]) {
             url = self.favicon;
         }
