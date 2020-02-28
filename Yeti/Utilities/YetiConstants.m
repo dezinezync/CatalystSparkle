@@ -97,7 +97,7 @@ NSNotificationName YTUserPurchasedSubscription = @"com.dezinezync.elytra.pro.pur
  * 2. Update the value of the LaunchCount key
  */
 NSString * const YTLaunchCountOldKey = @"";
-NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-0-0";
+NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-6-2";
 NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";
 
 NSString * const YTSubscriptionNotification = @"com.dezinezync.elytra.subscription";

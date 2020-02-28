@@ -1,51 +1,7 @@
-# v1.6
+# v1.6.2
 
-## Build 319
-- Fixed recommendations not displaying the feed correctly
+## Build 322
 
-- Fixed issue with loading images where narrower images would be enlarged to fix the max width as determined by the app. 
+- Fixed a bug which caused the app to launch with the Empty State Interface with no way to navigate within the app when opened in split-view mode on compatible iPads. 
 
-## Build 318
-
-- Fixed a 14 month old bug which could cause a crash when reloading feeds with one or more folders open. 
-
-## Build 317 
-
-- Re-add WebP Images support.
- 
-- Improved handling of opening articles from push notifications.  
-
-- Blog Names below the Article's title are now tappable. They open the blog's article's list. When you open an article from the blog's own article list, this behaviour is disabled to prevent a rabbit hole situation. 
-
-- Minor QoL adjustments and rendering improvements. 
-
-- Fixed opening an Feed from the search results. 
-
-- Improved loading Youtube Videos. The HLS Manifest of the video is now loaded when available. If this is absent, then the mp4 file is checked for and loaded if available. Using the HLS Manifest improves battery usage, performance and lowers data usage. The HLS Manifest is directly handled by the OS and hence also respects Low Data modes on your WiFi or Cellular connections.  
-
-## Build 316
-- Moving from open to open folder no longer crashes the app. 
-
-## Build 315
-
-- Keyboard commands are now available once again. **KNOWN ISSUE**: Once you open an article, the keyboard commands for the Feeds Interface may not work in certain cases. 
-
-- Fixed the default sorting option for Unread showing the wrong icon. 
-
-- Improved legibility and visibility of a couple of icons. 
-
-- Fixed rendering on the launch splash screen. 
-
-- Fixed displaying article helper view on larger iPhones.
-
-## Build 313
-
-- Introduces the new triple column layout for iPads in Landscape mode. 
-
-- Deprecated support for iOS 12. 
-
-- fixes iOS 13 link tap bug: when scrolling in the article reader, if your finger scrolls by dragging a link, iOS would tell the app to open that link. 
-
-- fixes Search Bar not toggling in view.
-
-- fixes Search previous button being enabled when viewing the first search result in the article. 
+- Fixed a crash that would occur when launching the app from a cold state. 

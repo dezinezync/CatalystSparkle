@@ -2743,7 +2743,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
-        if ((bookmarked && bookmarked.count) || (deleted && deleted.count)) {
+        if (self.bookmarksManager != nil && ((bookmarked && bookmarked.count) || (deleted && deleted.count))) {
             
             self.bookmarksManager->_migrating = YES;
             

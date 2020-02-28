@@ -376,26 +376,30 @@
   ontoPrimaryViewController:(UIViewController *)primaryViewController
               shouldAnimate:(BOOL)animate
 {
+    
+    if ([auxiliaryViewController isKindOfClass:UINavigationController.class]
+        && [[(UINavigationController *)auxiliaryViewController viewControllers].firstObject isKindOfClass:EmptyVC.class]) {
+        // do nothing for this since we want to discard the controller. 
+        return YES;
+    }
+    
     // Return YES when you've manually handled the collapse logic
     return NO;
 }
 
 - (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
                       separateViewControllerOfType:(TOSplitViewControllerType)type
-                         fromPrimaryViewController:(UIViewController *)primaryViewController
-{
+                         fromPrimaryViewController:(UIViewController *)primaryViewController {
     return nil;
 }
 
 - (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
-        primaryViewControllerForCollapsingFromType:(TOSplitViewControllerType)type
-{
+        primaryViewControllerForCollapsingFromType:(TOSplitViewControllerType)type {
     return nil;
 }
 
 - (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
-           primaryViewControllerForExpandingToType:(TOSplitViewControllerType)type
-{
+           primaryViewControllerForExpandingToType:(TOSplitViewControllerType)type {
     return nil;
 }
 
