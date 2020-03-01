@@ -1,6 +1,6 @@
 # v1.7.0
 
-## Build 323
+## Build 324
 
 - Article Reader customization menu is now available. Update Type and Paragraph metrics while reading an article. Extremely Alpha, expect to break.  
 
