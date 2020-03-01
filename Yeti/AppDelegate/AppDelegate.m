@@ -65,6 +65,8 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupRouting];
         
+        [self registerNotificationCategories];
+        
         NSDictionary *defaults = [self performSelector:@selector(appDefaults)];
         
         if(defaults)

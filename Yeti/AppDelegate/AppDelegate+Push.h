@@ -11,6 +11,8 @@
 
 @interface AppDelegate (Push) <UNUserNotificationCenterDelegate>
 
+- (void)registerNotificationCategories;
+
 - (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken;
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
