@@ -88,6 +88,7 @@
 		F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
+		F0533CB4240D463C00BB69CF /* UIRefreshControl+Manual.m in Sources */ = {isa = PBXBuildFile; fileRef = F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */; };
 		F0542E36211DBFD700D66878 /* black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E32211DBFD700D66878 /* black@3x.png */; };
 		F0542E38211DBFD700D66878 /* black.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E33211DBFD700D66878 /* black.png */; };
 		F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E34211DBFD700D66878 /* black~ipad@2x.png */; };
@@ -666,6 +667,8 @@
 		F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterInputCell.h; sourceTree = "<group>"; };
 		F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FilterInputCell.m; sourceTree = "<group>"; };
 		F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterInputCell.xib; sourceTree = "<group>"; };
+		F0533CB2240D463C00BB69CF /* UIRefreshControl+Manual.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIRefreshControl+Manual.h"; sourceTree = "<group>"; };
+		F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIRefreshControl+Manual.m"; sourceTree = "<group>"; };
 		F0542E32211DBFD700D66878 /* black@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@3x.png"; sourceTree = "<group>"; };
 		F0542E33211DBFD700D66878 /* black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black.png; sourceTree = "<group>"; };
 		F0542E34211DBFD700D66878 /* black~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black~ipad@2x.png"; sourceTree = "<group>"; };
@@ -1487,6 +1490,8 @@
 				F07A31312297FC9D00822969 /* UIView+Anchoring.m */,
 				F06C666322B2ABBA00D425E9 /* UIViewController+Stateful.h */,
 				F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */,
+				F0533CB2240D463C00BB69CF /* UIRefreshControl+Manual.h */,
+				F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -2746,6 +2751,7 @@
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
 				F035B4772107479400002576 /* UIImage+Sizing.m in Sources */,
 				F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */,
+				F0533CB4240D463C00BB69CF /* UIRefreshControl+Manual.m in Sources */,
 				F070C3441FBACD2C00912CCF /* Content.m in Sources */,
 				F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */,
 				F0FEC4A323085E840082C79D /* ArticlesManager.m in Sources */,

@@ -14,6 +14,8 @@
 #import "DetailCustomVC.h"
 #import "DetailFolderVC.h"
 
+#import "UIRefreshControl+Manual.h"
+
 #import <DZKit/DZBasicDatasource.h>
 
 #import <DZKit/EFNavController.h>
@@ -348,7 +350,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
-    [self.tableView addSubview:control];
+    self.tableView.refreshControl = control;
     self.refreshControl = control;
     
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
@@ -919,7 +921,7 @@ NSString * const kDS2Data = @"DS2Data";
         if (snapshot == nil
             || (snapshot != nil
                 && ([snapshot numberOfSections] == 0
-                    || (snapshot.numberOfSections > 1 && [snapshot numberOfItemsInSection:MainSection] == 0)
+                    || (snapshot.numberOfSections == 2 && [snapshot numberOfItemsInSection:MainSection] == 0)
                 )
             )
         ) {
@@ -928,7 +930,7 @@ NSString * const kDS2Data = @"DS2Data";
         }
         
         if (userUpdatedButWeHaveData == NO) {
-            [self beginRefreshing:self.refreshControl];
+            [self.refreshControl beginRefreshingManually:YES];
         }
         
     });

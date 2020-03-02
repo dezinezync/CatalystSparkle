@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 325
+
+- Show refresh control animation when the app loads and is loading Feeds data from the API. 
+
 ## Build 324
 
 - Article Reader customization menu is now available. Update Type and Paragraph metrics while reading an article. Extremely Alpha, expect to break.  
