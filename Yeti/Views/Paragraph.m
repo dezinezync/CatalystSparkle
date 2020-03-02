@@ -48,10 +48,38 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        UIFont *font = [[TypeFactory shared] bodyFont];
+        UIFont *defaultBodyFont = [[TypeFactory shared] bodyFont];
         
-        if (![fontPref isEqualToString:ALPSystem]) {
-            font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:SharedPrefs.fontSize]];
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        UIFont * font;
+        
+        if (SharedPrefs.useSystemSize == YES) {
+            font = isSystemFont ? defaultBodyFont : [UIFont fontWithName:fontName size:defaultBodyFont.pointSize];
+        }
+        else {
+            
+            if (isSystemFont) {
+                
+                UIFontDescriptor *descriptor = [defaultBodyFont fontDescriptor];
+                font = [UIFont fontWithDescriptor:descriptor size:SharedPrefs.fontSize];
+                
+            }
+            else {
+                font = [UIFont fontWithName:fontName size:SharedPrefs.fontSize];
+            }
+            
+        }
+        
+        if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
+            NSString *suffix = @"-Medium";
+            if ([fontName isEqualToString:@"Georgia"] || [fontName isEqualToString:@"Merriweather"]) {
+                suffix = @"-Bold";
+            }
+            
+            font = [UIFont fontWithName:[fontName stringByAppendingString:suffix] size:SharedPrefs.fontSize];
         }
         
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -550,7 +578,24 @@ static NSParagraphStyle * _paragraphStyle = nil;
         
         NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
         
-        __block UIFont * bodyFont = isSystemFont ? defaultBodyFont : [UIFont fontWithName:fontName size:defaultBodyFont.pointSize];
+        UIFont * bodyFont;
+        
+        if (SharedPrefs.useSystemSize == YES) {
+            bodyFont = isSystemFont ? defaultBodyFont : [UIFont fontWithName:fontName size:defaultBodyFont.pointSize];
+        }
+        else {
+            
+            if (isSystemFont) {
+                
+                UIFontDescriptor *descriptor = [defaultBodyFont fontDescriptor];
+                bodyFont = [UIFont fontWithDescriptor:descriptor size:SharedPrefs.fontSize];
+                
+            }
+            else {
+                bodyFont = [UIFont fontWithName:fontName size:SharedPrefs.fontSize];
+            }
+            
+        }
         
         if (isSystemFont == NO && UIAccessibilityIsBoldTextEnabled()) {
             NSString *suffix = @"-Medium";

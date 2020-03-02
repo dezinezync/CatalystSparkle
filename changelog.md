@@ -4,6 +4,10 @@
 
 - Show refresh control animation when the app loads and is loading Feeds data from the API. 
 
+- Fixed changing Font size not changing the size in the Article Reader. 
+
+- Fixed incorrect paragraph line-spacing calculation with the selected value for font size.  
+
 ## Build 324
 
 - Article Reader customization menu is now available. Update Type and Paragraph metrics while reading an article. Extremely Alpha, expect to break.  
