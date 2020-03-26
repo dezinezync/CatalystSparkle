@@ -582,6 +582,23 @@
     
     ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
     
+    UITraitCollection *rootTraits = self.window.rootViewController.traitCollection;
+    
+    if (rootTraits.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        && rootTraits.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        // show as detail
+        
+        UINavigationController *detailNav = [[UINavigationController alloc] initWithRootViewController:articleVC];
+        
+        TOSplitViewController * splitVC = (id)self.window.rootViewController;
+        
+        [splitVC to_showDetailViewController:detailNav sender:nav];
+        
+        return;
+        
+    }
+    
     [nav pushViewController:articleVC animated:YES];
     
     return;

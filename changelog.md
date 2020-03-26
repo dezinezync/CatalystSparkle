@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 326
+
+- Fixed an issue where opening a push notification on iPads would open them in the primary column. 
+
 ## Build 325
 
 - Show refresh control animation when the app loads and is loading Feeds data from the API. 

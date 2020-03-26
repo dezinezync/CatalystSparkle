@@ -78,9 +78,24 @@
         NSNumber *articleID = [payload valueForKey:@"articleID"];
         
         if (feedID == nil || articleID == nil) {
-            // do nothing
-            completionHandler();
-            return;
+            
+            // check if URL args exists
+            if ([payload valueForKeyPath:@"aps.url-args"]  != nil) {
+                
+                // this will be an array.
+                NSArray <NSNumber *> *args = [payload valueForKeyPath:@"aps.url-args"];
+                
+                feedID = [args firstObject];
+                articleID = [args lastObject];
+                
+            }
+            
+            if (feedID == nil || articleID == nil) {
+                // do nothing
+                completionHandler();
+                return;
+            }
+            
         }
         
         NSURL *url = formattedURL(@"yeti://feed/%@/article/%@", feedID, articleID);

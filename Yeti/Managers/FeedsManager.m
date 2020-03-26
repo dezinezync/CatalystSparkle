@@ -129,8 +129,10 @@ NSArray <NSString *> * _defaultsKeys;
             }
             else if (ArticlesManager.shared.folders.count) {
                 // check count of feeds in folders
-                NSNumber *total = (NSNumber *)[ArticlesManager.shared.folders rz_reduce:^id(NSNumber *prev, Folder *current, NSUInteger idx, NSArray *array) {
-                    return @(prev.integerValue + current.feeds.count);
+                NSNumber *total = (NSNumber *)[ArticlesManager.shared.folders rz_reduce:^id(id prev, Folder *current, NSUInteger idx, NSArray *array) {
+                    
+                    return @(((NSNumber *)prev).integerValue + current.feeds.count);
+                    
                 } initialValue:@(0)];
                 
                 if (total.integerValue >= 2) {
