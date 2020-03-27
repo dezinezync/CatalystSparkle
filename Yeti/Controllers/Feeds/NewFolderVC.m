@@ -98,6 +98,10 @@
     
     self->_isUpdating = YES;
     
+    TOSplitViewController *splitVC = (id)self.presentingViewController;
+    
+    FeedsVC *feedsVC = (id)[[(UINavigationController *)[splitVC primaryViewController] viewControllers] firstObject];
+    
     if (self.folder) {
         // editing the title
         [MyFeedsManager renameFolder:self.folder to:title success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -110,6 +114,10 @@
                 [self.feedsVC setupData];
                 
                 self.cancelButton.enabled = YES;
+                
+                if (feedsVC != nil) {
+                    [feedsVC setupData];
+                }
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
@@ -147,12 +155,14 @@
                 
                 self.cancelButton.enabled = YES;
                 
+                if (feedsVC != nil) {
+                    [feedsVC setupData];
+                }
+                
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
                 
             });
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:MyFeedsManager userInfo:@{@"feeds" : ArticlesManager.shared.feeds, @"folders": ArticlesManager.shared.folders}];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
