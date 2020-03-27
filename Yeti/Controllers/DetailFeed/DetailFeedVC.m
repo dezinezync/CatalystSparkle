@@ -631,18 +631,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
             [self to_showDetailViewController:nav sender:self];
             
-//            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
-//                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
-//
-//                [self.navigationController pushViewController:vc animated:YES];
-//
-//            }
-//            else {
-//                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//
-//                [self.splitViewController showDetailViewController:nav sender:self];
-//            }
-            
         }
         else {
             [self.navigationController pushViewController:vc animated:YES];

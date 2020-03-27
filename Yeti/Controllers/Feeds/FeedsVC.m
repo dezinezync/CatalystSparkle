@@ -522,6 +522,8 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
                     && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
+    UIViewController *detailVC = self.to_splitViewController.detailViewController ?: [(SplitVC *)[self to_splitViewController] emptyVC];
+    
     if (indexPath.section == 0) {
         
         DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
@@ -545,7 +547,7 @@ static void *KVO_Unread = &KVO_Unread;
             UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
             nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
             
-            [self to_showSecondaryViewController:nav setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
+            [self to_showSecondaryViewController:nav setDetailViewController:detailVC sender:self];
         }
         
         return;
@@ -568,7 +570,7 @@ static void *KVO_Unread = &KVO_Unread;
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
+            [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
         }
         
     }
@@ -590,7 +592,7 @@ static void *KVO_Unread = &KVO_Unread;
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
+            [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
         }
         
     }

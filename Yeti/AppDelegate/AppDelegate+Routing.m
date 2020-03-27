@@ -550,13 +550,10 @@
     
     weakify(self);
     
-    __block BOOL isFolder = NO;
-    __block BOOL isFolderExpanded = NO;
-    __block NSUInteger folderIndex = NSNotFound;
-    __block Folder *checkFolder = nil;
+    TOSplitViewController *splitVC = (id)UIApplication.keyWindow.rootViewController;
     
     // get the primary navigation controller
-    YTNavigationController *nav = [[(UISplitViewController *)[UIApplication.keyWindow rootViewController] viewControllers] firstObject];
+    UINavigationController *nav = (id)splitVC.viewControllers.firstObject;
     
     if ([[nav topViewController] isKindOfClass:DetailFeedVC.class]) {
         // check if the current topVC is the same feed
@@ -572,6 +569,49 @@
             
             return;
         }
+    }
+    
+    if (splitVC.secondaryViewController && [splitVC.secondaryViewController isKindOfClass:UINavigationController.class] == YES) {
+        
+        DetailFeedVC *feedVC = (id)[(UINavigationController *)[splitVC secondaryViewController] topViewController];
+        
+        if (feedVC != nil && [feedVC isKindOfClass:DetailFeedVC.class]) {
+            
+            if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
+                
+                if (articleID != nil) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        strongify(self);
+                        
+                        [self showArticle:articleID];
+                    });
+                }
+                
+                return;
+                
+            }
+            else if ([feedVC.collectionView indexPathsForSelectedItems].count > 0) {
+                
+                /*
+                 * The feedID is clearly different or is a custom feed. So deselect the selected items.
+                 */
+                
+                NSArray <NSIndexPath *> * selectedItems = [feedVC.collectionView indexPathsForSelectedItems];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    for (NSIndexPath *indexPath in selectedItems) {
+                        
+                        [feedVC.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+                        
+                    }
+                    
+                });
+                
+            }
+            
+        }
+        
     }
     
     [self popToRoot];
@@ -601,95 +641,6 @@
     
     [nav pushViewController:articleVC animated:YES];
     
-    return;
-    
-    FeedsVC *feedsVC = [[nav viewControllers] firstObject];
-    
-    UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
-    
-    NSArray * data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-    
-    if (!data || !data.count) {
-        weakify(self);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            [self openFeed:feedID article:articleID];
-        });
-        return;
-    }
-    
-    __block NSUInteger index = NSNotFound;
-    
-    [(NSArray <Feed *> *)data enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        
-        if ([obj isKindOfClass:Feed.class]) {
-            Feed *feed = obj;
-            
-            if ([feed.feedID isEqualToNumber:feedID]) {
-                index = idx;
-                *stop = YES;
-            }
-        }
-        else {
-            // folder
-            Folder *folder = obj;
-            
-            [folder.feeds.allObjects enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idxx, BOOL * _Nonnull stopx) {
-
-                if ([obj.feedID isEqualToNumber:feedID]) {
-                    index = idx;
-                    folderIndex = idxx;
-
-                    isFolder = YES;
-                    isFolderExpanded = folder.isExpanded;
-                    checkFolder = folder;
-
-                    *stop = YES;
-                    *stopx = YES;
-                }
-
-            }];
-        }
-        
-    }];
-    
-    if (index == NSNotFound)
-        return;
-    
-    // it is either not a folder
-    // or it's a folder and we need to expand it
-    if (!isFolder || (isFolder && !isFolderExpanded)) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:1];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-//            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-            FolderCell *cell = (FolderCell *)[feedsVC tableView:feedsVC.tableView cellForRowAtIndexPath:indexPath];
-            
-            if (cell && cell.interactionDelegate
-                && [cell.interactionDelegate respondsToSelector:@selector(didTapFolderIcon:cell:)]) {
-                [cell.interactionDelegate didTapFolderIcon:checkFolder cell:cell];
-            }
-        });
-    }
-    
-    // if it is a folder, it's expanded at this point
-    if (isFolder) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(index + folderIndex) inSection:1];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-//            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-            [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
-        });
-    }
-    
-    if (articleID != nil) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            [self showArticle:articleID];
-        });
-    }
 }
 
 - (void)showArticle:(NSNumber *)articleID {
@@ -704,17 +655,17 @@
     
     DetailFeedVC *feedVC = nil;
     
-    UISplitViewController *splitVC;
+    TOSplitViewController *splitVC;
     UINavigationController *nav;
     
     @try {
-        splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
+        splitVC = (TOSplitViewController *)[UIApplication.keyWindow rootViewController];
         
         if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            nav = [[splitVC viewControllers] lastObject];
+            nav = (id)splitVC.secondaryViewController;
         }
         else {
-            nav = [[splitVC viewControllers] firstObject];
+            nav = (id)splitVC.primaryViewController;
         }
         
         feedVC = (DetailFeedVC *)[nav topViewController];

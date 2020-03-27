@@ -1,5 +1,11 @@
 # v1.7.0
 
+## Build 327
+
+- When you tap on a push notification, the app sets up correctly on the iPad. If you tap on a Feed after this, it no longer dismisses the previously opened Article. 
+
+- When you tap on a push notification while another article is open from a Feed, the Feed now correctly deselects the active article.  
+
 ## Build 326
 
 - Fixed an issue where opening a push notification on iPads would open them in the primary column. 
