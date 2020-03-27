@@ -328,52 +328,48 @@
         return;
     }
     
-    if (!MyFeedsManager.pushToken) {
-        // register for push notifications first.
+    if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications] == NO) {
         
-        if (![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+        MyFeedsManager.subsribeAfterPushEnabled = self.feed;
+        
+        weakify(self);
+        
+        asyncMain(^{
+            sender.enabled = YES;
+        });
+        
+        [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
             
-            MyFeedsManager.subsribeAfterPushEnabled = self.feed;
-            
-            weakify(self);
-            
-            asyncMain(^{
-                sender.enabled = YES;
-            });
-            
-            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                
-                if (error) {
-                    DDLogError(@"Error authorizing for push notifications: %@",error);
-                    return;
-                }
-                
-                if (granted) {
-                    strongify(self);
-                    
-                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
-                    
-                    asyncMain(^{
-                        [UIApplication.sharedApplication registerForRemoteNotifications];
-                    });
-                    
-                    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(subscribedToFeed:) name:SubscribedToFeed object:nil];
-                }
-                
-            }];
-            
-            return;
-        }
-        else {
-            
-            if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil] == NO) {
-                [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+            if (error) {
+                DDLogError(@"Error authorizing for push notifications: %@",error);
+                return;
             }
             
-            asyncMain(^{
-                [UIApplication.sharedApplication registerForRemoteNotifications];
-            });
+            if (granted) {
+                strongify(self);
+                
+                [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                
+                asyncMain(^{
+                    [UIApplication.sharedApplication registerForRemoteNotifications];
+                });
+                
+                [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(subscribedToFeed:) name:SubscribedToFeed object:nil];
+            }
+            
+        }];
+        
+        return;
+    }
+    else {
+        
+        if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil] == NO) {
+            [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
         }
+        
+        asyncMain(^{
+            [UIApplication.sharedApplication registerForRemoteNotifications];
+        });
     }
     
     // add subscription
