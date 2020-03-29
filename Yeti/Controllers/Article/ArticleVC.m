@@ -56,7 +56,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -1033,13 +1033,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:NSClassFromString(@"DetailFeedVC")] == NO)) {
         
         // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = authorView.tintColor;
+        authorView.blogLabel.textColor = theme.tintColor;
         [authorView.blogLabel setNeedsDisplay];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
         tap.numberOfTapsRequired = 1;
         tap.delaysTouchesBegan = YES;
         tap.delaysTouchesEnded = NO;
+        
+        if (@available(iOS 13.4, *)) {
+            
+            UIPointerInteraction *interaction = [[UIPointerInteraction alloc] initWithDelegate:self];
+            [authorView.blogLabel addInteraction:interaction];
+            
+        }
         
         [authorView.blogLabel addGestureRecognizer:tap];
         
@@ -2751,6 +2758,69 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
     
+}
+
+#pragma mark - <UIPointerInteractionDelegate>
+
+- (void)pointerInteraction:(UIPointerInteraction *)interaction willEnterRegion:(UIPointerRegion *)region animator:(id<UIPointerInteractionAnimating>)animator  API_AVAILABLE(ios(13.4)) {
+    
+    if ([interaction.view isKindOfClass:UILabel.class] == YES) {
+        interaction.view.backgroundColor = UIColor.clearColor;
+    }
+    
+}
+
+- (void)pointerInteraction:(UIPointerInteraction *)interaction willExitRegion:(UIPointerRegion *)region animator:(id<UIPointerInteractionAnimating>)animator API_AVAILABLE(ios(13.4)) {
+    
+    if ([interaction.view isKindOfClass:UILabel.class] == YES) {
+        interaction.view.backgroundColor = UIColor.clearColor;
+    }
+    
+}
+
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction styleForRegion:(UIPointerRegion *)region  API_AVAILABLE(ios(13.4)){
+    
+    UIPreviewParameters *params = [UIPreviewParameters new];
+    
+    CGRect bounds = interaction.view.bounds;
+    
+    if ([interaction.view isKindOfClass:UILabel.class] == YES) {
+        
+        UILabel *label = (UILabel *)[interaction view];
+        
+        CGSize textBounds = [label sizeThatFits:bounds.size];
+#ifdef DEBUG
+        NSLog(@"textBounds: %@\nBounds: %@", [NSValue valueWithCGSize:textBounds], [NSValue valueWithCGRect:bounds]);
+#endif
+        bounds.size = textBounds;
+        
+        // inset it so we get some padding.
+        // Typically around 4px
+        // CGRectInset produces a weird behavior here.
+        bounds.origin.x -= 2.f;
+        bounds.origin.y -= 2.f;
+        bounds.size.width += 16.f;
+        bounds.size.height += 4.f;
+    }
+    
+    params.visiblePath = [UIBezierPath bezierPathWithRoundedRect:bounds cornerRadius:4.f];
+    
+    UIPointerShape *shape = [UIPointerShape shapeWithPath:params.visiblePath];
+    
+    UITargetedPreview *preview = [[UITargetedPreview alloc] initWithView:interaction.view parameters:params];
+    
+    UIPointerStyle *style = [UIPointerStyle styleWithEffect:[UIPointerHighlightEffect effectWithPreview:preview] shape:shape];
+    
+    return style;
+    
+    /*
+    let params = UIPreviewParameters()
+    params.visiblePath = starView.starPath
+    
+    let preview = UITargetedPreview(view: starView, parameters: params)
+
+    return UIPointerStyle(effect: .automatic(preview), shape: .path(starView.starPath))
+    */
 }
 
 @end

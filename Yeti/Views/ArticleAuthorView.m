@@ -52,6 +52,10 @@
         
         self.mercurialButton.translatesAutoresizingMaskIntoConstraints = NO;
         
+        if (@available(iOS 13.4, *)) {
+            self.mercurialButton.pointerInteractionEnabled = YES;
+        }
+        
         // we do not observe this as the article interface is redrawn when the theme changes
 //        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:kDidUpdateTheme object:nil];
         [self didUpdateTheme];
