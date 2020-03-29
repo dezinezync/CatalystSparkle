@@ -1,6 +1,18 @@
 # v1.7.0
 
+## Build 328
+
+- Support for Mouse/Pointer Interactions on iPadOS 13.4. 
+
+- GIFs will now show the first frame if the Image Proxy is enabled. 
+
+- Fixed GIF playback. 
+
+
+
 ## Build 327
+
+- Fixes a crash when creating a new Folder for the first time. 
 
 - When you tap on a push notification, the app sets up correctly on the iPad. If you tap on a Feed after this, it no longer dismisses the previously opened Article. 
 
