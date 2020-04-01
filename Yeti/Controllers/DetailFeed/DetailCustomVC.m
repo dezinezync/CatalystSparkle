@@ -134,7 +134,7 @@
     
     [super viewDidDisappear:animated];
     
-    if (_showingArticle == NO) {
+    if (_showingArticle == NO && self.bookmarksManager != nil) {
         [self.bookmarksManager removeObserver:self name:BookmarksDidUpdateNotification];
     }
     
@@ -280,6 +280,10 @@
 
 - (void)didTapSortOptions:(UIBarButtonItem *)sender {
     
+    if ([self isKindOfClass:NSClassFromString(@"TodayVC")] == YES) {
+        return [super didTapSortOptions:sender];
+    }
+    
     UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     
     weakify(self);
@@ -349,6 +353,10 @@
 }
 
 - (void)loadNextPage {
+    
+    if ([self isKindOfClass:NSClassFromString(@"TodayVC")] == YES) {
+        return [super loadNextPage];
+    }
     
     if (self.isUnread == NO) {
         [self setupData];

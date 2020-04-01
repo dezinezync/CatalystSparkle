@@ -1333,7 +1333,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     // sorting button
     YetiSortOption option = SharedPrefs.sortingOption;
     
-    if (self.customFeed == FeedTypeCustom) {
+    if (self.customFeed == FeedTypeCustom && [self isKindOfClass:NSClassFromString(@"TodayVC")] == NO) {
         
         // when the active option is either of these two, we don't need
         // to do anything extra

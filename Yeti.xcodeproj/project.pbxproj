@@ -308,6 +308,7 @@
 		F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */; };
 		F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */; };
 		F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */; };
+		F0D95E212434577B008E17F9 /* TodayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D95E202434577B008E17F9 /* TodayVC.m */; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DA1E4823375042008FF4B1 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
 		F0DA1E49233750AA008FF4B1 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
@@ -1004,6 +1005,8 @@
 		F0D1E984216DED50009A8614 /* DetailAuthorHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailAuthorHeaderView.h; sourceTree = "<group>"; };
 		F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailAuthorHeaderView.m; sourceTree = "<group>"; };
 		F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddFeedCell.xib; sourceTree = "<group>"; };
+		F0D95E1F2434577B008E17F9 /* TodayVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayVC.h; sourceTree = "<group>"; };
+		F0D95E202434577B008E17F9 /* TodayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayVC.m; sourceTree = "<group>"; };
 		F0DA1E3B23374EF9008FF4B1 /* MetaData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetaData.m; sourceTree = "<group>"; };
 		F0DB58F723F575250008D871 /* CustomizationHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizationHeader.h; sourceTree = "<group>"; };
 		F0DB58F823F575250008D871 /* CustomizationHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizationHeader.m; sourceTree = "<group>"; };
@@ -1290,6 +1293,8 @@
 				F0F51B8123880B59001B3CFC /* AuthorBioVC.h */,
 				F0F51B8023880B59001B3CFC /* AuthorBioVC.m */,
 				F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */,
+				F0D95E1F2434577B008E17F9 /* TodayVC.h */,
+				F0D95E202434577B008E17F9 /* TodayVC.m */,
 			);
 			path = DetailFeed;
 			sourceTree = "<group>";
@@ -2644,6 +2649,7 @@
 				F07A665B205554FF00BA2D9F /* Code.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F0EB27D921C20B81007E3547 /* DBManager+CloudCore.m in Sources */,
+				F0D95E212434577B008E17F9 /* TodayVC.m in Sources */,
 				F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
