@@ -109,7 +109,15 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    NSDictionary *params = @{@"userID": MyFeedsManager.userID};
+    NSDate *today = [NSDate date];
+    NSDateComponents *comps = [[NSCalendar currentCalendar] components:(NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay) fromDate:today];
+    
+    NSString *todayString = [NSString stringWithFormat:@"%@-%@-%@", @(comps.year), @(comps.month), @(comps.day)];
+    
+    NSDictionary *params = @{@"userID": MyFeedsManager.userID,
+                             @"version": @"1.7",
+                             @"date": todayString
+    };
     
     [self.session GET:@"/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
       
@@ -118,7 +126,10 @@ NSArray <NSString *> * _defaultsKeys;
         NSArray <Feed *> * feeds = [self parseFeedResponse:responseObject];
         
         NSNumber *unread = [responseObject valueForKey:@"unread"];
+        NSNumber *today = [responseObject valueForKey:@"todayCount"];
+        
         self.totalUnread = unread.integerValue;
+        self.totalToday = today.integerValue;
         
         BOOL hasAddedFirstFeed = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
         
@@ -2110,8 +2121,8 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] init];
         
-        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.90:3000"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

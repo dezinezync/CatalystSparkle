@@ -83,6 +83,11 @@
     self.subtitleLabel.textColor = theme.subtitleColor;
     
     [self getProducts];
+    
+#ifdef DEBUG
+    [self setButtonsState:YES];
+#endif
+    
 }
 
 #pragma mark - Actions

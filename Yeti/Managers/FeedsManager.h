@@ -57,6 +57,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (atomic, assign) NSInteger totalUnread;
 
+@property (atomic, assign) NSInteger totalToday;
+
 #pragma mark - Networking
 
 @property (nonatomic, strong, readonly) Reachability * _Nonnull reachability;

@@ -234,13 +234,13 @@ static void *KVO_Unread = &KVO_Unread;
                 imageName = @"largecircle.fill.circle";
                 tintColor = UIColor.systemBlueColor;
             }
-            else if (indexPath.row == 1) {
-                imageName = @"bookmark.fill";
-                tintColor = UIColor.systemOrangeColor;
-            }
-            else {
+            else if ([obj isEqualToString:@"Today"] == YES) {
                 imageName = @"calendar";
                 tintColor = UIColor.systemRedColor;
+            }
+            else {
+                imageName = @"bookmark.fill";
+                tintColor = UIColor.systemOrangeColor;
             }
             
             UIImage *image = [[UIImage systemImageNamed:imageName] imageWithTintColor:tintColor renderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -250,6 +250,9 @@ static void *KVO_Unread = &KVO_Unread;
             
             if (indexPath.row == 0) {
                 cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
+            }
+            else if ([obj isEqualToString:@"Today"] == YES) {
+                cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalToday));
             }
             else {
                 cell.countLabel.text = formattedString(@"%@", @(self.bookmarksManager.bookmarksCount));
@@ -724,10 +727,10 @@ NSString * const kDS2Data = @"DS2Data";
         BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
         
         if (pref) {
-            [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
+            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Today"] intoSectionWithIdentifier:TopSection];
         }
         else {
-            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Today", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
         }
         
         [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
@@ -735,10 +738,19 @@ NSString * const kDS2Data = @"DS2Data";
         [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
         
         if (presentingSelf == YES) {
+            
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            
             if (cell != nil) {
                 cell.countLabel.text = @(MyFeedsManager.totalUnread).stringValue;
             }
+            
+            cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+            
+            if (cell != nil) {
+                cell.countLabel.text = @(MyFeedsManager.totalToday).stringValue;
+            }
+            
         }
         
     } @catch (NSException *exc) {
@@ -748,8 +760,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 #pragma mark - KVO
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     weakify(self);
     
     if (context == KVO_Unread && [keyPath isEqualToString:propSel(totalUnread)]) {
