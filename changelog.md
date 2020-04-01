@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 330
+
+- New Custom Feed: Today. All articles from the day, read and unread. Sort by your own preference. 
+
 ## Build 328
 
 - Support for Mouse/Pointer Interactions on iPadOS 13.4. 
