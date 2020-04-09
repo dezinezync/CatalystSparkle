@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 331
+
+- Minor patch for the latest API changes. 
+
 ## Build 330
 
 - New Custom Feed: Today. All articles from the day, read and unread. Sort by your own preference. 
