@@ -3,7 +3,9 @@ var MyExtensionJavaScriptClass = function() {};
 const ANDROID_PREFIX = "android-app:";
 
 MyExtensionJavaScriptClass.prototype = {
+    
     run: function(arguments) {
+        
         const origin = window.location.origin;
         let result = [];
         
@@ -17,6 +19,7 @@ MyExtensionJavaScriptClass.prototype = {
             if (elements.length == 0) {
                 
                 let authorLink = document.querySelectorAll("link[rel='author']");
+                
                 if (authorLink.length) {
                     authorLink = authorLink[0].href;
                     let url = new URL(authorLink);
@@ -35,16 +38,22 @@ MyExtensionJavaScriptClass.prototype = {
                 
             }
             else {
+                
                 for (let elem of elements) {
+                    
                     const url = new URL(elem.href, origin);
+                    
                     result.push({
                                 url: url.href,
                                 title: elem.title || ""
                                 });
                 }
+                
             }
+            
         }
         else if (origin.includes("micro.blog")) {
+            
             // documentation for feeds: http://help.micro.blog/2017/api-feeds/
             
             let title = document.title;
@@ -61,6 +70,49 @@ MyExtensionJavaScriptClass.prototype = {
                         title,
                         url: jsonFeed
                         });
+            
+        }
+        else if (origin.includes("youtube.com")) {
+            
+            let {pathname} = window.location;
+            
+            if (pathname.includes("c/") == true || pathname.includes("u/") || pathname.includes("user/")) {
+                
+                let elements = document.querySelectorAll("link[rel='canonical']");
+                
+                for (let elem of elements) {
+                    
+                    const url = new URL(elem.href, origin);
+                    
+                    let title = elem.title || document.title || "";
+                    
+                    title = title.replace(" - YouTube", "");
+                    
+                    result.push({
+                                url: url.href,
+                                title
+                                });
+                }
+
+                
+            }
+            else if (pathname.includes("channel/")) {
+                
+                let title = document.title || "";
+                
+                title = title.replace(" - YouTube", "");
+                
+                let url = window.location.href;
+                
+                result.push({
+                    title,
+                    url
+                });
+                
+            }
+            else {
+                // non-supported youtube URL (inner or public pages).
+            }
             
         }
         else {

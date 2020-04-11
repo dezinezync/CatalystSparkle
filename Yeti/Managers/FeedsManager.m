@@ -427,6 +427,88 @@ NSArray <NSString *> * _defaultsKeys;
     }];
 }
 
+- (void)_checkYoutubeFeed:(NSURL *)url success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    if (!url || ([url.absoluteString isBlank] == YES)) {
+        
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:DZErrorDomain code:403 userInfo:@{NSLocalizedDescriptionKey: @"Please enter a valid URL."}], nil, nil);
+        }
+        
+        return;
+        
+    }
+    
+    NSURLComponents *components = [NSURLComponents componentsWithString:url.absoluteString];
+    
+    if (!components.scheme) {
+        components.scheme = @"http";
+        components.host = components.host ?: components.path;
+        components.path = nil;
+    }
+    
+    url = components.URL;
+    
+    // check if it's a Youtube URL
+    if ([components.host containsString:@"youtube.com"]) {
+        
+        NSRange pathRange = NSMakeRange(0, components.path.length);
+        NSString *pattern = @"\\/c(hannel)?\\/(.+)";
+        NSRegularExpression *youtubeChannelURL = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
+        
+        if ([components.path containsString:@"/user/"] == YES) {
+            
+            // get it from the canonical head tag
+            [MyFeedsManager getYoutubeCanonicalID:url success:successCB error:errorCB];
+            
+            return;
+            
+        }
+        else if ([youtubeChannelURL numberOfMatchesInString:components.path options:kNilOptions range:pathRange] > 0) {
+            
+            __block NSString *youtubeChannelID;
+            __block BOOL isChannelID = NO;
+            
+            [youtubeChannelURL enumerateMatchesInString:components.path options:kNilOptions range:pathRange usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL * _Nonnull stop) {
+                
+                NSRange matchingGroupRange = [result rangeAtIndex:result.numberOfRanges - 1];
+                
+                youtubeChannelID = [components.path substringWithRange:matchingGroupRange];
+                isChannelID = [result rangeAtIndex:1].location != NSNotFound;
+                
+    #ifdef DEBUG
+                NSLog(@"Youtube Channel ID: %@", youtubeChannelID);
+    #endif
+                
+                *stop = YES;
+                
+            }];
+            
+            if (youtubeChannelID != nil) {
+                
+                if (isChannelID == NO) {
+                    
+                    // get it from the canonical head tag
+                    [MyFeedsManager getYoutubeCanonicalID:url success:successCB error:errorCB];
+                    
+                    return;
+                    
+                }
+                
+                url = [NSURL URLWithFormat:@"https://www.youtube.com/feeds/videos.xml?channel_id=%@", youtubeChannelID];
+                
+            }
+            
+        }
+        
+    }
+    
+    if (successCB) {
+        successCB(url, nil, nil);
+    }
+    
+}
+
 - (void)addFeedByID:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSArray <Feed *> *existing = [ArticlesManager.shared.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
@@ -1026,6 +1108,15 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
 {
+    
+    if (!title || (title && [title isBlank] == YES)) {
+        
+        if (errorCB) {
+            errorCB([NSError errorWithDomain:DZErrorDomain code:403 userInfo:@{NSLocalizedDescriptionKey: @"Please enter a title for the Folder."}], nil, nil);
+        }
+        
+        return;
+    }
     
     [self.session PUT:@"/folder" queryParams:@{@"userID": [self userID]} parameters:@{@"title": title} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2122,7 +2213,7 @@ NSArray <NSString *> * _defaultsKeys;
         DZURLSession *session = [[DZURLSession alloc] init];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.90:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

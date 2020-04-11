@@ -1,5 +1,8 @@
 # v1.7.0
 
+## Build 332
+- Implemented adding Youtube Channel RSS Feeds from the Share Extension. 
+
 ## Build 331
 
 - Minor patch for the latest API changes. 

@@ -1463,9 +1463,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, identifier);
         
-        NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)],
-                                     NSLinkAttributeName: url
-                                     };
+        NSMutableDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)]}.mutableCopy;
+        
+        if (url != nil) {
+            attributes[NSLinkAttributeName] = url;
+        }
         
         NSMutableAttributedString *prefix = [[NSAttributedString alloc] initWithString:@"🔗 " attributes:attributes].mutableCopy;
         

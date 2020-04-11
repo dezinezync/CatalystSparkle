@@ -79,6 +79,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)_checkYoutubeFeed:(NSURL * _Nonnull)url success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
 - (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
