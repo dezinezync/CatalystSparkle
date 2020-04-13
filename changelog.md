@@ -1,6 +1,11 @@
 # v1.7.0
 
+## Build 333
+
+- Fixes a crash which would occur when adding Youtube Channel Feeds directly from the Youtube app.
+
 ## Build 332
+
 - Implemented adding Youtube Channel RSS Feeds from the Share Extension. 
 
 ## Build 331
