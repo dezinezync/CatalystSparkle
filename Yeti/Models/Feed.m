@@ -128,13 +128,16 @@
 - (void)setValue:(id)value forKey:(NSString *)key
 {
     
-    if ([value isKindOfClass:NSDate.class]) {
-        
-    }
+//    if ([value isKindOfClass:NSDate.class]) {
+//
+//    }
     
     if ([key isEqualToString:@"hubSubscribed"]) {
         if (!value)
             value = @(NO);
+    }
+    else if ([key isEqualToString:@"url"] && (value && [value isKindOfClass:NSURL.class])) {
+        value = [(NSURL *)value absoluteString];
     }
     
     if ([key isEqualToString:@"unread"]) {

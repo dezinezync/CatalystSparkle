@@ -362,6 +362,11 @@
     @try {
         if (ArticlesManager.shared != nil && ArticlesManager.shared.feeds != nil) {
             for (Feed *item in ArticlesManager.shared.feeds) { @autoreleasepool {
+                
+                if (item.url && [item.url isKindOfClass:NSURL.class]) {
+                    item.url = [(NSURL *)url absoluteString];
+                }
+                
                 if ([item.url isEqualToString:url.absoluteString]) {
                     have = item;
                     break;
@@ -390,6 +395,10 @@
     if ([url.absoluteString containsString:@"youtube.com"] == YES && [url.absoluteString containsString:@"videos.xml"] == NO) {
         
         [MyFeedsManager _checkYoutubeFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (responseObject != nil && [responseObject isKindOfClass:NSString.class]) {
+                responseObject = [NSURL URLWithString:responseObject];
+            }
             
             [self addFeed:responseObject];
             
