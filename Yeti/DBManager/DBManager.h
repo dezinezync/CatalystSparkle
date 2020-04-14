@@ -40,6 +40,9 @@ extern DBManager * MyDBManager;
 
 + (instancetype)sharedInstance;
 
+/// Call this method only once the userID becomes available.
+- (void)setupSync;
+
 @property (nonatomic, strong) YapDatabase *database;
 @property (nonatomic, strong) YapDatabaseConnection *uiConnection;
 @property (nonatomic, strong) YapDatabaseConnection *bgConnection;

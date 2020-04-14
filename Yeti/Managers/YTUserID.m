@@ -39,12 +39,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             
             id UUID = nil;
             
-            if (@available(iOS 13, *)) {
-                UUID = self.UUIDString;
-            }
-            else {
-                UUID = self.UUID;
-            }
+            UUID = self.UUIDString;
             
             NSNumber *userID = self.userID;
             
@@ -52,6 +47,7 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             
             if (UUID != nil && userID != nil) {
                 [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                [MyDBManager setupSync];
             }
         });
         
@@ -329,16 +325,20 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
 }
 
 - (void)setUserID:(NSNumber *)userID {
+    
     _userID = userID;
     
     if (_userID != nil) {
+        
         [Keychain add:kUserID string:userID.stringValue];
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
         if (defaults) {
             [defaults setValue:userID forKey:kUserID];
             [defaults synchronize];
         }
+        
     }
 }
 

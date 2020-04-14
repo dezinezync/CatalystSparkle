@@ -22,6 +22,12 @@ NSNotificationName const UIDatabaseConnectionWillUpdateNotification = @"UIDataba
 NSNotificationName const UIDatabaseConnectionDidUpdateNotification  = @"UIDatabaseConnectionDidUpdateNotification";
 NSString *const kNotificationsKey = @"notifications";
 
+@interface DBManager ()
+
+@property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
+
+@end
+
 @implementation DBManager
 
 + (void)initialize
@@ -65,7 +71,6 @@ NSString *const kNotificationsKey = @"notifications";
     if ((self = [super init]))
     {
         [self setupDatabase];
-        [self setupSync];
     }
     
     return self;
@@ -376,7 +381,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (void)setupSync {
     
-    if (MyFeedsManager.userID == nil) {
+    if (self.isSyncSetup == YES) {
         return;
     }
     
@@ -386,15 +391,18 @@ NSString *const kNotificationsKey = @"notifications";
         NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
         
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
+        // date was later changed to 2020-04-14 22:30 when sync was finalised.
         if (token == nil) {
             
-            token = [@"1993-03-11 06:11:00" base64Encoded];
+            token = [@"2020-04-14 22:30:00" base64Encoded];
         
         }
         
 //#ifdef DEBUG
 //        token = @"MjAyMC0wNC0xMyAwMzo1MToyMA==";
 //#endif
+        
+        self.syncSetup = YES;
         
         [self syncNow:token];
         
