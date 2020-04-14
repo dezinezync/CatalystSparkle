@@ -94,7 +94,6 @@
 		F0542E38211DBFD700D66878 /* black.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E33211DBFD700D66878 /* black.png */; };
 		F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E34211DBFD700D66878 /* black~ipad@2x.png */; };
 		F0542E3C211DBFD700D66878 /* black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E35211DBFD700D66878 /* black@2x.png */; };
-		F055166021B4FEAA008F1F2F /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F055165421B4FEAA008F1F2F /* YapDatabase.framework */; };
 		F055166321B4FF59008F1F2F /* DBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F055166221B4FF59008F1F2F /* DBManager.m */; };
 		F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = F055AC1C1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m */; };
 		F05A923421E71FBD0098448E /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F05A923321E71FBD0098448E /* PrefsManager.m */; };
@@ -335,6 +334,8 @@
 		F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27E821C20FF0007E3547 /* FeedOperation.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
+		F0EC4A3524458EDD00ABF67B /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0EC4A3824458F0B00ABF67B /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; };
 		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
 		F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85D21ECAF8B0046BB12 /* reader.json */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
@@ -518,6 +519,76 @@
 			remoteGlobalIDString = F031962A2075FDC400A50D17;
 			remoteInfo = DZNetworkingWatchOS;
 		};
+		F0EC4A2224458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCF7C2AE1BCC8E610087ED39;
+			remoteInfo = "YapDatabase-macOS";
+		};
+		F0EC4A2424458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCF7C2BE1BCC8E870087ED39;
+			remoteInfo = "YapDatabase-iOS";
+		};
+		F0EC4A2624458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCE760911D78ADEF009C83A0;
+			remoteInfo = "YapDatabase-tvOS";
+		};
+		F0EC4A2824458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC1E7D031D80C901000721B8;
+			remoteInfo = "YapDatabase-watchOS";
+		};
+		F0EC4A2A24458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCD8815D1BE94C9300317214;
+			remoteInfo = "TestModuleMap-macOS";
+		};
+		F0EC4A2C24458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCD881291BE93C1000317214;
+			remoteInfo = "TestModuleMap-iOS";
+		};
+		F0EC4A2E24458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCE7616C1D78B899009C83A0;
+			remoteInfo = "TestModuleMap-tvOS";
+		};
+		F0EC4A3024458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC6266C91D80D3E000557968;
+			remoteInfo = "TestModuleMap-watchOS";
+		};
+		F0EC4A3224458EC300ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC6266D51D80D3E000557968;
+			remoteInfo = "TestModuleMap-watchOS Extension";
+		};
+		F0EC4A3624458EFB00ABF67B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DCF7C2BD1BCC8E870087ED39;
+			remoteInfo = "YapDatabase-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -541,6 +612,7 @@
 			files = (
 				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
+				F0EC4A3524458EDD00ABF67B /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 				F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */,
 			);
@@ -675,7 +747,6 @@
 		F0542E33211DBFD700D66878 /* black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = black.png; sourceTree = "<group>"; };
 		F0542E34211DBFD700D66878 /* black~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black~ipad@2x.png"; sourceTree = "<group>"; };
 		F0542E35211DBFD700D66878 /* black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@2x.png"; sourceTree = "<group>"; };
-		F055165421B4FEAA008F1F2F /* YapDatabase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YapDatabase.framework; path = Carthage/Build/iOS/YapDatabase.framework; sourceTree = SOURCE_ROOT; };
 		F055166121B4FF59008F1F2F /* DBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBManager.h; sourceTree = "<group>"; };
 		F055166221B4FF59008F1F2F /* DBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DBManager.m; sourceTree = "<group>"; };
 		F055AC1B1FD2AEF4004B9C29 /* ArticleVC+Toolbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Toolbar.h"; sourceTree = "<group>"; };
@@ -750,7 +821,6 @@
 		F070C3201FBAC0E100912CCF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		F070C3231FBAC10600912CCF /* JLRoutes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JLRoutes.framework; path = Carthage/Build/iOS/JLRoutes.framework; sourceTree = SOURCE_ROOT; };
 		F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Carthage/Build/iOS/OMGHTTPURLRQ.framework; sourceTree = SOURCE_ROOT; };
-		F070C3251FBAC10600912CCF /* YapDatabase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YapDatabase.framework; path = Carthage/Build/iOS/YapDatabase.framework; sourceTree = SOURCE_ROOT; };
 		F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
 		F070C3321FBAC37600912CCF /* FeedsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsVC.h; sourceTree = "<group>"; };
 		F070C3331FBAC37600912CCF /* FeedsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsVC.m; sourceTree = "<group>"; };
@@ -1048,6 +1118,7 @@
 		F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Paragraph.m; sourceTree = "<group>"; };
 		F0EBC7DF1FBB2181004A5605 /* Heading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Heading.h; sourceTree = "<group>"; };
 		F0EBC7E01FBB2181004A5605 /* Heading.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Heading.m; sourceTree = "<group>"; };
+		F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YapDatabase.xcodeproj; path = Vendors/YapDatabase/YapDatabase.xcodeproj; sourceTree = "<group>"; };
 		F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreKeychainPersistence.h; sourceTree = "<group>"; };
 		F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreKeychainPersistence.m; sourceTree = "<group>"; };
 		F0EEC85D21ECAF8B0046BB12 /* reader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = reader.json; sourceTree = "<group>"; };
@@ -1087,13 +1158,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0EC4A3824458F0B00ABF67B /* YapDatabase.framework in Frameworks */,
 				F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0AC8FE620E3901E00373B3A /* FLAnimatedImage.framework in Frameworks */,
 				F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */,
 				F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */,
-				F055166021B4FEAA008F1F2F /* YapDatabase.framework in Frameworks */,
 				F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
@@ -1632,13 +1703,11 @@
 				F00E830622C4826D0027C45E /* RMStore */,
 				F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */,
 				F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */,
-				F055165421B4FEAA008F1F2F /* YapDatabase.framework */,
 				F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
 				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
 				F070C3231FBAC10600912CCF /* JLRoutes.framework */,
 				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
-				F070C3251FBAC10600912CCF /* YapDatabase.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -2027,6 +2096,7 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */,
 				F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */,
 				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
@@ -2062,6 +2132,22 @@
 				F0EB27E821C20FF0007E3547 /* FeedOperation.m */,
 			);
 			path = Operations;
+			sourceTree = "<group>";
+		};
+		F0EC4A1724458EC300ABF67B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0EC4A2324458EC300ABF67B /* YapDatabase.framework */,
+				F0EC4A2524458EC300ABF67B /* YapDatabase.framework */,
+				F0EC4A2724458EC300ABF67B /* YapDatabase.framework */,
+				F0EC4A2924458EC300ABF67B /* YapDatabase.framework */,
+				F0EC4A2B24458EC300ABF67B /* TestModuleMap-macOS.app */,
+				F0EC4A2D24458EC300ABF67B /* TestModuleMap-iOS.app */,
+				F0EC4A2F24458EC300ABF67B /* TestModuleMap-tvOS.app */,
+				F0EC4A3124458EC300ABF67B /* TestModuleMap-watchOS.app */,
+				F0EC4A3324458EC300ABF67B /* TestModuleMap-watchOS Extension.appex */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F0EEC85121ECAF6B0046BB12 /* themes */ = {
@@ -2124,6 +2210,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0EC4A3724458EFB00ABF67B /* PBXTargetDependency */,
 				F08C5E65238660B60055946F /* PBXTargetDependency */,
 				F08C5E31238657A10055946F /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
@@ -2264,6 +2351,10 @@
 					ProductGroup = F08C5E57238660A90055946F /* Products */;
 					ProjectRef = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
 				},
+				{
+					ProductGroup = F0EC4A1724458EC300ABF67B /* Products */;
+					ProjectRef = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -2380,6 +2471,69 @@
 			fileType = wrapper.framework;
 			path = DZNetworking.framework;
 			remoteRef = F0C4F8D1234C69B900D57C18 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2324458EC300ABF67B /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0EC4A2224458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2524458EC300ABF67B /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0EC4A2424458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2724458EC300ABF67B /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0EC4A2624458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2924458EC300ABF67B /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0EC4A2824458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2B24458EC300ABF67B /* TestModuleMap-macOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-macOS.app";
+			remoteRef = F0EC4A2A24458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2D24458EC300ABF67B /* TestModuleMap-iOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-iOS.app";
+			remoteRef = F0EC4A2C24458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A2F24458EC300ABF67B /* TestModuleMap-tvOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-tvOS.app";
+			remoteRef = F0EC4A2E24458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A3124458EC300ABF67B /* TestModuleMap-watchOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-watchOS.app";
+			remoteRef = F0EC4A3024458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0EC4A3324458EC300ABF67B /* TestModuleMap-watchOS Extension.appex */ = {
+			isa = PBXReferenceProxy;
+			fileType = "wrapper.app-extension";
+			path = "TestModuleMap-watchOS Extension.appex";
+			remoteRef = F0EC4A3224458EC300ABF67B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2566,7 +2720,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/JLRoutes.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OMGHTTPURLRQ.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/FLAnimatedImage.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/YapDatabase.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/NYTPhotoViewerCore.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/NYTPhotoViewer.framework",
 			);
@@ -2576,7 +2729,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JLRoutes.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/OMGHTTPURLRQ.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/FLAnimatedImage.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/YapDatabase.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NYTPhotoViewerCore.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NYTPhotoViewer.framework",
 			);
@@ -2871,6 +3023,11 @@
 			isa = PBXTargetDependency;
 			target = F0B7C841240B7272008D8F4F /* notificationContext */;
 			targetProxy = F0B7C84F240B7272008D8F4F /* PBXContainerItemProxy */;
+		};
+		F0EC4A3724458EFB00ABF67B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "YapDatabase-iOS";
+			targetProxy = F0EC4A3624458EFB00ABF67B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

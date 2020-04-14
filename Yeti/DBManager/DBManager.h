@@ -10,6 +10,7 @@
 
 #import "FeedsManager.h"
 #import "Feed.h"
+#import "FeedItem.h"
 
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseCloudCore.h>
@@ -46,6 +47,12 @@ extern DBManager * MyDBManager;
 #pragma mark - Methods
 
 - (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(void(^)(BOOL success))completionCB;
+
+#pragma mark - Articles
+
+- (FeedItem *)articleForID:(NSNumber *)identifier feedID:(NSNumber *)feedID;
+
+- (void)addArticle:(FeedItem *)article;
 
 #pragma mark - CloudCore
 

@@ -136,6 +136,8 @@ YETI_EXPORT NSString * _Nonnull const kShowMarkReadPrompt;
 extern BOOL canSupportOLED (void);
 
 #define LOCAL_NAME_COLLECTION @"localNames"
+#define LOCAL_FEEDS_COLLECTION @"localFeeds"
+#define LOCAL_ARTICLES_COLLECTION @"localArticles"
 
 @interface SortImageProvider : NSObject
 

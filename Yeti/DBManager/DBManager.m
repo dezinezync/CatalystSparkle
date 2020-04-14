@@ -8,10 +8,13 @@
 
 #import "DBManager+CloudCore.h"
 
-#import "Feed.h"
+#import <YapDatabase/YapDatabaseAutoView.h>
+#import <YapDatabase/YapDatabaseViewRangeOptions.h>
+
 #import "FeedOperation.h"
 
 #import <DZKit/NSString+Extras.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 DBManager *MyDBManager;
 
@@ -150,7 +153,9 @@ NSString *const kNotificationsKey = @"notifications";
         
         NSError *error = nil;
         
-        return [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
+        
+        return data;
         
     };
     
@@ -199,6 +204,9 @@ NSString *const kNotificationsKey = @"notifications";
     return postSanitizer;
 }
 
+#define GROUP_ARTICLES @"articles"
+#define GROUP_FEEDS @"feeds"
+
 - (void)setupDatabase
 {
     NSString *databasePath = [[self class] databasePath];
@@ -209,15 +217,15 @@ NSString *const kNotificationsKey = @"notifications";
     // We renamed the class in a recent version.
     
     [NSKeyedUnarchiver setClass:[Feed class] forClassName:@"Feed"];
+    [NSKeyedUnarchiver setClass:FeedItem.class forClassName:@"FeedItem"];
     
     // Create the database
     
-    _database = [[YapDatabase alloc] initWithPath:databasePath
-                                       serializer:[self databaseSerializer]
-                                     deserializer:[self databaseDeserializer]
-                                     preSanitizer:[self databasePreSanitizer]
-                                    postSanitizer:[self databasePostSanitizer]
-                                          options:nil];
+    _database = [[YapDatabase alloc] initWithURL:[NSURL fileURLWithPath:databasePath]];
+    [_database registerDefaultSerializer:[self databaseSerializer]];
+    [_database registerDefaultDeserializer:[self databaseDeserializer]];
+    [_database registerDefaultPreSanitizer:[self databasePreSanitizer]];
+    [_database registerDefaultPostSanitizer:[self databasePostSanitizer]];
     
     // Setup the extensions
     
@@ -239,11 +247,138 @@ NSString *const kNotificationsKey = @"notifications";
                                              selector:@selector(yapDatabaseModified:)
                                                  name:YapDatabaseModifiedNotification
                                                object:_database];
+    
+    [self setupViews];
+    
+    [self cleanupDatabase];
+    
+}
+
+- (void)setupViews {
+    
+    // Articles View
+    {
+        YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withObjectBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object) {
+            
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+                return [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, [(FeedItem *)object feedID]];
+            }
+            else if ([collection containsString:LOCAL_FEEDS_COLLECTION]) {
+                return GROUP_FEEDS;
+            }
+
+            return nil;
+            
+        }];
+        
+        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, id  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, id  _Nonnull object2) {
+           
+            if ([group containsString:GROUP_FEEDS]) {
+
+                Feed *feed1 = object1;
+                Feed *feed2 = object2;
+
+                return [feed1.feedID compare:feed2.feedID];
+
+            }
+            else if ([group containsString:GROUP_ARTICLES]) {
+                
+                FeedItem *item1 = object1;
+                FeedItem *item2 = object2;
+                
+                return [item1.identifier compare:item2.identifier] & [item1.timestamp compare:item2.timestamp];
+                
+            }
+            else {
+                return NSOrderedSame;
+            }
+            
+        }];
+        
+        NSString *versionTag = @"2020-04-14 04:52PM";
+        
+        YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+        
+        YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting versionTag:versionTag options:options];
+        [_database registerExtension:view withName:@"articlesView"];
+    }
+    
+}
+
+- (void)cleanupDatabase {
+    
+    // remove articles older than 2 weeks from the DB cache.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        
+        NSDate *now = NSDate.date;
+       
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            NSArray <NSString *> * collections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
+            }];
+            
+            NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:nil ascending:YES selector:@selector(compare:)];
+            
+            for (NSString *col in collections) {
+                
+                NSArray <NSNumber *> *keys = [[transaction allKeysInCollection:col] rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
+                        
+                    return @(obj.integerValue);
+                    
+                }];
+                
+                keys = [keys sortedArrayUsingDescriptors:@[descriptor]];
+                
+                if (keys.count == 0) {
+                    continue;
+                }
+                
+                // check the last 20 items
+                NSRange range = NSMakeRange(0, MIN(keys.count, 20));
+                
+                keys = [keys subarrayWithRange:range];
+                
+                for (NSNumber *key in keys) {
+                    
+                    FeedItem *item = [transaction objectForKey:key.stringValue inCollection:col];
+                    
+                    // if it is older than 2 weeks, delete it
+                    if (item != nil) {
+                        
+                        NSDate *created = item.timestamp;
+                        
+                        NSTimeInterval since = [now timeIntervalSinceDate:created];
+                        
+                        double days = floor(since / 86400);
+                        
+                        if(days >= 14.f) {
+                            
+                            NSLog(@"Article is stale %@:%@. Deleted.", col, key);
+                            
+                            [self _deleteArticle:key.stringValue collection:col transaction:transaction];
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }];
+        
+    });
+    
 }
 
 #pragma mark - Sync
 
 - (void)setupSync {
+    
+    if (MyFeedsManager.userID == nil) {
+        return;
+    }
     
     // check if sync has been setup on this device.
     [self.bgConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
@@ -253,15 +388,15 @@ NSString *const kNotificationsKey = @"notifications";
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
         if (token == nil) {
             
-            NSString *token = [@"1993-03-11 06:11:00" base64Encoded];
-            
-            [self syncNow:token];
-            
+            token = [@"1993-03-11 06:11:00" base64Encoded];
+        
         }
-        else {
-            // if we do, check with the server for updates
-            [self syncNow:token];
-        }
+        
+//#ifdef DEBUG
+//        token = @"MjAyMC0wNC0xMyAwMzo1MToyMA==";
+//#endif
+        
+        [self syncNow:token];
         
     }];
     
@@ -285,20 +420,21 @@ NSString *const kNotificationsKey = @"notifications";
             [transaction setObject:changeSet.changeToken forKey:syncToken inCollection:SYNC_COLLECTION];
             
             // now for every change set, create/update an appropriate key in the database
+            if (changeSet.customFeeds) {
+                
+                [self updateCustomFeedsMapping:changeSet transaction:transaction];
+                
+            }
             
-            for (SyncChange *change in changeSet.changes) {
+            if (changeSet.feedsWithNewArticles) {
                 
-                NSString *localNameKey = formattedString(@"feed-%@", change.feedID);
-                
-                // for now we're only syncing titles, so check those
-                if (change.title == nil) {
-                    // remove the custom title
-                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-                }
-                else {
-                    // doesn't matter if we overwrite the changes.
-                    [transaction setObject:change.title forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
-                }
+                // this is an async method. So we don't pass it a transaction.
+                // it'll fetch its own transaction as necessary.
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    
+                    [self fetchNewArticlesFor:changeSet.feedsWithNewArticles since:token];
+                    
+                });
                 
             }
 
@@ -329,6 +465,171 @@ NSString *const kNotificationsKey = @"notifications";
         DDLogError(@"An error occurred when syncing changes: %@", error);
         
     }];
+    
+}
+
+- (void)updateCustomFeedsMapping:(ChangeSet *)changeSet transaction:(YapDatabaseReadWriteTransaction *)transaction {
+    
+    for (SyncChange *change in changeSet.customFeeds) {
+        
+        NSString *localNameKey = formattedString(@"feed-%@", change.feedID);
+        
+        // for now we're only syncing titles, so check those
+        if (change.title == nil) {
+            // remove the custom title
+            [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        }
+        else {
+            // doesn't matter if we overwrite the changes.
+            [transaction setObject:change.title forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        }
+        
+    }
+    
+}
+
+- (void)fetchNewArticlesFor:(NSArray <NSNumber *> *)feedIDs since:(NSString *)since {
+    
+#ifdef DEBUG
+    
+    NSLog(@"[Sync] Fetching new articles for: %@", feedIDs);
+    
+#endif
+    
+    for (NSNumber *feedID in feedIDs) {
+        
+        __block NSNumber *articleID = nil;
+        
+//        YapDatabaseViewRangeOptions *options = [YapDatabaseViewRangeOptions fixedRangeWithLength:1 offset:0 from:YapDatabaseViewEnd];
+//        YapDatabaseViewMappings *mapping = [];
+        
+        // first we get the latest article for this Feed ID.
+        [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
+            
+            NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
+            
+            NSString *collection = nil;
+            NSString *key = nil;
+            
+            [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
+            
+            if (key != nil && collection != nil) {
+                articleID = @(key.integerValue);
+            }
+            
+        }];
+        
+        if (articleID) {
+            NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
+        }
+        else {
+            NSLog(@"[Sync] Fetching articles for %@ using token %@", feedID, since);
+        }
+        
+        NSMutableDictionary *params = @{@"feedID": feedID}.mutableCopy;
+        
+        if (articleID) {
+            params[@"articleID"] = articleID;
+        }
+        else if (since) {
+            params[@"since"] = since;
+        }
+        
+        [MyFeedsManager getSyncArticles:params success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (responseObject == nil || responseObject.count == 0) {
+                return;
+            }
+            
+            // insert these articles to the DB.
+            [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+               
+                for (FeedItem *item in responseObject) {
+                    
+                    NSString *collection = [self collectionForArticle:item];
+                    
+                    [transaction setObject:item forKey:item.identifier.stringValue inCollection:collection];
+                    
+                }
+                
+            }];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            NSLog(@"An error occurred when fetching articles for %@: %@", feedID, error.localizedDescription);
+            
+        }];
+        
+    }
+    
+}
+
+#pragma mark - Articles
+
+- (NSString *)articlesCollectionForFeed:(NSNumber *)feedID {
+    
+    return [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
+    
+}
+
+- (NSString *)collectionForArticle:(FeedItem *)article {
+    
+    NSString *collection = [self articlesCollectionForFeed:article.feedID];
+    
+    return collection;
+    
+}
+
+- (FeedItem *)articleForID:(NSNumber *)identifier feedID:(NSNumber *)feedID {
+    
+    __block FeedItem *article = nil;
+    
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        
+        NSString *collection = [self articlesCollectionForFeed:feedID];
+        
+        article = [transaction objectForKey:identifier.stringValue inCollection:collection];
+        
+    }];
+    
+    return article;
+    
+}
+
+- (void)addArticle:(FeedItem *)article {
+    
+    if (!article || !article.identifier || !article.feedID || !article.content) {
+        NSLog(@"Error adding article to db. Missing information.\n%@", article);
+        return;
+    }
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        NSString *collection = [self collectionForArticle:article];
+       
+        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection];
+        
+    }];
+    
+}
+
+- (void)deleteArticle:(FeedItem *)article {
+    
+    NSString *collection = [self collectionForArticle:article];
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        [self _deleteArticle:article.identifier.stringValue collection:collection transaction:transaction];
+        
+    }];
+    
+}
+
+- (void)_deleteArticle:(NSString *)key collection:(NSString *)col transaction:(YapDatabaseReadWriteTransaction *)transaction {
+    
+    [transaction removeObjectForKey:key inCollection:col];
     
 }
 

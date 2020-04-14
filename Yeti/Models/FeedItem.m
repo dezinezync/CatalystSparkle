@@ -60,11 +60,11 @@ static NSDateFormatter *_formatter = nil;
         self.author = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSString.class, nil] forKey:@"author"];
         self.blogTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"blogTitle"];
         self.bookmarked = [([decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] ?: @0) boolValue];
+        self.read = [([decoder decodeObjectOfClass:NSNumber.class forKey:@"read"]  ?: @0) boolValue];
         self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
         self.coverImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"coverImage"];
         self.guid = [decoder decodeObjectOfClass:[NSString class] forKey:@"guid"];
         self.modified = [decoder decodeObjectOfClass:[NSString class] forKey:@"modified"];
-        self.bookmarked = [[decoder decodeObjectOfClass:[NSNumber class] forKey:@"read"] boolValue];
         self.timestamp = [decoder decodeObjectOfClass:[NSDate class] forKey:@"timestamp"];
         
         self.mediaCredit = [decoder decodeObjectOfClass:[NSString class] forKey:@"mediaCredit"];

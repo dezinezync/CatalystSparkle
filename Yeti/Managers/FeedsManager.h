@@ -85,7 +85,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)getArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+- (void)getArticle:(NSNumber * _Nonnull)articleID feedID:(NSNumber * _Nullable)feedID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)getMercurialArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -164,6 +164,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)getSync:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)syncSettings;
+
+- (void)getSyncArticles:(NSDictionary * _Nonnull)params success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Search
 

@@ -558,7 +558,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)getArticle:(NSNumber *)articleID success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)getArticle:(NSNumber *)articleID feedID:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (articleID == nil || [articleID integerValue] == 0) {
         if (errorCB) {
@@ -566,6 +566,38 @@ NSArray <NSString *> * _defaultsKeys;
             errorCB(error, nil, nil);
         }
         return;
+    }
+    
+    if (feedID != nil) {
+        
+        FeedItem *item = [MyDBManager articleForID:articleID feedID:feedID];
+        
+        if (item != nil && item.content && successCB) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(item, nil, nil);
+            });
+            
+            // additionally mark the item as read.
+            if (item.read == NO) {
+                
+                NSString *path = formattedString(@"/article/true");
+                
+                NSDictionary *params = @{@"articles": @[articleID], @"userID": self.userID};
+                
+                [self.session POST:path parameters:params success:nil error:nil];
+             
+                item.read = YES;
+                
+                // save it back to the DB so the read state is persisted.
+                [MyDBManager addArticle:item];
+                
+            }
+            
+            return;
+            
+        }
+        
     }
     
     NSString *path = formattedString(@"/1.2/article/%@", articleID);
@@ -582,7 +614,13 @@ NSArray <NSString *> * _defaultsKeys;
             
             FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
             
-            successCB(item, response, task);
+            item.read = YES;
+            
+            [MyDBManager addArticle:item];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(item, response, task);
+            });
             
         }
         
@@ -1816,7 +1854,7 @@ NSArray <NSString *> * _defaultsKeys;
                             @"userID": self.userID
                             };
     
-    [self.session GET:@"/1.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session GET:@"/1.7/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             // nothing changed. exit early
@@ -1825,24 +1863,64 @@ NSArray <NSString *> * _defaultsKeys;
         
         // server will respond with changes and changeToken
         NSString *changeToken = responseObject[@"changeToken"];
-        NSArray <NSDictionary *> * changes = responseObject[@"changes"];
+        NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"];
         
         if (successCB) {
+            
             ChangeSet *changeSet = [[ChangeSet alloc] init];
             changeSet.changeToken = changeToken;
             
-            NSMutableArray <SyncChange *> *changeMembers = [[NSMutableArray alloc] initWithCapacity:changes.count];
+            NSArray *customFeeds = [changes valueForKey:@"customFeeds"];
             
-            for (NSDictionary *change in changes) {
-                SyncChange *changeObj = [[SyncChange alloc] init];
-                [changeObj setValuesForKeysWithDictionary:change];
+            if (customFeeds != nil) {
                 
-                [changeMembers addObject:changeObj];
+                NSMutableArray <SyncChange *> *changeMembers = [[NSMutableArray alloc] initWithCapacity:customFeeds.count];
+                
+                for (NSDictionary *change in customFeeds) {
+                    SyncChange *changeObj = [[SyncChange alloc] init];
+                    [changeObj setValuesForKeysWithDictionary:change];
+                    
+                    [changeMembers addObject:changeObj];
+                }
+                
+                changeSet.customFeeds = changeMembers.copy;
+                
             }
             
-            changeSet.changes = changeMembers.copy;
+            dispatch_group_t group = dispatch_group_create();
+
+            NSArray *newFeeds = [changes valueForKey:@"newFeeds"];
             
-            successCB(changeSet, response, task);
+            if (newFeeds != nil && newFeeds.count > 0) {
+                
+                dispatch_group_enter(group);
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                   
+                    [self getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        if (responseObject != nil && [(NSNumber *)responseObject integerValue] == 2) {
+                            dispatch_group_leave(group);
+                        }
+                        
+                    } error:nil];
+                    
+                });
+                
+            }
+            
+            NSArray *feedsWithNewArticles = [changes valueForKey:@"feedsWithNewArticles"];
+            
+            if (feedsWithNewArticles != nil && feedsWithNewArticles.count) {
+                
+                changeSet.feedsWithNewArticles = feedsWithNewArticles;
+                
+            }
+            
+            dispatch_group_notify(group, dispatch_get_main_queue(), ^ {
+                successCB(changeSet, response, task);
+            });
+        
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -2029,6 +2107,48 @@ NSArray <NSString *> * _defaultsKeys;
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSLog(@"Error updating sync default: %@", error);
+        
+    }];
+    
+}
+
+- (void)getSyncArticles:(NSDictionary *)params success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSNumber *feedID = [params valueForKey:@"feedID"];
+    
+    NSString *path = [NSString stringWithFormat:@"/1.7/feeds/%@", feedID];
+    
+    [self.session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (!successCB) {
+            return;
+        }
+        
+        NSArray <NSDictionary *> *objects = [responseObject valueForKey:@"articles"];
+        
+        NSMutableArray <FeedItem *> *articles = [NSMutableArray arrayWithCapacity:objects.count];
+        
+        for (NSDictionary *obj in objects) {
+            
+            FeedItem *item = [FeedItem instanceFromDictionary:obj];
+            
+            [articles addObject:item];
+            
+        }
+        
+        if (successCB) {
+            successCB(articles, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
         
     }];
     
@@ -2877,7 +2997,7 @@ NSArray <NSString *> * _defaultsKeys;
                     
                     weakify(self);
                     
-                    [self getArticle:obj success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    [self getArticle:obj feedID:nil success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         
                         strongify(self);
                         

@@ -8,13 +8,18 @@
 
 #import <Foundation/Foundation.h>
 #import "SyncChange.h"
+#import "Feed.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ChangeSet : NSObject
 
 @property (nonatomic, copy) NSString *changeToken;
-@property (nonatomic, strong) NSArray <SyncChange *> *changes;
+@property (nonatomic, strong) NSArray <SyncChange *> *customFeeds;
+@property (nonatomic, strong) NSArray <NSNumber *> * feedsWithNewArticles;
+
+// The following is automatically managed by FeedsManager. 
+//@property (nonatomic, strong) NSArray <Feed *> * feeds;
 
 @end
 
