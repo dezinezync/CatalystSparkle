@@ -3065,7 +3065,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3097,7 +3097,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3151,7 +3151,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3211,7 +3211,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3243,7 +3243,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3290,7 +3290,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3327,7 +3327,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3346,7 +3346,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3365,7 +3365,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3381,7 +3381,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3487,7 +3487,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3519,7 +3519,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3556,7 +3556,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3575,7 +3575,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3595,7 +3595,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 333;
+				CURRENT_PROJECT_VERSION = 334;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
