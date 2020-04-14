@@ -21,6 +21,7 @@
 		F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */; };
 		F01285C323436D8D00B8C277 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
+		F015C43A2446259B00FFC848 /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
@@ -334,8 +335,6 @@
 		F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27E821C20FF0007E3547 /* FeedOperation.m */; };
 		F0EBC7DE1FBAF8A5004A5605 /* Paragraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7DD1FBAF8A5004A5605 /* Paragraph.m */; };
 		F0EBC7E11FBB2181004A5605 /* Heading.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EBC7E01FBB2181004A5605 /* Heading.m */; };
-		F0EC4A3524458EDD00ABF67B /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F0EC4A3824458F0B00ABF67B /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; };
 		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
 		F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85D21ECAF8B0046BB12 /* reader.json */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
@@ -519,6 +518,13 @@
 			remoteGlobalIDString = F031962A2075FDC400A50D17;
 			remoteInfo = DZNetworkingWatchOS;
 		};
+		F0DEE58C244626B200A48915 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DCF7C2BD1BCC8E870087ED39;
+			remoteInfo = "YapDatabase-iOS";
+		};
 		F0EC4A2224458EC300ABF67B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
@@ -582,13 +588,6 @@
 			remoteGlobalIDString = DC6266D51D80D3E000557968;
 			remoteInfo = "TestModuleMap-watchOS Extension";
 		};
-		F0EC4A3624458EFB00ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = DCF7C2BD1BCC8E870087ED39;
-			remoteInfo = "YapDatabase-iOS";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -612,7 +611,6 @@
 			files = (
 				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
-				F0EC4A3524458EDD00ABF67B /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 				F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */,
 			);
@@ -1158,7 +1156,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0EC4A3824458F0B00ABF67B /* YapDatabase.framework in Frameworks */,
 				F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
@@ -1171,6 +1168,7 @@
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
+				F015C43A2446259B00FFC848 /* YapDatabase.framework in Frameworks */,
 				F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2210,7 +2208,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F0EC4A3724458EFB00ABF67B /* PBXTargetDependency */,
+				F0DEE58D244626B200A48915 /* PBXTargetDependency */,
 				F08C5E65238660B60055946F /* PBXTargetDependency */,
 				F08C5E31238657A10055946F /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
@@ -3024,10 +3022,10 @@
 			target = F0B7C841240B7272008D8F4F /* notificationContext */;
 			targetProxy = F0B7C84F240B7272008D8F4F /* PBXContainerItemProxy */;
 		};
-		F0EC4A3724458EFB00ABF67B /* PBXTargetDependency */ = {
+		F0DEE58D244626B200A48915 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "YapDatabase-iOS";
-			targetProxy = F0EC4A3624458EFB00ABF67B /* PBXContainerItemProxy */;
+			targetProxy = F0DEE58C244626B200A48915 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3172,7 +3170,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -3226,7 +3224,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -3254,6 +3252,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
+					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3275,6 +3274,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -3298,6 +3298,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
+					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -3317,6 +3318,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -3498,7 +3500,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -3525,6 +3527,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
+					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -3544,6 +3547,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Testflight;

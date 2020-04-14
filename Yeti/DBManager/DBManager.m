@@ -393,7 +393,7 @@ NSString *const kNotificationsKey = @"notifications";
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
         // date was later changed to 2020-04-14 22:30 when sync was finalised.
         if (token == nil) {
-            
+            [MyDBManager setupSync];
             token = [@"2020-04-14 22:30:00" base64Encoded];
         
         }
