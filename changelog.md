@@ -1,6 +1,6 @@
 # v1.7.0
 
-## Build 334
+## Build 335
 
 - Fixes a crash which would occur when adding Youtube Channel Feeds directly from the Youtube app.
 
