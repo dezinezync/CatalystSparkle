@@ -275,6 +275,7 @@
 		F0B7C84A240B7272008D8F4F /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B7C849240B7272008D8F4F /* NotificationViewController.m */; };
 		F0B7C84D240B7272008D8F4F /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B7C84B240B7272008D8F4F /* MainInterface.storyboard */; };
 		F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0B7C842240B7272008D8F4F /* notificationContext.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0B870F52446BED5009BAEE3 /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
 		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
 		F0BD3C3522ABDD190069A8B0 /* light-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0BD3C3422ABDD190069A8B0 /* light-dark.json */; };
@@ -609,6 +610,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F0B870F52446BED5009BAEE3 /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
