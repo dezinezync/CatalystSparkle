@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 336
+
+- Fixes the "Known Issue" from previous build wherein the app would not be able to make network requests for the first minute or two. 
+
 ## Build 335
 
 - Fixes a crash which would occur when adding Youtube Channel Feeds directly from the Youtube app.

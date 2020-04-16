@@ -405,7 +405,7 @@ NSString *const kNotificationsKey = @"notifications";
         }
         
 //#ifdef DEBUG
-//        token = @"MjAyMC0wNC0xMyAwMzo1MToyMA==";
+//        token = [@"2020-04-15 06:30:00" base64Encoded];
 //#endif
         
         self.syncSetup = YES;
@@ -510,73 +510,104 @@ NSString *const kNotificationsKey = @"notifications";
     
 #endif
     
-    for (NSNumber *feedID in feedIDs) {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue.maxConcurrentOperationCount = 1;
+    queue.name = @"com.elytra.sync.serialFetchArticles";
+    
+    NSBlockOperation *previousOp;
+    
+    for (NSNumber *feedID in feedIDs) { @autoreleasepool {
         
-        __block NSNumber *articleID = nil;
+        NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+            [self _fetchNewArticlesFor:feedID since:since queue:queue];
+        }];
         
+        if (previousOp != nil) {
+            [operation addDependency:previousOp];
+        }
+        
+        [queue addOperation:operation];
+        
+        previousOp = operation;
+        
+    } }
+    
+    [queue waitUntilAllOperationsAreFinished];
+    
+}
+
+- (void)_fetchNewArticlesFor:(NSNumber *)feedID since:(NSString *)since queue:(NSOperationQueue *)queue {
+    
+    [queue setSuspended:YES];
+    
+    __block NSNumber *articleID = nil;
+            
 //        YapDatabaseViewRangeOptions *options = [YapDatabaseViewRangeOptions fixedRangeWithLength:1 offset:0 from:YapDatabaseViewEnd];
 //        YapDatabaseViewMappings *mapping = [];
+    
+    // first we get the latest article for this Feed ID.
+    [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
         
-        // first we get the latest article for this Feed ID.
-        [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-            
-            YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
-            
-            NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
-            
-            NSString *collection = nil;
-            NSString *key = nil;
-            
-            [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
-            
-            if (key != nil && collection != nil) {
-                articleID = @(key.integerValue);
-            }
-            
-        }];
+        YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
         
-        if (articleID) {
-            NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
-        }
-        else {
-            NSLog(@"[Sync] Fetching articles for %@ using token %@", feedID, since);
+        NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
+        
+        NSString *collection = nil;
+        NSString *key = nil;
+        
+        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
+        
+        if (key != nil && collection != nil) {
+            articleID = @(key.integerValue);
         }
         
-        NSMutableDictionary *params = @{@"feedID": feedID}.mutableCopy;
-        
-        if (articleID) {
-            params[@"articleID"] = articleID;
-        }
-        else if (since) {
-            params[@"since"] = since;
-        }
-        
-        [MyFeedsManager getSyncArticles:params success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (responseObject == nil || responseObject.count == 0) {
-                return;
-            }
-            
-            // insert these articles to the DB.
-            [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-               
-                for (FeedItem *item in responseObject) {
-                    
-                    NSString *collection = [self collectionForArticle:item];
-                    
-                    [transaction setObject:item forKey:item.identifier.stringValue inCollection:collection];
-                    
-                }
-                
-            }];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            NSLog(@"An error occurred when fetching articles for %@: %@", feedID, error.localizedDescription);
-            
-        }];
-        
+    }];
+    
+    if (articleID) {
+        NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
     }
+    else {
+        NSLog(@"[Sync] Fetching articles for %@ using token %@", feedID, since);
+    }
+    
+    NSMutableDictionary *params = @{@"feedID": feedID}.mutableCopy;
+    
+    if (articleID) {
+        params[@"articleID"] = articleID;
+    }
+    else if (since) {
+        params[@"since"] = since;
+    }
+    
+    [MyFeedsManager getSyncArticles:params success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (responseObject == nil || responseObject.count == 0) {
+            [queue setSuspended:NO];
+            return;
+        }
+        
+        // insert these articles to the DB.
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            for (FeedItem *item in responseObject) {
+                
+                NSString *collection = [self collectionForArticle:item];
+                
+                [transaction setObject:item forKey:item.identifier.stringValue inCollection:collection];
+                
+            }
+            
+        }];
+        
+        [queue setSuspended:NO];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        NSLog(@"An error occurred when fetching articles for %@: %@", feedID, error.localizedDescription);
+        
+        [queue setSuspended:NO];
+        
+    }];
     
 }
 
