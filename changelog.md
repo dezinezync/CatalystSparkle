@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 337
+
+- Fixes an issue where an article would remain marked as Read even after opening it. 
+
 ## Build 336
 
 - Fixes the "Known Issue" from previous build wherein the app would not be able to make network requests for the first minute or two. 

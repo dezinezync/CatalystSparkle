@@ -574,10 +574,6 @@ NSArray <NSString *> * _defaultsKeys;
         
         if (item != nil && item.content && successCB) {
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                successCB(item, nil, nil);
-            });
-            
             // additionally mark the item as read.
             if (item.read == NO) {
                 
@@ -593,6 +589,12 @@ NSArray <NSString *> * _defaultsKeys;
                 [MyDBManager addArticle:item];
                 
             }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // without this line, the provider delegate doesn't get called.
+                item.read = NO;
+                successCB(item, nil, nil);
+            });
             
             return;
             
@@ -614,7 +616,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
             
-            item.read = YES;
+            item.read = NO;
             
             [MyDBManager addArticle:item];
             
