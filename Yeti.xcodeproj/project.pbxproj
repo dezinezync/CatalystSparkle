@@ -589,6 +589,20 @@
 			remoteGlobalIDString = DC6266D51D80D3E000557968;
 			remoteInfo = "TestModuleMap-watchOS Extension";
 		};
+		F0F10A15244C7B21009FC108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0119753244B6E490061C0C2;
+			remoteInfo = DZTextKit;
+		};
+		F0F10A17244C7B21009FC108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F011975C244B6E490061C0C2;
+			remoteInfo = DZTextKitTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1126,6 +1140,7 @@
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
+		F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZTextKit.xcodeproj; path = Vendors/DZTextKit/DZTextKit.xcodeproj; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AuthorBioVC.xib; path = Yeti/Controllers/Feed/AuthorBioVC.xib; sourceTree = SOURCE_ROOT; };
@@ -2096,6 +2111,7 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */,
 				F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */,
 				F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */,
 				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
@@ -2162,6 +2178,15 @@
 				F0BD3C4322ABDD2A0069A8B0 /* reader-dark.json */,
 			);
 			path = themes;
+			sourceTree = "<group>";
+		};
+		F0F10A07244C7B21009FC108 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0F10A16244C7B21009FC108 /* DZTextKit.framework */,
+				F0F10A18244C7B21009FC108 /* DZTextKitTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F0FDB22622112CD100EE67F8 /* flutter-dark */ = {
@@ -2346,6 +2371,10 @@
 				{
 					ProductGroup = F0C4F8C5234C69B900D57C18 /* Products */;
 					ProjectRef = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
+				},
+				{
+					ProductGroup = F0F10A07244C7B21009FC108 /* Products */;
+					ProjectRef = F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */;
 				},
 				{
 					ProductGroup = F08C5E57238660A90055946F /* Products */;
@@ -2534,6 +2563,20 @@
 			fileType = "wrapper.app-extension";
 			path = "TestModuleMap-watchOS Extension.appex";
 			remoteRef = F0EC4A3224458EC300ABF67B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0F10A16244C7B21009FC108 /* DZTextKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZTextKit.framework;
+			remoteRef = F0F10A15244C7B21009FC108 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0F10A18244C7B21009FC108 /* DZTextKitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZTextKitTests.xctest;
+			remoteRef = F0F10A17244C7B21009FC108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
