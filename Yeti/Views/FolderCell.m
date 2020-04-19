@@ -7,7 +7,7 @@
 //
 
 #import "FolderCell.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "FolderDrop.h"
 
 #import <DZKit/NSString+Extras.h>

@@ -11,7 +11,7 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 #import <DZTextKit/Paragraph.h>
 #import "FeedsManager.h"
@@ -21,7 +21,7 @@
 #import "SplitVC.h"
 #import "CustomizeVC.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 

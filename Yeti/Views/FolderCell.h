@@ -10,7 +10,7 @@
 #import "Folder.h"
 #import <DZTextKit/Image.h>
 #import "FolderDrop.h"
-#import "PaddedLabel.h"
+#import <DZTextKit/PaddedLabel.h>
 
 @class FolderCell;
 

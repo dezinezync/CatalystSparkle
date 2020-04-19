@@ -30,10 +30,10 @@
 
 #import <SafariServices/SafariServices.h>
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "YTPlayer.h"
 #import "YTExtractor.h"
-#import "NSString+ImageProxy.h"
+#import <DZTextKit/NSString+ImageProxy.h>
 
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
@@ -1295,9 +1295,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
-    Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
+    Paragraph *para = [[Paragraph alloc] initWithFrame:frame theme:theme];
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
 #endif
@@ -1434,9 +1436,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addLinebreak];
     }
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
-    Heading *heading = [[Heading alloc] initWithFrame:frame];
+    Heading *heading = [[Heading alloc] initWithFrame:frame theme:theme];
     heading.delegate = self;
 #ifdef DEBUG_LAYOUT
 #if DEBUG_LAYOUT == 1

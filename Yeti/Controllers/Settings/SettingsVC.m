@@ -8,8 +8,8 @@
 
 #import "SettingsVC.h"
 #import "SettingsCell.h"
-#import "YetiConstants.h"
-#import "UIColor+HEX.h"
+#import <DZTextKit/YetiConstants.h>
+#import <DZTextKit/UIColor+HEX.h>
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -25,7 +25,7 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 #import <DZKit/DZMessagingController.h>
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "DBManager+CloudCore.h"
 
 #import <sys/utsname.h>

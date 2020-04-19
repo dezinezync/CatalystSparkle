@@ -26,13 +26,13 @@
 #import "FeedsSearchResults.h"
 #import "UIViewController+Hairline.h"
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "EmptyView.h"
 #import "TableHeader.h"
 
 #import "EmptyCell.h"
 #import "StoreVC.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 #import <StoreKit/SKStoreReviewController.h>

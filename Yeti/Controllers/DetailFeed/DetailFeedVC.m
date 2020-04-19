@@ -10,7 +10,7 @@
 #import "ArticlePreviewVC.h"
 
 #import "ArticleCellB.h"
-#import "PaddedLabel.h"
+#import <DZTextKit/PaddedLabel.h>
 #import "DetailFeedHeaderView.h"
 
 #import "ArticleVC.h"
@@ -18,7 +18,7 @@
 
 #import "FeedsManager.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
@@ -26,8 +26,8 @@
 
 #import "ArticleProvider.h"
 
-#import "YetiThemeKit.h"
-#import "PrefsManager.h"
+#import <DZTextKit/YetiThemeKit.h>
+#import <DZTextKit/PrefsManager.h>
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 

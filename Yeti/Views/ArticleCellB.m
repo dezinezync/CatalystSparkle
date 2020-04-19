@@ -20,10 +20,10 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import <DZTextKit/NSString+ImageProxy.h>
 #import <DZTextKit/UIImage+Sizing.h>
-#import "UIColor+Hex.h"
+#import <DZTextKit/UIColor+Hex.h>
 
 #import <PopMenu/PopMenu-Swift.h>
 

@@ -87,7 +87,6 @@
 		F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F05DC072208328EC009029E1 /* AuthorHeaderView.m */; };
 		F05DC076208328FB009029E1 /* AuthorHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05DC075208328FB009029E1 /* AuthorHeaderView.xib */; };
 		F05E0C0F2174AFA70042FC38 /* DetailFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */; };
-		F0647BEA2099D2A9002291B9 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0647BE92099D2A9002291B9 /* dark.json */; };
 		F064A5322157638500A385AD /* LaunchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5302157638500A385AD /* LaunchVC.m */; };
 		F064A5332157638500A385AD /* LaunchVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A5312157638500A385AD /* LaunchVC.xib */; };
 		F064A5372157678900A385AD /* IdentityVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5352157678900A385AD /* IdentityVC.m */; };
@@ -139,7 +138,6 @@
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
-		F0869B5D2099CF0000A5D723 /* light.json in Resources */ = {isa = PBXBuildFile; fileRef = F0869B5C2099CF0000A5D723 /* light.json */; };
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -223,11 +221,10 @@
 		F0AFAC1A216C7A5200AB7057 /* DetailFeedVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AFAC18216C7A5200AB7057 /* DetailFeedVC.xib */; };
 		F0AFAC1D216C8AEA00AB7057 /* DetailFeedVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AFAC1C216C8AEA00AB7057 /* DetailFeedVC+Actions.m */; };
 		F0B1137523928EB40060AE2B /* DetailFeedVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B1137423928EB40060AE2B /* DetailFeedVC+Keyboard.m */; };
-		F0B17A09244C846100E42C5E /* PaddedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B17A08244C846100E42C5E /* PaddedLabel.m */; };
+		F0B17A1C244C8D5000E42C5E /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B17A1B244C8D5000E42C5E /* Enclosure.m */; };
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BC0208C82C6007E5A3B /* Folder.m */; };
-		F0B4FC22209C55A900C7941A /* black.json in Resources */ = {isa = PBXBuildFile; fileRef = F0B4FC21209C55A900C7941A /* black.json */; };
 		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
 		F0B69C9021B916F50032FD5A /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C8F21B916F50032FD5A /* VideoInfo.m */; };
 		F0B69C9C21B918AA0032FD5A /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C8F21B916F50032FD5A /* VideoInfo.m */; };
@@ -240,9 +237,6 @@
 		F0B870F52446BED5009BAEE3 /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
 		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
-		F0BD3C3522ABDD190069A8B0 /* light-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0BD3C3422ABDD190069A8B0 /* light-dark.json */; };
-		F0BD3C4222ABDD240069A8B0 /* black-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0BD3C4122ABDD240069A8B0 /* black-dark.json */; };
-		F0BD3C4422ABDD2A0069A8B0 /* reader-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F0BD3C4322ABDD2A0069A8B0 /* reader-dark.json */; };
 		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
 		F0C6CA6D2143A17B00577D16 /* FeedMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA692143A17B00577D16 /* FeedMeta.m */; };
 		F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */; };
@@ -291,7 +285,6 @@
 		F0EB27D921C20B81007E3547 /* DBManager+CloudCore.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */; };
 		F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EB27E821C20FF0007E3547 /* FeedOperation.m */; };
 		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
-		F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85D21ECAF8B0046BB12 /* reader.json */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
@@ -739,7 +732,6 @@
 		F05DC075208328FB009029E1 /* AuthorHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorHeaderView.xib; sourceTree = "<group>"; };
 		F05E0C0D2174AFA70042FC38 /* DetailFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailFolderVC.h; sourceTree = "<group>"; };
 		F05E0C0E2174AFA70042FC38 /* DetailFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailFolderVC.m; sourceTree = "<group>"; };
-		F0647BE92099D2A9002291B9 /* dark.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = dark.json; sourceTree = "<group>"; };
 		F064A52F2157638500A385AD /* LaunchVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LaunchVC.h; sourceTree = "<group>"; };
 		F064A5302157638500A385AD /* LaunchVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LaunchVC.m; sourceTree = "<group>"; };
 		F064A5312157638500A385AD /* LaunchVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LaunchVC.xib; sourceTree = "<group>"; };
@@ -830,7 +822,6 @@
 		F08011E32167345300F0CE81 /* OPMLDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLDeckController.m; sourceTree = "<group>"; };
 		F085785221D1EAE200CC2B95 /* PreviewLinesVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewLinesVC.h; sourceTree = "<group>"; };
 		F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewLinesVC.m; sourceTree = "<group>"; };
-		F0869B5C2099CF0000A5D723 /* light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = light.json; sourceTree = "<group>"; };
 		F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+DragDrop.h"; sourceTree = "<group>"; };
 		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
@@ -930,14 +921,13 @@
 		F0AFAC1C216C8AEA00AB7057 /* DetailFeedVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DetailFeedVC+Actions.m"; sourceTree = "<group>"; };
 		F0B1137323928EB40060AE2B /* DetailFeedVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DetailFeedVC+Keyboard.h"; sourceTree = "<group>"; };
 		F0B1137423928EB40060AE2B /* DetailFeedVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DetailFeedVC+Keyboard.m"; sourceTree = "<group>"; };
-		F0B179F2244C845200E42C5E /* PaddedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaddedLabel.h; sourceTree = "<group>"; };
-		F0B17A08244C846100E42C5E /* PaddedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaddedLabel.m; sourceTree = "<group>"; };
+		F0B17A1A244C8D5000E42C5E /* Enclosure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Enclosure.h; sourceTree = "<group>"; };
+		F0B17A1B244C8D5000E42C5E /* Enclosure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Enclosure.m; sourceTree = "<group>"; };
 		F0B21BB8208C7F4F007E5A3B /* NewFolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderVC.h; sourceTree = "<group>"; };
 		F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderVC.m; sourceTree = "<group>"; };
 		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
 		F0B21BBF208C82C6007E5A3B /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
 		F0B21BC0208C82C6007E5A3B /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
-		F0B4FC21209C55A900C7941A /* black.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = black.json; sourceTree = "<group>"; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
 		F0B69C8E21B916F50032FD5A /* VideoInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoInfo.h; sourceTree = "<group>"; };
@@ -954,9 +944,6 @@
 		F0BAE4D721523C7B00249A5E /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
 		F0BAE4D821523C7B00249A5E /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
 		F0BAE4D921523C7B00249A5E /* FolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderCell.xib; sourceTree = "<group>"; };
-		F0BD3C3422ABDD190069A8B0 /* light-dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "light-dark.json"; sourceTree = "<group>"; };
-		F0BD3C4122ABDD240069A8B0 /* black-dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "black-dark.json"; sourceTree = "<group>"; };
-		F0BD3C4322ABDD2A0069A8B0 /* reader-dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "reader-dark.json"; sourceTree = "<group>"; };
 		F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZNetworking.xcodeproj; path = Vendors/DZNetworking/DZNetworking.xcodeproj; sourceTree = "<group>"; };
 		F0C6CA662143A17B00577D16 /* MetaOpenGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaOpenGraph.h; sourceTree = "<group>"; };
 		F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaOpenGraph.m; sourceTree = "<group>"; };
@@ -1039,7 +1026,6 @@
 		F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YapDatabase.xcodeproj; path = Vendors/YapDatabase/YapDatabase.xcodeproj; sourceTree = "<group>"; };
 		F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreKeychainPersistence.h; sourceTree = "<group>"; };
 		F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreKeychainPersistence.m; sourceTree = "<group>"; };
-		F0EEC85D21ECAF8B0046BB12 /* reader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = reader.json; sourceTree = "<group>"; };
 		F0EEC85F21ECB2420046BB12 /* reader.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = reader.css; sourceTree = "<group>"; };
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
@@ -1508,6 +1494,8 @@
 				F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */,
 				F0B69C8E21B916F50032FD5A /* VideoInfo.h */,
 				F0B69C8F21B916F50032FD5A /* VideoInfo.m */,
+				F0B17A1A244C8D5000E42C5E /* Enclosure.h */,
+				F0B17A1B244C8D5000E42C5E /* Enclosure.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1578,7 +1566,6 @@
 				F0D01CBD211867E9003A01DD /* Icons */,
 				F0A5AE5920C197BF00CFA1D2 /* Fonts */,
 				F09E96412055340C00E61681 /* HLJS */,
-				F0EEC85121ECAF6B0046BB12 /* themes */,
 				F070C3211FBAC0EE00912CCF /* Frameworks */,
 				F070C2E71FBABC3600912CCF /* LaunchScreen.storyboard */,
 				F070C2EA1FBABC3600912CCF /* Info.plist */,
@@ -1702,8 +1689,6 @@
 				F0123C4A224D216300EDFF92 /* ArticleAuthorView.h */,
 				F0123C4B224D216300EDFF92 /* ArticleAuthorView.m */,
 				F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */,
-				F0B179F2244C845200E42C5E /* PaddedLabel.h */,
-				F0B17A08244C846100E42C5E /* PaddedLabel.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2004,20 +1989,6 @@
 				F0EC4A3324458EC300ABF67B /* TestModuleMap-watchOS Extension.appex */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F0EEC85121ECAF6B0046BB12 /* themes */ = {
-			isa = PBXGroup;
-			children = (
-				F0869B5C2099CF0000A5D723 /* light.json */,
-				F0BD3C3422ABDD190069A8B0 /* light-dark.json */,
-				F0647BE92099D2A9002291B9 /* dark.json */,
-				F0B4FC21209C55A900C7941A /* black.json */,
-				F0BD3C4122ABDD240069A8B0 /* black-dark.json */,
-				F0EEC85D21ECAF8B0046BB12 /* reader.json */,
-				F0BD3C4322ABDD2A0069A8B0 /* reader-dark.json */,
-			);
-			path = themes;
 			sourceTree = "<group>";
 		};
 		F0F10A07244C7B21009FC108 /* Products */ = {
@@ -2537,21 +2508,17 @@
 				F0AFAC1A216C7A5200AB7057 /* DetailFeedVC.xib in Resources */,
 				F0A5AEB020C19DA200CFA1D2 /* IBMPlexSans-Italic.ttf in Resources */,
 				F0A5AE9E20C19CB400CFA1D2 /* IBMPlexSerif-MediumItalic.ttf in Resources */,
-				F0647BEA2099D2A9002291B9 /* dark.json in Resources */,
 				F0673B0320C6A1EB00C42062 /* OPMLVC.xib in Resources */,
 				F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */,
 				F0A5AE6C20C197EF00CFA1D2 /* Merriweather-Black.ttf in Resources */,
 				F0EEC86021ECB2420046BB12 /* reader.css in Resources */,
 				F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */,
-				F0B4FC22209C55A900C7941A /* black.json in Resources */,
 				F0A5AE9220C19CB400CFA1D2 /* IBMPlexSerif-BoldItalic.ttf in Resources */,
-				F0BD3C4422ABDD2A0069A8B0 /* reader-dark.json in Resources */,
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */,
 				F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */,
 				F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
-				F0BD3C3522ABDD190069A8B0 /* light-dark.json in Resources */,
 				F0D01CC72118681C003A01DD /* dark@2x.png in Resources */,
 				F050E0B32154C16600225C6A /* StoreFooter.xib in Resources */,
 				F070C2E61FBABC3600912CCF /* Assets.xcassets in Resources */,
@@ -2566,7 +2533,6 @@
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
-				F0BD3C4222ABDD240069A8B0 /* black-dark.json in Resources */,
 				F09D12DE220D6CF800252902 /* reader@2x.png in Resources */,
 				F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */,
 				F064A5332157638500A385AD /* LaunchVC.xib in Resources */,
@@ -2581,7 +2547,6 @@
 				F0AFAC15216C78D400AB7057 /* TagCell.xib in Resources */,
 				F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */,
 				F078B639206637B40048DBEA /* EmptyVC.xib in Resources */,
-				F0869B5D2099CF0000A5D723 /* light.json in Resources */,
 				F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
 				F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */,
@@ -2594,7 +2559,6 @@
 				F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */,
 				F0A5AE8A20C19CB400CFA1D2 /* IBMPlexSerif-Thin.ttf in Resources */,
 				F0A5AE8C20C19CB400CFA1D2 /* IBMPlexSerif-Bold.ttf in Resources */,
-				F0EEC85E21ECAF8B0046BB12 /* reader.json in Resources */,
 				F0A5AE6620C197EF00CFA1D2 /* Merriweather-BoldItalic.ttf in Resources */,
 				F0DB590023F578E20008D871 /* CustomizationThemeCell.xib in Resources */,
 				F064A5382157678900A385AD /* IdentityVC.xib in Resources */,
@@ -2752,7 +2716,7 @@
 				F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */,
-				F0B17A09244C846100E42C5E /* PaddedLabel.m in Sources */,
+				F0B17A1C244C8D5000E42C5E /* Enclosure.m in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
 				F046DF57216E30AC00FFDBD7 /* DetailCustomVC.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,

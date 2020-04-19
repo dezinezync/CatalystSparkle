@@ -13,10 +13,10 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "FeedsManager.h"
-#import "PaddedLabel.h"
+#import <DZTextKit/PaddedLabel.h>
 
 #import "LaunchVC.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateDefault,

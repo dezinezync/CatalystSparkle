@@ -7,7 +7,7 @@
 //
 
 #import "FeedsGridCell.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
 #import <DZKit/NSString+Extras.h>

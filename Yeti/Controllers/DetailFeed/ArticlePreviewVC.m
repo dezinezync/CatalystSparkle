@@ -7,9 +7,9 @@
 //
 
 #import "ArticlePreviewVC.h"
-#import "NSString+ImageProxy.h"
+#import <DZTextKit/NSString+ImageProxy.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

@@ -9,8 +9,8 @@
 #import "AppDelegate+Routing.h"
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
-#import "YetiConstants.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiConstants.h>
+#import <DZTextKit/YetiThemeKit.h>
 
 #import "FeedsVC.h"
 #import "DetailFeedVC.h"

@@ -7,7 +7,7 @@
 //
 
 #import "AccentCell.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 NSString *const kAccentCell = @"com.yeti.cell.accentColour";
 

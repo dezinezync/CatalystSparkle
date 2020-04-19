@@ -7,7 +7,7 @@
 //
 
 #import "FilterInputCell.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 NSString *const kFilterInputCell = @"com.yeti.cell.filterinput";
 

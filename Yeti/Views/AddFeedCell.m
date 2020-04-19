@@ -7,11 +7,11 @@
 //
 
 #import "AddFeedCell.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 #import <DZNetworking/ImageLoader.h>
 #import <DZKit/NSString+Extras.h>
-#import "NSString+ImageProxy.h"
+#import <DZTextKit/NSString+ImageProxy.h>
 
 #import <DZTextKit/TypeFactory.h>
 

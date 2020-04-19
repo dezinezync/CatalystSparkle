@@ -11,7 +11,7 @@
 #import "FilterInputCell.h"
 
 #import "FeedsManager.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

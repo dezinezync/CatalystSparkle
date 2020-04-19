@@ -7,7 +7,7 @@
 //
 
 #import "AccentButton.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 @implementation AccentButton
 

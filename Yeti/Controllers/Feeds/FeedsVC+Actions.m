@@ -19,7 +19,7 @@
 #import "NewFolderVC.h"
 #import "YTNavigationController.h"
 #import "RecommendationsVC.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "FeedsCell.h"
 
 @implementation FeedsVC (Actions)

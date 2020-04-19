@@ -11,15 +11,15 @@
 #import "AppDelegate+Store.h"
 
 #import <JLRoutes/JLRoutes.h>
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "CodeParser.h"
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
 #import "SplitVC.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "FeedsManager.h"
 #import "Keychain.h"
 

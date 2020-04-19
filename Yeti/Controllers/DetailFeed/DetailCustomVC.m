@@ -13,9 +13,9 @@
 #import <DZKit/DZBasicDatasource.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import "PagingManager.h"
 

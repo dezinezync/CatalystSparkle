@@ -7,10 +7,10 @@
 //
 
 #import "SplitVC.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "CodeParser.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 

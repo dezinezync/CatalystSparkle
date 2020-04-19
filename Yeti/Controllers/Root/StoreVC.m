@@ -10,10 +10,10 @@
 #import "RMStore.h"
 #import "StoreKeychainPersistence.h"
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "StoreFooter.h"
 #import "FeedsManager.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

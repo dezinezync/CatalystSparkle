@@ -7,7 +7,7 @@
 //
 
 #import "ArticleHelperView.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "ArticleVC.h"
 
 @implementation ArticleHelperView

@@ -18,7 +18,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 NSString *const kArticleCell = @"com.yeti.cells.article";
 

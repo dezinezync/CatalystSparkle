@@ -8,7 +8,7 @@
 
 #import "AddFeedVC.h"
 #import "FeedsSearchResults.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
 #import "DetailFeedVC.h"
