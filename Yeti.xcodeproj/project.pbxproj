@@ -51,7 +51,6 @@
 		F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
 		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
 		F03CECE9216DD0FA00A25BE8 /* DetailFeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03CECE7216DD0FA00A25BE8 /* DetailFeedHeaderView.m */; };
-		F03FA5CE216F47E6009C5D96 /* TypeFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F03FA5CD216F47E6009C5D96 /* TypeFactory.m */; };
 		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0448D00244463B7003B6AA7 /* CoreServices.framework */; };
@@ -587,6 +586,13 @@
 			remoteGlobalIDString = F011975C244B6E490061C0C2;
 			remoteInfo = DZTextKitTests;
 		};
+		F0F10A7A244C7E29009FC108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 92C9BC0C1B199DC500D79B06;
+			remoteInfo = FLAnimatedImage;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -699,8 +705,6 @@
 		F03BC4E820C9016A007B574F /* EmptyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyView.m; sourceTree = "<group>"; };
 		F03CECE6216DD0FA00A25BE8 /* DetailFeedHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailFeedHeaderView.h; sourceTree = "<group>"; };
 		F03CECE7216DD0FA00A25BE8 /* DetailFeedHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailFeedHeaderView.m; sourceTree = "<group>"; };
-		F03FA5CC216F47E6009C5D96 /* TypeFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeFactory.h; sourceTree = "<group>"; };
-		F03FA5CD216F47E6009C5D96 /* TypeFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TypeFactory.m; sourceTree = "<group>"; };
 		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
 		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
@@ -1125,6 +1129,7 @@
 		F0F10A4A244C7C61009FC108 /* DTTimePeriodGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTTimePeriodGroup.h; sourceTree = "<group>"; };
 		F0F10A4B244C7C61009FC108 /* DTTimePeriodChain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriodChain.m; sourceTree = "<group>"; };
 		F0F10A4C244C7C61009FC108 /* NSDate+DateTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
+		F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FLAnimatedImage.xcodeproj; path = Vendors/FLAnimatedImage/FLAnimatedImage.xcodeproj; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AuthorBioVC.xib; path = Yeti/Controllers/Feed/AuthorBioVC.xib; sourceTree = SOURCE_ROOT; };
@@ -1515,8 +1520,6 @@
 				F0AD76D320E2217C0003787B /* Reachability.h */,
 				F0AD76D420E2217C0003787B /* Reachability.m */,
 				F08993C1210883E200A9978E /* FolderDrop.h */,
-				F03FA5CC216F47E6009C5D96 /* TypeFactory.h */,
-				F03FA5CD216F47E6009C5D96 /* TypeFactory.m */,
 				F01A34BA219C556C00D020F3 /* TwoFingerPanGestureRecognizer.h */,
 				F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */,
 				F04E92BA21B5427B00AD1FB2 /* YTExtractor.h */,
@@ -2078,6 +2081,7 @@
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
 				F08C5DD5238656620055946F /* DZKit.xcodeproj */,
 				F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */,
+				F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */,
 				F01285BE23436D8D00B8C277 /* Keychain */,
 				F0F10A3C244C7C61009FC108 /* DateTools */,
 				F0AA8C79216B4A4E00C65DAE /* RMStore */,
@@ -2170,6 +2174,14 @@
 				F0F10A4C244C7C61009FC108 /* NSDate+DateTools.h */,
 			);
 			path = DateTools;
+			sourceTree = "<group>";
+		};
+		F0F10A77244C7E28009FC108 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0F10A7B244C7E29009FC108 /* FLAnimatedImage.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F0FDB22622112CD100EE67F8 /* flutter-dark */ = {
@@ -2362,6 +2374,10 @@
 				{
 					ProductGroup = F08C5E57238660A90055946F /* Products */;
 					ProjectRef = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
+				},
+				{
+					ProductGroup = F0F10A77244C7E28009FC108 /* Products */;
+					ProjectRef = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
 				},
 				{
 					ProductGroup = F0EC4A1724458EC300ABF67B /* Products */;
@@ -2560,6 +2576,13 @@
 			fileType = wrapper.cfbundle;
 			path = DZTextKitTests.xctest;
 			remoteRef = F0F10A17244C7B21009FC108 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0F10A7B244C7E29009FC108 /* FLAnimatedImage.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FLAnimatedImage.framework;
+			remoteRef = F0F10A7A244C7E29009FC108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2898,7 +2921,6 @@
 				F0AFAC19216C7A5200AB7057 /* DetailFeedVC.m in Sources */,
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
-				F03FA5CE216F47E6009C5D96 /* TypeFactory.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,

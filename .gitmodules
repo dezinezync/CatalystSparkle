@@ -30,3 +30,6 @@
 [submodule "Yeti/Vendors/DateTools"]
 	path = Yeti/Vendors/DateTools
 	url = https://github.com/MatthewYork/DateTools.git
+[submodule "Yeti/Vendors/FLAnimatedImage"]
+	path = Yeti/Vendors/FLAnimatedImage
+	url = https://github.com/Flipboard/FLAnimatedImage.git
