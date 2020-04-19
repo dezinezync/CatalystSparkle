@@ -27,3 +27,6 @@
 [submodule "Yeti/Vendors/WebPImageSerialization"]
 	path = Yeti/Vendors/WebPImageSerialization
 	url = https://github.com/mattt/WebPImageSerialization.git
+[submodule "Yeti/Vendors/DateTools"]
+	path = Yeti/Vendors/DateTools
+	url = https://github.com/MatthewYork/DateTools.git
