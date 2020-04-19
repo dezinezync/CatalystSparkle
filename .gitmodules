@@ -22,3 +22,5 @@
 [submodule "Yeti/Vendors/YapDatabase"]
 	path = Yeti/Vendors/YapDatabase
 	url = git@github.com:dezinezync/YapDatabase.git
+[submodule "Yeti/Vendors/DZTextKit"]
+	path = Yeti/Vendors/DZTextKit
