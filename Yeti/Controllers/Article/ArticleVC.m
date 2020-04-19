@@ -8,36 +8,25 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
-#import "Content.h"
 #import "DetailFeedVC.h"
-
-#import "Paragraph.h"
-#import "Heading.h"
-#import "Blockquote.h"
-#import "List.h"
-#import "Aside.h"
-#import "Youtube.h"
-#import "Image.h"
-#import "Gallery.h"
-#import "Linebreak.h"
-#import "Code.h"
-#import "Tweet.h"
 #import "ArticleAuthorView.h"
 
-#import "YetiConstants.h"
-#import "CheckWifi.h"
+#import <DZTextKit/Content.h>
+#import <DZTextKit/DZTextKitViews.h>
+#import <DZTextKit/YetiConstants.h>
+#import <DZTextKit/CheckWifi.h>
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
-#import "NSAttributedString+Trimming.h"
+#import <DZTextKit/NSAttributedString+Trimming.h>
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
-#import "NSString+HTML.h"
+#import <DZTextKit/NSString+HTML.h>
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
-#import "TypeFactory.h"
+#import <DZTextKit/TypeFactory.h>
 
 #import <SafariServices/SafariServices.h>
 
@@ -1294,8 +1283,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)addParagraph:(Content *)content caption:(BOOL)caption {
     
-    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
+    if ([_last isMemberOfClass:Paragraph.class]
+        && !caption) {
+        // check if we have a duplicate
+        Paragraph *lastPara = (Paragraph *)_last;
+        
+        if(lastPara.isCaption && ([lastPara.text isEqualToString:content.content] || [lastPara.attributedText.string isEqualToString:content.content])) {
+            
+            return;
+            
+        }
+    }
     
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
+        
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
@@ -1303,15 +1304,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     para.avoidsLazyLoading = !_deferredProcessing;
     
-    if ([_last isMemberOfClass:Heading.class])
+    if ([_last isMemberOfClass:Heading.class]) {
+        
         para.afterHeading = YES;
-    
-    if ([_last isMemberOfClass:Paragraph.class]
-        && !caption) {
-        // check if we have a duplicate
-        Paragraph *lastPara = (Paragraph *)_last;
-        if(lastPara.isCaption && ([lastPara.text isEqualToString:content.content] || [lastPara.attributedText.string isEqualToString:content.content]))
-            return;
     }
     
     para.caption = caption;

@@ -14,7 +14,7 @@
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
-#import "TypeFactory.h"
+#import <DZTextKit/TypeFactory.h>
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

@@ -1,16 +1,11 @@
 #import "FeedItem.h"
 
-#import "Content.h"
+#import <DZTextKit/Content.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSDate+ISO8601.h>
 
-#import "NSString+HTML.h"
+#import <DZTextKit/NSString+HTML.h>
 #import <DZKit/NSString+Extras.h>
-
-#ifndef DDLogError
-#import <DZKit/DZLogger.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#endif
 
 @implementation FeedItem
 

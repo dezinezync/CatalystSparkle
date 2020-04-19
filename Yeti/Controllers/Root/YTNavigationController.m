@@ -7,7 +7,8 @@
 //
 
 #import "YTNavigationController.h"
-#import "YetiThemeKit.h"
+
+#import <DZTextKit/YetiThemeKit.h>
 
 @interface YTNavigationController ()
 

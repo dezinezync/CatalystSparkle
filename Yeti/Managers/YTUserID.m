@@ -10,7 +10,7 @@
 #import "FeedsManager.h"
 #import <DZKit/AlertManager.h>
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 NSString *const kAccountID = @"YTUserID";

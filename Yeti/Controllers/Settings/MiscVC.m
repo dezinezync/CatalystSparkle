@@ -7,9 +7,9 @@
 //
 
 #import "MiscVC.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "SettingsCell.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "PreviewLinesVC.h"
 
 #import <DZKit/NSArray+Safe.h>

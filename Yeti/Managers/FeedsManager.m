@@ -21,15 +21,9 @@
 
 #import <DZKit/AlertManager.h>
 #import "Keychain.h"
-
-#ifndef DDLogError
-#import <DZKit/DZLogger.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#endif
-
 @import UserNotifications;
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 

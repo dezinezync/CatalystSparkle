@@ -19,7 +19,7 @@
 #import "FeedsManagerErrors.h"
 #import "ChangeSet.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "ArticlesManager.h"
 #import "BookmarksManager.h"
 

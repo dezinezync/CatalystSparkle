@@ -9,7 +9,7 @@
 #import "ThemeVC.h"
 #import "AppDelegate.h"
 
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "CodeParser.h"
 #import "AccentCell.h"
 

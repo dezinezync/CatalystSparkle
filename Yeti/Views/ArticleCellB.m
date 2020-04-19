@@ -8,21 +8,21 @@
 
 #import "ArticleCellB.h"
 #import "NSDate+DateTools.h"
-#import "NSString+HTML.h"
-#import "Paragraph.h"
-#import "CheckWifi.h"
+#import <DZTextKit/NSString+HTML.h>
+#import <DZTextKit/Paragraph.h>
+#import <DZTextKit/CheckWifi.h>
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "FeedsManager.h"
-#import "TypeFactory.h"
+#import <DZTextKit/TypeFactory.h>
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "YetiThemeKit.h"
-#import "NSString+ImageProxy.h"
-#import "UIImage+Sizing.h"
+#import <DZTextKit/NSString+ImageProxy.h>
+#import <DZTextKit/UIImage+Sizing.h>
 #import "UIColor+Hex.h"
 
 #import <PopMenu/PopMenu-Swift.h>

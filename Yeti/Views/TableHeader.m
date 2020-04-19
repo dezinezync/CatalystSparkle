@@ -7,7 +7,7 @@
 //
 
 #import "TableHeader.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 @implementation TableHeader
 

@@ -7,7 +7,7 @@
 //
 
 #import "RecommendationsVC.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 #import "FeedsManager.h"
 
 #import "FeedsGridCell.h"
@@ -16,7 +16,7 @@
 #import "FeedsVC.h"
 #import "DetailFeedVC.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>

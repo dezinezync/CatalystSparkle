@@ -12,7 +12,7 @@
 #import "Folder.h"
 #import "Feed.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

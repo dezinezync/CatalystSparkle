@@ -7,7 +7,7 @@
 //
 
 #import "EmptyVC.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 @interface EmptyVC () {
     BOOL _showPrimaryOnce;

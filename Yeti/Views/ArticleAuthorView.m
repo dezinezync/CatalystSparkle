@@ -7,9 +7,9 @@
 //
 
 #import "ArticleAuthorView.h"
-#import "TypeFactory.h"
-#import "YetiThemeKit.h"
-#import "YetiConstants.h"
+#import <DZTextKit/TypeFactory.h>
+#import <DZTextKit/YetiThemeKit.h>
+#import <DZTextKit/YetiConstants.h>
 
 @interface ArticleAuthorView () {
     BOOL _didAddHorizontalConstraints;

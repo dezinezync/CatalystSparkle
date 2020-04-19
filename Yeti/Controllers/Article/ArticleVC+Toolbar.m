@@ -13,7 +13,7 @@
 
 #import "YetiThemeKit.h"
 
-#import "Paragraph.h"
+#import <DZTextKit/Paragraph.h>
 #import "FeedsManager.h"
 
 #import "DetailFeedVC.h"

@@ -7,7 +7,7 @@
 //
 
 #import "Customization.h"
-#import "PrefsManager.h"
+#import <DZTextKit/PrefsManager.h>
 
 NSErrorDomain CustomizationDomain = @"com.elytra.errorDomain.customization";
 

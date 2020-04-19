@@ -291,6 +291,10 @@ NSString *const kNotificationsKey = @"notifications";
                 FeedItem *item1 = object1;
                 FeedItem *item2 = object2;
                 
+                if (!item1 || !item2) {
+                    return NSOrderedSame;
+                }
+                
                 return [item1.identifier compare:item2.identifier] & [item1.timestamp compare:item2.timestamp];
                 
             }
@@ -300,7 +304,7 @@ NSString *const kNotificationsKey = @"notifications";
             
         }];
         
-        NSString *versionTag = @"2020-04-14 04:52PM";
+        NSString *versionTag = @"2020-04-19 06:26PM";
         
         YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
         

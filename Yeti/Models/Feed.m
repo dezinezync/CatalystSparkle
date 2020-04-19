@@ -1,11 +1,6 @@
 #import "Feed.h"
 #import "FeedItem.h"
 
-#ifndef DDLogError
-#import <DZKit/DZLogger.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#endif
-
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 

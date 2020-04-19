@@ -9,8 +9,8 @@
 #import "FeedHeaderView.h"
 #import "Feed.h"
 
-#import "NSString+HTML.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/NSString+HTML.h>
+#import <DZTextKit/YetiThemeKit.h>
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>

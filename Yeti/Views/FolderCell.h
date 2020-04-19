@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "Folder.h"
-#import "Image.h"
+#import <DZTextKit/Image.h>
 #import "FolderDrop.h"
 #import "PaddedLabel.h"
 

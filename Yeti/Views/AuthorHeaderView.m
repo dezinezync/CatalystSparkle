@@ -8,7 +8,7 @@
 
 #import "AuthorHeaderView.h"
 #import "AuthorBioVC.h"
-#import "YetiThemeKit.h"
+#import <DZTextKit/YetiThemeKit.h>
 
 @interface AuthorHeaderView () <UITextViewDelegate>
 

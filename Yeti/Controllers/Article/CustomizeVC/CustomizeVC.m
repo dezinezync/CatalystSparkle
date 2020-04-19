@@ -12,8 +12,8 @@
 #import "Customization.h"
 #import "CustomizationHeader.h"
 
-#import "YetiThemeKit.h"
-#import "PrefsManager.h"
+#import <DZTextKit/YetiThemeKit.h>
+#import <DZTextKit/PrefsManager.h>
 
 #define CUSTOMIZE_SECTION_TEXT @0
 #define CUSTOMIZE_SECTION_PARA @1
