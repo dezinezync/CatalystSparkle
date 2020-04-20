@@ -32,4 +32,4 @@
 	url = https://github.com/MatthewYork/DateTools.git
 [submodule "Yeti/Vendors/FLAnimatedImage"]
 	path = Yeti/Vendors/FLAnimatedImage
-	url = https://github.com/Flipboard/FLAnimatedImage.git
+	url = git@github.com:dezinezync/FLAnimatedImage.git
