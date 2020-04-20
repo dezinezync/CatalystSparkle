@@ -26,7 +26,7 @@
 #import "FeedsSearchResults.h"
 #import "UIViewController+Hairline.h"
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "EmptyView.h"
 #import "TableHeader.h"
 

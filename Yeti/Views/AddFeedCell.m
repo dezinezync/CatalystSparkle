@@ -7,13 +7,13 @@
 //
 
 #import "AddFeedCell.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import <DZNetworking/ImageLoader.h>
 #import <DZKit/NSString+Extras.h>
 #import <DZTextKit/NSString+ImageProxy.h>
 
-#import <DZTextKit/TypeFactory.h>
+#import "TypeFactory.h"
 
 NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
 

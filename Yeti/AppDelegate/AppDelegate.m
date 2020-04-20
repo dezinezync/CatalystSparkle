@@ -11,7 +11,7 @@
 #import "AppDelegate+Store.h"
 
 #import <JLRoutes/JLRoutes.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import <DZTextKit/YetiConstants.h>
 #import "CodeParser.h"
@@ -297,6 +297,8 @@ AppDelegate *MyAppDelegate = nil;
 //        _restoring = NO;
 //        return;
 //    }
+    
+    [YetiThemeKit loadThemeKit];
     
     SplitVC *splitVC = [[SplitVC alloc] init];
     

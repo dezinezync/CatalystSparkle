@@ -9,7 +9,8 @@
 #import "ImageLoadingVC.h"
 #import <DZTextKit/LayoutConstants.h>
 #import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
+#import "PrefsManager.h"
 
 #import <DZNetworking/ImageLoader.h>
 

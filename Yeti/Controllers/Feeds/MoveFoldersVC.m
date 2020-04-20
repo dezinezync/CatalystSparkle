@@ -10,7 +10,7 @@
 #import <DZKit/DZSectionedDatasource.h>
 
 #import <DZKit/AlertManager.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "YTNavigationController.h"
 
 static NSString *const kMoveFolderCell = @"movefoldercell";

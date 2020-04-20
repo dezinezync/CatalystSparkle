@@ -9,7 +9,7 @@
 #import "IdentityVC.h"
 #import "FeedsManager.h"
 #import "TrialVC.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import "UIImage+Color.h"
 #import "Keychain.h"

@@ -7,7 +7,7 @@
 //
 
 #import "ImportVC.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import <DZTextKit/NSString+GTMNSStringHTMLAdditions.h>
 
 #import <DZKit/NSArray+RZArrayCandy.h>

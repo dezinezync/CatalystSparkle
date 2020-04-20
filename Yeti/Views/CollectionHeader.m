@@ -7,7 +7,7 @@
 //
 
 #import "CollectionHeader.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 NSString * const kCollectionHeader = @"com.yeti.collection.header";
 

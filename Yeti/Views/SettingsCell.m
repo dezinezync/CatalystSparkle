@@ -7,7 +7,7 @@
 //
 
 #import "SettingsCell.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 NSString *const kSettingsCell = @"com.yeti.cell.settings";
 NSString *const kAccountsCell = @"com.yeti.cell.accounts";

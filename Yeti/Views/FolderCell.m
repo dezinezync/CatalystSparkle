@@ -7,14 +7,14 @@
 //
 
 #import "FolderCell.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "FolderDrop.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
-#import <DZTextKit/TypeFactory.h>
+#import "TypeFactory.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

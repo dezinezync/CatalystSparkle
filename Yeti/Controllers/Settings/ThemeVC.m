@@ -9,9 +9,10 @@
 #import "ThemeVC.h"
 #import "AppDelegate.h"
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "CodeParser.h"
 #import "AccentCell.h"
+#import "PrefsManager.h"
 
 static void * KVO_SELECTED_BUTTON = &KVO_SELECTED_BUTTON;
 

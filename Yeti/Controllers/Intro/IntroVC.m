@@ -16,7 +16,7 @@
 #import <DZTextKit/PaddedLabel.h>
 
 #import "LaunchVC.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 typedef NS_ENUM(NSInteger, IntroState) {
     IntroStateDefault,

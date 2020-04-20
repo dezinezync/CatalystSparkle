@@ -14,13 +14,13 @@
 
 #import <DZTextKit/YetiConstants.h>
 #import "FeedsManager.h"
-#import <DZTextKit/TypeFactory.h>
+#import "TypeFactory.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import <DZTextKit/NSString+ImageProxy.h>
 #import <DZTextKit/UIImage+Sizing.h>
 #import <DZTextKit/UIColor+Hex.h>
@@ -162,7 +162,14 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     }
     
     // if it's a micro blog post, use the normal font
-    self.titleLabel.font = self.item.content && self.item.content.count ? [TypeFactory.shared bodyFont] : [TypeFactory.shared titleFont];
+    
+    BOOL isMicroBlog = self.item.content && self.item.content.count;
+    
+    if (self.item.isBookmarked && [self.item.articleTitle isBlank] == NO) {
+        isMicroBlog = NO;
+    }
+    
+    self.titleLabel.font = isMicroBlog ? [TypeFactory.shared bodyFont] : [TypeFactory.shared titleFont];
     
     self.titleLabel.textColor         = theme.titleColor;
     self.timeLabel.textColor          = theme.subtitleColor;

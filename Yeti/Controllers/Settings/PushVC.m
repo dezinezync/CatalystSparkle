@@ -13,7 +13,7 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "UIViewController+Stateful.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import <DZTextKit/PaddedLabel.h>
 
 #define pushEmptyViewTag 947642

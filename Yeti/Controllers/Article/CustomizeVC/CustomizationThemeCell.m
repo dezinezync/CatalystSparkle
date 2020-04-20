@@ -7,8 +7,8 @@
 //
 
 #import "CustomizationThemeCell.h"
-#import <DZTextKit/YetiThemeKit.h>
-#import <DZTextKit/PrefsManager.h>
+#import "YetiThemeKit.h"
+#import "PrefsManager.h"
 #import "CodeParser.h"
 
 NSString * _Nonnull const kCustomizeThemeCell = @"com.dezinezync.elytra.cell.customizeTheme";

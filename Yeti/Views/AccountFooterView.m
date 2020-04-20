@@ -7,7 +7,7 @@
 //
 
 #import "AccountFooterView.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 @implementation AccountFooterView
 

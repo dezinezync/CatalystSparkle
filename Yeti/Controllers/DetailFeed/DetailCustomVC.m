@@ -13,7 +13,7 @@
 #import <DZKit/DZBasicDatasource.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import <DZTextKit/YetiConstants.h>
 

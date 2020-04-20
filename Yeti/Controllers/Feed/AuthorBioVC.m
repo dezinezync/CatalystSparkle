@@ -7,7 +7,7 @@
 //
 
 #import "AuthorBioVC.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface AuthorBioVC () 

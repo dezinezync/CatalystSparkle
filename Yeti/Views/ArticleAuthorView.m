@@ -7,8 +7,8 @@
 //
 
 #import "ArticleAuthorView.h"
-#import <DZTextKit/TypeFactory.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "TypeFactory.h"
+#import "YetiThemeKit.h"
 #import <DZTextKit/YetiConstants.h>
 
 @interface ArticleAuthorView () {

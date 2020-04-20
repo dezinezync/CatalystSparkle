@@ -8,7 +8,7 @@
 
 #import "OPMLVC.h"
 #import "FeedsManager.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "YTNavigationController.h"
 #import "FeedsManager.h"
 #import "StoreVC.h"

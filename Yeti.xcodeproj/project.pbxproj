@@ -32,6 +32,17 @@
 		F02EB7BF2386C15E00DB8E72 /* TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */; };
 		F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */; };
 		F0315DBC20CA59FB00F5674A /* Subscription.m in Sources */ = {isa = PBXBuildFile; fileRef = F0315DBB20CA59FB00F5674A /* Subscription.m */; };
+		F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A74F244D5F9A0024AC63 /* PrefsManager.m */; };
+		F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A759244D7D680024AC63 /* YetiThemeKit.m */; };
+		F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A75B244D7D8C0024AC63 /* YetiTheme.m */; };
+		F032A760244D7F470024AC63 /* TypeFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A75E244D7F470024AC63 /* TypeFactory.m */; };
+		F032A76D244D89AF0024AC63 /* black-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A766244D89AF0024AC63 /* black-dark.json */; };
+		F032A76E244D89AF0024AC63 /* black.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A767244D89AF0024AC63 /* black.json */; };
+		F032A76F244D89AF0024AC63 /* light-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A768244D89AF0024AC63 /* light-dark.json */; };
+		F032A770244D89AF0024AC63 /* reader-dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A769244D89AF0024AC63 /* reader-dark.json */; };
+		F032A771244D89AF0024AC63 /* light.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A76A244D89AF0024AC63 /* light.json */; };
+		F032A772244D89AF0024AC63 /* reader.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A76B244D89AF0024AC63 /* reader.json */; };
+		F032A773244D89AF0024AC63 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A76C244D89AF0024AC63 /* dark.json */; };
 		F035A21920617EC3005A88EE /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F035A21820617EC3005A88EE /* ActionViewController.m */; };
 		F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F035A21A20617EC3005A88EE /* MainInterface.storyboard */; };
 		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -652,6 +663,21 @@
 		F02EB7B32386C15E00DB8E72 /* UINavigationController+TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+TOSplitViewController.h"; sourceTree = "<group>"; };
 		F0315DBA20CA59FB00F5674A /* Subscription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subscription.h; sourceTree = "<group>"; };
 		F0315DBB20CA59FB00F5674A /* Subscription.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Subscription.m; sourceTree = "<group>"; };
+		F032A739244D5F9A0024AC63 /* PrefsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsManager.h; sourceTree = "<group>"; };
+		F032A74F244D5F9A0024AC63 /* PrefsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsManager.m; sourceTree = "<group>"; };
+		F032A758244D7D670024AC63 /* YetiThemeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiThemeKit.h; sourceTree = "<group>"; };
+		F032A759244D7D680024AC63 /* YetiThemeKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YetiThemeKit.m; sourceTree = "<group>"; };
+		F032A75B244D7D8C0024AC63 /* YetiTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YetiTheme.m; sourceTree = "<group>"; };
+		F032A75C244D7D8C0024AC63 /* YetiTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiTheme.h; sourceTree = "<group>"; };
+		F032A75E244D7F470024AC63 /* TypeFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TypeFactory.m; sourceTree = "<group>"; };
+		F032A75F244D7F470024AC63 /* TypeFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeFactory.h; sourceTree = "<group>"; };
+		F032A766244D89AF0024AC63 /* black-dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "black-dark.json"; sourceTree = "<group>"; };
+		F032A767244D89AF0024AC63 /* black.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = black.json; sourceTree = "<group>"; };
+		F032A768244D89AF0024AC63 /* light-dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "light-dark.json"; sourceTree = "<group>"; };
+		F032A769244D89AF0024AC63 /* reader-dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "reader-dark.json"; sourceTree = "<group>"; };
+		F032A76A244D89AF0024AC63 /* light.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = light.json; sourceTree = "<group>"; };
+		F032A76B244D89AF0024AC63 /* reader.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reader.json; sourceTree = "<group>"; };
+		F032A76C244D89AF0024AC63 /* dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dark.json; sourceTree = "<group>"; };
 		F035A21520617EC3005A88EE /* YetiShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = YetiShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F035A21720617EC3005A88EE /* ActionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActionViewController.h; sourceTree = "<group>"; };
 		F035A21820617EC3005A88EE /* ActionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionViewController.m; sourceTree = "<group>"; };
@@ -1239,6 +1265,20 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
+		F032A765244D89AF0024AC63 /* themes */ = {
+			isa = PBXGroup;
+			children = (
+				F032A766244D89AF0024AC63 /* black-dark.json */,
+				F032A767244D89AF0024AC63 /* black.json */,
+				F032A768244D89AF0024AC63 /* light-dark.json */,
+				F032A769244D89AF0024AC63 /* reader-dark.json */,
+				F032A76A244D89AF0024AC63 /* light.json */,
+				F032A76B244D89AF0024AC63 /* reader.json */,
+				F032A76C244D89AF0024AC63 /* dark.json */,
+			);
+			path = themes;
+			sourceTree = "<group>";
+		};
 		F035A21620617EC3005A88EE /* YetiShare */ = {
 			isa = PBXGroup;
 			children = (
@@ -1442,6 +1482,12 @@
 				F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */,
 				F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */,
 				F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */,
+				F032A739244D5F9A0024AC63 /* PrefsManager.h */,
+				F032A74F244D5F9A0024AC63 /* PrefsManager.m */,
+				F032A758244D7D670024AC63 /* YetiThemeKit.h */,
+				F032A759244D7D680024AC63 /* YetiThemeKit.m */,
+				F032A75F244D7F470024AC63 /* TypeFactory.h */,
+				F032A75E244D7F470024AC63 /* TypeFactory.m */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1496,6 +1542,8 @@
 				F0B69C8F21B916F50032FD5A /* VideoInfo.m */,
 				F0B17A1A244C8D5000E42C5E /* Enclosure.h */,
 				F0B17A1B244C8D5000E42C5E /* Enclosure.m */,
+				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
+				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1563,6 +1611,7 @@
 		F070C31E1FBAC0B200912CCF /* SupportingFiles */ = {
 			isa = PBXGroup;
 			children = (
+				F032A765244D89AF0024AC63 /* themes */,
 				F0D01CBD211867E9003A01DD /* Icons */,
 				F0A5AE5920C197BF00CFA1D2 /* Fonts */,
 				F09E96412055340C00E61681 /* HLJS */,
@@ -2458,6 +2507,7 @@
 				F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */,
 				F07CD39E22B266E9005BCDE7 /* OpenDyslexic-Bold.ttf in Resources */,
 				F0A5AE9420C19CB400CFA1D2 /* IBMPlexSerif-SemiBold.ttf in Resources */,
+				F032A773244D89AF0024AC63 /* dark.json in Resources */,
 				F09E96472055342000E61681 /* hljs.js in Resources */,
 				F0469DF220A0514100163C4E /* dark.css in Resources */,
 				F0A5AEB220C19DA200CFA1D2 /* IBMPlexSans-Light.ttf in Resources */,
@@ -2481,6 +2531,7 @@
 				F09D12D9220D6CF800252902 /* flutter~ipad@2x.png in Resources */,
 				F0A5AEBC20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
+				F032A76F244D89AF0024AC63 /* light-dark.json in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
 				F0469DF420A0528000163C4E /* black.css in Resources */,
 				F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
@@ -2528,6 +2579,7 @@
 				F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */,
 				F0A5AEBA20C19DA200CFA1D2 /* IBMPlexSans-Medium.ttf in Resources */,
 				F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */,
+				F032A770244D89AF0024AC63 /* reader-dark.json in Resources */,
 				F044B3CA2338A6E900DD8E90 /* BookmarksMigrationVC.xib in Resources */,
 				F047F4F420C25FB900626968 /* Spectral-Medium.ttf in Resources */,
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
@@ -2545,7 +2597,9 @@
 				F0AFAC08216C76B400AB7057 /* ArticleCellB.xib in Resources */,
 				F0A5AEC020C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */,
 				F0AFAC15216C78D400AB7057 /* TagCell.xib in Resources */,
+				F032A771244D89AF0024AC63 /* light.json in Resources */,
 				F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */,
+				F032A76D244D89AF0024AC63 /* black-dark.json in Resources */,
 				F078B639206637B40048DBEA /* EmptyVC.xib in Resources */,
 				F047F4E820C25FB900626968 /* Spectral-Bold.ttf in Resources */,
 				F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */,
@@ -2553,6 +2607,7 @@
 				F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */,
 				F0FDB22C22112CD200EE67F8 /* flutter-dark@3x.png in Resources */,
 				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
+				F032A772244D89AF0024AC63 /* reader.json in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F09D12DC220D6CF800252902 /* reader.png in Resources */,
@@ -2566,6 +2621,7 @@
 				F0542E38211DBFD700D66878 /* black.png in Resources */,
 				F0A5AE6820C197EF00CFA1D2 /* Merriweather-Regular.ttf in Resources */,
 				F047F4EA20C25FB900626968 /* Spectral-SemiBoldItalic.ttf in Resources */,
+				F032A76E244D89AF0024AC63 /* black.json in Resources */,
 				F0A5AE8620C19CB400CFA1D2 /* IBMPlexSerif-LightItalic.ttf in Resources */,
 				F09E96492055342000E61681 /* light.css in Resources */,
 			);
@@ -2667,6 +2723,7 @@
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F05E0C0F2174AFA70042FC38 /* DetailFolderVC.m in Sources */,
 				F0FA473220CBAD7D0035B1F5 /* AccountFooterView.m in Sources */,
+				F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */,
 				F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */,
 				F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */,
 				F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */,
@@ -2756,6 +2813,7 @@
 				F06B9F5E21CFAEBC00D452A1 /* SyncChange.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
+				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
 				F00E837322C4826D0027C45E /* RMStore.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
@@ -2773,6 +2831,7 @@
 				F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */,
 				F070C3451FBACD2C00912CCF /* Feed.m in Sources */,
 				F0533CB4240D463C00BB69CF /* UIRefreshControl+Manual.m in Sources */,
+				F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */,
 				F0FEC4A323085E840082C79D /* ArticlesManager.m in Sources */,
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
@@ -2783,6 +2842,7 @@
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F067D35D23F43B350034B968 /* Customization.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
+				F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
 				F0EB27E921C20FF0007E3547 /* FeedOperation.m in Sources */,

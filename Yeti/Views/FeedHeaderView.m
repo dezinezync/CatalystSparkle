@@ -10,7 +10,7 @@
 #import "Feed.h"
 
 #import <DZTextKit/NSString+HTML.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>

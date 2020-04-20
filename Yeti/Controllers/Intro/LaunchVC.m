@@ -10,7 +10,7 @@
 #import "TrialVC.h"
 #import "IdentityVC.h"
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import "FeedsManager.h"
 #import <DZKit/AlertManager.h>

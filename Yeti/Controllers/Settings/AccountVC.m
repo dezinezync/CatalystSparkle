@@ -13,7 +13,7 @@
 
 #import <DZTextKit/LayoutConstants.h>
 #import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "AccountFooterView.h"
 #import "DZWebViewController.h"
 #import <DZKit/DZMessagingController.h>

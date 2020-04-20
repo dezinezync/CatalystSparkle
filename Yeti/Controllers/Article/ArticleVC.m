@@ -26,11 +26,11 @@
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
-#import <DZTextKit/TypeFactory.h>
+#import "TypeFactory.h"
 
 #import <SafariServices/SafariServices.h>
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "YTPlayer.h"
 #import "YTExtractor.h"
 #import <DZTextKit/NSString+ImageProxy.h>
@@ -377,6 +377,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    Paragraph.tk_theme = theme;
+    Image.tk_theme = theme;
+    Gallery.tk_theme = theme;
     
     self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
     self.view.backgroundColor = theme.articleBackgroundColor;
@@ -1299,7 +1303,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
-    Paragraph *para = [[Paragraph alloc] initWithFrame:frame theme:theme];
+    Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
 #endif
@@ -1440,7 +1444,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
-    Heading *heading = [[Heading alloc] initWithFrame:frame theme:theme];
+    Heading *heading = [[Heading alloc] initWithFrame:frame];
     heading.delegate = self;
 #ifdef DEBUG_LAYOUT
 #if DEBUG_LAYOUT == 1

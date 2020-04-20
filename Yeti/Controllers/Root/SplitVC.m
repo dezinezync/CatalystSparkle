@@ -10,7 +10,7 @@
 #import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "CodeParser.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
@@ -67,9 +67,8 @@
 }
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
     
-    [YetiThemeKit loadThemeKit];
+    [super viewDidLoad];
     
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;

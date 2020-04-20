@@ -7,10 +7,11 @@
 //
 
 #import "MiscVC.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "SettingsCell.h"
 #import <DZTextKit/YetiConstants.h>
 #import "PreviewLinesVC.h"
+#import "PrefsManager.h"
 
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>

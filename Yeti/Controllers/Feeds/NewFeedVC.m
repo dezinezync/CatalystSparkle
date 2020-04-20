@@ -14,7 +14,7 @@
 #import <DZKit/AlertManager.h>
 
 #import <DZTextKit/PaddedLabel.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import "YTNavigationController.h"
 #import "AppDelegate+Routing.h"

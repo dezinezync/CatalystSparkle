@@ -25,7 +25,7 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 #import <DZKit/DZMessagingController.h>
 
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 #import "DBManager+CloudCore.h"
 
 #import <sys/utsname.h>

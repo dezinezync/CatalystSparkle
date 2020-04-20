@@ -26,8 +26,8 @@
 
 #import "ArticleProvider.h"
 
-#import <DZTextKit/YetiThemeKit.h>
-#import <DZTextKit/PrefsManager.h>
+#import "YetiThemeKit.h"
+#import "PrefsManager.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 

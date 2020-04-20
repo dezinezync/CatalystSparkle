@@ -8,7 +8,8 @@
 
 #import "PreviewLinesVC.h"
 #import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
+#import "PrefsManager.h"
 
 #define reuseIdentifer @"previewLinesCell"
 

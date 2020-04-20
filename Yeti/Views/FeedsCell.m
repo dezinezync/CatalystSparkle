@@ -11,12 +11,12 @@
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
-#import <DZTextKit/YetiThemeKit.h>
+#import "YetiThemeKit.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import <DZTextKit/TypeFactory.h>
+#import "TypeFactory.h"
 #import <DZTextKit/NSString+ImageProxy.h>
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
