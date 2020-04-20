@@ -11,6 +11,7 @@
 #import "FeedsManager.h"
 #import "Feed.h"
 #import "FeedItem.h"
+#import "Folder.h"
 
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseCloudCore.h>
@@ -30,6 +31,8 @@ extern NSNotificationName const UIDatabaseConnectionWillUpdateNotification;
 extern NSNotificationName const UIDatabaseConnectionDidUpdateNotification;
 extern NSString * const kNotificationsKey;
 
+typedef void (^syncProgressBlock)(CGFloat progress);
+
 extern DBManager * MyDBManager;
 
 @interface DBManager : NSObject {
@@ -47,7 +50,13 @@ extern DBManager * MyDBManager;
 @property (nonatomic, strong) YapDatabaseConnection *uiConnection;
 @property (nonatomic, strong) YapDatabaseConnection *bgConnection;
 
+@property (nonatomic, copy) syncProgressBlock syncProgressBlock;
+
 #pragma mark - Methods
+
+- (void)setFeeds:(NSArray <Feed *> *)feeds;
+
+- (void)setFolders:(NSArray <Folder *> *)folders;
 
 - (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(void(^)(BOOL success))completionCB;
 

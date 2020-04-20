@@ -71,6 +71,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 #pragma mark Networking APIs
 #pragma mark - Feeds
 
+- (void)getCountersWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)getFeedsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;

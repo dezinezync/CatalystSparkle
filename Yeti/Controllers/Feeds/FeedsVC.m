@@ -52,6 +52,10 @@ static void *KVO_Unread = &KVO_Unread;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
 @property (nonatomic, weak) UIView *hairlineView;
 
+@property (nonatomic, weak) UILabel *progressLabel;
+@property (nonatomic, weak) UIProgressView *syncProgressView;
+@property (nonatomic, strong) UIStackView *progressStackView;
+
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
 @end
@@ -77,9 +81,66 @@ static void *KVO_Unread = &KVO_Unread;
     [self setupTableView];
     [self setupNavigationBar];
     
+//    [self setupToolbar];
+    
+    MyDBManager.syncProgressBlock = ^(CGFloat progress) {
+#ifdef DEBUG
+        NSLog(@"Sync Progress: %@", @(progress));
+#endif
+        
+        if (progress == 0.f) {
+            
+            [self.navigationController setToolbarHidden:NO animated:YES];
+            
+            self.progressLabel.text = @"Syncing...";
+            [self.progressLabel sizeToFit];
+            
+            [self.syncProgressView setProgress:progress animated:YES];
+            
+        }
+        else if (progress >= 0.95f) {
+            
+            [self.syncProgressView setProgress:progress animated:YES];
+            
+            self.progressLabel.text = @"Syncing Complete.";
+            
+            if (self->_refreshing) {
+                self->_refreshing = NO;
+            }
+            
+            if ([self.refreshControl isRefreshing]) {
+                [self.refreshControl endRefreshing];
+            }
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self.navigationController setToolbarHidden:YES animated:YES];
+                
+            });
+            
+        }
+        else {
+            
+            if (progress <= 0.95f && self.navigationController.isToolbarHidden == YES) {
+                [self.navigationController setToolbarHidden:NO animated:NO];
+            }
+            
+            if (self.navigationController.isToolbarHidden == NO) {
+                
+                self.progressLabel.text = [NSString stringWithFormat:@"Synced %.f%%", progress * 100];
+                
+                [self.syncProgressView setProgress:progress animated:YES];
+                
+            }
+            
+        }
+        
+    };
+    
     self.tableView.estimatedRowHeight = UITableViewAutomaticDimension;
     
     [self setupObservors];
+    [self.navigationController setToolbarHidden:YES animated:NO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -88,6 +149,7 @@ static void *KVO_Unread = &KVO_Unread;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     [self setupTableView];
@@ -116,12 +178,12 @@ static void *KVO_Unread = &KVO_Unread;
         }
     }
     
-    if (PrefsManager.sharedInstance.useToolbar == YES) {
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
-    }
-    else {
-        self.additionalSafeAreaInsets = UIEdgeInsetsZero;
-    }
+//    if (PrefsManager.sharedInstance.useToolbar == YES) {
+//        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
+//    }
+//    else {
+//        self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+//    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -381,40 +443,64 @@ static void *KVO_Unread = &KVO_Unread;
         [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     }
     
-    if (PrefsManager.sharedInstance.useToolbar == NO) {
+//    if (PrefsManager.sharedInstance.useToolbar == NO) {
         self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
         self.navigationItem.leftBarButtonItem = self.leftBarButtonItem;
         
-        self.navigationController.toolbarHidden = YES;
-    }
-    else {
-        self.navigationController.toolbarHidden = NO;
-    }
+//        self.navigationController.toolbarHidden = YES;
+//    }
+//    else {
+//        self.navigationController.toolbarHidden = NO;
+//    }
     
 }
 
 - (NSArray <UIBarButtonItem *> *)toolbarItems {
     
-    if (PrefsManager.sharedInstance.useToolbar == NO) {
-        return nil;
+    if (_progressStackView == nil) {
+        
+        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - (LayoutPadding * 2), 32.f);
+        
+        UILabel *progressLabel = [[UILabel alloc] init];
+        
+        UIFont *sizedFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+        
+        progressLabel.font = [UIFont monospacedDigitSystemFontOfSize:MIN(11.f, sizedFont.pointSize) weight:UIFontWeightSemibold];
+        progressLabel.textColor = YTThemeKit.theme.subtitleColor;
+        progressLabel.textAlignment = NSTextAlignmentCenter;
+        progressLabel.frame = CGRectMake(0, 0, frame.size.width, 0);
+        [progressLabel.widthAnchor constraintGreaterThanOrEqualToConstant:frame.size.width].active = YES;
+//#ifdef DEBUG
+//        progressLabel.backgroundColor = UIColor.redColor;
+//#endif
+        UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        progressView.progressTintColor = YTThemeKit.theme.tintColor;
+        progressView.trackTintColor = YTThemeKit.theme.borderColor;
+        progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
+        progressView.layer.cornerRadius = 2.f;
+        [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+//#ifdef DEBUG
+//        progressView.backgroundColor = UIColor.greenColor;
+//#endif
+        
+        UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[progressLabel, progressView]];
+        stack.frame = frame;
+        stack.axis = UILayoutConstraintAxisVertical;
+        stack.distribution = UIStackViewDistributionEqualSpacing;
+        stack.spacing = 4.f;
+        stack.alignment = UIStackViewAlignmentLeading;
+        
+        _syncProgressView = progressView;
+        _progressLabel = progressLabel;
+        
+        _progressStackView = stack;
+        
     }
     
-    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:self.progressStackView];
     
-    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    fixed.width = 24.f;
+    return @[item];
     
-    NSArray *right = [[self.rightBarButtonItems rz_map:^id(UIBarButtonItem *obj, NSUInteger idx, NSArray *array) {
-        
-        if (idx == 0) {
-            return obj;
-        }
-        
-        return @[flex, obj];
-        
-    }] rz_flatten];
-    
-    return [@[self.leftBarButtonItem, flex] arrayByAddingObjectsFromArray:right];
 }
 
 #pragma mark - Setters
@@ -746,7 +832,9 @@ NSString * const kDS2Data = @"DS2Data";
             [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Today", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
         }
         
-        [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
+        NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:data];
+        
+        [snapshot appendItemsWithIdentifiers:orderedSet.objectEnumerator.allObjects intoSectionWithIdentifier:MainSection];
         
         [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
         
@@ -955,9 +1043,7 @@ NSString * const kDS2Data = @"DS2Data";
             userUpdatedButWeHaveData = NO;
         }
         
-        if (userUpdatedButWeHaveData == NO) {
-            [self.refreshControl beginRefreshingManually:YES];
-        }
+        [self.refreshControl beginRefreshingManually:YES];
         
     });
     

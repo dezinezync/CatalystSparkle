@@ -118,6 +118,22 @@ static ArticlesManager * SharedArticleManager = nil;
     
 }
 
+- (Feed *)feedForID:(NSNumber *)feedID {
+    
+    NSArray <Feed *> * filtered = [ArticlesManager.shared.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+       
+        return [obj.feedID isEqualToNumber:feedID];
+        
+    }];
+    
+    if (filtered.count) {
+        return filtered.firstObject;
+    }
+    
+    return nil;
+    
+}
+
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds {

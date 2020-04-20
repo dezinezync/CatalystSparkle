@@ -49,9 +49,19 @@
         return;
     }
     
+    if ([self.refreshControl isRefreshing] == NO) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self.refreshControl beginRefreshing];
+            
+        });
+        
+    }
+    
     _refreshing = YES;
     
-    weakify(self);
+//    weakify(self);
     
 //    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
 //
@@ -68,50 +78,75 @@
 //
 //    }];
     
-    [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//    [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        strongify(self);
+//
+//        if (self == nil) {
+//            return;
+//        }
+//
+//        MyFeedsManager.unreadLastUpdate = NSDate.date;
+//        self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
+//
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            if ([responseObject integerValue] == 2) {
+//                [sender endRefreshing];
+//            }
+//
+//            self->_refreshing = NO;
+//
+//            if (sender != nil && sender.isRefreshing == YES) {
+//                [sender endRefreshing];
+//            }
+//        });
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        DDLogError(@"%@", error);
+//
+//        asyncMain(^{
+//            if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
+//                if (UIApplication.sharedApplication.applicationState == UIApplicationStateActive) {
+//                    [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
+//                }
+//            }
+//
+//            if (sender != nil && sender.isRefreshing == YES) {
+//                [sender endRefreshing];
+//            }
+//        });
+//
+//        strongify(self);
+//
+//        self->_refreshing = NO;
+//
+//    }];
+    
+    [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        strongify(self);
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
         
-        if (self == nil) {
-            return;
+        if (snapshot != nil) {
+            
+            [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
+            
         }
         
-        MyFeedsManager.unreadLastUpdate = NSDate.date;
-        self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([responseObject integerValue] == 2) {
-                [sender endRefreshing];
-            }
-            
-            self->_refreshing = NO;
-            
-            if (sender != nil && sender.isRefreshing == YES) {
-                [sender endRefreshing];
-            }
-        });
+        if ([self.refreshControl isRefreshing]) {
+            [self.refreshControl endRefreshing];
+        }
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        DDLogError(@"%@", error);
-        
-        asyncMain(^{
-            if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
-                if (UIApplication.sharedApplication.applicationState == UIApplicationStateActive) {
-                    [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
-                }
-            }
-            
-            if (sender != nil && sender.isRefreshing == YES) {
-                [sender endRefreshing];
-            }
-        });
-        
-        strongify(self);
-        
-        self->_refreshing = NO;
+        NSLog(@"Error: Failed to fetch counters with error:%@", error.localizedDescription);
         
     }];
+    
+    [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
+    [MyDBManager setupSync];
     
 }
 

@@ -88,6 +88,75 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Feeds
 
+- (void)getCountersWithSuccess:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    weakify(self);
+        
+    if (MyFeedsManager.userID == nil) {
+        if (errorCB)
+            errorCB(nil, nil, nil);
+        return;
+    }
+    
+    NSDate *today = [NSDate date];
+    NSDateComponents *comps = [[NSCalendar currentCalendar] components:(NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay) fromDate:today];
+    
+    NSString *todayString = [NSString stringWithFormat:@"%@-%@-%@", @(comps.year), @(comps.month), @(comps.day)];
+    
+    NSDictionary *params = @{@"userID": MyFeedsManager.userID,
+                             @"version": @"1.7",
+                             @"date": todayString
+    };
+    
+    [self.session GET:@"/1.7/feeds" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+      
+        strongify(self);
+
+        NSNumber *unread = [responseObject valueForKey:@"unread"];
+        NSNumber *today = [responseObject valueForKey:@"todayCount"];
+        
+        NSDictionary *feedCounters = [responseObject valueForKey:@"feeds"];
+        
+        self.totalUnread = unread.integerValue;
+        self.totalToday = today.integerValue;
+        
+        if (feedCounters != nil) {
+                
+            [feedCounters enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull key, NSNumber *  _Nonnull obj, BOOL * _Nonnull stop) {
+               
+                Feed *feed = [ArticlesManager.shared feedForID:@(key.integerValue)];
+                
+                if (feed != nil) {
+                    feed.unread = obj;
+                }
+                
+            }];
+            
+        }
+
+        if (successCB) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(responseObject, response, task);
+            });
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB) {
+            errorCB(error, response, task);
+        }
+        else {
+            DDLogError(@"Unhandled network error: %@", error);
+        }
+        
+    }];
+    
+}
+
 - (void)getFeedsWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
 {
     weakify(self);
@@ -206,6 +275,8 @@ NSArray <NSString *> * _defaultsKeys;
     
     ArticlesManager.shared.feeds = feeds;
     
+    [MyDBManager setFeeds:feeds];
+    
     // create the folders map
     NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
        
@@ -216,6 +287,8 @@ NSArray <NSString *> * _defaultsKeys;
     }];
     
     ArticlesManager.shared.folders = folders;
+    
+    [MyDBManager setFolders:folders];
     
     return feeds;
 }
@@ -1854,6 +1927,11 @@ NSArray <NSString *> * _defaultsKeys;
         
         if (response.statusCode == 304) {
             // nothing changed. exit early
+            
+            if (successCB) {
+                successCB(nil, response, task);
+            }
+            
             return;
         }
         
