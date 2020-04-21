@@ -1,5 +1,9 @@
 # v1.7.0
 
+## Build 339
+
+RC 2 of v1.7. Fixes the syncing toolbar not appearing for most users. 
+
 ## Build 337
 
 - Fixes an issue where an article would remain marked as Read even after opening it. 
@@ -31,8 +35,6 @@
 - GIFs will now show the first frame if the Image Proxy is enabled. 
 
 - Fixed GIF playback. 
-
-
 
 ## Build 327
 

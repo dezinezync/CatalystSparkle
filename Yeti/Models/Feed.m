@@ -34,7 +34,7 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.authors = [decoder decodeObjectOfClass:NSArray.class forKey:@"authors"];
+        self.authors = [decoder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Author.class]] forKey:propSel(authors)];
         self.etag = [decoder decodeObjectOfClass:NSString.class forKey:@"etag"];
         self.favicon = [decoder decodeObjectOfClass:NSString.class forKey:@"favicon"];
         self.feedID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"feedID"];

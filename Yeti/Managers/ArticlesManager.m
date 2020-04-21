@@ -137,6 +137,12 @@ static ArticlesManager * SharedArticleManager = nil;
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setFeeds:) withObject:feeds waitUntilDone:NO];
+        return;
+    }
+    
     @synchronized (self) {
         ArticlesManager.shared->_feeds = feeds ?: @[];
     }
@@ -151,6 +157,11 @@ static ArticlesManager * SharedArticleManager = nil;
 }
 
 - (void)setFolders:(NSArray<Folder *> *)folders {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setFolders:) withObject:folders waitUntilDone:NO];
+        return;
+    }
     
     @synchronized (self) {
         ArticlesManager.shared->_folders = folders ?: @[];

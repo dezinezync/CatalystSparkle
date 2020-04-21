@@ -469,7 +469,8 @@ static void *KVO_Unread = &KVO_Unread;
         progressLabel.textColor = YTThemeKit.theme.subtitleColor;
         progressLabel.textAlignment = NSTextAlignmentCenter;
         progressLabel.frame = CGRectMake(0, 0, frame.size.width, 0);
-        [progressLabel.widthAnchor constraintGreaterThanOrEqualToConstant:frame.size.width].active = YES;
+        [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+        progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
 //#ifdef DEBUG
 //        progressLabel.backgroundColor = UIColor.redColor;
 //#endif
@@ -478,6 +479,7 @@ static void *KVO_Unread = &KVO_Unread;
         progressView.trackTintColor = YTThemeKit.theme.borderColor;
         progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
         progressView.layer.cornerRadius = 2.f;
+        progressView.translatesAutoresizingMaskIntoConstraints = NO;
         [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
 //#ifdef DEBUG
 //        progressView.backgroundColor = UIColor.greenColor;
@@ -488,7 +490,7 @@ static void *KVO_Unread = &KVO_Unread;
         stack.axis = UILayoutConstraintAxisVertical;
         stack.distribution = UIStackViewDistributionEqualSpacing;
         stack.spacing = 4.f;
-        stack.alignment = UIStackViewAlignmentLeading;
+        stack.alignment = UIStackViewAlignmentCenter;
         
         _syncProgressView = progressView;
         _progressLabel = progressLabel;
@@ -1043,7 +1045,15 @@ NSString * const kDS2Data = @"DS2Data";
             userUpdatedButWeHaveData = NO;
         }
         
-        [self.refreshControl beginRefreshingManually:YES];
+        if (userUpdatedButWeHaveData == NO) {
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self.refreshControl beginRefreshingManually:YES];
+                
+            });
+            
+        }
         
     });
     

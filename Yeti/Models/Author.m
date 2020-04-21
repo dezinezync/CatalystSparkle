@@ -34,7 +34,7 @@
     if (self = [super initWithCoder:aDecoder]) {
         self.authorID = [aDecoder decodeObjectOfClass:NSNumber.class forKey:@"authorID"];
         self.name = [aDecoder decodeObjectOfClass:NSString.class forKey:@"name"];
-        self.bio = [aDecoder decodeObjectOfClass:NSString.class forKey:@"bio"];
+        self.bio = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[NSString.class, NSArray.class, Content.class]] forKey:@"bio"];
     }
     
     return self;

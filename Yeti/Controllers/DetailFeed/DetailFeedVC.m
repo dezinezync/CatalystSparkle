@@ -713,7 +713,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
         }
         else {
-            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"circle.fill"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"largecircle.fill.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self userMarkedArticle:item read:YES];
                 

@@ -72,11 +72,12 @@ NSString *const kNotificationsKey = @"notifications";
 {
     NSAssert(MyDBManager == nil, @"Must use sharedInstance singleton (global MyDBManager)");
     
-    if ((self = [super init]))
-    {
+    if (self = [super init]) {
+        
         [self setupDatabase];
         [self loadFolders];
         [self loadFeeds];
+        
     }
     
     return self;
@@ -108,7 +109,9 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
         
-        [ArticlesManager.shared setFeeds:feeds];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ArticlesManager.shared setFeeds:feeds];
+        });
         
     }];
     
@@ -124,10 +127,18 @@ NSString *const kNotificationsKey = @"notifications";
         return;
     }
     
-    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
         
         for (Feed *feed in feeds) {
-            [transaction setObject:feed forKey:feed.feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+            
+            NSString *key = feed.feedID.stringValue;
+        
+#ifdef DEBUG
+            NSAssert(key != nil, @"Expected feed to have a feedID.");
+#endif
+            
+            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION];
+            
         }
         
     }];
@@ -252,11 +263,15 @@ NSString *const kNotificationsKey = @"notifications";
                     
                 }
                 
+                [folders addObject:folder];
+                
             }
             
         }
         
-        [ArticlesManager.shared setFolders:folders];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ArticlesManager.shared setFolders:folders];
+        });
         
     }];
     
@@ -333,7 +348,11 @@ NSString *const kNotificationsKey = @"notifications";
         
         NSError *error = nil;
         
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
+        
+        if (error) {
+            NSLog(@"Error: Failed to deserialize object for key:%@:%@\n%@", collection, key, error.localizedDescription);
+        }
         
         return data;
         
@@ -346,9 +365,26 @@ NSString *const kNotificationsKey = @"notifications";
 {
     // Pretty much the default serializer,
     // but it also ensures that objects coming out of the database are immutable.
-    YapDatabaseDeserializer deserializer = ^(NSString *collection, NSString *key, NSData *data){
+    YapDatabaseDeserializer deserializer = ^(NSString *collection, NSString *key, NSData *data) {
         
-        id object = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:nil];
+        NSError *error = nil;
+        Class objClass = NSObject.class;
+        
+//        if ([collection isEqualToString:LOCAL_FEEDS_COLLECTION]) {
+//            objClass = Feed.class;
+//        }
+//        else if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+//            objClass = FeedItem.class;
+//        }
+//        else if ([collection isEqualToString:LOCAL_FOLDERS_COLLECTION]) {
+//            objClass = Folder.class;
+//        }
+        
+        id object = [NSKeyedUnarchiver unarchivedObjectOfClass:objClass fromData:data error:&error];
+        
+        if (error) {
+            NSLog(@"Error: Failed to deserialize object for key:%@:%@\n%@", collection, key, error.localizedDescription);
+        }
         
         return object;
     };
