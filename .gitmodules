@@ -19,3 +19,17 @@
 [submodule "Yeti/Vendors/TOSplitViewController"]
 	path = Yeti/Vendors/TOSplitViewController
 	url = git@github.com:dezinezync/TOSplitViewController.git
+[submodule "Yeti/Vendors/YapDatabase"]
+	path = Yeti/Vendors/YapDatabase
+	url = git@github.com:dezinezync/YapDatabase.git
+[submodule "Yeti/Vendors/DZTextKit"]
+	path = Yeti/Vendors/DZTextKit
+[submodule "Yeti/Vendors/WebPImageSerialization"]
+	path = Yeti/Vendors/WebPImageSerialization
+	url = https://github.com/mattt/WebPImageSerialization.git
+[submodule "Yeti/Vendors/DateTools"]
+	path = Yeti/Vendors/DateTools
+	url = https://github.com/MatthewYork/DateTools.git
+[submodule "Yeti/Vendors/FLAnimatedImage"]
+	path = Yeti/Vendors/FLAnimatedImage
+	url = git@github.com:dezinezync/FLAnimatedImage.git

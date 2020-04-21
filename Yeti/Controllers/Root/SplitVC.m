@@ -7,7 +7,7 @@
 //
 
 #import "SplitVC.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 #import "YetiThemeKit.h"
@@ -67,9 +67,8 @@
 }
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
     
-    [YetiThemeKit loadThemeKit];
+    [super viewDidLoad];
     
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;

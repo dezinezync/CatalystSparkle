@@ -10,7 +10,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/DZUtilities.h>
 

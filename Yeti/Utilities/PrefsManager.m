@@ -7,12 +7,16 @@
 //
 
 #import "PrefsManager.h"
+#import <DZTextKit/YetiConstants.h>
+
+#import <DZTextKit/Paragraph.h>
+#import <DZTextKit/Content.h>
 
 PrefsManager * SharedPrefs = nil;
 
 @interface PrefsManager ()
 
-@property (nonatomic, weak) NSUserDefaults *defaults;
+@property (nonatomic, weak, readwrite) NSUserDefaults *defaults;
 
 @end
 
@@ -27,6 +31,10 @@ PrefsManager * SharedPrefs = nil;
     dispatch_once(&onceToken, ^{
         SharedPrefs = [[PrefsManager alloc] init];
         SharedPrefs.defaults = [NSUserDefaults standardUserDefaults];
+        
+        Paragraph.tk_prefsManager = SharedPrefs;
+        Content.tk_prefsManager = SharedPrefs;
+        
     });
     
     return SharedPrefs;
@@ -50,6 +58,11 @@ PrefsManager * SharedPrefs = nil;
     self.previewLines = [self.defaults integerForKey:kPreviewLines];
     self.showTags = ([self.defaults valueForKey:kShowTags] ? [[self.defaults valueForKey:kShowTags] boolValue] : YES);
     self.useToolbar = ([self.defaults valueForKey:kUseToolbar] ? [[self.defaults valueForKey:kUseToolbar] boolValue] : NO);
+    
+    self.useSystemSize = ([self.defaults valueForKey:kUseSystemFontSize] ? [[self.defaults valueForKey:kUseSystemFontSize] boolValue] : YES);
+    self.fontSize = ([self.defaults valueForKey:kFontSize] ? [[self.defaults valueForKey:kFontSize] integerValue] : [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize);
+    self.paraTitleFont = [self.defaults valueForKey:kParagraphTitleFont];
+    self.lineSpacing = ([self.defaults floatForKey:kLineSpacing] ?: 1.4f);
 }
 
 - (NSString *)mappingForKey:(NSString *)key {
@@ -105,6 +118,18 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(useToolbar)]) {
         return kUseToolbar;
     }
+    else if ([key isEqualToString:propSel(useSystemSize)]) {
+        return kUseSystemFontSize;
+    }
+    else if ([key isEqualToString:propSel(fontSize)]) {
+        return kFontSize;
+    }
+    else if ([key isEqualToString:propSel(paraTitleFont)]) {
+        return kParagraphTitleFont;
+    }
+    else if ([key isEqualToString:propSel(lineSpacing)]) {
+        return kLineSpacing;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -132,7 +157,14 @@ PrefsManager * SharedPrefs = nil;
             [self.defaults setValue:value forKey:mapping];
         }
         else if ([value isKindOfClass:NSNumber.class]) {
-            [self.defaults setInteger:[(NSNumber *)value integerValue] forKey:mapping];
+            
+            if ([mapping isEqualToString:kLineSpacing]) {
+                [self.defaults setFloat:[(NSNumber *)value floatValue] forKey:mapping];
+            }
+            else {
+                [self.defaults setInteger:[(NSNumber *)value integerValue] forKey:mapping];
+            }
+            
         }
         else if ([NSStringFromClass([value class]) containsString:@"Boolean"]) {
             [self.defaults setBool:value forKey:mapping];
@@ -153,6 +185,13 @@ PrefsManager * SharedPrefs = nil;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
+        });
+        
+    }
+    else if ([@[propSel(lineSpacing), propSel(fontSize), propSel(useSystemSize), propSel(paraTitleFont), propSel(articleFont), propSel(theme)] indexOfObject:key] != NSNotFound) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSNotificationCenter.defaultCenter postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
         });
         
     }

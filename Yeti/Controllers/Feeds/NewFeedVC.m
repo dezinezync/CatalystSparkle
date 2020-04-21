@@ -13,7 +13,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/AlertManager.h>
 
-#import "PaddedLabel.h"
+#import <DZTextKit/PaddedLabel.h>
 #import "YetiThemeKit.h"
 
 #import "YTNavigationController.h"

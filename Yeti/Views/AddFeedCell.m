@@ -11,9 +11,7 @@
 
 #import <DZNetworking/ImageLoader.h>
 #import <DZKit/NSString+Extras.h>
-#import "NSString+ImageProxy.h"
-
-#import "TypeFactory.h"
+#import <DZTextKit/NSString+ImageProxy.h>
 
 NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
 

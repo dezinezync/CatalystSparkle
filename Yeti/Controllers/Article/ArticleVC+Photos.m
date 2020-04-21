@@ -8,8 +8,8 @@
 
 #import "ArticleVC+Photos.h"
 
-#import "Image.h"
-#import "Gallery.h"
+#import <DZTextKit/Image.h>
+#import <DZTextKit/Gallery.h>
 #import "ArticlePhoto.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>

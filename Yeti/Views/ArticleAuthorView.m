@@ -9,7 +9,7 @@
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
 #import "YetiThemeKit.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 @interface ArticleAuthorView () {
     BOOL _didAddHorizontalConstraints;
@@ -51,6 +51,10 @@
         [self.mercurialButton setImage:image forState:UIControlStateNormal];
         
         self.mercurialButton.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        if (@available(iOS 13.4, *)) {
+            self.mercurialButton.pointerInteractionEnabled = YES;
+        }
         
         // we do not observe this as the article interface is redrawn when the theme changes
 //        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:kDidUpdateTheme object:nil];

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +21,8 @@ extern PrefsManager * SharedPrefs;
  All properties are mapped to NSUserDefaults and are read from it upon launch.
  */
 @interface PrefsManager : NSObject
+
+@property (nonatomic, weak, readonly) NSUserDefaults *defaults;
 
 + (instancetype)sharedInstance;
 
@@ -42,6 +44,11 @@ extern PrefsManager * SharedPrefs;
 @property (assign) BOOL showTags; // kShowTags
 @property (assign) BOOL useToolbar; // kUseToolbar
 
+@property (assign) BOOL useSystemSize; // kUseSystemFontSize
+@property (assign) NSInteger fontSize; // kFontSize
+@property (copy) ArticleLayoutFont paraTitleFont; // kParagraphTitleFont
+@property (assign) CGFloat lineSpacing; // kLineSpacing
+ 
 @end
 
 NS_ASSUME_NONNULL_END

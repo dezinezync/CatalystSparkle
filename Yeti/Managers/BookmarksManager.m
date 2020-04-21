@@ -343,12 +343,13 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
     
     // Create the database
     if (_database == nil) {
-        _database = [[YapDatabase alloc] initWithPath:databasePath
-           serializer:[self databaseSerializer]
-         deserializer:[self databaseDeserializer]
-         preSanitizer:[self databasePreSanitizer]
-        postSanitizer:[self databasePostSanitizer]
-              options:nil];
+        
+        _database = [[YapDatabase alloc] initWithURL:[NSURL fileURLWithPath:databasePath]];
+        [_database registerDefaultSerializer:[self databaseSerializer]];
+        [_database registerDefaultDeserializer:[self databaseDeserializer]];
+        [_database registerDefaultPreSanitizer:[self databasePreSanitizer]];
+        [_database registerDefaultPostSanitizer:[self databasePostSanitizer]];
+
     }
     
     // Setup database connection(s)

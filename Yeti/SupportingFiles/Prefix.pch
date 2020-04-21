@@ -13,7 +13,6 @@
 
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 
-#import <DZKit/DZLogger.h>
 #import <DZKit/DZUtilities.h>
 #import "TOSplitViewController.h"
 
