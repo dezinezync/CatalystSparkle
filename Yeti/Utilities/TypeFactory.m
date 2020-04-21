@@ -20,6 +20,8 @@ static TypeFactory * sharedTypeFactory;
     BOOL _firingSelfNotification;
 }
 
+@property (nonatomic, assign) CGFloat basePointSize;
+
 @property (nonatomic, assign) CGFloat scale;
 
 @property (nonatomic, weak) UIViewController *rootController;
@@ -176,6 +178,7 @@ static TypeFactory * sharedTypeFactory;
     
     // reset the scale so it gets updated.
     _scale = 0.f;
+    _basePointSize = 0.f;
     
 }
 
@@ -199,14 +202,24 @@ static TypeFactory * sharedTypeFactory;
 
 #pragma mark - Getters
 
+- (CGFloat)basePointSize {
+    
+    if (_basePointSize == 0.f) {
+        _basePointSize = [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize;
+    }
+    
+    return _basePointSize;
+    
+}
+
 - (CGFloat)scale {
     
     if (_scale == 0.f) {
         
-        NSInteger base = 17.f;
+        NSInteger base = self.basePointSize;
         
         if (SharedPrefs.useSystemSize == NO) {
-            base = SharedPrefs.fontSize;
+            base = MAX(base, SharedPrefs.fontSize);
         }
         
         _scale = base / [[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize];
@@ -230,7 +243,7 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)titleFont {
     
     UIFontTextStyle const style = UIFontTextStyleHeadline;
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 17.f : SharedPrefs.fontSize;
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? self.basePointSize : SharedPrefs.fontSize;
     
     if (_titleFont == nil) {
         
@@ -245,7 +258,7 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)caption1Font {
     
     UIFontTextStyle const style = UIFontTextStyleCaption1;
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 13.f : floor(SharedPrefs.fontSize  * 13.f / 17.f);
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 13.f : floor(SharedPrefs.fontSize  * 13.f / self.basePointSize);
     
     if (_caption1Font == nil) {
         _caption1Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -259,7 +272,7 @@ static TypeFactory * sharedTypeFactory;
     
     UIFontTextStyle const style = UIFontTextStyleCaption2;
     
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 12.f : floor(SharedPrefs.fontSize  * 12.f / 17.f);
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 12.f : floor(SharedPrefs.fontSize  * 12.f / self.basePointSize);
     
     if (_caption2Font == nil) {
         _caption2Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -272,7 +285,7 @@ static TypeFactory * sharedTypeFactory;
     
     UIFontTextStyle const style = UIFontTextStyleFootnote;
     
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 11.f : floor(SharedPrefs.fontSize  * 11.f / 17.f);
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 11.f : floor(SharedPrefs.fontSize  * 11.f / self.basePointSize);
 
     if (_footnoteFont == nil) {
         _footnoteFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -285,7 +298,7 @@ static TypeFactory * sharedTypeFactory;
     
     UIFontTextStyle const style = UIFontTextStyleSubheadline;
     
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / 17.f);
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / self.basePointSize);
     
     if (_subtitleFont == nil) {
         _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -297,7 +310,7 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)bodyFont {
     
     UIFontTextStyle const style = UIFontTextStyleBody;
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 17.f : SharedPrefs.fontSize;
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? self.basePointSize : SharedPrefs.fontSize;
     
     if (_bodyFont == nil) {
         _bodyFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -353,7 +366,7 @@ static TypeFactory * sharedTypeFactory;
 
 - (UIFont *)codeFont {
     
-    CGFloat maximumPointSize = 17.f;
+    CGFloat maximumPointSize = self.basePointSize;
     
     if (_codeFont == nil) {
         UIFont *font = self.bodyFont;
