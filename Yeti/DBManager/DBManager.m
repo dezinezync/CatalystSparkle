@@ -77,8 +77,10 @@ NSString *const kNotificationsKey = @"notifications";
         [self setupDatabase];
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            [ArticlesManager.shared willBeginUpdatingStore];
             [self loadFeeds];
             [self loadFolders];
+            [ArticlesManager.shared didFinishUpdatingStore];
         });
         
     }
@@ -112,9 +114,14 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        if (NSThread.isMainThread) {
             [ArticlesManager.shared setFeeds:feeds];
-        });
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ArticlesManager.shared setFeeds:feeds];
+            });
+        }
         
     }];
     
@@ -274,9 +281,14 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        if (NSThread.isMainThread) {
             [ArticlesManager.shared setFolders:folders];
-        });
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ArticlesManager.shared setFolders:folders];
+            });
+        }
         
     }];
     
@@ -857,38 +869,38 @@ NSString *const kNotificationsKey = @"notifications";
     __block NSNumber *articleID = nil;
     
     // first we get the latest article for this Feed ID.
-    [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-        
-        YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
-        
-        NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
-        
-        NSString *collection = nil;
-        NSString *key = nil;
-        
-        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
-        
-        if (key != nil && collection != nil) {
-            articleID = @(key.integerValue);
-        }
-        
-    }];
-    
-    if (articleID) {
-        NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
-    }
-    else {
+//    [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+//
+//        YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
+//
+//        NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
+//
+//        NSString *collection = nil;
+//        NSString *key = nil;
+//
+//        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
+//
+//        if (key != nil && collection != nil) {
+//            articleID = @(key.integerValue);
+//        }
+//
+//    }];
+//
+//    if (articleID) {
+//        NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
+//    }
+//    else {
         NSLog(@"[Sync] Fetching articles for %@ using token %@", feedID, since);
-    }
+//    }
     
     NSMutableDictionary *params = @{@"feedID": feedID}.mutableCopy;
     
-    if (articleID) {
-        params[@"articleID"] = articleID;
-    }
-    else if (since) {
+//    if (articleID) {
+//        params[@"articleID"] = articleID;
+//    }
+//    else if (since) {
         params[@"since"] = since;
-    }
+//    }
     
     weakify(self);
     

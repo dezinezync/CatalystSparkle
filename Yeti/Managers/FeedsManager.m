@@ -278,17 +278,53 @@ NSArray <NSString *> * _defaultsKeys;
        
         Folder *folder = [Folder instanceFromDictionary:obj];
         
+        if (folder.feedIDs != nil && folder.feedIDs.count > 0) {
+                            
+            folder.feeds = [NSPointerArray weakObjectsPointerArray];
+            
+            NSArray *feedIDs = folder.feedIDs.allObjects;
+            
+            NSMutableArray *allFeeds = [NSMutableArray arrayWithCapacity:folder.feedIDs.count];
+            
+            [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                Feed *feed = [feeds rz_find:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                   
+                    return [obj.feedID isEqualToNumber:objx];
+                    
+                }];
+                
+                if (feed != nil) {
+                    
+                    [allFeeds addObject:feed];
+                    feed.folderID = folder.folderID;
+                    
+                }
+                
+            }];
+            
+            [folder.feeds addObjectsFromArray:allFeeds];
+            
+        }
+        
         return folder;
         
     }];
     
-    ArticlesManager.shared.folders = folders;
-    
-    [MyDBManager setFolders:folders];
-    
-    ArticlesManager.shared.feeds = feeds;
-    
-    [MyDBManager setFeeds:feeds];
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        [ArticlesManager.shared willBeginUpdatingStore];
+        
+        [MyDBManager setFeeds:feeds];
+        [MyDBManager setFolders:folders];
+        
+        ArticlesManager.shared.folders = folders;
+        
+        ArticlesManager.shared.feeds = feeds;
+        
+        [ArticlesManager.shared didFinishUpdatingStore];
+        
+    });
     
     return feeds;
 }

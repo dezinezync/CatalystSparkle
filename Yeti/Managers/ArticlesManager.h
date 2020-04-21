@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable bookmarks;
 
+- (void)willBeginUpdatingStore;
+
+- (void)didFinishUpdatingStore;
+
 @end
 
 NS_ASSUME_NONNULL_END

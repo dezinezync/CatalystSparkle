@@ -77,29 +77,7 @@
     
     _refreshing = YES;
     
-    [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        MyFeedsManager.unreadLastUpdate = NSDate.date;
-        
-        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-        
-        if (snapshot != nil) {
-            
-            [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
-            
-        }
-        
-        if ([self.refreshControl isRefreshing]) {
-            [self.refreshControl endRefreshing];
-        }
-        
-        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSLog(@"Error: Failed to fetch counters with error:%@", error.localizedDescription);
-        
-    }];
+    [self fetchLatestCounters];
     
     [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
     [MyDBManager setupSync];

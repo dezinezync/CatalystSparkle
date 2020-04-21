@@ -176,6 +176,8 @@ static void *KVO_Unread = &KVO_Unread;
             [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
         }
+        
+        [self fetchLatestCounters];
     }
     
 //    if (PrefsManager.sharedInstance.useToolbar == YES) {
@@ -729,6 +731,34 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 #pragma mark - Data
+
+- (void)fetchLatestCounters {
+    
+    [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        MyFeedsManager.unreadLastUpdate = NSDate.date;
+        
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        
+        if (snapshot != nil) {
+            
+            [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
+            
+        }
+        
+        if ([self.refreshControl isRefreshing]) {
+            [self.refreshControl endRefreshing];
+        }
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error: Failed to fetch counters with error:%@", error.localizedDescription);
+        
+    }];
+    
+}
 
 - (UIView *)viewForEmptyDataset {
     
