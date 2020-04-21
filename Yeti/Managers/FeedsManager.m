@@ -273,10 +273,6 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSDictionary *foldersStruct = [responseObject valueForKey:@"struct"];
     
-    ArticlesManager.shared.feeds = feeds;
-    
-    [MyDBManager setFeeds:feeds];
-    
     // create the folders map
     NSArray <Folder *> *folders = [[foldersStruct valueForKey:@"folders"] rz_map:^id(id obj, NSUInteger idxxx, NSArray *array) {
        
@@ -289,6 +285,10 @@ NSArray <NSString *> * _defaultsKeys;
     ArticlesManager.shared.folders = folders;
     
     [MyDBManager setFolders:folders];
+    
+    ArticlesManager.shared.feeds = feeds;
+    
+    [MyDBManager setFeeds:feeds];
     
     return feeds;
 }

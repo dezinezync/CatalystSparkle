@@ -820,7 +820,11 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
         
-        [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
+        if (ArticlesManager.shared.feedsWithoutFolders != nil && ArticlesManager.shared.feedsWithoutFolders.count > 0) {
+                
+            [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
+            
+        }
         
         NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
         [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];

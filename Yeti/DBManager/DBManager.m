@@ -75,8 +75,11 @@ NSString *const kNotificationsKey = @"notifications";
     if (self = [super init]) {
         
         [self setupDatabase];
-        [self loadFolders];
-        [self loadFeeds];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self loadFeeds];
+            [self loadFolders];
+        });
         
     }
     
@@ -221,7 +224,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (void)loadFolders {
     
-    NSMutableSet <Feed *> * mappedFeeds = [NSMutableSet new];
+//    NSMutableSet <Feed *> * mappedFeeds = [NSMutableSet new];
         
     [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
        
@@ -249,17 +252,19 @@ NSString *const kNotificationsKey = @"notifications";
                     
                     [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
                         
-                        Feed *feed = [transaction objectForKey:objx.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+                        Feed *feed = [ArticlesManager.shared feedForID:objx];
                         
                         if (feed != nil) {
                             
                             [allFeeds addObject:feed];
+                            feed.folderID = folder.folderID;
                             
                         }
                         
                     }];
                     
                     [folder.feeds addObjectsFromArray:allFeeds];
+//                    [mappedFeeds addObjectsFromArray:allFeeds];
                     
                 }
                 
@@ -279,32 +284,32 @@ NSString *const kNotificationsKey = @"notifications";
     NSLog(@"Fetched feeds from local cache");
 #endif
     
-    // Now we can setup Feeds without Folders
-    if (mappedFeeds.count == ArticlesManager.shared.feeds.count) {
-        // both are the same, so all are mapped.
-#ifdef DEBUG
-        NSLog(@"No feeds without folders");
-#endif
-    }
-    else {
-        
-        NSMutableOrderedSet *unmappedFeeds = [NSMutableOrderedSet orderedSetWithArray:ArticlesManager.shared.feeds];
-        
-        [unmappedFeeds removeObjectsInArray:mappedFeeds.allObjects];
-        
-        if (unmappedFeeds.count > 0) {
-            
-            NSArray *unmappedObjects = unmappedFeeds.objectEnumerator.allObjects;
-            
-            if (unmappedObjects != nil) {
-                
-                [ArticlesManager.shared setValue:unmappedObjects forKeyPath:propSel(feedsWithoutFolders)];
-                
-            }
-                
-        }
-        
-    }
+//    // Now we can setup Feeds without Folders
+//    if (mappedFeeds.count == ArticlesManager.shared.feeds.count) {
+//        // both are the same, so all are mapped.
+//#ifdef DEBUG
+//        NSLog(@"No feeds without folders");
+//#endif
+//    }
+//    else {
+//
+//        NSMutableOrderedSet *unmappedFeeds = [NSMutableOrderedSet orderedSetWithArray:ArticlesManager.shared.feeds];
+//
+//        [unmappedFeeds removeObjectsInArray:mappedFeeds.allObjects];
+//
+//        if (unmappedFeeds.count > 0) {
+//
+//            NSArray *unmappedObjects = unmappedFeeds.objectEnumerator.allObjects;
+//
+//            if (unmappedObjects != nil) {
+//
+//                [ArticlesManager.shared setValue:unmappedObjects forKeyPath:propSel(feedsWithoutFolders)];
+//
+//            }
+//
+//        }
+//
+//    }
     
 }
 
@@ -1035,5 +1040,19 @@ NSString *const kNotificationsKey = @"notifications";
                                                       userInfo:userInfo];
 }
 
+#pragma mark - Bulk Operations
+
+- (void)purgeDataForResync {
+    
+    /* during a re-sync, we remove all local refs to feeds and folders. */
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+       
+        [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
+        [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
+        
+    }];
+    
+}
 
 @end

@@ -166,7 +166,7 @@
                             
                             UIStepper *stepper = [[UIStepper alloc] init];
                             stepper.minimumValue = 9;
-                            stepper.maximumValue = 21;
+                            stepper.maximumValue = 23;
                             stepper.value = value;
                         
                             BOOL settingValue = SharedPrefs.useSystemSize;

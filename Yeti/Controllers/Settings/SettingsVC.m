@@ -340,6 +340,8 @@ NSString* deviceName() {
             
             ArticlesManager.shared.feeds = nil;
             
+            [DBManager.sharedInstance purgeDataForResync];
+            
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 
 //                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];

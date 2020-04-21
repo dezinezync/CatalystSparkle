@@ -44,11 +44,18 @@ static ArticlesManager * SharedArticleManager = nil;
 
 - (NSArray <Feed *> *)feedsWithoutFolders {
     
-   NSArray <Feed *> * feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-        return obj.folderID == nil;
-    }];
+    if (_feedsWithoutFolders == nil) {
+        
+        NSArray <Feed *> * feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            return obj.folderID == nil;
+        }];
+        
+        _feedsWithoutFolders = feeds;
+        
+    }
     
-    return feeds;
+    return _feedsWithoutFolders;
+        
 }
 
 - (NSArray <FeedItem *> *)bookmarks {
@@ -145,6 +152,7 @@ static ArticlesManager * SharedArticleManager = nil;
     
     @synchronized (self) {
         ArticlesManager.shared->_feeds = feeds ?: @[];
+        ArticlesManager.shared->_feedsWithoutFolders = nil;
     }
     
     // calling this invalidates the pointers we store in folders.

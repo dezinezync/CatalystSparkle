@@ -157,8 +157,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [self.collectionView registerClass:DetailFeedHeaderView.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView];
     
     // Do any additional setup after loading the view.
-    if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
+    if ([self respondsToSelector:@selector(author)]
+        || (self.feed.authors && self.feed.authors.count > 1)
+        || self.feed.summary || self.feed.extra.summary) {
+        
         self->_shouldShowHeader = YES;
+        
     }
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -532,14 +536,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
     
-    NSDictionary *attributes = @{NSFontAttributeName: [TypeFactory shared].bodyFont,
+    UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    
+    NSDictionary *attributes = @{NSFontAttributeName: font,
                                  NSForegroundColorAttributeName: theme.subtitleColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
-    attributes = @{NSFontAttributeName: [TypeFactory.shared boldBodyFont],
+    attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
                    NSForegroundColorAttributeName: theme.titleColor,
                    NSParagraphStyleAttributeName: para
                    };
@@ -1479,14 +1485,30 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     if (self->_shouldShowHeader == YES) {
         
-        NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
-
-        NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
+        FeedHeaderView *view = [[FeedHeaderView alloc] initWithNib];
+        view.frame = CGRectMake(0, 0, self.view.bounds.size.width, 0.f);
+        [view setupAppearance];
+        [view configure:self.feed];
         
-        boundryItem.zIndex = 10;
+        CGSize size = [view intrinsicContentSize];
+        
+        if (size.height == 0.f) {
+            
+            self->_shouldShowHeader = NO;
+            
+        }
+        else {
+            
+            NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:ceil(size.height)]];
 
-        layoutSection.boundarySupplementaryItems = @[boundryItem];
-        layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(90.f, 0, 0, 0);
+            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
+            
+            boundryItem.zIndex = 10;
+
+            layoutSection.boundarySupplementaryItems = @[boundryItem];
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(ceil(size.height) + 1, 0, 0, 0);
+            
+        }
         
     }
 

@@ -71,7 +71,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     if (!_footerSizingLabel) {
         UILabel *label = [UILabel new];
         label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
-        label.font = TypeFactory.shared.footnoteFont;
+        label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         label.numberOfLines = 0;
         
         _footerSizingLabel = label;

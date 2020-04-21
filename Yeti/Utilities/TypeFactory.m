@@ -103,7 +103,31 @@ static TypeFactory * sharedTypeFactory;
         
         NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
         
-        font = isSystemFont ? [UIFont systemFontOfSize:MAX(font.pointSize, pointSize)] : [UIFont fontWithName:fontName size:MAX(font.pointSize, pointSize)];
+        UIFontWeight weight = UIFontWeightRegular;
+        
+        if ([style isEqualToString:UIFontTextStyleHeadline]) {
+            weight = UIFontWeightSemibold;
+        }
+        
+        if (isSystemFont) {
+            
+            font = [UIFont systemFontOfSize:MAX(font.pointSize, pointSize) weight:weight];
+            
+        }
+        else {
+            
+            font = [UIFont fontWithName:fontName size:MAX(font.pointSize, pointSize)];
+            
+            if (weight == UIFontWeightSemibold) {
+                
+                UIFontDescriptor *descriptor = [font fontDescriptor];
+                descriptor = [descriptor fontDescriptorByAddingAttributes:@{UIFontDescriptorTraitsAttribute: @{UIFontWeightTrait: @(weight)}}];
+                
+                font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
+                
+            }
+            
+        }
         
     }
     
@@ -168,6 +192,7 @@ static TypeFactory * sharedTypeFactory;
         self->_firingSelfNotification = YES;
         
         [[NSNotificationCenter defaultCenter] postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
+        
     });
     
 }
@@ -205,15 +230,12 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)titleFont {
     
     UIFontTextStyle const style = UIFontTextStyleHeadline;
-    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 32.f : floor(SharedPrefs.fontSize  * 32.f / 17.f);
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 17.f : SharedPrefs.fontSize;
     
     if (_titleFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _titleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _titleFont = [UIFont preferredFontForTextStyle:style];
-        }
+        
+        _titleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
+        
     }
     
     return _titleFont;
@@ -226,12 +248,7 @@ static TypeFactory * sharedTypeFactory;
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 13.f : floor(SharedPrefs.fontSize  * 13.f / 17.f);
     
     if (_caption1Font == nil) {
-        if (IS_PAD(self.rootController)) {
-            _caption1Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _caption1Font = [UIFont preferredFontForTextStyle:style];
-        }
+        _caption1Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
     
     return _caption1Font;
@@ -245,12 +262,7 @@ static TypeFactory * sharedTypeFactory;
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 12.f : floor(SharedPrefs.fontSize  * 12.f / 17.f);
     
     if (_caption2Font == nil) {
-        if (IS_PAD(self.rootController)) {
-            _caption2Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _caption2Font = [UIFont preferredFontForTextStyle:style];
-        }
+        _caption2Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
     
     return _caption2Font;
@@ -263,12 +275,7 @@ static TypeFactory * sharedTypeFactory;
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 11.f : floor(SharedPrefs.fontSize  * 11.f / 17.f);
 
     if (_footnoteFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _footnoteFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _footnoteFont = [UIFont preferredFontForTextStyle:style];
-        }
+        _footnoteFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
 
     return _footnoteFont;
@@ -281,12 +288,7 @@ static TypeFactory * sharedTypeFactory;
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / 17.f);
     
     if (_subtitleFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _subtitleFont = [UIFont preferredFontForTextStyle:style];
-        }
+        _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
     
     return _subtitleFont;

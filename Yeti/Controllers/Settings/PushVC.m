@@ -322,14 +322,16 @@
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
     
-    NSDictionary *attributes = @{NSFontAttributeName: [TypeFactory shared].bodyFont,
+    UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    
+    NSDictionary *attributes = @{NSFontAttributeName: font,
                                  NSForegroundColorAttributeName: theme.subtitleColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
-    attributes = @{NSFontAttributeName: [TypeFactory.shared boldBodyFont],
+    attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
                    NSForegroundColorAttributeName: theme.titleColor,
                    NSParagraphStyleAttributeName: para
                    };

@@ -70,6 +70,10 @@ extern DBManager * MyDBManager;
 
 @property (nonatomic, strong) YapDatabaseCloudCore *cloudCoreExtension;
 
+#pragma mark - Bulk Operations 
+
+- (void)purgeDataForResync;
+
 @end
 
 NS_ASSUME_NONNULL_END

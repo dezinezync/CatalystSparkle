@@ -38,7 +38,7 @@
         self.etag = [decoder decodeObjectOfClass:NSString.class forKey:@"etag"];
         self.favicon = [decoder decodeObjectOfClass:NSString.class forKey:@"favicon"];
         self.feedID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"feedID"];
-        self.folderID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"folderID"];
+        self.folderID = [decoder decodeObjectOfClass:NSNumber.class forKey:propSel(folderID)];
         self.articles = [decoder decodeObjectOfClass:NSArray.class forKey:@"articles"];
         self.summary = [decoder decodeObjectOfClass:NSString.class forKey:@"summary"];
         self.title = [decoder decodeObjectOfClass:NSString.class forKey:@"title"];

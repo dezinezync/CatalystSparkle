@@ -277,7 +277,7 @@
     
     NSMutableDictionary *attributes = [NSMutableDictionary new];
     
-    UIFont *font = TypeFactory.shared.bodyFont;
+    UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     
     if (font != nil) {
         [attributes setObject:font forKey:NSFontAttributeName];
@@ -301,7 +301,7 @@
         
         attributes = [NSMutableDictionary new];
         
-        font = TypeFactory.shared.titleFont;
+        font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
         
         if (font != nil) {
             [attributes setObject:font forKey:NSFontAttributeName];

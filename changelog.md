@@ -1,5 +1,13 @@
 # v1.7.0
 
+## Build 340
+
+Final Release version.
+
+- Fixes a type bug on the iPad where the font sizes were comically large for titles. 
+
+- Fixes font sizes for the Feed description.
+
 ## Build 339
 
 RC 2 of v1.7. Fixes the syncing toolbar not appearing for most users. 

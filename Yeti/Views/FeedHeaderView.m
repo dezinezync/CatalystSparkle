@@ -99,8 +99,8 @@
     
     _feed = feed;
     
-    self.descriptionLabel.text = [feed.summary htmlToPlainText];
-    [self.descriptionLabel sizeToFit];
+    NSString *summary = feed.summary ?: feed.extra.summary;
+    summary = [summary htmlToPlainText];
     
     UIFont *font = nil;
     
@@ -109,6 +109,18 @@
     }
     else {
         font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+    }
+    
+    if (summary && [summary stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length != 0) {
+
+        self.descriptionLabel.text = summary;
+        [self.descriptionLabel sizeToFit];
+        
+    }
+    else {
+        
+        self.descriptionLabel.hidden = YES;
+        
     }
     
     if ([self.stackView arrangedSubviews].count) {
@@ -122,25 +134,36 @@
         
     }
     
-    for (Author *author in self.feed.authors) { @autoreleasepool {
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-        [button setTitle:author.name forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(didTapAuthorButton:) forControlEvents:UIControlEventTouchUpInside];
+    if (self.feed.authors != nil && self.feed.authors.count) {
         
-        button.titleLabel.font = font;
-        button.titleLabel.adjustsFontForContentSizeCategory = YES;
+        for (Author *author in self.feed.authors) { @autoreleasepool {
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+            [button setTitle:author.name forState:UIControlStateNormal];
+            [button addTarget:self action:@selector(didTapAuthorButton:) forControlEvents:UIControlEventTouchUpInside];
+            
+            button.titleLabel.font = font;
+            button.titleLabel.adjustsFontForContentSizeCategory = YES;
+            
+            [button sizeToFit];
+            
+            [self.stackView addArrangedSubview:button];
+        } }
         
-        [button sizeToFit];
-        
-        [self.stackView addArrangedSubview:button];
-    } }
+    }
+    else {
+        self.scrollView.hidden = YES;
+    }
     
     [self.stackView setNeedsUpdateConstraints];
     [self.stackView layoutIfNeeded];
     
-    self.scrollView.contentSize = [self.stackView sizeThatFits:CGSizeMake(self.bounds.size.width-32.f, CGFLOAT_MAX)];
-    
-    [self scrollViewDidScroll:self.scrollView];
+    if ([self.scrollView isHidden] == NO) {
+        
+        self.scrollView.contentSize = [self.stackView sizeThatFits:CGSizeMake(self.bounds.size.width-32.f, CGFLOAT_MAX)];
+        
+        [self scrollViewDidScroll:self.scrollView];
+        
+    }
     
 }
 
@@ -151,11 +174,24 @@
     size.height = MAX(0, size.height);
     
     size.width = self.bounds.size.width - 32.f;
-    size.height += [self.descriptionLabel sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
     
-    size.height += [self.stackView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
+    if (self.descriptionLabel.isHidden == NO) {
+        
+        size.height += [self.descriptionLabel sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
+        
+    }
     
-    size.height += 24.f;
+    if (self.scrollView.isHidden == NO) {
+        
+        size.height += [self.stackView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
+        
+    }
+    
+    if (self.scrollView.isHidden == NO || self.descriptionLabel.isHidden == NO) {
+        
+        size.height += 24.f;
+        
+    }
     
     return size;
 }

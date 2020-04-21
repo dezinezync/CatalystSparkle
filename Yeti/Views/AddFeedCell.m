@@ -13,8 +13,6 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZTextKit/NSString+ImageProxy.h>
 
-#import "TypeFactory.h"
-
 NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
 
 @interface AddFeedCell ()

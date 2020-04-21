@@ -16,7 +16,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import "TypeFactory.h"
 #import <DZTextKit/NSString+ImageProxy.h>
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
@@ -65,7 +64,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.backgroundColor = theme.cellColor;
 
     self.titleLabel.textColor = theme.titleColor;
-    self.titleLabel.font = [TypeFactory.shared titleFont];
+    self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
     self.countLabel.textColor = theme.unreadTextColor;
