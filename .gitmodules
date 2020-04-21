@@ -24,6 +24,7 @@
 	url = git@github.com:dezinezync/YapDatabase.git
 [submodule "Yeti/Vendors/DZTextKit"]
 	path = Yeti/Vendors/DZTextKit
+	url = git@github.com:dezinezync/DZTextKit.git
 [submodule "Yeti/Vendors/WebPImageSerialization"]
 	path = Yeti/Vendors/WebPImageSerialization
 	url = https://github.com/mattt/WebPImageSerialization.git
