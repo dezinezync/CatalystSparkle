@@ -58,7 +58,7 @@
 
 #pragma mark - Opening URLs
 
-- (void)openLinkExternally:(NSString *)link;
+- (void)openLinkExternally:(NSString * _Nullable)link;
 
 #pragma mark - Private
 

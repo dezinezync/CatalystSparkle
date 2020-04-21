@@ -16,7 +16,7 @@
 #import "FeedsVC.h"
 #import "DetailFeedVC.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>

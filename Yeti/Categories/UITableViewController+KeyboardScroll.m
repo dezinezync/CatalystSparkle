@@ -43,9 +43,9 @@ static char highlightedRowKey;
 
 - (void)didTapPrev {
     
-    SEL unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"dW5oaWdobGlnaHRSb3dBdEluZGV4UGF0aDphbmltYXRlZDo=" options:kNilOptions] encoding:NSUTF8StringEncoding]);
-    
-    SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+//    SEL unhighlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"dW5oaWdobGlnaHRSb3dBdEluZGV4UGF0aDphbmltYXRlZDo=" options:kNilOptions] encoding:NSUTF8StringEncoding]);
+//    
+//    SEL highlight = NSSelectorFromString([[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:@"aGlnaGxpZ2h0Um93QXRJbmRleFBhdGg6YW5pbWF0ZWQ6c2Nyb2xsUG9zaXRpb246" options:kNilOptions] encoding:NSUTF8StringEncoding]);
     
     NSIndexPath *indexPath = self.highlightedRow;
     NSInteger section = indexPath ? indexPath.section : 0;

@@ -21,6 +21,7 @@
 #import "YetiConstants.h"
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
+#import "NSString+ImageProxy.h"
 
 @interface Image () <UIContextMenuInteractionDelegate>
 
@@ -32,6 +33,9 @@
 - (UIMenu *)makeMenuForPoint:(CGPoint)location suggestions:suggestedActions API_AVAILABLE(ios(13.0));
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location API_AVAILABLE(ios(13.0));
+
+@property (nonatomic, weak) UIImageView * GIFPreviewImageView;
+@property (nonatomic, weak) UIButton *GIFButton;
 
 @end
 
@@ -114,6 +118,46 @@
     }
     
     _imageView = (SizedImage *)imageView;
+    
+    /*
+     * Now we additionally setup the cover image if the user is using an image proxy. 
+     */
+    
+    if (PrefsManager.sharedInstance.imageProxy == YES) {
+        
+        NSString *url = [[self.URL absoluteString] pathForImageProxy:NO maxWidth:imageView.bounds.size.width quality:0.9 firstFrameForGIF:YES];
+#ifdef DEBUG
+        NSLog(@"Image: [GIF] > First frame URL: %@", url);
+#endif
+        
+        if (url != nil && [url isEqualToString:self.URL.absoluteString] == NO) {
+            
+            // we have a first frame URL from the image proxy. Let's use it.
+            UIImageView *previewImageView = [[UIImageView alloc] initWithFrame:imageView.bounds];
+            previewImageView.contentMode = UIViewContentModeScaleAspectFit;
+            previewImageView.translatesAutoresizingMaskIntoConstraints = NO;
+            imageView.backgroundColor = UIColor.clearColor;
+            
+            if (self.GIFButton != nil) {
+                [self insertSubview:previewImageView belowSubview:self.GIFButton];
+            }
+            else {
+                [self addSubview:previewImageView];
+            }
+            
+            [previewImageView.topAnchor constraintEqualToAnchor:self.topAnchor constant:0].active = YES;
+            [previewImageView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:0].active = YES;
+            [previewImageView setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+            [previewImageView.widthAnchor constraintEqualToAnchor:self.widthAnchor constant:0.f].active = YES;
+            
+            self.GIFPreviewImageView = previewImageView;
+            
+            [self.GIFPreviewImageView il_setImageWithURL:[NSURL URLWithString:url]];
+            
+        }
+        
+    }
+    
 }
 
 #pragma mark -
@@ -228,6 +272,10 @@
     [gifButton setTitle:@"  Loading..." forState:UIControlStateDisabled];
     gifButton.titleLabel.font = [UIFont systemFontOfSize:13.f];
     
+    if (@available(iOS 13.4, *)) {
+        gifButton.pointerInteractionEnabled = YES;
+    }
+    
     [gifButton setImage:[[UIImage imageNamed:@"gif"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [gifButton sizeToFit];
     
@@ -235,6 +283,9 @@
     [gifButton.heightAnchor constraintEqualToConstant:gifButton.bounds.size.height + 8.f].active = YES;
     
     [self addSubview:gifButton];
+    
+    self.GIFButton = gifButton;
+    
     [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
     
     if (UIApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
@@ -264,6 +315,10 @@
     startStopButton.translatesAutoresizingMaskIntoConstraints = NO;
     startStopButton.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.3];
     startStopButton.layer.cornerRadius = 3.f;
+    
+    if (@available(iOS 13.4, *)) {
+        startStopButton.pointerInteractionEnabled = YES;
+    }
     
     [startStopButton setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
     [startStopButton sizeToFit];
@@ -316,6 +371,11 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (self.GIFPreviewImageView != nil) {
+                [self.GIFPreviewImageView removeFromSuperview];
+            }
+            
             [sender removeFromSuperview];
         });
         
@@ -332,11 +392,15 @@
 - (void)didTapStartStop:(UIButton *)sender {
     
     if ([NSThread isMainThread] == NO) {
+        
         weakify(self);
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             [self didTapStartStop:sender];
         });
+        
+        return;
     }
     
     if (self.isAnimating) {

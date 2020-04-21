@@ -8,22 +8,21 @@
 
 #import "ArticleCellB.h"
 #import "NSDate+DateTools.h"
-#import "NSString+HTML.h"
-#import "Paragraph.h"
-#import "CheckWifi.h"
+#import <DZTextKit/NSString+HTML.h>
+#import <DZTextKit/Paragraph.h>
+#import <DZTextKit/CheckWifi.h>
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "FeedsManager.h"
-#import "TypeFactory.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "YetiThemeKit.h"
-#import "NSString+ImageProxy.h"
-#import "UIImage+Sizing.h"
-#import "UIColor+Hex.h"
+#import <DZTextKit/NSString+ImageProxy.h>
+#import <DZTextKit/UIImage+Sizing.h>
+#import <DZTextKit/UIColor+Hex.h>
 
 #import <PopMenu/PopMenu-Swift.h>
 
@@ -141,7 +140,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
 //        stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
-        insets.top = [TypeFactory.shared titleFont].pointSize / 2.f;
+        insets.top = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline].pointSize / 2.f;
         stackView.layoutMargins = insets;
         
         stackView.layoutMarginsRelativeArrangement = YES;
@@ -155,14 +154,21 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
 //        stackView = (UIStackView *)[self.faviconView superview];
         UIEdgeInsets insets = stackView.layoutMargins;
-        insets.top = self.feedType == FeedTypeFeed ? ([TypeFactory.shared titleFont].pointSize / 3.f) : 0;
+        insets.top = self.feedType == FeedTypeFeed ? ([UIFont preferredFontForTextStyle:UIFontTextStyleHeadline].pointSize / 3.f) : 0;
         stackView.layoutMargins = insets;
         
         stackView.layoutMarginsRelativeArrangement = self.feedType == FeedTypeFeed;
     }
     
     // if it's a micro blog post, use the normal font
-    self.titleLabel.font = self.item.content && self.item.content.count ? [TypeFactory.shared bodyFont] : [TypeFactory.shared titleFont];
+    
+    BOOL isMicroBlog = self.item.content && self.item.content.count;
+    
+    if (self.item.isBookmarked && [self.item.articleTitle isBlank] == NO) {
+        isMicroBlog = NO;
+    }
+    
+    self.titleLabel.font = isMicroBlog ? [UIFont preferredFontForTextStyle:UIFontTextStyleBody] : [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     
     self.titleLabel.textColor         = theme.titleColor;
     self.timeLabel.textColor          = theme.subtitleColor;
@@ -208,7 +214,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     self.markerView.image = nil;
     
 //    self.faviconView.hidden = NO;
-    self.titleLabel.font = [TypeFactory.shared titleFont];
+    self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     
     self.backgroundView.alpha = 0.f;
     self.separatorView.hidden = YES;
@@ -479,7 +485,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
             isMicroBlogPost = YES;
             
             self.titleLabel.text = content.content;
-            self.titleLabel.font = [TypeFactory.shared bodyFont];
+            self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
             self.titleLabel.textColor = [[YTThemeKit theme] titleColor];
         }
     }
@@ -585,7 +591,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         }
         
         UIEdgeInsets margins = [stackView layoutMargins];
-        margins.top = ceil([TypeFactory.shared titleFont].pointSize/2.f) + 4.f;
+        margins.top = ceil([UIFont preferredFontForTextStyle:UIFontTextStyleHeadline].pointSize/2.f) + 4.f;
         
         stackView.layoutMargins = margins;
         

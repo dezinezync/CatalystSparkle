@@ -1,11 +1,6 @@
 #import "Feed.h"
 #import "FeedItem.h"
 
-#ifndef DDLogError
-#import <DZKit/DZLogger.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#endif
-
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 
@@ -39,11 +34,11 @@
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
-        self.authors = [decoder decodeObjectOfClass:NSArray.class forKey:@"authors"];
+        self.authors = [decoder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Author.class]] forKey:propSel(authors)];
         self.etag = [decoder decodeObjectOfClass:NSString.class forKey:@"etag"];
         self.favicon = [decoder decodeObjectOfClass:NSString.class forKey:@"favicon"];
         self.feedID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"feedID"];
-        self.folderID = [decoder decodeObjectOfClass:NSNumber.class forKey:@"folderID"];
+        self.folderID = [decoder decodeObjectOfClass:NSNumber.class forKey:propSel(folderID)];
         self.articles = [decoder decodeObjectOfClass:NSArray.class forKey:@"articles"];
         self.summary = [decoder decodeObjectOfClass:NSString.class forKey:@"summary"];
         self.title = [decoder decodeObjectOfClass:NSString.class forKey:@"title"];
@@ -128,13 +123,16 @@
 - (void)setValue:(id)value forKey:(NSString *)key
 {
     
-    if ([value isKindOfClass:NSDate.class]) {
-        
-    }
+//    if ([value isKindOfClass:NSDate.class]) {
+//
+//    }
     
     if ([key isEqualToString:@"hubSubscribed"]) {
         if (!value)
             value = @(NO);
+    }
+    else if ([key isEqualToString:@"url"] && (value && [value isKindOfClass:NSURL.class])) {
+        value = [(NSURL *)value absoluteString];
     }
     
     if ([key isEqualToString:@"unread"]) {

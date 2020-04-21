@@ -14,7 +14,6 @@
 #import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
-#import "TypeFactory.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -59,7 +58,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     self.backgroundColor = theme.cellColor;
     
     self.titleLabel.textColor = theme.titleColor;
-    self.titleLabel.font = [TypeFactory.shared titleFont];
+    self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     
     self.countLabel.backgroundColor = theme.unreadBadgeColor;
     self.countLabel.textColor = theme.unreadTextColor;

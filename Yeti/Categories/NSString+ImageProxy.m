@@ -13,7 +13,23 @@
 
 - (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality {
     
+    return [self pathForImageProxy:usedSRCSet maxWidth:maxWidth quality:quality firstFrameForGIF:NO];
+    
+}
+
+- (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality firstFrameForGIF:(BOOL)firstFrameForGIF {
+    
     NSString *copy = [self copy];
+    
+    if ([copy containsString:@".gif"] && firstFrameForGIF == NO) {
+        /*
+         * weserv.nl does not support gifs properly as of 29/03/2020.
+         * It returns the first frame from the GIF.
+         * So we do not use it to proxy images.
+         * We do however use it to fetch the first frame of the gif.
+         */
+        return copy;
+    }
     
     maxWidth = maxWidth ?: [UIScreen mainScreen].bounds.size.width;
     

@@ -97,6 +97,10 @@
     
     weakify(self);
     
+    if ([params[@"page"] integerValue] > 1) {
+        params[@"total"] = @(self.total);
+    }
+    
     [MyFeedsManager.session GET:self.path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);

@@ -19,7 +19,7 @@
 #import "FeedsManagerErrors.h"
 #import "ChangeSet.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "ArticlesManager.h"
 #import "BookmarksManager.h"
 
@@ -57,6 +57,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (atomic, assign) NSInteger totalUnread;
 
+@property (atomic, assign) NSInteger totalToday;
+
 #pragma mark - Networking
 
 @property (nonatomic, strong, readonly) Reachability * _Nonnull reachability;
@@ -69,6 +71,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 #pragma mark Networking APIs
 #pragma mark - Feeds
 
+- (void)getCountersWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 - (void)getFeedsWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
@@ -77,11 +81,13 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)addFeed:(NSURL * _Nonnull)url success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)_checkYoutubeFeed:(NSURL * _Nonnull)url success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
 - (void)addFeedByID:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)getArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+- (void)getArticle:(NSNumber * _Nonnull)articleID feedID:(NSNumber * _Nullable)feedID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)getMercurialArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -160,6 +166,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)getSync:(NSString * _Nonnull)token success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)syncSettings;
+
+- (void)getSyncArticles:(NSDictionary * _Nonnull)params success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 #pragma mark - Search
 

@@ -9,10 +9,10 @@
 #import "AccountVC.h"
 #import "SettingsCell.h"
 #import "FeedsManager.h"
-#import "UIColor+HEX.h"
+#import <DZTextKit/UIColor+HEX.h>
 
-#import "LayoutConstants.h"
-#import "YetiConstants.h"
+#import <DZTextKit/LayoutConstants.h>
+#import <DZTextKit/YetiConstants.h>
 #import "YetiThemeKit.h"
 #import "AccountFooterView.h"
 #import "DZWebViewController.h"
@@ -21,7 +21,7 @@
 #import "SplitVC.h"
 
 #import "StoreVC.h"
-#import "PaddedLabel.h"
+#import <DZTextKit/PaddedLabel.h>
 
 #import <AuthenticationServices/AuthenticationServices.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>

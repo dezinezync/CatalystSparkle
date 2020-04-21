@@ -12,7 +12,7 @@
 
 #import "RMStore.h"
 #import "UIImage+Color.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -83,6 +83,11 @@
     self.subtitleLabel.textColor = theme.subtitleColor;
     
     [self getProducts];
+    
+#ifdef DEBUG
+    [self setButtonsState:YES];
+#endif
+    
 }
 
 #pragma mark - Actions

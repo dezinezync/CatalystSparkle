@@ -82,7 +82,7 @@
     
     if (!_paragraphStyle) {
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        style.lineHeightMultiple = 1.125f;
+        style.lineHeightMultiple = SharedPrefs.lineSpacing;
         _paragraphStyle = style;
     }
     
@@ -122,7 +122,7 @@
     NSArray <NSNumber *> * const scales = @[@(2.2f), @(1.8f), @(1.6f), @(1.4f), @(1.2f), @(1.f)];
     CGFloat scale = [scales[level - 1] floatValue];
     
-    ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    ArticleLayoutFont fontPref = SharedPrefs.paraTitleFont ?: SharedPrefs.articleFont;
     CGFloat fontSize = 16 * scale;
     
     UIFont * bodyFont = [UIFont boldSystemFontOfSize:fontSize];

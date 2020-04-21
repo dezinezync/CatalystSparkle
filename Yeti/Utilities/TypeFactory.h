@@ -11,8 +11,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSNotificationName UserUpdatedPreferredFontMetrics;
-
 @interface TypeFactory : NSObject
 
 + (instancetype)shared;

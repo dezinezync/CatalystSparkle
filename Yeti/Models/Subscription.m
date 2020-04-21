@@ -9,7 +9,7 @@
 #import "Subscription.h"
 #import <DZKit/DZCloudObject.h>
 #import "FeedsManager.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 @implementation Subscription

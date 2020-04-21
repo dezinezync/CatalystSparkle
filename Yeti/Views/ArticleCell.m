@@ -8,11 +8,11 @@
 
 #import "ArticleCell.h"
 #import "NSDate+DateTools.h"
-#import "NSString+HTML.h"
-#import "Paragraph.h"
-#import "CheckWifi.h"
+#import <DZTextKit/NSString+HTML.h>
+#import <DZTextKit/Paragraph.h>
+#import <DZTextKit/CheckWifi.h>
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "FeedsManager.h"
 
 #import <DZKit/NSString+Extras.h>

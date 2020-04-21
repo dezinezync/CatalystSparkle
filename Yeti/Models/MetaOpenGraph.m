@@ -21,11 +21,11 @@
 {
     if ((self = [super initWithCoder:decoder])) {
 //        self.descriptionText = [decoder decodeObjectForKey:@"descriptionText"];
-        self.image = [decoder decodeObjectForKey:@"image"];
-        self.locale = [decoder decodeObjectForKey:@"locale"];
+        self.image = [decoder decodeObjectOfClass:NSString.class forKey:@"image"];
+        self.locale = [decoder decodeObjectOfClass:NSString.class forKey:@"locale"];
 //        self.title = [decoder decodeObjectForKey:@"title"];
 //        self.type = [decoder decodeObjectForKey:@"type"];
-        self.url = [decoder decodeObjectForKey:@"url"];
+        self.url = [decoder decodeObjectOfClass:NSURL.class forKey:@"url"];
     }
     return self;
 }

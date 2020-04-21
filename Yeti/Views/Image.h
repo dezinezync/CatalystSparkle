@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Content.h"
+#import <DZTextKit/Content.h>
 #import <FLAnimatedImage/FLAnimatedImageView.h>
 
 @interface SizedImage : UIImageView

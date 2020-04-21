@@ -9,7 +9,7 @@
 #import "AppDelegate+Routing.h"
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "YetiThemeKit.h"
 
 #import "FeedsVC.h"
@@ -362,6 +362,11 @@
     @try {
         if (ArticlesManager.shared != nil && ArticlesManager.shared.feeds != nil) {
             for (Feed *item in ArticlesManager.shared.feeds) { @autoreleasepool {
+                
+                if (item.url && [item.url isKindOfClass:NSURL.class]) {
+                    item.url = [(NSURL *)url absoluteString];
+                }
+                
                 if ([item.url isEqualToString:url.absoluteString]) {
                     have = item;
                     break;
@@ -379,73 +384,94 @@
     }
     
     NSTimeInterval delay = [self popRootToRoot];
+    
     weakify(self);
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         strongify(self);
         [self _showAddingFeedDialog];
     });
     
-    [MyFeedsManager addFeed:url success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    if ([url.absoluteString containsString:@"youtube.com"] == YES && [url.absoluteString containsString:@"videos.xml"] == NO) {
         
-        // check again if we have the feed
-        BOOL haveItem = NO;
-        if (responseObject != nil && [responseObject isKindOfClass:Feed.class]) {
-            for (Feed *item in ArticlesManager.shared.feeds) {
-                if ([item.title isEqualToString:responseObject.title]) {
-                    haveItem = YES;
-                    break;
+        [MyFeedsManager _checkYoutubeFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (responseObject != nil && [responseObject isKindOfClass:NSString.class]) {
+                responseObject = [NSURL URLWithString:responseObject];
+            }
+            
+            [self addFeed:responseObject];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:@"An error occurred when trying to fetch the Youtube URL."];
+            
+        }];
+        
+    }
+    else {
+        [MyFeedsManager addFeed:url success:^(Feed *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            // check again if we have the feed
+            BOOL haveItem = NO;
+            if (responseObject != nil && [responseObject isKindOfClass:Feed.class]) {
+                for (Feed *item in ArticlesManager.shared.feeds) {
+                    if ([item.title isEqualToString:responseObject.title]) {
+                        haveItem = YES;
+                        break;
+                    }
                 }
             }
-        }
-        
-        strongify(self);
-        
-        [self _dismissAddingFeedDialog];
-        
-        if (!haveItem) {
-            // we don't have it.
-            ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
+            
+            strongify(self);
+            
+            [self _dismissAddingFeedDialog];
+            
+            if (!haveItem) {
+                // we don't have it.
+                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
+                
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [self.notificationGenerator prepare];
+                });
+                
+            }
+            else {
+                
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                    [self.notificationGenerator prepare];
+                });
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+                });
+            }
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            [self _dismissAddingFeedDialog];
             
             weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
                 strongify(self);
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                [self.notificationGenerator prepare];
-            });
-            
-        }
-        else {
-            
-            weakify(self);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                strongify(self);
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeWarning];
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
                 [self.notificationGenerator prepare];
             });
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [AlertManager showGenericAlertWithTitle:@"Feed Exists" message:formattedString(@"You are already subscribed to %@", responseObject.title)];
+                [AlertManager showGenericAlertWithTitle:@"Error Adding Feed" message:error.localizedDescription];
             });
-        }
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        [self _dismissAddingFeedDialog];
-        
-        weakify(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            strongify(self);
-            [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-            [self.notificationGenerator prepare];
-        });
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [AlertManager showGenericAlertWithTitle:@"Error Adding Feed" message:error.localizedDescription];
-        });
-        
-    }];
+            
+        }];
+    }
     
     return YES;
 }
@@ -550,13 +576,10 @@
     
     weakify(self);
     
-    __block BOOL isFolder = NO;
-    __block BOOL isFolderExpanded = NO;
-    __block NSUInteger folderIndex = NSNotFound;
-    __block Folder *checkFolder = nil;
+    TOSplitViewController *splitVC = (id)UIApplication.keyWindow.rootViewController;
     
     // get the primary navigation controller
-    YTNavigationController *nav = [[(UISplitViewController *)[UIApplication.keyWindow rootViewController] viewControllers] firstObject];
+    UINavigationController *nav = (id)splitVC.viewControllers.firstObject;
     
     if ([[nav topViewController] isKindOfClass:DetailFeedVC.class]) {
         // check if the current topVC is the same feed
@@ -574,6 +597,49 @@
         }
     }
     
+    if (splitVC.secondaryViewController && [splitVC.secondaryViewController isKindOfClass:UINavigationController.class] == YES) {
+        
+        DetailFeedVC *feedVC = (id)[(UINavigationController *)[splitVC secondaryViewController] topViewController];
+        
+        if (feedVC != nil && [feedVC isKindOfClass:DetailFeedVC.class]) {
+            
+            if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
+                
+                if (articleID != nil) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        strongify(self);
+                        
+                        [self showArticle:articleID];
+                    });
+                }
+                
+                return;
+                
+            }
+            else if ([feedVC.collectionView indexPathsForSelectedItems].count > 0) {
+                
+                /*
+                 * The feedID is clearly different or is a custom feed. So deselect the selected items.
+                 */
+                
+                NSArray <NSIndexPath *> * selectedItems = [feedVC.collectionView indexPathsForSelectedItems];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    for (NSIndexPath *indexPath in selectedItems) {
+                        
+                        [feedVC.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+                        
+                    }
+                    
+                });
+                
+            }
+            
+        }
+        
+    }
+    
     [self popToRoot];
     
     FeedItem *item = [[FeedItem alloc] init];
@@ -582,97 +648,25 @@
     
     ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
     
+    UITraitCollection *rootTraits = self.window.rootViewController.traitCollection;
+    
+    if (rootTraits.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        && rootTraits.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        // show as detail
+        
+        UINavigationController *detailNav = [[UINavigationController alloc] initWithRootViewController:articleVC];
+        
+        TOSplitViewController * splitVC = (id)self.window.rootViewController;
+        
+        [splitVC to_showDetailViewController:detailNav sender:nav];
+        
+        return;
+        
+    }
+    
     [nav pushViewController:articleVC animated:YES];
     
-    return;
-    
-    FeedsVC *feedsVC = [[nav viewControllers] firstObject];
-    
-    UITableViewDiffableDataSource *DDS = [feedsVC valueForKeyPath:@"DDS"];
-    
-    NSArray * data = [DDS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
-    
-    if (!data || !data.count) {
-        weakify(self);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            [self openFeed:feedID article:articleID];
-        });
-        return;
-    }
-    
-    __block NSUInteger index = NSNotFound;
-    
-    [(NSArray <Feed *> *)data enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        
-        if ([obj isKindOfClass:Feed.class]) {
-            Feed *feed = obj;
-            
-            if ([feed.feedID isEqualToNumber:feedID]) {
-                index = idx;
-                *stop = YES;
-            }
-        }
-        else {
-            // folder
-            Folder *folder = obj;
-            
-            [folder.feeds.allObjects enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idxx, BOOL * _Nonnull stopx) {
-
-                if ([obj.feedID isEqualToNumber:feedID]) {
-                    index = idx;
-                    folderIndex = idxx;
-
-                    isFolder = YES;
-                    isFolderExpanded = folder.isExpanded;
-                    checkFolder = folder;
-
-                    *stop = YES;
-                    *stopx = YES;
-                }
-
-            }];
-        }
-        
-    }];
-    
-    if (index == NSNotFound)
-        return;
-    
-    // it is either not a folder
-    // or it's a folder and we need to expand it
-    if (!isFolder || (isFolder && !isFolderExpanded)) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:1];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-//            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-            FolderCell *cell = (FolderCell *)[feedsVC tableView:feedsVC.tableView cellForRowAtIndexPath:indexPath];
-            
-            if (cell && cell.interactionDelegate
-                && [cell.interactionDelegate respondsToSelector:@selector(didTapFolderIcon:cell:)]) {
-                [cell.interactionDelegate didTapFolderIcon:checkFolder cell:cell];
-            }
-        });
-    }
-    
-    // if it is a folder, it's expanded at this point
-    if (isFolder) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(index + folderIndex) inSection:1];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-//            [feedsVC.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-            [feedsVC tableView:feedsVC.tableView didSelectRowAtIndexPath:indexPath];
-        });
-    }
-    
-    if (articleID != nil) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            strongify(self);
-            
-            [self showArticle:articleID];
-        });
-    }
 }
 
 - (void)showArticle:(NSNumber *)articleID {
@@ -687,17 +681,17 @@
     
     DetailFeedVC *feedVC = nil;
     
-    UISplitViewController *splitVC;
+    TOSplitViewController *splitVC;
     UINavigationController *nav;
     
     @try {
-        splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
+        splitVC = (TOSplitViewController *)[UIApplication.keyWindow rootViewController];
         
         if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            nav = [[splitVC viewControllers] lastObject];
+            nav = (id)splitVC.secondaryViewController;
         }
         else {
-            nav = [[splitVC viewControllers] firstObject];
+            nav = (id)splitVC.primaryViewController;
         }
         
         feedVC = (DetailFeedVC *)[nav topViewController];

@@ -7,9 +7,10 @@
 //
 
 #import "ImageLoadingVC.h"
-#import "LayoutConstants.h"
-#import "YetiConstants.h"
+#import <DZTextKit/LayoutConstants.h>
+#import <DZTextKit/YetiConstants.h>
 #import "YetiThemeKit.h"
+#import "PrefsManager.h"
 
 #import <DZNetworking/ImageLoader.h>
 
@@ -70,7 +71,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     if (!_footerSizingLabel) {
         UILabel *label = [UILabel new];
         label.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0.f);
-        label.font = TypeFactory.shared.footnoteFont;
+        label.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         label.numberOfLines = 0;
         
         _footerSizingLabel = label;

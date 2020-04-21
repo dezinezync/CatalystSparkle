@@ -8,32 +8,21 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
-#import "Content.h"
 #import "DetailFeedVC.h"
-
-#import "Paragraph.h"
-#import "Heading.h"
-#import "Blockquote.h"
-#import "List.h"
-#import "Aside.h"
-#import "Youtube.h"
-#import "Image.h"
-#import "Gallery.h"
-#import "Linebreak.h"
-#import "Code.h"
-#import "Tweet.h"
 #import "ArticleAuthorView.h"
 
-#import "YetiConstants.h"
-#import "CheckWifi.h"
+#import <DZTextKit/Content.h>
+#import <DZTextKit/DZTextKitViews.h>
+#import <DZTextKit/YetiConstants.h>
+#import <DZTextKit/CheckWifi.h>
 
 #import <DZNetworking/UIImageView+ImageLoading.h>
-#import "NSAttributedString+Trimming.h"
+#import <DZTextKit/NSAttributedString+Trimming.h>
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
-#import "NSString+HTML.h"
+#import <DZTextKit/NSString+HTML.h>
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
@@ -44,7 +33,7 @@
 #import "YetiThemeKit.h"
 #import "YTPlayer.h"
 #import "YTExtractor.h"
-#import "NSString+ImageProxy.h"
+#import <DZTextKit/NSString+ImageProxy.h>
 
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
@@ -56,7 +45,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -374,7 +363,44 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Paragraph.paragraphStyle = nil;
     
+    UIGraphicsBeginImageContextWithOptions(self.scrollView.superview.bounds.size, YES, 0.0);
+    [self.scrollView drawViewHierarchyInRect:self.scrollView.superview.bounds afterScreenUpdates:NO];
+    UIImage * snapshot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    CGRect frame = self.scrollView.superview.bounds;
+    
+    UIImageView *snapshotView = [[UIImageView alloc] initWithFrame:frame];
+    snapshotView.image = snapshot;
+    snapshotView.alpha = 1;
+    
+    [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    Paragraph.tk_theme = theme;
+    Image.tk_theme = theme;
+    Gallery.tk_theme = theme;
+    
+    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    self.view.backgroundColor = theme.articleBackgroundColor;
+    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    
     [self setupArticle:self.currentArticle];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [UIView animateKeyframesWithDuration:0.3 delay:0 options:UIViewKeyframeAnimationOptionCalculationModeCubicPaced|UIViewKeyframeAnimationOptionBeginFromCurrentState animations:^{
+            
+            snapshotView.alpha = 0;
+            
+        } completion:^(BOOL finished) {
+            
+            [snapshotView removeFromSuperview];
+            
+        }];
+        
+    });
     
 }
 
@@ -636,7 +662,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    [MyFeedsManager getArticle:self.item.identifier success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getArticle:self.item.identifier feedID:self.item.feedID success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -938,7 +964,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     para.paragraphSpacingBefore = 0.f;
     para.paragraphSpacing = 0.f;
 
-    ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
+    ArticleLayoutFont fontPref = SharedPrefs.paraTitleFont ?: SharedPrefs.articleFont;
     CGFloat baseFontSize = 32.f;
 
     if (self.item.articleTitle.length > 24) {
@@ -1000,13 +1026,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:NSClassFromString(@"DetailFeedVC")] == NO)) {
         
         // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = authorView.tintColor;
+        authorView.blogLabel.textColor = theme.tintColor;
         [authorView.blogLabel setNeedsDisplay];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
         tap.numberOfTapsRequired = 1;
         tap.delaysTouchesBegan = YES;
         tap.delaysTouchesEnded = NO;
+        
+        if (@available(iOS 13.4, *)) {
+            
+            UIPointerInteraction *interaction = [[UIPointerInteraction alloc] initWithDelegate:self];
+            [authorView.blogLabel addInteraction:interaction];
+            
+        }
         
         [authorView.blogLabel addGestureRecognizer:tap];
         
@@ -1254,8 +1287,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)addParagraph:(Content *)content caption:(BOOL)caption {
     
-    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
+    if ([_last isMemberOfClass:Paragraph.class]
+        && !caption) {
+        // check if we have a duplicate
+        Paragraph *lastPara = (Paragraph *)_last;
+        
+        if(lastPara.isCaption && ([lastPara.text isEqualToString:content.content] || [lastPara.attributedText.string isEqualToString:content.content])) {
+            
+            return;
+            
+        }
+    }
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
+        
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
@@ -1263,15 +1310,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     para.avoidsLazyLoading = !_deferredProcessing;
     
-    if ([_last isMemberOfClass:Heading.class])
+    if ([_last isMemberOfClass:Heading.class]) {
+        
         para.afterHeading = YES;
-    
-    if ([_last isMemberOfClass:Paragraph.class]
-        && !caption) {
-        // check if we have a duplicate
-        Paragraph *lastPara = (Paragraph *)_last;
-        if(lastPara.isCaption && ([lastPara.text isEqualToString:content.content] || [lastPara.attributedText.string isEqualToString:content.content]))
-            return;
     }
     
     para.caption = caption;
@@ -1336,34 +1377,34 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-//    if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
-//        
-//        para = nil;
-//        
-//        // since the last one is a paragraph as well, simlpy append to it.
-//        Paragraph *last = (Paragraph *)_last;
-//        
-//        NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
-//        
-//        NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
-//        
-//        if (newAttrs) {
-//            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
-//            
-//            [attrs appendAttributedString:accessory];
-//            [attrs appendAttributedString:newAttrs];
-//            
-//            if (!rangeAdded) {
-//                last.bigContainer = YES;
-//            }
-//            
-//            last.attributedText = attrs.copy;
-//        }
-//        
-//        attrs = nil;
-//        newAttrs = nil;
-//        return;
-//    }
+    if ([_last isMemberOfClass:Paragraph.class] && ![(Paragraph *)_last isCaption] && !para.isCaption) {
+        
+        para = nil;
+        
+        // since the last one is a paragraph as well, simlpy append to it.
+        Paragraph *last = (Paragraph *)_last;
+        
+        NSMutableAttributedString *attrs = last.attributedText.mutableCopy;
+        
+        NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
+        
+        if (newAttrs) {
+            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+            
+            [attrs appendAttributedString:accessory];
+            [attrs appendAttributedString:newAttrs];
+            
+            if (!rangeAdded) {
+                last.bigContainer = YES;
+            }
+            
+            last.attributedText = attrs.copy;
+        }
+        
+        attrs = nil;
+        newAttrs = nil;
+        return;
+    }
     
     [para setText:content.content ranges:content.ranges attributes:content.attributes];
     
@@ -1399,6 +1440,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addLinebreak];
     }
     
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
     Heading *heading = [[Heading alloc] initWithFrame:frame];
@@ -1423,9 +1466,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         NSURL *url = formattedURL(@"%@#%@", self.item.articleURL, identifier);
         
-        NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)],
-                                     NSLinkAttributeName: url
-                                     };
+        NSMutableDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:MAX(14.f, heading.bodyFont.pointSize - 8.f)]}.mutableCopy;
+        
+        if (url != nil) {
+            attributes[NSLinkAttributeName] = url;
+        }
         
         NSMutableAttributedString *prefix = [[NSAttributedString alloc] initWithString:@"🔗 " attributes:attributes].mutableCopy;
         
@@ -2718,6 +2763,69 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
     
+}
+
+#pragma mark - <UIPointerInteractionDelegate>
+
+- (void)pointerInteraction:(UIPointerInteraction *)interaction willEnterRegion:(UIPointerRegion *)region animator:(id<UIPointerInteractionAnimating>)animator  API_AVAILABLE(ios(13.4)) {
+    
+    if ([interaction.view isKindOfClass:UILabel.class] == YES) {
+        interaction.view.backgroundColor = UIColor.clearColor;
+    }
+    
+}
+
+- (void)pointerInteraction:(UIPointerInteraction *)interaction willExitRegion:(UIPointerRegion *)region animator:(id<UIPointerInteractionAnimating>)animator API_AVAILABLE(ios(13.4)) {
+    
+    if ([interaction.view isKindOfClass:UILabel.class] == YES) {
+        interaction.view.backgroundColor = UIColor.clearColor;
+    }
+    
+}
+
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction styleForRegion:(UIPointerRegion *)region  API_AVAILABLE(ios(13.4)){
+    
+    UIPreviewParameters *params = [UIPreviewParameters new];
+    
+    CGRect bounds = interaction.view.bounds;
+    
+    if ([interaction.view isKindOfClass:UILabel.class] == YES) {
+        
+        UILabel *label = (UILabel *)[interaction view];
+        
+        CGSize textBounds = [label sizeThatFits:bounds.size];
+#ifdef DEBUG
+        NSLog(@"textBounds: %@\nBounds: %@", [NSValue valueWithCGSize:textBounds], [NSValue valueWithCGRect:bounds]);
+#endif
+        bounds.size = textBounds;
+        
+        // inset it so we get some padding.
+        // Typically around 4px
+        // CGRectInset produces a weird behavior here.
+        bounds.origin.x -= 2.f;
+        bounds.origin.y -= 2.f;
+        bounds.size.width += 16.f;
+        bounds.size.height += 4.f;
+    }
+    
+    params.visiblePath = [UIBezierPath bezierPathWithRoundedRect:bounds cornerRadius:4.f];
+    
+    UIPointerShape *shape = [UIPointerShape shapeWithPath:params.visiblePath];
+    
+    UITargetedPreview *preview = [[UITargetedPreview alloc] initWithView:interaction.view parameters:params];
+    
+    UIPointerStyle *style = [UIPointerStyle styleWithEffect:[UIPointerHighlightEffect effectWithPreview:preview] shape:shape];
+    
+    return style;
+    
+    /*
+    let params = UIPreviewParameters()
+    params.visiblePath = starView.starPath
+    
+    let preview = UITargetedPreview(view: starView, parameters: params)
+
+    return UIPointerStyle(effect: .automatic(preview), shape: .path(starView.starPath))
+    */
 }
 
 @end

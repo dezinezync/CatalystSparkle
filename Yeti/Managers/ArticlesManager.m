@@ -11,7 +11,9 @@
 
 static ArticlesManager * SharedArticleManager = nil;
 
-@interface ArticlesManager ()
+@interface ArticlesManager () {
+    BOOL _updatingStores;
+}
 
 @property (nonatomic, strong, readwrite) NSArray <Feed *> * _Nullable feedsWithoutFolders;
 
@@ -40,15 +42,46 @@ static ArticlesManager * SharedArticleManager = nil;
     
 }
 
+- (void)willBeginUpdatingStore {
+    
+    if (_updatingStores == YES) {
+        return;
+    }
+    
+    _updatingStores = YES;
+    
+}
+
+- (void)didFinishUpdatingStore {
+    
+    if (_updatingStores == NO) {
+        return;
+    }
+    
+    _updatingStores = NO;
+    
+    self.feedsWithoutFolders = nil;
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
+    
+}
+
 #pragma mark - Getters
 
 - (NSArray <Feed *> *)feedsWithoutFolders {
     
-   NSArray <Feed *> * feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-        return obj.folderID == nil;
-    }];
+    if (_feedsWithoutFolders == nil) {
+        
+        NSArray <Feed *> * feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+            return obj.folderID == nil;
+        }];
+        
+        _feedsWithoutFolders = feeds;
+        
+    }
     
-    return feeds;
+    return _feedsWithoutFolders;
+        
 }
 
 - (NSArray <FeedItem *> *)bookmarks {
@@ -118,23 +151,47 @@ static ArticlesManager * SharedArticleManager = nil;
     
 }
 
+- (Feed *)feedForID:(NSNumber *)feedID {
+    
+    Feed * filtered = [ArticlesManager.shared.feeds rz_find:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+       
+        return [obj.feedID isEqualToNumber:feedID];
+        
+    }];
+    
+    return filtered;
+    
+}
+
 #pragma mark - Setters
 
 - (void)setFeeds:(NSArray<Feed *> *)feeds {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setFeeds:) withObject:feeds waitUntilDone:NO];
+        return;
+    }
+    
     @synchronized (self) {
         ArticlesManager.shared->_feeds = feeds ?: @[];
+        ArticlesManager.shared->_feedsWithoutFolders = nil;
     }
     
     // calling this invalidates the pointers we store in folders.
     // calling the folders setter will remap the feeds.
     self.folders = [ArticlesManager.shared folders];
     
-    if (ArticlesManager.shared.feeds) {
+    if (ArticlesManager.shared.feeds && _updatingStores == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
     }
 }
 
 - (void)setFolders:(NSArray<Folder *> *)folders {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(setFolders:) withObject:folders waitUntilDone:NO];
+        return;
+    }
     
     @synchronized (self) {
         ArticlesManager.shared->_folders = folders ?: @[];
@@ -177,32 +234,20 @@ static ArticlesManager * SharedArticleManager = nil;
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    [coder encodeObject:(self.feeds ?: @[]) forKey:propSel(feeds)];
-    [coder encodeObject:(self.folders ?: @[]) forKey:propSel(folders)];
-    [coder encodeObject:(self.feedsWithoutFolders ?: @[]) forKey:propSel(feedsWithoutFolders)];
-    
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    self.feeds = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feeds)];
-    self.folders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Folder.class]] forKey:propSel(folders)];
-    self.feedsWithoutFolders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feedsWithoutFolders)];
-    
 }
 
 - (void)encodeWithCoder:(nonnull NSCoder *)coder {
-    [coder encodeObject:(self.feeds ?: @[]) forKey:propSel(feeds)];
-    [coder encodeObject:(self.folders ?: @[]) forKey:propSel(folders)];
-    [coder encodeObject:(self.feedsWithoutFolders ?: @[]) forKey:propSel(feedsWithoutFolders)];
+    
 }
 
 - (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder {
 
     if (self = [super init]) {
-        self.feeds = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feeds)];
-        self.folders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Folder.class]] forKey:propSel(folders)];
-        self.feedsWithoutFolders = [coder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Feed.class]] forKey:propSel(feedsWithoutFolders)];
+        
     }
     
     return self;

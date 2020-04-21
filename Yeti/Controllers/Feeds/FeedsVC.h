@@ -41,6 +41,8 @@
 
 - (id)objectAtIndexPath:(NSIndexPath *)indexPath;
 
+- (void)fetchLatestCounters;
+
 #pragma mark - Actions Extension
 
 @property (nonatomic, weak) UITextField *alertTextField;

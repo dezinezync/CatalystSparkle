@@ -9,6 +9,8 @@
 #ifndef CheckWifi_h
 #define CheckWifi_h
 
+#import <Foundation/Foundation.h>
+
 BOOL CheckWiFi(void);
 
 #endif /* CheckWifi_h */

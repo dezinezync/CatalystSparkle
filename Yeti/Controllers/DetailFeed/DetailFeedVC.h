@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Feed.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import "UIViewController+ScrollLoad.h"
 #import <DZKit/DZBasicDatasource.h>

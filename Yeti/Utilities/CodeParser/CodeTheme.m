@@ -7,7 +7,7 @@
 //
 
 #import "CodeTheme.h"
-#import "UIColor+HEX.h"
+#import <DZTextKit/UIColor+HEX.h>
 
 typedef NSDictionary <NSString *, NSDictionary <NSString *, NSString *> *> ThemeStringDict;
 typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, NSString *> *> MutableStringThemeDict;

@@ -10,7 +10,7 @@
 #import "ArticlePreviewVC.h"
 
 #import "ArticleCellB.h"
-#import "PaddedLabel.h"
+#import <DZTextKit/PaddedLabel.h>
 #import "DetailFeedHeaderView.h"
 
 #import "ArticleVC.h"
@@ -18,7 +18,7 @@
 
 #import "FeedsManager.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
@@ -27,7 +27,6 @@
 #import "ArticleProvider.h"
 
 #import "YetiThemeKit.h"
-#import "PopMenuViewController.h"
 #import "PrefsManager.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -158,8 +157,12 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     [self.collectionView registerClass:DetailFeedHeaderView.class forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView];
     
     // Do any additional setup after loading the view.
-    if ([self respondsToSelector:@selector(author)] || (self.feed.authors && self.feed.authors.count > 1)) {
+    if ([self respondsToSelector:@selector(author)]
+        || (self.feed.authors && self.feed.authors.count > 1)
+        || self.feed.summary || self.feed.extra.summary) {
+        
         self->_shouldShowHeader = YES;
+        
     }
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
@@ -533,14 +536,16 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     
     NSString *formatted = formattedString(@"%@\n%@", title, subtitle);
     
-    NSDictionary *attributes = @{NSFontAttributeName: [TypeFactory shared].bodyFont,
+    UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    
+    NSDictionary *attributes = @{NSFontAttributeName: font,
                                  NSForegroundColorAttributeName: theme.subtitleColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
-    attributes = @{NSFontAttributeName: [TypeFactory.shared boldBodyFont],
+    attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
                    NSForegroundColorAttributeName: theme.titleColor,
                    NSParagraphStyleAttributeName: para
                    };
@@ -632,18 +637,6 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
 
             [self to_showDetailViewController:nav sender:self];
             
-//            if ((self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
-//                || (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular)) {
-//
-//                [self.navigationController pushViewController:vc animated:YES];
-//
-//            }
-//            else {
-//                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//
-//                [self.splitViewController showDetailViewController:nav sender:self];
-//            }
-            
         }
         else {
             [self.navigationController pushViewController:vc animated:YES];
@@ -726,7 +719,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
             
         }
         else {
-            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"circle.fill"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"largecircle.fill.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 [self userMarkedArticle:item read:YES];
                 
@@ -1346,7 +1339,7 @@ NSString * const kSizCache = @"FeedSizesCache";
     // sorting button
     YetiSortOption option = SharedPrefs.sortingOption;
     
-    if (self.customFeed == FeedTypeCustom) {
+    if (self.customFeed == FeedTypeCustom && [self isKindOfClass:NSClassFromString(@"TodayVC")] == NO) {
         
         // when the active option is either of these two, we don't need
         // to do anything extra
@@ -1492,14 +1485,30 @@ NSString * const kSizCache = @"FeedSizesCache";
     
     if (self->_shouldShowHeader == YES) {
         
-        NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:84.f]];
-
-        NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
+        FeedHeaderView *view = [[FeedHeaderView alloc] initWithNib];
+        view.frame = CGRectMake(0, 0, self.view.bounds.size.width, 0.f);
+        [view setupAppearance];
+        [view configure:self.feed];
         
-        boundryItem.zIndex = 10;
+        CGSize size = [view intrinsicContentSize];
+        
+        if (size.height == 0.f) {
+            
+            self->_shouldShowHeader = NO;
+            
+        }
+        else {
+            
+            NSCollectionLayoutSize *boundrySize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.f] heightDimension:[NSCollectionLayoutDimension estimatedDimension:ceil(size.height)]];
 
-        layoutSection.boundarySupplementaryItems = @[boundryItem];
-        layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(90.f, 0, 0, 0);
+            NSCollectionLayoutBoundarySupplementaryItem *boundryItem = [NSCollectionLayoutBoundarySupplementaryItem supplementaryItemWithLayoutSize:boundrySize elementKind:UICollectionElementKindSectionHeader containerAnchor:[NSCollectionLayoutAnchor layoutAnchorWithEdges:NSDirectionalRectEdgeTop]];
+            
+            boundryItem.zIndex = 10;
+
+            layoutSection.boundarySupplementaryItems = @[boundryItem];
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(ceil(size.height) + 1, 0, 0, 0);
+            
+        }
         
     }
 
