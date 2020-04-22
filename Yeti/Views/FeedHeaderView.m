@@ -60,10 +60,17 @@
 }
 
 - (void)setupAppearance {
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.backgroundColor = theme.cellColor;
     
-    NSString *imageName = formattedString(@"authorsfade-%@", theme.name);
+    NSString *name = theme.name;
+    
+    if ([name isEqualToString:@"light"] && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        name = @"black";
+    }
+    
+    NSString *imageName = formattedString(@"authorsfade-%@", name);
     UIImage *image = [UIImage imageNamed:imageName];
     
     self.authorsFade.image = image;
