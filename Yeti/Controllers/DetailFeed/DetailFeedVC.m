@@ -598,6 +598,8 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         DetailFeedHeaderView *view = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kDetailFeedHeaderView forIndexPath:indexPath];
         
+        view.clipsToBounds = YES;
+        
         [view setupAppearance];
         
         self.headerView = view.headerContent;
@@ -1506,7 +1508,7 @@ NSString * const kSizCache = @"FeedSizesCache";
             boundryItem.zIndex = 10;
 
             layoutSection.boundarySupplementaryItems = @[boundryItem];
-            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(ceil(size.height) + 1, 0, 0, 0);
+            layoutSection.contentInsets = NSDirectionalEdgeInsetsMake(size.height + 1, 0, 0, 0);
             
         }
         

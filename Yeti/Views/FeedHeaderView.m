@@ -109,14 +109,14 @@
     NSString *summary = feed.summary ?: feed.extra.summary;
     summary = [summary htmlToPlainText];
     
-    UIFont *font = nil;
-    
-    if ([UIApplication.keyWindow rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-    }
-    else {
-        font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
-    }
+//    UIFont *font = nil;
+//
+//    if ([UIApplication.keyWindow rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//        font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+//    }
+//    else {
+//        font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+//    }
     
     if (summary && [summary stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length != 0) {
 
@@ -148,7 +148,7 @@
             [button setTitle:author.name forState:UIControlStateNormal];
             [button addTarget:self action:@selector(didTapAuthorButton:) forControlEvents:UIControlEventTouchUpInside];
             
-            button.titleLabel.font = font;
+//            button.titleLabel.font = font;
             button.titleLabel.adjustsFontForContentSizeCategory = YES;
             
             [button sizeToFit];
@@ -158,6 +158,7 @@
         
     }
     else {
+        self.authorsFade.hidden = YES;
         self.scrollView.hidden = YES;
     }
     
@@ -194,11 +195,18 @@
         
     }
     
-    if (self.scrollView.isHidden == NO || self.descriptionLabel.isHidden == NO) {
+    if (self.scrollView.isHidden == NO) {
         
         size.height += 24.f;
         
     }
+    else if (self.descriptionLabel.isHidden == NO) {
+        
+        size.height += 12.f;
+        
+    }
+    
+    size.height = ceil(size.height);
     
     return size;
 }
