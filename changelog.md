@@ -2,6 +2,8 @@
 
 ## Build 343
 
+- Fixed an issue with relatively linked images not loading in the Article Viewer or Image Viewer. 
+
 - Fixed an issue with sorting of Folders. Folders are once again correctly sorted using the alphabetical ascending order. 
 
 - Fixed an issue with opening Feeds on iPad 9.7" and 10.5" from the Search Results list. 

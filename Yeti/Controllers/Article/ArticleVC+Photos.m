@@ -53,7 +53,7 @@
                 ArticlePhoto *photo = [ArticlePhoto new];
                 photo.referenceView = image;
                 photo.placeholderImage = [(Image *)image imageView].image;
-                photo.URL = [NSURL URLWithString:content.url];
+                photo.URL = [(Image *)image URL];
                 
                 NSString *title = nil;
                 
