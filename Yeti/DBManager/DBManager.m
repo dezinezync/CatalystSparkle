@@ -108,6 +108,8 @@ NSString *const kNotificationsKey = @"notifications";
             
             if (feed != nil) {
                 
+                feed.unread = 0;
+                
                 [feeds addObject:feed];
                 
             }
@@ -439,6 +441,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 #define GROUP_ARTICLES @"articles"
 #define GROUP_FEEDS @"feeds"
+#define GROUP_FOLDERS @"folders"
 
 - (void)setupDatabase
 {
@@ -535,6 +538,9 @@ NSString *const kNotificationsKey = @"notifications";
             else if ([collection containsString:LOCAL_FEEDS_COLLECTION]) {
                 return GROUP_FEEDS;
             }
+            else if ([collection containsString:LOCAL_FOLDERS_COLLECTION]) {
+                return GROUP_FOLDERS;
+            }
 
             return nil;
             
@@ -566,13 +572,25 @@ NSString *const kNotificationsKey = @"notifications";
                 return [item1.identifier compare:item2.identifier] & [item1.timestamp compare:item2.timestamp];
                 
             }
+            else if ([group isEqualToString:GROUP_FOLDERS]) {
+                
+                Folder *item1 = object1;
+                Folder *item2 = object2;
+                
+                if (!item1 || !item2) {
+                    return NSOrderedSame;
+                }
+                
+                return [item1.title localizedCompare:item2.title];
+                
+            }
             else {
                 return NSOrderedSame;
             }
             
         }];
         
-        NSString *versionTag = @"2020-04-20 06:31PM";
+        NSString *versionTag = @"2020-04-22 04:55PM";
         
         YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
         

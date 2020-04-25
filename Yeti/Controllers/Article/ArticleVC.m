@@ -1621,6 +1621,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [imageView addGestureRecognizer:tap];
     
+    NSURLComponents *comps = [NSURLComponents componentsWithString:url];
+    
+    if (comps.host == nil) {
+#ifdef DEBUG
+        NSLog(@"No hostname for URL: %@", url);
+#endif
+        
+        NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
+        
+        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url];
+#ifdef DEBUG
+        NSLog(@"Attempted fixed URL: %@", articleURLComps.URL);
+#endif
+        
+        url = articleURLComps.URL.absoluteString;
+    }
+    
     imageView.URL = [NSURL URLWithString:url];
     
     [self addLinebreak];

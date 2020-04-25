@@ -10,6 +10,7 @@
 #import "FeedsCell.h"
 #import "FolderCell.h"
 #import "DetailFeedVC.h"
+#import "SplitVC.h"
 
 @interface FeedsSearchResults ()
 
@@ -49,7 +50,21 @@
     
     UIViewController *presenting = self.presentingViewController;
     
-    [presenting to_showDetailViewController:vc sender:self];
+    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+                   && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    
+    CGFloat maxSize = MAX([presenting to_splitViewController].view.bounds.size.width, [presenting to_splitViewController].view.bounds.size.height);
+    
+    if (isPhone || (isPhone == NO && maxSize <= 1024.f)) {
+         [presenting to_showSecondaryViewController:vc sender:self];
+     }
+     else {
+         UIViewController *detailVC = presenting.to_splitViewController.detailViewController ?: [(SplitVC *)[presenting to_splitViewController] emptyVC];
+       
+         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+       
+         [presenting to_showSecondaryViewController:nav setDetailViewController:detailVC sender:self];
+     }
 }
 
 @end
