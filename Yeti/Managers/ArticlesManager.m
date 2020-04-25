@@ -194,6 +194,15 @@ static ArticlesManager * SharedArticleManager = nil;
     }
     
     @synchronized (self) {
+        
+        if (folders && folders.count) {
+            
+            NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES selector:@selector(caseInsensitiveCompare:)];
+            
+            folders = [folders sortedArrayUsingDescriptors:@[descriptor]];
+            
+        }
+        
         ArticlesManager.shared->_folders = folders ?: @[];
         
         [ArticlesManager.shared.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull folder, NSUInteger idxx, BOOL * _Nonnull stopx) {
