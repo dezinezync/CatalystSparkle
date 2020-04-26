@@ -17,7 +17,6 @@
 		F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */; };
 		F01285C323436D8D00B8C277 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
-		F015C43A2446259B00FFC848 /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
@@ -152,13 +151,10 @@
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
 		F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F08C5E3923865A8A0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DDD238656620055946F /* DZKit.framework */; };
 		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
 		F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */; };
 		F095F6BE234B6E780005356B /* PagingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F095F6BD234B6E780005356B /* PagingManager.m */; };
@@ -236,6 +232,10 @@
 		F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BB9208C7F4F007E5A3B /* NewFolderVC.m */; };
 		F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */; };
 		F0B21BC1208C82C7007E5A3B /* Folder.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B21BC0208C82C6007E5A3B /* Folder.m */; };
+		F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; };
+		F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482642455F62C00EE5AA2 /* YapDatabase.framework */; };
+		F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482642455F62C00EE5AA2 /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */; };
 		F0B69C9021B916F50032FD5A /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C8F21B916F50032FD5A /* VideoInfo.m */; };
 		F0B69C9C21B918AA0032FD5A /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B69C8F21B916F50032FD5A /* VideoInfo.m */; };
@@ -245,7 +245,6 @@
 		F0B7C84A240B7272008D8F4F /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B7C849240B7272008D8F4F /* NotificationViewController.m */; };
 		F0B7C84D240B7272008D8F4F /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B7C84B240B7272008D8F4F /* MainInterface.storyboard */; };
 		F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0B7C842240B7272008D8F4F /* notificationContext.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F0B870F52446BED5009BAEE3 /* YapDatabase.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0EC4A2524458EC300ABF67B /* YapDatabase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
 		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
 		F0C6CA6B2143A17B00577D16 /* MetaOpenGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6CA672143A17B00577D16 /* MetaOpenGraph.m */; };
@@ -339,34 +338,6 @@
 			remoteGlobalIDString = F070C2D81FBABC3500912CCF;
 			remoteInfo = Yeti;
 		};
-		F08C5DDC238656620055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F056B9B21F04F55D0041BB0C;
-			remoteInfo = DZKit;
-		};
-		F08C5DDE238656620055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F056B9BB1F04F55D0041BB0C;
-			remoteInfo = DZKitTests;
-		};
-		F08C5DE0238656620055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0A18EDC1F0504F300DC5E8B;
-			remoteInfo = DZKitTestApp;
-		};
-		F08C5DE2238656620055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0E7CC3E1F0B7C6D00A6ECBC;
-			remoteInfo = ColumnApp;
-		};
 		F08C5DF7238656620055946F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
@@ -409,20 +380,6 @@
 			remoteGlobalIDString = F0634F9D1B6B4C950025C347;
 			remoteInfo = DZAppdelegate;
 		};
-		F08C5E30238657A10055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
-			remoteInfo = DZKit;
-		};
-		F08C5E3723865A840055946F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
-			remoteInfo = DZKit;
-		};
 		F08C5E5C238660A90055946F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
@@ -450,6 +407,83 @@
 			proxyType = 1;
 			remoteGlobalIDString = F06A6F851FB0698900D3A819;
 			remoteInfo = DZThemeKit;
+		};
+		F0B482612455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCF7C2AE1BCC8E610087ED39;
+			remoteInfo = "YapDatabase-macOS";
+		};
+		F0B482632455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCF7C2BE1BCC8E870087ED39;
+			remoteInfo = "YapDatabase-iOS";
+		};
+		F0B482652455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCE760911D78ADEF009C83A0;
+			remoteInfo = "YapDatabase-tvOS";
+		};
+		F0B482672455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC1E7D031D80C901000721B8;
+			remoteInfo = "YapDatabase-watchOS";
+		};
+		F0B482692455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCD8815D1BE94C9300317214;
+			remoteInfo = "TestModuleMap-macOS";
+		};
+		F0B4826B2455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCD881291BE93C1000317214;
+			remoteInfo = "TestModuleMap-iOS";
+		};
+		F0B4826D2455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCE7616C1D78B899009C83A0;
+			remoteInfo = "TestModuleMap-tvOS";
+		};
+		F0B4826F2455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC6266C91D80D3E000557968;
+			remoteInfo = "TestModuleMap-watchOS";
+		};
+		F0B482712455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC6266D51D80D3E000557968;
+			remoteInfo = "TestModuleMap-watchOS Extension";
+		};
+		F0B482782455F64900EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0FEECA41BAC296100AC74F9;
+			remoteInfo = DZKit;
+		};
+		F0B4827A2455F64900EE5AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0FEECAD1BAC296100AC74F9;
+			remoteInfo = DZKITTests;
 		};
 		F0B7C84F240B7272008D8F4F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -485,76 +519,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F031962A2075FDC400A50D17;
 			remoteInfo = DZNetworkingWatchOS;
-		};
-		F0DEE58C244626B200A48915 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = DCF7C2BD1BCC8E870087ED39;
-			remoteInfo = "YapDatabase-iOS";
-		};
-		F0EC4A2224458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCF7C2AE1BCC8E610087ED39;
-			remoteInfo = "YapDatabase-macOS";
-		};
-		F0EC4A2424458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCF7C2BE1BCC8E870087ED39;
-			remoteInfo = "YapDatabase-iOS";
-		};
-		F0EC4A2624458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCE760911D78ADEF009C83A0;
-			remoteInfo = "YapDatabase-tvOS";
-		};
-		F0EC4A2824458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DC1E7D031D80C901000721B8;
-			remoteInfo = "YapDatabase-watchOS";
-		};
-		F0EC4A2A24458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCD8815D1BE94C9300317214;
-			remoteInfo = "TestModuleMap-macOS";
-		};
-		F0EC4A2C24458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCD881291BE93C1000317214;
-			remoteInfo = "TestModuleMap-iOS";
-		};
-		F0EC4A2E24458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DCE7616C1D78B899009C83A0;
-			remoteInfo = "TestModuleMap-tvOS";
-		};
-		F0EC4A3024458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DC6266C91D80D3E000557968;
-			remoteInfo = "TestModuleMap-watchOS";
-		};
-		F0EC4A3224458EC300ABF67B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DC6266D51D80D3E000557968;
-			remoteInfo = "TestModuleMap-watchOS Extension";
 		};
 		F0F10A15244C7B21009FC108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -605,13 +569,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F0B870F52446BED5009BAEE3 /* YapDatabase.framework in Embed Frameworks */,
 				F0F10AA1244C8078009FC108 /* FLAnimatedImage.framework in Embed Frameworks */,
+				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
 				F0658EA5244C80F3002AC231 /* DZTextKit.framework in Embed Frameworks */,
+				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
-				F08C5E05238656880055946F /* DZKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -851,7 +815,6 @@
 		F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+DragDrop.h"; sourceTree = "<group>"; };
 		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
-		F08C5DD5238656620055946F /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = ../../../DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -954,6 +917,8 @@
 		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
 		F0B21BBF208C82C6007E5A3B /* Folder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Folder.h; sourceTree = "<group>"; };
 		F0B21BC0208C82C6007E5A3B /* Folder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Folder.m; sourceTree = "<group>"; };
+		F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YapDatabase.xcodeproj; path = Vendors/YapDatabase/YapDatabase.xcodeproj; sourceTree = "<group>"; };
+		F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = Vendors/DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };
 		F0B5BFA52060D57F0092DA31 /* AppDelegate+Routing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Routing.m"; sourceTree = "<group>"; };
 		F0B69C8E21B916F50032FD5A /* VideoInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoInfo.h; sourceTree = "<group>"; };
@@ -1049,7 +1014,6 @@
 		F0EB27D821C20B81007E3547 /* DBManager+CloudCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DBManager+CloudCore.m"; sourceTree = "<group>"; };
 		F0EB27E721C20FF0007E3547 /* FeedOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedOperation.h; sourceTree = "<group>"; };
 		F0EB27E821C20FF0007E3547 /* FeedOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedOperation.m; sourceTree = "<group>"; };
-		F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YapDatabase.xcodeproj; path = Vendors/YapDatabase/YapDatabase.xcodeproj; sourceTree = "<group>"; };
 		F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreKeychainPersistence.h; sourceTree = "<group>"; };
 		F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreKeychainPersistence.m; sourceTree = "<group>"; };
 		F0EEC85F21ECB2420046BB12 /* reader.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = reader.css; sourceTree = "<group>"; };
@@ -1098,7 +1062,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F08C5E3923865A8A0055946F /* DZKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1106,9 +1069,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F08C5E66238660CD0055946F /* DZKit.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
+				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F0E8648D234793200089F9EF /* NYTPhotoViewer.framework in Frameworks */,
 				F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */,
 				F0E8648E234793200089F9EF /* NYTPhotoViewerCore.framework in Frameworks */,
@@ -1116,10 +1079,10 @@
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F070C32A1FBAC10600912CCF /* JLRoutes.framework in Frameworks */,
+				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
 				F0F10AA0244C8077009FC108 /* FLAnimatedImage.framework in Frameworks */,
 				F0658EA4244C80F3002AC231 /* DZTextKit.framework in Frameworks */,
-				F015C43A2446259B00FFC848 /* YapDatabase.framework in Frameworks */,
 				F070C32F1FBAC10600912CCF /* CocoaLumberjack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1774,17 +1737,6 @@
 			path = OpenDyslexic;
 			sourceTree = "<group>";
 		};
-		F08C5DD6238656620055946F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F08C5DDD238656620055946F /* DZKit.framework */,
-				F08C5DDF238656620055946F /* DZKitTests.xctest */,
-				F08C5DE1238656620055946F /* DZKitTestApp.app */,
-				F08C5DE3238656620055946F /* ColumnApp.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F08C5DF1238656620055946F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1936,6 +1888,31 @@
 			path = RMStore;
 			sourceTree = "<group>";
 		};
+		F0B482562455F62C00EE5AA2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0B482622455F62C00EE5AA2 /* YapDatabase.framework */,
+				F0B482642455F62C00EE5AA2 /* YapDatabase.framework */,
+				F0B482662455F62C00EE5AA2 /* YapDatabase.framework */,
+				F0B482682455F62C00EE5AA2 /* YapDatabase.framework */,
+				F0B4826A2455F62C00EE5AA2 /* TestModuleMap-macOS.app */,
+				F0B4826C2455F62C00EE5AA2 /* TestModuleMap-iOS.app */,
+				F0B4826E2455F62C00EE5AA2 /* TestModuleMap-tvOS.app */,
+				F0B482702455F62C00EE5AA2 /* TestModuleMap-watchOS.app */,
+				F0B482722455F62C00EE5AA2 /* TestModuleMap-watchOS Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0B482742455F64900EE5AA2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0B482792455F64900EE5AA2 /* DZKit.framework */,
+				F0B4827B2455F64900EE5AA2 /* DZKITTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F0B7C847240B7272008D8F4F /* notificationContext */ = {
 			isa = PBXGroup;
 			children = (
@@ -1984,12 +1961,12 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */,
+				F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */,
 				F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */,
-				F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */,
 				F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */,
 				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
-				F08C5DD5238656620055946F /* DZKit.xcodeproj */,
 				F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */,
 				F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */,
 				F01285BE23436D8D00B8C277 /* Keychain */,
@@ -2022,22 +1999,6 @@
 				F0EB27E821C20FF0007E3547 /* FeedOperation.m */,
 			);
 			path = Operations;
-			sourceTree = "<group>";
-		};
-		F0EC4A1724458EC300ABF67B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F0EC4A2324458EC300ABF67B /* YapDatabase.framework */,
-				F0EC4A2524458EC300ABF67B /* YapDatabase.framework */,
-				F0EC4A2724458EC300ABF67B /* YapDatabase.framework */,
-				F0EC4A2924458EC300ABF67B /* YapDatabase.framework */,
-				F0EC4A2B24458EC300ABF67B /* TestModuleMap-macOS.app */,
-				F0EC4A2D24458EC300ABF67B /* TestModuleMap-iOS.app */,
-				F0EC4A2F24458EC300ABF67B /* TestModuleMap-tvOS.app */,
-				F0EC4A3124458EC300ABF67B /* TestModuleMap-watchOS.app */,
-				F0EC4A3324458EC300ABF67B /* TestModuleMap-watchOS Extension.appex */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		F0F10A07244C7B21009FC108 /* Products */ = {
@@ -2106,7 +2067,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F08C5E3823865A840055946F /* PBXTargetDependency */,
 			);
 			name = YetiShare;
 			productName = YetiShare;
@@ -2128,9 +2088,7 @@
 			);
 			dependencies = (
 				F0F10A85244C7FED009FC108 /* PBXTargetDependency */,
-				F0DEE58D244626B200A48915 /* PBXTargetDependency */,
 				F08C5E65238660B60055946F /* PBXTargetDependency */,
-				F08C5E31238657A10055946F /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
 				F08C5E0D238656AE0055946F /* PBXTargetDependency */,
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
@@ -2258,8 +2216,8 @@
 					ProjectRef = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
 				},
 				{
-					ProductGroup = F08C5DD6238656620055946F /* Products */;
-					ProjectRef = F08C5DD5238656620055946F /* DZKit.xcodeproj */;
+					ProductGroup = F0B482742455F64900EE5AA2 /* Products */;
+					ProjectRef = F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */;
 				},
 				{
 					ProductGroup = F0C4F8C5234C69B900D57C18 /* Products */;
@@ -2278,8 +2236,8 @@
 					ProjectRef = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
 				},
 				{
-					ProductGroup = F0EC4A1724458EC300ABF67B /* Products */;
-					ProjectRef = F0EC4A1624458EC300ABF67B /* YapDatabase.xcodeproj */;
+					ProductGroup = F0B482562455F62C00EE5AA2 /* Products */;
+					ProjectRef = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -2294,34 +2252,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		F08C5DDD238656620055946F /* DZKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DZKit.framework;
-			remoteRef = F08C5DDC238656620055946F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F08C5DDF238656620055946F /* DZKitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DZKitTests.xctest;
-			remoteRef = F08C5DDE238656620055946F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F08C5DE1238656620055946F /* DZKitTestApp.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DZKitTestApp.app;
-			remoteRef = F08C5DE0238656620055946F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F08C5DE3238656620055946F /* ColumnApp.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ColumnApp.app;
-			remoteRef = F08C5DE2238656620055946F /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F08C5DF8238656620055946F /* DZAppDelegate.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -2371,6 +2301,83 @@
 			remoteRef = F08C5E60238660A90055946F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F0B482622455F62C00EE5AA2 /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0B482612455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B482642455F62C00EE5AA2 /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0B482632455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B482662455F62C00EE5AA2 /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0B482652455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B482682455F62C00EE5AA2 /* YapDatabase.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = YapDatabase.framework;
+			remoteRef = F0B482672455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B4826A2455F62C00EE5AA2 /* TestModuleMap-macOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-macOS.app";
+			remoteRef = F0B482692455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B4826C2455F62C00EE5AA2 /* TestModuleMap-iOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-iOS.app";
+			remoteRef = F0B4826B2455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B4826E2455F62C00EE5AA2 /* TestModuleMap-tvOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-tvOS.app";
+			remoteRef = F0B4826D2455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B482702455F62C00EE5AA2 /* TestModuleMap-watchOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestModuleMap-watchOS.app";
+			remoteRef = F0B4826F2455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B482722455F62C00EE5AA2 /* TestModuleMap-watchOS Extension.appex */ = {
+			isa = PBXReferenceProxy;
+			fileType = "wrapper.app-extension";
+			path = "TestModuleMap-watchOS Extension.appex";
+			remoteRef = F0B482712455F62C00EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B482792455F64900EE5AA2 /* DZKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DZKit.framework;
+			remoteRef = F0B482782455F64900EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0B4827B2455F64900EE5AA2 /* DZKITTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DZKITTests.xctest;
+			remoteRef = F0B4827A2455F64900EE5AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2397,69 +2404,6 @@
 			fileType = wrapper.framework;
 			path = DZNetworking.framework;
 			remoteRef = F0C4F8D1234C69B900D57C18 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2324458EC300ABF67B /* YapDatabase.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = YapDatabase.framework;
-			remoteRef = F0EC4A2224458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2524458EC300ABF67B /* YapDatabase.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = YapDatabase.framework;
-			remoteRef = F0EC4A2424458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2724458EC300ABF67B /* YapDatabase.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = YapDatabase.framework;
-			remoteRef = F0EC4A2624458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2924458EC300ABF67B /* YapDatabase.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = YapDatabase.framework;
-			remoteRef = F0EC4A2824458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2B24458EC300ABF67B /* TestModuleMap-macOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "TestModuleMap-macOS.app";
-			remoteRef = F0EC4A2A24458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2D24458EC300ABF67B /* TestModuleMap-iOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "TestModuleMap-iOS.app";
-			remoteRef = F0EC4A2C24458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A2F24458EC300ABF67B /* TestModuleMap-tvOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "TestModuleMap-tvOS.app";
-			remoteRef = F0EC4A2E24458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A3124458EC300ABF67B /* TestModuleMap-watchOS.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "TestModuleMap-watchOS.app";
-			remoteRef = F0EC4A3024458EC300ABF67B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0EC4A3324458EC300ABF67B /* TestModuleMap-watchOS Extension.appex */ = {
-			isa = PBXReferenceProxy;
-			fileType = "wrapper.app-extension";
-			path = "TestModuleMap-watchOS Extension.appex";
-			remoteRef = F0EC4A3224458EC300ABF67B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F0F10A16244C7B21009FC108 /* DZTextKit.framework */ = {
@@ -2913,16 +2857,6 @@
 			name = DZAppdelegate;
 			targetProxy = F08C5E2E2386579C0055946F /* PBXContainerItemProxy */;
 		};
-		F08C5E31238657A10055946F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZKit;
-			targetProxy = F08C5E30238657A10055946F /* PBXContainerItemProxy */;
-		};
-		F08C5E3823865A840055946F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZKit;
-			targetProxy = F08C5E3723865A840055946F /* PBXContainerItemProxy */;
-		};
 		F08C5E65238660B60055946F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DZThemeKit;
@@ -2932,11 +2866,6 @@
 			isa = PBXTargetDependency;
 			target = F0B7C841240B7272008D8F4F /* notificationContext */;
 			targetProxy = F0B7C84F240B7272008D8F4F /* PBXContainerItemProxy */;
-		};
-		F0DEE58D244626B200A48915 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "YapDatabase-iOS";
-			targetProxy = F0DEE58C244626B200A48915 /* PBXContainerItemProxy */;
 		};
 		F0F10A85244C7FED009FC108 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
