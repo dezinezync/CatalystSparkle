@@ -8,7 +8,7 @@
 
 #import <DZKit/DZObject.h>
 
-#import "Content.h"
+#import <DZTextKit/Content.h>
 
 @interface Author : DZObject <NSSecureCoding, NSCopying>
 

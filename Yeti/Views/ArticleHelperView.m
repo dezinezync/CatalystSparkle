@@ -50,6 +50,10 @@
             button.translatesAutoresizingMaskIntoConstraints = NO;
             [button setNeedsDisplay];
             [button setNeedsLayout];
+            
+            if (@available(iOS 13.4, *)) {
+                button.pointerInteractionEnabled = YES;
+            }
         }
         
         [self configureForShadow];

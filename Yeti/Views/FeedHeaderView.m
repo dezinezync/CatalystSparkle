@@ -9,7 +9,7 @@
 #import "FeedHeaderView.h"
 #import "Feed.h"
 
-#import "NSString+HTML.h"
+#import <DZTextKit/NSString+HTML.h>
 #import "YetiThemeKit.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -60,10 +60,17 @@
 }
 
 - (void)setupAppearance {
+    
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.backgroundColor = theme.cellColor;
     
-    NSString *imageName = formattedString(@"authorsfade-%@", theme.name);
+    NSString *name = theme.name;
+    
+    if ([name isEqualToString:@"light"] && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        name = @"black";
+    }
+    
+    NSString *imageName = formattedString(@"authorsfade-%@", name);
     UIImage *image = [UIImage imageNamed:imageName];
     
     self.authorsFade.image = image;
@@ -99,16 +106,28 @@
     
     _feed = feed;
     
-    self.descriptionLabel.text = [feed.summary htmlToPlainText];
-    [self.descriptionLabel sizeToFit];
+    NSString *summary = feed.summary ?: feed.extra.summary;
+    summary = [summary htmlToPlainText];
     
-    UIFont *font = nil;
+//    UIFont *font = nil;
+//
+//    if ([UIApplication.keyWindow rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//        font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+//    }
+//    else {
+//        font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+//    }
     
-    if ([UIApplication.keyWindow rootViewController].traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    if (summary && [summary stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length != 0) {
+
+        self.descriptionLabel.text = summary;
+        [self.descriptionLabel sizeToFit];
+        
     }
     else {
-        font = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+        
+        self.descriptionLabel.hidden = YES;
+        
     }
     
     if ([self.stackView arrangedSubviews].count) {
@@ -122,25 +141,37 @@
         
     }
     
-    for (Author *author in self.feed.authors) { @autoreleasepool {
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-        [button setTitle:author.name forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(didTapAuthorButton:) forControlEvents:UIControlEventTouchUpInside];
+    if (self.feed.authors != nil && self.feed.authors.count) {
         
-        button.titleLabel.font = font;
-        button.titleLabel.adjustsFontForContentSizeCategory = YES;
+        for (Author *author in self.feed.authors) { @autoreleasepool {
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+            [button setTitle:author.name forState:UIControlStateNormal];
+            [button addTarget:self action:@selector(didTapAuthorButton:) forControlEvents:UIControlEventTouchUpInside];
+            
+//            button.titleLabel.font = font;
+            button.titleLabel.adjustsFontForContentSizeCategory = YES;
+            
+            [button sizeToFit];
+            
+            [self.stackView addArrangedSubview:button];
+        } }
         
-        [button sizeToFit];
-        
-        [self.stackView addArrangedSubview:button];
-    } }
+    }
+    else {
+        self.authorsFade.hidden = YES;
+        self.scrollView.hidden = YES;
+    }
     
     [self.stackView setNeedsUpdateConstraints];
     [self.stackView layoutIfNeeded];
     
-    self.scrollView.contentSize = [self.stackView sizeThatFits:CGSizeMake(self.bounds.size.width-32.f, CGFLOAT_MAX)];
-    
-    [self scrollViewDidScroll:self.scrollView];
+    if ([self.scrollView isHidden] == NO) {
+        
+        self.scrollView.contentSize = [self.stackView sizeThatFits:CGSizeMake(self.bounds.size.width-32.f, CGFLOAT_MAX)];
+        
+        [self scrollViewDidScroll:self.scrollView];
+        
+    }
     
 }
 
@@ -151,11 +182,31 @@
     size.height = MAX(0, size.height);
     
     size.width = self.bounds.size.width - 32.f;
-    size.height += [self.descriptionLabel sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
     
-    size.height += [self.stackView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
+    if (self.descriptionLabel.isHidden == NO) {
+        
+        size.height += [self.descriptionLabel sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
+        
+    }
     
-    size.height += 24.f;
+    if (self.scrollView.isHidden == NO) {
+        
+        size.height += [self.stackView sizeThatFits:CGSizeMake(size.width, CGFLOAT_MAX)].height;
+        
+    }
+    
+    if (self.scrollView.isHidden == NO) {
+        
+        size.height += 24.f;
+        
+    }
+    else if (self.descriptionLabel.isHidden == NO) {
+        
+        size.height += 12.f;
+        
+    }
+    
+    size.height = ceil(size.height);
     
     return size;
 }

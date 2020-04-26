@@ -12,7 +12,10 @@
 #import "FolderCell.h"
 #import "DetailFeedVC.h"
 #import "DetailCustomVC.h"
+#import "TodayVC.h"
 #import "DetailFolderVC.h"
+
+#import "UIRefreshControl+Manual.h"
 
 #import <DZKit/DZBasicDatasource.h>
 
@@ -29,7 +32,7 @@
 
 #import "EmptyCell.h"
 #import "StoreVC.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 #import <StoreKit/SKStoreReviewController.h>
@@ -48,6 +51,10 @@ static void *KVO_Unread = &KVO_Unread;
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
 @property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
 @property (nonatomic, weak) UIView *hairlineView;
+
+@property (nonatomic, weak) UILabel *progressLabel;
+@property (nonatomic, weak) UIProgressView *syncProgressView;
+@property (nonatomic, strong) UIStackView *progressStackView;
 
 @property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
@@ -74,9 +81,66 @@ static void *KVO_Unread = &KVO_Unread;
     [self setupTableView];
     [self setupNavigationBar];
     
+//    [self setupToolbar];
+    
+    MyDBManager.syncProgressBlock = ^(CGFloat progress) {
+#ifdef DEBUG
+        NSLog(@"Sync Progress: %@", @(progress));
+#endif
+        
+        if (progress == 0.f) {
+            
+            [self.navigationController setToolbarHidden:NO animated:YES];
+            
+            self.progressLabel.text = @"Syncing...";
+            [self.progressLabel sizeToFit];
+            
+            [self.syncProgressView setProgress:progress animated:YES];
+            
+        }
+        else if (progress >= 0.95f) {
+            
+            [self.syncProgressView setProgress:progress animated:YES];
+            
+            self.progressLabel.text = @"Syncing Complete.";
+            
+            if (self->_refreshing) {
+                self->_refreshing = NO;
+            }
+            
+            if ([self.refreshControl isRefreshing]) {
+                [self.refreshControl endRefreshing];
+            }
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self.navigationController setToolbarHidden:YES animated:YES];
+                
+            });
+            
+        }
+        else {
+            
+            if (progress <= 0.95f && self.navigationController.isToolbarHidden == YES) {
+                [self.navigationController setToolbarHidden:NO animated:NO];
+            }
+            
+            if (self.navigationController.isToolbarHidden == NO) {
+                
+                self.progressLabel.text = [NSString stringWithFormat:@"Synced %.f%%", progress * 100];
+                
+                [self.syncProgressView setProgress:progress animated:YES];
+                
+            }
+            
+        }
+        
+    };
+    
     self.tableView.estimatedRowHeight = UITableViewAutomaticDimension;
     
     [self setupObservors];
+    [self.navigationController setToolbarHidden:YES animated:NO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -85,6 +149,7 @@ static void *KVO_Unread = &KVO_Unread;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     [self setupTableView];
@@ -111,14 +176,16 @@ static void *KVO_Unread = &KVO_Unread;
             [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
         }
+        
+        [self fetchLatestCounters];
     }
     
-    if (PrefsManager.sharedInstance.useToolbar == YES) {
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
-    }
-    else {
-        self.additionalSafeAreaInsets = UIEdgeInsetsZero;
-    }
+//    if (PrefsManager.sharedInstance.useToolbar == YES) {
+//        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
+//    }
+//    else {
+//        self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+//    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -232,13 +299,13 @@ static void *KVO_Unread = &KVO_Unread;
                 imageName = @"largecircle.fill.circle";
                 tintColor = UIColor.systemBlueColor;
             }
-            else if (indexPath.row == 1) {
-                imageName = @"bookmark.fill";
-                tintColor = UIColor.systemOrangeColor;
-            }
-            else {
+            else if ([obj isEqualToString:@"Today"] == YES) {
                 imageName = @"calendar";
                 tintColor = UIColor.systemRedColor;
+            }
+            else {
+                imageName = @"bookmark.fill";
+                tintColor = UIColor.systemOrangeColor;
             }
             
             UIImage *image = [[UIImage systemImageNamed:imageName] imageWithTintColor:tintColor renderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -248,6 +315,9 @@ static void *KVO_Unread = &KVO_Unread;
             
             if (indexPath.row == 0) {
                 cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalUnread));
+            }
+            else if ([obj isEqualToString:@"Today"] == YES) {
+                cell.countLabel.text = formattedString(@"%@", @(MyFeedsManager.totalToday));
             }
             else {
                 cell.countLabel.text = formattedString(@"%@", @(self.bookmarksManager.bookmarksCount));
@@ -348,7 +418,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     [control addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
-    [self.tableView addSubview:control];
+    self.tableView.refreshControl = control;
     self.refreshControl = control;
     
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
@@ -375,40 +445,66 @@ static void *KVO_Unread = &KVO_Unread;
         [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     }
     
-    if (PrefsManager.sharedInstance.useToolbar == NO) {
+//    if (PrefsManager.sharedInstance.useToolbar == NO) {
         self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
         self.navigationItem.leftBarButtonItem = self.leftBarButtonItem;
         
-        self.navigationController.toolbarHidden = YES;
-    }
-    else {
-        self.navigationController.toolbarHidden = NO;
-    }
+//        self.navigationController.toolbarHidden = YES;
+//    }
+//    else {
+//        self.navigationController.toolbarHidden = NO;
+//    }
     
 }
 
 - (NSArray <UIBarButtonItem *> *)toolbarItems {
     
-    if (PrefsManager.sharedInstance.useToolbar == NO) {
-        return nil;
+    if (_progressStackView == nil) {
+        
+        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - (LayoutPadding * 2), 32.f);
+        
+        UILabel *progressLabel = [[UILabel alloc] init];
+        
+        UIFont *sizedFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+        
+        progressLabel.font = [UIFont monospacedDigitSystemFontOfSize:MIN(11.f, sizedFont.pointSize) weight:UIFontWeightSemibold];
+        progressLabel.textColor = YTThemeKit.theme.subtitleColor;
+        progressLabel.textAlignment = NSTextAlignmentCenter;
+        progressLabel.frame = CGRectMake(0, 0, frame.size.width, 0);
+        [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+        progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
+//#ifdef DEBUG
+//        progressLabel.backgroundColor = UIColor.redColor;
+//#endif
+        UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        progressView.progressTintColor = YTThemeKit.theme.tintColor;
+        progressView.trackTintColor = YTThemeKit.theme.borderColor;
+        progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
+        progressView.layer.cornerRadius = 2.f;
+        progressView.translatesAutoresizingMaskIntoConstraints = NO;
+        [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+//#ifdef DEBUG
+//        progressView.backgroundColor = UIColor.greenColor;
+//#endif
+        
+        UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[progressLabel, progressView]];
+        stack.frame = frame;
+        stack.axis = UILayoutConstraintAxisVertical;
+        stack.distribution = UIStackViewDistributionEqualSpacing;
+        stack.spacing = 4.f;
+        stack.alignment = UIStackViewAlignmentCenter;
+        
+        _syncProgressView = progressView;
+        _progressLabel = progressLabel;
+        
+        _progressStackView = stack;
+        
     }
     
-    UIBarButtonItem *flex = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:self.progressStackView];
     
-    UIBarButtonItem *fixed = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    fixed.width = 24.f;
+    return @[item];
     
-    NSArray *right = [[self.rightBarButtonItems rz_map:^id(UIBarButtonItem *obj, NSUInteger idx, NSArray *array) {
-        
-        if (idx == 0) {
-            return obj;
-        }
-        
-        return @[flex, obj];
-        
-    }] rz_flatten];
-    
-    return [@[self.leftBarButtonItem, flex] arrayByAddingObjectsFromArray:right];
 }
 
 #pragma mark - Setters
@@ -520,12 +616,26 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
                     && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
+    UIViewController *detailVC = self.to_splitViewController.detailViewController ?: [(SplitVC *)[self to_splitViewController] emptyVC];
+    
     if (indexPath.section == 0) {
         
-        DetailCustomVC *vc = [[DetailCustomVC alloc] initWithFeed:nil];
-        vc.customFeed = FeedTypeCustom;
-        vc.bookmarksManager = self.bookmarksManager;
-        vc.unread = indexPath.row == 0;
+        DetailCustomVC *vc = nil;
+        
+        if (indexPath.row == 1 && PrefsManager.sharedInstance.hideBookmarks == NO) {
+            
+            vc = [[TodayVC alloc] initWithFeed:nil];
+            vc.customFeed = FeedTypeCustom;
+            
+        }
+        else {
+            
+            vc = [[DetailCustomVC alloc] initWithFeed:nil];
+            vc.customFeed = FeedTypeCustom;
+            vc.bookmarksManager = self.bookmarksManager;
+            vc.unread = indexPath.row == 0;
+            
+        }
         
         BOOL animated = YES;
         
@@ -543,7 +653,7 @@ static void *KVO_Unread = &KVO_Unread;
             UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
             nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
             
-            [self to_showSecondaryViewController:nav setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
+            [self to_showSecondaryViewController:nav setDetailViewController:detailVC sender:self];
         }
         
         return;
@@ -566,7 +676,7 @@ static void *KVO_Unread = &KVO_Unread;
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
+            [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
         }
         
     }
@@ -588,7 +698,7 @@ static void *KVO_Unread = &KVO_Unread;
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
             [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc setDetailViewController:[(SplitVC *)[self to_splitViewController] emptyVC] sender:self];
+            [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
         }
         
     }
@@ -621,6 +731,34 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 #pragma mark - Data
+
+- (void)fetchLatestCounters {
+    
+    [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        MyFeedsManager.unreadLastUpdate = NSDate.date;
+        
+        NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
+        
+        if (snapshot != nil) {
+            
+            [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
+            
+        }
+        
+        if ([self.refreshControl isRefreshing]) {
+            [self.refreshControl endRefreshing];
+        }
+        
+        [self.DDS applySnapshot:snapshot animatingDifferences:YES];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error: Failed to fetch counters with error:%@", error.localizedDescription);
+        
+    }];
+    
+}
 
 - (UIView *)viewForEmptyDataset {
     
@@ -712,7 +850,11 @@ NSString * const kDS2Data = @"DS2Data";
             
         }];
         
-        [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
+        if (ArticlesManager.shared.feedsWithoutFolders != nil && ArticlesManager.shared.feedsWithoutFolders.count > 0) {
+                
+            [data addObjectsFromArray:[ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]]];
+            
+        }
         
         NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
         [snapshot appendSectionsWithIdentifiers:@[TopSection, MainSection]];
@@ -720,21 +862,32 @@ NSString * const kDS2Data = @"DS2Data";
         BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kHideBookmarksTab];
         
         if (pref) {
-            [snapshot appendItemsWithIdentifiers:@[@"Unread"] intoSectionWithIdentifier:TopSection];
+            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Today"] intoSectionWithIdentifier:TopSection];
         }
         else {
-            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
+            [snapshot appendItemsWithIdentifiers:@[@"Unread", @"Today", @"Bookmarks"] intoSectionWithIdentifier:TopSection];
         }
         
-        [snapshot appendItemsWithIdentifiers:data intoSectionWithIdentifier:MainSection];
+        NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:data];
+        
+        [snapshot appendItemsWithIdentifiers:orderedSet.objectEnumerator.allObjects intoSectionWithIdentifier:MainSection];
         
         [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
         
         if (presentingSelf == YES) {
+            
             FeedsCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            
             if (cell != nil) {
                 cell.countLabel.text = @(MyFeedsManager.totalUnread).stringValue;
             }
+            
+            cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection:0]];
+            
+            if (cell != nil) {
+                cell.countLabel.text = @(MyFeedsManager.totalToday).stringValue;
+            }
+            
         }
         
     } @catch (NSException *exc) {
@@ -744,8 +897,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 #pragma mark - KVO
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     weakify(self);
     
     if (context == KVO_Unread && [keyPath isEqualToString:propSel(totalUnread)]) {
@@ -919,7 +1071,7 @@ NSString * const kDS2Data = @"DS2Data";
         if (snapshot == nil
             || (snapshot != nil
                 && ([snapshot numberOfSections] == 0
-                    || (snapshot.numberOfSections > 1 && [snapshot numberOfItemsInSection:MainSection] == 0)
+                    || (snapshot.numberOfSections == 2 && [snapshot numberOfItemsInSection:MainSection] == 0)
                 )
             )
         ) {
@@ -928,7 +1080,13 @@ NSString * const kDS2Data = @"DS2Data";
         }
         
         if (userUpdatedButWeHaveData == NO) {
-            [self beginRefreshing:self.refreshControl];
+
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self.refreshControl beginRefreshingManually:YES];
+                
+            });
+            
         }
         
     });

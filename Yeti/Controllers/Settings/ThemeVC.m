@@ -7,12 +7,12 @@
 //
 
 #import "ThemeVC.h"
-#import "YetiConstants.h"
 #import "AppDelegate.h"
 
 #import "YetiThemeKit.h"
 #import "CodeParser.h"
 #import "AccentCell.h"
+#import "PrefsManager.h"
 
 static void * KVO_SELECTED_BUTTON = &KVO_SELECTED_BUTTON;
 
@@ -20,14 +20,44 @@ NSString *const kBasicCell = @"cell.theme";
 
 @interface ThemeVC () {
     BOOL _isPhoneX;
-    NSArray <ArticleLayoutPreference> * _fonts;
-    NSDictionary <ArticleLayoutPreference, NSString *> *_fontNamesMap;
     NSIndexPath *_selectedFontIndexPath;
 }
 
 @end
 
+static NSArray <ArticleLayoutFont> * _fonts = nil;
+static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
+
 @implementation ThemeVC
+
++ (NSArray <ArticleLayoutFont> *)fonts {
+    
+    if (_fonts == nil) {
+        _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral, ALPOpenDyslexic];
+    }
+    
+    return _fonts;
+    
+}
+
++ (NSDictionary <ArticleLayoutFont, NSString *> *)fontNamesMap {
+    
+    if (_fontNamesMap == nil) {
+        _fontNamesMap = @{
+        ALPSystem         : @"System (San Fransico)",
+        ALPSerif          : @"Georgia",
+        ALPHelvetica      : @"Helvetica Neue",
+        ALPMerriweather   : @"Merriweather",
+        ALPPlexSerif      : @"Plex Serif",
+        ALPPlexSans       : @"Plex Sans",
+        ALPSpectral       : @"Spectral",
+        ALPOpenDyslexic   : @"OpenDyslexic"
+        };
+    }
+    
+    return _fontNamesMap;
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -35,19 +65,8 @@ NSString *const kBasicCell = @"cell.theme";
     self.title = @"Appearance";
     // when adding a new font here or removing one,
     // update the method -[tableview:cellForRowAtIndexPath:]
-    _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral, ALPOpenDyslexic];
-    _fontNamesMap = @{
-                      ALPSystem         : @"System (San Fransico)",
-                      ALPSerif          : @"Georgia",
-                      ALPHelvetica      : @"Helvetica Neue",
-                      ALPMerriweather   : @"Merriweather",
-                      ALPPlexSerif      : @"Plex Serif",
-                      ALPPlexSans       : @"Plex Sans",
-                      ALPSpectral       : @"Spectral",
-                      ALPOpenDyslexic   : @"OpenDyslexic"
-                      };
     
-        _isPhoneX = canSupportOLED();
+    _isPhoneX = canSupportOLED();
     
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -84,7 +103,7 @@ NSString *const kBasicCell = @"cell.theme";
         return 1;
     }
     
-    return self->_fonts.count;
+    return self.class.fonts.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -142,11 +161,11 @@ NSString *const kBasicCell = @"cell.theme";
         
         ArticleLayoutFont fontPref = [NSUserDefaults.standardUserDefaults valueForKey:kDefaultsArticleFont];
         
-        NSString *fontName = _fontNamesMap[_fonts[indexPath.row]];
+        NSString *fontName = self.class.fontNamesMap[self.class.fonts[indexPath.row]];
         cell.textLabel.text = fontName;
         
         if (![fontName containsString:@"System"]) {
-            fontName = [_fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
+            fontName = [self.class.fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
             UIFont *cellFont = [UIFont fontWithName:fontName size:17.f];
             
             cellFont = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:cellFont];
@@ -251,7 +270,7 @@ NSString *const kBasicCell = @"cell.theme";
     }
     else if (indexPath.section == 2) {
         
-        [defaults setValue:self->_fonts[indexPath.row] forKey:kDefaultsArticleFont];
+        [defaults setValue:self.class.fonts[indexPath.row] forKey:kDefaultsArticleFont];
         
         // remove the checkmark
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:_selectedFontIndexPath];

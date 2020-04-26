@@ -12,7 +12,7 @@
 #import "Folder.h"
 #import "Feed.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,9 +26,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSArray <Feed *> * _Nullable feeds;
 
+- (Feed * _Nullable)feedForID:(NSNumber * _Nonnull)feedID;
+
 @property (nonatomic, strong, readonly) NSArray <Feed *> * _Nullable feedsWithoutFolders;
 
 @property (nonatomic, strong) NSArray <FeedItem *> * _Nullable bookmarks;
+
+- (void)willBeginUpdatingStore;
+
+- (void)didFinishUpdatingStore;
 
 @end
 

@@ -200,7 +200,7 @@
                         return;
                     }
                     
-                    if(url) {
+                    if (url) {
                         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                             [self handleURL:url];
                         }];
@@ -209,7 +209,35 @@
                 
                 foundItems = YES;
             }
-
+            else if ([itemProvider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeText]) {
+                
+                [itemProvider loadItemForTypeIdentifier:(NSString *)kUTTypeText options:nil completionHandler:^(NSString *text, NSError *error) {
+                    
+                    if (error) {
+                        [self showError:error.localizedDescription];
+                        return;
+                    }
+                    
+                    if (text) {
+                        
+                        NSURL *url = [NSURL URLWithString:text];
+                        
+                        if (url != nil) {
+                            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                                [self handleURL:url];
+                            }];
+                        }
+                        else {
+                            [self showError:@"An invalid or no URL was found."];
+                            return;
+                        }
+                        
+                    }
+                }];
+                
+                foundItems = YES;
+                
+            }
             
             if (foundItems) {
                 break;
@@ -232,6 +260,10 @@
     self.activityLabel.text = @"Loading...";
     self.activityIndicator.superview.hidden = NO;
     [self.activityIndicator startAnimating];
+    
+    if ([url.absoluteString containsString:@"youtube.com"]) {
+        return [self finalizeURL:url];
+    }
     
     weakify(self);
     

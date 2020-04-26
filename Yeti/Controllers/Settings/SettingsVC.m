@@ -8,8 +8,8 @@
 
 #import "SettingsVC.h"
 #import "SettingsCell.h"
-#import "YetiConstants.h"
-#import "UIColor+HEX.h"
+#import <DZTextKit/YetiConstants.h>
+#import <DZTextKit/UIColor+HEX.h>
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -139,7 +139,7 @@ NSString* deviceName() {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return 3;
+            return 4;
             break;
         case 1:
             return 6;
@@ -187,9 +187,11 @@ NSString* deviceName() {
                 case 1:
                     cell.textLabel.text = @"Filters";
                     break;
-                default:
+                case 2:
                     cell.textLabel.text = @"Push Notifications";
                     break;
+                case 3:
+                    cell.textLabel.text = @"Force Re-Sync Data";
             }
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -305,6 +307,14 @@ NSString* deviceName() {
     
     UIImage *image = [UIImage imageNamed:title];
     
+    if (indexPath.row == 3 && indexPath.section == 0) {
+        
+        image = [UIImage systemImageNamed:@"arrow.clockwise.circle.fill"];
+        
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        
+    }
+    
     cell.imageView.image = image;
     
     return cell;
@@ -317,6 +327,39 @@ NSString* deviceName() {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Navigation logic may go here, for example:
     // Create the next view controller.
+    
+    if (indexPath.section == 0 && indexPath.row == 3) {
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        
+        UITableViewController *instance = (UITableViewController *)[[(UINavigationController *)[[((UISplitViewController *)self.presentingViewController) viewControllers] firstObject] viewControllers] firstObject];
+        
+        if (instance != nil) {
+            
+            ArticlesManager.shared.folders = nil;
+            
+            ArticlesManager.shared.feeds = nil;
+            
+            [DBManager.sharedInstance purgeDataForResync];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.625 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+//                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
+                
+                SEL selector = NSSelectorFromString(@"beginRefreshing:");
+                IMP imp = [instance methodForSelector:selector];
+                void (*func)(id, SEL, UIControl *) = (void *)imp;
+                func(instance, selector, [instance refreshControl]);
+                
+            });
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+            
+        }
+        
+        return;
+        
+    }
     
     UITableViewStyle style = UITableViewStyleInsetGrouped;
     

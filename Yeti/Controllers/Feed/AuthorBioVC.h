@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Paragraph.h"
+#import <DZTextKit/Paragraph.h>
 
 @interface AuthorBioVC : UIViewController <UIPopoverPresentationControllerDelegate>
 

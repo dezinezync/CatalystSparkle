@@ -172,7 +172,7 @@
         
         NSString *path = formattedString(@"/1.1/folder/%@/feed", self.folder.folderID);
         
-        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:nil];
+        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
         
         _folderFeedsManager = pagingManager;
     }

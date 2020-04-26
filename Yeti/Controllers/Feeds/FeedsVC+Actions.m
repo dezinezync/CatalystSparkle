@@ -45,73 +45,42 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
+    if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0) && _refreshing == NO) {
+        
+        [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [self beginRefreshing:sender];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [self beginRefreshing:sender];
+            
+        }];
+        
+        return;
+        
+    }
+    
     if (_refreshing == YES) {  
         return;
     }
     
+    if ([self.refreshControl isRefreshing] == NO) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self.refreshControl beginRefreshing];
+            
+        });
+        
+    }
+    
     _refreshing = YES;
     
-    weakify(self);
+    [self fetchLatestCounters];
     
-//    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
-//
-//            [self setupData];
-//
-//        });
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        DDLogError(@"Failed to fetch unread: %@", error);
-//
-//    }];
-    
-    [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        strongify(self);
-        
-        if (self == nil) {
-            return;
-        }
-        
-        MyFeedsManager.unreadLastUpdate = NSDate.date;
-        self.refreshControl.attributedTitle = [self lastUpdateAttributedString];
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ([responseObject integerValue] == 2) {
-                [sender endRefreshing];
-            }
-            
-            self->_refreshing = NO;
-            
-            if (sender != nil && sender.isRefreshing == YES) {
-                [sender endRefreshing];
-            }
-        });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        DDLogError(@"%@", error);
-        
-        asyncMain(^{
-            if ([[error userInfo] valueForKey:@"_kCFStreamErrorCodeKey"]) {
-                if (UIApplication.sharedApplication.applicationState == UIApplicationStateActive) {
-                    [AlertManager showGenericAlertWithTitle:@"Failed to Fetch Feeds" message:error.localizedDescription];
-                }
-            }
-            
-            if (sender != nil && sender.isRefreshing == YES) {
-                [sender endRefreshing];
-            }
-        });
-        
-        strongify(self);
-        
-        self->_refreshing = NO;
-        
-    }];
+    [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
+    [MyDBManager setupSync];
     
 }
 

@@ -1,7 +1,11 @@
-# v1.6.2
+# v1.7.1
 
-## Build 322
+## Build 343
 
-- Fixed a bug which caused the app to launch with the Empty State Interface with no way to navigate within the app when opened in split-view mode on compatible iPads. 
+- Fixed an issue with relatively linked images not loading in the Article Viewer or Image Viewer. 
 
-- Fixed a crash that would occur when launching the app from a cold state. 
+- Fixed an issue with sorting of Folders. Folders are once again correctly sorted using the alphabetical ascending order. 
+
+- Fixed an issue with opening Feeds on iPad 9.7" and 10.5" from the Search Results list. 
+
+- Fixed a UI issue with the Feed header view. 

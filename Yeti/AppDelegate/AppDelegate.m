@@ -13,13 +13,13 @@
 #import <JLRoutes/JLRoutes.h>
 #import "YetiThemeKit.h"
 
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "CodeParser.h"
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
 #import "SplitVC.h"
-#import "YetiConstants.h"
+#import <DZTextKit/YetiConstants.h>
 #import "FeedsManager.h"
 #import "Keychain.h"
 
@@ -64,6 +64,8 @@ AppDelegate *MyAppDelegate = nil;
     dispatch_once(&onceToken, ^{
         
         [self setupRouting];
+        
+        [self registerNotificationCategories];
         
         NSDictionary *defaults = [self performSelector:@selector(appDefaults)];
         
@@ -113,8 +115,13 @@ AppDelegate *MyAppDelegate = nil;
         
         [[UIImageView appearance] setAccessibilityIgnoresInvertColors:YES];
         
-        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
-        [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)ArticlesManager.shared restorationIdentifier:NSStringFromClass(ArticlesManager.class)];
+        if (MyFeedsManager != nil) {
+            [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)MyFeedsManager restorationIdentifier:NSStringFromClass(FeedsManager.class)];
+        }
+            
+        if (ArticlesManager.shared != nil) {
+            [UIApplication registerObjectForStateRestoration:(id <UIStateRestoring>)ArticlesManager.shared restorationIdentifier:NSStringFromClass(ArticlesManager.class)];
+        }
         
 //         To test push notifications
 //        #ifdef DEBUG
@@ -295,6 +302,8 @@ AppDelegate *MyAppDelegate = nil;
 //        _restoring = NO;
 //        return;
 //    }
+    
+    [YetiThemeKit loadThemeKit];
     
     SplitVC *splitVC = [[SplitVC alloc] init];
     

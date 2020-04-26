@@ -8,6 +8,7 @@
 
 #import "TypeFactory.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
+#import <DZTextKit/Paragraph.h>
 
 BOOL IS_PAD (UIViewController *viewController) {
     return viewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad;
@@ -15,9 +16,11 @@ BOOL IS_PAD (UIViewController *viewController) {
 
 static TypeFactory * sharedTypeFactory;
 
-NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userUpdatedPreferredFontMetrics";
+@interface TypeFactory () {
+    BOOL _firingSelfNotification;
+}
 
-@interface TypeFactory ()
+@property (nonatomic, assign) CGFloat basePointSize;
 
 @property (nonatomic, assign) CGFloat scale;
 
@@ -48,7 +51,11 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
         sharedTypeFactory = [[TypeFactory alloc] init];
+        
+        Paragraph.tk_typeFactory = sharedTypeFactory;
+        
     });
     
     return sharedTypeFactory;
@@ -63,6 +70,7 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(didUpdateContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
         [notificationCenter addObserver:self selector:@selector(didUpdateContentCategory) name:UIAccessibilityBoldTextStatusDidChangeNotification object:nil];
+        [notificationCenter addObserver:self selector:@selector(userUpdatedContentCategory) name:UserUpdatedPreferredFontMetrics object:nil];
     }
     
     return self;
@@ -84,6 +92,47 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
     
     UIFont *font = [UIFont preferredFontForTextStyle:style];
     
+    // Since the scale is 1 (17pt) and the system font is being preffered
+    if (self.scale == 1.f && SharedPrefs.articleFont == ALPSystem) {
+        // we can directly return this font.
+        return font;
+    }
+    else {
+        
+        NSString * fontPref = SharedPrefs.articleFont;
+        
+        BOOL isSystemFont = [fontPref isEqualToString:ALPSystem];
+        
+        NSString *fontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        UIFontWeight weight = UIFontWeightRegular;
+        
+        if ([style isEqualToString:UIFontTextStyleHeadline]) {
+            weight = UIFontWeightSemibold;
+        }
+        
+        if (isSystemFont) {
+            
+            font = [UIFont systemFontOfSize:MAX(font.pointSize, pointSize) weight:weight];
+            
+        }
+        else {
+            
+            font = [UIFont fontWithName:fontName size:MAX(font.pointSize, pointSize)];
+            
+            if (weight == UIFontWeightSemibold) {
+                
+                UIFontDescriptor *descriptor = [font fontDescriptor];
+                descriptor = [descriptor fontDescriptorByAddingAttributes:@{UIFontDescriptorTraitsAttribute: @{UIFontWeightTrait: @(weight)}}];
+                
+                font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
+                
+            }
+            
+        }
+        
+    }
+    
     pointSize = pointSize * self.scale;
     
     if ([style isEqualToString:UIFontTextStyleCaption1]
@@ -98,9 +147,6 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
         }
         
     }
-    else {
-        pointSize = pointSize * self.scale;
-    }
     
     pointSize = floor(pointSize);
     
@@ -111,33 +157,73 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
         font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
     }
     
-    UIFont *scaled = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+    UIFont *scaled = [[UIFontMetrics metricsForTextStyle:style] scaledFontForFont:font maximumPointSize:pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
     
     return scaled;
 }
 
 #pragma mark - Notifications
 
-- (void)didUpdateContentCategory {
- 
+- (void)userUpdatedContentCategory {
+    
+    if (_firingSelfNotification) {
+        _firingSelfNotification = NO;
+        return;
+    }
+    
     // set all our mapped properties to nil so they can be reloaded
     for (NSString *keypath in [TypeFactory mappedProperties]) {
         [self setValue:nil forKeyPath:keypath];
     }
     
-    self.scale = 0.f;
+    // reset the scale so it gets updated.
+    _scale = 0.f;
+    _basePointSize = 0.f;
+    
+}
+
+- (void)didUpdateContentCategory {
+ 
+    [self userUpdatedContentCategory];
+    
+    weakify(self);
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        strongify(self);
+        
+        self->_firingSelfNotification = YES;
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
+        
     });
     
 }
 
 #pragma mark - Getters
 
+- (CGFloat)basePointSize {
+    
+    if (_basePointSize == 0.f) {
+        _basePointSize = [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize;
+    }
+    
+    return _basePointSize;
+    
+}
+
 - (CGFloat)scale {
+    
     if (_scale == 0.f) {
-        _scale = [[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize] / 17.f;
+        
+        NSInteger base = self.basePointSize;
+        
+        if (SharedPrefs.useSystemSize == NO) {
+            base = MAX(base, SharedPrefs.fontSize);
+        }
+        
+        _scale = base / [[UIFont preferredFontForTextStyle:UIFontTextStyleBody] pointSize];
+        
     }
     
     return _scale;
@@ -157,15 +243,12 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
 - (UIFont *)titleFont {
     
     UIFontTextStyle const style = UIFontTextStyleHeadline;
-    CGFloat maximumPointSize = 32.f;
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? self.basePointSize : SharedPrefs.fontSize;
     
     if (_titleFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _titleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _titleFont = [UIFont preferredFontForTextStyle:style];
-        }
+        
+        _titleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
+        
     }
     
     return _titleFont;
@@ -175,15 +258,10 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
 - (UIFont *)caption1Font {
     
     UIFontTextStyle const style = UIFontTextStyleCaption1;
-    CGFloat maximumPointSize = 13.f;
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 13.f : floor(SharedPrefs.fontSize  * 13.f / self.basePointSize);
     
     if (_caption1Font == nil) {
-        if (IS_PAD(self.rootController)) {
-            _caption1Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _caption1Font = [UIFont preferredFontForTextStyle:style];
-        }
+        _caption1Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
     
     return _caption1Font;
@@ -191,64 +269,51 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
 }
 
 - (UIFont *)caption2Font {
+    
     UIFontTextStyle const style = UIFontTextStyleCaption2;
-    CGFloat maximumPointSize = 12.f;
+    
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 12.f : floor(SharedPrefs.fontSize  * 12.f / self.basePointSize);
     
     if (_caption2Font == nil) {
-        if (IS_PAD(self.rootController)) {
-            _caption2Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _caption2Font = [UIFont preferredFontForTextStyle:style];
-        }
+        _caption2Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
     
     return _caption2Font;
 }
 
 - (UIFont *)footnoteFont {
+    
     UIFontTextStyle const style = UIFontTextStyleFootnote;
-    CGFloat maximumPointSize = 11.f;
+    
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 11.f : floor(SharedPrefs.fontSize  * 11.f / self.basePointSize);
 
     if (_footnoteFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _footnoteFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _footnoteFont = [UIFont preferredFontForTextStyle:style];
-        }
+        _footnoteFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
 
     return _footnoteFont;
 }
 
 - (UIFont *)subtitleFont {
+    
     UIFontTextStyle const style = UIFontTextStyleSubheadline;
-    CGFloat maximumPointSize = 16.f;
+    
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / self.basePointSize);
     
     if (_subtitleFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _subtitleFont = [UIFont preferredFontForTextStyle:style];
-        }
+        _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
     
     return _subtitleFont;
 }
 
 - (UIFont *)bodyFont {
+    
     UIFontTextStyle const style = UIFontTextStyleBody;
-    CGFloat maximumPointSize = 17.f;
+    CGFloat maximumPointSize = SharedPrefs.useSystemSize ? self.basePointSize : SharedPrefs.fontSize;
     
     if (_bodyFont == nil) {
-        if (IS_PAD(self.rootController)) {
-            _bodyFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
-        }
-        else {
-            _bodyFont = [UIFont preferredFontForTextStyle:style];
-        }
+        _bodyFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
 
     return _bodyFont;
@@ -288,7 +353,7 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
     
     if (_boldItalicBodyFont == nil) {
         UIFont *font = [self bodyFont];
-        UIFontDescriptor *descriptor = [[[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+        UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic|UIFontDescriptorTraitBold];
         
         font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
         font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
@@ -301,7 +366,7 @@ NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userU
 
 - (UIFont *)codeFont {
     
-    CGFloat maximumPointSize = 17.f;
+    CGFloat maximumPointSize = self.basePointSize;
     
     if (_codeFont == nil) {
         UIFont *font = self.bodyFont;

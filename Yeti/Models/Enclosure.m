@@ -6,11 +6,6 @@
 //  Copyright © 2016 Dezine Zync Studios. All rights reserved.
 //
 
-#ifndef DDLogError
-#import <DZKit/DZLogger.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#endif
-
 #import "Enclosure.h"
 
 @implementation Enclosure
@@ -83,7 +78,7 @@
 {
     if ([key isEqualToString:@"created"] || [key isEqualToString:@"modified"] || [key isEqualToString:@"articleID"]) {}
     else
-        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+        NSLog(@"Wanring: %@ : %@-%@", NSStringFromClass(self.class), key, value);
 }
 
 - (NSDictionary *)dictionaryRepresentation

@@ -8,8 +8,8 @@
 
 #import "ArticleVC+Photos.h"
 
-#import "Image.h"
-#import "Gallery.h"
+#import <DZTextKit/Image.h>
+#import <DZTextKit/Gallery.h>
 #import "ArticlePhoto.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -53,7 +53,7 @@
                 ArticlePhoto *photo = [ArticlePhoto new];
                 photo.referenceView = image;
                 photo.placeholderImage = [(Image *)image imageView].image;
-                photo.URL = [NSURL URLWithString:content.url];
+                photo.URL = [(Image *)image URL];
                 
                 NSString *title = nil;
                 

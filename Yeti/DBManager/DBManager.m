@@ -8,16 +8,29 @@
 
 #import "DBManager+CloudCore.h"
 
-#import "Feed.h"
+#import <YapDatabase/YapDatabaseAutoView.h>
+#import <YapDatabase/YapDatabaseViewRangeOptions.h>
+
 #import "FeedOperation.h"
+#import "NSPointerArray+AbstractionHelpers.h"
 
 #import <DZKit/NSString+Extras.h>
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 DBManager *MyDBManager;
 
 NSNotificationName const UIDatabaseConnectionWillUpdateNotification = @"UIDatabaseConnectionWillUpdateNotification";
 NSNotificationName const UIDatabaseConnectionDidUpdateNotification  = @"UIDatabaseConnectionDidUpdateNotification";
 NSString *const kNotificationsKey = @"notifications";
+
+@interface DBManager () {
+    CGFloat _totalProgress;
+    CGFloat _currentProgress;
+}
+
+@property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
+
+@end
 
 @implementation DBManager
 
@@ -59,16 +72,94 @@ NSString *const kNotificationsKey = @"notifications";
 {
     NSAssert(MyDBManager == nil, @"Must use sharedInstance singleton (global MyDBManager)");
     
-    if ((self = [super init]))
-    {
+    if (self = [super init]) {
+        
         [self setupDatabase];
-        [self setupSync];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [ArticlesManager.shared willBeginUpdatingStore];
+            [self loadFeeds];
+            [self loadFolders];
+            [ArticlesManager.shared didFinishUpdatingStore];
+        });
+        
     }
     
     return self;
 }
 
 #pragma mark - Methods
+
+- (void)loadFeeds {
+    
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        NSArray <NSString *> *keys = [transaction allKeysInCollection:LOCAL_FEEDS_COLLECTION];
+        
+        if (keys.count == 0) {
+            return;
+        }
+        
+        NSMutableArray <Feed *> *feeds = [NSMutableArray arrayWithCapacity:keys.count];
+        
+        for (NSString *key in keys) {
+            
+            Feed *feed = [transaction objectForKey:key inCollection:LOCAL_FEEDS_COLLECTION];
+            
+            if (feed != nil) {
+                
+                feed.unread = 0;
+                
+                [feeds addObject:feed];
+                
+            }
+            
+        }
+        
+        if (NSThread.isMainThread) {
+            [ArticlesManager.shared setFeeds:feeds];
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ArticlesManager.shared setFeeds:feeds];
+            });
+        }
+        
+    }];
+    
+#ifdef DEBUG
+    NSLog(@"Fetched feeds from local cache");
+#endif
+    
+}
+
+- (void)setFeeds:(NSArray <Feed *> *)feeds {
+    
+    if (feeds == nil || (feeds && feeds.count == 0)) {
+        return;
+    }
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        for (Feed *feed in feeds) {
+            
+            NSString *key = feed.feedID.stringValue;
+        
+#ifdef DEBUG
+            NSAssert(key != nil, @"Expected feed to have a feedID.");
+#endif
+            
+            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION];
+            
+        }
+        
+    }];
+    
+#ifdef DEBUG
+    NSLog(@"Updated local cache of feeds");
+#endif
+    
+}
 
 - (FeedOperation *)_renameFeed:(Feed *)feed title:(NSString *)title {
     
@@ -140,6 +231,132 @@ NSString *const kNotificationsKey = @"notifications";
     
 }
 
+- (void)loadFolders {
+    
+//    NSMutableSet <Feed *> * mappedFeeds = [NSMutableSet new];
+        
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        NSArray <NSString *> *keys = [transaction allKeysInCollection:LOCAL_FOLDERS_COLLECTION];
+        
+        if (keys.count == 0) {
+            return;
+        }
+        
+        NSMutableArray <Folder *> *folders = [NSMutableArray arrayWithCapacity:keys.count];
+        
+        for (NSString *key in keys) {
+            
+            Folder *folder = [transaction objectForKey:key inCollection:LOCAL_FOLDERS_COLLECTION];
+            
+            if (folder != nil) {
+                
+                if (folder.feedIDs != nil && folder.feedIDs.count > 0) {
+                    
+                    folder.feeds = [NSPointerArray weakObjectsPointerArray];
+                    
+                    NSArray *feedIDs = folder.feedIDs.allObjects;
+                    
+                    NSMutableArray *allFeeds = [NSMutableArray arrayWithCapacity:folder.feedIDs.count];
+                    
+                    [feedIDs enumerateObjectsUsingBlock:^(NSNumber * _Nonnull objx, NSUInteger idx, BOOL * _Nonnull stop) {
+                        
+                        Feed *feed = [ArticlesManager.shared feedForID:objx];
+                        
+                        if (feed != nil) {
+                            
+                            [allFeeds addObject:feed];
+                            feed.folderID = folder.folderID;
+                            
+                        }
+                        
+                    }];
+                    
+                    [folder.feeds addObjectsFromArray:allFeeds];
+//                    [mappedFeeds addObjectsFromArray:allFeeds];
+                    
+                }
+                
+                [folders addObject:folder];
+                
+            }
+            
+        }
+        
+        if (NSThread.isMainThread) {
+            [ArticlesManager.shared setFolders:folders];
+        }
+        else {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ArticlesManager.shared setFolders:folders];
+            });
+        }
+        
+    }];
+    
+#ifdef DEBUG
+    NSLog(@"Fetched feeds from local cache");
+#endif
+    
+//    // Now we can setup Feeds without Folders
+//    if (mappedFeeds.count == ArticlesManager.shared.feeds.count) {
+//        // both are the same, so all are mapped.
+//#ifdef DEBUG
+//        NSLog(@"No feeds without folders");
+//#endif
+//    }
+//    else {
+//
+//        NSMutableOrderedSet *unmappedFeeds = [NSMutableOrderedSet orderedSetWithArray:ArticlesManager.shared.feeds];
+//
+//        [unmappedFeeds removeObjectsInArray:mappedFeeds.allObjects];
+//
+//        if (unmappedFeeds.count > 0) {
+//
+//            NSArray *unmappedObjects = unmappedFeeds.objectEnumerator.allObjects;
+//
+//            if (unmappedObjects != nil) {
+//
+//                [ArticlesManager.shared setValue:unmappedObjects forKeyPath:propSel(feedsWithoutFolders)];
+//
+//            }
+//
+//        }
+//
+//    }
+    
+}
+
+- (void)setFolders:(NSArray<Folder *> *)folders {
+    
+    if (folders == nil || (folders && folders.count == 0)) {
+        return;
+    }
+    
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        for (Folder *folder in folders) {
+            
+            NSMutableDictionary *dict = folder.dictionaryRepresentation.mutableCopy;
+            
+            if ([dict objectForKey:@"feeds"]) {
+                [dict removeObjectForKey:@"feeds"];
+            }
+            
+            Folder *object = [Folder instanceFromDictionary:dict];
+            
+            [transaction setObject:object forKey:object.folderID.stringValue inCollection:LOCAL_FOLDERS_COLLECTION];
+            
+        }
+        
+    }];
+    
+#ifdef DEBUG
+    NSLog(@"Updated local cache of folders");
+#endif
+    
+}
+
 #pragma mark - Setup
 
 - (YapDatabaseSerializer)databaseSerializer
@@ -150,7 +367,13 @@ NSString *const kNotificationsKey = @"notifications";
         
         NSError *error = nil;
         
-        return [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
+        
+        if (error) {
+            NSLog(@"Error: Failed to deserialize object for key:%@:%@\n%@", collection, key, error.localizedDescription);
+        }
+        
+        return data;
         
     };
     
@@ -161,9 +384,26 @@ NSString *const kNotificationsKey = @"notifications";
 {
     // Pretty much the default serializer,
     // but it also ensures that objects coming out of the database are immutable.
-    YapDatabaseDeserializer deserializer = ^(NSString *collection, NSString *key, NSData *data){
+    YapDatabaseDeserializer deserializer = ^(NSString *collection, NSString *key, NSData *data) {
         
-        id object = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:nil];
+        NSError *error = nil;
+        Class objClass = NSObject.class;
+        
+//        if ([collection isEqualToString:LOCAL_FEEDS_COLLECTION]) {
+//            objClass = Feed.class;
+//        }
+//        else if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+//            objClass = FeedItem.class;
+//        }
+//        else if ([collection isEqualToString:LOCAL_FOLDERS_COLLECTION]) {
+//            objClass = Folder.class;
+//        }
+        
+        id object = [NSKeyedUnarchiver unarchivedObjectOfClass:objClass fromData:data error:&error];
+        
+        if (error) {
+            NSLog(@"Error: Failed to deserialize object for key:%@:%@\n%@", collection, key, error.localizedDescription);
+        }
         
         return object;
     };
@@ -199,6 +439,10 @@ NSString *const kNotificationsKey = @"notifications";
     return postSanitizer;
 }
 
+#define GROUP_ARTICLES @"articles"
+#define GROUP_FEEDS @"feeds"
+#define GROUP_FOLDERS @"folders"
+
 - (void)setupDatabase
 {
     NSString *databasePath = [[self class] databasePath];
@@ -209,15 +453,51 @@ NSString *const kNotificationsKey = @"notifications";
     // We renamed the class in a recent version.
     
     [NSKeyedUnarchiver setClass:[Feed class] forClassName:@"Feed"];
+    [NSKeyedUnarchiver setClass:FeedItem.class forClassName:@"FeedItem"];
     
     // Create the database
     
-    _database = [[YapDatabase alloc] initWithPath:databasePath
-                                       serializer:[self databaseSerializer]
-                                     deserializer:[self databaseDeserializer]
-                                     preSanitizer:[self databasePreSanitizer]
-                                    postSanitizer:[self databasePostSanitizer]
-                                          options:nil];
+    _database = [[YapDatabase alloc] initWithURL:[NSURL fileURLWithPath:databasePath]];
+    [_database registerDefaultSerializer:[self databaseSerializer]];
+    [_database registerDefaultDeserializer:[self databaseDeserializer]];
+    [_database registerDefaultPreSanitizer:[self databasePreSanitizer]];
+    [_database registerDefaultPostSanitizer:[self databasePostSanitizer]];
+    
+    [_database registerMetadataSerializer:^NSData * _Nonnull(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nonnull object) {
+        
+        if (object == nil) {
+            return nil;
+        }
+        
+        NSError *error = nil;
+        
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:YES error:&error];
+        
+        if (error) {
+            NSLog(@"Error serializing metadata:%@ with error:\n%@", object, error);
+        }
+        
+        return data;
+        
+    } forCollection:LOCAL_ARTICLES_COLLECTION];
+    
+    [_database registerMetadataDeserializer:^id _Nullable(NSString * _Nonnull collection, NSString * _Nonnull key, NSData * _Nonnull data) {
+        
+        if (data == nil) {
+            return nil;
+        }
+        
+        NSError *error = nil;
+        
+        NSDictionary * object = [NSKeyedUnarchiver unarchivedObjectOfClass:NSDictionary.class fromData:data error:&error];
+        
+        if (error != nil) {
+            NSLog(@"Error deserializing metadata:%@ with error:\n%@", object, error);
+        }
+        
+        return object;
+        
+    } forCollection:LOCAL_ARTICLES_COLLECTION];
     
     // Setup the extensions
     
@@ -225,7 +505,7 @@ NSString *const kNotificationsKey = @"notifications";
     
     _uiConnection = [_database newConnection];
     _uiConnection.objectCacheLimit = 400;
-    _uiConnection.metadataCacheEnabled = NO;
+    _uiConnection.metadataCacheEnabled = YES;
     
     _bgConnection = [_database newConnection];
     _bgConnection.objectCacheLimit = 400;
@@ -239,11 +519,161 @@ NSString *const kNotificationsKey = @"notifications";
                                              selector:@selector(yapDatabaseModified:)
                                                  name:YapDatabaseModifiedNotification
                                                object:_database];
+    
+    [self setupViews];
+    
+    [self cleanupDatabase];
+    
+}
+
+- (void)setupViews {
+    
+    // Articles View
+    {
+        YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withObjectBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object) {
+            
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+                return [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, [(FeedItem *)object feedID]];
+            }
+            else if ([collection containsString:LOCAL_FEEDS_COLLECTION]) {
+                return GROUP_FEEDS;
+            }
+            else if ([collection containsString:LOCAL_FOLDERS_COLLECTION]) {
+                return GROUP_FOLDERS;
+            }
+
+            return nil;
+            
+        }];
+        
+        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, id  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, id  _Nonnull object2) {
+           
+            if ([group containsString:GROUP_FEEDS]) {
+
+                Feed *feed1 = object1;
+                Feed *feed2 = object2;
+                
+                if (feed1 == nil || feed2 == nil) {
+                    return NSOrderedSame;
+                }
+
+                return [feed1.feedID compare:feed2.feedID];
+
+            }
+            else if ([group containsString:GROUP_ARTICLES]) {
+                
+                FeedItem *item1 = object1;
+                FeedItem *item2 = object2;
+                
+                if (!item1 || !item2) {
+                    return NSOrderedSame;
+                }
+                
+                return [item1.identifier compare:item2.identifier] & [item1.timestamp compare:item2.timestamp];
+                
+            }
+            else if ([group isEqualToString:GROUP_FOLDERS]) {
+                
+                Folder *item1 = object1;
+                Folder *item2 = object2;
+                
+                if (!item1 || !item2) {
+                    return NSOrderedSame;
+                }
+                
+                return [item1.title localizedCompare:item2.title];
+                
+            }
+            else {
+                return NSOrderedSame;
+            }
+            
+        }];
+        
+        NSString *versionTag = @"2020-04-22 04:55PM";
+        
+        YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+        
+        YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting versionTag:versionTag options:options];
+        [_database registerExtension:view withName:@"articlesView"];
+    }
+    
+}
+
+- (void)cleanupDatabase {
+    
+    // remove articles older than 2 weeks from the DB cache.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        
+        NSDate *now = NSDate.date;
+       
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            NSArray <NSString *> * collections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
+            }];
+            
+            NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:nil ascending:YES selector:@selector(compare:)];
+            
+            for (NSString *col in collections) {
+                
+                NSArray <NSNumber *> *keys = [[transaction allKeysInCollection:col] rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
+                        
+                    return @(obj.integerValue);
+                    
+                }];
+                
+                keys = [keys sortedArrayUsingDescriptors:@[descriptor]];
+                
+                if (keys.count == 0) {
+                    continue;
+                }
+                
+                // check the last 20 items
+                NSRange range = NSMakeRange(0, MIN(keys.count, 20));
+                
+                keys = [keys subarrayWithRange:range];
+                
+                for (NSNumber *key in keys) {
+                    
+                    FeedItem *item = [transaction objectForKey:key.stringValue inCollection:col];
+                    
+                    // if it is older than 2 weeks, delete it
+                    if (item != nil) {
+                        
+                        NSDate *created = item.timestamp;
+                        
+                        NSTimeInterval since = [now timeIntervalSinceDate:created];
+                        
+                        double days = floor(since / 86400);
+                        
+                        if(days >= 14.f) {
+                            
+                            NSLog(@"Article is stale %@:%@. Deleted.", col, key);
+                            
+                            [self _deleteArticle:key.stringValue collection:col transaction:transaction];
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }];
+        
+    });
+    
 }
 
 #pragma mark - Sync
 
 - (void)setupSync {
+    
+    if (self.isSyncSetup == YES) {
+        return;
+    }
     
     // check if sync has been setup on this device.
     [self.bgConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
@@ -251,17 +681,26 @@ NSString *const kNotificationsKey = @"notifications";
         NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
         
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
+        // date was later changed to 2020-04-14 22:30 when sync was finalised.
         if (token == nil) {
             
-            NSString *token = [@"1993-03-11 06:11:00" base64Encoded];
+            NSCalendarUnit units = NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour;
             
-            [self syncNow:token];
+            NSDateComponents * components = [NSCalendar.currentCalendar components:units fromDate:NSDate.date];
             
+            token = [NSString stringWithFormat:@"%@-%@-%@ %@:00:00", @(components.year), @(components.month), @(components.day), @(components.hour)];
+            
+            token = [token base64Encoded];
+        
         }
-        else {
-            // if we do, check with the server for updates
-            [self syncNow:token];
-        }
+        
+//#ifdef DEBUG
+//        token = [@"2020-04-19 13:13:00" base64Encoded];
+//#endif
+        
+        self.syncSetup = YES;
+        
+        [self syncNow:token];
         
     }];
     
@@ -277,27 +716,82 @@ NSString *const kNotificationsKey = @"notifications";
         return;
     }
     
+    _totalProgress = 0.f;
+    _currentProgress = 0.f;
+    
+    if (self.syncProgressBlock) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.syncProgressBlock(0.f);
+        });
+        
+    }
+    
+    weakify(self);
+    
     [MyFeedsManager getSync:token success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (changeSet == nil) {
+            
+            if (self.syncProgressBlock) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.syncProgressBlock(1.f);
+                });
+                
+            }
+            
+            return;
+            
+        }
         
         // save the new change token to our local db
         [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            strongify(self);
 
             [transaction setObject:changeSet.changeToken forKey:syncToken inCollection:SYNC_COLLECTION];
             
             // now for every change set, create/update an appropriate key in the database
+            if (changeSet.customFeeds) {
+                
+                self->_totalProgress += changeSet.customFeeds.count;
+                self->_currentProgress = self->_totalProgress;
+                
+                [self updateCustomFeedsMapping:changeSet transaction:transaction];
+                
+            }
             
-            for (SyncChange *change in changeSet.changes) {
+            if (changeSet.feedsWithNewArticles) {
                 
-                NSString *localNameKey = formattedString(@"feed-%@", change.feedID);
+                self->_totalProgress += changeSet.feedsWithNewArticles.count;
                 
-                // for now we're only syncing titles, so check those
-                if (change.title == nil) {
-                    // remove the custom title
-                    [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                if (self.syncProgressBlock) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+                    });
+                    
                 }
-                else {
-                    // doesn't matter if we overwrite the changes.
-                    [transaction setObject:change.title forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+                
+                // this is an async method. So we don't pass it a transaction.
+                // it'll fetch its own transaction as necessary.
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    
+                    [self fetchNewArticlesFor:changeSet.feedsWithNewArticles since:token];
+                    
+                });
+                
+            }
+            
+            if (self->_totalProgress == 0.f) {
+                
+                if (self.syncProgressBlock) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.syncProgressBlock(1.f);
+                    });
+                    
                 }
                 
             }
@@ -332,6 +826,225 @@ NSString *const kNotificationsKey = @"notifications";
     
 }
 
+- (void)updateCustomFeedsMapping:(ChangeSet *)changeSet transaction:(YapDatabaseReadWriteTransaction *)transaction {
+    
+    for (SyncChange *change in changeSet.customFeeds) {
+        
+        NSString *localNameKey = formattedString(@"feed-%@", change.feedID);
+        
+        // for now we're only syncing titles, so check those
+        if (change.title == nil) {
+            // remove the custom title
+            [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        }
+        else {
+            // doesn't matter if we overwrite the changes.
+            [transaction setObject:change.title forKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
+        }
+        
+    }
+    
+}
+
+- (void)fetchNewArticlesFor:(NSArray <NSNumber *> *)feedIDs since:(NSString *)since {
+    
+#ifdef DEBUG
+    
+    NSLog(@"[Sync] Fetching new articles for: %@", feedIDs);
+    
+#endif
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue.maxConcurrentOperationCount = 1;
+    queue.name = @"com.elytra.sync.serialFetchArticles";
+    
+    NSBlockOperation *previousOp;
+    
+    for (NSNumber *feedID in feedIDs) { @autoreleasepool {
+        
+        NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+            [self _fetchNewArticlesFor:feedID since:since queue:queue];
+        }];
+        
+        if (previousOp != nil) {
+            [operation addDependency:previousOp];
+        }
+        
+        [queue addOperation:operation];
+        
+        previousOp = operation;
+        
+    } }
+    
+    [queue waitUntilAllOperationsAreFinished];
+    
+}
+
+- (void)_fetchNewArticlesFor:(NSNumber *)feedID since:(NSString *)since queue:(NSOperationQueue *)queue {
+    
+    [queue setSuspended:YES];
+    
+    __block NSNumber *articleID = nil;
+    
+    // first we get the latest article for this Feed ID.
+//    [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+//
+//        YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
+//
+//        NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
+//
+//        NSString *collection = nil;
+//        NSString *key = nil;
+//
+//        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
+//
+//        if (key != nil && collection != nil) {
+//            articleID = @(key.integerValue);
+//        }
+//
+//    }];
+//
+//    if (articleID) {
+//        NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
+//    }
+//    else {
+        NSLog(@"[Sync] Fetching articles for %@ using token %@", feedID, since);
+//    }
+    
+    NSMutableDictionary *params = @{@"feedID": feedID}.mutableCopy;
+    
+//    if (articleID) {
+//        params[@"articleID"] = articleID;
+//    }
+//    else if (since) {
+        params[@"since"] = since;
+//    }
+    
+    weakify(self);
+    
+    [MyFeedsManager getSyncArticles:params success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        if (self.syncProgressBlock) {
+            
+            self->_currentProgress += 1;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+            });
+            
+        }
+        
+        if (responseObject == nil || responseObject.count == 0) {
+            [queue setSuspended:NO];
+            return;
+        }
+        
+        // insert these articles to the DB.
+        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            for (FeedItem *item in responseObject) {
+                
+                NSString *collection = [self collectionForArticle:item];
+                
+                [transaction setObject:item forKey:item.identifier.stringValue inCollection:collection];
+                
+            }
+            
+        }];
+        
+        [queue setSuspended:NO];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        
+        if (self.syncProgressBlock) {
+            
+            self->_currentProgress += 1;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+            });
+            
+        }
+       
+        NSLog(@"An error occurred when fetching articles for %@: %@", feedID, error.localizedDescription);
+        
+        [queue setSuspended:NO];
+        
+    }];
+    
+}
+
+#pragma mark - Articles
+
+- (NSString *)articlesCollectionForFeed:(NSNumber *)feedID {
+    
+    return [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
+    
+}
+
+- (NSString *)collectionForArticle:(FeedItem *)article {
+    
+    NSString *collection = [self articlesCollectionForFeed:article.feedID];
+    
+    return collection;
+    
+}
+
+- (FeedItem *)articleForID:(NSNumber *)identifier feedID:(NSNumber *)feedID {
+    
+    __block FeedItem *article = nil;
+    
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        
+        NSString *collection = [self articlesCollectionForFeed:feedID];
+        
+        article = [transaction objectForKey:identifier.stringValue inCollection:collection];
+        
+    }];
+    
+    return article;
+    
+}
+
+- (void)addArticle:(FeedItem *)article {
+    
+    if (!article || !article.identifier || !article.feedID || !article.content) {
+        NSLog(@"Error adding article to db. Missing information.\n%@", article);
+        return;
+    }
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        NSString *collection = [self collectionForArticle:article];
+       
+        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection];
+        
+    }];
+    
+}
+
+- (void)deleteArticle:(FeedItem *)article {
+    
+    NSString *collection = [self collectionForArticle:article];
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        [self _deleteArticle:article.identifier.stringValue collection:collection transaction:transaction];
+        
+    }];
+    
+}
+
+- (void)_deleteArticle:(NSString *)key collection:(NSString *)col transaction:(YapDatabaseReadWriteTransaction *)transaction {
+    
+    [transaction removeObjectForKey:key inCollection:col];
+    
+}
+
 #pragma mark - Notifications
 
 - (void)yapDatabaseModified:(NSNotification *)ignored
@@ -357,5 +1070,19 @@ NSString *const kNotificationsKey = @"notifications";
                                                       userInfo:userInfo];
 }
 
+#pragma mark - Bulk Operations
+
+- (void)purgeDataForResync {
+    
+    /* during a re-sync, we remove all local refs to feeds and folders. */
+    
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+       
+        [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
+        [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
+        
+    }];
+    
+}
 
 @end
