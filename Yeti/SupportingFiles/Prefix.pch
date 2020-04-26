@@ -9,10 +9,6 @@
 #ifndef Prefix_pch
 #define Prefix_pch
 
-#import <CocoaLumberjackSwift/CocoaLumberjackSwift.h>
-
-static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
-
 #import <DZKit/DZUtilities.h>
 #import "TOSplitViewController.h"
 
