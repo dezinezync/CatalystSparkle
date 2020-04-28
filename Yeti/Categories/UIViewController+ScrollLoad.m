@@ -39,7 +39,7 @@
     
     BOOL contentSmallerThanContentSize = contentHeight < scrollView.bounds.size.height;
     
-    DDLogDebug(@"Diff:%@\nThreshold:%@\nPercent:%@\nisAtBottom:%@", @(diff), @(threshold), @(diff/threshold), @(isAtBottom));
+    NSLog(@"Diff:%@\nThreshold:%@\nPercent:%@\nisAtBottom:%@", @(diff), @(threshold), @(diff/threshold), @(isAtBottom));
     
     if (percentage || isAtBottom || contentSmallerThanContentSize) {
         id delegate = scrollView.delegate;
@@ -47,7 +47,7 @@
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
             
             if (![delegate isLoadingNext] && ![delegate cantLoadNext]) {
-                DDLogInfo(@"Loading next page for: %@", self);
+                NSLog(@"Loading next page for: %@", self);
                 
                 [delegate loadNextPage];
             }
