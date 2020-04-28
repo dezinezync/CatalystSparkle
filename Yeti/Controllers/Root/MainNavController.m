@@ -40,7 +40,7 @@
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
 
-    DDLogDebug(@"Encoding restoration Nav: %@", self.restorationIdentifier);
+    NSLogDebug(@"Encoding restoration Nav: %@", self.restorationIdentifier);
     
     [super encodeRestorableStateWithCoder:coder];
 
@@ -48,7 +48,7 @@
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Decoding Restoration Nav: %@", self.restorationIdentifier);
+    NSLogDebug(@"Decoding Restoration Nav: %@", self.restorationIdentifier);
     
     [super decodeRestorableStateWithCoder:coder];
     

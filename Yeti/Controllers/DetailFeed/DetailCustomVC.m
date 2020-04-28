@@ -225,7 +225,7 @@
         weakify(self);
         
         _unreadsManager.errorCB = ^(NSError * _Nonnull error) {
-            DDLogError(@"%@", error);
+            NSLog(@"%@", error);
             
             strongify(self);
             

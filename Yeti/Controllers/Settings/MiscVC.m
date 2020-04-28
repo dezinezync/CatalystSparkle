@@ -311,7 +311,7 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         [[UIApplication sharedApplication] setAlternateIconName:name completionHandler:^(NSError * _Nullable error) {
             
             if (error != nil) {
-                DDLogError(@"Set alternate icon error: %@", error);
+                NSLog(@"Set alternate icon error: %@", error);
             }
             else {
                 dispatch_async(dispatch_get_main_queue(), ^{

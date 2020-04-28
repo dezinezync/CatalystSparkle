@@ -47,7 +47,7 @@ CodeParser *MyCodeParser;
         NSString *script = [[NSString alloc] initWithContentsOfFile:hlpath encoding:NSUTF8StringEncoding error:&error];
         
         if (error) {
-            DDLogError(@"%@", error);
+            NSLog(@"%@", error);
         }
         else {
             _script = script;
@@ -81,7 +81,7 @@ static NSString *const hljs = @"window.hljs";
 #pragma clang diagnostic pop
     JSContext *context = [[JSContext alloc] init];
     [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
-        DDLogDebug(@"%@", aVal);
+        NSLogDebug(@"%@", aVal);
     }];
     
     __unused JSValue *winVal = [context evaluateScript:@"var window = {};"];
@@ -113,7 +113,7 @@ static NSString *const hljs = @"window.hljs";
     
     JSContext *context = [[JSContext alloc] init];
     [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
-        DDLogDebug(@"%@", aVal);
+        NSLogDebug(@"%@", aVal);
     }];
     
     __unused JSValue *winVal = [context evaluateScript:@"var window = {};"];

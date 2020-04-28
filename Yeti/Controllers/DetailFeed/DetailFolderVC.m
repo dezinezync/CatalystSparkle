@@ -229,7 +229,7 @@
         weakify(self);
         
         _folderFeedsManager.errorCB = ^(NSError * _Nonnull error) {
-            DDLogError(@"%@", error);
+            NSLog(@"%@", error);
             
             strongify(self);
             

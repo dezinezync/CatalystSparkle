@@ -154,7 +154,7 @@
         weakify(self);
         
         _authorPagingManager.errorCB = ^(NSError * _Nonnull error) {
-            DDLogError(@"%@", error);
+            NSLog(@"%@", error);
             
             strongify(self);
             

@@ -199,7 +199,7 @@
     }
     else if ([key isEqualToString:@"status"] || [key isEqualToString:@"created"] || [key isEqualToString:@"modified"] || [key isEqualToString:@"flags"] || [key isEqualToString:@"hubLease"]) {}
     else {
-        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+        NSLog(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
     }
 }
 

@@ -258,7 +258,7 @@
     if (!author)
         return;
     
-//    DDLogDebug(@"Author: %@", author);
+//    NSLogDebug(@"Author: %@", author);
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(didTapAuthor:)]) {
         [self.delegate didTapAuthor:author];
@@ -287,7 +287,7 @@
         alpha = MIN(1.f, xPoint/(self.authorsFade.bounds.size.width * 2.f));
     }
     
-//    DDLogDebug(@"x:%@", @(xPoint));
+//    NSLogDebug(@"x:%@", @(xPoint));
     self.authorsFade.alpha = alpha;
 }
 

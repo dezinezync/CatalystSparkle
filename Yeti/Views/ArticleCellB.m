@@ -388,7 +388,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        DDLogDebug(@"Failed to fetch favicon at: %@", url);
+        NSLogDebug(@"Failed to fetch favicon at: %@", url);
         
         dispatch_async(dispatch_get_main_queue(), ^{
             attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
@@ -635,7 +635,7 @@ NSString *const kiPadArticleCell = @"com.yeti.cell.iPadArticleCell";
     
     NSString *tag = [sender titleForState:UIControlStateNormal];
     
-    DDLogDebug(@"Tapped tag: %@", tag);
+    NSLogDebug(@"Tapped tag: %@", tag);
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(didTapTag:)]) {
         [self.delegate didTapTag:tag];

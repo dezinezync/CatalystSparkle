@@ -561,7 +561,7 @@
     
     searchText = [searchText stringByStrippingWhitespace];
     
-    DDLogDebug(@"Article search text: %@", searchText);
+    NSLogDebug(@"Article search text: %@", searchText);
     
     NSArray <Paragraph *> *foundInViews = [[self.stackView arrangedSubviews] rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
        

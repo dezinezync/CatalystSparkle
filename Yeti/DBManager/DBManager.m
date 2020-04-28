@@ -446,7 +446,7 @@ NSString *const kNotificationsKey = @"notifications";
 - (void)setupDatabase
 {
     NSString *databasePath = [[self class] databasePath];
-    DDLogVerbose(@"databasePath: %@", databasePath);
+    NSLog(@"databasePath: %@", databasePath);
     
     // Configure custom class mappings for NSCoding.
     // In a previous version of the app, the "MyTodo" class was named "MyTodoItem".
@@ -820,7 +820,7 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
        
-        DDLogError(@"An error occurred when syncing changes: %@", error);
+        NSLog(@"An error occurred when syncing changes: %@", error);
         
     }];
     

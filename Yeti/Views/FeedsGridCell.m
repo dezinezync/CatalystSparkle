@@ -54,7 +54,7 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
         }
         @catch (NSException *exc) {
             // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            DDLogWarn(@"ArticleCell setImage: %@", exc);
+            NSLog(@"ArticleCell setImage: %@", exc);
         }
     }
     

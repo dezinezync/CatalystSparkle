@@ -32,14 +32,14 @@
         [token appendFormat:@"%02.2hhX", data[i]];
     }
     
-    DDLogInfo(@"Registered for Push notifications with token: %@", token);
+    NSLog(@"Registered for Push notifications with token: %@", token);
     
     MyFeedsManager.pushToken = token;
 }
 
 - (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-    DDLogError(@"Failed to register for push notifications: %@", error.localizedDescription);
+    NSLog(@"Failed to register for push notifications: %@", error.localizedDescription);
 }
 
 #pragma mark - <UNUserNotificationCenterDelegate>

@@ -180,7 +180,7 @@ static NSDateFormatter *_formatter = nil;
                 self.summary = [value htmlToPlainText];
             }
             @catch (NSException *exc) {
-                DDLogWarn(@"Exception when setting summary: %@", exc);
+                NSLog(@"Exception when setting summary: %@", exc);
             }
         }
     }
@@ -213,7 +213,7 @@ static NSDateFormatter *_formatter = nil;
         self.articleTitle = value;
     }
     else {
-        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+        NSLog(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
     }
 }
 

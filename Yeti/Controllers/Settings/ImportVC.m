@@ -95,8 +95,8 @@ NSString *const kImportCell = @"importCell";
     
     self.total = self.unmappedFeeds.count;
     
-    DDLogInfo(@"%@", self.unmappedFolders);
-    DDLogInfo(@"%@ feeds to import", @(self.total));
+    NSLog(@"%@", self.unmappedFolders);
+    NSLog(@"%@ feeds to import", @(self.total));
     
     [self processImportData];
 }
@@ -268,7 +268,7 @@ NSString *const kImportCell = @"importCell";
                     
                 } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
-                    DDLogError(@"Error creating folder: %@", obj);
+                    NSLog(@"Error creating folder: %@", obj);
                     
                     dispatch_semaphore_signal(semaphore);
                     
@@ -304,7 +304,7 @@ NSString *const kImportCell = @"importCell";
         return;
     }
     
-    DDLogInfo(@"Next Feed URL: %@", nextObj);
+    NSLog(@"Next Feed URL: %@", nextObj);
     
     if (self.lastImported == 0) {
         // triggers the first title update.
@@ -434,7 +434,7 @@ NSString *const kImportCell = @"importCell";
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                
-                DDLogError(@"Error adding url to it's folder %@ (%@): %@", url, folderName, error);
+                NSLog(@"Error adding url to it's folder %@ (%@): %@", url, folderName, error);
                 
                 strongify(self);
                 
@@ -450,7 +450,7 @@ NSString *const kImportCell = @"importCell";
      
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        DDLogError(@"Error importing url %@: %@", url, error);
+        NSLog(@"Error importing url %@: %@", url, error);
         
         strongify(self);
         

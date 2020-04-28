@@ -341,7 +341,7 @@
         [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
             
             if (error) {
-                DDLogError(@"Error authorizing for push notifications: %@",error);
+                NSLog(@"Error authorizing for push notifications: %@",error);
                 return;
             }
             

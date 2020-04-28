@@ -140,7 +140,7 @@ AppDelegate *MyAppDelegate = nil;
 //            [self yt_log_fontnames];
         
         //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
-        //    DDLogDebug(@"EX:%@", data);
+        //    NSLogDebug(@"EX:%@", data);
         
         // did finish launching
 #if !(TARGET_IPHONE_SIMULATOR)
@@ -233,25 +233,25 @@ AppDelegate *MyAppDelegate = nil;
     UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
     UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
     if (restorationInterfaceIdiom != currentInterfaceIdiom) {
-        DDLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
+        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
         return NO;
     }
     
     _restoring = YES;
     
-    DDLogDebug(@"Will restore application state");
+    NSLogDebug(@"Will restore application state");
     return _restoring;
 }
 
 - (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
-    DDLogDebug(@"Application will save restoration data");
+    NSLogDebug(@"Application will save restoration data");
     
     [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
     [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
 }
 
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
-    DDLogDebug(@"Application did restore");
+    NSLogDebug(@"Application did restore");
 }
 
 //- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
@@ -363,7 +363,7 @@ AppDelegate *MyAppDelegate = nil;
 - (void)_checkWindows {
     
     for (UIWindow *testWindow in [UIApplication sharedApplication].windows) {
-        DDLogDebug(@"Window: Level: %@; Hidden: %@; Class: %@", @(testWindow.windowLevel), @(testWindow.isHidden), NSStringFromClass(testWindow.class));
+        NSLogDebug(@"Window: Level: %@; Hidden: %@; Class: %@", @(testWindow.windowLevel), @(testWindow.isHidden), NSStringFromClass(testWindow.class));
         if (!testWindow.opaque && [NSStringFromClass(testWindow.class) hasPrefix:@"UIText"]) {
             BOOL wasHidden = testWindow.hidden;
             testWindow.hidden = YES;

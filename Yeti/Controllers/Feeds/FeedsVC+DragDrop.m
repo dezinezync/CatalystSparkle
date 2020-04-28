@@ -62,7 +62,7 @@
     UIDragItem *item = [self dragItemForIndexPath:indexPath];
     
     if (item != nil) {
-        DDLogDebug(@"New drag count: %@", @(session.items.count + 1));
+        NSLogDebug(@"New drag count: %@", @(session.items.count + 1));
         
         return @[item];
     }
@@ -107,7 +107,7 @@
             
             strongify(self);
             
-            DDLogDebug(@"Dropping %@ at %@", url, indexPath);
+            NSLogDebug(@"Dropping %@ at %@", url, indexPath);
             
             __block Feed *feed = nil;
             __block Folder *source = nil;
@@ -221,7 +221,7 @@
         
     }];
     
-    DDLogDebug(@"Dropping items %@ (%@) in %@", feed.title, (source ? source.title : @""), folder.title);
+    NSLogDebug(@"Dropping items %@ (%@) in %@", feed.title, (source ? source.title : @""), folder.title);
     
     /*
      * 1. If you have both a source and destination folder
@@ -247,13 +247,13 @@
                 
             } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
-                DDLogError(@"Move: Add Error: %@", error.localizedDescription);
+                NSLog(@"Move: Add Error: %@", error.localizedDescription);
             
             }];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            DDLogError(@"Move: Remove Error: %@", error.localizedDescription);
+            NSLog(@"Move: Remove Error: %@", error.localizedDescription);
             
         }];
         
@@ -266,7 +266,7 @@
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            DDLogError(@"MoveIn: Add Error: %@", error.localizedDescription);
+            NSLog(@"MoveIn: Add Error: %@", error.localizedDescription);
             
         }];
         
@@ -279,7 +279,7 @@
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            DDLogError(@"MoveOut: Remove Error: %@", error.localizedDescription);
+            NSLog(@"MoveOut: Remove Error: %@", error.localizedDescription);
             
         }];
         

@@ -209,7 +209,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         }
         @catch (NSException *exc) {
             // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            DDLogWarn(@"ArticleCell setImage: %@", exc);
+            NSLog(@"ArticleCell setImage: %@", exc);
         }
     }
     

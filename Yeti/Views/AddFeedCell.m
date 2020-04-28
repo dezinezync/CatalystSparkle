@@ -119,7 +119,7 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
         }
         @catch (NSException *exc) {
             // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            DDLogWarn(@"ArticleCell setImage: %@", exc);
+            NSLog(@"ArticleCell setImage: %@", exc);
         }
     }
     
