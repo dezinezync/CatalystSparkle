@@ -487,6 +487,13 @@
 			remoteGlobalIDString = F0B7C841240B7272008D8F4F;
 			remoteInfo = notificationContext;
 		};
+		F0BFD6BE245804FD009A863C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
+			remoteInfo = DZKit;
+		};
 		F0C4F8CB234C69B900D57C18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
@@ -2202,6 +2209,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
 				F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */,
 				F0F10A85244C7FED009FC108 /* PBXTargetDependency */,
@@ -3037,6 +3045,11 @@
 			isa = PBXTargetDependency;
 			target = F0B7C841240B7272008D8F4F /* notificationContext */;
 			targetProxy = F0B7C84F240B7272008D8F4F /* PBXContainerItemProxy */;
+		};
+		F0BFD6BF245804FD009A863C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZKit;
+			targetProxy = F0BFD6BE245804FD009A863C /* PBXContainerItemProxy */;
 		};
 		F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
