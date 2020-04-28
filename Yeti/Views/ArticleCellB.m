@@ -24,8 +24,6 @@
 #import <DZTextKit/UIImage+Sizing.h>
 #import <DZTextKit/UIColor+Hex.h>
 
-#import <PopMenu/PopMenu-Swift.h>
-
 BOOL IsAccessibilityContentCategory(void) {
     return [UIApplication.sharedApplication.preferredContentSizeCategory containsString:@"Accessibility"];
 }
