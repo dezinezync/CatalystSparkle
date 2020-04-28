@@ -34,3 +34,9 @@
 [submodule "Yeti/Vendors/FLAnimatedImage"]
 	path = Yeti/Vendors/FLAnimatedImage
 	url = git@github.com:dezinezync/FLAnimatedImage.git
+[submodule "Yeti/Vendors/JLRoutes"]
+	path = Yeti/Vendors/JLRoutes
+	url = https://github.com/joeldev/JLRoutes.git
+[submodule "Yeti/Vendors/NYTPhotoViewer"]
+	path = Yeti/Vendors/NYTPhotoViewer
+	url = https://github.com/nytimes/NYTPhotoViewer.git
