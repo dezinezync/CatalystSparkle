@@ -495,6 +495,20 @@
 			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
 			remoteInfo = DZKit;
 		};
+		F0BFD72E2458058B009A863C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 92C9BC0B1B199DC500D79B06;
+			remoteInfo = FLAnimatedImage;
+		};
+		F0BFD74C24580590009A863C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DCF7C2BD1BCC8E870087ED39;
+			remoteInfo = "YapDatabase-iOS";
+		};
 		F0C4F8CB234C69B900D57C18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
@@ -2211,6 +2225,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0BFD74D24580590009A863C /* PBXTargetDependency */,
+				F0BFD72F2458058B009A863C /* PBXTargetDependency */,
 				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
 				F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */,
@@ -3052,6 +3068,16 @@
 			isa = PBXTargetDependency;
 			name = DZKit;
 			targetProxy = F0BFD6BE245804FD009A863C /* PBXContainerItemProxy */;
+		};
+		F0BFD72F2458058B009A863C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FLAnimatedImage;
+			targetProxy = F0BFD72E2458058B009A863C /* PBXContainerItemProxy */;
+		};
+		F0BFD74D24580590009A863C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "YapDatabase-iOS";
+			targetProxy = F0BFD74C24580590009A863C /* PBXContainerItemProxy */;
 		};
 		F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
