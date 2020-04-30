@@ -110,20 +110,17 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 feed.unread = 0;
                 
+                feed.extra = nil;
+                
                 [feeds addObject:feed];
                 
             }
             
         }
         
-        if (NSThread.isMainThread) {
+        runOnMainQueueWithoutDeadlocking(^{
             [ArticlesManager.shared setFeeds:feeds];
-        }
-        else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [ArticlesManager.shared setFeeds:feeds];
-            });
-        }
+        });
         
     }];
     

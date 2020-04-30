@@ -3096,6 +3096,9 @@ NSArray <NSString *> * _defaultsKeys;
         return obj.identifier.stringValue;
     }];
     
+    // we no longer need the bookmarks in memory. 
+    [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
+    
     NSString *existing = [existingArr componentsJoinedByString:@","];
     
     weakify(self);

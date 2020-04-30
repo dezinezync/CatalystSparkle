@@ -52,7 +52,7 @@ FOUNDATION_EXTERN BOOL IsAccessibilityContentCategory(void);
 
 @property (nonatomic, assign, getter=isExploring) BOOL exploring;
 
-@property (nonatomic, strong) Feed * _Nullable feed;
+@property (nonatomic, weak) Feed * _Nullable feed;
 
 @property (nonatomic, strong) NSOperation * _Nullable searchOperation;
 

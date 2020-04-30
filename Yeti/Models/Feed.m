@@ -13,6 +13,7 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder {
+    
     [super encodeWithCoder:encoder];
     [encoder encodeObject:self.authors forKey:@"authors"];
     [encoder encodeObject:self.etag forKey:@"etag"];
@@ -29,11 +30,13 @@
     [encoder encodeBool:self.hubSubscribed forKey:@"hubSubscribed"];
     [encoder encodeBool:self.subscribed forKey:@"subscribed"];
     [encoder encodeObject:self.localName forKey:propSel(localName)];
+    
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
     if ((self = [super initWithCoder:decoder])) {
+        
         self.authors = [decoder decodeObjectOfClasses:[NSSet setWithArray:@[NSArray.class, Author.class]] forKey:propSel(authors)];
         self.etag = [decoder decodeObjectOfClass:NSString.class forKey:@"etag"];
         self.favicon = [decoder decodeObjectOfClass:NSString.class forKey:@"favicon"];
@@ -49,7 +52,13 @@
         self.hubSubscribed = [decoder decodeBoolForKey:@"hubSubscribed"];
         self.subscribed = [decoder decodeBoolForKey:@"subscribed"];
         self.localName = [decoder decodeObjectOfClass:NSString.class forKey:propSel(localName)];
+        
+        // cache it to memory.
+        NSString *favicon = [self faviconURI];
+        favicon = nil;
+        
     }
+    
     return self;
 }
 
@@ -117,6 +126,10 @@
     }
 
     [self setValuesForKeysWithDictionary:aDictionary];
+    
+    // cache it to memory
+    NSString *favicon = [self faviconURI];
+    favicon = nil;
 
 }
 
