@@ -226,6 +226,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [cache removeAllObjects];
     }
     
+    cache = [self.articlesImageLoader valueForKeyPath:@"cache"];
+    
+    if (cache) {
+        [cache removeAllObjects];
+    }
+    
 //    [self.navigationController popViewControllerAnimated:NO];
 }
 
@@ -2225,7 +2231,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 imageview.loading = YES;
                 
-                [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
+                __weak ImageLoader *weakImageLoader = self.articlesImageLoader;
+                
+                [imageview il_setImageWithURL:imageview.URL imageLoader:weakImageLoader];
             }
         }
         else if (imageview.imageView.image && !contains) {
