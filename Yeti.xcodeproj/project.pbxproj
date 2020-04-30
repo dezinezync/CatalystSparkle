@@ -175,6 +175,12 @@
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */; };
 		F0A0501C21F07BFF00A46524 /* AddFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0501B21F07BFF00A46524 /* AddFeedVC.m */; };
+		F0A39B12245A955600A9B26E /* PINRemoteImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B11245A955600A9B26E /* PINRemoteImage.framework */; };
+		F0A39B13245A955600A9B26E /* PINRemoteImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B11245A955600A9B26E /* PINRemoteImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0A39B15245A956E00A9B26E /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B14245A956E00A9B26E /* PINCache.framework */; };
+		F0A39B16245A956E00A9B26E /* PINCache.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B14245A956E00A9B26E /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0A39B18245A958200A9B26E /* PINOperation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B17245A958200A9B26E /* PINOperation.framework */; };
+		F0A39B19245A958200A9B26E /* PINOperation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B17245A958200A9B26E /* PINOperation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
@@ -682,10 +688,13 @@
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
 				F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */,
 				F0E0E6DF2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Embed Frameworks */,
+				F0A39B16245A956E00A9B26E /* PINCache.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
 				F0658EA5244C80F3002AC231 /* DZTextKit.framework in Embed Frameworks */,
 				F0E0E6E12457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Embed Frameworks */,
 				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
+				F0A39B13245A955600A9B26E /* PINRemoteImage.framework in Embed Frameworks */,
+				F0A39B19245A958200A9B26E /* PINOperation.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -881,9 +890,7 @@
 		F070C3001FBABC3600912CCF /* YetiUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiUITests.m; sourceTree = "<group>"; };
 		F070C3021FBABC3600912CCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F070C3201FBAC0E100912CCF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		F070C3231FBAC10600912CCF /* JLRoutes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JLRoutes.framework; path = Carthage/Build/iOS/JLRoutes.framework; sourceTree = SOURCE_ROOT; };
 		F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Carthage/Build/iOS/OMGHTTPURLRQ.framework; sourceTree = SOURCE_ROOT; };
-		F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
 		F070C3321FBAC37600912CCF /* FeedsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsVC.h; sourceTree = "<group>"; };
 		F070C3331FBAC37600912CCF /* FeedsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsVC.m; sourceTree = "<group>"; };
 		F070C3371FBAC3CC00912CCF /* FeedsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsManager.h; sourceTree = "<group>"; };
@@ -957,6 +964,9 @@
 		F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedDeckController.m; sourceTree = "<group>"; };
 		F0A0501A21F07BFF00A46524 /* AddFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedVC.h; sourceTree = "<group>"; };
 		F0A0501B21F07BFF00A46524 /* AddFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedVC.m; sourceTree = "<group>"; };
+		F0A39B11245A955600A9B26E /* PINRemoteImage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PINRemoteImage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0A39B14245A956E00A9B26E /* PINCache.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PINCache.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0A39B17245A958200A9B26E /* PINOperation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PINOperation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
 		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
@@ -997,7 +1007,6 @@
 		F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-MediumItalic.ttf"; sourceTree = "<group>"; };
 		F0A7B8F220FA21C00056A2C0 /* _YetiStoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _YetiStoreVC.h; sourceTree = "<group>"; };
 		F0A7B8F320FA21C00056A2C0 /* _YetiStoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _YetiStoreVC.m; sourceTree = "<group>"; };
-		F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAnimatedImage.framework; path = Carthage/Build/iOS/FLAnimatedImage.framework; sourceTree = SOURCE_ROOT; };
 		F0AD76D320E2217C0003787B /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		F0AD76D420E2217C0003787B /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		F0AF313720D27F7700E074D6 /* IntroVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroVC.h; sourceTree = "<group>"; };
@@ -1117,8 +1126,6 @@
 		F0E71E6D1FD6F2D400408CFF /* FeedsManager+KVS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsManager+KVS.h"; sourceTree = "<group>"; };
 		F0E71E6E1FD6F2D400408CFF /* FeedsManager+KVS.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsManager+KVS.m"; sourceTree = "<group>"; };
 		F0E71E731FD6FF7100408CFF /* Yeti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yeti.entitlements; sourceTree = "<group>"; };
-		F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewer.framework; path = Carthage/Build/iOS/NYTPhotoViewer.framework; sourceTree = SOURCE_ROOT; };
-		F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NYTPhotoViewerCore.framework; path = Carthage/Build/iOS/NYTPhotoViewerCore.framework; sourceTree = SOURCE_ROOT; };
 		F0E8648F234793870089F9EF /* ArticleVC+Photos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Photos.h"; sourceTree = "<group>"; };
 		F0E86490234793870089F9EF /* ArticleVC+Photos.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Photos.m"; sourceTree = "<group>"; };
 		F0E86492234796B80089F9EF /* ArticlePhoto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePhoto.h; sourceTree = "<group>"; };
@@ -1183,14 +1190,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A39B12245A955600A9B26E /* PINRemoteImage.framework in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
+				F0A39B18245A958200A9B26E /* PINOperation.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F08C5E062386569D0055946F /* DZNetworking.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F0E0E6DE2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Frameworks */,
+				F0A39B15245A956E00A9B26E /* PINCache.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F0E0E6E02457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
@@ -1721,12 +1731,7 @@
 			isa = PBXGroup;
 			children = (
 				F00E830622C4826D0027C45E /* RMStore */,
-				F0E8648B234793200089F9EF /* NYTPhotoViewer.framework */,
-				F0E8648C234793200089F9EF /* NYTPhotoViewerCore.framework */,
-				F0AC8FE520E3901E00373B3A /* FLAnimatedImage.framework */,
 				F074D802208DC2B4002F22CB /* WebP.framework */,
-				F070C3281FBAC10600912CCF /* CocoaLumberjack.framework */,
-				F070C3231FBAC10600912CCF /* JLRoutes.framework */,
 				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
 			);
 			path = Frameworks;
@@ -1874,6 +1879,9 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0A39B17245A958200A9B26E /* PINOperation.framework */,
+				F0A39B14245A956E00A9B26E /* PINCache.framework */,
+				F0A39B11245A955600A9B26E /* PINRemoteImage.framework */,
 				F0448D00244463B7003B6AA7 /* CoreServices.framework */,
 				F0E0DBB122AE0F46006A2D93 /* WebKit.framework */,
 				F099465F20AD86BE00E5520F /* StoreKit.framework */,
