@@ -109,6 +109,8 @@
     
 }
 
+#pragma mark -
+
 + (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary
 {
 
@@ -215,7 +217,6 @@
         NSLog(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
     }
 }
-
 
 - (NSDictionary *)dictionaryRepresentation
 {

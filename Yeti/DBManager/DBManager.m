@@ -110,8 +110,6 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 feed.unread = 0;
                 
-                feed.extra = nil;
-                
                 [feeds addObject:feed];
                 
             }
