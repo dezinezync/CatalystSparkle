@@ -2097,6 +2097,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
+    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+    
+    if ([self.item.articleURL containsString:feed.extra.url] == NO) {
+        
+        [AlertManager showGenericAlertWithTitle:@"Not Supported" message:@"Fetching full-text for externally linked articles is not supported at the moment."];
+        
+        return;
+        
+    }
+    
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [self setupArticle:responseObject];
