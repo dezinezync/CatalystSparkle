@@ -2101,6 +2101,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if ([self.item.articleURL containsString:feed.extra.url] == NO) {
         
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+        
         [AlertManager showGenericAlertWithTitle:@"Not Supported" message:@"Fetching full-text for externally linked articles is not supported at the moment."];
         
         return;
