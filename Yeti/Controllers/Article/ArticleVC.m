@@ -1305,7 +1305,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
@@ -1446,7 +1446,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addLinebreak];
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     

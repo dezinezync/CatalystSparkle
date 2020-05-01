@@ -841,7 +841,7 @@ NSString *const kNotificationsKey = @"notifications";
     
     [queue setSuspended:YES];
     
-    __block NSNumber *articleID = nil;
+//    __block NSNumber *articleID = nil;
     
     // first we get the latest article for this Feed ID.
 //    [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
