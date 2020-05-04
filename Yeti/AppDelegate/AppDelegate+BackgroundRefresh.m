@@ -16,6 +16,13 @@
     
     [self scheduleBackgroundRefresh];
     
+//#ifdef DEBUG
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+//    [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:@"com.yeti.refresh"];
+//#pragma clang diagnostic pop
+//#endif
+    
 }
 
 - (void)scheduleBackgroundRefresh {

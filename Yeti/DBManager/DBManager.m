@@ -662,6 +662,9 @@ NSString *const kNotificationsKey = @"notifications";
         
     };
     
+    self->_syncSetup = NO;
+    [self setupSync];
+    
 }
 
 - (void)setupSync {
