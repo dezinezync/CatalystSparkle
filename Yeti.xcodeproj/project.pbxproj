@@ -72,6 +72,7 @@
 		F047F4F820C25FB900626968 /* Spectral-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */; };
 		F047F4FA20C25FB900626968 /* Spectral-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E020C25FB900626968 /* Spectral-Italic.ttf */; };
 		F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */; };
+		F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */; };
 		F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F04CFAC52154B57B00AA7B5E /* StoreVC.m */; };
 		F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BB21B5427B00AD1FB2 /* YTExtractor.m */; };
 		F04E92BF21B5429300AD1FB2 /* NSString+Components.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BE21B5429300AD1FB2 /* NSString+Components.m */; };
@@ -805,6 +806,8 @@
 		F047F4DF20C25FB900626968 /* Spectral-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-SemiBold.ttf"; sourceTree = "<group>"; };
 		F047F4E020C25FB900626968 /* Spectral-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-Italic.ttf"; sourceTree = "<group>"; };
 		F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
+		F04815FA245FD88200F8091E /* AppDelegate+BackgroundRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+BackgroundRefresh.h"; sourceTree = "<group>"; };
+		F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+BackgroundRefresh.m"; sourceTree = "<group>"; };
 		F04CFAC42154B57B00AA7B5E /* StoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreVC.h; sourceTree = "<group>"; };
 		F04CFAC52154B57B00AA7B5E /* StoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreVC.m; sourceTree = "<group>"; };
 		F04E92BA21B5427B00AD1FB2 /* YTExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTExtractor.h; sourceTree = "<group>"; };
@@ -1723,6 +1726,8 @@
 				F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */,
 				F099466320AD8A8A00E5520F /* AppDelegate+Store.h */,
 				F099466420AD8A8B00E5520F /* AppDelegate+Store.m */,
+				F04815FA245FD88200F8091E /* AppDelegate+BackgroundRefresh.h */,
+				F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -2894,6 +2899,7 @@
 				F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */,
 				F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */,
 				F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */,
+				F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */,
 				F04E92BF21B5429300AD1FB2 /* NSString+Components.m in Sources */,
 				F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,

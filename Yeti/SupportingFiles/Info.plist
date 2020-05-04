@@ -285,5 +285,9 @@
 			</dict>
 		</dict>
 	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.yeti.refresh</string>
+	</array>
 </dict>
 </plist>

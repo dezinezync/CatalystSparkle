@@ -26,6 +26,7 @@ NSString *const kNotificationsKey = @"notifications";
 @interface DBManager () {
     CGFloat _totalProgress;
     CGFloat _currentProgress;
+    NSOperationQueue *_syncQueue;
 }
 
 @property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
@@ -626,6 +627,43 @@ NSString *const kNotificationsKey = @"notifications";
 
 #pragma mark - Sync
 
+- (void)setupSync:(BGAppRefreshTask *)task {
+    
+    syncProgressBlock originalSyncBlock = self.syncProgressBlock;
+    
+    weakify(self);
+    
+    self.syncProgressBlock = ^(CGFloat progress) {
+        
+        if (progress >= 0.95f) {
+            
+            strongify(self);
+            
+            BOOL completed = self->_syncQueue != nil;
+            
+            [task setTaskCompletedWithSuccess:completed];
+            
+            self->_syncProgressBlock = originalSyncBlock;
+            
+        }
+        
+    };
+    
+    task.expirationHandler = ^{
+        
+        strongify(self);
+        
+        if (self->_syncQueue != nil) {
+            
+            [self->_syncQueue cancelAllOperations];
+            self->_syncQueue = nil;
+            
+        }
+        
+    };
+    
+}
+
 - (void)setupSync {
     
     if (self.isSyncSetup == YES) {
@@ -814,6 +852,8 @@ NSString *const kNotificationsKey = @"notifications";
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
     queue.name = @"com.elytra.sync.serialFetchArticles";
+    
+    _syncQueue = queue;
     
     NSBlockOperation *previousOp;
     
