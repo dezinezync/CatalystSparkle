@@ -1,6 +1,8 @@
 # v1.7.1
 
-## Build 347
+## Build 348
+
+- Modern Background Syncing code. 
 
 - Fixed a leak that would occur on loading PNG images with incorrect alpha channel information. 
 
