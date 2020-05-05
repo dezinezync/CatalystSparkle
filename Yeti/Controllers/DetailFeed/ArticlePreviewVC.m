@@ -14,7 +14,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import <DZTextKit/Content.h>
+#import "Content.h"
 
 @interface ArticlePreviewVC ()
 

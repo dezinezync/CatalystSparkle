@@ -11,7 +11,7 @@
 #import "DetailFeedVC.h"
 #import "ArticleAuthorView.h"
 
-#import <DZTextKit/Content.h>
+#import "Content.h"
 #import <DZTextKit/DZTextKitViews.h>
 #import <DZTextKit/YetiConstants.h>
 #import <DZTextKit/CheckWifi.h>
