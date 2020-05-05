@@ -33,7 +33,7 @@
 	url = https://github.com/MatthewYork/DateTools.git
 [submodule "Yeti/Vendors/FLAnimatedImage"]
 	path = Yeti/Vendors/FLAnimatedImage
-	url = git@github.com:dezinezync/FLAnimatedImage.git
+	url = https://github.com/Flipboard/FLAnimatedImage.git
 [submodule "Yeti/Vendors/JLRoutes"]
 	path = Yeti/Vendors/JLRoutes
 	url = https://github.com/joeldev/JLRoutes.git
