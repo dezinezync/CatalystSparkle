@@ -40,3 +40,6 @@
 [submodule "Yeti/Vendors/NYTPhotoViewer"]
 	path = Yeti/Vendors/NYTPhotoViewer
 	url = https://github.com/nytimes/NYTPhotoViewer.git
+[submodule "DBManager"]
+	path = Yeti/DBManager
+	url = git@github.com:dezinezync/YTDBManager.git
