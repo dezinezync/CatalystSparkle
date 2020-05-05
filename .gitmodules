@@ -21,7 +21,7 @@
 	url = git@github.com:dezinezync/TOSplitViewController.git
 [submodule "Yeti/Vendors/YapDatabase"]
 	path = Yeti/Vendors/YapDatabase
-	url = git@github.com:dezinezync/YapDatabase.git
+	url = https://github.com/yapstudios/YapDatabase.git
 [submodule "Yeti/Vendors/DZTextKit"]
 	path = Yeti/Vendors/DZTextKit
 	url = git@github.com:dezinezync/DZTextKit.git
