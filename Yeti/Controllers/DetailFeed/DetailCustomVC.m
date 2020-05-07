@@ -43,6 +43,17 @@
     
 }
 
+- (void)dealloc {
+    
+    if (self.isUnread == NO) {
+        
+        // we no longer need the bookmarks in memory.
+        [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
+        
+    }
+    
+}
+
 - (void)setupState {
     
     if (_hasSetupState) {
@@ -225,7 +236,7 @@
         weakify(self);
         
         _unreadsManager.errorCB = ^(NSError * _Nonnull error) {
-            DDLogError(@"%@", error);
+            NSLog(@"%@", error);
             
             strongify(self);
             

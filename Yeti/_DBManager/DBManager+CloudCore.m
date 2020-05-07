@@ -20,7 +20,7 @@
     
     [self.database asyncRegisterExtension:self.cloudCoreExtension withName:cloudCoreExtensionName completionQueue:dispatch_get_main_queue() completionBlock:^(BOOL ready) {
         
-        DDLogInfo(@"Cloud core extension registered !");
+        NSLog(@"Cloud core extension registered !");
         
     }];
     
@@ -51,7 +51,7 @@
 
 - (void)startOperation:(YapDatabaseCloudCoreOperation *)operation forPipeline:(YapDatabaseCloudCorePipeline *)pipeline {
     
-    DDLogDebug(@"CloudCore:[Pipeline] %@ > %@", pipeline.name, operation);
+    NSLogDebug(@"CloudCore:[Pipeline] %@ > %@", pipeline.name, operation);
     
     [operation start];
 

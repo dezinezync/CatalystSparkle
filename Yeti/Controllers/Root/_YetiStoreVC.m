@@ -315,7 +315,7 @@ static void *KVO_Subscription = &KVO_Subscription;
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            DDLogError(@"Get Subscription error in YetiStoreVC: %@", error);
+            NSLog(@"Get Subscription error in YetiStoreVC: %@", error);
         }];
         
         return;

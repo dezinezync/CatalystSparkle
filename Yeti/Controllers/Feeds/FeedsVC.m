@@ -204,6 +204,18 @@ static void *KVO_Unread = &KVO_Unread;
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    if (PrefsManager.sharedInstance.useToolbar == NO && self.navigationController.isToolbarHidden == NO) {
+        
+        [self.navigationController setToolbarHidden:YES animated:YES];
+        
+    }
+    
+    [super viewWillDisappear:animated];
+    
+}
+
 - (BOOL)definesPresentationContext
 {
     return YES;
@@ -525,7 +537,7 @@ static void *KVO_Unread = &KVO_Unread;
         NSString *data = formattedString(@"%@", timestamp);
         NSError *error = nil;
         if (![data writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
-            DDLogError(@"Failed to save since date for feeds. %@", error.localizedDescription);
+            NSLog(@"Failed to save since date for feeds. %@", error.localizedDescription);
         }
     }
     
@@ -715,14 +727,14 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-     DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+     NSLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
     
     [super encodeRestorableStateWithCoder:coder];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
     
     [super decodeRestorableStateWithCoder:coder];
     
@@ -891,7 +903,7 @@ NSString * const kDS2Data = @"DS2Data";
         }
         
     } @catch (NSException *exc) {
-        DDLogWarn(@"Exception: %@", exc);
+        NSLog(@"Exception: %@", exc);
     }
 }
 
@@ -948,7 +960,7 @@ NSString * const kDS2Data = @"DS2Data";
     }
     
     if (self.presentedViewController != nil) {
-        DDLogWarn(@"FeedsVC is already presenting a viewController. Not showing the subscriptions interface.");
+        NSLog(@"FeedsVC is already presenting a viewController. Not showing the subscriptions interface.");
         return;
     }
     
@@ -957,7 +969,7 @@ NSString * const kDS2Data = @"DS2Data";
     BOOL betaVal = [Keychain boolFor:YTSubscriptionPurchased error:nil];
 
     if (betaVal == YES) {
-        DDLogWarn(@"Beta user has already gone through the subscription check. Ignoring.");
+        NSLog(@"Beta user has already gone through the subscription check. Ignoring.");
         return;
     }
 #endif
@@ -965,7 +977,7 @@ NSString * const kDS2Data = @"DS2Data";
     BOOL addedVal = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
     
     if (addedVal == NO) {
-        DDLogWarn(@"User hasn't added their first feed yet. Ignoring.");
+        NSLog(@"User hasn't added their first feed yet. Ignoring.");
         return;
     }
 #if TESTFLIGHT == 0
@@ -1106,11 +1118,11 @@ NSString * const kDS2Data = @"DS2Data";
                 return;
             }
             
-            DDLogDebug(@"Get Subscription: %@", MyFeedsManager.subscription.expiry);
+            NSLogDebug(@"Get Subscription: %@", MyFeedsManager.subscription.expiry);
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            DDLogDebug(@"Get Subscription: %@", MyFeedsManager.subscription.error.localizedDescription);
+            NSLogDebug(@"Get Subscription: %@", MyFeedsManager.subscription.error.localizedDescription);
             
             if ([MyFeedsManager.subscription hasExpired]) {
                 [self showSubscriptionsInterface];
@@ -1193,7 +1205,7 @@ NSString * const kDS2Data = @"DS2Data";
     __block NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
     
     if (index == NSNotFound) {
-        DDLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
+        NSLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
         return;
     }
     

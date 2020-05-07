@@ -11,7 +11,7 @@
 #import "DetailFeedVC.h"
 #import "ArticleAuthorView.h"
 
-#import <DZTextKit/Content.h>
+#import "Content.h"
 #import <DZTextKit/DZTextKitViews.h>
 #import <DZTextKit/YetiConstants.h>
 #import <DZTextKit/CheckWifi.h>
@@ -221,6 +221,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // Dispose of any resources that can be recreated.
     
     NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
+    
+    if (cache) {
+        [cache removeAllObjects];
+    }
+    
+    cache = [self.articlesImageLoader valueForKeyPath:@"cache"];
     
     if (cache) {
         [cache removeAllObjects];
@@ -880,7 +886,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         self->_last = nil;
         
-        DDLogInfo(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
+        NSLog(@"Processing: %@", @([NSDate.date timeIntervalSinceDate:start]));
         
         if (self.item && self.item.isRead == NO) {
             // since v1.2, fetching the article marks it as read.
@@ -900,7 +906,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         self.scrollView.contentSize = contentSize;
         
-        DDLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
+        NSLogDebug(@"ScrollView contentsize: %@", NSStringFromCGSize(contentSize));
         
         self.state = ArticleStateLoaded;
     });
@@ -1281,7 +1287,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     else {
-        DDLogWarn(@"Unhandled node: %@", content);
+        NSLog(@"Unhandled node: %@", content);
     }
 }
 
@@ -1299,7 +1305,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
@@ -1440,7 +1446,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addLinebreak];
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
@@ -1874,7 +1880,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         videoID = [videoID stringByReplacingOccurrencesOfString:@"watch?v=" withString:@""];
     }
     
-    DDLogDebug(@"Extracting YT info for: %@", videoID);
+    NSLogDebug(@"Extracting YT info for: %@", videoID);
     
     if ([_last isKindOfClass:Linebreak.class] == NO) {
         [self addLinebreak];
@@ -1929,11 +1935,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
     //                    [playerController.player addObserver:self forKeyPath:propSel(rate) options:NSKeyValueObservingOptionNew context:KVO_PlayerRate];
                         
-                        DDLogInfo(@"Video player image has been set: %@", URL);
+                        NSLog(@"Video player image has been set: %@", URL);
                         
                     } error:^(NSError * _Nonnull error) {
 
-                        DDLogError(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
+                        NSLog(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
 
                     }];
                     
@@ -1951,7 +1957,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     } error:^(NSError * _Nonnull error) {
        
-        DDLogError(@"Error extracting Youtube Video info: %@", error.localizedDescription);
+        NSLog(@"Error extracting Youtube Video info: %@", error.localizedDescription);
         
         [self.stackView removeArrangedSubview:playerView];
         [playerView removeFromSuperview];
@@ -2097,6 +2103,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
+    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+    
+    if ([self.item.articleURL containsString:feed.extra.url] == NO) {
+        
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+        
+        [AlertManager showGenericAlertWithTitle:@"Not Supported" message:@"Fetching full-text for externally linked articles is not supported at the moment."];
+        
+        return;
+        
+    }
+    
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [self setupArticle:responseObject];
@@ -2200,18 +2220,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             contains = contains || CGRectContainsRect(visibleRect, imageFrame);
         }
         
-//        DDLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
+//        NSLogDebug(@"Frame:%@, contains: %@", NSStringFromCGRect(imageview.frame), @(contains));
         
         if ([imageview isMemberOfClass:Gallery.class]) {
             [(Gallery *)imageview setLoading:YES];
         }
         else if (!imageview.imageView.image && contains && !imageview.isLoading) {
-//            DDLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
+//            NSLogDebug(@"Point: %@ Loading image: %@", NSStringFromCGPoint(point), imageview.URL);
             if (imageview.URL && ![imageview.URL.absoluteString isBlank]) {
                 
                 imageview.loading = YES;
                 
-                [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
+                __weak ImageLoader *weakImageLoader = self.articlesImageLoader;
+                
+                [imageview il_setImageWithURL:imageview.URL imageLoader:weakImageLoader];
             }
         }
         else if (imageview.imageView.image && !contains) {
@@ -2259,7 +2281,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     identifier = [identifier stringByReplacingOccurrencesOfString:@"#" withString:@""];
     
-    DDLogDebug(@"Looking up anchor %@", identifier);
+    NSLogDebug(@"Looking up anchor %@", identifier);
     
     NSArray <Paragraph *> *paragraphs = [self.stackView.arrangedSubviews rz_filter:^BOOL(__kindof UIView *obj, NSUInteger idx, NSArray *array) {
         return [obj isKindOfClass:Paragraph.class];
@@ -2280,11 +2302,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 compare = [compare stringByReplacingOccurrencesOfString:@"#" withString:@""];
                 
                 float ld = [identifier compareStringWithString:compare];
-                DDLogDebug(@"href:%@ distance:%@", compare, @(ld));
+                NSLogDebug(@"href:%@ distance:%@", compare, @(ld));
                 
                 BOOL contained = [compare containsString:identifier] || [identifier containsString:compare];
                 
-                DDLogDebug(@"sub matching:%@", contained ? @"Yes" : @"No");
+                NSLogDebug(@"sub matching:%@", contained ? @"Yes" : @"No");
                 
                 // also check last N chars
                 
@@ -2306,7 +2328,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (required) {
         CGRect frame = required.frame;
         
-//        DDLogDebug(@"Found the paragraph: %@", required);
+//        NSLogDebug(@"Found the paragraph: %@", required);
         
         self.scrollView.userInteractionEnabled = NO;
         // compare against the maximum contentOffset which is contentsize.height - bounds.size.height
@@ -2426,7 +2448,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     NSString *absolute = URL.absoluteString;
     
-    DDLogDebug(@"Interact with URL: %@ and interaction type: %@", URL, @(interaction));
+    NSLogDebug(@"Interact with URL: %@ and interaction type: %@", URL, @(interaction));
     
     if (interaction != UITextItemInteractionPresentActions) {
         // footlinks and the like
@@ -2489,7 +2511,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             pvc.sourceView = textView;
             pvc.sourceRect = [Paragraph boundingRectIn:textView forCharacterRange:characterRange];
             
-            DDLogDebug(@"view: %@", pvc.sourceView);
+            NSLogDebug(@"view: %@", pvc.sourceView);
         }
         
         [self presentViewController:avc animated:YES completion:nil];
@@ -2731,7 +2753,7 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
     
     [super encodeRestorableStateWithCoder:coder];
     
@@ -2742,7 +2764,7 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
     
     [super decodeRestorableStateWithCoder:coder];
     

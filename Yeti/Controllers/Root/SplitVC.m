@@ -202,7 +202,7 @@
 
 - (void)didPanWithTwoFingers:(UISwipeGestureRecognizer *)sender {
     
-    DDLogDebug(@"State: %@", @(sender.state));
+    NSLogDebug(@"State: %@", @(sender.state));
     
     if (sender.state == UIGestureRecognizerStateEnded && ((sender.direction | UISwipeGestureRecognizerDirectionUp) || (sender.direction | UISwipeGestureRecognizerDirectionDown))) {
         
@@ -210,7 +210,7 @@
         NSInteger index = [YetiThemeKit.themeNames indexOfObject:activeTheme];
         NSInteger lastThemeIndex = YetiThemeKit.themeNames.count - 1;
         
-        DDLogDebug(@"Direction: %@", @(sender.direction));
+        NSLogDebug(@"Direction: %@", @(sender.direction));
         
         if (sender.direction == UISwipeGestureRecognizerDirectionUp) {
             // previous theme unless we are at 0, in that case the last theme
@@ -297,7 +297,7 @@
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
     
     [super encodeRestorableStateWithCoder:coder];
     
@@ -305,7 +305,7 @@
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
     
     [super decodeRestorableStateWithCoder:coder];
     

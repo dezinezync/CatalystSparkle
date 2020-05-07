@@ -13,7 +13,7 @@
 
 - (void)start {
     
-    DDLogDebug(@"Starting Operation: %@", self);
+    NSLogDebug(@"Starting Operation: %@", self);
     
     // network IO happens here.
     if (self.feed && self.customTitle) {
@@ -47,7 +47,7 @@
         
     }
     else {
-        DDLogError(@"Nothing to do in operation: %@ for feed: %@", NSStringFromClass(self.class), self.feed ? self.feed.title : @"No feed");
+        NSLog(@"Nothing to do in operation: %@ for feed: %@", NSStringFromClass(self.class), self.feed ? self.feed.title : @"No feed");
         
         // close this request
         [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {

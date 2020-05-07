@@ -24,6 +24,7 @@
 @import UserNotifications;
 
 #import <DZTextKit/YetiConstants.h>
+#import <DeviceCheck/DeviceCheck.h>
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
@@ -36,6 +37,8 @@ NSArray <NSString *> * _defaultsKeys;
 
 @property (atomic, strong, readwrite) YTUserID * _Nonnull userIDManager;
 @property (atomic, strong, readwrite) Subscription * _Nullable subscription;
+
+@property (nonatomic, copy) NSString *deviceID;
 
 @end
 
@@ -72,10 +75,49 @@ NSArray <NSString *> * _defaultsKeys;
         
         self.userIDManager = [[YTUserID alloc] initWithDelegate:self];
         
-//        DDLogWarn(@"%@", MyFeedsManager.bookmarks);
+//        NSLog(@"%@", MyFeedsManager.bookmarks);
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+        
+        NSError *error = nil;
+        
+        NSString *deviceID = [Keychain stringFor:@"deviceID" error:&error];
+        
+        if (error == nil && deviceID != nil) {
+            self.deviceID = deviceID;
+        }
+        else {
+            
+            DCDevice *device = DCDevice.currentDevice;
+            
+            if ([device isSupported]) {
+                
+                [device generateTokenWithCompletionHandler:^(NSData * _Nullable token, NSError * _Nullable error) {
+                    
+                    NSData *encoded = [token base64EncodedDataWithOptions:kNilOptions];
+                    
+                    NSString *tokenString = [[NSString alloc] initWithData:encoded encoding:NSUTF8StringEncoding];
+                    
+                    NSString *tokenMD5 = [tokenString md5];
+                    
+                    self.deviceID = tokenMD5;
+                    
+                    [Keychain add:@"deviceID" string:self.deviceID];
+                    [Keychain add:@"rawDeviceID" data:token];
+                    
+                }];
+                
+            }
+            else {
+                
+                self.deviceID = [[NSUUID UUID] UUIDString];
+                
+                [Keychain add:@"deviceID" string:self.deviceID];
+                
+            }
+            
+        }
     
     }
     
@@ -150,7 +192,7 @@ NSArray <NSString *> * _defaultsKeys;
             errorCB(error, response, task);
         }
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -222,7 +264,7 @@ NSArray <NSString *> * _defaultsKeys;
         }
         
         if (successCB) {
-//            DDLogDebug(@"Responding to successCB from network");
+//            NSLogDebug(@"Responding to successCB from network");
             asyncMain(^{
                 successCB(@2, response, task);
             });
@@ -234,7 +276,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -424,7 +466,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -525,7 +567,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -655,7 +697,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -736,7 +778,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -778,7 +820,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -832,7 +874,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -855,7 +897,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(error, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
             
         }];
@@ -917,7 +959,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(error, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
             
         }];
@@ -985,7 +1027,7 @@ NSArray <NSString *> * _defaultsKeys;
             
         }
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -1019,7 +1061,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -1060,7 +1102,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1141,7 +1183,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF == %d", item.identifier.integerValue];
             NSArray *filteredArray = [markedRead filteredArrayUsingPredicate:predicate];
-            DDLogDebug(@"Index: %@", filteredArray);
+            NSLogDebug(@"Index: %@", filteredArray);
             
             if (filteredArray.count > 0 && !item.read) {
                 item.read = YES;
@@ -1219,7 +1261,7 @@ NSArray <NSString *> * _defaultsKeys;
 //        if (errorCB)
 //            errorCB(error, response, task);
 //        else {
-//            DDLogError(@"Unhandled network error: %@", error);
+//            NSLog(@"Unhandled network error: %@", error);
 //        }
 //    }];
 }
@@ -1242,7 +1284,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -1283,7 +1325,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -1444,7 +1486,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -1466,7 +1508,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -1508,7 +1550,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1568,7 +1610,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1593,7 +1635,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -1614,7 +1656,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -1636,7 +1678,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -1659,7 +1701,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1689,7 +1731,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1705,7 +1747,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1720,7 +1762,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1777,7 +1819,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -1830,7 +1872,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            DDLogError(@"Subscription Error: %@", error.localizedDescription);
+            NSLog(@"Subscription Error: %@", error.localizedDescription);
             
             Subscription *sub = [Subscription new];
             sub.error = error;
@@ -1844,7 +1886,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(err, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
             
         });
@@ -1892,7 +1934,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         dispatch_async(dispatch_get_main_queue(), ^{
            
-            DDLogError(@"Subscription Error: %@", error.localizedDescription);
+            NSLog(@"Subscription Error: %@", error.localizedDescription);
             
             Subscription *sub = [Subscription new];
             sub.error = error;
@@ -1906,7 +1948,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(err, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
             
         });
@@ -1934,7 +1976,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -2040,7 +2082,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -2257,7 +2299,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -2297,7 +2339,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
         
     }];
@@ -2359,11 +2401,11 @@ NSArray <NSString *> * _defaultsKeys;
         
         [self addPushToken:_pushToken success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            DDLogDebug(@"added push token: %@", responseObject);
+            NSLogDebug(@"added push token: %@", responseObject);
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
-            DDLogError(@"Add push token error: %@", error);
+            NSLog(@"Add push token error: %@", error);
         }];
     }
 }
@@ -2472,6 +2514,11 @@ NSArray <NSString *> * _defaultsKeys;
             [request setValue:signature forHTTPHeaderField:@"Authorization"];
             [request setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
             [request setValue:timecode forHTTPHeaderField:@"x-timestamp"];
+            
+            if (self.deviceID != nil) {
+                [request setValue:self.deviceID forHTTPHeaderField:@"x-device"];
+            }
+            
             return request;
             
         };
@@ -2558,7 +2605,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
                 NSError *error = nil;
                 if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                    DDLogError(@"Error creating bookmarks directory: %@", error);
+                    NSLog(@"Error creating bookmarks directory: %@", error);
                 }
             }
             
@@ -2590,7 +2637,7 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     if (!item) {
-        DDLogWarn(@"A bookmark notification was posted but did not include a FeedItem object.");
+        NSLog(@"A bookmark notification was posted but did not include a FeedItem object.");
         return;
     }
     
@@ -2712,7 +2759,7 @@ NSArray <NSString *> * _defaultsKeys;
         [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
            
             if (error) {
-                DDLogError(@"Error scheduling notification: %@", error);
+                NSLog(@"Error scheduling notification: %@", error);
             }
             
         }];
@@ -2816,7 +2863,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(error, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
             
             return;
@@ -2832,7 +2879,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
     
@@ -2905,7 +2952,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(error, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
         }
     }];
@@ -2929,7 +2976,7 @@ NSArray <NSString *> * _defaultsKeys;
         if (errorCB)
             errorCB(error, response, task);
         else {
-            DDLogError(@"Unhandled network error: %@", error);
+            NSLog(@"Unhandled network error: %@", error);
         }
     }];
 }
@@ -2975,7 +3022,7 @@ NSArray <NSString *> * _defaultsKeys;
             if (errorCB)
                 errorCB(error, response, task);
             else {
-                DDLogError(@"Unhandled network error: %@", error);
+                NSLog(@"Unhandled network error: %@", error);
             }
         }
     }];
@@ -3049,6 +3096,9 @@ NSArray <NSString *> * _defaultsKeys;
         return obj.identifier.stringValue;
     }];
     
+    // we no longer need the bookmarks in memory. 
+    [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
+    
     NSString *existing = [existingArr componentsJoinedByString:@","];
     
     weakify(self);
@@ -3073,7 +3123,7 @@ NSArray <NSString *> * _defaultsKeys;
         NSArray <NSNumber *> * bookmarked = [responseObject valueForKey:@"bookmarks"];
         NSArray <NSNumber *> * deleted = [responseObject valueForKey:@"deleted"];
         
-//        DDLogDebug(@"Bookmarked: %@\nDeleted:%@", bookmarked, deleted);
+//        NSLogDebug(@"Bookmarked: %@\nDeleted:%@", bookmarked, deleted);
         
         strongify(self);
         
@@ -3137,8 +3187,8 @@ NSArray <NSString *> * _defaultsKeys;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
-        DDLogError(@"Failed to fetch bookmarks from the server.");
-        DDLogError(@"%@", error.localizedDescription);
+        NSLog(@"Failed to fetch bookmarks from the server.");
+        NSLog(@"%@", error.localizedDescription);
         
     }];
 }

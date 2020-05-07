@@ -77,10 +77,10 @@ AppDelegate *MyAppDelegate = nil;
         [self setupRootController];
         
         // Set app-wide shared cache (first number is megabyte value)
-        NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
-        NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
-        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
-        [NSURLCache setSharedURLCache:sharedCache];
+//        NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
+//        NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
+//        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
+//        [NSURLCache setSharedURLCache:sharedCache];
         
 //        [SharedImageLoader.cache removeAllObjects];
 //        [SharedImageLoader.cache removeAllObjectsFromDisk];
@@ -90,7 +90,9 @@ AppDelegate *MyAppDelegate = nil;
             MyAppDelegate = self;
         });
         
-        [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
+        [self setupBackgroundRefresh];
+        
+//        [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
         
 //        self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
         
@@ -140,7 +142,7 @@ AppDelegate *MyAppDelegate = nil;
 //            [self yt_log_fontnames];
         
         //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
-        //    DDLogDebug(@"EX:%@", data);
+        //    NSLogDebug(@"EX:%@", data);
         
         // did finish launching
 #if !(TARGET_IPHONE_SIMULATOR)
@@ -233,25 +235,25 @@ AppDelegate *MyAppDelegate = nil;
     UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
     UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
     if (restorationInterfaceIdiom != currentInterfaceIdiom) {
-        DDLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
+        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
         return NO;
     }
     
     _restoring = YES;
     
-    DDLogDebug(@"Will restore application state");
+    NSLogDebug(@"Will restore application state");
     return _restoring;
 }
 
 - (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
-    DDLogDebug(@"Application will save restoration data");
+    NSLogDebug(@"Application will save restoration data");
     
     [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
     [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
 }
 
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
-    DDLogDebug(@"Application did restore");
+    NSLogDebug(@"Application did restore");
 }
 
 //- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
@@ -363,7 +365,7 @@ AppDelegate *MyAppDelegate = nil;
 - (void)_checkWindows {
     
     for (UIWindow *testWindow in [UIApplication sharedApplication].windows) {
-        DDLogDebug(@"Window: Level: %@; Hidden: %@; Class: %@", @(testWindow.windowLevel), @(testWindow.isHidden), NSStringFromClass(testWindow.class));
+        NSLogDebug(@"Window: Level: %@; Hidden: %@; Class: %@", @(testWindow.windowLevel), @(testWindow.isHidden), NSStringFromClass(testWindow.class));
         if (!testWindow.opaque && [NSStringFromClass(testWindow.class) hasPrefix:@"UIText"]) {
             BOOL wasHidden = testWindow.hidden;
             testWindow.hidden = YES;
@@ -398,70 +400,70 @@ AppDelegate *MyAppDelegate = nil;
     return [JLRoutes routeURL:url];
 }
 
-- (void)application:(UIApplication *)app performFetchWithCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
-    
-    BOOL backgroundRefresh = [NSUserDefaults.standardUserDefaults boolForKey:@"backgroundRefresh"];
-    
-    if (backgroundRefresh == NO) {
-        completionHandler(UIBackgroundFetchResultNoData);
-        return;
-    }
-    
-    NSInteger currentCount = MyFeedsManager.totalUnread;
-    
-    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        if (responseObject == nil) {
-            completionHandler(UIBackgroundFetchResultNoData);
-            return;
-        }
-        
-        if ([responseObject isKindOfClass:NSDictionary.class] == NO) {
-            completionHandler(UIBackgroundFetchResultNoData);
-            return;
-        }
-        
-        NSInteger newCount = [[responseObject valueForKey:@"total"] integerValue];
-        
-        SplitVC *vc = (SplitVC *)(self.window.rootViewController);
-        
-        if (!vc) {
-            completionHandler(UIBackgroundFetchResultNewData);
-            return;
-        }
-        
-        UINavigationController *nav = [[vc viewControllers] firstObject];
-        
-        if (!nav) {
-            completionHandler(UIBackgroundFetchResultNewData);
-            return;
-        }
-        
-        FeedsVC *feeds = [[nav viewControllers] firstObject];
-        
-        if (!feeds) {
-            completionHandler(UIBackgroundFetchResultNewData);
-            return;
-        }
-        
-        if (newCount > currentCount) {
-            completionHandler(UIBackgroundFetchResultNewData);
-            
-            NSIndexSet *set = [NSIndexSet indexSetWithIndex:0];
-            [feeds.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
-        }
-        else {
-            completionHandler(UIBackgroundFetchResultNoData);
-        }
-        
-        [feeds.refreshControl setAttributedTitle:[feeds lastUpdateAttributedString]];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        completionHandler(UIBackgroundFetchResultFailed);
-        
-    }];
-    
-}
+//- (void)application:(UIApplication *)app performFetchWithCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
+//
+//    BOOL backgroundRefresh = [NSUserDefaults.standardUserDefaults boolForKey:@"backgroundRefresh"];
+//
+//    if (backgroundRefresh == NO) {
+//        completionHandler(UIBackgroundFetchResultNoData);
+//        return;
+//    }
+//
+//    NSInteger currentCount = MyFeedsManager.totalUnread;
+//
+//    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        if (responseObject == nil) {
+//            completionHandler(UIBackgroundFetchResultNoData);
+//            return;
+//        }
+//
+//        if ([responseObject isKindOfClass:NSDictionary.class] == NO) {
+//            completionHandler(UIBackgroundFetchResultNoData);
+//            return;
+//        }
+//
+//        NSInteger newCount = [[responseObject valueForKey:@"total"] integerValue];
+//
+//        SplitVC *vc = (SplitVC *)(self.window.rootViewController);
+//
+//        if (!vc) {
+//            completionHandler(UIBackgroundFetchResultNewData);
+//            return;
+//        }
+//
+//        UINavigationController *nav = [[vc viewControllers] firstObject];
+//
+//        if (!nav) {
+//            completionHandler(UIBackgroundFetchResultNewData);
+//            return;
+//        }
+//
+//        FeedsVC *feeds = [[nav viewControllers] firstObject];
+//
+//        if (!feeds) {
+//            completionHandler(UIBackgroundFetchResultNewData);
+//            return;
+//        }
+//
+//        if (newCount > currentCount) {
+//            completionHandler(UIBackgroundFetchResultNewData);
+//
+//            NSIndexSet *set = [NSIndexSet indexSetWithIndex:0];
+//            [feeds.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
+//        }
+//        else {
+//            completionHandler(UIBackgroundFetchResultNoData);
+//        }
+//
+//        [feeds.refreshControl setAttributedTitle:[feeds lastUpdateAttributedString]];
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        completionHandler(UIBackgroundFetchResultFailed);
+//
+//    }];
+//
+//}
 
 @end

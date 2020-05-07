@@ -35,7 +35,7 @@ platform :ios do
             scheme: 'Yeti',
             include_bitcode: false,
             include_symbols: false,
-            configuration: 'Testflight'
+            configuration: 'Release'
         )
 
         upload_to_testflight(

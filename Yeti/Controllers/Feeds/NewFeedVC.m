@@ -221,7 +221,7 @@
                 return;
             }
             
-            DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
             
             asyncMain(^{
                 self.cancelButton.enabled = YES;
@@ -458,7 +458,7 @@
             return;
         }
         
-        DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+        NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

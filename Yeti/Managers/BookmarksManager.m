@@ -333,7 +333,7 @@ NSNotificationName const BookmarksDidUpdateNotification = @"com.elytra.note.book
 - (void)setupDatabase {
     
     NSString *databasePath = [self databasePath];
-    DDLogVerbose(@"databasePath: %@", databasePath);
+    NSLog(@"databasePath: %@", databasePath);
     
     // Configure custom class mappings for NSCoding.
     // In a previous version of the app, the "MyTodo" class was named "MyTodoItem".

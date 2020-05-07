@@ -97,13 +97,13 @@ static ArticlesManager * SharedArticleManager = nil;
         if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
             NSError *error = nil;
             if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                DDLogError(@"Error creating bookmarks directory: %@", error);
+                NSLog(@"Error creating bookmarks directory: %@", error);
             }
         }
         
         NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
         NSArray *objects = enumerator.allObjects;
-//            DDLogDebug(@"Have %@ bookmarks", @(objects.count));
+//            NSLogDebug(@"Have %@ bookmarks", @(objects.count));
         
         NSMutableArray <FeedItem *> *bookmarkedItems = [NSMutableArray arrayWithCapacity:objects.count+1];
         
@@ -122,7 +122,7 @@ static ArticlesManager * SharedArticleManager = nil;
                     item = [NSKeyedUnarchiver unarchivedObjectOfClass:FeedItem.class fromData:fileData error:&error];
                     
                     if (error != nil) {
-                        DDLogError(@"Error loading bookmark file from: %@\n%@", filePath, error);
+                        NSLog(@"Error loading bookmark file from: %@\n%@", filePath, error);
                     }
                     
                     if (item == nil) {
@@ -133,7 +133,7 @@ static ArticlesManager * SharedArticleManager = nil;
                 }
             }
             @catch (NSException *exception) {
-                DDLogWarn(@"Bookmark load exception: %@", exception);
+                NSLog(@"Bookmark load exception: %@", exception);
             }
             
             if (item) {

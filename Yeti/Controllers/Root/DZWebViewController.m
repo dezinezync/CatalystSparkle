@@ -35,7 +35,7 @@
         NSString *html = [NSString stringWithContentsOfURL:self.URL encoding:NSUTF8StringEncoding error:&error];
         
         if (error) {
-            DDLogError(@"error loading file: %@\n%@", self.URL, error.localizedDescription);
+            NSLog(@"error loading file: %@\n%@", self.URL, error.localizedDescription);
         }
         else {
             [self.webview loadHTMLString:html baseURL:NSBundle.mainBundle.bundleURL];
@@ -56,7 +56,7 @@
                 self.evalJSOnLoad = nil;
                 
                 if (error) {
-                    DDLogError(@"Attributions view error: %@", error);
+                    NSLog(@"Attributions view error: %@", error);
                 }
             }];
         });

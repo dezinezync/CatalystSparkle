@@ -67,8 +67,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
             strongify(self);
             
             NSDictionary *user = [responseObject valueForKey:@"user"];
-            DDLogDebug(@"Got existing user: %@", user);
-            
+#ifdef DEBUG
+            NSLog(@"Got existing user: %@", user);
+#endif
             self.userID = @([[user valueForKey:@"id"] integerValue]);
             
             if (@available(iOS 13, *)) {
@@ -110,7 +111,9 @@ NSNotificationName const YTUserNotFound = @"com.yeti.note.userNotFound";
     
     // let our server know about these changes
     [self.delegate updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        DDLogDebug(@"created new user");
+#ifdef DEBUG
+        NSLog(@"created new user");
+#endif
         NSDictionary *user = [responseObject valueForKey:@"user"];
         self.userID = @([[user valueForKey:@"id"] integerValue]);
 #ifndef SHARE_EXTENSION

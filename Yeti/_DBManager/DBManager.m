@@ -26,6 +26,7 @@ NSString *const kNotificationsKey = @"notifications";
 @interface DBManager () {
     CGFloat _totalProgress;
     CGFloat _currentProgress;
+    NSOperationQueue *_syncQueue;
 }
 
 @property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
@@ -116,20 +117,13 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
         
-        if (NSThread.isMainThread) {
+        runOnMainQueueWithoutDeadlocking(^{
             [ArticlesManager.shared setFeeds:feeds];
-        }
-        else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [ArticlesManager.shared setFeeds:feeds];
-            });
-        }
+        });
         
     }];
     
-#ifdef DEBUG
-    NSLog(@"Fetched feeds from local cache");
-#endif
+    NSLogDebug(@"Fetched feeds from local cache");
     
 }
 
@@ -192,12 +186,10 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 [transaction removeObjectForKey:localNameKey inCollection:LOCAL_NAME_COLLECTION];
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
+                runOnMainQueueWithoutDeadlocking(^{
                     if (completionCB) {
                         completionCB(YES);
                     }
-                    
                 });
                 
                 [(YapDatabaseCloudCoreTransaction *)[transaction ext:cloudCoreExtensionName] addOperation:operation];
@@ -219,7 +211,7 @@ NSString *const kNotificationsKey = @"notifications";
         
         if (completionCB) {
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            runOnMainQueueWithoutDeadlocking(^{
                 completionCB(YES);
             });
             
@@ -283,47 +275,13 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
         
-        if (NSThread.isMainThread) {
+        runOnMainQueueWithoutDeadlocking(^{
             [ArticlesManager.shared setFolders:folders];
-        }
-        else {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [ArticlesManager.shared setFolders:folders];
-            });
-        }
+        });
         
     }];
     
-#ifdef DEBUG
-    NSLog(@"Fetched feeds from local cache");
-#endif
-    
-//    // Now we can setup Feeds without Folders
-//    if (mappedFeeds.count == ArticlesManager.shared.feeds.count) {
-//        // both are the same, so all are mapped.
-//#ifdef DEBUG
-//        NSLog(@"No feeds without folders");
-//#endif
-//    }
-//    else {
-//
-//        NSMutableOrderedSet *unmappedFeeds = [NSMutableOrderedSet orderedSetWithArray:ArticlesManager.shared.feeds];
-//
-//        [unmappedFeeds removeObjectsInArray:mappedFeeds.allObjects];
-//
-//        if (unmappedFeeds.count > 0) {
-//
-//            NSArray *unmappedObjects = unmappedFeeds.objectEnumerator.allObjects;
-//
-//            if (unmappedObjects != nil) {
-//
-//                [ArticlesManager.shared setValue:unmappedObjects forKeyPath:propSel(feedsWithoutFolders)];
-//
-//            }
-//
-//        }
-//
-//    }
+    NSLogDebug(@"Fetched feeds from local cache");
     
 }
 
@@ -446,7 +404,7 @@ NSString *const kNotificationsKey = @"notifications";
 - (void)setupDatabase
 {
     NSString *databasePath = [[self class] databasePath];
-    DDLogVerbose(@"databasePath: %@", databasePath);
+    NSLog(@"databasePath: %@", databasePath);
     
     // Configure custom class mappings for NSCoding.
     // In a previous version of the app, the "MyTodo" class was named "MyTodoItem".
@@ -504,11 +462,11 @@ NSString *const kNotificationsKey = @"notifications";
     // Setup database connection(s)
     
     _uiConnection = [_database newConnection];
-    _uiConnection.objectCacheLimit = 400;
+    _uiConnection.objectCacheLimit = 100;
     _uiConnection.metadataCacheEnabled = YES;
     
     _bgConnection = [_database newConnection];
-    _bgConnection.objectCacheLimit = 400;
+    _bgConnection.objectCacheLimit = 25;
     _bgConnection.metadataCacheEnabled = NO;
     
     // Start the longLivedReadTransaction on the UI connection.
@@ -669,6 +627,46 @@ NSString *const kNotificationsKey = @"notifications";
 
 #pragma mark - Sync
 
+- (void)setupSync:(BGAppRefreshTask *)task {
+    
+    syncProgressBlock originalSyncBlock = self.syncProgressBlock;
+    
+    weakify(self);
+    
+    self.syncProgressBlock = ^(CGFloat progress) {
+        
+        if (progress >= 0.95f) {
+            
+            strongify(self);
+            
+            BOOL completed = self->_syncQueue != nil;
+            
+            [task setTaskCompletedWithSuccess:completed];
+            
+            self->_syncProgressBlock = originalSyncBlock;
+            
+        }
+        
+    };
+    
+    task.expirationHandler = ^{
+        
+        strongify(self);
+        
+        if (self->_syncQueue != nil) {
+            
+            [self->_syncQueue cancelAllOperations];
+            self->_syncQueue = nil;
+            
+        }
+        
+    };
+    
+    self->_syncSetup = NO;
+    [self setupSync];
+    
+}
+
 - (void)setupSync {
     
     if (self.isSyncSetup == YES) {
@@ -721,7 +719,7 @@ NSString *const kNotificationsKey = @"notifications";
     
     if (self.syncProgressBlock) {
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+        runOnMainQueueWithoutDeadlocking(^{
             self.syncProgressBlock(0.f);
         });
         
@@ -735,7 +733,7 @@ NSString *const kNotificationsKey = @"notifications";
             
             if (self.syncProgressBlock) {
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
+                runOnMainQueueWithoutDeadlocking(^{
                     self.syncProgressBlock(1.f);
                 });
                 
@@ -768,7 +766,7 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 if (self.syncProgressBlock) {
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    runOnMainQueueWithoutDeadlocking(^{
                         self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
                     });
                     
@@ -788,7 +786,7 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 if (self.syncProgressBlock) {
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    runOnMainQueueWithoutDeadlocking(^{
                         self.syncProgressBlock(1.f);
                     });
                     
@@ -820,7 +818,7 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
        
-        DDLogError(@"An error occurred when syncing changes: %@", error);
+        NSLog(@"An error occurred when syncing changes: %@", error);
         
     }];
     
@@ -858,6 +856,8 @@ NSString *const kNotificationsKey = @"notifications";
     queue.maxConcurrentOperationCount = 1;
     queue.name = @"com.elytra.sync.serialFetchArticles";
     
+    _syncQueue = queue;
+    
     NSBlockOperation *previousOp;
     
     for (NSNumber *feedID in feedIDs) { @autoreleasepool {
@@ -884,7 +884,7 @@ NSString *const kNotificationsKey = @"notifications";
     
     [queue setSuspended:YES];
     
-    __block NSNumber *articleID = nil;
+//    __block NSNumber *articleID = nil;
     
     // first we get the latest article for this Feed ID.
 //    [self.bgConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
@@ -930,7 +930,7 @@ NSString *const kNotificationsKey = @"notifications";
             
             self->_currentProgress += 1;
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            runOnMainQueueWithoutDeadlocking(^{
                 self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
             });
             
@@ -964,7 +964,7 @@ NSString *const kNotificationsKey = @"notifications";
             
             self->_currentProgress += 1;
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            runOnMainQueueWithoutDeadlocking(^{
                 self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
             });
             
@@ -1078,6 +1078,7 @@ NSString *const kNotificationsKey = @"notifications";
     
     [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
+        [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
         

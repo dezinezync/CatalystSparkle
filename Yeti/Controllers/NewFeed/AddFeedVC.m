@@ -429,7 +429,7 @@
                 return;
             }
             
-            DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
             
             asyncMain(^{
                 self.cancelButton.enabled = YES;
@@ -603,7 +603,7 @@
         
         self.page = page;
         
-        DDLogDebug(@"%ld search results", responseObject.count);
+        NSLogDebug(@"%ld search results", responseObject.count);
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -615,7 +615,7 @@
         }
         else {
             // Do nothing
-            DDLogError(@"Error loading search query: %@", error);
+            NSLog(@"Error loading search query: %@", error);
         }
         
     }];
@@ -716,7 +716,7 @@
             return;
         }
         
-        DDLogError(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+        NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         

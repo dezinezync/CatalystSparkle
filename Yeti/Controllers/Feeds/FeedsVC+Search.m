@@ -69,7 +69,7 @@
         DS.data = filtered;
     }
     @catch (NSException *exc) {
-        DDLogWarn(@"Exception: Feeds Search: %@", exc);
+        NSLog(@"Exception: Feeds Search: %@", exc);
     }
 }
 

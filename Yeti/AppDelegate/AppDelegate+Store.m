@@ -41,14 +41,14 @@
 //    [MyStoreManager setPaymentQueueUpdatedTransactionsBlock:^(SKPaymentQueue *queue, NSArray <SKPaymentTransaction *> *transactions) {
 //        
 //        for (SKPaymentTransaction *transaction in transactions) {
-//            DDLogDebug(@"Transaction for: %@ in state: %@", transaction.payment.productIdentifier, @(transaction.transactionState));
+//            NSLogDebug(@"Transaction for: %@ in state: %@", transaction.payment.productIdentifier, @(transaction.transactionState));
 //        }
 //        
 //    }];
 //    
 //    [MyStoreManager setPaymentQueueRemovedTransactionsBlock:^(SKPaymentQueue *queue, NSArray *transactions) {
 //        
-//        DDLogDebug(@"Removed transactions from Queue: %@", transactions);
+//        NSLogDebug(@"Removed transactions from Queue: %@", transactions);
 //        
 //    }];
 //    
@@ -73,7 +73,7 @@
 //    if (SKPaymentQueue.defaultQueue.transactions.count) {
 //        
 //        for (SKPaymentTransaction *pending in SKPaymentQueue.defaultQueue.transactions) {
-//            DDLogDebug(@"Pending transaction:%@", pending.payment.productIdentifier);
+//            NSLogDebug(@"Pending transaction:%@", pending.payment.productIdentifier);
 //        }
 //        
 //    }

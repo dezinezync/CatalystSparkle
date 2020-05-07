@@ -174,7 +174,7 @@
         [MyFeedsManager getUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             NSDictionary *user = [responseObject valueForKey:@"user"];
-            DDLogDebug(@"Got existing user: %@", user);
+            NSLogDebug(@"Got existing user: %@", user);
             
             MyFeedsManager.userID = @([[user valueForKey:@"id"] integerValue]);
             MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:[user valueForKey:@"uuid"]];

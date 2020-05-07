@@ -232,7 +232,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
     @try {
         [NSNotificationCenter.defaultCenter removeObserver:self];
     } @catch (NSException *exc) {
-        DDLogWarn(@"Exception when unregistering: %@", exc);
+        NSLog(@"Exception when unregistering: %@", exc);
     }
 }
 
@@ -804,7 +804,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         NSURLSessionTask *task = [SharedImageLoader downloadImageForURL:item.coverImage success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-//            DDLogDebug(@"Cached image for %@", item.coverImage);
+//            NSLogDebug(@"Cached image for %@", item.coverImage);
             
             [self.prefetchedImageTasks removeObjectForKey:item.coverImage];
             
@@ -869,7 +869,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
     }
     @catch (NSException *exc) {
-        DDLogWarn(@"Exception updating feed articles: %@", exc);
+        NSLog(@"Exception updating feed articles: %@", exc);
     }
     
 }
@@ -947,7 +947,7 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         weakify(self);
         
         _pagingManager.errorCB = ^(NSError * _Nonnull error) {
-            DDLogError(@"%@", error);
+            NSLog(@"%@", error);
             
             strongify(self);
             
@@ -1267,7 +1267,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Encoding restoration: %@", self.restorationIdentifier);
     
     [super encodeRestorableStateWithCoder:coder];
     
@@ -1282,7 +1282,7 @@ NSString * const kSizCache = @"FeedSizesCache";
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
     
-    DDLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
+    NSLogDebug(@"Decoding restoration: %@", self.restorationIdentifier);
     
     [super decodeRestorableStateWithCoder:coder];
     

@@ -115,7 +115,7 @@
         // silently handle
         error = [self errorFromResponse:error.userInfo];
 
-        DDLogError(@"error marking %@ as read: %@", articles, error.localizedDescription);
+        NSLog(@"error marking %@ as read: %@", articles, error.localizedDescription);
 
     }];
 }
@@ -143,7 +143,7 @@
             errorCB(error, response, task);
         }
         else {
-            DDLogError(@"error marking %@ as bookmarked: %@", item, error.localizedDescription);
+            NSLog(@"error marking %@ as bookmarked: %@", item, error.localizedDescription);
         }
         
     }];
@@ -160,7 +160,7 @@
         NSFileManager *manager = [NSFileManager defaultManager];
         NSError *error = nil;
         if (![manager removeItemAtPath:directory error:&error]) {
-            DDLogError(@"Error deleting directory %@", directory);
+            NSLog(@"Error deleting directory %@", directory);
         }
         
     });
@@ -182,7 +182,7 @@
 //                                                     name:NSUserDefaultsDidChangeNotification
 //                                                   object:nil];
 //    } else {
-//        DDLogWarn(@"iCloud not enabled");
+//        NSLog(@"iCloud not enabled");
 //    }
 //}
 //
@@ -198,7 +198,7 @@
 //        } }];
 //    }
 //    @catch (NSException *exc) {
-//        DDLogError(@"updateToiCloud: %@", exc);
+//        NSLog(@"updateToiCloud: %@", exc);
 //    }
 //    
 //    [[NSUbiquitousKeyValueStore defaultStore] synchronize];
@@ -223,7 +223,7 @@
 //        } }];
 //    }
 //    @catch (NSException *exc) {
-//        DDLogError(@"updateToiCloud: %@", exc);
+//        NSLog(@"updateToiCloud: %@", exc);
 //    }
 //    
 //    [[NSUserDefaults standardUserDefaults] synchronize];

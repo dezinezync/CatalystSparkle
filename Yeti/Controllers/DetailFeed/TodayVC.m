@@ -147,7 +147,7 @@
         weakify(self);
         
         _todayManager.errorCB = ^(NSError * _Nonnull error) {
-            DDLogError(@"%@", error);
+            NSLog(@"Error today manager:%@", error);
             
             strongify(self);
             

@@ -118,7 +118,7 @@
         self.authorID = value;
     }
     else {
-        DDLogDebug(@"Author: Key:%@ - Value:%@", key, value);
+        NSLogDebug(@"Author: Key:%@ - Value:%@", key, value);
     }
 }
 
