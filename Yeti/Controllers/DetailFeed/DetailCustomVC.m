@@ -43,6 +43,17 @@
     
 }
 
+- (void)dealloc {
+    
+    if (self.isUnread == NO) {
+        
+        // we no longer need the bookmarks in memory.
+        [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
+        
+    }
+    
+}
+
 - (void)setupState {
     
     if (_hasSetupState) {

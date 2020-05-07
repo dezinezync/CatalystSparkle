@@ -34,7 +34,7 @@
 
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
 
-@property (nonatomic, strong) FeedItem * _Nullable item;
+@property (nonatomic, weak) FeedItem * _Nullable item;
 
 @property (weak, nonatomic) IBOutlet UIStackView * _Nullable stackView;
 

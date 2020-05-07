@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <BackgroundTasks/BackgroundTasks.h>
+
 #import "FeedsManager.h"
 #import "Feed.h"
 #import "FeedItem.h"
@@ -73,6 +75,8 @@ extern DBManager * MyDBManager;
 #pragma mark - Bulk Operations 
 
 - (void)purgeDataForResync;
+
+- (void)setupSync:(BGAppRefreshTask *)task;
 
 @end
 

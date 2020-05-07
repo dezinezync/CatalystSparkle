@@ -11,7 +11,7 @@
 #import "DetailFeedVC.h"
 #import "ArticleAuthorView.h"
 
-#import <DZTextKit/Content.h>
+#import "Content.h"
 #import <DZTextKit/DZTextKitViews.h>
 #import <DZTextKit/YetiConstants.h>
 #import <DZTextKit/CheckWifi.h>
@@ -221,6 +221,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // Dispose of any resources that can be recreated.
     
     NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
+    
+    if (cache) {
+        [cache removeAllObjects];
+    }
+    
+    cache = [self.articlesImageLoader valueForKeyPath:@"cache"];
     
     if (cache) {
         [cache removeAllObjects];
@@ -1299,7 +1305,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
@@ -1440,7 +1446,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addLinebreak];
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
@@ -2097,6 +2103,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
+    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+    
+    if ([self.item.articleURL containsString:feed.extra.url] == NO) {
+        
+        if (completionHandler) {
+            completionHandler(NO);
+        }
+        
+        [AlertManager showGenericAlertWithTitle:@"Not Supported" message:@"Fetching full-text for externally linked articles is not supported at the moment."];
+        
+        return;
+        
+    }
+    
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [self setupArticle:responseObject];
@@ -2211,7 +2231,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 imageview.loading = YES;
                 
-                [imageview il_setImageWithURL:imageview.URL imageLoader:self.articlesImageLoader];
+                __weak ImageLoader *weakImageLoader = self.articlesImageLoader;
+                
+                [imageview il_setImageWithURL:imageview.URL imageLoader:weakImageLoader];
             }
         }
         else if (imageview.imageView.image && !contains) {

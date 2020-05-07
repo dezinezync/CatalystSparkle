@@ -10,7 +10,7 @@
 #import <DZTextKit/YetiConstants.h>
 
 #import <DZTextKit/Paragraph.h>
-#import <DZTextKit/Content.h>
+#import "Content.h"
 
 PrefsManager * SharedPrefs = nil;
 

@@ -1,11 +1,13 @@
 # v1.7.1
 
-## Build 343
+## Build 348
 
-- Fixed an issue with relatively linked images not loading in the Article Viewer or Image Viewer. 
+- Modern Background Syncing code. 
 
-- Fixed an issue with sorting of Folders. Folders are once again correctly sorted using the alphabetical ascending order. 
+- Fixed a leak that would occur on loading PNG images with incorrect alpha channel information. 
 
-- Fixed an issue with opening Feeds on iPad 9.7" and 10.5" from the Search Results list. 
+- Fetching full-text for externally linked articles is not supported at the moment.
 
-- Fixed a UI issue with the Feed header view. 
+- Fixed a crash when opening articles with a gallery.
+
+- Fixed a long-standing issue with loading unread articles in the correct order without skipping itermediate articles. 

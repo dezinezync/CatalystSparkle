@@ -204,6 +204,18 @@ static void *KVO_Unread = &KVO_Unread;
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    if (PrefsManager.sharedInstance.useToolbar == NO && self.navigationController.isToolbarHidden == NO) {
+        
+        [self.navigationController setToolbarHidden:YES animated:YES];
+        
+    }
+    
+    [super viewWillDisappear:animated];
+    
+}
+
 - (BOOL)definesPresentationContext
 {
     return YES;

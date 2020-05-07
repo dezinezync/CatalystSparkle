@@ -24,6 +24,7 @@
 @import UserNotifications;
 
 #import <DZTextKit/YetiConstants.h>
+#import <DeviceCheck/DeviceCheck.h>
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
@@ -36,6 +37,8 @@ NSArray <NSString *> * _defaultsKeys;
 
 @property (atomic, strong, readwrite) YTUserID * _Nonnull userIDManager;
 @property (atomic, strong, readwrite) Subscription * _Nullable subscription;
+
+@property (nonatomic, copy) NSString *deviceID;
 
 @end
 
@@ -76,6 +79,45 @@ NSArray <NSString *> * _defaultsKeys;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+        
+        NSError *error = nil;
+        
+        NSString *deviceID = [Keychain stringFor:@"deviceID" error:&error];
+        
+        if (error == nil && deviceID != nil) {
+            self.deviceID = deviceID;
+        }
+        else {
+            
+            DCDevice *device = DCDevice.currentDevice;
+            
+            if ([device isSupported]) {
+                
+                [device generateTokenWithCompletionHandler:^(NSData * _Nullable token, NSError * _Nullable error) {
+                    
+                    NSData *encoded = [token base64EncodedDataWithOptions:kNilOptions];
+                    
+                    NSString *tokenString = [[NSString alloc] initWithData:encoded encoding:NSUTF8StringEncoding];
+                    
+                    NSString *tokenMD5 = [tokenString md5];
+                    
+                    self.deviceID = tokenMD5;
+                    
+                    [Keychain add:@"deviceID" string:self.deviceID];
+                    [Keychain add:@"rawDeviceID" data:token];
+                    
+                }];
+                
+            }
+            else {
+                
+                self.deviceID = [[NSUUID UUID] UUIDString];
+                
+                [Keychain add:@"deviceID" string:self.deviceID];
+                
+            }
+            
+        }
     
     }
     
@@ -2472,6 +2514,11 @@ NSArray <NSString *> * _defaultsKeys;
             [request setValue:signature forHTTPHeaderField:@"Authorization"];
             [request setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
             [request setValue:timecode forHTTPHeaderField:@"x-timestamp"];
+            
+            if (self.deviceID != nil) {
+                [request setValue:self.deviceID forHTTPHeaderField:@"x-device"];
+            }
+            
             return request;
             
         };
@@ -3048,6 +3095,9 @@ NSArray <NSString *> * _defaultsKeys;
     NSArray <NSString *> *existingArr = [self.bookmarksManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
         return obj.identifier.stringValue;
     }];
+    
+    // we no longer need the bookmarks in memory. 
+    [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
     
     NSString *existing = [existingArr componentsJoinedByString:@","];
     
