@@ -2,7 +2,9 @@
 
 ## Build 350
 
-- Fixes 
+- Improves eager loading of images as they are about to appear on screen. 
+
+- Fixes an issue in the previous build causing some Feeds to not load properly. 
 
 - Modern Background Syncing code. 
 
