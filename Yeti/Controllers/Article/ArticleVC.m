@@ -2211,11 +2211,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     for (Image *imageview in self.images) { @autoreleasepool {
         
-        BOOL contains = CGRectContainsRect(visibleRect, imageview.frame) || CGRectIntersectsRect(visibleRect, imageview.frame);
+        CGRect imageFrame = imageview.frame;
+        
+        if (imageFrame.origin.y > 120.f) {
+            imageFrame.origin.y -= 120.f;
+            imageFrame.size.height += 120.f;
+        }
+        
+        BOOL contains = CGRectContainsRect(visibleRect, imageFrame) || CGRectIntersectsRect(visibleRect, imageFrame);
+        
         // the first image may be out of bounds of the scrollView when it's loaded.
         // check if it's frame is contained within the frame of the scrollView.
+        
         if (imageview.idx == 0) {
-            CGRect imageFrame = imageview.frame;
             imageFrame.origin.x = 0.f;
             contains = contains || CGRectContainsRect(visibleRect, imageFrame);
         }
@@ -2259,12 +2267,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGFloat y = scrollView.contentOffset.y;
     
     BOOL enableTop = y > (scrollView.bounds.size.height / 2.f);
-    if (enableTop != _helperView.startOfArticle.isEnabled)
+    
+    if (enableTop != _helperView.startOfArticle.isEnabled) {
         _helperView.startOfArticle.enabled = enableTop;
+    }
     
     BOOL enableBottom = y < (scrollView.contentSize.height - scrollView.bounds.size.height);
-    if (enableBottom != _helperView.endOfArticle.isEnabled)
+    
+    if (enableBottom != _helperView.endOfArticle.isEnabled) {
         _helperView.endOfArticle.enabled = enableBottom;
+    }
+    
 }
 
 #pragma mark - <UITextViewDelegate>
