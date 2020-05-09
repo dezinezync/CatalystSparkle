@@ -46,6 +46,8 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL _openingOnLaunch;
     
     BOOL _hasSetupTable;
+    
+    BOOL _fetchingCounters;
 }
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
@@ -746,7 +748,16 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)fetchLatestCounters {
     
+    if (self->_fetchingCounters == YES) {
+        return;
+    }
+    
+    self->_fetchingCounters = YES;
+    
     [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        self->_fetchingCounters = NO;
+        self->_refreshing = NO;
         
         MyFeedsManager.unreadLastUpdate = NSDate.date;
         
@@ -767,6 +778,9 @@ NSString * const kDS2Data = @"DS2Data";
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         NSLog(@"Error: Failed to fetch counters with error:%@", error.localizedDescription);
+        
+        self->_fetchingCounters = NO;
+        self->_refreshing = NO;
         
     }];
     
