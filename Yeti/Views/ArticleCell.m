@@ -24,6 +24,20 @@ NSString *const kArticleCell = @"com.yeti.cells.article";
 
 @implementation ArticleCell
 
++ (void)registerOnTable:(UITableView *)tableView {
+    
+    if (tableView == nil) {
+        return;
+    }
+    
+    Class class = ArticleCell.class;
+    NSBundle *bundle = [NSBundle bundleForClass:class];
+    UINib *nib = [UINib nibWithNibName:NSStringFromClass(class) bundle:bundle];
+    
+    [tableView registerNib:nib forCellReuseIdentifier:kArticleCell];
+    
+}
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];

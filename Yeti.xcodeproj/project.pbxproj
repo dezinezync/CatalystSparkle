@@ -143,8 +143,6 @@
 		F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3331FBAC37600912CCF /* FeedsVC.m */; };
 		F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C34A1FBADF8D00912CCF /* FeedsCell.m */; };
 		F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C34B1FBADF8D00912CCF /* FeedsCell.xib */; };
-		F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C34F1FBAE2F200912CCF /* ArticleCell.m */; };
-		F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3501FBAE2F200912CCF /* ArticleCell.xib */; };
 		F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F070C3571FBAE7A200912CCF /* ArticleVC.m */; };
 		F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3581FBAE7A200912CCF /* ArticleVC.xib */; };
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
@@ -168,6 +166,9 @@
 		F08C5E072386569D0055946F /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F092C5CE246C288B007FDE8A /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5CD246C288B007FDE8A /* FeedVC.m */; };
+		F092C5D1246C2B9A007FDE8A /* FeedVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5D0246C2B9A007FDE8A /* FeedVC+Actions.m */; };
+		F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5D3246C30D8007FDE8A /* FeedVC+ArticleProvider.m */; };
 		F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */; };
 		F0948E6322B8D389009DB25D /* ArticlePreviewVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
@@ -196,6 +197,8 @@
 		F0A39B18245A958200A9B26E /* PINOperation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B17245A958200A9B26E /* PINOperation.framework */; };
 		F0A39B19245A958200A9B26E /* PINOperation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B17245A958200A9B26E /* PINOperation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
+		F0A495B524711CE500E9BA13 /* ArticleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A495B324711CE500E9BA13 /* ArticleCell.m */; };
+		F0A495B624711CE500E9BA13 /* ArticleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A495B424711CE500E9BA13 /* ArticleCell.xib */; };
 		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
@@ -346,6 +349,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F070C2D81FBABC3500912CCF;
 			remoteInfo = Yeti;
+		};
+		F076DECC246EC94B00B68F4E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F07D5FAB246EAD680031C9E0;
+			remoteInfo = ImageLoaderExample;
 		};
 		F08C5DF7238656620055946F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -932,9 +942,6 @@
 		F070C3491FBADF8D00912CCF /* FeedsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsCell.h; sourceTree = "<group>"; };
 		F070C34A1FBADF8D00912CCF /* FeedsCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsCell.m; sourceTree = "<group>"; };
 		F070C34B1FBADF8D00912CCF /* FeedsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsCell.xib; sourceTree = "<group>"; };
-		F070C34E1FBAE2F200912CCF /* ArticleCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ArticleCell.h; path = Yeti/Views/ArticleCell.h; sourceTree = SOURCE_ROOT; };
-		F070C34F1FBAE2F200912CCF /* ArticleCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ArticleCell.m; path = Yeti/Views/ArticleCell.m; sourceTree = SOURCE_ROOT; };
-		F070C3501FBAE2F200912CCF /* ArticleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ArticleCell.xib; path = Yeti/Views/ArticleCell.xib; sourceTree = SOURCE_ROOT; };
 		F070C3561FBAE7A200912CCF /* ArticleVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleVC.h; sourceTree = "<group>"; };
 		F070C3571FBAE7A200912CCF /* ArticleVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleVC.m; sourceTree = "<group>"; };
 		F070C3581FBAE7A200912CCF /* ArticleVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleVC.xib; sourceTree = "<group>"; };
@@ -966,6 +973,12 @@
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		F092C5CC246C288B007FDE8A /* FeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedVC.h; sourceTree = "<group>"; };
+		F092C5CD246C288B007FDE8A /* FeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedVC.m; sourceTree = "<group>"; };
+		F092C5CF246C2B9A007FDE8A /* FeedVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Actions.h"; sourceTree = "<group>"; };
+		F092C5D0246C2B9A007FDE8A /* FeedVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+Actions.m"; sourceTree = "<group>"; };
+		F092C5D2246C30D8007FDE8A /* FeedVC+ArticleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+ArticleProvider.h"; sourceTree = "<group>"; };
+		F092C5D3246C30D8007FDE8A /* FeedVC+ArticleProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+ArticleProvider.m"; sourceTree = "<group>"; };
 		F0948E5F22B8D389009DB25D /* ArticlePreviewVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticlePreviewVC.h; sourceTree = "<group>"; };
 		F0948E6022B8D389009DB25D /* ArticlePreviewVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePreviewVC.m; sourceTree = "<group>"; };
 		F0948E6122B8D389009DB25D /* ArticlePreviewVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticlePreviewVC.xib; sourceTree = "<group>"; };
@@ -998,6 +1011,9 @@
 		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
 		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
+		F0A495B224711CE500E9BA13 /* ArticleCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleCell.h; sourceTree = "<group>"; };
+		F0A495B324711CE500E9BA13 /* ArticleCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleCell.m; sourceTree = "<group>"; };
+		F0A495B424711CE500E9BA13 /* ArticleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleCell.xib; sourceTree = "<group>"; };
 		F0A589EF205A4E7E00488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
 		F0A589F3205A580300488015 /* LinguisticSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinguisticSearch.h; sourceTree = "<group>"; };
 		F0A589F4205A580300488015 /* LinguisticSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LinguisticSearch.m; sourceTree = "<group>"; };
@@ -1644,6 +1660,7 @@
 			children = (
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F0A0501921F07BD600A46524 /* NewFeed */,
+				F092C5B1246C286C007FDE8A /* FeedVC */,
 				F043430621CF433000F854E4 /* DetailFeed */,
 				F01D714C1FBBF51B00DF84B9 /* Article */,
 				F018A2CB205D0EF9001E682B /* Settings */,
@@ -1837,9 +1854,6 @@
 				F0BAE4D721523C7B00249A5E /* FolderCell.h */,
 				F0BAE4D821523C7B00249A5E /* FolderCell.m */,
 				F0BAE4D921523C7B00249A5E /* FolderCell.xib */,
-				F070C34E1FBAE2F200912CCF /* ArticleCell.h */,
-				F070C34F1FBAE2F200912CCF /* ArticleCell.m */,
-				F070C3501FBAE2F200912CCF /* ArticleCell.xib */,
 				F0D071F2205E76A500A042CD /* SettingsCell.h */,
 				F0D071F3205E76A500A042CD /* SettingsCell.m */,
 				F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */,
@@ -1960,6 +1974,22 @@
 				F0B7C845240B7272008D8F4F /* UserNotificationsUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F092C5B1246C286C007FDE8A /* FeedVC */ = {
+			isa = PBXGroup;
+			children = (
+				F092C5CC246C288B007FDE8A /* FeedVC.h */,
+				F092C5CD246C288B007FDE8A /* FeedVC.m */,
+				F092C5CF246C2B9A007FDE8A /* FeedVC+Actions.h */,
+				F092C5D0246C2B9A007FDE8A /* FeedVC+Actions.m */,
+				F092C5D2246C30D8007FDE8A /* FeedVC+ArticleProvider.h */,
+				F092C5D3246C30D8007FDE8A /* FeedVC+ArticleProvider.m */,
+				F0A495B224711CE500E9BA13 /* ArticleCell.h */,
+				F0A495B324711CE500E9BA13 /* ArticleCell.m */,
+				F0A495B424711CE500E9BA13 /* ArticleCell.xib */,
+			);
+			path = FeedVC;
 			sourceTree = "<group>";
 		};
 		F09D12C3220D6CF800252902 /* flutter */ = {
@@ -2124,6 +2154,7 @@
 				F0C4F8CE234C69B900D57C18 /* DZNetworkingTests.xctest */,
 				F0C4F8D0234C69B900D57C18 /* DZNetworking.framework */,
 				F0C4F8D2234C69B900D57C18 /* DZNetworking.framework */,
+				F076DECD246EC94B00B68F4E /* ImageLoaderExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2456,6 +2487,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F076DECD246EC94B00B68F4E /* ImageLoaderExample.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ImageLoaderExample.app;
+			remoteRef = F076DECC246EC94B00B68F4E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F08C5DF8238656620055946F /* DZAppDelegate.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -2742,8 +2780,8 @@
 				F0F51B8223880B59001B3CFC /* AuthorBioVC.xib in Resources */,
 				F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */,
 				F0A5AE9A20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
+				F0A495B624711CE500E9BA13 /* ArticleCell.xib in Resources */,
 				F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */,
-				F070C3521FBAE2F200912CCF /* ArticleCell.xib in Resources */,
 				F0A5AEAE20C19DA200CFA1D2 /* IBMPlexSans-Bold.ttf in Resources */,
 				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
 				F09D12D9220D6CF800252902 /* flutter~ipad@2x.png in Resources */,
@@ -2968,6 +3006,7 @@
 				F05041D52461442800A65C1C /* FeedsManager+KVS.m in Sources */,
 				F0F51B8323880B59001B3CFC /* AuthorBioVC.m in Sources */,
 				F05041E02461442800A65C1C /* Range.m in Sources */,
+				F092C5D1246C2B9A007FDE8A /* FeedVC+Actions.m in Sources */,
 				F03BC4E920C9016A007B574F /* EmptyView.m in Sources */,
 				F01285C323436D8D00B8C277 /* Keychain.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
@@ -2976,6 +3015,7 @@
 				F046DF57216E30AC00FFDBD7 /* DetailCustomVC.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
+				F092C5CE246C288B007FDE8A /* FeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
 				F05041DB2461442800A65C1C /* MetaOpenGraph.m in Sources */,
 				F0948E6222B8D389009DB25D /* ArticlePreviewVC.m in Sources */,
@@ -2984,6 +3024,7 @@
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */,
 				F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */,
+				F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */,
 				F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */,
 				F05041E22461442800A65C1C /* FeedMeta.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
@@ -2993,7 +3034,6 @@
 				F0DB58FF23F578E20008D871 /* CustomizationThemeCell.m in Sources */,
 				F05041E82461442800A65C1C /* DBManager+CloudCore.m in Sources */,
 				F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */,
-				F070C3511FBAE2F200912CCF /* ArticleCell.m in Sources */,
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
 				F05041D62461442800A65C1C /* FeedsManagerErrors.m in Sources */,
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
@@ -3024,6 +3064,7 @@
 				F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */,
 				F05041D92461442800A65C1C /* Subscription.m in Sources */,
 				F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */,
+				F0A495B524711CE500E9BA13 /* ArticleCell.m in Sources */,
 				F05DC073208328EC009029E1 /* AuthorHeaderView.m in Sources */,
 				F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */,
 				F0D071F4205E76A500A042CD /* SettingsCell.m in Sources */,

@@ -10,11 +10,15 @@
 
 #import "DBManager+CloudCore.h"
 
+#import <DZNetworking/ImageLoader.h>
+
 @implementation AppDelegate (BackgroundRefresh)
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     
     [self scheduleBackgroundRefresh];
+    
+    [SharedImageLoader.cache removeAllObjects];
     
 //#ifdef DEBUG
 //#pragma clang diagnostic push

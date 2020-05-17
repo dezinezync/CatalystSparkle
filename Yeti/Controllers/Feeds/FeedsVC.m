@@ -11,6 +11,7 @@
 #import "FeedsCell.h"
 #import "FolderCell.h"
 #import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "DetailCustomVC.h"
 #import "TodayVC.h"
 #import "DetailFolderVC.h"
@@ -679,16 +680,16 @@ static void *KVO_Unread = &KVO_Unread;
         UIViewController *vc;
         
         if (isPhone) {
-            vc = [[DetailFeedVC alloc] initWithFeed:feed];
-            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
+            vc = [[FeedVC alloc] initWithFeed:feed];
+            [(FeedVC *)vc setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc sender:self];
         }
         else {
-            vc = [DetailFeedVC instanceWithFeed:feed];
+            vc = [FeedVC instanceWithFeed:feed];
             
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+            [(FeedVC *)[(UINavigationController *)vc topViewController] setType:FeedVCTypeNatural];
+            [(FeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
         }
