@@ -8,6 +8,7 @@
 
 #import "ArticleCell.h"
 #import "PrefsManager.h"
+#import "FeedVC.h"
 
 #import <DZKit/NSString+Extras.h>
 
@@ -25,6 +26,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     BOOL _isShowingCover;
     
 }
+
+@property (nonatomic, strong) NSURLSessionTask *faviconTask;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleLabelWidthConstraint;
 
 @end
 
@@ -49,9 +53,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     // Initialization code
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.faviconView.layer.cornerRadius = 3.f;
-    self.faviconView.layer.cornerCurve = kCACornerCurveContinuous;
     
     self.coverImage.layer.cornerRadius = 3.f;
     self.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
@@ -91,13 +92,14 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     [self.coverImage il_cancelImageLoading];
     self.coverImage.image = nil;
     
-    [self.faviconView il_cancelImageLoading];
-    self.faviconView.image = nil;
-    
     self.coverImage.hidden = NO;
-    self.faviconView.hidden = NO;
     
-    self.markerView.backgroundColor = UIColor.clearColor;
+    self.markerView.image = nil;
+    
+    if (self.faviconTask) {
+        [self.faviconTask cancel];
+        self.faviconTask = nil;
+    }
     
 }
 
@@ -129,7 +131,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     if ([self showImage] == NO) {
         
-        self.faviconView.hidden = YES;
         self.coverImage.hidden = YES;
         
     }
@@ -138,16 +139,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     Feed *feed = [ArticlesManager.shared feedForID:self.article.feedID];
     
-    self.titleLabel.text = article.articleTitle;
-    
-    if (feedType != FeedVCTypeNatural) {
-        
-        [self configureFavicon:feed];
-        
-    }
-    else {
-        [(UIStackView *)[self.faviconView superview] removeArrangedSubview:self.faviconView];
-    }
+    [self configureTitle:feedType];
     
     NSString *coverImageURL = article.coverImage;
     
@@ -294,13 +286,16 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     }
     
     if (article.isBookmarked) {
-        self.markerView.backgroundColor = UIColor.systemOrangeColor;
+        self.markerView.tintColor = UIColor.systemOrangeColor;
+        self.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
     }
     else if (article.isRead == NO) {
-        self.markerView.backgroundColor = UIColor.systemBlueColor;
+        self.markerView.tintColor = UIColor.systemBlueColor;
+        self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
     }
     else {
-        self.markerView.backgroundColor = UIColor.clearColor;
+        self.markerView.tintColor = UIColor.secondaryLabelColor;
+        self.markerView.image = [UIImage systemImageNamed:@"smallcircle.fill.circle"];
     }
     
     _isShowingCover = NO;
@@ -318,10 +313,10 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         self.coverImage.hidden = YES;
     }
     
-    CGFloat width = self.bounds.size.width - 24.f;
+    CGFloat width = self.bounds.size.width - 48.f;
         
     self.titleLabel.preferredMaxLayoutWidth = width - (_isShowingCover ? 92.f : 4.f); // 80 + 12
-//    self.titleWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
+    self.titleLabelWidthConstraint.constant = self.titleLabel.preferredMaxLayoutWidth;
     
     self.summaryLabel.preferredMaxLayoutWidth = width;
     
@@ -351,11 +346,34 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
 }
 
-- (void)configureFavicon:(Feed *)feed {
+- (void)configureTitle:(FeedVCType)feedType {
     
-    if (self.article == nil) {
+    if (feedType == FeedVCTypeNatural) {
+
+        self.titleLabel.text = self.article.articleTitle;
         return;
+
     }
+    
+    if ([self showImage] == NO) {
+        
+        self.titleLabel.text = self.article.articleTitle;
+        return;
+        
+    }
+    
+    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+    para.lineSpacing = 24.f;
+    
+    NSDictionary *attributes = @{NSFontAttributeName: self.titleLabel.font,
+                                 NSForegroundColorAttributeName: self.titleLabel.textColor,
+                                 };
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formattedString(@"  %@", self.article.articleTitle) attributes:attributes];
+    
+    NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+    
+    Feed *feed = [MyFeedsManager feedForID:self.article.feedID];
     
     if (feed == nil) {
         return;
@@ -363,29 +381,93 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     NSString *url = [feed faviconURI];
     
-    CGFloat maxWidth = self.faviconView.bounds.size.width;
+    if (url != nil && [url isBlank] == NO) {
+        NSString *key = formattedString(@"png-24-%@", url);
+            
+        [self _configureTitleFavicon:key attachment:attachment url:url];
+    }
     
-    if (SharedPrefs.imageProxy == YES) {
+    // positive offsets push it up, negative push it down
+    // this is similar to NSRect
+    CGFloat fontSize = self.titleLabel.font.pointSize;
+    CGFloat baseline = 17.f; // we compute our expected using this
+    CGFloat expected = 7.f;  // from the above, so A:B :: C:D
+    CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
+    
+    attachment.bounds = CGRectMake(0, yOffset, 24, 24);
+    NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
+    
+    [attachmentString appendAttributedString:attrs];
+    
+    self.titleLabel.attributedText = attachmentString;
+    
+}
+
+- (void)_configureTitleFavicon:(NSString *)key
+                    attachment:(NSTextAttachment *)attachment
+                           url:(NSString *)url {
+    
+    if (self.faviconTask != nil) {
         
-        url = [url pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+        // if it is running, do not interrupt it.
+        if (self.faviconTask.state == NSURLSessionTaskStateRunning) {
+            return;
+        }
+        
+        // otherwise, cancel it and move on
+        [self.faviconTask cancel];
+        self.faviconTask = nil;
         
     }
     
-    [self.faviconView il_setImageWithURL:[NSURL URLWithString:url] mutate:^UIImage * _Nonnull(UIImage * _Nonnull image) {
+    if (SharedPrefs.imageProxy) {
         
-        if (SharedPrefs.imageProxy == YES) {
-            return image;
+        url = [url pathForImageProxy:NO maxWidth:attachment.bounds.size.width quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+        
+    }
+    
+    attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+    
+    if (url == nil) {
+        return;
+    }
+    
+    self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([image isKindOfClass:UIImage.class] == NO) {
+            image = nil;
         }
         
-        CGSize size = CGSizeMake(maxWidth, maxWidth);
+        if (image != nil) {
+            
+            CGFloat width = 24.f * UIScreen.mainScreen.scale;
+            
+            NSData *jpeg = nil;
+            
+            image = [image fastScale:CGSizeMake(width, width) quality:1.f cornerRadius:4.f imageData:&jpeg];
+            
+        }
         
-        UIImage *sized = [image fastScale:size quality:1.f cornerRadius:0.f imageData:nil];
+        runOnMainQueueWithoutDeadlocking(^{
+            if (image == nil) {
+                attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+            }
+            else {
+                attachment.image = image;
+            }
+            
+            [self.titleLabel setNeedsDisplay];
+        });
         
-        return sized;
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-    } success:nil error:^(NSError * _Nonnull error) {
-       
-        self.faviconView.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+        NSLogDebug(@"Failed to fetch favicon at: %@", url);
+        
+        runOnMainQueueWithoutDeadlocking(^{
+            attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+            
+            [self.titleLabel setNeedsDisplay];
+        });
         
     }];
     
@@ -405,6 +487,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
+    self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+    
     [self.coverImage il_setImageWithURL:[NSURL URLWithString:url] mutate:^UIImage * _Nonnull(UIImage * _Nonnull image) {
         
         if (SharedPrefs.imageProxy == YES) {
@@ -419,7 +503,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     } success:nil error:^(NSError * _Nonnull error) {
        
-        self.faviconView.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+        self.coverImage.contentMode = UIViewContentModeCenter;
+        self.coverImage.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
         
     }];
     

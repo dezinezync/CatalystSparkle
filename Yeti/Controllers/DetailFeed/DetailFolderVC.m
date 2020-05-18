@@ -164,11 +164,9 @@
         
         params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
             
-        #if TESTFLIGHT == 0
-            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
-                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-            }
-        #endif
+        if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+            params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+        }
         
         NSString *path = formattedString(@"/1.1/folder/%@/feed", self.folder.folderID);
         

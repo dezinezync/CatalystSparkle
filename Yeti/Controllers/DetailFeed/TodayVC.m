@@ -88,12 +88,10 @@
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10, @"date": todayString}.mutableCopy;
         
         params[@"sortType"] = @(_sortingOption.integerValue);
-            
-        #if TESTFLIGHT == 0
-            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
-                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-            }
-        #endif
+
+        if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+            params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+        }
         
         PagingManager * todayManager = [[PagingManager alloc] initWithPath:@"/1.7/today" queryParams:params itemsKey:@"articles"];
         

@@ -177,12 +177,10 @@
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
         params[@"sortType"] = @(_sortingOption.integerValue);
-            
-        #if TESTFLIGHT == 0
-            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
-                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-            }
-        #endif
+        
+        if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+            params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+        }
         
         PagingManager * unreadsManager = [[PagingManager alloc] initWithPath:@"/unread" queryParams:params itemsKey:@"articles"];
         

@@ -883,11 +883,9 @@ static void *KVO_DetailFeedFrame = &KVO_DetailFeedFrame;
         
         params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
             
-        #if TESTFLIGHT == 0
-            if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
-                params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-            }
-        #endif
+        if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
+            params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+        }
         
         NSString *path = [NSString stringWithFormat:@"/feeds/%@", self.feed.feedID];
         

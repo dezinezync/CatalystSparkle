@@ -251,6 +251,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (self.articlesImageLoader != nil) {
         [self.articlesImageLoader.cache removeAllObjects];
+        self.articlesImageLoader = nil;
     }
     
     @try {

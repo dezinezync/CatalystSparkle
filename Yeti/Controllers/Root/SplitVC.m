@@ -92,13 +92,6 @@
     if (hasShownIntro == NO) {
         [self userNotFound];
     }
-#if TESTFLIGHT == 1
-    else {
-        // this ensures anyone who has already gone through the setup isn't asked to subscribe again.
-        // this value should change for the production app on the App Store
-        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
-    }
-#endif
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
 }

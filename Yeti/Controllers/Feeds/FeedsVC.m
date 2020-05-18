@@ -486,18 +486,28 @@ static void *KVO_Unread = &KVO_Unread;
         progressLabel.textColor = YTThemeKit.theme.subtitleColor;
         progressLabel.textAlignment = NSTextAlignmentCenter;
         progressLabel.frame = CGRectMake(0, 0, frame.size.width, 0);
-        [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+        
+        NSLayoutConstraint *labelWidthConstraint = [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
+        labelWidthConstraint.priority = 999;
+        
         progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
-//#ifdef DEBUG
+
+        //#ifdef DEBUG
 //        progressLabel.backgroundColor = UIColor.redColor;
 //#endif
+        
         UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         progressView.progressTintColor = YTThemeKit.theme.tintColor;
         progressView.trackTintColor = YTThemeKit.theme.borderColor;
         progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
         progressView.layer.cornerRadius = 2.f;
         progressView.translatesAutoresizingMaskIntoConstraints = NO;
-        [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+        
+        NSLayoutConstraint *widthConstraint = [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
+        widthConstraint.priority = 999;
+        
+        [NSLayoutConstraint activateConstraints:@[widthConstraint, labelWidthConstraint]];
+        
 //#ifdef DEBUG
 //        progressView.backgroundColor = UIColor.greenColor;
 //#endif
@@ -979,25 +989,15 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-#if TESTFLIGHT == 1
-    // during betas and for testflight builds, this option should be left on.
-    BOOL betaVal = [Keychain boolFor:YTSubscriptionPurchased error:nil];
-
-    if (betaVal == YES) {
-        NSLog(@"Beta user has already gone through the subscription check. Ignoring.");
-        return;
-    }
-#endif
-    
     BOOL addedVal = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
     
     if (addedVal == NO) {
         NSLog(@"User hasn't added their first feed yet. Ignoring.");
         return;
     }
-#if TESTFLIGHT == 0
+
     [self subscriptionExpired:nil];
-#endif
+
 }
 
 #pragma mark - Notifications
@@ -1167,7 +1167,7 @@ NSString * const kDS2Data = @"DS2Data";
     if ([Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil]) {
         return;
     }
-#if TESTFLIGHT == 0
+
     StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
     
     vc.modalInPresentation = YES;
@@ -1192,7 +1192,7 @@ NSString * const kDS2Data = @"DS2Data";
         strongify(self);
         [self.to_splitViewController presentViewController:nav animated:YES completion:nil];
     });
-#endif
+
 }
 
 - (void)didPurchaseSubscription:(NSNotification *)note {

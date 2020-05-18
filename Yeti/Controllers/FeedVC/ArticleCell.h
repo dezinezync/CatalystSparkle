@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "FeedItem.h"
 
-#import "FeedVC.h"
-
 extern NSString * _Nonnull const kArticleCell;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,8 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)registerOnTableView:(UITableView * _Nonnull)tableView;
 
-@property (weak, nonatomic) IBOutlet UIView *markerView;
-@property (weak, nonatomic) IBOutlet UIImageView *faviconView;
+@property (weak, nonatomic) IBOutlet UIImageView *markerView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *summaryLabel;
 @property (weak, nonatomic) IBOutlet UILabel *innerAuthorLabel;
