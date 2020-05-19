@@ -121,11 +121,11 @@
             // we can expect a cell for it and therefore
             // reload it.
             
-            NSArray <NSIndexPath *> * visible = self.collectionView.indexPathsForVisibleItems;
+            NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
             
             BOOL isVisible = NO;
             for (NSIndexPath *ip in visible) {
-                if (ip.item == index) {
+                if (ip.row == index) {
                     isVisible = YES;
                     indexPath = ip;
                     break;
@@ -133,21 +133,11 @@
             }
             
             if (isVisible) {
-//                ArticleCellB *cell = (ArticleCellB *)[self.collectionView cellForItemAtIndexPath:indexPath];
-//                // only change when not bookmarked. If bookmarked, continue showing the bookmark icon
-//                if (cell != nil && article.isBookmarked == NO) {
-//
-//                    if (read == YES) {
-//                        cell.markerView.image = [[UIImage systemImageNamed:@"circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-//
-//                        cell.markerView.tintColor = [[YTThemeKit theme] borderColor];
-//                    }
-//                    else {
-//                        cell.markerView.image = [[UIImage systemImageNamed:@"largecircle.fill.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-//
-//                        cell.markerView.tintColor = [[YTThemeKit theme] tintColor];
-//                    }
-//                }
+                
+                ArticleCell *cell = (ArticleCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                
+                [cell updateMarkerView];
+                
             }
         }
     });
@@ -198,16 +188,11 @@
             }
             
             if (isVisible) {
+                
                 ArticleCell *cell = (ArticleCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-
-                if (cell != nil) {
-                    if (bookmarked == NO) {
-                        cell.markerView.backgroundColor = UIColor.clearColor;
-                    }
-                    else {
-                        cell.markerView.backgroundColor = UIColor.systemOrangeColor;
-                    }
-                }
+                
+                [cell updateMarkerView];
+                
             }
         }
     });

@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)configure:(FeedItem * _Nonnull)article feedType:(NSInteger)feedType;
 
+- (void)updateMarkerView;
+
 @end
 
 NS_ASSUME_NONNULL_END

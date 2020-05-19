@@ -20,6 +20,7 @@
 #import "Feed.h"
 
 #import "BookmarksManager.h"
+#import "BarPositioning.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,17 +41,17 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 @property (nonatomic, assign) FeedVCType type;
 
-@property (nonatomic, weak) BookmarksManager *bookmarksManager;
+@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 @property (atomic, assign) StateType controllerState;
 
-@property (nonatomic, strong) PagingManager *pagingManager;
+@property (nonatomic, strong) PagingManager * _Nullable pagingManager;
 
 #pragma mark - Getters
 
-@property (nonatomic, strong, readonly) UISelectionFeedbackGenerator *feedbackGenerator;
+@property (nonatomic, strong, readonly) UISelectionFeedbackGenerator * _Nonnull feedbackGenerator;
 
-@property (nonatomic, strong, readonly) UITableViewDiffableDataSource *DS;
+@property (nonatomic, strong, readonly) UITableViewDiffableDataSource <NSNumber *, FeedItem *> * _Nullable DS;
 
 - (NSUInteger)indexOfItem:(FeedItem * _Nonnull)item retIndexPath:(NSIndexPath * _Nullable)outIndexPath;
 
@@ -61,6 +62,18 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 - (NSString * _Nonnull)emptyViewSubtitle;
 
 - (UIView * _Nonnull)viewForEmptyDataset;
+
+#pragma mark -
+
+/// Loads the given article ID when the view controller is ready.
+@property (nonatomic, assign) NSNumber * _Nullable loadOnReady;
+
+/// Determines if the user is simply exploring this feed from recommendations or somewhere else.
+@property (nonatomic, assign, getter=isExploring) BOOL exploring;
+
+- (BOOL)showsSortingButton;
+
+@property (nonatomic, assign) YetiSortOption sortingOption;
 
 @end
 

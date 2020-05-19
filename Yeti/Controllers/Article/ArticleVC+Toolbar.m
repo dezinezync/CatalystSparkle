@@ -29,7 +29,7 @@
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
-    UIImage * readImage = [UIImage systemImageNamed:@"circle"],
+    UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
             * bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")],
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
@@ -302,16 +302,17 @@
 
 - (void)didTapRead:(UIBarButtonItem *)button {
     
-    if (![button respondsToSelector:@selector(setEnabled:)]) {
-        button = [self.navigationItem.rightBarButtonItems objectAtIndex:3];
+    if (button && [button respondsToSelector:@selector(setEnabled:)]) {
+        button.enabled = NO;
     }
     
-    button.enabled = NO;
-    
     [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
+    
     self.item.read = !self.item.isRead;
     
-    button.image = self.item.isRead ? [UIImage systemImageNamed:@"circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+    if (button) {
+        button.image = self.item.isRead ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+    }
     
     if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
         
@@ -319,7 +320,9 @@
         
     }
     
-    button.enabled = YES;
+    if (button) {
+        button.enabled = YES;
+    }
     
     weakify(self);
     

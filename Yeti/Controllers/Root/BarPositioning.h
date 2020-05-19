@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIBarButtonItem * _Nullable)rightBarButtonItem;
 - (NSArray <UIBarButtonItem *> * _Nullable)rightBarButtonItems;
 
+- (NSArray <UIBarButtonItem *> * _Nullable)toolbarItems;
+
 @end
 
 NS_ASSUME_NONNULL_END

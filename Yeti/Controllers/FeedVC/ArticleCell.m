@@ -285,18 +285,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    if (article.isBookmarked) {
-        self.markerView.tintColor = UIColor.systemOrangeColor;
-        self.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
-    }
-    else if (article.isRead == NO) {
-        self.markerView.tintColor = UIColor.systemBlueColor;
-        self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
-    }
-    else {
-        self.markerView.tintColor = UIColor.secondaryLabelColor;
-        self.markerView.image = [UIImage systemImageNamed:@"smallcircle.fill.circle"];
-    }
+    [self updateMarkerView];
     
     _isShowingCover = NO;
     
@@ -507,6 +496,23 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         self.coverImage.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
         
     }];
+    
+}
+
+- (void)updateMarkerView {
+    
+    if (self.article.isBookmarked) {
+        self.markerView.tintColor = UIColor.systemOrangeColor;
+        self.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
+    }
+    else if (self.article.isRead == NO) {
+        self.markerView.tintColor = UIColor.systemBlueColor;
+        self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
+    }
+    else {
+        self.markerView.tintColor = UIColor.secondaryLabelColor;
+        self.markerView.image = [UIImage systemImageNamed:@"smallcircle.fill.circle"];
+    }
     
 }
 

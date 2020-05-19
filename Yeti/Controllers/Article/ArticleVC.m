@@ -723,6 +723,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.item = responseObject;
     
+    [self didTapRead:nil];
+    
     BOOL isYoutubeVideo = [self.item.articleURL containsString:@"youtube.com/watch"];
     
     // add Body
