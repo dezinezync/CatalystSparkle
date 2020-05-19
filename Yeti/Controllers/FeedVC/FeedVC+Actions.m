@@ -148,7 +148,7 @@
 //        return;
 //    }
     
-    NSArray <NSIndexPath *> *indices = [self.collectionView indexPathsForVisibleItems];
+    NSArray <NSIndexPath *> *indices = [self.tableView indexPathsForVisibleRows];
     
     for (NSIndexPath *indexPath in indices) { @autoreleasepool {
         

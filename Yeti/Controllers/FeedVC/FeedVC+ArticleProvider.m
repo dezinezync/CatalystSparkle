@@ -176,7 +176,7 @@
             // if the article exists in the datasource,
             // we can expect a cell for it and therefore
             // reload it.
-            NSArray <NSIndexPath *> * visible = self.collectionView.indexPathsForVisibleItems;
+            NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
             
             BOOL isVisible = NO;
             for (NSIndexPath *ip in visible) {
@@ -222,14 +222,11 @@
     
     indexPath = indexPath ?: [NSIndexPath indexPathForRow:index inSection:0];
     
-    if ((self.class != NSClassFromString(@"CustomFeedVC")
-         || self.class != NSClassFromString(@"CustomFolderVC")
-         || self.class != NSClassFromString(@"CustomAuthorVC"))
-        && !item.isRead) {
+    if (self.type == FeedVCTypeNatural && !item.isRead) {
         [self userMarkedArticle:item read:YES];
     }
     
-    [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionCenteredVertically];
+    [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
     
     weakify(self);
     
@@ -247,7 +244,7 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            [self scrollViewDidEndDecelerating:self.collectionView];
+            [self scrollViewDidEndDecelerating:self.tableView];
         });
     }
 }
