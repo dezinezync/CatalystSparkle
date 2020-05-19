@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC+BarPositioning.h"
+#import "FeedVC+SearchController.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
 
@@ -86,7 +86,7 @@
     
     [super viewWillAppear:animated];
     
-    [self setupNavigationBar];
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
@@ -127,6 +127,10 @@
     
 }
 
+- (BOOL)definesPresentationContext {
+    return YES;
+}
+
 #pragma mark - Setups
 
 - (void)setupNavigationBar {
@@ -162,6 +166,16 @@
         }
         
     }
+    
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    searchController.searchResultsUpdater = self;
+    searchController.searchBar.placeholder = @"Search Articles";
+    searchController.automaticallyShowsCancelButton = YES;
+    searchController.automaticallyShowsScopeBar = YES;
+    searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
+    searchController.obscuresBackgroundDuringPresentation = NO;
+    
+    self.navigationItem.searchController = searchController;
     
 }
 
@@ -589,7 +603,13 @@
 #pragma mark - <ScrollLoading>
 
 - (BOOL)isLoadingNext {
+    
+    if (self.navigationItem.searchController.presentingViewController != nil) {
+        return YES;
+    }
+    
     return self.controllerState == StateLoading;
+    
 }
 
 - (void)loadNextPage {

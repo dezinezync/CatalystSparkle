@@ -53,6 +53,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 @property (nonatomic, strong, readonly) UITableViewDiffableDataSource <NSNumber *, FeedItem *> * _Nullable DS;
 
+- (void)setupData;
+
 - (NSUInteger)indexOfItem:(FeedItem * _Nonnull)item retIndexPath:(NSIndexPath * _Nullable)outIndexPath;
 
 - (FeedItem * _Nullable)itemForIndexPath:(NSIndexPath * _Nonnull)indexPath;
@@ -74,6 +76,10 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 - (BOOL)showsSortingButton;
 
 @property (nonatomic, assign) YetiSortOption sortingOption;
+
+#pragma mark - Search Results
+
+@property (nonatomic, strong) NSURLSessionTask * _Nullable searchOperation;
 
 @end
 

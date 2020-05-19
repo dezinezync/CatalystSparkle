@@ -106,6 +106,7 @@
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
 		F05219E924739F8100DFB69C /* FeedVC+BarPositioning.m in Sources */ = {isa = PBXBuildFile; fileRef = F05219E824739F8100DFB69C /* FeedVC+BarPositioning.m */; };
+		F0521A072473AB8400DFB69C /* FeedVC+SearchController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0521A062473AB8400DFB69C /* FeedVC+SearchController.m */; };
 		F0533CB4240D463C00BB69CF /* UIRefreshControl+Manual.m in Sources */ = {isa = PBXBuildFile; fileRef = F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */; };
 		F0542E36211DBFD700D66878 /* black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E32211DBFD700D66878 /* black@3x.png */; };
 		F0542E38211DBFD700D66878 /* black.png in Resources */ = {isa = PBXBuildFile; fileRef = F0542E33211DBFD700D66878 /* black.png */; };
@@ -877,6 +878,8 @@
 		F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FilterInputCell.xib; sourceTree = "<group>"; };
 		F05219E724739F8100DFB69C /* FeedVC+BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+BarPositioning.h"; sourceTree = "<group>"; };
 		F05219E824739F8100DFB69C /* FeedVC+BarPositioning.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+BarPositioning.m"; sourceTree = "<group>"; };
+		F0521A052473AB8400DFB69C /* FeedVC+SearchController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+SearchController.h"; sourceTree = "<group>"; };
+		F0521A062473AB8400DFB69C /* FeedVC+SearchController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+SearchController.m"; sourceTree = "<group>"; };
 		F0533CB2240D463C00BB69CF /* UIRefreshControl+Manual.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIRefreshControl+Manual.h"; sourceTree = "<group>"; };
 		F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIRefreshControl+Manual.m"; sourceTree = "<group>"; };
 		F0542E32211DBFD700D66878 /* black@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@3x.png"; sourceTree = "<group>"; };
@@ -1990,6 +1993,8 @@
 				F092C5D3246C30D8007FDE8A /* FeedVC+ArticleProvider.m */,
 				F05219E724739F8100DFB69C /* FeedVC+BarPositioning.h */,
 				F05219E824739F8100DFB69C /* FeedVC+BarPositioning.m */,
+				F0521A052473AB8400DFB69C /* FeedVC+SearchController.h */,
+				F0521A062473AB8400DFB69C /* FeedVC+SearchController.m */,
 				F0A495B224711CE500E9BA13 /* ArticleCell.h */,
 				F0A495B324711CE500E9BA13 /* ArticleCell.m */,
 				F0A495B424711CE500E9BA13 /* ArticleCell.xib */,
@@ -3081,6 +3086,7 @@
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
+				F0521A072473AB8400DFB69C /* FeedVC+SearchController.m in Sources */,
 				F05041D32461442800A65C1C /* ArticlesManager.m in Sources */,
 				F05041D42461442800A65C1C /* BookmarksManager.m in Sources */,
 				F05041DD2461442800A65C1C /* FeedItem.m in Sources */,
