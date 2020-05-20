@@ -1502,13 +1502,13 @@
 			isa = PBXGroup;
 			children = (
 				F05041A42461442800A65C1C /* PagingManager.h */,
-				F05041A52461442800A65C1C /* FeedsManagerErrors.h */,
-				F05041A62461442800A65C1C /* FeedsManager+KVS.m */,
-				F05041A72461442800A65C1C /* FeedsManager.h */,
-				F05041A82461442800A65C1C /* FeedsManagerErrors.m */,
 				F05041A92461442800A65C1C /* PagingManager.m */,
+				F05041A52461442800A65C1C /* FeedsManagerErrors.h */,
+				F05041A82461442800A65C1C /* FeedsManagerErrors.m */,
+				F05041A72461442800A65C1C /* FeedsManager.h */,
 				F05041AA2461442800A65C1C /* FeedsManager.m */,
 				F05041AB2461442800A65C1C /* FeedsManager+KVS.h */,
+				F05041A62461442800A65C1C /* FeedsManager+KVS.m */,
 			);
 			path = FeedsManager;
 			sourceTree = "<group>";

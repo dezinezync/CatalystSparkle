@@ -29,6 +29,16 @@
     
 }
 
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(nonnull NSString *)identifier completionHandler:(nonnull void (^)(void))completionHandler {
+    
+    MyFeedsManager.backgroundSession.backgroundCompletionHandler = ^(NSURLSessionTask * _Nullable task, id  _Nullable responseObject, NSError * _Nullable error) {
+      
+        completionHandler();
+        
+    };
+    
+}
+
 - (void)scheduleBackgroundRefresh {
     
     BGAppRefreshTaskRequest *request = [[BGAppRefreshTaskRequest alloc] initWithIdentifier:@"com.yeti.refresh"];
