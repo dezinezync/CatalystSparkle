@@ -23,18 +23,11 @@
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="2" verticalCompressionResistancePriority="998" alignment="top" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="X3G-qr-c4j">
                                 <rect key="frame" x="0.0" y="0.0" width="351" height="110"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="rr2-I9-xcl">
-                                        <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" priority="999" constant="20" id="ZHH-tQ-Vq5"/>
-                                            <constraint firstAttribute="height" priority="999" constant="20" id="qXc-SZ-UTq"/>
-                                        </constraints>
-                                    </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="240" verticalCompressionResistancePriority="760" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="mDw-uV-AN2">
-                                        <rect key="frame" x="32" y="0.0" width="217" height="110"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="249" height="90.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="3" verticalCompressionResistancePriority="997" text="This should be a multiline title even when cover image is hidden" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLS-mj-0xd">
-                                                <rect key="frame" x="0.0" y="0.0" width="217" height="64.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="249" height="64.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" priority="999" constant="217" id="I0P-vB-8Jr"/>
                                                 </constraints>
@@ -48,15 +41,9 @@
                                                 </variation>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fkf-40-JG6">
-                                                <rect key="frame" x="0.0" y="72.5" width="217" height="18"/>
+                                                <rect key="frame" x="0.0" y="72.5" width="249" height="18"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NSW-g7-YJ6">
-                                                <rect key="frame" x="0.0" y="98.5" width="217" height="11.5"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
-                                                <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
@@ -70,30 +57,32 @@
                                     </imageView>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="OFU-pE-ICK">
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="OFU-pE-ICK">
                                 <rect key="frame" x="0.0" y="118" width="351" height="20"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sBI-iH-7cG">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="747" verticalCompressionResistancePriority="747" translatesAutoresizingMaskIntoConstraints="NO" id="Oc2-mZ-DAY">
                                         <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="JF2-5S-p4Y"/>
-                                            <constraint firstAttribute="height" constant="20" id="gmj-7d-scP"/>
+                                            <constraint firstAttribute="height" priority="999" constant="20" id="1YZ-pF-y2j"/>
+                                            <constraint firstAttribute="width" priority="999" constant="20" id="4h7-q9-XLH"/>
                                         </constraints>
-                                    </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGe-PO-ucb">
-                                        <rect key="frame" x="32" y="0.0" width="267.5" height="20"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="749" text="Label" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGe-PO-ucb">
+                                        <rect key="frame" x="32" y="0.0" width="109" height="20"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                         <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bzw-h8-aBq">
-                                        <rect key="frame" x="311.5" y="0.0" width="39.5" height="20"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bzw-h8-aBq">
+                                        <rect key="frame" x="153" y="2" width="198" height="16"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                         <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" secondItem="tGe-PO-ucb" secondAttribute="height" id="Pfg-Gz-xhI"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                     </stackView>
@@ -107,10 +96,9 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
+                <outlet property="authorLabel" destination="tGe-PO-ucb" id="TmJ-N9-F1I"/>
                 <outlet property="coverImage" destination="1y9-pP-N2x" id="eZd-Yh-SMf"/>
-                <outlet property="innerAuthorLabel" destination="NSW-g7-YJ6" id="ozd-SH-2vO"/>
-                <outlet property="markerView" destination="rr2-I9-xcl" id="PPg-FA-ISH"/>
-                <outlet property="outerAuthorLabel" destination="tGe-PO-ucb" id="bxh-vP-Wrj"/>
+                <outlet property="markerView" destination="Oc2-mZ-DAY" id="BOY-ly-4dl"/>
                 <outlet property="summaryLabel" destination="fkf-40-JG6" id="xzE-fK-n7p"/>
                 <outlet property="timeLabel" destination="Bzw-h8-aBq" id="WRq-Ho-XHN"/>
                 <outlet property="titleLabel" destination="BLS-mj-0xd" id="myY-cO-MqB"/>

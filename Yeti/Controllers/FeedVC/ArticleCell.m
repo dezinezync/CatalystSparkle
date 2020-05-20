@@ -52,28 +52,19 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     [super awakeFromNib];
     // Initialization code
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     self.coverImage.layer.cornerRadius = 3.f;
     self.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
     
-    NSArray <UILabel *> * labels = @[self.titleLabel, self.summaryLabel, self.innerAuthorLabel, self.outerAuthorLabel, self.timeLabel];
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.titleLabel.textColor = theme.titleColor;
     self.summaryLabel.textColor = theme.subtitleColor;
     
-    self.innerAuthorLabel.textColor = theme.captionColor;
-    self.outerAuthorLabel.textColor = theme.captionColor;
+    self.authorLabel.textColor = theme.captionColor;
     self.timeLabel.textColor = theme.captionColor;
     
     self.selectedBackgroundView = [UIView new];
     self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
-    
-    for (UILabel *label in labels) {
-        
-        label.text = nil;
-        
-    }
     
     [self resetUI];
     
@@ -90,6 +81,15 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 - (void)resetUI {
     
     [self.coverImage il_cancelImageLoading];
+    
+    NSArray <UILabel *> * labels = @[self.titleLabel, self.summaryLabel, self.authorLabel, self.timeLabel];
+    
+    for (UILabel *label in labels) {
+        
+        label.text = nil;
+        
+    }
+    
     self.coverImage.image = nil;
     
     self.coverImage.hidden = NO;
@@ -160,86 +160,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         }
     }
     
-    NSInteger previewLines = SharedPrefs.previewLines;
+    [self configureSummary];
     
-    if (previewLines == 0 || (article.summary && [[article.summary stringByStrippingHTML] length] == 0)) {
-        self.summaryLabel.text = nil;
-        self.summaryLabel.hidden = YES;
-    }
-    else {
-        self.summaryLabel.hidden = NO;
-        self.summaryLabel.numberOfLines = previewLines;
-        self.summaryLabel.text = [article.summary stringByStrippingHTML];
-    }
-    
-    NSString *appendFormat = @" - %@";
-    
-    UILabel *authorLabel = nil;
-    
-    if (coverImageURL) {
-        
-        authorLabel = self.innerAuthorLabel;
-        self.outerAuthorLabel.hidden = YES;
-        
-    }
-    else {
-        
-        authorLabel = self.outerAuthorLabel;
-        self.innerAuthorLabel.hidden = YES;
-        
-    }
-    
-    // But if we have a summary beyond 3 lines, switch to the outer label only
-    if (previewLines > 3 && authorLabel != self.outerAuthorLabel) {
-        
-        authorLabel = self.outerAuthorLabel;
-        self.innerAuthorLabel.hidden = YES;
-        
-    }
-    
-    authorLabel.hidden = NO;
-    
-    if (article.author) {
-        
-        if ([article.author isKindOfClass:NSString.class]) {
-            
-            if ([article.author isBlank] == NO) {
-                
-                authorLabel.text = [(article.author ?: @"") stringByStrippingHTML];
-                
-            }
-            else {
-                appendFormat = @"%@";
-            }
-            
-        }
-        else {
-            
-            authorLabel.text = [([article.author valueForKey:@"name"] ?: @"") stringByStrippingHTML];
-            
-        }
-    }
-    else {
-        authorLabel.text = nil;
-        appendFormat = @"%@";
-    }
-    
-    if (feedType != FeedVCTypeNatural) {
-        
-        if (feed) {
-            
-            NSString *feedTitle = feed.displayTitle;
-            
-            authorLabel.text = [self.innerAuthorLabel.text stringByAppendingFormat:appendFormat, feedTitle];
-            
-        }
-        else {
-            
-            authorLabel.text = nil;
-            
-        }
-        
-    }
+    [self configureAuthorWithFeedType:feedType feed:feed];
     
     BOOL isMicroBlogPost = NO;
     
@@ -276,12 +199,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         self.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
         self.titleLabel.textAlignment = NSTextAlignmentRight;
         
-        if (coverImageURL) {
-            self.innerAuthorLabel.textAlignment = NSTextAlignmentRight;
-        }
-        else {
-            self.outerAuthorLabel.textAlignment = NSTextAlignmentRight;
-        }
+        self.authorLabel.textAlignment = NSTextAlignmentRight;
         
     }
     
@@ -309,14 +227,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     self.summaryLabel.preferredMaxLayoutWidth = width;
     
-    if (_isShowingCover == YES) {
-        self.innerAuthorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 24.f;
-    }
-    else {
-        self.outerAuthorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 140.f;
-    }
+    self.timeLabel.preferredMaxLayoutWidth = 92.f;
     
-    self.timeLabel.preferredMaxLayoutWidth = 80.f;
+    self.authorLabel.preferredMaxLayoutWidth = self.titleLabel.preferredMaxLayoutWidth - 24.f - 12.f - self.timeLabel.preferredMaxLayoutWidth;
     
     NSString *timestamp = [[NSRelativeDateTimeFormatter new] localizedStringForDate:article.timestamp relativeToDate:NSDate.date];
     
@@ -332,6 +245,19 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     self.backgroundColor = [UIColor grayColor];
     self.contentView.backgroundColor = [UIColor yellowColor];
 #endif
+    
+//    NSArray <UILabel *> * labels = @[self.titleLabel, self.summaryLabel, self.authorLabel, self.timeLabel];
+//
+//    for (UILabel *label in labels) {
+//
+//        [label sizeToFit];
+//
+//    }
+    
+//    [self.titleLabel.superview.superview.superview setNeedsUpdateConstraints];
+//    
+//    [self.titleLabel.superview.superview.superview layoutIfNeeded];
+//    [self.titleLabel.superview.superview.superview setNeedsLayout];
     
 }
 
@@ -459,6 +385,78 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         });
         
     }];
+    
+}
+
+- (void)configureSummary {
+    
+    NSInteger previewLines = SharedPrefs.previewLines;
+    
+    if (previewLines == 0 || (self.article.summary && [[self.article.summary stringByStrippingHTML] length] == 0)) {
+        self.summaryLabel.text = nil;
+        self.summaryLabel.hidden = YES;
+    }
+    else {
+        self.summaryLabel.hidden = NO;
+        self.summaryLabel.numberOfLines = previewLines;
+        self.summaryLabel.text = [self.article.summary stringByStrippingHTML];
+    }
+    
+}
+
+- (void)configureAuthorWithFeedType:(FeedVCType)feedType feed:(Feed *)feed {
+    
+    NSString *appendFormat = @" - %@";
+    
+    UILabel *authorLabel = self.authorLabel;
+    
+    authorLabel.hidden = NO;
+    
+    if (self.article.author) {
+        
+        if ([self.article.author isKindOfClass:NSString.class]) {
+            
+            if ([self.article.author isBlank] == NO) {
+                
+                authorLabel.text = [(self.article.author ?: @"") stringByStrippingHTML];
+                
+            }
+            else {
+                appendFormat = @"%@";
+            }
+            
+        }
+        else {
+            
+            authorLabel.text = [([self.article.author valueForKey:@"name"] ?: @"") stringByStrippingHTML];
+            
+        }
+    }
+    else {
+        authorLabel.text = nil;
+        appendFormat = @"%@";
+    }
+    
+    if (feedType != FeedVCTypeNatural) {
+        
+        if (feed) {
+            
+            NSString *feedTitle = feed.displayTitle;
+            
+            if ([feedTitle isEqualToString:authorLabel.text] == NO) {
+            
+                authorLabel.text = [[authorLabel.text stringByAppendingFormat:appendFormat, feedTitle] stringByStrippingWhitespace];
+
+            }
+            
+        }
+        else {
+            
+            authorLabel.text = nil;
+            
+        }
+        
+    }
     
 }
 

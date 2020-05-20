@@ -273,6 +273,8 @@
 		F0C9F7D6215250980078FB8F /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C9F7D5215250980078FB8F /* FeedCell.m */; };
 		F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */; };
 		F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
+		F0CDA0AD2474E72000DC1217 /* UnreadVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0AC2474E72000DC1217 /* UnreadVC.m */; };
+		F0CDA0CB24750BCC00DC1217 /* FeedVC+ContextMenus.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D008562081C32400EAFE3B /* FeedHeaderView.m */; };
 		F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D008582081C33400EAFE3B /* FeedHeaderView.xib */; };
@@ -1113,6 +1115,10 @@
 		F0CA4587211DB99400D08E40 /* dark~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark~ipad@2x.png"; sourceTree = "<group>"; };
 		F0CCD2172098923A00920AE4 /* SplitVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitVC.h; sourceTree = "<group>"; };
 		F0CCD2182098923A00920AE4 /* SplitVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitVC.m; sourceTree = "<group>"; };
+		F0CDA0AB2474E72000DC1217 /* UnreadVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadVC.h; sourceTree = "<group>"; };
+		F0CDA0AC2474E72000DC1217 /* UnreadVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnreadVC.m; sourceTree = "<group>"; };
+		F0CDA0C924750BCC00DC1217 /* FeedVC+ContextMenus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+ContextMenus.h"; sourceTree = "<group>"; };
+		F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+ContextMenus.m"; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D008552081C32400EAFE3B /* FeedHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedHeaderView.h; sourceTree = "<group>"; };
@@ -1995,9 +2001,13 @@
 				F05219E824739F8100DFB69C /* FeedVC+BarPositioning.m */,
 				F0521A052473AB8400DFB69C /* FeedVC+SearchController.h */,
 				F0521A062473AB8400DFB69C /* FeedVC+SearchController.m */,
+				F0CDA0C924750BCC00DC1217 /* FeedVC+ContextMenus.h */,
+				F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */,
 				F0A495B224711CE500E9BA13 /* ArticleCell.h */,
 				F0A495B324711CE500E9BA13 /* ArticleCell.m */,
 				F0A495B424711CE500E9BA13 /* ArticleCell.xib */,
+				F0CDA0AB2474E72000DC1217 /* UnreadVC.h */,
+				F0CDA0AC2474E72000DC1217 /* UnreadVC.m */,
 			);
 			path = FeedVC;
 			sourceTree = "<group>";
@@ -3063,9 +3073,11 @@
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
+				F0CDA0CB24750BCC00DC1217 /* FeedVC+ContextMenus.m in Sources */,
 				F05041D72461442800A65C1C /* PagingManager.m in Sources */,
 				F00E837322C4826D0027C45E /* RMStore.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
+				F0CDA0AD2474E72000DC1217 /* UnreadVC.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
 				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F05041E52461442800A65C1C /* YTUserID.m in Sources */,

@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC+SearchController.h"
+#import "FeedVC+ContextMenus.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
 
@@ -47,9 +47,20 @@
 
 @implementation FeedVC
 
++ (UINavigationController *)instanceInNavigationController {
+    
+    FeedVC *instance = [[[self class] alloc] init];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
+    nav.restorationIdentifier = @"FeedNavVC";
+    
+    return nav;
+    
+}
+
 + (UINavigationController *)instanceWithFeed:(Feed *)feed {
     
-    FeedVC *instance = [[FeedVC alloc] initWithFeed:feed];
+    FeedVC *instance = [[[self class] alloc] initWithFeed:feed];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
     nav.restorationIdentifier = @"FeedNavVC";
@@ -73,7 +84,9 @@
     
     [super viewDidLoad];
     
-    self.title = self.feed.displayTitle;
+    if (self.type == FeedVCTypeNatural && self.feed) {
+        self.title = self.feed.displayTitle;
+    }
     
     [self setupNavigationBar];
     [self setupTableView];

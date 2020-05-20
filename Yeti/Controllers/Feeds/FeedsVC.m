@@ -11,7 +11,9 @@
 #import "FeedsCell.h"
 #import "FolderCell.h"
 #import "DetailFeedVC.h"
-#import "FeedVC.h"
+
+#import "UnreadVC.h"
+
 #import "DetailCustomVC.h"
 #import "TodayVC.h"
 #import "DetailFolderVC.h"
@@ -653,12 +655,17 @@ static void *KVO_Unread = &KVO_Unread;
             vc.customFeed = FeedTypeCustom;
             
         }
-        else {
+        else if (indexPath.row == 1) {
             
             vc = [[DetailCustomVC alloc] initWithFeed:nil];
             vc.customFeed = FeedTypeCustom;
             vc.bookmarksManager = self.bookmarksManager;
             vc.unread = indexPath.row == 0;
+            
+        }
+        else {
+            
+            vc = (DetailCustomVC *)[[UnreadVC alloc] init];
             
         }
         

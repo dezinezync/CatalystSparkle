@@ -27,6 +27,10 @@
         return;
     
     CGFloat actualPosition = scrollView.contentOffset.y + (scrollView.adjustedContentInset.top);
+    if (actualPosition < self.view.bounds.size.height) {
+        return;
+    }
+    
     CGFloat contentHeight = scrollView.contentSize.height;
     
     CGFloat diff = contentHeight - actualPosition - scrollView.adjustedContentInset.top;

@@ -35,6 +35,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 @property (nonatomic, weak) Feed * _Nullable feed;
 
++ (UINavigationController * _Nullable)instanceInNavigationController;
+
 + (UINavigationController * _Nullable)instanceWithFeed:(Feed * _Nonnull)feed;
 
 - (instancetype _Nullable)initWithFeed:(Feed * _Nonnull)feed;
