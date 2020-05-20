@@ -53,7 +53,12 @@ static NSString * const reuseIdentifier = @"Cell";
     self.collectionView.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-collectionView"];
     
     self.title = @"Recommended";
+    
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    self.navigationController.navigationBar.translucent = NO;
     
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -62,6 +67,8 @@ static NSString * const reuseIdentifier = @"Cell";
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     self.collectionView.backgroundColor = theme.backgroundColor;
+    
+    self.navigationController.navigationBar.barTintColor = theme.subbarColor;
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsGridCell.class) bundle:nil] forCellWithReuseIdentifier:kFeedsGridCell];

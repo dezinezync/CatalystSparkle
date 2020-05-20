@@ -118,9 +118,9 @@
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
-    [self presentViewController:nav animated:YES completion:nil];
+    [self.to_splitViewController to_showSecondaryViewController:nav sender:sender];
 
 }
 
