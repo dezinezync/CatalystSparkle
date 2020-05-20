@@ -28,7 +28,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
     FeedVCTypeNatural,
     FeedVCTypeUnread,
     FeedVCTypeBookmarks,
-    FeedVCTypeToday
+    FeedVCTypeToday,
+    FeedVCTypeFolder
 };
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading >
@@ -56,6 +57,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 @property (nonatomic, strong, readonly) UITableViewDiffableDataSource <NSNumber *, FeedItem *> * _Nullable DS;
 
 - (void)setupData;
+
+- (void)setupNavigationBar;
 
 - (NSUInteger)indexOfItem:(FeedItem * _Nonnull)item retIndexPath:(NSIndexPath * _Nullable)outIndexPath;
 

@@ -15,6 +15,7 @@
 #import "UnreadVC.h"
 #import "BookmarksVC.h"
 #import "TodayVC.h"
+#import "FolderVC.h"
 
 #import "DetailFolderVC.h"
 
@@ -717,16 +718,15 @@ static void *KVO_Unread = &KVO_Unread;
         UIViewController *vc;
         
         if (isPhone) {
-            vc = [[DetailFolderVC alloc] initWithFolder:folder];
-            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
+            vc = [[FolderVC alloc] initWithFolder:folder];
+            [(FolderVC *)vc setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc sender:self];
         }
         else {
-            vc = [DetailFolderVC instanceWithFolder:folder];
+            vc = [FolderVC instanceWithFolder:folder];
             
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+            [(FolderVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
         }

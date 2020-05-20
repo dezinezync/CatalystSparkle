@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedVC (SearchController) <UISearchResultsUpdating>
 
+- (void)_search:(NSString *)text scope:(NSInteger)scope;
+
 - (NSURLSessionTask *)searchOperationTask:(NSString *)text;
 
 @end

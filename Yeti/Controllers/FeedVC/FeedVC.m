@@ -198,6 +198,7 @@
     searchController.obscuresBackgroundDuringPresentation = NO;
     
     self.navigationItem.searchController = searchController;
+    self.navigationItem.hidesSearchBarWhenScrolling = YES;
     
 }
 

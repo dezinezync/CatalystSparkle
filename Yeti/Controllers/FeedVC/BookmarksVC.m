@@ -72,6 +72,15 @@
 
 #pragma mark - Subclassed
 
+- (void)setupNavigationBar {
+    
+    [super setupNavigationBar];
+    
+    self.navigationItem.searchController.searchBar.scopeButtonTitles = @[@"Local"];
+    self.navigationItem.searchController.searchBar.showsScopeBar = NO;
+    
+}
+
 - (PagingManager *)pagingManager {
     return nil;
 }
@@ -185,6 +194,48 @@
     [avc addAction:allAsc];
     
     [self presentAllReadController:avc fromSender:sender];
+    
+}
+
+- (void)_search:(NSString *)text scope:(NSInteger)scope {
+ 
+    // scope will always be 0 here
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    
+    NSArray <FeedItem *> * items = self.articles;
+    
+    items = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+        
+        NSString *title = obj.articleTitle.lowercaseString;
+        
+        if ([title isEqualToString:text] || [title containsString:text]) {
+            return YES;
+        }
+        
+        if (obj.summary != nil) {
+            
+            NSString *summary = [obj.summary lowercaseString];
+            
+            if ([summary containsString:text]) {
+                return YES;
+            }
+            
+        }
+        
+        NSString *blogTitle = obj.blogTitle.lowercaseString;
+        
+        if ([blogTitle isEqualToString:text] || [blogTitle containsString:text]) {
+            return YES;
+        }
+        
+        return NO;
+        
+    }];
+    
+    [snapshot appendSectionsWithIdentifiers:@[@0]];
+    [snapshot appendItemsWithIdentifiers:items intoSectionWithIdentifier:@0];
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
 }
 

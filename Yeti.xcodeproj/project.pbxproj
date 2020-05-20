@@ -277,6 +277,7 @@
 		F0CDA0CB24750BCC00DC1217 /* FeedVC+ContextMenus.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */; };
 		F0CDA0CE24750E0200DC1217 /* TodayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0CD24750E0200DC1217 /* TodayVC.m */; };
 		F0CDA0D12475191600DC1217 /* BookmarksVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0D02475191600DC1217 /* BookmarksVC.m */; };
+		F0CDA0D4247524F900DC1217 /* FolderVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0D3247524F900DC1217 /* FolderVC.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D008562081C32400EAFE3B /* FeedHeaderView.m */; };
 		F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D008582081C33400EAFE3B /* FeedHeaderView.xib */; };
@@ -1124,6 +1125,8 @@
 		F0CDA0CD24750E0200DC1217 /* TodayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayVC.m; sourceTree = "<group>"; };
 		F0CDA0CF2475191600DC1217 /* BookmarksVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookmarksVC.h; sourceTree = "<group>"; };
 		F0CDA0D02475191600DC1217 /* BookmarksVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookmarksVC.m; sourceTree = "<group>"; };
+		F0CDA0D2247524F900DC1217 /* FolderVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderVC.h; sourceTree = "<group>"; };
+		F0CDA0D3247524F900DC1217 /* FolderVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderVC.m; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D008552081C32400EAFE3B /* FeedHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedHeaderView.h; sourceTree = "<group>"; };
@@ -2013,6 +2016,8 @@
 				F0CDA0CD24750E0200DC1217 /* TodayVC.m */,
 				F0CDA0CF2475191600DC1217 /* BookmarksVC.h */,
 				F0CDA0D02475191600DC1217 /* BookmarksVC.m */,
+				F0CDA0D2247524F900DC1217 /* FolderVC.h */,
+				F0CDA0D3247524F900DC1217 /* FolderVC.m */,
 			);
 			path = FeedVC;
 			sourceTree = "<group>";
@@ -3017,6 +3022,7 @@
 				F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */,
 				F0A0501C21F07BFF00A46524 /* AddFeedVC.m in Sources */,
 				F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */,
+				F0CDA0D4247524F900DC1217 /* FolderVC.m in Sources */,
 				F05041E92461442800A65C1C /* SyncChange.m in Sources */,
 				F0695B2020CE6B7600517AF8 /* UIViewController+Hairline.m in Sources */,
 				F0B1137523928EB40060AE2B /* DetailFeedVC+Keyboard.m in Sources */,
