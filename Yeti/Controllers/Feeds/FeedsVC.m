@@ -10,14 +10,11 @@
 #import "FeedsManager.h"
 #import "FeedsCell.h"
 #import "FolderCell.h"
-#import "DetailFeedVC.h"
 
 #import "UnreadVC.h"
 #import "BookmarksVC.h"
 #import "TodayVC.h"
 #import "FolderVC.h"
-
-#import "DetailFolderVC.h"
 
 #import "UIRefreshControl+Manual.h"
 

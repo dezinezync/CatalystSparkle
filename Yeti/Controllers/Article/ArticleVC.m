@@ -8,7 +8,7 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "ArticleAuthorView.h"
 
 #import "Content.h"
@@ -1032,7 +1032,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // came from a push notification
     // or the providerDelegate is a non-base-DetailFeedVC (eg. DetailCustomVC)
     if (self.providerDelegate == nil ||
-        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:NSClassFromString(@"DetailFeedVC")] == NO)) {
+        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
         
         // the blog label should redirect to the blog
         authorView.blogLabel.textColor = theme.tintColor;
@@ -2076,9 +2076,31 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    DetailFeedVC *feedVC = [[DetailFeedVC alloc] initWithFeed:feed];
+    FeedVC *feedVC = [[FeedVC alloc] initWithFeed:feed];
     
-    [self.navigationController pushViewController:feedVC animated:YES];
+    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        
+        [self.navigationController pushViewController:feedVC animated:YES];
+        
+    }
+    else {
+        
+        UIViewController *vc = self.to_splitViewController.secondaryViewController;
+        
+        if ([vc isKindOfClass:UINavigationController.class] == YES) {
+            
+            [(UINavigationController *)vc pushViewController:feedVC animated:YES];
+            
+        }
+        else {
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            
+            [self.to_splitViewController showSecondaryViewController:nav sender:self];
+            
+        }
+        
+    }
     
 }
 

@@ -11,7 +11,7 @@
 #import "YetiThemeKit.h"
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/AlertManager.h>
@@ -198,10 +198,8 @@
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     if (feed) {
-        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
-        vc.customFeed = NO;
+        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
         vc.exploring = YES;
-        vc.customFeed = FeedTypeFeed;
         
         [self.navigationController pushViewController:vc animated:YES];
     }

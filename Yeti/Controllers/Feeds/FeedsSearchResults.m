@@ -9,7 +9,7 @@
 #import "FeedsSearchResults.h"
 #import "FeedsCell.h"
 #import "FolderCell.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "SplitVC.h"
 
 @interface FeedsSearchResults ()
@@ -46,7 +46,7 @@
 {
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
-    DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
+    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
     
     UIViewController *presenting = self.presentingViewController;
     

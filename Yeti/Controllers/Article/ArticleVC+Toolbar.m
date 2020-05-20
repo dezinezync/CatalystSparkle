@@ -16,7 +16,7 @@
 #import <DZTextKit/Paragraph.h>
 #import "FeedsManager.h"
 
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "EmptyVC.h"
 #import "SplitVC.h"
 #import "CustomizeVC.h"
@@ -193,15 +193,15 @@
         nav = (id)(vc.viewControllers.firstObject);
     }
     
-    DetailFeedVC *top = (DetailFeedVC *)[nav topViewController];
+    FeedVC *top = (FeedVC *)[nav topViewController];
     
-    if (top != nil && ([top isKindOfClass:DetailFeedVC.class] || [top.class isSubclassOfClass:DetailFeedVC.class])) {
-        NSArray <NSIndexPath *> *selectedItems = [top.collectionView indexPathsForSelectedItems];
+    if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
+        NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];
         
         NSIndexPath *selected = selectedItems.count ? [selectedItems firstObject] : nil;
         
         if (selected != nil) {
-            [top.collectionView deselectItemAtIndexPath:selected animated:YES];
+            [top.tableView deselectRowAtIndexPath:selected animated:YES];
         }
     }
 }

@@ -14,7 +14,7 @@
 #import "CollectionHeader.h"
 
 #import "FeedsVC.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 
 #import <DZTextKit/YetiConstants.h>
 
@@ -335,10 +335,8 @@ static NSString * const reuseIdentifier = @"Cell";
     
     if (feed) {
         
-        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
-        vc.customFeed = NO;
+        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
         vc.exploring = YES;
-        vc.customFeed = FeedTypeFeed;
         
         [self.navigationController pushViewController:vc animated:YES];
         
