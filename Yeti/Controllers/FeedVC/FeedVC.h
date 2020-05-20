@@ -29,7 +29,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
     FeedVCTypeUnread,
     FeedVCTypeBookmarks,
     FeedVCTypeToday,
-    FeedVCTypeFolder
+    FeedVCTypeFolder,
+    FeedVCTypeAuthor
 };
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading >

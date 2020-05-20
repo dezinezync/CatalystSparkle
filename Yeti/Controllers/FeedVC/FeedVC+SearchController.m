@@ -146,7 +146,7 @@
 
 - (NSURLSessionTask *)searchOperationTask:(NSString *)text {
     
-    return [MyFeedsManager search:text feedID:self.feed.feedID success:self.searchOperationSuccess error:self.searchOperationError];
+    return [MyFeedsManager search:text feedID:self.feed.feedID author:nil success:self.searchOperationSuccess error:self.searchOperationError];
     
 }
 

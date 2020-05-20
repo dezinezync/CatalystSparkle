@@ -7,6 +7,9 @@
 //
 
 #import "FeedVC+ContextMenus.h"
+#import "AuthorVC.h"
+
+#import <DZKit/NSString+Extras.h>
 
 @implementation FeedVC (ContextMenus)
 
@@ -85,11 +88,60 @@
             
         }];
         
+        if (self.type == FeedVCTypeNatural) {
+            
+            NSString *author;
+            
+            if ([item.author isKindOfClass:NSString.class]) {
+                
+                if ([item.author isBlank] == NO) {
+                    
+                    author = [(item.author ?: @"") stringByStrippingHTML];
+                    
+                }
+                
+            }
+            else {
+                
+                author = [([item.author valueForKey:@"name"] ?: @"") stringByStrippingHTML];
+                
+            }
+            
+            if (author != nil && author.length > 0) {
+                
+                NSString *title = [NSString stringWithFormat:@"Articles by %@", author];
+                
+                UIAction *authorAction = [UIAction actionWithTitle:title image:[UIImage systemImageNamed:@"person.fill"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                   
+                    [self showAuthorVC:author];
+                    
+                }];
+                
+                return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share, authorAction]];
+                
+            }
+            
+        }
+        
         return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share]];
         
     }];
     
     return config;
+    
+}
+
+#pragma mark -
+
+- (void)showAuthorVC:(NSString *)author {
+    
+    if (!author || [author isBlank]) {
+        return;
+    }
+    
+    AuthorVC *vc = [[AuthorVC alloc] initWithFeed:self.feed author:author];
+    
+    [self.navigationController pushViewController:vc animated:YES];
     
 }
 
