@@ -69,11 +69,20 @@
     
 }
 
+- (instancetype)initWithStyle:(UITableViewStyle)style {
+    
+    if (self = [super initWithStyle:style]) {
+        self.sortingOption = SharedPrefs.sortingOption;
+    }
+    
+    return self;
+    
+}
+
 - (instancetype)initWithFeed:(Feed *)feed {
     
     if (self = [super initWithStyle:UITableViewStylePlain]) {
         self.feed = feed;
-        self.sortingOption = SharedPrefs.sortingOption;
     }
     
     return self;
@@ -869,18 +878,29 @@
     
     if (changed) {
         
-        self.pagingManager = nil;
-        
         [SharedPrefs setValue:option forKey:propSel(sortingOption)];
         
-        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-        
-        self.controllerState = StateLoaded;
-        
-        [self loadNextPage];
+        if ([self respondsToSelector:@selector(_setSortingOption:)]) {
+            
+            [self _setSortingOption:option];
+            
+            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            
+            self.controllerState = StateLoaded;
+            
+            [self loadNextPage];
+            
+            
+        }
         
     }
+    
+}
+
+- (void)_setSortingOption:(YetiSortOption)option {
+    
+    self.pagingManager = nil;
     
 }
 

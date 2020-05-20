@@ -2,16 +2,13 @@
 //  TodayVC.m
 //  Yeti
 //
-//  Created by Nikhil Nigade on 01/04/20.
+//  Created by Nikhil Nigade on 20/05/20.
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
 #import "TodayVC.h"
 
-@interface TodayVC () {
-    BOOL _hasSetupState;
-    BOOL _reloadDataset;
-}
+@interface TodayVC ()
 
 @property (nonatomic, strong) PagingManager *todayManager;
 
@@ -19,62 +16,33 @@
 
 @implementation TodayVC
 
+- (instancetype)init {
+    
+    if (self = [super initWithStyle:UITableViewStylePlain]) {
+        
+        self.type = FeedVCTypeToday;
+        
+    }
+    
+    return self;
+    
+}
+
 - (void)viewDidLoad {
     
     [super viewDidLoad];
     
     self.title = @"Today";
+    self.pagingManager = self.todayManager;
+    
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    
+    self.refreshControl = refreshControl;
     
 }
 
-- (void)setupState {
-    
-    if (_hasSetupState) {
-        return;
-    }
-    
-    _hasSetupState = YES;
-    
-    self.restorationIdentifier = @"TodayVC-Detail";
-    
-    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
-    
-    [refresh addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
-    self.collectionView.refreshControl = refresh;
-    
-    [self setupData];
-
-//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
-    
-}
-
-- (void)setupData {
-    
-    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-    [snapshot appendSectionsWithIdentifiers:@[@0]];
-    [snapshot appendItemsWithIdentifiers:(self.todayManager.items ?: @[]) intoSectionWithIdentifier:@0];
-    
-    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-    
-}
-
-- (void)_didFinishAllReadActionSuccessfully {
-    [self setupData];
-}
-
-#pragma mark - Getters
-
-- (PagingManager *)pagingManager {
-    
-    return self.todayManager;
-    
-}
-
-- (void)setPagingManager:(PagingManager *)pagingManager {
-    
-    _todayManager = pagingManager;
-    
-}
+#pragma mark - Subclassed
 
 - (PagingManager *)todayManager {
     
@@ -87,7 +55,7 @@
         
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10, @"date": todayString}.mutableCopy;
         
-        params[@"sortType"] = @(_sortingOption.integerValue);
+        params[@"sortType"] = @(self.sortingOption.integerValue);
 
         if ([MyFeedsManager subscription] != nil && [MyFeedsManager.subscription hasExpired] == YES) {
             params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
@@ -129,8 +97,8 @@
             self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.collectionView.refreshControl isRefreshing]) {
-                    [self.collectionView.refreshControl endRefreshing];
+                if ([self.tableView.refreshControl isRefreshing]) {
+                    [self.tableView.refreshControl endRefreshing];
                 }
                 
                 if (self.todayManager.page == 1 && self.todayManager.hasNextPage == YES) {
@@ -159,8 +127,8 @@
             asyncMain(^{
                 strongify(self);
                 
-                if ([self.collectionView.refreshControl isRefreshing]) {
-                    [self.collectionView.refreshControl endRefreshing];
+                if ([self.tableView.refreshControl isRefreshing]) {
+                    [self.tableView.refreshControl endRefreshing];
                 }
             })
         };
@@ -170,61 +138,36 @@
     
 }
 
-- (NSString *)emptyViewSubtitle {
-    return @"No Articles from today are available.";
-}
-
-#pragma mark - Notifications
-
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
-    if ([sender isRefreshing]) {
+    if (sender != nil && [sender isRefreshing]) {
         self.todayManager = nil;
-        _canLoadNext = YES;
-        
+        self.pagingManager = self.todayManager;
         [self loadNextPage];
     }
     
 }
 
-- (void)didUpdateUnread {
-    if (!_reloadDataset) {
-        _reloadDataset = YES;
-    }
+- (NSString *)emptyViewSubtitle {
+    return @"No Articles from today are available.";
 }
 
-#pragma mark - State Restoration
+- (BOOL)showsSortingButton {
+    return YES;
+}
 
-#define kBUnreadData @"TodayData"
-
-+ (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+- (void)_setSortingOption:(YetiSortOption)option {
     
-    TodayVC *vc = [[TodayVC alloc] initWithFeed:nil];
-    
-    vc.customFeed = FeedTypeCustom;
-    vc.restorationIdentifier = @"TodayVC-Detail";
-    
-    return vc;
+    self.todayManager = nil;
+    self.pagingManager = self.todayManager;
     
 }
 
-- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+- (NSURLSessionTask *)searchOperationTask:(NSString *)text {
     
-    [super encodeRestorableStateWithCoder:coder];
-    
-    if (self.todayManager) {
-        [coder encodeObject:self.todayManager forKey:@"todayManager"];
-    }
+    return [MyFeedsManager searchToday:text success:self.searchOperationSuccess error:self.searchOperationError];
     
 }
 
-- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
-    
-    [super decodeRestorableStateWithCoder:coder];
-    
-    self.todayManager = [coder decodeObjectOfClass:PagingManager.class forKey:@"todayManager"];
-    self.controllerState = StateLoaded;
-    
-}
 
 @end

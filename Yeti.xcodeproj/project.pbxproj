@@ -275,6 +275,8 @@
 		F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CCD2182098923A00920AE4 /* SplitVC.m */; };
 		F0CDA0AD2474E72000DC1217 /* UnreadVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0AC2474E72000DC1217 /* UnreadVC.m */; };
 		F0CDA0CB24750BCC00DC1217 /* FeedVC+ContextMenus.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */; };
+		F0CDA0CE24750E0200DC1217 /* TodayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0CD24750E0200DC1217 /* TodayVC.m */; };
+		F0CDA0D12475191600DC1217 /* BookmarksVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CDA0D02475191600DC1217 /* BookmarksVC.m */; };
 		F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */; };
 		F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D008562081C32400EAFE3B /* FeedHeaderView.m */; };
 		F0D008592081C33400EAFE3B /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D008582081C33400EAFE3B /* FeedHeaderView.xib */; };
@@ -291,7 +293,6 @@
 		F0D1E97B216DECAC009A8614 /* DetailAuthorVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E97A216DECAC009A8614 /* DetailAuthorVC.m */; };
 		F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */; };
 		F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */; };
-		F0D95E212434577B008E17F9 /* TodayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D95E202434577B008E17F9 /* TodayVC.m */; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
 		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
@@ -1119,6 +1120,10 @@
 		F0CDA0AC2474E72000DC1217 /* UnreadVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnreadVC.m; sourceTree = "<group>"; };
 		F0CDA0C924750BCC00DC1217 /* FeedVC+ContextMenus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+ContextMenus.h"; sourceTree = "<group>"; };
 		F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+ContextMenus.m"; sourceTree = "<group>"; };
+		F0CDA0CC24750E0200DC1217 /* TodayVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayVC.h; sourceTree = "<group>"; };
+		F0CDA0CD24750E0200DC1217 /* TodayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayVC.m; sourceTree = "<group>"; };
+		F0CDA0CF2475191600DC1217 /* BookmarksVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookmarksVC.h; sourceTree = "<group>"; };
+		F0CDA0D02475191600DC1217 /* BookmarksVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookmarksVC.m; sourceTree = "<group>"; };
 		F0CEA1722035B91B0082F4E7 /* NSString+Levenshtein.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Levenshtein.h"; sourceTree = "<group>"; };
 		F0CEA1732035B91B0082F4E7 /* NSString+Levenshtein.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Levenshtein.m"; sourceTree = "<group>"; };
 		F0D008552081C32400EAFE3B /* FeedHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedHeaderView.h; sourceTree = "<group>"; };
@@ -1147,8 +1152,6 @@
 		F0D1E984216DED50009A8614 /* DetailAuthorHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailAuthorHeaderView.h; sourceTree = "<group>"; };
 		F0D1E985216DED50009A8614 /* DetailAuthorHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailAuthorHeaderView.m; sourceTree = "<group>"; };
 		F0D401F721F2FEC1008F45D0 /* AddFeedCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddFeedCell.xib; sourceTree = "<group>"; };
-		F0D95E1F2434577B008E17F9 /* TodayVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayVC.h; sourceTree = "<group>"; };
-		F0D95E202434577B008E17F9 /* TodayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayVC.m; sourceTree = "<group>"; };
 		F0DA1E3B23374EF9008FF4B1 /* MetaData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetaData.m; sourceTree = "<group>"; };
 		F0DB58F723F575250008D871 /* CustomizationHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizationHeader.h; sourceTree = "<group>"; };
 		F0DB58F823F575250008D871 /* CustomizationHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizationHeader.m; sourceTree = "<group>"; };
@@ -1448,8 +1451,6 @@
 				F0F51B8123880B59001B3CFC /* AuthorBioVC.h */,
 				F0F51B8023880B59001B3CFC /* AuthorBioVC.m */,
 				F0F51B7F23880B59001B3CFC /* AuthorBioVC.xib */,
-				F0D95E1F2434577B008E17F9 /* TodayVC.h */,
-				F0D95E202434577B008E17F9 /* TodayVC.m */,
 			);
 			path = DetailFeed;
 			sourceTree = "<group>";
@@ -2008,6 +2009,10 @@
 				F0A495B424711CE500E9BA13 /* ArticleCell.xib */,
 				F0CDA0AB2474E72000DC1217 /* UnreadVC.h */,
 				F0CDA0AC2474E72000DC1217 /* UnreadVC.m */,
+				F0CDA0CC24750E0200DC1217 /* TodayVC.h */,
+				F0CDA0CD24750E0200DC1217 /* TodayVC.m */,
+				F0CDA0CF2475191600DC1217 /* BookmarksVC.h */,
+				F0CDA0D02475191600DC1217 /* BookmarksVC.m */,
 			);
 			path = FeedVC;
 			sourceTree = "<group>";
@@ -2989,7 +2994,6 @@
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
-				F0D95E212434577B008E17F9 /* TodayVC.m in Sources */,
 				F0D1E986216DED50009A8614 /* DetailAuthorHeaderView.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,
@@ -3070,6 +3074,7 @@
 				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
 				F0AFAC07216C76B400AB7057 /* ArticleCellB.m in Sources */,
 				F0D008572081C32400EAFE3B /* FeedHeaderView.m in Sources */,
+				F0CDA0D12475191600DC1217 /* BookmarksVC.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
@@ -3102,6 +3107,7 @@
 				F05041D32461442800A65C1C /* ArticlesManager.m in Sources */,
 				F05041D42461442800A65C1C /* BookmarksManager.m in Sources */,
 				F05041DD2461442800A65C1C /* FeedItem.m in Sources */,
+				F0CDA0CE24750E0200DC1217 /* TodayVC.m in Sources */,
 				F0AFAC14216C78D400AB7057 /* TagCell.m in Sources */,
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F05041D82461442800A65C1C /* FeedsManager.m in Sources */,

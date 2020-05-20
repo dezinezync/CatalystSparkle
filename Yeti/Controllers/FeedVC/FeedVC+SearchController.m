@@ -32,6 +32,38 @@
     
     if (scope == 1) {
         
+        if (self.searchOperationSuccess == nil) {
+            
+            weakify(self);
+            
+            self.searchOperationSuccess = ^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                
+                [snapshot appendSectionsWithIdentifiers:@[@0]];
+                [snapshot appendItemsWithIdentifiers:responseObject intoSectionWithIdentifier:@0];
+                
+                strongify(self);
+                
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            };
+            
+        }
+        
+        if (self.searchOperationError == nil) {
+            
+            self.searchOperationError = ^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                if (error.code == 0) {
+                    return;
+                }
+               
+                [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+                
+            };
+            
+        }
+        
         NSTimeInterval dispatchTime = 0;
         
         if (self.searchOperation != nil) {
@@ -104,28 +136,17 @@
             return;
         }
         
-        self.searchOperation = [MyFeedsManager search:text feedID:self.feed.feedID success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            
-            [snapshot appendSectionsWithIdentifiers:@[@0]];
-            [snapshot appendItemsWithIdentifiers:responseObject intoSectionWithIdentifier:@0];
-            
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if (error.code == 0) {
-                return;
-            }
-           
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-            
-        }];
+        self.searchOperation = [self searchOperationTask:text];
         
         [self.searchOperation resume];
         
     }
+    
+}
+
+- (NSURLSessionTask *)searchOperationTask:(NSString *)text {
+    
+    return [MyFeedsManager search:text feedID:self.feed.feedID success:self.searchOperationSuccess error:self.searchOperationError];
     
 }
 

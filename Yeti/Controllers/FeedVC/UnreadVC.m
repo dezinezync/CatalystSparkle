@@ -150,6 +150,13 @@
     return YES;
 }
 
+- (void)_setSortingOption:(YetiSortOption)option {
+    
+    self.unreadsManager = nil;
+    self.pagingManager = self.unreadsManager;
+    
+}
+
 - (void)updateSortingOptionTo:(YetiSortOption)option sender:(UIBarButtonItem *)sender {
     
     self.sortingOption = option;
@@ -192,13 +199,11 @@
         UIImage * image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:&tintColor];
         
         [allDesc setValue:image forKeyPath:@"image"];
-//        [allDesc setValue:tintColor forKeyPath:@"tintColor"];
         
         tintColor = nil;
         image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:&tintColor];
         
         [allAsc setValue:image forKeyPath:@"image"];
-//        [allAsc setValue:tintColor forKeyPath:@"tintColor"];
 
 
     }
@@ -210,6 +215,12 @@
     [avc addAction:allAsc];
     
     [self presentAllReadController:avc fromSender:sender];
+    
+}
+
+- (NSURLSessionTask *)searchOperationTask:(NSString *)text {
+    
+    return [MyFeedsManager searchUnread:text success:self.searchOperationSuccess error:self.searchOperationError];
     
 }
 

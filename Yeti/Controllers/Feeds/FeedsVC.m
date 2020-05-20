@@ -13,9 +13,9 @@
 #import "DetailFeedVC.h"
 
 #import "UnreadVC.h"
-
-#import "DetailCustomVC.h"
+#import "BookmarksVC.h"
 #import "TodayVC.h"
+
 #import "DetailFolderVC.h"
 
 #import "UIRefreshControl+Manual.h"
@@ -647,27 +647,25 @@ static void *KVO_Unread = &KVO_Unread;
     
     if (indexPath.section == 0) {
         
-        DetailCustomVC *vc = nil;
+        FeedVC *vc = nil;
         
         if (indexPath.row == 1 && PrefsManager.sharedInstance.hideBookmarks == NO) {
             
-            vc = [[TodayVC alloc] initWithFeed:nil];
-            vc.customFeed = FeedTypeCustom;
+            vc = [[TodayVC alloc] init];
             
         }
-        else if (indexPath.row == 1) {
+        else if (indexPath.row == 0) {
             
-            vc = [[DetailCustomVC alloc] initWithFeed:nil];
-            vc.customFeed = FeedTypeCustom;
-            vc.bookmarksManager = self.bookmarksManager;
-            vc.unread = indexPath.row == 0;
+            vc = [[UnreadVC alloc] init];
             
         }
         else {
             
-            vc = (DetailCustomVC *)[[UnreadVC alloc] init];
+            vc = [[BookmarksVC alloc] init];
             
         }
+        
+        vc.bookmarksManager = self.bookmarksManager;
         
         BOOL animated = YES;
         

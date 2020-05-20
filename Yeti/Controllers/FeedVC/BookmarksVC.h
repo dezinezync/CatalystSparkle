@@ -1,5 +1,5 @@
 //
-//  UnreadVC.h
+//  BookmarksVC.h
 //  Yeti
 //
 //  Created by Nikhil Nigade on 20/05/20.
@@ -10,11 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UnreadVC : FeedVC
+@interface BookmarksVC : FeedVC
 
 - (instancetype)init;
-
-- (void)_setSortingOption:(YetiSortOption)option;
 
 @end
 

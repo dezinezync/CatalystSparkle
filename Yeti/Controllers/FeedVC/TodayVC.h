@@ -1,5 +1,5 @@
 //
-//  UnreadVC.h
+//  TodayVC.h
 //  Yeti
 //
 //  Created by Nikhil Nigade on 20/05/20.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UnreadVC : FeedVC
+@interface TodayVC : FeedVC
 
 - (instancetype)init;
 

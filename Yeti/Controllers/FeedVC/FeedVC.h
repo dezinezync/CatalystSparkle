@@ -79,7 +79,13 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 @property (nonatomic, assign) YetiSortOption sortingOption;
 
+- (void)_setSortingOption:(YetiSortOption)option;
+
 #pragma mark - Search Results
+
+@property (nonatomic, copy) successBlock _Nullable searchOperationSuccess;
+
+@property (nonatomic, copy) errorBlock _Nullable searchOperationError;
 
 @property (nonatomic, strong) NSURLSessionTask * _Nullable searchOperation;
 
