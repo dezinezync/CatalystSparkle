@@ -16,7 +16,11 @@
 
 extern AppDelegate * MyAppDelegate;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate> {
+    
+    dispatch_queue_t _bgTaskDispatchQueue;
+    
+}
 
 @property (nonatomic, strong) UIWindow *window;
 
@@ -27,6 +31,10 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
 @property (nonatomic, strong) id<RMStoreTransactionPersistor> persistence;
+
+#pragma mark - Background Tasks
+
+@property (nonatomic, strong) dispatch_queue_t bgTaskDispatchQueue;
 
 - (void)loadCodeTheme;
 

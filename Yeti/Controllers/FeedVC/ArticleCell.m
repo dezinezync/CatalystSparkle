@@ -191,6 +191,10 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
+    if (isMicroBlogPost == NO) {
+        self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    }
+    
     self.titleLabel.accessibilityValue = [self.titleLabel.text stringByReplacingOccurrencesOfString:@" | " withString:@" by "];
     
     if (([Paragraph languageDirectionForText:article.articleTitle] == NSLocaleLanguageDirectionRightToLeft)
@@ -337,7 +341,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     if (SharedPrefs.imageProxy) {
         
-        url = [url pathForImageProxy:NO maxWidth:attachment.bounds.size.width quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+        url = [url pathForImageProxy:NO maxWidth:attachment.bounds.size.width quality:0.9f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
         
     }
     
@@ -470,7 +474,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     if (SharedPrefs.imageProxy == YES) {
         
-        url = [url pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+        url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.9f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
         
     }
     
