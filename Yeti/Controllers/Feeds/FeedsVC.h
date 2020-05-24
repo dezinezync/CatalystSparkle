@@ -26,6 +26,8 @@
     
     NSDate *_sinceDate;
     NSIndexPath *_highlightedRow;
+    
+    NSUInteger _refreshFeedsCounter;
 }
 
 @property (nonatomic, strong, readonly) DZSectionedDatasource *DS NS_DEPRECATED_IOS(11, 13.0);

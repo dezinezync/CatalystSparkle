@@ -1414,8 +1414,8 @@
 		F050419D2461442800A65C1C /* ArticlesManager */ = {
 			isa = PBXGroup;
 			children = (
-				F050419E2461442800A65C1C /* ArticlesManager.m */,
 				F050419F2461442800A65C1C /* ArticlesManager.h */,
+				F050419E2461442800A65C1C /* ArticlesManager.m */,
 			);
 			path = ArticlesManager;
 			sourceTree = "<group>";

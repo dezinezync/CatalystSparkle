@@ -60,8 +60,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     self.titleLabel.textColor = theme.titleColor;
     self.summaryLabel.textColor = theme.subtitleColor;
     
-    self.authorLabel.textColor = theme.captionColor;
-    self.timeLabel.textColor = theme.captionColor;
+    self.authorLabel.textColor = theme.subtitleColor;
+    self.timeLabel.textColor = theme.subtitleColor;
     
     self.selectedBackgroundView = [UIView new];
     self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
@@ -185,7 +185,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             
             self.titleLabel.text = content.content;
             self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-//            self.titleLabel.textColor = [[YTThemeKit theme] titleColor];
             
         }
         
@@ -249,19 +248,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     self.backgroundColor = [UIColor grayColor];
     self.contentView.backgroundColor = [UIColor yellowColor];
 #endif
-    
-//    NSArray <UILabel *> * labels = @[self.titleLabel, self.summaryLabel, self.authorLabel, self.timeLabel];
-//
-//    for (UILabel *label in labels) {
-//
-//        [label sizeToFit];
-//
-//    }
-    
-//    [self.titleLabel.superview.superview.superview setNeedsUpdateConstraints];
-//    
-//    [self.titleLabel.superview.superview.superview layoutIfNeeded];
-//    [self.titleLabel.superview.superview.superview setNeedsLayout];
     
 }
 

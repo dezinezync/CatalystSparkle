@@ -76,12 +76,6 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupRootController];
         
-        // Set app-wide shared cache (first number is megabyte value)
-//        NSUInteger cacheSizeMemory = 50*1024*1024; // 50 MB
-//        NSUInteger cacheSizeDisk = 500*1024*1024; // 500 MB
-//        NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:cacheSizeMemory diskCapacity:cacheSizeDisk diskPath:@"nsurlcache"];
-//        [NSURLCache setSharedURLCache:sharedCache];
-        
 //        [SharedImageLoader.cache removeAllObjects];
 //        [SharedImageLoader.cache removeAllObjectsFromDisk];
         
@@ -90,11 +84,9 @@ AppDelegate *MyAppDelegate = nil;
             MyAppDelegate = self;
         });
         
-        [self setupBackgroundRefresh];
-        
-//        [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
-        
-//        self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+        if (SharedPrefs.backgroundRefresh == YES) {
+            [self setupBackgroundRefresh];
+        }
         
         weakify(self);
         
@@ -167,12 +159,6 @@ AppDelegate *MyAppDelegate = nil;
         [Keychain add:YTLaunchCount integer:(count + 1)];
         
         retval = YES;
-        
-        // from v1.2, this is the default.
-        if ([NSUserDefaults.standardUserDefaults boolForKey:kUseExtendedFeedLayout] == NO) {
-            [NSUserDefaults.standardUserDefaults setBool:YES forKey:kUseExtendedFeedLayout];
-            [NSUserDefaults.standardUserDefaults synchronize];
-        }
         
     });
     
