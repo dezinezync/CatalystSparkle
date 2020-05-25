@@ -194,57 +194,53 @@ AppDelegate *MyAppDelegate = nil;
 
 #define kFeedsManager @"FeedsManager"
 
-//- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
-//    
-//    return YES;
-//    
-//}
-//
-//- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-//    
-//    if (_resetting) {
-//        return NO;
-//    }
-//    
-//    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
-//    
-//    if (oldVersion) {
-//        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
-//        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
-//        // don't restore across versions.
-//        if (isNewer) {
-//            return NO;
-//        }
-//    }
-//    
-//    UIDevice *currentDevice = [UIDevice currentDevice];
-//    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
-//    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
-//    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
-//        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
-//        return NO;
-//    }
-//    
-//    _restoring = YES;
-//    
-//    NSLogDebug(@"Will restore application state");
-//    return _restoring;
-//}
-//
-//- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
-//    NSLogDebug(@"Application will save restoration data");
-//    
-//    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
-//    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
-//}
-//
-//- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
-//    NSLogDebug(@"Application did restore");
-//}
+- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+    
+    return YES;
+    
+}
 
-//- (UIViewController *)application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray <NSString *> *)identifierComponents coder:(NSCoder *)coder {
-//    return nil;
-//}
+- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+    
+    if (_resetting) {
+        return NO;
+    }
+    
+    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
+    
+    if (oldVersion) {
+        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
+        // don't restore across versions.
+        if (isNewer) {
+            return NO;
+        }
+    }
+    
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
+    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
+    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
+        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
+        return NO;
+    }
+    
+    _restoring = YES;
+    
+    NSLogDebug(@"Will restore application state");
+    return _restoring;
+}
+
+- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
+    NSLogDebug(@"Application will save restoration data");
+    
+    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
+    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
+}
+
+- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
+    NSLogDebug(@"Application did restore");
+}
 
 #pragma mark -
 
@@ -385,71 +381,5 @@ AppDelegate *MyAppDelegate = nil;
 {
     return [JLRoutes routeURL:url];
 }
-
-//- (void)application:(UIApplication *)app performFetchWithCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
-//
-//    BOOL backgroundRefresh = [NSUserDefaults.standardUserDefaults boolForKey:@"backgroundRefresh"];
-//
-//    if (backgroundRefresh == NO) {
-//        completionHandler(UIBackgroundFetchResultNoData);
-//        return;
-//    }
-//
-//    NSInteger currentCount = MyFeedsManager.totalUnread;
-//
-//    [MyFeedsManager getUnreadForPage:1 sorting:@"0" success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        if (responseObject == nil) {
-//            completionHandler(UIBackgroundFetchResultNoData);
-//            return;
-//        }
-//
-//        if ([responseObject isKindOfClass:NSDictionary.class] == NO) {
-//            completionHandler(UIBackgroundFetchResultNoData);
-//            return;
-//        }
-//
-//        NSInteger newCount = [[responseObject valueForKey:@"total"] integerValue];
-//
-//        SplitVC *vc = (SplitVC *)(self.window.rootViewController);
-//
-//        if (!vc) {
-//            completionHandler(UIBackgroundFetchResultNewData);
-//            return;
-//        }
-//
-//        UINavigationController *nav = [[vc viewControllers] firstObject];
-//
-//        if (!nav) {
-//            completionHandler(UIBackgroundFetchResultNewData);
-//            return;
-//        }
-//
-//        FeedsVC *feeds = [[nav viewControllers] firstObject];
-//
-//        if (!feeds) {
-//            completionHandler(UIBackgroundFetchResultNewData);
-//            return;
-//        }
-//
-//        if (newCount > currentCount) {
-//            completionHandler(UIBackgroundFetchResultNewData);
-//
-//            NSIndexSet *set = [NSIndexSet indexSetWithIndex:0];
-//            [feeds.tableView reloadSections:set withRowAnimation:UITableViewRowAnimationNone];
-//        }
-//        else {
-//            completionHandler(UIBackgroundFetchResultNoData);
-//        }
-//
-//        [feeds.refreshControl setAttributedTitle:[feeds lastUpdateAttributedString]];
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        completionHandler(UIBackgroundFetchResultFailed);
-//
-//    }];
-//
-//}
 
 @end

@@ -12,6 +12,8 @@
 
 #import <DZNetworking/ImageLoader.h>
 
+#import "SplitVC.h"
+
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @implementation AppDelegate (BackgroundRefresh)
@@ -112,14 +114,51 @@
 
 - (void)setupBackgroundRefresh {
     
+    weakify(self);
+    
     BOOL registered = [[BGTaskScheduler sharedScheduler] registerForTaskWithIdentifier:backgroundRefreshIdentifier usingQueue:nil launchHandler:^(__kindof BGAppRefreshTask * _Nonnull task) {
         
         NSLog(@"Woken to perform account refresh.");
         
+        strongify(self);
+        
         // schedule next refresh
         [self scheduleBackgroundRefresh];
        
-        [MyDBManager setupSync:task];
+        [MyDBManager setupSync:task completionHandler:^(BOOL completed) {
+            
+            if (completed == NO) {
+                return;
+            }
+            
+            SplitVC *vc = (SplitVC *)(self.window.rootViewController);
+
+            if (!vc) {
+                return;
+            }
+
+            UINavigationController *nav = (UINavigationController *)[[vc viewControllers] firstObject];
+
+            if (!nav) {
+                return;
+            }
+
+            FeedsVC *feedsVC = [[nav viewControllers] firstObject];
+
+            if (!feedsVC) {
+                return;
+            }
+            
+            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                [feedsVC setupData];
+
+                [feedsVC.refreshControl setAttributedTitle:[feedsVC lastUpdateAttributedString]];
+                
+            } error:nil];
+            
+        }];
+
         
     }];
     
