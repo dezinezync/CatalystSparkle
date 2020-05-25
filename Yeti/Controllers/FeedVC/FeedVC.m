@@ -31,6 +31,8 @@
     
     NSUInteger _loadOnReadyTries;
     
+    BOOL _reloadDataset;
+    
 }
 
 @property (nonatomic, strong, readwrite) UITableViewDiffableDataSource *DS;
@@ -115,6 +117,14 @@
     if (self.pagingManager.page == 1 && [self.DS.snapshot numberOfItems] == 0) {
         self.controllerState = StateLoaded;
         [self loadNextPage];
+    }
+    
+    if (_reloadDataset) {
+        
+        _reloadDataset = NO;
+        
+        [self setupData:NO];
+        
     }
     
 }
@@ -209,6 +219,26 @@
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(didChangeTheme) name:kDidUpdateTheme object:nil];
     
+    [notificationCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
+    
+    if (ArticlesManager.shared.feeds != nil && ArticlesManager.shared.feeds.count > 0) {}
+    else {
+        
+        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+        
+        [center addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
+        
+    }
+    
+    weakify(self);
+    
+    [self.bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+       
+        strongify(self);
+        [self didUpdateBookmarks];
+        
+    }];
+    
 }
 
 - (void)setupTableView {
@@ -252,7 +282,7 @@
     
 }
 
-- (void)setupData {
+- (void)setupData:(BOOL)animated {
     
     if (NSThread.isMainThread == NO) {
         [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
@@ -267,11 +297,32 @@
         [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
         [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
         
-        [self.DS applySnapshot:snapshot animatingDifferences:(articles.count > 10)];
+        [self.DS applySnapshot:snapshot animatingDifferences:animated];
         
     }
     @catch (NSException *exc) {
         NSLog(@"Exception updating feed articles: %@", exc);
+    }
+    
+}
+
+- (void)setupData {
+    
+    BOOL animate = (self.pagingManager.items.count > 10);
+    
+    [self setupData:animate];
+    
+}
+
+#pragma mark - Setters
+
+- (void)setFeed:(Feed *)feed {
+    
+    _feed = feed;
+    
+    if (_feed != nil) {
+        self.restorationIdentifier = [NSString stringWithFormat:@"FeedVC-Feed-%@", feed.feedID];
+        self.restorationClass = [self class];
     }
     
 }
@@ -430,6 +481,8 @@
             })
         };
     }
+    
+    _pagingManager.objectClass = FeedItem.class;
     
     return _pagingManager;
     
@@ -615,11 +668,55 @@
 
 #pragma mark - Notifications
 
+- (void)didUpdateBookmarks {
+    if (!_reloadDataset) {
+        _reloadDataset = YES;
+    }
+}
+
+- (void)didUpdateUnread {
+    if (!_reloadDataset) {
+        _reloadDataset = YES;
+    }
+}
+
+- (void)updatedFeedsNotification:(id)sender {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+
+        NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+        [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:NO];
+
+    });
+    
+}
+
 - (void)didChangeContentCategory {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+
+        if ([[self.tableView indexPathsForVisibleRows] count] > 0) {
+            
+            NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+            
+            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            
+        }
+        
+    });
     
 }
 
 - (void)didChangeTheme {
+    
+    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    
+    self.view.backgroundColor = theme.cellColor;
+    self.tableView.backgroundColor = theme.cellColor;
     
 }
 
@@ -955,6 +1052,81 @@
         [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
         
     });
+    
+}
+
+#pragma mark - State Restoration
+
+#define kVCType @"kFeedVCType"
+#define kVCFeed @"kFeedVCFeed"
+#define kPagingManager @"kPagingManager"
+
++ (nullable UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    
+    FeedVC *vc = [[[self class] alloc] initWithFeed:nil];
+    
+    PagingManager *pagingManager = [coder decodeObjectOfClass:PagingManager.class forKey:kPagingManager];
+    
+    vc.pagingManager = pagingManager;
+    
+    FeedVCType type = [coder decodeIntegerForKey:kVCType];
+    
+    vc.type = type;
+    
+    if (type == FeedVCTypeNatural) {
+        
+        Feed *feed = [coder decodeObjectOfClass:Feed.class forKey:kVCFeed];
+        
+        if (feed != nil) {
+            
+            vc.feed = feed;
+        
+        }
+        
+    }
+    
+    return vc;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeInteger:self.type forKey:kVCType];
+    
+    if (self.type == FeedVCTypeNatural) {
+        
+        [coder encodeObject:self.feed forKey:kVCFeed];
+        
+    }
+    
+    [coder encodeObject:self.pagingManager forKey:kPagingManager];
+    
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super decodeRestorableStateWithCoder:coder];
+    
+    FeedVCType type = [coder decodeIntegerForKey:kVCType];
+    
+    self.type = type;
+    
+    self.pagingManager = [coder decodeObjectOfClass:PagingManager.class forKey:kPagingManager];
+    
+    self.controllerState = StateLoaded;
+    
+    if (type == FeedVCTypeNatural) {
+        
+        Feed *feed = [coder decodeObjectOfClass:Feed.class forKey:kVCFeed];
+        
+        if (feed != nil) {
+            
+            self.feed = feed;
+            
+        }
+        
+    }
     
 }
 

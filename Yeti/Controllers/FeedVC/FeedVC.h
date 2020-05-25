@@ -39,7 +39,7 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 + (UINavigationController * _Nullable)instanceInNavigationController;
 
-+ (UINavigationController * _Nullable)instanceWithFeed:(Feed * _Nonnull)feed;
++ (UINavigationController * _Nullable)instanceWithFeed:(Feed * _Nullable)feed;
 
 - (instancetype _Nullable)initWithFeed:(Feed * _Nonnull)feed;
 
@@ -57,7 +57,10 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 @property (nonatomic, strong, readonly) UITableViewDiffableDataSource <NSNumber *, FeedItem *> * _Nullable DS;
 
+/// Calls setupData: with animated determined on how many articles exist in the paging manager.
 - (void)setupData;
+
+- (void)setupData:(BOOL)animated;
 
 - (void)setupNavigationBar;
 

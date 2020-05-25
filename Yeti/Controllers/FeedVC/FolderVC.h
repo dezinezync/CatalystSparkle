@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC.h"
+#import "FeedVC+ContextMenus.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

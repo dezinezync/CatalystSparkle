@@ -149,4 +149,38 @@
     
 }
 
+#pragma mark - State Restoration
+
+#define kAuthorVCAuthor @"kAuthorVCAuthor"
+
++ (nullable UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    
+    AuthorVC *vc = (AuthorVC *)[[super class] viewControllerWithRestorationIdentifierPath:identifierComponents coder:coder];
+    
+    NSString *author = [coder decodeObjectOfClass:NSString.class forKey:kAuthorVCAuthor];
+    
+    vc.author = author;
+    
+    return vc;
+    
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.author forKey:kAuthorVCAuthor];
+    
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super decodeRestorableStateWithCoder:coder];
+    
+    NSString *author = [coder decodeObjectOfClass:NSString.class forKey:kAuthorVCAuthor];
+    
+    self.author = author;
+    
+}
+
 @end

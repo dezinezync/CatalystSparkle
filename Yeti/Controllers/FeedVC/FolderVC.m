@@ -7,6 +7,7 @@
 //
 
 #import "FolderVC.h"
+#import <DZKit/AlertManager.h>
 
 @interface FolderVC ()
 
@@ -49,6 +50,21 @@
     [refreshControl addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     self.refreshControl = refreshControl;
+    
+}
+
+#pragma mark - Setters
+
+- (void)setFolder:(Folder *)folder {
+    
+    _folder = folder;
+    
+    if (_folder) {
+        
+        self.restorationIdentifier = [NSString stringWithFormat:@"FeedVC-Folder-%@", folder.folderID];
+        self.restorationClass = [self class];
+        
+    }
     
 }
 
@@ -169,6 +185,106 @@
 - (NSURLSessionTask *)searchOperationTask:(NSString *)text {
     
     return [MyFeedsManager search:text folderID:self.folder.folderID success:self.searchOperationSuccess error:self.searchOperationError];
+    
+}
+
+#pragma mark - Actions
+
+- (void)didLongPressOnAllRead:(id)sender {
+    
+    BOOL showPrompt = SharedPrefs.showMarkReadPrompts;
+    
+    void(^markReadInline)(void) = ^(void) {
+        
+        [MyFeedsManager markFolderRead:self.folder success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                if (self != nil && [self tableView] != nil) {
+                    // if we're in the unread section
+                    if (self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
+                        
+                        self.controllerState = StateLoading;
+                        
+                        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                        [snapshot appendSectionsWithIdentifiers:@[@0]];
+                        
+                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                        
+                        self.controllerState = StateLoaded;
+                        
+                    }
+                    else {
+                        [self _markVisibleRowsRead];
+                        [self _didFinishAllReadActionSuccessfully];
+                    }
+                }
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Marking all Read" message:error.localizedDescription];
+            
+        }];
+        
+    };
+    
+    if (showPrompt) {
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            markReadInline();
+            
+        }]];
+        
+        [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        
+        [self presentAllReadController:avc fromSender:sender];
+    }
+    else {
+        [self.feedbackGenerator selectionChanged];
+        [self.feedbackGenerator prepare];
+        
+        markReadInline();
+    }
+}
+
+- (void)_didFinishAllReadActionSuccessfully {
+    
+}
+
+#pragma mark - State Restoration
+
+#define kFolderVCFolder @"kFolderVCFolder"
+
++ (nullable UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+    
+    FolderVC *vc = (FolderVC *)[[super class] viewControllerWithRestorationIdentifierPath:identifierComponents coder:coder];
+    
+    Folder *folder = [coder decodeObjectOfClass:Folder.class forKey:kFolderVCFolder];
+    
+    vc.folder = folder;
+    
+    return vc;
+    
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super encodeRestorableStateWithCoder:coder];
+    
+    [coder encodeObject:self.folder forKey:kFolderVCFolder];
+    
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    
+    [super decodeRestorableStateWithCoder:coder];
+    
+    Folder *folder = [coder decodeObjectOfClass:Folder.class forKey:kFolderVCFolder];
+    
+    self.folder = folder;
     
 }
 

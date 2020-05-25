@@ -184,7 +184,6 @@
             
             if (self && [self tableView]) {
                 [self _markVisibleRowsRead];
-                [self _didFinishAllReadActionSuccessfully];
             }
             
             if (self.type == FeedVCTypeUnread || self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
@@ -241,9 +240,9 @@
         [MyFeedsManager markFeedRead:self.feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if (self != nil && [self collectionView] != nil) {
+                if (self != nil && [self tableView] != nil) {
                     // if we're in the unread section
-                    if ([self isKindOfClass:NSClassFromString(@"DetailCustomVC")] == YES) {
+                    if (self.type == FeedVCTypeUnread || self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
                         
                         self.controllerState = StateLoading;
                         
@@ -291,6 +290,10 @@
 }
 
 - (void)_didFinishAllReadActionSuccessfully {
+    
+    if (self.feed != nil && self.feed.unread > 0) {
+        self.feed.unread = 0;
+    }
     
 }
 
