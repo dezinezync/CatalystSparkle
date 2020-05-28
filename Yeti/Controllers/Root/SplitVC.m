@@ -70,6 +70,16 @@
     
     [super viewDidLoad];
     
+    UISwipeGestureRecognizer *edgePanLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
+    edgePanLeft.numberOfTouchesRequired = 2;
+    edgePanLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    edgePanLeft.delegate = self;
+    
+    UISwipeGestureRecognizer *edgePanRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
+    edgePanRight.numberOfTouchesRequired = 2;
+    edgePanRight.direction = UISwipeGestureRecognizerDirectionRight;
+    edgePanRight.delegate = self;
+    
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;
     twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
@@ -82,6 +92,8 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
+    [self.view addGestureRecognizer:edgePanLeft];
+    [self.view addGestureRecognizer:edgePanRight];
 
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
@@ -192,6 +204,37 @@
 }
 
 #pragma mark - Gestures
+
+- (void)didSwipeOnEdge:(UISwipeGestureRecognizer *)sender {
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        if (self.viewControllers.count == 1 && [self.viewControllers.lastObject isKindOfClass:YTNavigationController.class] == NO) {
+            return;
+        }
+        
+        if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+            
+            if (self.primaryColumnIsHidden == YES) {
+                return;
+            }
+            
+            self.primaryColumnIsHidden = YES;
+            
+        }
+        else {
+            
+            if (self.primaryColumnIsHidden == NO) {
+                return;
+            }
+            
+            self.primaryColumnIsHidden = NO;
+            
+        }
+        
+    }
+    
+}
 
 - (void)didPanWithTwoFingers:(UISwipeGestureRecognizer *)sender {
     
