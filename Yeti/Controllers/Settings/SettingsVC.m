@@ -506,7 +506,7 @@ NSString* deviceName() {
     UIDevice *device = [UIDevice currentDevice];
     NSString *model = deviceName();
     NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
-    NSString *deviceUUID = device.identifierForVendor.UUIDString;
+    NSString *deviceUUID = MyFeedsManager.deviceID;
     
     NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
     NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];

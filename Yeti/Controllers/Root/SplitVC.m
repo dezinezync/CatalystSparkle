@@ -207,6 +207,10 @@
 
 - (void)didSwipeOnEdge:(UISwipeGestureRecognizer *)sender {
     
+    if (self.traitCollection.horizontalSizeClass != UIUserInterfaceSizeClassRegular) {
+        return;
+    }
+    
     if (sender.state == UIGestureRecognizerStateEnded) {
         
         if (self.viewControllers.count == 1 && [self.viewControllers.lastObject isKindOfClass:YTNavigationController.class] == NO) {
