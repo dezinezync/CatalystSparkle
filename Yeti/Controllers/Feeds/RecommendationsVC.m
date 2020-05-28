@@ -66,9 +66,10 @@ static NSString * const reuseIdentifier = @"Cell";
     self.state = ReccoStateLoading;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    self.view.backgroundColor = theme.cellColor;
     self.collectionView.backgroundColor = theme.backgroundColor;
     
-    self.navigationController.navigationBar.barTintColor = theme.subbarColor;
+//    self.navigationController.navigationBar.barTintColor = theme.subbarColor;
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsGridCell.class) bundle:nil] forCellWithReuseIdentifier:kFeedsGridCell];

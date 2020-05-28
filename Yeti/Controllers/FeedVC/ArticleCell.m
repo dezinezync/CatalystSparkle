@@ -101,6 +101,10 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         self.faviconTask = nil;
     }
     
+    self.semanticContentAttribute = UISemanticContentAttributeUnspecified;
+    self.titleLabel.textAlignment = NSTextAlignmentLeft;
+    self.authorLabel.textAlignment = NSTextAlignmentLeft;
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

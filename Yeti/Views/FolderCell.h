@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet PaddedLabel *countLabel;
 
+@property (weak, nonatomic) Folder * folder;
+
 @property (weak, nonatomic) id <FolderInteractionDelegate> interactionDelegate;
 
 - (void)configureFolder:(Folder *_Nonnull)folder;

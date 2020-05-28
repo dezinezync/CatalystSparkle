@@ -1218,8 +1218,40 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
     
-    NSIndexPath *indexPath = nil;
-    __block NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    
+    if (indexPath == nil) {
+        
+        // if the cell is being tapped on, it's most likely visible.
+        
+        NSArray <UITableViewCell *> *cells = self.tableView.visibleCells;
+        
+        FolderCell *cellFromTable = (FolderCell *)[cells rz_find:^BOOL(UITableViewCell *obj, NSUInteger idx, NSArray *array) {
+           
+            if ([obj isKindOfClass:FolderCell.class] && [[(FolderCell*)obj folder] isEqualToFolder:folder]) {
+                return YES;
+            }
+            
+            return NO;
+            
+        }];
+        
+        if (cellFromTable != nil) {
+            
+            indexPath = [self.tableView indexPathForCell:cellFromTable];
+            
+        }
+        
+        if (indexPath == nil) {
+            return;
+        }
+        else {
+            folder = cell.folder;
+        }
+
+    }
+    
+    NSUInteger index = indexPath.row;
     
     if (index == NSNotFound) {
         NSLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
@@ -1229,7 +1261,7 @@ NSString * const kDS2Data = @"DS2Data";
     CGPoint contentOffset = self.tableView.contentOffset;
     
     if (indexPath == nil) {
-        indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+        indexPath = [self.DDS indexPathForItemIdentifier:folder];
     }
     
     Folder *folderFromDS = [self.DDS itemIdentifierForIndexPath:indexPath];
@@ -1246,13 +1278,6 @@ NSString * const kDS2Data = @"DS2Data";
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
             
-        UIImage *image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-        
-        cell.faviconView.image = image;
-        
-        [cell.faviconView setNeedsDisplay];
-        [cell setNeedsDisplay];
-        
         [self.tableView.layer removeAllAnimations];
         [self.tableView setContentOffset:contentOffset animated:NO];
     });

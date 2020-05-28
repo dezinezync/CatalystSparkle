@@ -24,7 +24,6 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
 
 @interface FolderCell () <UIDropInteractionDelegate>
 
-@property (strong, nonatomic) Folder * folder;
 @property (weak, nonatomic) UIDropInteraction *dropInteraction;
 
 @property (weak, nonatomic) id <FolderDrop> dropDelegate;
@@ -196,7 +195,18 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
 
 - (void)didTapIcon:(id)sender {
     
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(didTapIcon:) withObject:sender waitUntilDone:NO];
+        return;
+    }
+    
+    UIImage *image = [[UIImage systemImageNamed:(![self.folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    
+    self.faviconView.image = image;
+    [self.faviconView setNeedsDisplay];
+    
     if (self.interactionDelegate) {
+        
         [self.interactionDelegate didTapFolderIcon:self.folder cell:self];
     }
     

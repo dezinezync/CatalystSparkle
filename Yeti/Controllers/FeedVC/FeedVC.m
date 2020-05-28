@@ -71,16 +71,6 @@
     
 }
 
-- (instancetype)initWithStyle:(UITableViewStyle)style {
-    
-    if (self = [super initWithStyle:style]) {
-        self.sortingOption = SharedPrefs.sortingOption;
-    }
-    
-    return self;
-    
-}
-
 - (instancetype)initWithFeed:(Feed *)feed {
     
     if (self = [super initWithStyle:UITableViewStylePlain]) {
@@ -94,6 +84,8 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+    
+    self.sortingOption = SharedPrefs.sortingOption;
     
     if (self.type == FeedVCTypeNatural && self.feed) {
         self.title = self.feed.displayTitle;
