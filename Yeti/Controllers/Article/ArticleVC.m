@@ -1460,7 +1460,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     heading.backgroundColor = UIColor.redColor;
 #endif
 #endif
-    heading.level = content.level.integerValue;
+    heading.level = content && content.level ? content.level.integerValue : 1;
     
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     

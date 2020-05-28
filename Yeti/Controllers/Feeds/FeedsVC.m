@@ -911,7 +911,12 @@ NSString * const kDS2Data = @"DS2Data";
         
         [snapshot appendItemsWithIdentifiers:orderedSet.objectEnumerator.allObjects intoSectionWithIdentifier:MainSection];
         
-        [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
+        @try {
+            [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
+        }
+        @catch (NSException *exc) {
+            NSLog(@"Exception updating Feeds Table: %@", exc);
+        }
         
         if (presentingSelf == YES) {
             
