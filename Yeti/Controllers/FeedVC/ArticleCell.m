@@ -187,7 +187,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             
             isMicroBlogPost = YES;
             
-            self.titleLabel.text = content.content;
+            NSString * titleContent = [self.article textFromContent];
+            
+            self.titleLabel.text = titleContent;
             self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
             
         }
@@ -285,6 +287,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     Feed *feed = [MyFeedsManager feedForID:self.article.feedID];
     
     if (feed == nil) {
+        
+        self.titleLabel.attributedText = attrs;
+        
         return;
     }
     
@@ -439,7 +444,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             
             if ([feedTitle isEqualToString:authorLabel.text] == NO) {
             
-                authorLabel.text = [[authorLabel.text stringByAppendingFormat:appendFormat, feedTitle] stringByStrippingWhitespace];
+                authorLabel.text = [[(authorLabel.text ?: @"") stringByAppendingFormat:appendFormat, feedTitle] stringByStrippingWhitespace];
 
             }
             

@@ -15,7 +15,6 @@
     BOOL _didAddHorizontalConstraints;
 }
 
-@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
 @property (weak, nonatomic) IBOutlet UIView *activityView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 

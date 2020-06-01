@@ -690,26 +690,26 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)updateFeedAndFolder:(FeedItem *)item {
     
-    Feed *feed = [MyFeedsManager feedForID:item.feedID];
-    
-    if (feed != nil) {
-        
-        MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - 1);
-        
-        feed.unread = @(MAX(0, feed.unread.integerValue - 1));
-        
-        if (feed.folderID != nil) {
-            Folder *folder = [MyFeedsManager folderForID:feed.folderID];
-            
-            if (folder != nil) {
-                [folder willChangeValueForKey:propSel(unreadCount)];
-                // simply tell the unreadCount property that it has been updated.
-                // KVO should handle the rest for us
-                [folder didChangeValueForKey:propSel(unreadCount)];
-            }
-        }
-        
-    }
+//    Feed *feed = [MyFeedsManager feedForID:item.feedID];
+//    
+//    if (feed != nil) {
+//        
+////        MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - 1);
+//        
+//        feed.unread = @(MAX(0, feed.unread.integerValue - 1));
+//        
+//        if (feed.folderID != nil) {
+//            Folder *folder = [MyFeedsManager folderForID:feed.folderID];
+//            
+//            if (folder != nil) {
+//                [folder willChangeValueForKey:propSel(unreadCount)];
+//                // simply tell the unreadCount property that it has been updated.
+//                // KVO should handle the rest for us
+//                [folder didChangeValueForKey:propSel(unreadCount)];
+//            }
+//        }
+//        
+//    }
     
 }
 
@@ -983,6 +983,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
+    
+    ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
+    authorView.delegate = self;
+    
+    if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
+        
+        authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        
+        authorView.titleLabel.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        para.alignment = NSTextAlignmentRight;
+        
+    }
 
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: theme.titleColor,
@@ -991,15 +1003,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                                      };
 
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
-    
-    ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
-    authorView.delegate = self;
-    
-    if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
-        authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-        authorView.titleLabel.textAlignment = NSTextAlignmentRight;
-        authorView.blogLabel.textAlignment = NSTextAlignmentRight;
-    }
     
     // this will be reused later after setting up the label.
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
