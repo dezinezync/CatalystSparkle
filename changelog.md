@@ -1,5 +1,9 @@
 # v1.8.0
 
+## Build 358
+
+- If the source supports it, the separate "dark mode" image will be used when available. 
+
 ## Build 356
 
 ### New
