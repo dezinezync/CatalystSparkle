@@ -1,13 +1,7 @@
-# v1.7.1
+# v1.7.4
 
-## Build 348
+## Build 349
 
-- Modern Background Syncing code. 
+- Fixes a networking issue that causes the app to continously poll one of Elytra's APIs for new updates.  
 
-- Fixed a leak that would occur on loading PNG images with incorrect alpha channel information. 
-
-- Fetching full-text for externally linked articles is not supported at the moment.
-
-- Fixed a crash when opening articles with a gallery.
-
-- Fixed a long-standing issue with loading unread articles in the correct order without skipping itermediate articles. 
+- Background Refresh now also respects your In-App preference. 
