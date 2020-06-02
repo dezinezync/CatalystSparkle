@@ -1,6 +1,6 @@
 # v1.7.4
 
-## Build 349
+## Build 350
 
 - Fixes a networking issue that causes the app to continously poll one of Elytra's APIs for new updates.  
 

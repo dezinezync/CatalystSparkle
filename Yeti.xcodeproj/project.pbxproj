@@ -1494,28 +1494,28 @@
 		F05041AD2461442800A65C1C /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				F05041AE2461442800A65C1C /* Content.h */,
-				F05041AF2461442800A65C1C /* Range.h */,
-				F05041B02461442800A65C1C /* Subscription.m */,
-				F05041B12461442800A65C1C /* Enclosure.m */,
-				F05041B22461442800A65C1C /* MetaOpenGraph.m */,
+				F05041BC2461442800A65C1C /* Feed.h */,
 				F05041B32461442800A65C1C /* Feed.m */,
-				F05041B42461442800A65C1C /* FeedItem.m */,
-				F05041B52461442800A65C1C /* VideoInfo.h */,
+				F05041C12461442800A65C1C /* Folder.h */,
 				F05041B62461442800A65C1C /* Folder.m */,
+				F05041AE2461442800A65C1C /* Content.h */,
+				F05041BA2461442800A65C1C /* Content.m */,
+				F05041AF2461442800A65C1C /* Range.h */,
+				F05041B92461442800A65C1C /* Range.m */,
+				F05041BB2461442800A65C1C /* Subscription.h */,
+				F05041B02461442800A65C1C /* Subscription.m */,
+				F05041BE2461442800A65C1C /* Enclosure.h */,
+				F05041B12461442800A65C1C /* Enclosure.m */,
+				F05041BD2461442800A65C1C /* MetaOpenGraph.h */,
+				F05041B22461442800A65C1C /* MetaOpenGraph.m */,
+				F05041C32461442800A65C1C /* FeedItem.h */,
+				F05041B42461442800A65C1C /* FeedItem.m */,
+				F05041C02461442800A65C1C /* Author.h */,
 				F05041B72461442800A65C1C /* Author.m */,
 				F05041B82461442800A65C1C /* FeedMeta.h */,
-				F05041B92461442800A65C1C /* Range.m */,
-				F05041BA2461442800A65C1C /* Content.m */,
-				F05041BB2461442800A65C1C /* Subscription.h */,
-				F05041BC2461442800A65C1C /* Feed.h */,
-				F05041BD2461442800A65C1C /* MetaOpenGraph.h */,
-				F05041BE2461442800A65C1C /* Enclosure.h */,
 				F05041BF2461442800A65C1C /* FeedMeta.m */,
-				F05041C02461442800A65C1C /* Author.h */,
-				F05041C12461442800A65C1C /* Folder.h */,
+				F05041B52461442800A65C1C /* VideoInfo.h */,
 				F05041C22461442800A65C1C /* VideoInfo.m */,
-				F05041C32461442800A65C1C /* FeedItem.h */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1523,15 +1523,15 @@
 		F05041C72461442800A65C1C /* DBManager */ = {
 			isa = PBXGroup;
 			children = (
-				F05041C82461442800A65C1C /* ChangeSet.m */,
-				F05041C92461442800A65C1C /* SyncChange.h */,
-				F05041CA2461442800A65C1C /* DBManager+CloudCore.h */,
 				F05041CB2461442800A65C1C /* DBManager.h */,
-				F05041CC2461442800A65C1C /* Operations */,
-				F05041CF2461442800A65C1C /* DBManager+CloudCore.m */,
-				F05041D02461442800A65C1C /* SyncChange.m */,
-				F05041D12461442800A65C1C /* ChangeSet.h */,
 				F05041D22461442800A65C1C /* DBManager.m */,
+				F05041C92461442800A65C1C /* SyncChange.h */,
+				F05041D02461442800A65C1C /* SyncChange.m */,
+				F05041CA2461442800A65C1C /* DBManager+CloudCore.h */,
+				F05041CF2461442800A65C1C /* DBManager+CloudCore.m */,
+				F05041CC2461442800A65C1C /* Operations */,
+				F05041D12461442800A65C1C /* ChangeSet.h */,
+				F05041C82461442800A65C1C /* ChangeSet.m */,
 			);
 			path = DBManager;
 			sourceTree = "<group>";
@@ -3185,7 +3185,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3217,7 +3217,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3271,7 +3271,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3331,7 +3331,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3363,7 +3363,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3410,7 +3410,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3447,7 +3447,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3466,7 +3466,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3485,7 +3485,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -3501,7 +3501,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 348;
+				CURRENT_PROJECT_VERSION = 350;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
