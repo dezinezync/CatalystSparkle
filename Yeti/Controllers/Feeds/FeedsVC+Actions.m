@@ -45,7 +45,11 @@
 
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
-    if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0) && _refreshing == NO) {
+    if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0)
+    && _refreshing == NO
+    && _refreshFeedsCounter < 3) {
+    
+        _refreshFeedsCounter++;
         
         [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
@@ -64,6 +68,8 @@
         return;
         
     }
+    
+    _refreshFeedsCounter = 0;
     
     if (_refreshing == YES) {  
         return;

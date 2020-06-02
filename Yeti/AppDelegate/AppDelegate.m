@@ -90,7 +90,9 @@ AppDelegate *MyAppDelegate = nil;
             MyAppDelegate = self;
         });
         
-        [self setupBackgroundRefresh];
+        if (SharedPrefs.backgroundRefresh == YES) {
+            [self setupBackgroundRefresh];
+        }
         
 //        [application setMinimumBackgroundFetchInterval:(3600 * 2)]; // fetch once every 2 hours
         
