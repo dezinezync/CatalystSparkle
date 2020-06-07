@@ -48,6 +48,8 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL _hasSetupTable;
     
     BOOL _fetchingCounters;
+    
+    BOOL _hasOpenedUnread;
 }
 
 @property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
@@ -169,16 +171,6 @@ static void *KVO_Unread = &KVO_Unread;
             [self userDidUpdate:NO];
         }
         
-        BOOL pref = [[NSUserDefaults standardUserDefaults] boolForKey:kOpenUnreadOnLaunch];
-        
-        if (pref) {
-            _openingOnLaunch = YES;
-            
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-            [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
-        }
-        
         [self fetchLatestCounters];
     }
     
@@ -191,6 +183,7 @@ static void *KVO_Unread = &KVO_Unread;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    
     [super viewDidAppear:animated];
     
     [self setupTableView];
@@ -198,12 +191,29 @@ static void *KVO_Unread = &KVO_Unread;
     [self becomeFirstResponder];
     
     if (MyFeedsManager.shouldRequestReview == YES) {
+        
         dispatch_async(dispatch_get_main_queue(), ^{
+            
             [SKStoreReviewController requestReview];
+            
             MyFeedsManager.shouldRequestReview = NO;
+            
             [Keychain add:YTRequestedReview boolean:YES];
+            
         });
+        
     }
+    
+    if (SharedPrefs.openUnread == YES && _hasOpenedUnread == NO) {
+        
+        _hasOpenedUnread = YES;
+        _openingOnLaunch = YES;
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+    }
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
