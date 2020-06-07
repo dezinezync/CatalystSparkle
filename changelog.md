@@ -1,7 +1,5 @@
-# v1.7.4
+# v1.7.5
 
-## Build 350
+## Build 352
 
-- Fixes a networking issue that causes the app to continously poll one of Elytra's APIs for new updates.  
-
-- Background Refresh now also respects your In-App preference. 
+- Fixes a crash caused by the "Open Unread" preference when it is on. 
