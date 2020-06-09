@@ -293,6 +293,11 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         return;
     }
     
+#if TARGET_OS_MACCATALYST
+    self.titleLabel.attributedText = attrs;
+    return;
+#endif
+    
     NSString *url = [feed faviconURI];
     
     if (url != nil && [url isBlank] == NO) {

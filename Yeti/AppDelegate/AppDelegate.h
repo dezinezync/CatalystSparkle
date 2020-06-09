@@ -16,7 +16,7 @@
 
 extern AppDelegate * MyAppDelegate;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UIWindowSceneDelegate> {
     
     dispatch_queue_t _bgTaskDispatchQueue;
     

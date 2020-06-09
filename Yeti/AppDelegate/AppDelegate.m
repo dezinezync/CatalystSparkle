@@ -36,23 +36,51 @@ AppDelegate *MyAppDelegate = nil;
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
+//- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
+//    
+//    self.window = [[UIWindow alloc] init];
+//    
+//    BOOL retval = [self commonInit:application];
+//    
+//    return retval;
+//    
+//}
+//
+//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+//    
+//    BOOL retval = [self commonInit:application];
+//    
+//    [self.window makeKeyAndVisible];
+//    
+//    return retval;
+//    
+//}
+
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(nonnull UISceneSession *)connectingSceneSession options:(nonnull UISceneConnectionOptions *)options {
     
-    self.window = [[UIWindow alloc] init];
-    
-    BOOL retval = [self commonInit:application];
-    
-    return retval;
+    UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:UIWindowSceneSessionRoleApplication];
+    config.delegateClass = AppDelegate.class;
+    return config;
     
 }
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
     
-    BOOL retval = [self commonInit:application];
+    if ([scene isKindOfClass:UIWindowScene.class] == NO) {
+        return;
+    }
+    
+    UIWindowScene *windowScene = (UIWindowScene *)scene;
+    
+    self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+    
+    __unused BOOL unused = [self commonInit:UIApplication.sharedApplication];
+    
+#if TARGET_OS_MACCATALYST
+    [self ct_setupToolbar:windowScene];
+#endif
     
     [self.window makeKeyAndVisible];
-    
-    return retval;
     
 }
 

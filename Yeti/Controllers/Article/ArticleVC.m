@@ -112,6 +112,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     self.state = ArticleStateLoading;
     self.articlesImageLoader = [ImageLoader new];
     
+#if TARGET_OS_MACCATALYST
+    
+    self.scrollView.contentInset = UIEdgeInsetsMake(44.f, 0, 44.f, 0);
+    
+#else
+    
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
     if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
@@ -139,7 +145,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    
+#endif
+
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
     
     [self didUpdateTheme];
@@ -262,6 +269,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (void)setupHelperView {
+    
+#if TARGET_OS_MACCATALYST
+    return;
+#endif
     
     if (self.providerDelegate == nil)
         return;

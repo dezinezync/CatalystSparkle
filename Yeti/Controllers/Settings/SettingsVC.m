@@ -64,6 +64,8 @@ NSString* deviceName() {
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+    
 //    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [self didUpdateTheme];
 }
