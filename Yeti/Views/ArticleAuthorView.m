@@ -110,7 +110,12 @@
     
     self.titleLabel.textColor = theme.titleColor;
     self.blogLabel.textColor = theme.subtitleColor;
+    
+#if TARGET_OS_MACCATALYST
+    self.authorLabel.textColor = theme.subtitleColor;
+#else
     self.authorLabel.textColor = theme.captionColor;
+#endif
     
     for (UILabel *label in @[self.titleLabel, self.blogLabel, self.authorLabel]) {
         label.backgroundColor = theme.articleBackgroundColor;

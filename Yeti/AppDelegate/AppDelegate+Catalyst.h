@@ -10,9 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AppDelegate (Catalyst)
+@interface AppDelegate (Catalyst) <NSToolbarDelegate>
 
 - (void)ct_setupToolbar:(UIWindowScene *)scene;
+
+- (void)ct_setupAppKitBundle;
 
 @end
 

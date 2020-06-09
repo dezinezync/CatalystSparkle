@@ -306,12 +306,14 @@
         button.enabled = NO;
     }
     
-    [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
-    
-    self.item.read = !self.item.isRead;
+    [MyFeedsManager article:self.item markAsRead:(button == nil ? YES : !self.item.isRead)];
     
     if (button) {
+        
+        self.item.read = !self.item.isRead;
+        
         button.image = self.item.isRead ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+        
     }
     
     if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {

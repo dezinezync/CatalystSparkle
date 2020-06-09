@@ -10,6 +10,13 @@
 #import <DZAppdelegate/DZAppdelegate.h>
 
 #import "RMStore.h"
+
+#if TARGET_OS_MACCATALYST
+
+#import "AppKitGlue.h"
+
+#endif
+
 @class RMStoreKeychainPersistence;
 
 @class AppDelegate;
@@ -37,6 +44,14 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, strong) dispatch_queue_t bgTaskDispatchQueue;
 
 - (void)loadCodeTheme;
+
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, strong) NSBundle *appKitBundle;
+
+@property (nonatomic, strong) AppKitGlue *sharedGlue;
+
+#endif
 
 @end
 

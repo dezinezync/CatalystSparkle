@@ -35,6 +35,12 @@
 #import "YTExtractor.h"
 #import <DZTextKit/NSString+ImageProxy.h>
 
+#if TARGET_OS_MACCATALYST
+
+#import <AppKit/NSWorkspace.h>
+
+#endif
+
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -200,15 +206,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     [super viewWillAppear:animated];
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
     
-    if (!_hasRendered) {
-        [self.loader startAnimating];
-    }
+#else
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    
+#endif
+    
+    if (!_hasRendered) {
+        [self.loader startAnimating];
+    }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
@@ -990,6 +1004,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
+#if TARGET_OS_MACCATALYST
+    
+    baseFontSize *= 1.42f;
+    baseFontSize = floor(baseFontSize);
+    
+#endif
 
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
@@ -2619,9 +2640,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         formatted = formattedURL(@"yeti://external?link=%@", link);
     }
     
-    asyncMain(^{
+    runOnMainQueueWithoutDeadlocking(^{
+        
+#if TARGET_OS_MACCATALYST
+        
+        Class workspaceClass = NSClassFromString(@"NSWorkspace");
+        
+        id sharedInstance = [workspaceClass performSelector:@selector(sharedWorkspace)];
+        
+        BOOL didOpen = (BOOL)[sharedInstance performSelector:@selector(openURL:) withObject:formatted];
+        
+#ifdef DEBUG
+        NSLog(@"Opened URL: %@", @(didOpen));
+#endif
+        
+#else
+        
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+        
+#endif
+
+        
     });
+    
 }
 
 - (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range

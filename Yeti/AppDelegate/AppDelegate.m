@@ -78,6 +78,7 @@ AppDelegate *MyAppDelegate = nil;
     
 #if TARGET_OS_MACCATALYST
     [self ct_setupToolbar:windowScene];
+    [self ct_setupAppKitBundle];
 #endif
     
     [self.window makeKeyAndVisible];

@@ -435,6 +435,12 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (void)setupNavigationBar {
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
@@ -479,6 +485,8 @@ static void *KVO_Unread = &KVO_Unread;
 //    else {
 //        self.navigationController.toolbarHidden = NO;
 //    }
+    
+#endif
     
 }
 

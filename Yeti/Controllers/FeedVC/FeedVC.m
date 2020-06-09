@@ -159,6 +159,12 @@
 
 - (void)setupNavigationBar {
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     self.extendedLayoutIncludesOpaqueBars = YES;
@@ -201,6 +207,8 @@
     
     self.navigationItem.searchController = searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = YES;
+    
+#endif
     
 }
 

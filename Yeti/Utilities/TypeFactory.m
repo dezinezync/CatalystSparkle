@@ -205,7 +205,16 @@ static TypeFactory * sharedTypeFactory;
 - (CGFloat)basePointSize {
     
     if (_basePointSize == 0.f) {
+        
+#if TARGET_OS_MACCATALYST
+        
+        _basePointSize = 21.f;
+        
+#else
+        
         _basePointSize = [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize;
+        
+#endif
     }
     
     return _basePointSize;
