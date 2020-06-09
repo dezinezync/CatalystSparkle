@@ -166,6 +166,8 @@
 	<string>360</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.news</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>narwhal</string>
