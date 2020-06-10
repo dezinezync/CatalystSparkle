@@ -43,7 +43,10 @@
     AddFeedVC *vc = [[AddFeedVC alloc] init];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalInPresentation = UIModalPresentationAutomatic;
+    
+#if !TARGET_OS_MACCATALYST
+    nav.modalInPresentation = YES;
+#endif
     
     return nav;
 }
@@ -70,6 +73,10 @@
     
     [self setupSearchController];
     [self setupDefaultViews];
+    
+#if TARGET_OS_MACCATALYST
+    self.navigationController.navigationBar.translucent = NO;
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated {

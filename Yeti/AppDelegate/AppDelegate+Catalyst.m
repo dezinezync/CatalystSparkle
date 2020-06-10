@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate+Catalyst.h"
+#import "FeedsVC+Actions.h"
+
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 
 @implementation AppDelegate (Catalyst)
@@ -41,14 +43,19 @@
 
 #pragma mark - <NSToolbarDelegate>
 
-#define kNewFeedToolbarIdentifier @[@"com.yeti.toolbar.newFeed", @"New Feed"]
-#define kNewFolderToolbarIdentifier @[@"com.yeti.toolbar.newFolder", @"New Folder"]
-#define kRefreshAllToolbarIdentifier @[@"com.yeti.toolbar.refreshAll", @"Refresh All"]
-#define kRefreshFeedToolbarIdentifier @[@"com.yeti.toolbar.refreshFeed", @"Refresh Feed"]
+#define kFeedsToolbarGroup      @"FeedsToolbarGroup"
+#define kFeedToolbarGroup       @"FeedToolbarGroup"
+#define kArticleToolbarGroup    @"ArticleToolbarGroup"
+#define kToolbarIdentifierGroups @[kFeedsToolbarGroup, kFeedToolbarGroup, kArticleToolbarGroup]
+
+#define kNewFeedToolbarIdentifier       @[@"com.yeti.toolbar.newFeed", @"New Feed"]
+#define kNewFolderToolbarIdentifier     @[@"com.yeti.toolbar.newFolder", @"New Folder"]
+#define kRefreshAllToolbarIdentifier    @[@"com.yeti.toolbar.refreshAll", @"Refresh All"]
+#define kRefreshFeedToolbarIdentifier   @[@"com.yeti.toolbar.refreshFeed", @"Refresh Feed"]
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
-    return @[kNewFeedToolbarIdentifier[0], kNewFolderToolbarIdentifier[0], kRefreshAllToolbarIdentifier[0], NSToolbarSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, kRefreshFeedToolbarIdentifier[0]];
+    return @[kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
     
 }
 
@@ -62,35 +69,49 @@
     
     UIBarButtonItem *button = nil;
     NSString *title = nil;
+    UIImage *image = nil;
     
-    if ([itemIdentifier isEqualToString:kNewFeedToolbarIdentifier[0]]) {
+    TOSplitViewController *splitVC = (TOSplitViewController *)[self.window rootViewController];
+    UINavigationController *navVC = (UINavigationController *)[splitVC.viewControllers firstObject];
+    FeedsVC *feedsVC = navVC.viewControllers.firstObject;
+    
+    if ([itemIdentifier isEqualToString:kFeedsToolbarGroup]) {
         
         title = kNewFeedToolbarIdentifier[1];
         
-        UIImage *image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed"];
+        image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:nil];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:feedsVC action:@selector(didTapAdd:)];
         
-    }
-    else if ([itemIdentifier isEqualToString:kNewFolderToolbarIdentifier[0]]) {
+        NSToolbarItem *item1 = [self toolbarItemWithItemIdentifier:kNewFeedToolbarIdentifier[0] title:title button:button];
         
+        //
         title = kNewFolderToolbarIdentifier[1];
         
-        UIImage *image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder"];
+        image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:nil];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:feedsVC action:@selector(didTapAddFolder:)];
         
-    }
-    else if ([itemIdentifier isEqualToString:kRefreshAllToolbarIdentifier[0]]) {
+        NSToolbarItem *item2 = [self toolbarItemWithItemIdentifier:kNewFolderToolbarIdentifier[0] title:title button:button];
         
+        //
         title = kRefreshAllToolbarIdentifier[1];
         
-        UIImage *image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all"];
+        image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:nil];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:feedsVC action:@selector(beginRefreshing:)];
+        
+        NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kRefreshAllToolbarIdentifier[0] title:title button:button];
+        
+        NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
+               
+        [group setSubitems:@[item1, item2, item3]];
+        
+        return group;
         
     }
-    else if ([itemIdentifier isEqualToString:kRefreshFeedToolbarIdentifier[0]]) {
+    
+    else if ([itemIdentifier isEqualToString:kFeedToolbarGroup]) {
         
         title = kRefreshFeedToolbarIdentifier[1];
         
@@ -98,24 +119,32 @@
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:nil];
         
-    }
-    
-    if (button != nil) {
+        NSToolbarItem *item1 = [self toolbarItemWithItemIdentifier:kRefreshFeedToolbarIdentifier[0] title:title button:button];
         
-        NSToolbarItem *item = [NSToolbarItem itemWithItemIdentifier:itemIdentifier barButtonItem:button];
+        NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
+               
+        [group setSubitems:@[item1]];
         
-        if (title) {
-            item.paletteLabel = title;
-        }
-        
-        item.label = @"";
-        item.toolTip = nil;
-        
-        return item;
+        return group;
         
     }
     
     return nil;
+    
+}
+
+- (NSToolbarItem *)toolbarItemWithItemIdentifier:(NSToolbarItemIdentifier)itemIdentifier title:(NSString *)title button:(UIBarButtonItem *)button {
+    
+    NSToolbarItem *item = [NSToolbarItem itemWithItemIdentifier:itemIdentifier barButtonItem:button];
+    
+    if (title) {
+        item.paletteLabel = title;
+    }
+    
+    item.label = @"";
+    item.toolTip = nil;
+    
+    return item;
     
 }
 
