@@ -23,6 +23,36 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+- (CGColorRef)CTColorForName:(NSString *)name {
+    
+    SEL sel = NSSelectorFromString(name);
+    
+    if ([NSColor respondsToSelector:sel] == YES) {
+        
+        NSColor *color = [NSColor performSelector:sel];
+        
+        if (color != nil) {
+            
+            CGColorRef cgColor = color.CGColor;
+            
+            return cgColor;
+            
+//            CGFloat red, green, blue, alpha;
+//
+//            [color getRed:&red green:&green blue:&blue alpha:&alpha];
+//
+//            return @[@(red), @(green), @(blue), @(alpha)];
+            
+        }
+        
+        return nil;
+        
+    }
+    
+    return nil;
+    
+}
+
 - (void)ct_showAlertWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitle:(NSString *)otherButtonTitle completionHandler:(void (^ _Nullable)(NSString * _Nonnull))completionHandler {
     
     NSAlert *alert = [[NSAlert alloc] init];

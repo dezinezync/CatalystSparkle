@@ -21,6 +21,8 @@
     
     scene.titlebar.toolbar = toolbar;
     
+    scene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+    
 }
 
 - (void)ct_setupAppKitBundle {
@@ -55,7 +57,7 @@
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
-    return @[kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
+    return @[kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
     
 }
 
@@ -189,6 +191,20 @@
     }
     
     return image;
+    
+}
+
+- (UIColor *)appKitColorNamed:(NSString *)name {
+    
+    CGColorRef values = [self.sharedGlue CTColorForName:name];
+    
+    if (values == nil) {
+        return nil;
+    }
+    
+    UIColor *color = [UIColor colorWithCGColor:values];
+    
+    return color;
     
 }
 

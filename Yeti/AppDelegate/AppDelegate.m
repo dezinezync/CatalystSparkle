@@ -78,7 +78,6 @@ AppDelegate *MyAppDelegate = nil;
     
 #if TARGET_OS_MACCATALYST
     [self ct_setupToolbar:windowScene];
-    [self ct_setupAppKitBundle];
 #endif
     
     [self.window makeKeyAndVisible];
@@ -91,6 +90,12 @@ AppDelegate *MyAppDelegate = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
+        MyAppDelegate = self;
+        
+#if TARGET_OS_MACCATALYST
+        [self ct_setupAppKitBundle];
+#endif
         
         [self setupRouting];
         
@@ -107,11 +112,6 @@ AppDelegate *MyAppDelegate = nil;
         
 //        [SharedImageLoader.cache removeAllObjects];
 //        [SharedImageLoader.cache removeAllObjectsFromDisk];
-        
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            MyAppDelegate = self;
-        });
         
         if (SharedPrefs.backgroundRefresh == YES) {
             [self setupBackgroundRefresh];

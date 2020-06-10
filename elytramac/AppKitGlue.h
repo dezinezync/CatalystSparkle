@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype _Nonnull)shared;
 
+- (CGColorRef _Nullable)CTColorForName:(NSString * _Nonnull)name;
+
 - (void)ct_showAlertWithTitle:(NSString * _Nonnull)title message:(NSString * _Nullable)message cancelButtonTitle:(NSString * _Nullable)cancelButtonTitle otherButtonTitle:(NSString * _Nullable)otherButtonTitle completionHandler:(void(^ _Nullable)(NSString *buttonTitle))completionHandler;
 
 @end

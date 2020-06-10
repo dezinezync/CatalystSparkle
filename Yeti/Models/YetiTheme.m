@@ -7,6 +7,11 @@
 //
 
 #import "YetiTheme.h"
+#import "AppKitGlue.h"
+
+#if TARGET_OS_MACCATALYST
+#import "AppDelegate+Catalyst.h"
+#endif
 
 static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorContext;
 
@@ -45,6 +50,7 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     
 #if TARGET_OS_MACCATALYST
     [self ct_hookAndUpdateTintColor];
+    [self ct_updateSemanticAppKitColors];
 #endif
     
     [super updateAppearances];
@@ -133,6 +139,15 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     }
     
 }
+
+- (void)ct_updateSemanticAppKitColors {
+    
+    self.backgroundColor = [MyAppDelegate appKitColorNamed:@"windowBackgroundColor"];
+    self.cellColor = [MyAppDelegate appKitColorNamed:@"unemphasizedSelectedContentBackgroundColor"];
+    
+}
+
+#pragma mark -
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     
