@@ -372,7 +372,9 @@ static void *KVO_Unread = &KVO_Unread;
             }
         }
         
-        ocell.countLabel.hidden = !showUnreadCounter;
+        if (ocell.countLabel.isHidden == NO) {
+            ocell.countLabel.hidden = !showUnreadCounter;
+        }
         
         return ocell;
         

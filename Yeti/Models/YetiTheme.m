@@ -144,6 +144,7 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     
     self.backgroundColor = [MyAppDelegate appKitColorNamed:@"windowBackgroundColor"];
     self.cellColor = [MyAppDelegate appKitColorNamed:@"unemphasizedSelectedContentBackgroundColor"];
+    self.tableColor = self.cellColor;
     
 }
 

@@ -65,6 +65,10 @@
         
             NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
             
+#if TARGET_OS_MACCATALYST
+            URL = [NSURL URLWithString:item.articleURL];
+#endif
+            
             dispatch_async(dispatch_get_main_queue(), ^{
                 
                 [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
@@ -81,8 +85,9 @@
             UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
             
             UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-            pvc.sourceView = self.collectionView;
-            pvc.sourceRect = [[self.collectionView cellForItemAtIndexPath:indexPath] frame];
+            
+            pvc.sourceView = tableView;
+            pvc.sourceRect = [[tableView cellForRowAtIndexPath:indexPath] frame];
             
             [self presentViewController:avc animated:YES completion:nil];
             

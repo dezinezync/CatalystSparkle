@@ -188,7 +188,11 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.feed = feed;
     
     self.titleLabel.text = feed.displayTitle;
-    self.countLabel.text = (feed.unread ?: @0).stringValue;
+    
+    NSNumber *unreadCount = feed.unread ?: @0;
+    
+    self.countLabel.text = unreadCount.stringValue;
+    self.countLabel.hidden = unreadCount.integerValue == 0;
     
     NSString *url = [feed faviconURI];
     
@@ -219,6 +223,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 #pragma mark - a11y
 
 - (NSString *)accessibilityLabel {
+    
     NSInteger count = [self.countLabel.text integerValue];
     NSString *title = self.titleLabel.text;
     
@@ -278,6 +283,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     NSNumber *totalUnread = self.feed ? self.feed.unread : @(0);
     
     self.countLabel.text = [(totalUnread ?: @0) stringValue];
+    self.countLabel.hidden = totalUnread.integerValue == 0;
 }
 
 @end

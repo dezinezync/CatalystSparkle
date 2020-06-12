@@ -7,7 +7,9 @@
 //
 
 #import "AppDelegate+Catalyst.h"
+
 #import "FeedsVC+Actions.h"
+#import "ArticleVC+Toolbar.h"
 
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 
@@ -53,11 +55,14 @@
 #define kNewFeedToolbarIdentifier       @[@"com.yeti.toolbar.newFeed", @"New Feed"]
 #define kNewFolderToolbarIdentifier     @[@"com.yeti.toolbar.newFolder", @"New Folder"]
 #define kRefreshAllToolbarIdentifier    @[@"com.yeti.toolbar.refreshAll", @"Refresh All"]
+
 #define kRefreshFeedToolbarIdentifier   @[@"com.yeti.toolbar.refreshFeed", @"Refresh Feed"]
+
+#define kShareArticleToolbarIdentifier   @[@"com.yeti.toolbar.shareArticle", @"Share Article"]
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
-    return @[kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
+    return @[kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarFlexibleSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
     
 }
 
@@ -119,7 +124,7 @@
         
         UIImage *image = [self dynamicImageWithLightImageName:@"refresh-feed" darkImageName:@"refresh-feed"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:nil];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapRefreshFeed:)];
         
         NSToolbarItem *item1 = [self toolbarItemWithItemIdentifier:kRefreshFeedToolbarIdentifier[0] title:title button:button];
         
@@ -130,8 +135,29 @@
         return group;
         
     }
-    
-    return nil;
+    else {
+        
+        //
+//        title = kShareArticleToolbarIdentifier[1];
+//
+//        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share"];
+//
+////        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapShareArticle:)];
+//
+//        NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
+//        item3.image = image;
+//        item3.action = @selector(ct_didTapShareArticle:);
+//        item3.target = self;
+//
+//        NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
+//
+//        [group setSubitems:@[item3]];
+//
+//        return group;
+        
+        return nil;
+        
+    }
     
 }
 
@@ -205,6 +231,28 @@
     UIColor *color = [UIColor colorWithCGColor:values];
     
     return color;
+    
+}
+
+#pragma mark - Actions
+
+- (void)ct_didTapRefreshFeed:(NSToolbarItem *)sender {
+    
+    
+    
+}
+
+- (void)ct_didTapShareArticle:(NSToolbarItem *)sender {
+    
+    TOSplitViewController *splitVC = (TOSplitViewController *)[[self window] rootViewController];
+    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] lastObject];
+    ArticleVC *vc = [[nav viewControllers] lastObject];
+    
+    if ([vc isKindOfClass:ArticleVC.class] == NO) {
+        return;
+    }
+    
+    [vc didTapShare:sender];
     
 }
 

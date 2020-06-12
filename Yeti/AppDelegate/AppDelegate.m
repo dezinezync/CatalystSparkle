@@ -36,25 +36,17 @@ AppDelegate *MyAppDelegate = nil;
 
 @implementation AppDelegate
 
-//- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
-//    
-//    self.window = [[UIWindow alloc] init];
-//    
-//    BOOL retval = [self commonInit:application];
-//    
-//    return retval;
-//    
-//}
-//
-//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//    
-//    BOOL retval = [self commonInit:application];
-//    
-//    [self.window makeKeyAndVisible];
-//    
-//    return retval;
-//    
-//}
+- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
+    
+    return YES;
+    
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    return YES;
+    
+}
 
 - (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(nonnull UISceneSession *)connectingSceneSession options:(nonnull UISceneConnectionOptions *)options {
     
@@ -290,7 +282,7 @@ AppDelegate *MyAppDelegate = nil;
 #pragma mark - <DZAppDelegateProtocol>
 
 - (NSDictionary *)appDefaults {
-    return @{kDefaultsTheme: LightTheme,
+    NSMutableDictionary *dict =  @{kDefaultsTheme: LightTheme,
              kDefaultsBackgroundRefresh: @YES,
              kDefaultsNotifications: @NO,
              kDefaultsImageLoading: ImageLoadingMediumRes,
@@ -306,7 +298,15 @@ AppDelegate *MyAppDelegate = nil;
              kPreviewLines: @0,
              kShowTags: @YES,
              kUseToolbar: @NO
-             };
+    }.mutableCopy;
+    
+#if TARGET_OS_MACCATALYST
+    dict[kUseSystemFontSize] = @NO;
+    dict[kFontSize] = @(23.f);
+#endif
+    
+    return dict;
+    
 }
 
 - (void)setupRootController {

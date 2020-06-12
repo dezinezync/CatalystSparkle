@@ -318,6 +318,12 @@ static TypeFactory * sharedTypeFactory;
     
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / self.basePointSize);
     
+#if TARGET_OS_MACCATALYST
+        
+    maximumPointSize = self.basePointSize;
+        
+#endif
+    
     if (_subtitleFont == nil) {
         _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }

@@ -216,13 +216,22 @@
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, @" ", URL] applicationActivities:nil];
     
-//    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (sender && [sender isKindOfClass:UIBarButtonItem.class]) {
     
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         pvc.barButtonItem = sender;
         pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
         
-//    }
+    }
+#if TARGET_OS_MACCATALYST
+    else if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
+      
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.barButtonItem = (UIBarButtonItem *)sender;
+        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        
+    }
+#endif
     
     [self presentViewController:avc animated:YES completion:nil];
     
