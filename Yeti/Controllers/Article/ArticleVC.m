@@ -710,6 +710,54 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
+- (BOOL)imageURLAppearsInContent:(NSString *)url {
+    
+    Content *appearing = [self.item.content rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
+       
+        if (([objx.type isEqualToString:@"image"] || [objx.type isEqualToString:@"img"])) {
+            
+            if ([objx.url isEqualToString:url]) {
+                
+                return YES;
+                
+            }
+            
+            if (objx.srcset != nil) {
+                
+                NSArray *values = [objx.srcset allValues];
+                
+                values = [values rz_map:^id(id objxx, NSUInteger idxxx, NSArray *arrayxx) {
+                   
+                    if ([objxx isKindOfClass:NSDictionary.class]) {
+                        
+                        return [(NSDictionary *)objxx allValues];
+                        
+                    }
+                    
+                    return objxx;
+                    
+                }];
+                
+                values = [values rz_flatten];
+                
+                if ([values indexOfObject:url] != NSNotFound) {
+                    
+                    return YES;
+                    
+                }
+                
+            }
+        
+        }
+        
+        return NO;
+        
+    }];
+    
+    return appearing != nil;
+    
+}
+
 - (void)_setupArticle:(FeedItem *)responseObject start:(NSDate *)start isChangingArticle:(BOOL)isChangingArticle {
     
     if (self == nil) {
@@ -734,23 +782,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self->_deferredProcessing = YES;
     }
     
-    /*
-     * In the event of a Youtube video, we add the video itself
-     * instead of the cover and then the video.
-     */
-    if (isYoutubeVideo == NO && self.item.coverImage) {
-        Content *content = [Content new];
-        content.type = @"image";
-        content.url = self.item.coverImage;
-        
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            [self addImage:content];
-        });
-    }
-    
     if (isYoutubeVideo == YES) {
         
         Content *content = [Content new];
@@ -764,7 +795,30 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
     
     if (self.item.coverImage != nil) {
-        [imagesFromEnclosures addObject:self.item.coverImage];
+        
+        if ([self imageURLAppearsInContent:self.item.coverImage] == NO) {
+            
+            [imagesFromEnclosures addObject:self.item.coverImage];
+            
+            /*
+             * In the event of a Youtube video, we add the video itself
+             * instead of the cover and then the video.
+             */
+            if (isYoutubeVideo == NO && self.item.coverImage) {
+                Content *content = [Content new];
+                content.type = @"image";
+                content.url = self.item.coverImage;
+
+                weakify(self);
+
+                asyncMain(^{
+                    strongify(self);
+                    [self addImage:content];
+                });
+            }
+            
+        }
+        
     }
     
     if (self.item.enclosures && self.item.enclosures.count) {
@@ -775,7 +829,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         // check for images
         NSArray <Enclosure *> *enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
            
-            return obj.type && [IMAGE_TYPES containsObject:obj.type];
+            BOOL isImage = obj.type && [IMAGE_TYPES containsObject:obj.type];
+            
+            // ensure it doesn't appear in the content
+            if (isImage) {
+                
+                isImage = ![self imageURLAppearsInContent:obj.url.absoluteString];
+                
+            }
+            
+            return isImage;
             
         }];
         
