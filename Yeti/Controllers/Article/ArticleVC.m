@@ -16,7 +16,6 @@
 #import <DZTextKit/YetiConstants.h>
 #import <DZTextKit/CheckWifi.h>
 
-#import <DZNetworking/UIImageView+ImageLoading.h>
 #import <DZTextKit/NSAttributedString+Trimming.h>
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -411,6 +410,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    
+    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+        
+        [self updateImagesForNewInterfaceStyle];
+        
+    }
+    
+    [super traitCollectionDidChange:previousTraitCollection];
+    
+}
+
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
@@ -422,6 +433,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             strongify(self);
             
             [self setupToolbar:newCollection];
+            
         }];
     }
     else
@@ -501,6 +513,54 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
         }
     }];
+}
+
+- (void)updateImagesForNewInterfaceStyle {
+    
+    UIUserInterfaceStyle style = self.traitCollection.userInterfaceStyle;
+    
+    for (Image *imageView in self.images) { @autoreleasepool {
+        
+        Image *view = nil;
+        
+        if ([imageView respondsToSelector:@selector(imageView)] && [imageView.imageView respondsToSelector:@selector(image)]) {
+            
+            view = imageView;
+            
+        }
+//        else if ([imageView respondsToSelector:@selector(image)]) {
+//            
+//            view =
+//            
+//        }
+        
+        if (view != nil) {
+            
+            if (style == UIUserInterfaceStyleDark && view.darkModeURL != nil) {
+                
+                if ([[view.imageView sd_imageURL] isEqual:view.darkModeURL] == NO) {
+                    
+                    [view cancelImageLoading];
+                    [view setImageWithURL:view.darkModeURL];
+                    
+                }
+                
+            }
+            else {
+                
+                if ([[view.imageView sd_imageURL] isEqual:view.URL] == NO) {
+                    
+                    [view cancelImageLoading];
+                    [view setImageWithURL:view.URL];
+                    
+                }
+                
+            }
+            
+        }
+        
+    } }
+    
 }
 
 #pragma mark - <ArticleHandler>
@@ -1556,7 +1616,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
             || ([content.url containsString:@"deal"])
             || ([content.url containsString:@"amaz"]
-            || [content.url containsString:@"i2.wp.com/9to5mac.com"])
+            || [content.url containsString:@"i2.wp.com"])
         )) {
         return;
     }
@@ -1626,31 +1686,41 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     CGFloat width = self.scrollView.bounds.size.width;
     
-    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:width];
+    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
+    NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
     imageView.userInteractionEnabled = YES;
     
     [imageView addGestureRecognizer:tap];
     
-    NSURLComponents *comps = [NSURLComponents componentsWithString:url];
+    NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
     
     if (comps.host == nil) {
 #ifdef DEBUG
         NSLog(@"No hostname for URL: %@", url);
 #endif
-        
         NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
         
-        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url];
+        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
 #ifdef DEBUG
         NSLog(@"Attempted fixed URL: %@", articleURLComps.URL);
 #endif
         
-        url = articleURLComps.URL.absoluteString;
+        url = articleURLComps.URL;
+        
+        if (darkModeURL != nil) {
+                
+            articleURLComps.path = darkModeURL.absoluteString;
+            
+            darkModeURL = articleURLComps.URL;
+            
+        }
+        
     }
     
-    imageView.URL = [NSURL URLWithString:url];
+    imageView.URL = url;
+    imageView.darkModeURL = darkModeURL;
     
     [self addLinebreak];
     
@@ -2267,15 +2337,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 imageview.loading = YES;
                 
-                __weak ImageLoader *weakImageLoader = self.articlesImageLoader;
+                if (imageview.darkModeURL != nil && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                    [imageview setImageWithURL:imageview.darkModeURL];
+                }
+                else {
+                    [imageview setImageWithURL:imageview.URL];
+                }
                 
-                [imageview il_setImageWithURL:imageview.URL imageLoader:weakImageLoader];
             }
+            
         }
         else if (imageview.imageView.image && !contains) {
             
             if (imageview.isLoading) {
-                [imageview il_cancelImageLoading];
+                [imageview cancelImageLoading];
                 imageview.loading = NO;
             }
             
