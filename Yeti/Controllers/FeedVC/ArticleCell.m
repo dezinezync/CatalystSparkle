@@ -17,6 +17,8 @@
 #import <DZTextKit/NSString+ImageProxy.h>
 #import <DZTextKit/Paragraph.h>
 
+#import <SDWebImage/UIImageView+WebCache.h>
+
 #import "YetiThemeKit.h"
 
 NSString *const kArticleCell = @"com.yeti.cell.article";
@@ -473,24 +475,15 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+    self.coverImage.contentMode = UIViewContentModeCenter;
     
-    [self.coverImage il_setImageWithURL:[NSURL URLWithString:url] mutate:^UIImage * _Nonnull(UIImage * _Nonnull image) {
+    [self.coverImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
-        if (SharedPrefs.imageProxy == YES) {
-            return image;
+        if (error != nil) {
+            return;
         }
         
-        CGSize size = CGSizeMake(maxWidth, maxWidth);
-        
-        UIImage *sized = [image fastScale:size quality:1.f cornerRadius:0.f imageData:nil];
-        
-        return sized;
-        
-    } success:nil error:^(NSError * _Nonnull error) {
-       
-        self.coverImage.contentMode = UIViewContentModeCenter;
-        self.coverImage.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+        self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
         
     }];
     

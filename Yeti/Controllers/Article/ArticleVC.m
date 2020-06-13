@@ -2006,17 +2006,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 if (thumbnail == nil || [thumbnail isBlank] == YES) {}
                 else {
-
-                    [imageView il_setImageWithURL:thumbnail success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-
-    //                    [playerController.player addObserver:self forKeyPath:propSel(rate) options:NSKeyValueObservingOptionNew context:KVO_PlayerRate];
+                    
+                    [imageView sd_setImageWithURL:[NSURL URLWithString:thumbnail] placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                         
-                        NSLog(@"Video player image has been set: %@", URL);
+                        if (error != nil) {
+                            
+                            NSLog(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
+                            
+                            return;
+                            
+                        }
                         
-                    } error:^(NSError * _Nonnull error) {
-
-                        NSLog(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
-
+                        NSLog(@"Video player image has been set: %@", imageURL);
+                        
                     }];
                     
                 }

@@ -11,7 +11,6 @@
 #import "FolderDrop.h"
 
 #import <DZKit/NSString+Extras.h>
-#import <DZNetworking/UIImageView+ImageLoading.h>
 
 #import "FeedsManager.h"
 
