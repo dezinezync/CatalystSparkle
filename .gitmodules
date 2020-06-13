@@ -37,3 +37,6 @@
 [submodule "DBManager"]
 	path = Yeti/DBManager
 	url = git@github.com:dezinezync/YTDBManager.git
+[submodule "Yeti/Vendors/SDWebImage"]
+	path = Yeti/Vendors/SDWebImage
+	url = git@github.com:SDWebImage/SDWebImage.git
