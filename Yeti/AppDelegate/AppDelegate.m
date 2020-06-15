@@ -76,9 +76,6 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupRootController];
         
-//        [SharedImageLoader.cache removeAllObjects];
-//        [SharedImageLoader.cache removeAllObjectsFromDisk];
-        
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             MyAppDelegate = self;

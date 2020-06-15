@@ -29,7 +29,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
 }
 
-@property (nonatomic, strong) NSURLSessionTask *faviconTask;
+@property (nonatomic, strong) SDWebImageCombinedOperation *faviconTask;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleLabelWidthConstraint;
 
 @end
@@ -324,12 +324,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
                            url:(NSString *)url {
     
     if (self.faviconTask != nil) {
-        
-        // if it is running, do not interrupt it.
-        if (self.faviconTask.state == NSURLSessionTaskStateRunning) {
-            return;
-        }
-        
+
         // otherwise, cancel it and move on
         [self.faviconTask cancel];
         self.faviconTask = nil;
@@ -342,45 +337,40 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
-    
     if (url == nil) {
+        attachment.bounds = CGRectZero;
         return;
     }
     
-    self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    self.faviconTask = [[SDWebImageManager sharedManager] loadImageWithURL:[NSURL URLWithString:url] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+        
+        if (error != nil) {
+            
+            NSLogDebug(@"Failed to fetch favicon at: %@", url);
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                
+                attachment.bounds = CGRectZero;
+                
+                [self.titleLabel setNeedsDisplay];
+                
+            });
+            
+            return;
+            
+        }
         
         if ([image isKindOfClass:UIImage.class] == NO) {
             image = nil;
         }
         
-        if (image != nil) {
-            
-            CGFloat width = 24.f * UIScreen.mainScreen.scale;
-            
-            NSData *jpeg = nil;
-            
-            image = [image fastScale:CGSizeMake(width, width) quality:1.f cornerRadius:4.f imageData:&jpeg];
-            
-        }
-        
         runOnMainQueueWithoutDeadlocking(^{
             if (image == nil) {
-                attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+                attachment.bounds = CGRectZero;
             }
             else {
                 attachment.image = image;
             }
-            
-            [self.titleLabel setNeedsDisplay];
-        });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSLogDebug(@"Failed to fetch favicon at: %@", url);
-        
-        runOnMainQueueWithoutDeadlocking(^{
-            attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
             
             [self.titleLabel setNeedsDisplay];
         });

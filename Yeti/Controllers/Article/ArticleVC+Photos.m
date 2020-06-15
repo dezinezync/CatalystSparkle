@@ -13,7 +13,7 @@
 #import "ArticlePhoto.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
-#import <DZNetworking/ImageLoader.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 @implementation ArticleVC (Photos)
 
@@ -46,14 +46,14 @@
         
         if ([image isKindOfClass:Image.class]) {
             
+            ArticlePhoto *photo = [ArticlePhoto new];
+            photo.referenceView = image;
+            photo.placeholderImage = [(Image *)image imageView].image;
+            photo.URL = [(Image *)image URL];
+            
             Content *content = [(Image *)image content];
             
             if (content != nil) {
-                
-                ArticlePhoto *photo = [ArticlePhoto new];
-                photo.referenceView = image;
-                photo.placeholderImage = [(Image *)image imageView].image;
-                photo.URL = [(Image *)image URL];
                 
                 NSString *title = nil;
                 
@@ -65,14 +65,18 @@
                     photo.attributedCaptionSummary = [self captionForText:title];
                 }
                 
-                [_images addObject:photo];
-                counter++;
-                
-                if (sender.view == image && index == NSNotFound) {
-                    index = counter;
-                }
-                
             }
+            else if ([(Image *)image accessibilityValue] != nil) {
+                photo.attributedCaptionSummary = [self captionForText:[(Image *)image accessibilityValue]];
+            }
+            
+            [_images addObject:photo];
+            counter++;
+            
+            if (sender.view == image && index == NSNotFound) {
+                index = counter;
+            }
+            
         }
         else if ([image isKindOfClass:Gallery.class]) {
             
@@ -156,33 +160,43 @@
 
 - (void)photosViewController:(NYTPhotosViewController *)photosViewController didNavigateToPhoto:(ArticlePhoto *)photo atIndex:(NSUInteger)photoIndex {
     
+    if (photo == nil) {
+        return;
+    }
+    
     if (photo.image == nil && photo.task == nil) {
         
-        photo.task = [SharedImageLoader downloadImageForURL:photo.URL success:^(UIImage * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        photo.task = [[SDWebImageManager sharedManager] loadImageWithURL:photo.URL options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
             
-            photo.image = responseObject;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [photosViewController updatePhoto:photo];
-            });
-            
-            photo.task = nil;
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
+            if (error != nil) {
 #ifdef DEBUG
-            NSLog(@"Error downloading image: %@", photo.URL);
+                NSLog(@"Error downloading image: %@", photo.URL);
 #endif
             
-            NSString *errorString = [[NSString alloc] initWithFormat:@"Error downloading: %@", error.localizedDescription];
-            
-            photo.attributedCaptionSummary = [self captionForText:errorString];
+                NSString *errorString = [[NSString alloc] initWithFormat:@"Error downloading: %@", error.localizedDescription];
+                
+                photo.attributedCaptionSummary = [self captionForText:errorString];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [photosViewController updatePhoto:photo];
+                });
+                
+                photo.task = nil;
+                
+                return;
+                
+            }
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                photo.downloadedImage = image;
+                
                 [photosViewController updatePhoto:photo];
+                
             });
             
             photo.task = nil;
+            
             
         }];
         

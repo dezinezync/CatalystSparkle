@@ -279,6 +279,8 @@
         return;
     }
     
+    BOOL isAppending = self.DS.snapshot.numberOfItems > 0;
+    
     __weak NSArray *articles = self.pagingManager.items;
     
     @try {
@@ -287,7 +289,15 @@
         [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
         [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
         
+        if (isAppending == YES) {
+            [self.tableView setScrollEnabled:NO];
+        }
+        
         [self.DS applySnapshot:snapshot animatingDifferences:animated];
+        
+        if (isAppending == YES) {
+            [self.tableView setScrollEnabled:YES];
+        }
         
     }
     @catch (NSException *exc) {

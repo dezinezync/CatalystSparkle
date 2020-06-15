@@ -76,8 +76,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
 
-@property (nonatomic, strong) ImageLoader *articlesImageLoader;
-
 @end
 
 @implementation ArticleVC
@@ -109,7 +107,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     self.state = ArticleStateLoading;
-    self.articlesImageLoader = [ImageLoader new];
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -218,19 +215,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    
-    NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
-    
-    if (cache) {
-        [cache removeAllObjects];
-    }
-    
-    cache = [self.articlesImageLoader valueForKeyPath:@"cache"];
-    
-    if (cache) {
-        [cache removeAllObjects];
-    }
-    
 //    [self.navigationController popViewControllerAnimated:NO];
 }
 
@@ -247,11 +231,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)dealloc {
-    
-    if (self.articlesImageLoader != nil) {
-        [self.articlesImageLoader.cache removeAllObjects];
-        self.articlesImageLoader = nil;
-    }
     
     @try {
         [NSNotificationCenter.defaultCenter removeObserver:self];

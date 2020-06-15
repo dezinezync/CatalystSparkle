@@ -10,8 +10,6 @@
 
 #import "DBManager+CloudCore.h"
 
-#import <DZNetworking/ImageLoader.h>
-
 #import "SplitVC.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
@@ -29,8 +27,6 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    
-    [SharedImageLoader.cache removeAllObjects];
     
     [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
         
