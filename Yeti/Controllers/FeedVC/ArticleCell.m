@@ -261,7 +261,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 
 - (void)configureTitle:(FeedVCType)feedType {
     
-    if (feedType == FeedVCTypeNatural) {
+    if (feedType == FeedVCTypeNatural || feedType == FeedVCTypeAuthor) {
 
         self.titleLabel.text = self.article.articleTitle;
         return;
