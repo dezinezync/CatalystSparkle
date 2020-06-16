@@ -1,5 +1,11 @@
 # v1.8.0
 
+## Build 363
+
+- Fixes loading of some favicons. 
+
+- Fixes reloading of stale data in some cases. 
+
 ## Build 362
 
 - If the source supports it, the separate "dark mode" image will be used when available. 
