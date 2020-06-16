@@ -89,9 +89,8 @@ static void *KVO_Unread = &KVO_Unread;
 //    [self setupToolbar];
     
     MyDBManager.syncProgressBlock = ^(CGFloat progress) {
-#ifdef DEBUG
-        NSLog(@"Sync Progress: %@", @(progress));
-#endif
+        
+        NSLogDebug(@"Sync Progress: %@", @(progress));
         
         if (progress == 0.f) {
             

@@ -842,9 +842,7 @@
         self->_presentingKnown = NO;
     });
  
-#ifdef DEBUG
-    NSLog(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
-#endif
+    NSLogDebug(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
     
     NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
     

@@ -1676,15 +1676,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
     
     if (comps.host == nil) {
-#ifdef DEBUG
-        NSLog(@"No hostname for URL: %@", url);
-#endif
+        
+        NSLogDebug(@"No hostname for URL: %@", url);
+
         NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
         
         articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
-#ifdef DEBUG
-        NSLog(@"Attempted fixed URL: %@", articleURLComps.URL);
-#endif
+
+        NSLogDebug(@"Attempted fixed URL: %@", articleURLComps.URL);
         
         url = articleURLComps.URL;
         
@@ -2930,9 +2929,9 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
         UILabel *label = (UILabel *)[interaction view];
         
         CGSize textBounds = [label sizeThatFits:bounds.size];
-#ifdef DEBUG
-        NSLog(@"textBounds: %@\nBounds: %@", [NSValue valueWithCGSize:textBounds], [NSValue valueWithCGRect:bounds]);
-#endif
+
+        NSLogDebug(@"textBounds: %@\nBounds: %@", [NSValue valueWithCGSize:textBounds], [NSValue valueWithCGRect:bounds]);
+
         bounds.size = textBounds;
         
         // inset it so we get some padding.

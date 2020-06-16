@@ -26,9 +26,7 @@
     
     NSInteger scope = searchController.searchBar.selectedScopeButtonIndex;
     
-#ifdef DEBUG
-    NSLog(@"Search text: %@ - Scope: %@", text, @(scope));
-#endif
+    NSLogDebug(@"Search text: %@ - Scope: %@", text, @(scope));
     
     if (scope == 1) {
         

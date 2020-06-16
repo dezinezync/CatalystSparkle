@@ -169,9 +169,8 @@
         photo.task = [[SDWebImageManager sharedManager] loadImageWithURL:photo.URL options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
             
             if (error != nil) {
-#ifdef DEBUG
-                NSLog(@"Error downloading image: %@", photo.URL);
-#endif
+                
+                NSLogDebug(@"Error downloading image: %@", photo.URL);
             
                 NSString *errorString = [[NSString alloc] initWithFormat:@"Error downloading: %@", error.localizedDescription];
                 
