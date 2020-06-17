@@ -41,8 +41,6 @@
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
-@property (nonatomic, strong) NSMapTable <NSString *, NSURLSessionTask *> *prefetchingTasks;
-
 @end
 
 #define ArticlesSection @0
@@ -93,8 +91,6 @@
     
     [self setupNavigationBar];
     [self setupTableView];
-    
-    self.prefetchingTasks = [NSMapTable weakToStrongObjectsMapTable];
     
 }
 
@@ -245,6 +241,8 @@
     
     [self setupDatasource];
     
+    self.tableView.prefetchDataSource = self;
+    
     self.tableView.tableFooterView = [UIView new];
     self.tableView.estimatedRowHeight =  150.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -289,6 +287,8 @@
         return;
     }
     
+    BOOL isAppending = self.DS.snapshot.numberOfItems > 0;
+    
     __weak NSArray *articles = self.pagingManager.items;
     
     @try {
@@ -297,7 +297,15 @@
         [snapshot appendSectionsWithIdentifiers:@[ArticlesSection]];
         [snapshot appendItemsWithIdentifiers:articles intoSectionWithIdentifier:ArticlesSection];
         
+        if (isAppending == YES) {
+            [self.tableView setScrollEnabled:NO];
+        }
+        
         [self.DS applySnapshot:snapshot animatingDifferences:animated];
+        
+        if (isAppending == YES) {
+            [self.tableView setScrollEnabled:YES];
+        }
         
     }
     @catch (NSException *exc) {
@@ -791,146 +799,125 @@
 }
 
 #pragma mark - <UITableViewDatasourcePrefetching>
-
-- (void)tableView:(UITableView *)tableView prefetchRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
-
-    BOOL showImage = SharedPrefs.imageLoading != ImageLoadingNever;
-
-    if (CheckWiFi() == NO && showImage == YES) {
-        showImage = NO;
-    }
-
-    if (showImage == NO) {
-        return;
-    }
-
-    BOOL imageProxy = SharedPrefs.imageProxy;
-
-    // get any cell
-    ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPaths.firstObject];
-
-    for (NSIndexPath *indexPath in indexPaths) {
-
-        FeedItem *article = [self itemForIndexPath:indexPath];
-
-        if (article == nil) {
-            continue;
-        }
-
-        if (self.type != FeedVCTypeNatural) {
-
-            // should pre-cache the Favicon
-            Feed *feed = [ArticlesManager.shared feedForID:article.feedID];
-
-            if (feed != nil) {
-
-                NSString *faviconURL = feed.faviconURI;
-
-                if (faviconURL != nil) {
-
-                    CGFloat maxWidth = 24.f;
-
-                    if (imageProxy == YES) {
-
-                        faviconURL = [faviconURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
-
-                    }
-
-                    NSString *hash = [faviconURL md5];
-
-                    NSString *key = [NSString stringWithFormat:@"%@-%@:%@", @(indexPath.section), @(indexPath.row), hash];
-
-                    if (faviconURL && [self.prefetchingTasks objectForKey:key] == nil) {
-
-                        NSURLSessionTask *task = [SharedImageLoader downloadImageForURL:faviconURL success:nil error:nil];
-
-                        [self.prefetchingTasks setObject:task forKey:key];
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        // check for cover image
-        NSString *coverImageURL = article.coverImage;
-
-        if (coverImageURL == nil && article.content != nil && article.content.count > 0) {
-
-            Content *content = [article.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
-
-                if (prev && [prev.type isEqualToString:@"image"]) {
-                    return prev;
-                }
-
-                return current;
-            }];
-
-            if (content != nil) {
-                article.coverImage = content.url;
-                coverImageURL = article.coverImage;
-            }
-
-        }
-
-        if (coverImageURL != nil) {
-
-            CGFloat maxWidth = cell.coverImage.bounds.size.width;
-
-            if (imageProxy == YES) {
-
-                coverImageURL = [coverImageURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
-
-            }
-
-            NSString *hash = [coverImageURL md5];
-
-            NSString *key = [NSString stringWithFormat:@"%@-%@:%@", @(indexPath.section), @(indexPath.row), hash];
-
-            if ([self.prefetchingTasks objectForKey:key] == nil) {
-
-                NSURLSessionTask *task = [SharedImageLoader downloadImageForURL:coverImageURL success:nil error:nil];
-
-                [self.prefetchingTasks setObject:task forKey:key];
-
-            }
-
-        }
-
-    }
-
-}
-
-- (void)tableView:(UITableView *)tableView cancelPrefetchingForRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
-
-    NSArray <NSString *> *allKeys = [[self.prefetchingTasks keyEnumerator] allObjects];
-
-    for (NSIndexPath *indexPath in indexPaths) {
-
-        NSString *keyPrefix = [NSString stringWithFormat:@"%@-%@:", @(indexPath.section), @(indexPath.row)];
-
-        for (NSString *key in allKeys) {
-
-            if ([key containsString:keyPrefix] == YES) {
-
-                NSURLSessionTask *task = [self.prefetchingTasks objectForKey:key];
-
-                if (task != nil) {
-                    [task cancel];
-                }
-
-                [self.prefetchingTasks removeObjectForKey:key];
-                task = nil;
-
-            }
-
-        }
-
-    }
-
-}
+//
+//- (void)tableView:(UITableView *)tableView prefetchRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+//
+//    BOOL showImage = SharedPrefs.imageLoading != ImageLoadingNever;
+//
+//    if (CheckWiFi() == NO && showImage == YES) {
+//        showImage = NO;
+//    }
+//
+//    if (showImage == NO) {
+//        return;
+//    }
+//
+//    BOOL imageProxy = SharedPrefs.imageProxy;
+//
+//    NSMutableArray <NSURL *> *imagesToCache = [NSMutableArray new];
+//
+//    // get any cell
+//    ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPaths.firstObject];
+//
+//    for (NSIndexPath *indexPath in indexPaths) {
+//
+//        FeedItem *article = [self itemForIndexPath:indexPath];
+//
+//        if (article == nil) {
+//            continue;
+//        }
+//
+//        if (self.type != FeedVCTypeNatural) {
+//
+//            // should pre-cache the Favicon
+//            Feed *feed = [ArticlesManager.shared feedForID:article.feedID];
+//
+//            if (feed != nil) {
+//
+//                NSString *faviconURL = feed.faviconURI;
+//
+//                if (faviconURL != nil) {
+//
+//                    CGFloat maxWidth = 24.f;
+//
+//                    if (imageProxy == YES) {
+//
+//                        faviconURL = [faviconURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+//
+//                    }
+//
+//                    if (faviconURL) {
+//
+//                        [imagesToCache addObject:[NSURL URLWithString:faviconURL]];
+//
+//                    }
+//
+//                }
+//
+//            }
+//
+//        }
+//
+//        // check for cover image
+//        NSString *coverImageURL = article.coverImage;
+//
+//        if (coverImageURL == nil && article.content != nil && article.content.count > 0) {
+//
+//            Content *content = [article.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
+//
+//                if (prev && [prev.type isEqualToString:@"image"]) {
+//                    return prev;
+//                }
+//
+//                return current;
+//            }];
+//
+//            if (content != nil) {
+//                article.coverImage = content.url;
+//                coverImageURL = article.coverImage;
+//            }
+//
+//        }
+//
+//        if (coverImageURL != nil) {
+//
+//            CGFloat maxWidth = cell.coverImage.bounds.size.width;
+//
+//            if (imageProxy == YES) {
+//
+//                coverImageURL = [coverImageURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+//
+//            }
+//
+//            if (coverImageURL != nil) {
+//
+//                [imagesToCache addObject:[NSURL URLWithString:coverImageURL]];
+//
+//            }
+//
+//        }
+//
+//    }
+//
+//    if (imagesToCache.count > 0) {
+//
+//        self.prefetchingTasks = [SDWebImagePrefetcher.sharedImagePrefetcher prefetchURLs:imagesToCache];
+//
+//    }
+//
+//}
+//
+//- (void)tableView:(UITableView *)tableView cancelPrefetchingForRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
+//
+//    if (self.prefetchingTasks != nil) {
+//
+//        [self.prefetchingTasks cancel];
+//
+//        self.prefetchingTasks = nil;
+//
+//    }
+//
+//}
 
 #pragma mark - Setters
 

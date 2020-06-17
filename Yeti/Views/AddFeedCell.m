@@ -9,7 +9,7 @@
 #import "AddFeedCell.h"
 #import "YetiThemeKit.h"
 
-#import <DZNetworking/ImageLoader.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 #import <DZKit/NSString+Extras.h>
 #import <DZTextKit/NSString+ImageProxy.h>
 
@@ -77,7 +77,7 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
     
     self.titleLabel.text = nil;
     self.urlLabel.text = nil;
-    [self.faviconView il_cancelImageLoading];
+    [self.faviconView sd_cancelCurrentImageLoad];
 
 }
 
@@ -109,17 +109,22 @@ NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
         @try {
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
                 strongify(self);
-                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-                    
+                
+                UIImage *placeholder = [[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                
+                [self.faviconView sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:placeholder options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                   
                     self.faviconView.contentMode = UIViewContentModeScaleAspectFit;
                     
-                } error:nil];
+                }];
+                
             });
         }
         @catch (NSException *exc) {
             // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            NSLog(@"ArticleCell setImage: %@", exc);
+            NSLog(@"AddFeedCell setImage: %@", exc);
         }
     }
     

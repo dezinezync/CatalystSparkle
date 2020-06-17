@@ -298,6 +298,8 @@
 		F0E656872063EF0D00450959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86490234793870089F9EF /* ArticleVC+Photos.m */; };
 		F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86493234796B80089F9EF /* ArticlePhoto.m */; };
+		F0EB460F2494987500175B42 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F069AF85249496E100BAB6FB /* SDWebImage.framework */; };
+		F0EB46102494987500175B42 /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F069AF85249496E100BAB6FB /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
@@ -310,8 +312,6 @@
 		F0F10A9D244C8020009FC108 /* DTError.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A93244C8020009FC108 /* DTError.m */; };
 		F0F10A9E244C8020009FC108 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A94244C8020009FC108 /* DTTimePeriodCollection.m */; };
 		F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A96244C8020009FC108 /* DTTimePeriodChain.m */; };
-		F0F10AA0244C8077009FC108 /* FLAnimatedImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0F10A7B244C7E29009FC108 /* FLAnimatedImage.framework */; };
-		F0F10AA1244C8078009FC108 /* FLAnimatedImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0F10A7B244C7E29009FC108 /* FLAnimatedImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
@@ -331,6 +331,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = F035A21420617EC3005A88EE;
 			remoteInfo = YetiShare;
+		};
+		F069AF82249496E100BAB6FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53761325155AD0D5005750A4;
+			remoteInfo = "SDWebImage static";
+		};
+		F069AF84249496E100BAB6FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4A2CADFF1AB4BB5300B6BC39;
+			remoteInfo = SDWebImage;
+		};
+		F069AF86249496E100BAB6FB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 80B6DFEE2142B71600BCB334;
+			remoteInfo = SDWebImageMapKit;
 		};
 		F070C2FD1FBABC3600912CCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -500,13 +521,6 @@
 			remoteGlobalIDString = F056B9B11F04F55D0041BB0C;
 			remoteInfo = DZKit;
 		};
-		F0BFD72E2458058B009A863C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 92C9BC0B1B199DC500D79B06;
-			remoteInfo = FLAnimatedImage;
-		};
 		F0BFD74C24580590009A863C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
@@ -633,6 +647,13 @@
 			remoteGlobalIDString = 5CB4EB481B45BF5B0058E91A;
 			remoteInfo = "JLRoutes-iOS";
 		};
+		F0EB45EE2494986600175B42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 326CA50C22BA14EF0033A92F;
+			remoteInfo = "SDWebImage XCFramework";
+		};
 		F0F10A15244C7B21009FC108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */;
@@ -646,13 +667,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F011975C244B6E490061C0C2;
 			remoteInfo = DZTextKitTests;
-		};
-		F0F10A7A244C7E29009FC108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 92C9BC0C1B199DC500D79B06;
-			remoteInfo = FLAnimatedImage;
 		};
 		F0F10A84244C7FED009FC108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -683,7 +697,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F0F10AA1244C8078009FC108 /* FLAnimatedImage.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
 				F0E0E6DF2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Embed Frameworks */,
@@ -693,6 +706,7 @@
 				F0658EA5244C80F3002AC231 /* DZTextKit.framework in Embed Frameworks */,
 				F0E0E6E12457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Embed Frameworks */,
 				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
+				F0EB46102494987500175B42 /* SDWebImage.framework in Embed Frameworks */,
 				F0A39B13245A955600A9B26E /* PINRemoteImage.framework in Embed Frameworks */,
 				F0A39B19245A958200A9B26E /* PINOperation.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
@@ -897,6 +911,7 @@
 		F067D35C23F43B350034B968 /* Customization.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Customization.m; sourceTree = "<group>"; };
 		F0695B1E20CE6B7600517AF8 /* UIViewController+Hairline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Hairline.h"; sourceTree = "<group>"; };
 		F0695B1F20CE6B7600517AF8 /* UIViewController+Hairline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Hairline.m"; sourceTree = "<group>"; };
+		F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDWebImage.xcodeproj; path = Vendors/SDWebImage/SDWebImage.xcodeproj; sourceTree = "<group>"; };
 		F06B765D20C278EC00FBCDE7 /* FeedsVC+Keyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+Keyboard.h"; sourceTree = "<group>"; };
 		F06B765E20C278EC00FBCDE7 /* FeedsVC+Keyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+Keyboard.m"; sourceTree = "<group>"; };
 		F06B766220C27CD000FBCDE7 /* YTNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTNavigationController.h; sourceTree = "<group>"; };
@@ -1144,7 +1159,6 @@
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
 		F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZTextKit.xcodeproj; path = Vendors/DZTextKit/DZTextKit.xcodeproj; sourceTree = "<group>"; };
-		F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FLAnimatedImage.xcodeproj; path = Vendors/FLAnimatedImage/FLAnimatedImage.xcodeproj; sourceTree = "<group>"; };
 		F0F10A88244C8020009FC108 /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0F10A89244C8020009FC108 /* DTTimePeriod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriod.m; sourceTree = "<group>"; };
 		F0F10A8A244C8020009FC108 /* DTError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTError.h; sourceTree = "<group>"; };
@@ -1192,6 +1206,7 @@
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F0A39B18245A958200A9B26E /* PINOperation.framework in Frameworks */,
+				F0EB460F2494987500175B42 /* SDWebImage.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
@@ -1203,7 +1218,6 @@
 				F0E0E6E02457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
-				F0F10AA0244C8077009FC108 /* FLAnimatedImage.framework in Frameworks */,
 				F0658EA4244C80F3002AC231 /* DZTextKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1544,6 +1558,16 @@
 				F064A53E21576F5600A385AD /* TrialVC.xib */,
 			);
 			path = Intro;
+			sourceTree = "<group>";
+		};
+		F069AF7C249496E100BAB6FB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F069AF83249496E100BAB6FB /* libSDWebImage.a */,
+				F069AF85249496E100BAB6FB /* SDWebImage.framework */,
+				F069AF87249496E100BAB6FB /* SDWebImageMapKit.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F070C2D01FBABC3500912CCF = {
@@ -2154,6 +2178,7 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */,
 				F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */,
 				F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */,
 				F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */,
@@ -2163,7 +2188,6 @@
 				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
 				F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */,
-				F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */,
 				F01285BE23436D8D00B8C277 /* Keychain */,
 				F0AA8C79216B4A4E00C65DAE /* RMStore */,
 				F0F10A87244C8020009FC108 /* DateTools */,
@@ -2198,14 +2222,6 @@
 			children = (
 				F0F10A16244C7B21009FC108 /* DZTextKit.framework */,
 				F0F10A18244C7B21009FC108 /* DZTextKitTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F0F10A77244C7E28009FC108 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F0F10A7B244C7E29009FC108 /* FLAnimatedImage.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2278,8 +2294,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0EB45EF2494986600175B42 /* PBXTargetDependency */,
 				F0BFD74D24580590009A863C /* PBXTargetDependency */,
-				F0BFD72F2458058B009A863C /* PBXTargetDependency */,
 				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
 				F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */,
@@ -2448,16 +2464,16 @@
 					ProjectRef = F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */;
 				},
 				{
-					ProductGroup = F0F10A77244C7E28009FC108 /* Products */;
-					ProjectRef = F0F10A76244C7E28009FC108 /* FLAnimatedImage.xcodeproj */;
-				},
-				{
 					ProductGroup = F0E0E6E32457FF1D00DFFD17 /* Products */;
 					ProjectRef = F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */;
 				},
 				{
 					ProductGroup = F0E0E6C72457FED300DFFD17 /* Products */;
 					ProjectRef = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
+				},
+				{
+					ProductGroup = F069AF7C249496E100BAB6FB /* Products */;
+					ProjectRef = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
 				},
 				{
 					ProductGroup = F0B482562455F62C00EE5AA2 /* Products */;
@@ -2477,6 +2493,27 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F069AF83249496E100BAB6FB /* libSDWebImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSDWebImage.a;
+			remoteRef = F069AF82249496E100BAB6FB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F069AF85249496E100BAB6FB /* SDWebImage.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDWebImage.framework;
+			remoteRef = F069AF84249496E100BAB6FB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F069AF87249496E100BAB6FB /* SDWebImageMapKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDWebImageMapKit.framework;
+			remoteRef = F069AF86249496E100BAB6FB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F076DECD246EC94B00B68F4E /* ImageLoaderExample.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -2720,13 +2757,6 @@
 			fileType = wrapper.cfbundle;
 			path = DZTextKitTests.xctest;
 			remoteRef = F0F10A17244C7B21009FC108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0F10A7B244C7E29009FC108 /* FLAnimatedImage.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = FLAnimatedImage.framework;
-			remoteRef = F0F10A7A244C7E29009FC108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -3157,11 +3187,6 @@
 			name = DZKit;
 			targetProxy = F0BFD6BE245804FD009A863C /* PBXContainerItemProxy */;
 		};
-		F0BFD72F2458058B009A863C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FLAnimatedImage;
-			targetProxy = F0BFD72E2458058B009A863C /* PBXContainerItemProxy */;
-		};
 		F0BFD74D24580590009A863C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "YapDatabase-iOS";
@@ -3176,6 +3201,11 @@
 			isa = PBXTargetDependency;
 			name = "JLRoutes-iOS";
 			targetProxy = F0E0E6F02457FF2A00DFFD17 /* PBXContainerItemProxy */;
+		};
+		F0EB45EF2494986600175B42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SDWebImage XCFramework";
+			targetProxy = F0EB45EE2494986600175B42 /* PBXContainerItemProxy */;
 		};
 		F0F10A85244C7FED009FC108 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3221,7 +3251,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3259,7 +3289,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3318,7 +3348,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3378,7 +3408,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3410,7 +3440,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3460,7 +3490,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3500,7 +3530,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3523,7 +3553,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3546,7 +3576,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3566,7 +3596,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 360;
+				CURRENT_PROJECT_VERSION = 363;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -12,8 +12,6 @@
 #import "YetiThemeKit.h"
 #import "PrefsManager.h"
 
-#import <DZNetworking/ImageLoader.h>
-
 NSString *const kXSwitchCell = @"cell.switch";
 NSString *const kXImageLoadingCell = @"cell.imageLoading";
 
@@ -270,9 +268,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
             [SharedPrefs setValue:ImageLoadingMediumRes forKey:propSel(imageBandwidth)];
         else
             [SharedPrefs setValue:ImageLoadingHighRes forKey:propSel(imageLoading)];
-        
-        [[SharedImageLoader cache] removeAllObjects];
-        [[SharedImageLoader cache] removeAllObjectsFromDisk];
+
     }
     else {
         if (self.bandwidth == 0)

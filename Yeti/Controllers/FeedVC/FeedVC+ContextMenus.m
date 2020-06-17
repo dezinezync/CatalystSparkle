@@ -65,10 +65,6 @@
         
             NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
             
-#if TARGET_OS_MACCATALYST
-            URL = [NSURL URLWithString:item.articleURL];
-#endif
-            
             dispatch_async(dispatch_get_main_queue(), ^{
                 
                 [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
@@ -79,17 +75,7 @@
         
         UIAction *share = [UIAction actionWithTitle:@"Share Article" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
-            NSString *title = item.articleTitle;
-            NSURL *URL = formattedURL(@"%@", item.articleURL);
-            
-            UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
-            
-            UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-            
-            pvc.sourceView = tableView;
-            pvc.sourceRect = [[tableView cellForRowAtIndexPath:indexPath] frame];
-            
-            [self presentViewController:avc animated:YES completion:nil];
+            [self wantsToShare:item indexPath:indexPath];
             
         }];
         
@@ -136,7 +122,154 @@
     
 }
 
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView leadingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    FeedItem *item = [self itemForIndexPath:indexPath];
+    
+    if (item == nil) {
+        return nil;
+    }
+    
+    NSMutableArray <UIContextualAction *> *actions = [NSMutableArray arrayWithCapacity:2];
+    
+    UIContextualAction *read = nil;
+    
+    if (item.isRead == YES) {
+        
+        read = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Unread" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+            
+            [self userMarkedArticle:item read:NO];
+            
+            completionHandler(YES);
+            
+        }];
+        
+        read.image = [UIImage systemImageNamed:@"circle"];
+        
+    }
+    else {
+        
+        read = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Read" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+            
+            [self userMarkedArticle:item read:YES];
+            
+            completionHandler(YES);
+            
+        }];
+        
+        read.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
+        
+    }
+    
+    read.backgroundColor = UIColor.systemBlueColor;
+    
+    [actions addObject:read];
+    
+    UIContextualAction *bookmark = nil;
+    
+    if (item.isBookmarked == YES) {
+        
+        bookmark = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Unbookmark" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+            
+            [self userMarkedArticle:item bookmarked:NO];
+            
+            completionHandler(YES);
+            
+        }];
+        
+        bookmark.image = [UIImage systemImageNamed:@"bookmark"];
+        
+    }
+    else {
+        
+        bookmark = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Bookmark" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+            
+            [self userMarkedArticle:item bookmarked:YES];
+            
+            completionHandler(YES);
+            
+        }];
+        
+        bookmark.image = [UIImage systemImageNamed:@"bookmark.fill"];
+        
+    }
+    
+    bookmark.backgroundColor = UIColor.systemOrangeColor;
+    
+    [actions addObject:bookmark];
+    
+    UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:actions];
+    
+    return config;
+    
+}
+
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    FeedItem *item = [self itemForIndexPath:indexPath];
+    
+    if (item == nil) {
+        return nil;
+    }
+    
+    NSMutableArray <UIContextualAction *> *actions = [NSMutableArray arrayWithCapacity:2];
+    
+    UIContextualAction *browser = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Browser" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        
+        completionHandler(YES);
+        
+        NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+            
+        });
+        
+    }];
+    
+    browser.image = [UIImage systemImageNamed:@"safari"];
+    
+    browser.backgroundColor = UIColor.systemTealColor;
+    
+    [actions addObject:browser];
+    
+    UIContextualAction *share = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Share" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        
+        completionHandler(YES);
+        
+        [self wantsToShare:item indexPath:indexPath];
+        
+    }];
+    
+    share.image = [UIImage systemImageNamed:@"square.and.arrow.up"];
+    
+    share.backgroundColor = UIColor.systemGrayColor;
+    
+    [actions addObject:share];
+    
+    UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:actions];
+    
+    return config;
+    
+}
+
 #pragma mark -
+
+- (void)wantsToShare:(FeedItem *)item indexPath:(NSIndexPath *)indexPath {
+    
+    NSString *title = item.articleTitle;
+    NSURL *URL = formattedURL(@"%@", item.articleURL);
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, URL] applicationActivities:nil];
+    
+    UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+    pvc.sourceView = self.tableView;
+    pvc.sourceRect = [[self.tableView cellForRowAtIndexPath:indexPath] frame];
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
+}
 
 - (void)showAuthorVC:(NSString *)author {
     

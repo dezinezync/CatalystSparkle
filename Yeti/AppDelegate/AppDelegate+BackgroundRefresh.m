@@ -10,8 +10,6 @@
 
 #import "DBManager+CloudCore.h"
 
-#import <DZNetworking/ImageLoader.h>
-
 #import "SplitVC.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
@@ -29,8 +27,6 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    
-    [SharedImageLoader.cache removeAllObjects];
     
     [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
         
@@ -67,9 +63,7 @@
 
 - (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(nonnull NSString *)identifier completionHandler:(nonnull void (^)(void))completionHandler {
     
-#ifdef DEBUG
-    NSLog(@"Got a fresh background completion handler");
-#endif
+    NSLogDebug(@"Got a fresh background completion handler");
     
     MyFeedsManager.backgroundSession.backgroundCompletionHandler = completionHandler;
 //    MyDBManager.backgroundCompletionHandler = completionHandler;

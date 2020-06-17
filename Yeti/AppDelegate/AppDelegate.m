@@ -102,9 +102,6 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupRootController];
         
-//        [SharedImageLoader.cache removeAllObjects];
-//        [SharedImageLoader.cache removeAllObjectsFromDisk];
-        
         if (SharedPrefs.backgroundRefresh == YES) {
             [self setupBackgroundRefresh];
         }

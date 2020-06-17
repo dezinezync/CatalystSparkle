@@ -17,6 +17,8 @@
 #import <DZTextKit/NSString+ImageProxy.h>
 #import <DZTextKit/Paragraph.h>
 
+#import <SDWebImage/UIImageView+WebCache.h>
+
 #import "YetiThemeKit.h"
 
 NSString *const kArticleCell = @"com.yeti.cell.article";
@@ -27,7 +29,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
 }
 
-@property (nonatomic, strong) NSURLSessionTask *faviconTask;
+@property (nonatomic, strong) SDWebImageCombinedOperation *faviconTask;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleLabelWidthConstraint;
 
 @end
@@ -259,7 +261,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 
 - (void)configureTitle:(FeedVCType)feedType {
     
-    if (feedType == FeedVCTypeNatural) {
+    if (feedType == FeedVCTypeNatural || feedType == FeedVCTypeAuthor) {
 
         self.titleLabel.text = self.article.articleTitle;
         return;
@@ -327,12 +329,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
                            url:(NSString *)url {
     
     if (self.faviconTask != nil) {
-        
-        // if it is running, do not interrupt it.
-        if (self.faviconTask.state == NSURLSessionTaskStateRunning) {
-            return;
-        }
-        
+
         // otherwise, cancel it and move on
         [self.faviconTask cancel];
         self.faviconTask = nil;
@@ -345,45 +342,40 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
-    
     if (url == nil) {
+        attachment.bounds = CGRectZero;
         return;
     }
     
-    self.faviconTask = [SharedImageLoader downloadImageForURL:url success:^(UIImage *image, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    self.faviconTask = [[SDWebImageManager sharedManager] loadImageWithURL:[NSURL URLWithString:url] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+        
+        if (error != nil) {
+            
+            NSLogDebug(@"Failed to fetch favicon at: %@", url);
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                
+                attachment.bounds = CGRectZero;
+                
+                [self.titleLabel setNeedsDisplay];
+                
+            });
+            
+            return;
+            
+        }
         
         if ([image isKindOfClass:UIImage.class] == NO) {
             image = nil;
         }
         
-        if (image != nil) {
-            
-            CGFloat width = 24.f * UIScreen.mainScreen.scale;
-            
-            NSData *jpeg = nil;
-            
-            image = [image fastScale:CGSizeMake(width, width) quality:1.f cornerRadius:4.f imageData:&jpeg];
-            
-        }
-        
         runOnMainQueueWithoutDeadlocking(^{
             if (image == nil) {
-                attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+                attachment.bounds = CGRectZero;
             }
             else {
                 attachment.image = image;
             }
-            
-            [self.titleLabel setNeedsDisplay];
-        });
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        NSLogDebug(@"Failed to fetch favicon at: %@", url);
-        
-        runOnMainQueueWithoutDeadlocking(^{
-            attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
             
             [self.titleLabel setNeedsDisplay];
         });
@@ -478,24 +470,15 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+    self.coverImage.contentMode = UIViewContentModeCenter;
     
-    [self.coverImage il_setImageWithURL:[NSURL URLWithString:url] mutate:^UIImage * _Nonnull(UIImage * _Nonnull image) {
+    [self.coverImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
-        if (SharedPrefs.imageProxy == YES) {
-            return image;
+        if (error != nil) {
+            return;
         }
         
-        CGSize size = CGSizeMake(maxWidth, maxWidth);
-        
-        UIImage *sized = [image fastScale:size quality:1.f cornerRadius:0.f imageData:nil];
-        
-        return sized;
-        
-    } success:nil error:^(NSError * _Nonnull error) {
-       
-        self.coverImage.contentMode = UIViewContentModeCenter;
-        self.coverImage.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled"];
+        self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
         
     }];
     

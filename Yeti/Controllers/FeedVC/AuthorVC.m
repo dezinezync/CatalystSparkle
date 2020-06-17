@@ -37,6 +37,12 @@
     
 }
 
+- (FeedVCType)type {
+    
+    return FeedVCTypeAuthor;
+    
+}
+
 #pragma mark - Subclassed
 
 - (PagingManager *)authorPagingManager {
