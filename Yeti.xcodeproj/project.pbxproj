@@ -325,6 +325,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F032B7E8249A5E8A0034A685 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 326CA50C22BA14EF0033A92F;
+			remoteInfo = "SDWebImage XCFramework";
+		};
 		F035A21E20617EC3005A88EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
@@ -646,13 +653,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5CB4EB481B45BF5B0058E91A;
 			remoteInfo = "JLRoutes-iOS";
-		};
-		F0EB45EE2494986600175B42 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 326CA50C22BA14EF0033A92F;
-			remoteInfo = "SDWebImage XCFramework";
 		};
 		F0F10A15244C7B21009FC108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2294,7 +2294,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F0EB45EF2494986600175B42 /* PBXTargetDependency */,
+				F032B7E9249A5E8A0034A685 /* PBXTargetDependency */,
 				F0BFD74D24580590009A863C /* PBXTargetDependency */,
 				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
@@ -3150,6 +3150,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F032B7E9249A5E8A0034A685 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SDWebImage XCFramework";
+			targetProxy = F032B7E8249A5E8A0034A685 /* PBXContainerItemProxy */;
+		};
 		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F035A21420617EC3005A88EE /* YetiShare */;
@@ -3201,11 +3206,6 @@
 			isa = PBXTargetDependency;
 			name = "JLRoutes-iOS";
 			targetProxy = F0E0E6F02457FF2A00DFFD17 /* PBXContainerItemProxy */;
-		};
-		F0EB45EF2494986600175B42 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SDWebImage XCFramework";
-			targetProxy = F0EB45EE2494986600175B42 /* PBXContainerItemProxy */;
 		};
 		F0F10A85244C7FED009FC108 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

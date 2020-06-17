@@ -74,6 +74,10 @@ AppDelegate *MyAppDelegate = nil;
     
     [self.window makeKeyAndVisible];
     
+    if (SharedPrefs.backgroundRefresh == YES) {
+        [self setupBackgroundRefresh];
+    }
+    
 }
 
 - (BOOL)commonInit:(UIApplication *)application {
@@ -101,10 +105,6 @@ AppDelegate *MyAppDelegate = nil;
         }
         
         [self setupRootController];
-        
-        if (SharedPrefs.backgroundRefresh == YES) {
-            [self setupBackgroundRefresh];
-        }
         
         weakify(self);
         
