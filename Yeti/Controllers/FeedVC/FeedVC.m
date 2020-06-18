@@ -107,6 +107,12 @@
         [self loadNextPage];
     }
     
+#if TARGET_OS_MACCATALYST
+    
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
+#endif
+    
     if (_reloadDataset) {
         
         _reloadDataset = NO;

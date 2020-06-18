@@ -20,11 +20,15 @@
     
     self.sortingOption = option;
     
-    UIColor *tintColor = nil;
-    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
-    
-    sender.image = image;
-    sender.tintColor = tintColor;
+    if (sender != nil && [sender isKindOfClass:UIBarButtonItem.class]) {
+        
+        UIColor *tintColor = nil;
+        UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+        
+        sender.image = image;
+        sender.tintColor = tintColor;
+        
+    }
     
 }
 
@@ -491,5 +495,8 @@
     
 }
 
+#if TARGET_OS_MACCATALYST
+
+#endif
 
 @end

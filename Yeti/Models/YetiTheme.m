@@ -142,8 +142,17 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
 
 - (void)ct_updateSemanticAppKitColors {
     
-    self.backgroundColor = [MyAppDelegate appKitColorNamed:@"windowBackgroundColor"];
-    self.cellColor = [MyAppDelegate appKitColorNamed:@"unemphasizedSelectedContentBackgroundColor"];
+    self.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return [UIColor colorWithRed: 0.15 green: 0.15 blue: 0.17 alpha: 1.00];
+        }
+        
+        return [UIColor colorWithRed: 0.91 green: 0.91 blue: 0.91 alpha: 1.00];
+        
+    }];
+    
+    self.cellColor = self.backgroundColor;
     self.tableColor = self.cellColor;
     
 }

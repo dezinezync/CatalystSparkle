@@ -150,6 +150,7 @@
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
+		F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */ = {isa = PBXBuildFile; fileRef = F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */; };
 		F07CD39522B266E9005BCDE7 /* OpenDyslexic-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */; };
 		F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */; };
 		F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38522B266E9005BCDE7 /* OpenDyslexic-Regular.ttf */; };
@@ -959,6 +960,8 @@
 		F078B637206637B40048DBEA /* EmptyVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyVC.xib; sourceTree = "<group>"; };
 		F07A31302297FC9D00822969 /* UIView+Anchoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Anchoring.h"; sourceTree = "<group>"; };
 		F07A31312297FC9D00822969 /* UIView+Anchoring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Anchoring.m"; sourceTree = "<group>"; };
+		F07CA623249BA03500EA4212 /* AppDelegate+CatalystActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+CatalystActions.h"; sourceTree = "<group>"; };
+		F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+CatalystActions.m"; sourceTree = "<group>"; };
 		F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Italic.ttf"; sourceTree = "<group>"; };
 		F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-BoldItalic.ttf"; sourceTree = "<group>"; };
 		F07CD38522B266E9005BCDE7 /* OpenDyslexic-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Regular.ttf"; sourceTree = "<group>"; };
@@ -1814,6 +1817,8 @@
 				F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */,
 				F088CF6C248E72020010EBC0 /* AppDelegate+Catalyst.h */,
 				F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */,
+				F07CA623249BA03500EA4212 /* AppDelegate+CatalystActions.h */,
+				F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -3038,6 +3043,7 @@
 				F0F10A9C244C8020009FC108 /* DTConstants.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */,
+				F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */,
 				F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */,
 				F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */,
 				F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */,

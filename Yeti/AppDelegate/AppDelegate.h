@@ -51,6 +51,8 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) AppKitGlue *sharedGlue;
 
+@property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
+
 #endif
 
 @end

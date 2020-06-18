@@ -167,7 +167,7 @@ PrefsManager * SharedPrefs = nil;
             
         }
         else if ([NSStringFromClass([value class]) containsString:@"Boolean"]) {
-            [self.defaults setBool:value forKey:mapping];
+            [self.defaults setBool:[value boolValue] forKey:mapping];
         }
         else {
             [self.defaults setValue:value forKey:mapping];
