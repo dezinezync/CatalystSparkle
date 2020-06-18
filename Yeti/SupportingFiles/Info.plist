@@ -298,5 +298,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2016-2020 Nikhil Nigade</string>
 </dict>
 </plist>
