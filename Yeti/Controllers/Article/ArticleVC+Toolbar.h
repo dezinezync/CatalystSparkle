@@ -25,4 +25,6 @@
 - (void)didTapShare:(UIBarButtonItem *)sender;
 - (void)didTapClose;
 
+- (void)openInBrowser;
+
 @end

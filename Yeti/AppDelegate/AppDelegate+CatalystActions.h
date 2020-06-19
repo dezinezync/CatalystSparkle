@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AppDelegate (CatalystActions)
 
+- (void)createNewFeed;
+- (void)createNewFolder;
+- (void)refreshAll;
+
 - (void)toggleSidebar;
 
 - (void)setSortingAllDesc;
@@ -26,6 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)switchToPreviousArticle;
 - (void)switchToNextArticle;
+
+- (void)markArticleRead;
+- (void)markArticleBookmark;
+- (void)openArticleInBrowser;
+- (void)closeArticle;
 
 @end
 

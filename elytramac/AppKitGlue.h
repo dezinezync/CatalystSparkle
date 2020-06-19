@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)ct_showAlertWithTitle:(NSString * _Nonnull)title message:(NSString * _Nullable)message cancelButtonTitle:(NSString * _Nullable)cancelButtonTitle otherButtonTitle:(NSString * _Nullable)otherButtonTitle completionHandler:(void(^ _Nullable)(NSString *buttonTitle))completionHandler;
 
+- (void)openURL:(NSURL *)url inBackground:(BOOL)inBackground;
+
 @end
 
 NS_ASSUME_NONNULL_END

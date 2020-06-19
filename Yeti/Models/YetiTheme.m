@@ -152,6 +152,18 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
         
     }];
     
+    self.borderColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+       
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            
+            return [UIColor colorWithRed: 0.21 green: 0.22 blue: 0.24 alpha: 1.00];
+            
+        }
+        
+        return [UIColor colorWithRed: 0.80 green: 0.80 blue: 0.80 alpha: 1.00];
+        
+    }];
+    
     self.cellColor = self.backgroundColor;
     self.tableColor = self.cellColor;
     

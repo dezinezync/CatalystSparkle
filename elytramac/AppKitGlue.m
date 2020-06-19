@@ -93,4 +93,18 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+- (void)openURL:(NSURL *)url inBackground:(BOOL)background {
+    
+    if (background) {
+      
+        NSArray* urls = [NSArray arrayWithObject:url];
+      
+        [[NSWorkspace sharedWorkspace] openURLs:urls withAppBundleIdentifier:nil options:NSWorkspaceLaunchWithoutActivation additionalEventParamDescriptor:nil launchIdentifiers:nil];
+    }
+    else {
+      [[NSWorkspace sharedWorkspace] openURL:url];
+    }
+    
+}
+
 @end

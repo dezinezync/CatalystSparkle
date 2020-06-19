@@ -10,9 +10,39 @@
 
 #import "SplitVC.h"
 #import "FeedVC+Actions.h"
-#import "ArticleVC+Keyboard.h"
+#import "ArticleVC+Toolbar.h"
 
 @implementation AppDelegate (CatalystActions)
+
+- (void)createNewFeed {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    
+    [vc didTapAdd:nil];
+    
+}
+
+- (void)createNewFolder {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    
+    [vc didTapAddFolder:nil];
+    
+}
+
+- (void)refreshAll {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    
+    [vc beginRefreshing:nil];
+    
+}
 
 - (void)toggleSidebar {
     
@@ -121,6 +151,50 @@
     ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
     
     [vc didTapPreviousArticle:nil];
+    
+}
+
+- (void)markArticleRead {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc didTapRead:nil];
+    
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
+}
+
+- (void)markArticleBookmark {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc didTapBookmark:nil];
+    
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
+}
+
+- (void)openArticleInBrowser {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc openInBrowser];
+    
+}
+
+- (void)closeArticle {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc didTapClose];
     
 }
 

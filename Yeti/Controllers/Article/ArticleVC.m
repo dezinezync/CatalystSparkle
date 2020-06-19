@@ -11,6 +11,8 @@
 #import "FeedVC.h"
 #import "ArticleAuthorView.h"
 
+#import "AppDelegate.h"
+
 #import "Content.h"
 #import <DZTextKit/DZTextKitViews.h>
 #import <DZTextKit/YetiConstants.h>
@@ -254,6 +256,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)dealloc {
+    
+    [UIMenuSystem.mainSystem setNeedsRebuild];
     
     @try {
         [NSNotificationCenter.defaultCenter removeObserver:self];
@@ -2737,16 +2741,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     runOnMainQueueWithoutDeadlocking(^{
         
 #if TARGET_OS_MACCATALYST
-        
-        Class workspaceClass = NSClassFromString(@"NSWorkspace");
-        
-        id sharedInstance = [workspaceClass performSelector:@selector(sharedWorkspace)];
-        
-        BOOL didOpen = (BOOL)[sharedInstance performSelector:@selector(openURL:) withObject:formatted];
-        
-#ifdef DEBUG
-        NSLog(@"Opened URL: %@", @(didOpen));
-#endif
+            
+        [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
         
 #else
         

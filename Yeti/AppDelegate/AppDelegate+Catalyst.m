@@ -71,9 +71,9 @@
     SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
     
     // Add items for File menu
-    UIKeyCommand *newFeed = [UIKeyCommand commandWithTitle:@"New Feed" image:nil action:@selector(createNewFeed:) input:@"n" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    UIKeyCommand *newFeed = [UIKeyCommand commandWithTitle:@"New Feed" image:nil action:@selector(createNewFeed) input:@"n" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
-    UIKeyCommand *newFolder = [UIKeyCommand commandWithTitle:@"New Folder" image:nil action:@selector(createNewFolder:) input:@"n" modifierFlags:UIKeyModifierCommand|UIKeyModifierShift propertyList:nil];
+    UIKeyCommand *newFolder = [UIKeyCommand commandWithTitle:@"New Folder" image:nil action:@selector(createNewFolder) input:@"n" modifierFlags:UIKeyModifierCommand|UIKeyModifierShift propertyList:nil];
     
     UIKeyCommand *refresh = [UIKeyCommand commandWithTitle:@"Refresh" image:nil action:@selector(refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
@@ -156,9 +156,11 @@
     
     // Go menu
     
-    UIKeyCommand *nextArticle = [UIKeyCommand commandWithTitle:@"Next Article" image:nil action:@selector(switchToNextArticle) input:@"/" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    ArticleVC *articleVC = nil;
     
-    UIKeyCommand *previousArticle = [UIKeyCommand commandWithTitle:@"Previous Article" image:nil action:@selector(switchToPreviousArticle) input:@"/" modifierFlags:UIKeyModifierCommand|UIKeyModifierControl propertyList:nil];
+    UIKeyCommand *nextArticle = [UIKeyCommand commandWithTitle:@"Next Article" image:nil action:@selector(switchToNextArticle) input:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    UIKeyCommand *previousArticle = [UIKeyCommand commandWithTitle:@"Previous Article" image:nil action:@selector(switchToPreviousArticle) input:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
     
     // If the article VC is not visible, leave them disabled
     if (splitVC.viewControllers.count != 3) {
@@ -172,6 +174,8 @@
         ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
         
         if ([vc isKindOfClass:ArticleVC.class] == YES) {
+            
+            articleVC = vc;
             
             // we have a ArticleVC so check with its ArticleProvider for prev/next info
             id <ArticleProvider> articleProvider = vc.providerDelegate;
@@ -215,6 +219,33 @@
     UIMenu *topLevelGoMenu = [UIMenu menuWithTitle:@"Go" children:@[articlesGoToMenu, goToMenu]];
     
     [builder insertSiblingMenu:topLevelGoMenu afterMenuForIdentifier:UIMenuView];
+    
+    // Article Top-Level Menu
+    NSString *markReadTitle = articleVC ? articleVC.currentArticle.isRead ? @"Mark Unread" : @"Mark Read" : @"Mark Read";
+    
+    UIKeyCommand *markRead = [UIKeyCommand commandWithTitle:markReadTitle image:nil action:@selector(markArticleRead) input:@"u" modifierFlags:UIKeyModifierCommand|UIKeyModifierShift propertyList:nil];
+    
+    NSString *markBookmarkTitle = articleVC ? articleVC.currentArticle.isBookmarked ? @"Unbookmark" : @"Bookmark" : @"Bookmark";
+    
+    UIKeyCommand *markBookmark = [UIKeyCommand commandWithTitle:markBookmarkTitle image:nil action:@selector(markArticleBookmark) input:@"l" modifierFlags:UIKeyModifierCommand|UIKeyModifierShift propertyList:nil];
+    
+    UIKeyCommand *openInBrowser = [UIKeyCommand commandWithTitle:@"Open in Browser" image:nil action:@selector(openArticleInBrowser) input:UIKeyInputRightArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    UIKeyCommand *closeArticle = [UIKeyCommand commandWithTitle:@"Close Article" image:nil action:@selector(closeArticle) input:UIKeyInputLeftArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    for (UIKeyCommand *command in @[markRead, markBookmark, openInBrowser, closeArticle]) {
+        
+        if (articleVC == nil) {
+            
+            command.attributes = UIMenuElementAttributesDisabled;
+            
+        }
+        
+    }
+    
+    UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle]];
+    
+    [builder insertSiblingMenu:articlesMenu beforeMenuForIdentifier:UIMenuWindow];
     
 }
 
@@ -261,17 +292,13 @@
     NSString *title = nil;
     UIImage *image = nil;
     
-    TOSplitViewController *splitVC = (TOSplitViewController *)[self.window rootViewController];
-    UINavigationController *navVC = (UINavigationController *)[splitVC.viewControllers firstObject];
-    FeedsVC *feedsVC = navVC.viewControllers.firstObject;
-    
     if ([itemIdentifier isEqualToString:kFeedsToolbarGroup]) {
         
         title = kNewFeedToolbarIdentifier[1];
         
         image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:feedsVC action:@selector(didTapAdd:)];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFeed)];
         
         NSToolbarItem *item1 = [self toolbarItemWithItemIdentifier:kNewFeedToolbarIdentifier[0] title:title button:button];
         
@@ -280,7 +307,7 @@
         
         image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:feedsVC action:@selector(didTapAddFolder:)];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFolder)];
         
         NSToolbarItem *item2 = [self toolbarItemWithItemIdentifier:kNewFolderToolbarIdentifier[0] title:title button:button];
         
@@ -289,7 +316,7 @@
         
         image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all"];
         
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:feedsVC action:@selector(beginRefreshing:)];
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
         
         NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kRefreshAllToolbarIdentifier[0] title:title button:button];
         

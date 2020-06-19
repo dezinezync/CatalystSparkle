@@ -11,6 +11,8 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 
+#import "AppDelegate.h"
+
 #import "YetiThemeKit.h"
 
 #import <DZTextKit/Paragraph.h>
@@ -239,11 +241,13 @@
 
 - (void)didTapBookmark:(UIBarButtonItem *)button {
     
-    if (![button respondsToSelector:@selector(setEnabled:)]) {
-        button = [self.navigationItem.rightBarButtonItems objectAtIndex:2];
-    }
+    BOOL isButton = button && [button respondsToSelector:@selector(setEnabled:)];
     
-    button.enabled = NO;
+    if (isButton) {
+        
+        button.enabled = NO;
+        
+    }
     
     weakify(self);
     
@@ -252,14 +256,19 @@
         strongify(self);
         
         void (^bookmarkCallback)(BOOL success) = ^void(BOOL success) {
+            
             if (success == YES) {
-               
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                       
-                       UIImage *image = self.item.isBookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
-                       
-                       [button setImage:image];
-                   });
+                
+                if (isButton) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        UIImage *image = self.item.isBookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
+                        
+                        [button setImage:image];
+                    });
+                    
+                }
                    
                }
                else {
@@ -270,18 +279,22 @@
                    [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
                }
             
-               weakify(self);
-               
-               dispatch_async(dispatch_get_main_queue(), ^{
-                  
-                   strongify(self);
+            if (isButton) {
+            
+                   weakify(self);
                    
-                   button.enabled = YES;
-                   
-                   [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
-                   [[self notificationGenerator] prepare];
-                   
-               });
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                      
+                       strongify(self);
+                       
+                       button.enabled = YES;
+                       
+                       [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+                       [[self notificationGenerator] prepare];
+                       
+                   });
+                
+            }
         };
         
         if (self.item.isBookmarked) {
@@ -295,7 +308,9 @@
        
         [AlertManager showGenericAlertWithTitle:@"Service Error" message:error.localizedDescription];
         
-        button.enabled = YES;
+        if (isButton) {
+            button.enabled = YES;
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -311,15 +326,17 @@
 
 - (void)didTapRead:(UIBarButtonItem *)button {
     
-    if (button && [button respondsToSelector:@selector(setEnabled:)]) {
+    BOOL isButton = button && [button respondsToSelector:@selector(setEnabled:)];
+    
+    if (isButton) {
         button.enabled = NO;
     }
     
     [MyFeedsManager article:self.item markAsRead:(button == nil ? YES : !self.item.isRead)];
     
-    if (button) {
-        
-        self.item.read = !self.item.isRead;
+    self.item.read = !self.item.isRead;
+    
+    if (isButton) {
         
         button.image = self.item.isRead ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
         
@@ -331,7 +348,7 @@
         
     }
     
-    if (button) {
+    if (isButton) {
         button.enabled = YES;
     }
     
@@ -349,6 +366,15 @@
 }
 
 - (void)openInBrowser {
+    
+#if TARGET_OS_MACCATALYST
+    
+    [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
+    
+    return;
+    
+#endif
+    
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
