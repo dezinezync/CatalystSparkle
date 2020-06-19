@@ -13,6 +13,8 @@
 
 #import "SplitVC.h"
 #import "FeedVC.h"
+#import "ArticleVC.h"
+#import "ArticleProvider.h"
 
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 #import <UIKit/UIMenuSystem.h>
@@ -151,6 +153,68 @@
     UIMenu *hideSidebarMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SidebarHideMenu" options:UIMenuOptionsDisplayInline children:@[hideSidebar]];
     
     [builder insertSiblingMenu:hideSidebarMenu afterMenuForIdentifier:@"SortingMenu"];
+    
+    // Go menu
+    
+    UIKeyCommand *nextArticle = [UIKeyCommand commandWithTitle:@"Next Article" image:nil action:@selector(switchToNextArticle) input:@"/" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    UIKeyCommand *previousArticle = [UIKeyCommand commandWithTitle:@"Previous Article" image:nil action:@selector(switchToPreviousArticle) input:@"/" modifierFlags:UIKeyModifierCommand|UIKeyModifierControl propertyList:nil];
+    
+    // If the article VC is not visible, leave them disabled
+    if (splitVC.viewControllers.count != 3) {
+        
+        nextArticle.attributes = UIMenuElementAttributesDisabled;
+        previousArticle.attributes = UIMenuElementAttributesDisabled;
+        
+    }
+    else {
+        
+        ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+        
+        if ([vc isKindOfClass:ArticleVC.class] == YES) {
+            
+            // we have a ArticleVC so check with its ArticleProvider for prev/next info
+            id <ArticleProvider> articleProvider = vc.providerDelegate;
+            
+            if ([articleProvider hasNextArticleForArticle:vc.currentArticle] == NO) {
+                
+                nextArticle.attributes = UIMenuElementAttributesDisabled;
+                
+            }
+            
+            if ([articleProvider hasPreviousArticleForArticle:vc.currentArticle] == NO) {
+                
+                previousArticle.attributes = UIMenuElementAttributesDisabled;
+                
+            }
+            
+        }
+        
+    }
+    
+    UIMenu *articlesGoToMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"ArticlesGoTo" options:UIMenuOptionsDisplayInline children:@[nextArticle, previousArticle]];
+    
+    NSMutableArray *goToMenuItems = [NSMutableArray arrayWithCapacity:3];
+    
+    UIKeyCommand *goUnread = [UIKeyCommand commandWithTitle:@"Unread" image:nil action:@selector(goToUnread) input:@"1" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    UIKeyCommand *goToday = [UIKeyCommand commandWithTitle:@"Today" image:nil action:@selector(goToToday) input:@"2" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    [goToMenuItems addObjectsFromArray:@[goUnread, goToday]];
+    
+    if (SharedPrefs.hideBookmarks == NO) {
+        
+        UIKeyCommand *goBookmarks = [UIKeyCommand commandWithTitle:@"Bookmarks" image:nil action:@selector(goToBookmarks) input:@"3" modifierFlags:UIKeyModifierCommand propertyList:nil];
+        
+        [goToMenuItems addObject:goBookmarks];
+        
+    }
+    
+    UIMenu *goToMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"GoToMenu" options:UIMenuOptionsDisplayInline children:goToMenuItems];
+    
+    UIMenu *topLevelGoMenu = [UIMenu menuWithTitle:@"Go" children:@[articlesGoToMenu, goToMenu]];
+    
+    [builder insertSiblingMenu:topLevelGoMenu afterMenuForIdentifier:UIMenuView];
     
 }
 
@@ -371,7 +435,7 @@
         return;
     }
     
-    [vc didTapShare:sender];
+    [vc didTapShare:(UIBarButtonItem *)sender];
     
 }
 

@@ -20,6 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setSortingUnreadDesc;
 - (void)setSortingUnreadAsc;
 
+- (void)goToUnread;
+- (void)goToToday;
+- (void)goToBookmarks;
+
+- (void)switchToPreviousArticle;
+- (void)switchToNextArticle;
+
 @end
 
 NS_ASSUME_NONNULL_END

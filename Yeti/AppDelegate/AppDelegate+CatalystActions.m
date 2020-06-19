@@ -10,6 +10,7 @@
 
 #import "SplitVC.h"
 #import "FeedVC+Actions.h"
+#import "ArticleVC+Keyboard.h"
 
 @implementation AppDelegate (CatalystActions)
 
@@ -60,6 +61,66 @@
 - (void)setSortingUnreadAsc {
     
     [self setSortingOptionTo:YTSortUnreadAsc];
+    
+}
+
+- (void)goToIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath == nil) {
+        return;
+    }
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    FeedsVC *vc = (FeedsVC *)[[(UINavigationController *)[splitVC.viewControllers firstObject] viewControllers] firstObject];
+    
+    [vc.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    
+    [vc tableView:vc.tableView didSelectRowAtIndexPath:indexPath];
+    
+}
+
+- (void)goToUnread {
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    
+    [self goToIndexPath:indexPath];
+    
+}
+
+- (void)goToToday {
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+    
+    [self goToIndexPath:indexPath];
+    
+}
+
+- (void)goToBookmarks {
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+    
+    [self goToIndexPath:indexPath];
+    
+}
+
+- (void)switchToNextArticle {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc didTapNextArticle:nil];
+    
+}
+
+- (void)switchToPreviousArticle {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc didTapPreviousArticle:nil];
     
 }
 

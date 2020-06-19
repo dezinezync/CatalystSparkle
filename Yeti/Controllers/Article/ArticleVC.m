@@ -206,6 +206,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     self.navigationController.navigationBar.hidden = YES;
     
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
 #else
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
