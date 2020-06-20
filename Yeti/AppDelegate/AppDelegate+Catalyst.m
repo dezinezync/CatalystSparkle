@@ -348,22 +348,22 @@
     else {
         
         //
-//        title = kShareArticleToolbarIdentifier[1];
-//
-//        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share"];
-//
-////        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapShareArticle:)];
-//
-//        NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
-//        item3.image = image;
-//        item3.action = @selector(ct_didTapShareArticle:);
-//        item3.target = self;
-//
-//        NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
-//
-//        [group setSubitems:@[item3]];
-//
-//        return group;
+        title = kShareArticleToolbarIdentifier[1];
+
+        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share"];
+
+//        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapShareArticle:)];
+
+        NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
+        item3.image = image;
+        item3.action = @selector(ct_didTapShareArticle:);
+        item3.target = self;
+
+        NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
+
+        [group setSubitems:@[item3]];
+
+        return group;
         
         return nil;
         

@@ -229,8 +229,10 @@
     else if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
       
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.barButtonItem = (UIBarButtonItem *)sender;
-        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        pvc.sourceView = self.view;
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 240.f, 36.f, self.view.bounds.size.width, 1);
+//        pvc.barButtonItem = (UIBarButtonItem *)sender;
+//        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
         
     }
 #endif
