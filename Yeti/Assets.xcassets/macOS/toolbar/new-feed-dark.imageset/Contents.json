@@ -1,0 +1,28 @@
+{
+  "images" : [
+    {
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "ipad",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "new-feed-dark.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "subtype" : "mac-catalyst"
+    },
+    {
+      "filename" : "new-feed-dark@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "subtype" : "mac-catalyst"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

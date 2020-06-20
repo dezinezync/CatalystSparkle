@@ -9,6 +9,7 @@
 #import "AppDelegate+CatalystActions.h"
 
 #import "SplitVC.h"
+#import "UnreadVC.h"
 #import "FeedVC+Actions.h"
 #import "ArticleVC+Toolbar.h"
 
@@ -41,6 +42,29 @@
     FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
     
     [vc beginRefreshing:nil];
+    
+}
+
+- (void)refreshFeed {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    UINavigationController *nav = (UINavigationController *)[splitVC.viewControllers objectAtIndex:1];
+    
+    if ([[nav visibleViewController] isKindOfClass:FeedVC.class] == NO) {
+        return;
+    }
+    
+    FeedVC *vc = (FeedVC *)[nav visibleViewController];
+    
+    if (vc.type != FeedVCTypeUnread || vc.type != FeedVCTypeToday) {
+        return;
+    }
+    
+    UIRefreshControl *refreshControl = [(UnreadVC *)vc refreshControl];
+    [refreshControl beginRefreshing];
+    
+    [(UnreadVC *)vc didBeginRefreshing:refreshControl];
     
 }
 

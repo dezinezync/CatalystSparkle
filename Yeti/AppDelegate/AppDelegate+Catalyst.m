@@ -37,6 +37,8 @@
     
     scene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
     
+    self.toolbar = toolbar;
+    
 }
 
 - (void)ct_setupAppKitBundle {
@@ -296,7 +298,7 @@
         
         title = kNewFeedToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed"];
+        image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed-dark"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFeed)];
         
@@ -305,7 +307,7 @@
         //
         title = kNewFolderToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder"];
+        image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder-dark"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFolder)];
         
@@ -314,7 +316,7 @@
         //
         title = kRefreshAllToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all"];
+        image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all-dark"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
         
@@ -332,11 +334,13 @@
         
         title = kRefreshFeedToolbarIdentifier[1];
         
-        UIImage *image = [self dynamicImageWithLightImageName:@"refresh-feed" darkImageName:@"refresh-feed"];
+        UIImage *image = [self dynamicImageWithLightImageName:@"refresh-feed" darkImageName:@"refresh-feed-dark"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapRefreshFeed:)];
         
         NSToolbarItem *item1 = [self toolbarItemWithItemIdentifier:kRefreshFeedToolbarIdentifier[0] title:title button:button];
+        item1.action = @selector(refreshFeed);
+        item1.target = self;
         
         NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
                
@@ -350,10 +354,8 @@
         //
         title = kShareArticleToolbarIdentifier[1];
 
-        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share"];
-
-//        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapShareArticle:)];
-
+        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share-dark"];
+        
         NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
         item3.image = image;
         item3.action = @selector(ct_didTapShareArticle:);

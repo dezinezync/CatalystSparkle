@@ -53,6 +53,8 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
 
+@property (nonatomic, weak) NSToolbar *toolbar;
+
 #endif
 
 @end

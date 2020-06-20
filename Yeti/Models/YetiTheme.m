@@ -156,11 +156,11 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
        
         if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
             
-            return [UIColor colorWithRed: 0.21 green: 0.22 blue: 0.24 alpha: 1.00];
+            return [UIColor colorWithWhite:1.f alpha:0.12f];
             
         }
         
-        return [UIColor colorWithRed: 0.80 green: 0.80 blue: 0.80 alpha: 1.00];
+        return [UIColor colorWithWhite:0.f alpha:0.12f];
         
     }];
     
