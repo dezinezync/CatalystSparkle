@@ -107,4 +107,46 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+// https://github.com/thekarladam/fluidium/blob/4e4b7c7cf742a368d8f6a651ee149f1aec20d0a5/Fluidium/lib/OmniGroup/Frameworks/OmniAppKit/OpenStepExtensions.subproj/NSImage-OAExtensions.m#L150
+- (CGImageRef)imageForFileType:(NSString *)fileType {
+    
+    static NSMutableDictionary *imageDictionary = nil;
+    id image;
+
+    NSAssert(NSThread.isMainThread, @"+imageForFileType: is not thread-safe; must be called from the main thread");
+    // We could fix this by adding locks around imageDictionary
+
+    if (!fileType)
+        return nil;
+            
+    if (imageDictionary == nil)
+        imageDictionary = [[NSMutableDictionary alloc] init];
+
+    image = [imageDictionary objectForKey:fileType];
+    if (image == nil) {
+#ifdef DEBUG
+        // Make sure that our caching doesn't go insane (and that we don't ask it to cache insane stuff)
+        NSLog(@"Caching workspace image for file type '%@'", fileType);
+#endif
+        image = [[NSWorkspace sharedWorkspace] iconForFileType:fileType];
+        
+        if (image == nil) {
+            image = [NSNull null];
+        }
+        
+        [imageDictionary setObject:image forKey:fileType];
+    }
+    
+    if (image == [NSNull null]) {
+        return nil;
+    }
+    
+    // https://stackoverflow.com/a/2548861/1387258
+    CGImageSourceRef source = CGImageSourceCreateWithData((CFDataRef)[image TIFFRepresentation], NULL);
+    CGImageRef ref =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
+    
+    return ref;
+    
+}
+
 @end
