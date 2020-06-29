@@ -62,6 +62,10 @@ AppDelegate *MyAppDelegate = nil;
         return;
     }
     
+    if (SharedPrefs.backgroundRefresh == YES) {
+        [self setupBackgroundRefresh];
+    }
+    
     UIWindowScene *windowScene = (UIWindowScene *)scene;
     
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
@@ -73,10 +77,6 @@ AppDelegate *MyAppDelegate = nil;
 #endif
     
     [self.window makeKeyAndVisible];
-    
-    if (SharedPrefs.backgroundRefresh == YES) {
-        [self setupBackgroundRefresh];
-    }
     
 }
 

@@ -8,6 +8,8 @@
 
 #import "AppDelegate+CatalystActions.h"
 
+#if TARGET_OS_MACCATALYST
+
 #import "FeedsVC+Actions.h"
 #import "ArticleVC+Toolbar.h"
 
@@ -18,6 +20,7 @@
 
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 #import <UIKit/UIMenuSystem.h>
+
 
 @interface _UIMenuBarItem : NSObject
 
@@ -469,3 +472,5 @@
 }
 
 @end
+
+#endif

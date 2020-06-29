@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if TARGET_OS_MACCATALYST
+
 @interface AppDelegate (Catalyst) <NSToolbarDelegate>
 
 - (void)ct_setupToolbar:(UIWindowScene *)scene;
@@ -21,5 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIColor * _Nullable)appKitColorNamed:(NSString * _Nonnull)name;
 
 @end
+
+#endif
 
 NS_ASSUME_NONNULL_END
