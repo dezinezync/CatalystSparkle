@@ -63,7 +63,11 @@ AppDelegate *MyAppDelegate = nil;
     }
     
     if (SharedPrefs.backgroundRefresh == YES) {
-        [self setupBackgroundRefresh];
+        
+        dispatch_async(self.bgTaskDispatchQueue, ^{
+            [self setupBackgroundRefresh];
+        });
+        
     }
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
