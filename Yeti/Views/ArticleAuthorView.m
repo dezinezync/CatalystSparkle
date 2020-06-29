@@ -96,7 +96,7 @@
     
     [self.mercurialButton setImage:image forState:UIControlStateNormal];
     
-    self.mercurialButton.tintColor = mercurialed ? [theme tintColor] : [theme borderColor];
+    self.mercurialButton.tintColor = mercurialed ? [theme tintColor] : UIColor.systemGrayColor;
     
     [self.mercurialButton setNeedsDisplay];
     

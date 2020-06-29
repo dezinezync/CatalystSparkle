@@ -18,7 +18,7 @@
 
 #import "FeedsManager.h"
 
-#import "AppDelegate.h"
+#import "AppDelegate+Catalyst.h"
 #import "TwoFingerPanGestureRecognizer.h"
 #import "MainNavController.h"
 
@@ -106,6 +106,14 @@
     }
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
+    
+#if TARGET_OS_MACCATALYST
+    
+    UIColor *separatorColor = [MyAppDelegate appKitColorNamed:@"separatorColor"];
+    
+    self.separatorStrokeColor = separatorColor;
+    
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated {

@@ -11,6 +11,8 @@
 #import "FeedVC.h"
 #import "ArticleAuthorView.h"
 
+#import "AppDelegate.h"
+
 #import "Content.h"
 #import <DZTextKit/DZTextKitViews.h>
 #import <DZTextKit/YetiConstants.h>
@@ -33,6 +35,12 @@
 #import "YTPlayer.h"
 #import "YTExtractor.h"
 #import <DZTextKit/NSString+ImageProxy.h>
+
+#if TARGET_OS_MACCATALYST
+
+#import <AppKit/NSWorkspace.h>
+
+#endif
 
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
@@ -108,6 +116,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.state = ArticleStateLoading;
     
+#if TARGET_OS_MACCATALYST
+    
+    self.scrollView.contentInset = UIEdgeInsetsMake(44.f, 0, 44.f, 0);
+    
+#else
+    
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
     if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
@@ -135,7 +149,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    
+#endif
+
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
     
     [self didUpdateTheme];
@@ -189,15 +204,25 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     [super viewWillAppear:animated];
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
     
-    if (!_hasRendered) {
-        [self.loader startAnimating];
-    }
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
+#else
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    
+#endif
+    
+    if (!_hasRendered) {
+        [self.loader startAnimating];
+    }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
@@ -232,6 +257,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)dealloc {
     
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
     @try {
         [NSNotificationCenter.defaultCenter removeObserver:self];
     } @catch (NSException *exc) {}
@@ -240,6 +267,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (void)setupHelperView {
+    
+#if TARGET_OS_MACCATALYST
+    return;
+#endif
     
     if (self.providerDelegate == nil)
         return;
@@ -712,9 +743,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         strongify(self);
         
-        // v1.2 will automatically mark the articles as read upon successfully fetching.
-        [self updateFeedAndFolder:responseObject];
-        
         [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -727,28 +755,51 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
-- (void)updateFeedAndFolder:(FeedItem *)item {
+- (BOOL)imageURLAppearsInContent:(NSString *)url {
     
-//    Feed *feed = [MyFeedsManager feedForID:item.feedID];
-//    
-//    if (feed != nil) {
-//        
-////        MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - 1);
-//        
-//        feed.unread = @(MAX(0, feed.unread.integerValue - 1));
-//        
-//        if (feed.folderID != nil) {
-//            Folder *folder = [MyFeedsManager folderForID:feed.folderID];
-//            
-//            if (folder != nil) {
-//                [folder willChangeValueForKey:propSel(unreadCount)];
-//                // simply tell the unreadCount property that it has been updated.
-//                // KVO should handle the rest for us
-//                [folder didChangeValueForKey:propSel(unreadCount)];
-//            }
-//        }
-//        
-//    }
+    Content *appearing = [self.item.content rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
+       
+        if (([objx.type isEqualToString:@"image"] || [objx.type isEqualToString:@"img"])) {
+            
+            if ([objx.url isEqualToString:url]) {
+                
+                return YES;
+                
+            }
+            
+            if (objx.srcset != nil) {
+                
+                NSArray *values = [objx.srcset allValues];
+                
+                values = [values rz_map:^id(id objxx, NSUInteger idxxx, NSArray *arrayxx) {
+                   
+                    if ([objxx isKindOfClass:NSDictionary.class]) {
+                        
+                        return [(NSDictionary *)objxx allValues];
+                        
+                    }
+                    
+                    return objxx;
+                    
+                }];
+                
+                values = [values rz_flatten];
+                
+                if ([values indexOfObject:url] != NSNotFound) {
+                    
+                    return YES;
+                    
+                }
+                
+            }
+        
+        }
+        
+        return NO;
+        
+    }];
+    
+    return appearing != nil;
     
 }
 
@@ -762,7 +813,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.item = responseObject;
     
-    [self didTapRead:nil];
+    if (self.item.isRead == NO) {
+        [self didTapRead:nil];
+    }
     
     BOOL isYoutubeVideo = [self.item.articleURL containsString:@"youtube.com/watch"];
     
@@ -772,23 +825,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // iOS 13 shouldn't need it and handle it well.
     if (self.item.content.count > 20) {
         self->_deferredProcessing = YES;
-    }
-    
-    /*
-     * In the event of a Youtube video, we add the video itself
-     * instead of the cover and then the video.
-     */
-    if (isYoutubeVideo == NO && self.item.coverImage) {
-        Content *content = [Content new];
-        content.type = @"image";
-        content.url = self.item.coverImage;
-        
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            [self addImage:content];
-        });
     }
     
     if (isYoutubeVideo == YES) {
@@ -804,7 +840,30 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
     
     if (self.item.coverImage != nil) {
-        [imagesFromEnclosures addObject:self.item.coverImage];
+        
+        if ([self imageURLAppearsInContent:self.item.coverImage] == NO) {
+            
+            [imagesFromEnclosures addObject:self.item.coverImage];
+            
+            /*
+             * In the event of a Youtube video, we add the video itself
+             * instead of the cover and then the video.
+             */
+            if (isYoutubeVideo == NO && self.item.coverImage) {
+                Content *content = [Content new];
+                content.type = @"image";
+                content.url = self.item.coverImage;
+
+                weakify(self);
+
+                asyncMain(^{
+                    strongify(self);
+                    [self addImage:content];
+                });
+            }
+            
+        }
+        
     }
     
     if (self.item.enclosures && self.item.enclosures.count) {
@@ -815,7 +874,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         // check for images
         NSArray <Enclosure *> *enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
            
-            return obj.type && [IMAGE_TYPES containsObject:obj.type];
+            BOOL isImage = obj.type && [IMAGE_TYPES containsObject:obj.type];
+            
+            // ensure it doesn't appear in the content
+            if (isImage) {
+                
+                isImage = ![self imageURLAppearsInContent:obj.url.absoluteString];
+                
+            }
+            
+            return isImage;
             
         }];
         
@@ -1018,6 +1086,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
+#if TARGET_OS_MACCATALYST
+    
+    baseFontSize *= 1.42f;
+    baseFontSize = floor(baseFontSize);
+    
+#endif
 
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
@@ -2663,9 +2738,21 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         formatted = formattedURL(@"yeti://external?link=%@", link);
     }
     
-    asyncMain(^{
+    runOnMainQueueWithoutDeadlocking(^{
+        
+#if TARGET_OS_MACCATALYST
+            
+        [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
+        
+#else
+        
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+        
+#endif
+
+        
     });
+    
 }
 
 - (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range

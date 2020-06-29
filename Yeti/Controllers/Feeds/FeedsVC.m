@@ -371,7 +371,9 @@ static void *KVO_Unread = &KVO_Unread;
             }
         }
         
-        ocell.countLabel.hidden = !showUnreadCounter;
+        if (ocell.countLabel.isHidden == NO) {
+            ocell.countLabel.hidden = !showUnreadCounter;
+        }
         
         return ocell;
         
@@ -434,6 +436,12 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (void)setupNavigationBar {
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
@@ -478,6 +486,8 @@ static void *KVO_Unread = &KVO_Unread;
 //    else {
 //        self.navigationController.toolbarHidden = NO;
 //    }
+    
+#endif
     
 }
 

@@ -21,6 +21,31 @@
 
 #import "YetiThemeKit.h"
 
+#if TARGET_OS_MACCATALYST
+
+#import "AppDelegate.h"
+
+// https://gist.github.com/steipete/9b279c94a35389c05bf5ea32336551ed
+@implementation UIImage (ResourceProxyHack)
+
++ (UIImage *)_iconForResourceProxy:(id)proxy format:(int)format {
+    
+    // using this causes the app to use large amounts of memory.
+    // so we simply return nil for now until Apple implements it
+    // for catalyst 
+    return nil;
+    
+    // HACK: proxy seems garbage so we always show PNG for now.
+    CGImageRef cgImage = [MyAppDelegate.sharedGlue imageForFileType:@"png"];
+    // HACK: We use mainScreen here but could have multiple screens.
+    UIImage * image = [UIImage imageWithCGImage:cgImage scale:UIScreen.mainScreen.scale orientation:UIImageOrientationUp];
+    return image;
+}
+
+@end
+
+#endif
+
 NSString *const kArticleCell = @"com.yeti.cell.article";
 
 @interface ArticleCell () {
@@ -294,6 +319,11 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
         return;
     }
+    
+//#if TARGET_OS_MACCATALYST
+//    self.titleLabel.attributedText = attrs;
+//    return;
+//#endif
     
     NSString *url = [feed faviconURI];
     

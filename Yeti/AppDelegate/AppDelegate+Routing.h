@@ -6,7 +6,7 @@
 //  Copyright © 2018 Dezine Zync Studios. All rights reserved.
 //
 
-#import "AppDelegate+BackgroundRefresh.h"
+#import "AppDelegate+Catalyst.h"
 
 @interface AppDelegate (Routing)
 

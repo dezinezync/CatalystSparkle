@@ -205,7 +205,16 @@ static TypeFactory * sharedTypeFactory;
 - (CGFloat)basePointSize {
     
     if (_basePointSize == 0.f) {
+        
+#if TARGET_OS_MACCATALYST
+        
+        _basePointSize = 21.f;
+        
+#else
+        
         _basePointSize = [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize;
+        
+#endif
     }
     
     return _basePointSize;
@@ -308,6 +317,12 @@ static TypeFactory * sharedTypeFactory;
     UIFontTextStyle const style = UIFontTextStyleSubheadline;
     
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / self.basePointSize);
+    
+#if TARGET_OS_MACCATALYST
+        
+    maximumPointSize = self.basePointSize;
+        
+#endif
     
     if (_subtitleFont == nil) {
         _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];

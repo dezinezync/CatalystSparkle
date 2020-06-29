@@ -10,13 +10,20 @@
 #import <DZAppdelegate/DZAppdelegate.h>
 
 #import "RMStore.h"
+
+#if TARGET_OS_MACCATALYST
+
+#import "AppKitGlue.h"
+
+#endif
+
 @class RMStoreKeychainPersistence;
 
 @class AppDelegate;
 
 extern AppDelegate * MyAppDelegate;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UIWindowSceneDelegate> {
     
     dispatch_queue_t _bgTaskDispatchQueue;
     
@@ -37,6 +44,18 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, strong) dispatch_queue_t bgTaskDispatchQueue;
 
 - (void)loadCodeTheme;
+
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, strong) NSBundle *appKitBundle;
+
+@property (nonatomic, strong) AppKitGlue *sharedGlue;
+
+@property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
+
+@property (nonatomic, weak) NSToolbar *toolbar;
+
+#endif
 
 @end
 

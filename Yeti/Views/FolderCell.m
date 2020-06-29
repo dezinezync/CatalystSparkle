@@ -301,6 +301,7 @@ NSString *const kFolderCell = @"com.yeti.cells.folder";
     NSNumber *totalUnread = self.folder ? self.folder.unreadCount : @(0);
     
     self.countLabel.text = [(totalUnread ?: @0) stringValue];
+    self.countLabel.hidden = totalUnread.integerValue == 0;
 }
 
 #pragma mark - Drop

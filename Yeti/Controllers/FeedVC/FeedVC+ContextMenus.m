@@ -8,6 +8,7 @@
 
 #import "FeedVC+ContextMenus.h"
 #import "AuthorVC.h"
+#import "AppDelegate.h"
 
 #import <DZKit/NSString+Extras.h>
 
@@ -62,6 +63,11 @@
         }
         
         UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+#if TARGET_OS_MACCATALYST
+            [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:item.articleURL] inBackground:YES];
+            return;
+#endif
         
             NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
             
@@ -217,6 +223,11 @@
     UIContextualAction *browser = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Browser" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
         
         completionHandler(YES);
+        
+#if TARGET_OS_MACCATALYST
+            [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:item.articleURL] inBackground:YES];
+            return;
+#endif
         
         NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
         

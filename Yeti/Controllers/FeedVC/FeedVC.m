@@ -21,6 +21,12 @@
 #import <DZTextKit/CheckWifi.h>
 #import <DZTextKit/NSString+ImageProxy.h>
 
+#if TARGET_OS_MACCATALYST
+
+#import "AppDelegate.h"
+
+#endif
+
 #define emptyViewTag 386728
 
 @interface FeedVC () {
@@ -107,6 +113,39 @@
         [self loadNextPage];
     }
     
+#if TARGET_OS_MACCATALYST
+    
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+
+    NSToolbarItem *refreshFeedItem = [[[[MyAppDelegate.toolbar items] rz_map:^id(__kindof NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
+        
+        if ([obj isKindOfClass:NSToolbarItemGroup.class]) {
+            
+            return [(NSToolbarItemGroup *)obj subitems];
+            
+        }
+        
+        return obj;
+        
+    }] rz_flatten] rz_find:^BOOL(NSToolbarItem * obj, NSUInteger idx, NSArray *array) {
+        
+        return [obj.itemIdentifier isEqualToString:@"com.yeti.toolbar.refreshFeed"];
+        
+    }];
+    
+    if (refreshFeedItem != nil) {
+        
+        if (self.type == FeedVCTypeToday || self.type == FeedVCTypeUnread) {
+            [refreshFeedItem setEnabled:YES];
+        }
+        else {
+            [refreshFeedItem setEnabled:NO];
+        }
+        
+    }
+    
+#endif
+    
     if (_reloadDataset) {
         
         _reloadDataset = NO;
@@ -155,6 +194,12 @@
 
 - (void)setupNavigationBar {
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     self.extendedLayoutIncludesOpaqueBars = YES;
@@ -197,6 +242,8 @@
     
     self.navigationItem.searchController = searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = YES;
+    
+#endif
     
 }
 

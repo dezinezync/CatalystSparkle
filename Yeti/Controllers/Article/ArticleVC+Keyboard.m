@@ -127,23 +127,35 @@
         return;
     }
     
-    if (sender == nil || [sender respondsToSelector:@selector(setEnabled:)] == NO) {
-        return;
-    }
-    
     if (self.providerDelegate == nil) {
-        sender.enabled = NO;
+        
+        if (sender != nil && [sender respondsToSelector:@selector(setEnabled:)] == YES) {
+            
+            sender.enabled = NO;
+            
+        }
+        
         return;
     }
     
     FeedItem *article = [self.providerDelegate previousArticleFor:[self currentArticle]];
     
-    if (article)
+    if (article) {
         [self setupArticle:article];
-    else
-        sender.enabled = NO;
+    }
+    else {
+        
+        if (sender != nil && [sender respondsToSelector:@selector(setEnabled:)] == YES) {
+            
+            sender.enabled = NO;
+            
+        }
+        
+    }
     
+#if !TARGET_OS_MACCATALYST
     [self updateBarButtonItems];
+#endif
 }
 
 - (void)didTapNextArticle:(UIButton *)sender {
@@ -153,23 +165,36 @@
         return;
     }
     
-    if (sender == nil || [sender respondsToSelector:@selector(setEnabled:)] == NO) {
-        return;
-    }
-    
     if (self.providerDelegate == nil) {
-        sender.enabled = NO;
+        
+        if (sender != nil && [sender respondsToSelector:@selector(setEnabled:)] == YES) {
+            
+            sender.enabled = NO;
+            
+        }
+        
         return;
     }
     
     FeedItem *article = [self.providerDelegate nextArticleFor:[self currentArticle]];
     
-    if (article)
+    if (article) {
         [self setupArticle:article];
-    else
-        sender.enabled = NO;
+    }
+    else {
+        
+        if (sender != nil && [sender respondsToSelector:@selector(setEnabled:)] == YES) {
+            
+            sender.enabled = NO;
+            
+        }
+        
+    }
     
+#if !TARGET_OS_MACCATALYST
     [self updateBarButtonItems];
+#endif
+    
 }
 
 #pragma mark - Gallery Nav

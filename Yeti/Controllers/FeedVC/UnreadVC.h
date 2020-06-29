@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_setSortingOption:(YetiSortOption)option;
 
+- (void)didBeginRefreshing:(UIRefreshControl *)sender;
+
 @end
 
 NS_ASSUME_NONNULL_END

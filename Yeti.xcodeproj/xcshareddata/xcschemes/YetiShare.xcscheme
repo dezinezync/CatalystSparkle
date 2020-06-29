@@ -30,8 +30,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F070C2D81FBABC3500912CCF"
-               BuildableName = "Yeti.app"
-               BlueprintName = "Yeti"
+               BuildableName = "Elytra.app"
+               BlueprintName = "Elytra"
                ReferencedContainer = "container:Yeti.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F070C2D81FBABC3500912CCF"
-            BuildableName = "Yeti.app"
-            BlueprintName = "Yeti"
+            BuildableName = "Elytra.app"
+            BlueprintName = "Elytra"
             ReferencedContainer = "container:Yeti.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -80,8 +80,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F070C2D81FBABC3500912CCF"
-            BuildableName = "Yeti.app"
-            BlueprintName = "Yeti"
+            BuildableName = "Elytra.app"
+            BlueprintName = "Elytra"
             ReferencedContainer = "container:Yeti.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -38,21 +38,45 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
-    self.window = [[UIWindow alloc] init];
-    
-    BOOL retval = [self commonInit:application];
-    
-    return retval;
+    return YES;
     
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    BOOL retval = [self commonInit:application];
+    return YES;
+    
+}
+
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(nonnull UISceneSession *)connectingSceneSession options:(nonnull UISceneConnectionOptions *)options {
+    
+    UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:UIWindowSceneSessionRoleApplication];
+    config.delegateClass = AppDelegate.class;
+    return config;
+    
+}
+
+- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
+    
+    if ([scene isKindOfClass:UIWindowScene.class] == NO) {
+        return;
+    }
+    
+    UIWindowScene *windowScene = (UIWindowScene *)scene;
+    
+    self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+    
+    __unused BOOL unused = [self commonInit:UIApplication.sharedApplication];
+    
+#if TARGET_OS_MACCATALYST
+    [self ct_setupToolbar:windowScene];
+#endif
     
     [self.window makeKeyAndVisible];
     
-    return retval;
+    if (SharedPrefs.backgroundRefresh == YES) {
+        [self setupBackgroundRefresh];
+    }
     
 }
 
@@ -62,6 +86,12 @@ AppDelegate *MyAppDelegate = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
+        MyAppDelegate = self;
+        
+#if TARGET_OS_MACCATALYST
+        [self ct_setupAppKitBundle];
+#endif
         
         [self setupRouting];
         
@@ -75,15 +105,6 @@ AppDelegate *MyAppDelegate = nil;
         }
         
         [self setupRootController];
-        
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            MyAppDelegate = self;
-        });
-        
-        if (SharedPrefs.backgroundRefresh == YES) {
-            [self setupBackgroundRefresh];
-        }
         
         weakify(self);
         
@@ -163,7 +184,9 @@ AppDelegate *MyAppDelegate = nil;
     
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {
+#pragma mark -
+
+- (void)_checkForAppResetPref {
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -184,6 +207,18 @@ AppDelegate *MyAppDelegate = nil;
         [defaults setBool:NO forKey:kResetAccountSettingsPref];
         [defaults synchronize];
     }
+    
+}
+
+- (void)sceneDidBecomeActive:(UIScene *)scene {
+    
+    [self _checkForAppResetPref];
+    
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    
+    [self _checkForAppResetPref];
 
 }
 
@@ -258,7 +293,7 @@ AppDelegate *MyAppDelegate = nil;
 #pragma mark - <DZAppDelegateProtocol>
 
 - (NSDictionary *)appDefaults {
-    return @{kDefaultsTheme: LightTheme,
+    NSMutableDictionary *dict =  @{kDefaultsTheme: LightTheme,
              kDefaultsBackgroundRefresh: @YES,
              kDefaultsNotifications: @NO,
              kDefaultsImageLoading: ImageLoadingMediumRes,
@@ -274,7 +309,15 @@ AppDelegate *MyAppDelegate = nil;
              kPreviewLines: @0,
              kShowTags: @YES,
              kUseToolbar: @NO
-             };
+    }.mutableCopy;
+    
+#if TARGET_OS_MACCATALYST
+    dict[kUseSystemFontSize] = @NO;
+    dict[kFontSize] = @(23.f);
+#endif
+    
+    return dict;
+    
 }
 
 - (void)setupRootController {
