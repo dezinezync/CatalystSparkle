@@ -184,7 +184,9 @@ AppDelegate *MyAppDelegate = nil;
     
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application {
+#pragma mark -
+
+- (void)_checkForAppResetPref {
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
@@ -205,6 +207,18 @@ AppDelegate *MyAppDelegate = nil;
         [defaults setBool:NO forKey:kResetAccountSettingsPref];
         [defaults synchronize];
     }
+    
+}
+
+- (void)sceneDidBecomeActive:(UIScene *)scene {
+    
+    [self _checkForAppResetPref];
+    
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    
+    [self _checkForAppResetPref];
 
 }
 
