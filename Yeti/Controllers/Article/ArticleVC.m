@@ -212,6 +212,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #else
     
+    self.navigationController.hidesBarsOnSwipe = YES;
+    
+    [self.navigationController.barHideOnSwipeGestureRecognizer addTarget:self action:@selector(didUpdateNavBarAppearance:)];
+    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -234,6 +238,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if ([self canBecomeFirstResponder] == YES) {
         [self becomeFirstResponder];
     }
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [super viewWillDisappear:animated];
+    
+#if !TARGET_OS_MACCATALYST
+    
+    self.navigationController.hidesBarsOnSwipe = NO;
+    
+    [self.navigationController.barHideOnSwipeGestureRecognizer removeTarget:self action:@selector(didUpdateNavBarAppearance:)];
+    
+#endif
     
 }
 
@@ -2187,6 +2205,33 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 #pragma mark - Actions
+
+- (void)didUpdateNavBarAppearance:(UIPanGestureRecognizer *)sender {
+    
+    if (self.helperView == nil) {
+        return;
+    }
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        [self.helperView layoutIfNeeded];
+        
+        if (self.navigationController.isNavigationBarHidden == YES) {
+            self.helperView.bottomConstraint.constant = -32.f + 120.f;
+        }
+        else {
+            self.helperView.bottomConstraint.constant = -32.f;
+        }
+        
+        [UIView animateWithDuration:1 animations:^{
+           
+            [self.helperView layoutIfNeeded];
+            
+        }];
+        
+    }
+    
+}
 
 - (void)didTapOnBlogLabel:(UITapGestureRecognizer *)sender {
     
