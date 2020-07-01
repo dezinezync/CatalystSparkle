@@ -1,5 +1,13 @@
 # v1.8.0
 
+## Build 364
+
+- New App Icon
+
+- New App Icon Sets (under Settings > Misc. > App Icons)
+
+- Article Readers bars now auto-hide/show on scroll deferring more screen real-estate to the content. 
+
 ## Build 363
 
 - Fixes loading of some favicons. 
