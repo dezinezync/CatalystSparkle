@@ -34,29 +34,56 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>flutter</key>
+			<key>gold</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>flutter</string>
+					<string>gold</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>flutter-dark</key>
+			<key>gold-dark</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>flutter-dark</string>
+					<string>gold-dark</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>reader</key>
+			<key>platinum</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>reader</string>
+					<string>platinum</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>platinum-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>platinum-dark</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>red</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>red</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>red-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>red-dark</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
@@ -94,29 +121,56 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>flutter</key>
+			<key>gold</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>flutter~ipad</string>
+					<string>gold~ipad</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>flutter-dark</key>
+			<key>gold-dark</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>flutter-dark~ipad</string>
+					<string>gold-dark~ipad</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>reader</key>
+			<key>platinum</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>reader~ipad</string>
+					<string>platinum~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>platinum-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>platinum-dark~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>red</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>red~ipad</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>red-dark</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>red-dark~ipad</string>
 				</array>
 				<key>UIPrerenderedIcon</key>
 				<false/>

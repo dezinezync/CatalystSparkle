@@ -32,9 +32,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     AppIconLight = 0,
     AppIconDark,
     AppIconBlack,
-    AppIconReader,
-    AppIconFlutter,
-    AppIconFlutterDark,
+    AppIconRed,
+    AppIconRedDark,
+    AppIconGold,
+    AppIconGoldDark,
+    AppIconPlatinum,
+    AppIconPlatinumDark,
     AppIconLastIndex
 };
 
@@ -273,7 +276,7 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 
 - (NSArray <NSString *> *)appIconNames {
     if (_appIconNames == nil) {
-        _appIconNames = @[@"Light", @"Dark", @"Black", @"Reader", @"Flutter", @"Flutter Dark"];
+        _appIconNames = @[@"Light", @"Dark", @"Black", @"Red", @"Red Dark", @"Gold", @"Gold Dark", @"Platinum", @"Platinum Dark"];
     }
     
     return _appIconNames;
