@@ -38,6 +38,14 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
+    if (SharedPrefs.backgroundRefresh == YES) {
+        
+        dispatch_async(self.bgTaskDispatchQueue, ^{
+            [self setupBackgroundRefresh];
+        });
+        
+    }
+    
     return YES;
     
 }
@@ -60,14 +68,6 @@ AppDelegate *MyAppDelegate = nil;
     
     if ([scene isKindOfClass:UIWindowScene.class] == NO) {
         return;
-    }
-    
-    if (SharedPrefs.backgroundRefresh == YES) {
-        
-        dispatch_async(self.bgTaskDispatchQueue, ^{
-            [self setupBackgroundRefresh];
-        });
-        
     }
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
@@ -424,6 +424,20 @@ AppDelegate *MyAppDelegate = nil;
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     return [JLRoutes routeURL:url];
+}
+
+- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+    
+    if (URLContexts.count) {
+        
+        UIOpenURLContext *ctx = [URLContexts allObjects].firstObject;
+        
+        NSURL *URL = ctx.URL;
+        
+        __unused BOOL unused = [JLRoutes routeURL:URL];
+        
+    }
+    
 }
 
 @end
