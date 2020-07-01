@@ -1,5 +1,11 @@
 # v1.8.0
 
+## Build 365 
+
+- Fixed loading articles after tapping a Push Notification.
+
+- Fixes showing cover images in rich push notifications.
+
 ## Build 364
 
 - New App Icon
