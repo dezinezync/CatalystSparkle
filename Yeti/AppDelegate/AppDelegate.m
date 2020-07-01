@@ -110,16 +110,11 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupRootController];
         
-        weakify(self);
+//        weakify(self);
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
-            strongify(self);
-            
-            [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
-            
-            [self setupStoreManager];
-        });
+        [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
+        
+        [self setupStoreManager];
         
         if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil]) {
             dispatch_async(dispatch_get_main_queue(), ^{

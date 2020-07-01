@@ -225,7 +225,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #endif
     
     if (!_hasRendered) {
+        
         [self.loader startAnimating];
+        
     }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
@@ -1753,13 +1755,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     imageView.content = content;
     
-    [self.images addPointer:(__bridge void *)imageView];
-    imageView.idx = self.images.count - 1;
-    
     CGFloat width = self.scrollView.bounds.size.width;
     
     NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
     NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
+    
+    if (url == nil && darkModeURL == nil) {
+        
+        [self.stackView removeArrangedSubview:imageView];
+        [imageView removeFromSuperview];
+        
+        imageView = nil;
+        
+        return;
+    }
+    
+    [self.images addPointer:(__bridge void *)imageView];
+    imageView.idx = self.images.count - 1;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
     imageView.userInteractionEnabled = YES;

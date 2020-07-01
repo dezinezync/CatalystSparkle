@@ -21,6 +21,10 @@
 @property (weak, nonatomic) IBOutlet UIStackView *mainStack;
 @property (weak, nonatomic) IBOutlet UIStackView *subStack;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *coverWidth;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *coverHeight;
+
 @property (nonatomic, strong) NSURLCache *cache;
 
 @end
@@ -35,6 +39,7 @@
     self.subStack.translatesAutoresizingMaskIntoConstraints = NO;
     self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    self.coverImage.translatesAutoresizingMaskIntoConstraints = NO;
     
     self.favicon.layer.cornerRadius = 4.f;
     self.favicon.layer.cornerCurve = kCACornerCurveContinuous;
@@ -67,12 +72,12 @@
     
     path = [notification.request.content.userInfo valueForKey:@"coverImage"];
     
-//    if (path != nil) {
-//        [self setupCoverImage:path];
-//    }
-//    else {
+    if (path != nil) {
+        [self setupCoverImage:path];
+    }
+    else {
         self.coverImage.hidden = YES;
-//    }
+    }
     
     [self.titleLabel sizeToFit];
     [self.subtitleLabel sizeToFit];
@@ -158,9 +163,7 @@
         
         UIImage *image = [UIImage imageWithData:cached.data];
         
-        self.coverImage.image = image;
-
-        [self.coverImage layoutIfNeeded];
+        [self _setCoverImage:image];
         
         return;
     }
@@ -190,15 +193,30 @@
                 
                 [self.cache storeCachedResponse:cached forRequest:request];
                 
-                self.coverImage.image = image;
-
-                [self.coverImage layoutIfNeeded];
+                [self _setCoverImage:image];
                 
             });
             
         }] resume];
         
     });
+    
+}
+
+- (void)_setCoverImage:(UIImage *)image {
+    
+    self.coverImage.backgroundColor = UIColor.clearColor;
+    
+    self.coverImage.image = image;
+    
+    if (image == nil) {
+        return;
+    }
+    
+    self.coverWidth.constant = self.view.superview.bounds.size.width;
+    self.coverHeight.constant = (image.size.height / image.size.width) * self.coverWidth.constant;
+
+    [self.coverImage layoutIfNeeded];
     
 }
 
