@@ -1,5 +1,11 @@
 # v1.8.0
 
+## Build 366
+
+- Hiding bars on scroll in the Article Reader is now a preference under Settings > Misc. It is now disabled by default. 
+
+- Fixed the Dark app icon rendering incorrectly when used. 
+
 ## Build 365 
 
 - Fixed loading articles after tapping a Push Notification.
