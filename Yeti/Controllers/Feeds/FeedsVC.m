@@ -53,8 +53,6 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL _hasOpenedUnread;
 }
 
-@property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
-@property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
 @property (nonatomic, weak) UIView *hairlineView;
 
 @property (nonatomic, weak) UILabel *progressLabel;

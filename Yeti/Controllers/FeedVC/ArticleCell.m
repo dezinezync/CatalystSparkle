@@ -18,6 +18,7 @@
 #import <DZTextKit/Paragraph.h>
 
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/UIImage+Transform.h>
 
 #import "YetiThemeKit.h"
 
@@ -392,6 +393,19 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
         if ([image isKindOfClass:UIImage.class] == NO) {
             image = nil;
+        }
+        
+        if (image != nil) {
+            
+            CGRect rect = attachment.bounds;
+            rect.origin = CGPointZero;
+            
+            UIImage *rounded = [image sd_roundedCornerImageWithRadius:(3.f * UIScreen.mainScreen.scale) corners:UIRectCornerAllCorners borderWidth:0.f borderColor:nil];
+            
+            if (rounded != nil) {
+                image = rounded;
+            }
+            
         }
         
         runOnMainQueueWithoutDeadlocking(^{
