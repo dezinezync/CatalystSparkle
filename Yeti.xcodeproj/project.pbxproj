@@ -1549,8 +1549,8 @@
 		F05041A02461442800A65C1C /* BookmarksManager */ = {
 			isa = PBXGroup;
 			children = (
-				F05041A12461442800A65C1C /* BookmarksManager.m */,
 				F05041A22461442800A65C1C /* BookmarksManager.h */,
+				F05041A12461442800A65C1C /* BookmarksManager.m */,
 			);
 			path = BookmarksManager;
 			sourceTree = "<group>";

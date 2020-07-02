@@ -1,5 +1,15 @@
 # v1.8.0
 
+## Build 367
+
+- Fixes bookmarking and unbookmarking articles. 
+
+- Fixes bookmarks count not updating in real-time. 
+
+- Fixes removing a bookmark would have no net-effect. 
+
+- Bookmarks List no longer shows a persistent bookmark icon. It instead now correctly defers to the Article's read status.
+
 ## Build 366
 
 - Hiding bars on scroll in the Article Reader is now a preference under Settings > Misc. It is now disabled by default. 

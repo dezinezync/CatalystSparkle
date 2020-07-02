@@ -101,6 +101,8 @@
     
     NSArray <FeedItem *> * articles = self.bookmarksManager.bookmarks;
     
+    articles = [[NSSet setWithArray:articles] allObjects];
+    
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:(SharedPrefs.sortingOption == YTSortAllAsc)];
     
     self.articles = [articles sortedArrayUsingDescriptors:@[sortDescriptor]];

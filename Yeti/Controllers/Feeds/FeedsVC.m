@@ -1030,6 +1030,11 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)didUpdateBookmarks {
     
+    if (SharedPrefs.hideBookmarks == YES) {
+        // row is hidden. Ignore.
+        return;
+    }
+    
     if (NSThread.isMainThread == NO) {
         [self performSelectorOnMainThread:@selector(didUpdateBookmarks) withObject:nil waitUntilDone:NO];
         return;
@@ -1038,10 +1043,11 @@ NSString * const kDS2Data = @"DS2Data";
     NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
     
     for (NSIndexPath *indexpath in visible) {
+        
         // check if the bookmarks row is visible
-        if (indexpath.section == 0 && indexpath.row == 1) {
+        if (indexpath.section == 0 && indexpath.row == 2) {
             
-            FeedsCell *cell = (FeedsCell *)[self tableView:self.tableView cellForRowAtIndexPath:indexpath];
+            FeedsCell *cell = (FeedsCell *)[self.tableView cellForRowAtIndexPath:indexpath];
             
             if (cell != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
