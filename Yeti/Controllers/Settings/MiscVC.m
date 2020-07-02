@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     self.title = @"Miscellaneous";
     
-    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar"];
+    self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar", @"Hide Bars"];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
@@ -118,6 +118,10 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     else if (section == 6) {
         return @"Show all actions in toolbar at the bottom of the interface instead of the navigation bar at the top. (Requires an App restart)";
+    }
+    
+    else if (section == 7) {
+        return @"Hides the navigation bar and toolbar in the article reader when scrolling.";
     }
     
     return nil;
@@ -217,6 +221,14 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         
         [sw setOn:SharedPrefs.useToolbar];
         [sw addTarget:self action:@selector(didChangeToolbarPref:) forControlEvents:UIControlEventValueChanged];
+    }
+    else if ([sectionName isEqualToString:@"Hide Bars"]) {
+        
+        cell.textLabel.text = sectionName;
+        
+        [sw setOn:SharedPrefs.hideBars];
+        [sw addTarget:self action:@selector(didChangeHideBarsPref:) forControlEvents:UIControlEventValueChanged];
+        
     }
     
     [sw setOnTintColor:self.view.tintColor];
@@ -374,6 +386,12 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 - (void)didChangeToolbarPref:(UISwitch *)sender {
     
     [SharedPrefs setValue:@(sender.isOn) forKey:propSel(useToolbar)];
+    
+}
+
+- (void)didChangeHideBarsPref:(UISwitch *)sender {
+    
+    [SharedPrefs setValue:@(sender.isOn) forKey:propSel(hideBars)];
     
 }
 

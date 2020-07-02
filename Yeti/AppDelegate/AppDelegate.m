@@ -307,7 +307,8 @@ AppDelegate *MyAppDelegate = nil;
              kShowMarkReadPrompt: @YES,
              kPreviewLines: @0,
              kShowTags: @YES,
-             kUseToolbar: @NO
+             kUseToolbar: @NO,
+             kHideBars: @NO
     }.mutableCopy;
     
 #if TARGET_OS_MACCATALYST

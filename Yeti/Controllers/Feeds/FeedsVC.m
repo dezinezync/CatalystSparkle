@@ -172,6 +172,8 @@ static void *KVO_Unread = &KVO_Unread;
         [self fetchLatestCounters];
     }
     
+    self.navigationController.toolbarHidden = YES;
+    
 //    if (PrefsManager.sharedInstance.useToolbar == YES) {
 //        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
 //    }
