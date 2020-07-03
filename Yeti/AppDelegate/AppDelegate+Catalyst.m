@@ -238,7 +238,9 @@
     
     UIKeyCommand *closeArticle = [UIKeyCommand commandWithTitle:@"Close Article" image:nil action:@selector(closeArticle) input:UIKeyInputLeftArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
     
-    for (UIKeyCommand *command in @[markRead, markBookmark, openInBrowser, closeArticle]) {
+    UIKeyCommand *shareArticle = [UIKeyCommand commandWithTitle:@"Share Article" image:nil action:@selector(shareArticle) input:@"i" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    for (UIKeyCommand *command in @[markRead, markBookmark, openInBrowser, closeArticle, shareArticle]) {
         
         if (articleVC == nil) {
             
@@ -248,7 +250,7 @@
         
     }
     
-    UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle]];
+    UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle, shareArticle]];
     
     [builder insertSiblingMenu:articlesMenu beforeMenuForIdentifier:UIMenuWindow];
     
@@ -367,10 +369,10 @@
         NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
 
         [group setSubitems:@[item3]];
+        
+        self.shareArticleItem = item3;
 
         return group;
-        
-        return nil;
         
     }
     

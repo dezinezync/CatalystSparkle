@@ -78,6 +78,9 @@
 - (instancetype)initWithFeed:(Feed *)feed {
     
     if (self = [super initWithStyle:UITableViewStylePlain]) {
+        
+        NSLogDebug(@"Feed:%@", feed.feedID);
+        
         self.feed = feed;
     }
     

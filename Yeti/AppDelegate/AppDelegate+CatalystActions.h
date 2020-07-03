@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)markArticleBookmark;
 - (void)openArticleInBrowser;
 - (void)closeArticle;
+- (void)shareArticle;
 
 @end
 
