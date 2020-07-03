@@ -101,6 +101,18 @@
     
     NSArray <FeedItem *> * articles = self.bookmarksManager.bookmarks;
     
+    for (FeedItem *article in articles) {
+        
+        if (article.read == NO) {
+            
+            if ([article.timestamp timeIntervalSince1970] > (86400 * 14)) {
+                article.read = YES;
+            }
+            
+        }
+        
+    }
+    
     articles = [[NSSet setWithArray:articles] allObjects];
     
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:(SharedPrefs.sortingOption == YTSortAllAsc)];
