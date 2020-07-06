@@ -2986,6 +2986,36 @@ NSString * const kArticleData = @"ArticleData";
 NSString * const kScrollViewSize = @"ScrollViewContentSize";
 NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSDictionary *article = [activity.userInfo valueForKey:@"article"];
+    
+    if (article == nil) {
+        return;
+    }
+    
+//    CGSize size = CGSizeFromString([article valueForKey:kScrollViewSize]);
+    CGPoint offset = CGPointFromString([article valueForKey:kScrollViewOffset]);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.scrollView setContentOffset:offset animated:NO];
+    });
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+    
+    NSString *contentSize = NSStringFromCGSize(self.scrollView.contentSize);
+    NSString *contentOffset = NSStringFromCGPoint(self.scrollView.contentOffset);
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"article": @{
+                                                         kScrollViewSize: contentSize,
+                                                         kScrollViewOffset: contentOffset
+    }
+    }];
+    
+}
+
 + (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     
     FeedItem *item = [coder decodeObjectForKey:kArticleData];

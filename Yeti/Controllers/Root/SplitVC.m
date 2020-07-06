@@ -47,6 +47,9 @@
     }
     
     if (self = [super initWithViewControllers:controllers]) {
+        
+        self.feedsVC = nav1.viewControllers.firstObject;
+        
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
         
@@ -336,6 +339,71 @@
 }
 
 #pragma mark - <UIViewControllerRestoration>
+
+- (NSUserActivity *)continuationActivity {
+    
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"restoration"];
+    activity.persistentIdentifier = NSUUID.UUID.UUIDString;
+    
+    NSArray *controllers = [self.viewControllers rz_map:^id(UIViewController *obj, NSUInteger idx, NSArray *array) {
+        
+        if ([obj isKindOfClass:UINavigationController.class] == NO) {
+            return obj.restorationIdentifier;
+        }
+       
+        return [[(UINavigationController *)obj viewControllers] rz_map:^id(__kindof UIViewController *objx, NSUInteger idx, NSArray *array) {
+           
+            return [objx restorationIdentifier];
+            
+        }];
+        
+    }];
+    
+    controllers = [[controllers rz_flatten] rz_filter:^BOOL(NSString * obj, NSUInteger idx, NSArray *array) {
+        
+        return [obj isEqualToString:@"FeedsVC"] == NO;
+        
+    }];
+    
+    controllers = [[[NSOrderedSet orderedSetWithArray:controllers] objectEnumerator] allObjects];
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
+    
+    if (self.feedsVC) {
+        [self.feedsVC saveRestorationActivity:activity];
+    }
+    
+    if (self.feedVC) {
+        [self.feedVC saveRestorationActivity:activity];
+    }
+    
+    if (self.articleVC) {
+        [self.articleVC saveRestorationActivity:activity];
+    }
+    
+    return activity;
+    
+}
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    
+    if (restorationIdentifiers == nil || restorationIdentifiers.count == 0) {
+        return;
+    }
+    
+    NSLogDebug(@"Continuing activity: %@", restorationIdentifiers);
+    
+    NSString * first = restorationIdentifiers.firstObject;
+    
+    if ([first containsString:@"FeedVC-"] == YES) {
+        
+        [self.feedsVC continueActivity:activity];
+        
+    }
+    
+}
 
 + (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
 

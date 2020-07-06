@@ -64,4 +64,8 @@
 
 - (CGRect)boundingRectIn:(UITextView * _Nonnull)textview forCharacterRange:(NSRange)range;
 
+- (void)continueActivity:(NSUserActivity * _Nonnull)activity;
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
 @end

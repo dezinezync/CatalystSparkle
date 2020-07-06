@@ -49,4 +49,8 @@
 @property (nonatomic, weak) Feed *alertFeed;
 @property (nonatomic, strong) NSIndexPath *alertIndexPath;
 
+- (void)continueActivity:(NSUserActivity *)activity;
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
 @end

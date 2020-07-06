@@ -43,6 +43,16 @@
     
 }
 
+- (void)setAuthor:(NSString *)author {
+    
+    _author = author;
+    
+    if (_author) {
+        self.restorationIdentifier = formattedString(@"FeedVC-Author-%@-%@", self.feed.feedID, _author);
+    }
+    
+}
+
 #pragma mark - Subclassed
 
 - (PagingManager *)authorPagingManager {

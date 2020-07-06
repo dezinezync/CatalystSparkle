@@ -25,7 +25,7 @@
         self.type = FeedVCTypeBookmarks;
         
         self.restorationClass = [self class];
-        self.restorationIdentifier = @"BookmarksVC";
+        self.restorationIdentifier = @"FeedVC-Bookmarks";
         
     }
     
