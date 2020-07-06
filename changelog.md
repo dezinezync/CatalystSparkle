@@ -4,7 +4,7 @@
 
 - Improved scroll pagination. 
 
-- 
+- Various improvements for better state restoration using the newer iOS APIs. 
 
 ## Build 367
 
