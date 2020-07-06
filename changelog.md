@@ -1,5 +1,11 @@
 # v1.8.0
 
+## Build 368
+
+- Improved scroll pagination. 
+
+- 
+
 ## Build 367
 
 - Fixes bookmarking and unbookmarking articles. 

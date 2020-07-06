@@ -174,7 +174,7 @@
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
-		F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */ = {isa = PBXBuildFile; fileRef = F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */; };
+		F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */ = {isa = PBXBuildFile; fileRef = F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */; platformFilter = maccatalyst; };
 		F07CD39522B266E9005BCDE7 /* OpenDyslexic-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */; };
 		F07CD39622B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38022B266E9005BCDE7 /* OpenDyslexic-BoldItalic.ttf */; };
 		F07CD39B22B266E9005BCDE7 /* OpenDyslexic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD38522B266E9005BCDE7 /* OpenDyslexic-Regular.ttf */; };
@@ -185,7 +185,7 @@
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
 		F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
 		F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; };
+		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F08993BE2108791D00A9978E /* FeedsVC+DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
