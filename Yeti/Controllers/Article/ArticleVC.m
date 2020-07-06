@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate, TextSharing> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -1458,6 +1458,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
+    
+    para.textSharingDelegate = self;
+    
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
 #endif
@@ -3143,6 +3146,27 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
     return UIPointerStyle(effect: .automatic(preview), shape: .path(starView.starPath))
     */
+}
+
+#pragma mark - <TextSharing>
+
+- (void)shareText:(NSString *)text paragraph:(Paragraph *)paragraph rect:(CGRect)rect {
+    
+    text = formattedString(@"\"%@\"", text);
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, [NSURL URLWithString:self.item.articleURL]] applicationActivities:nil];
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        pvc.sourceView = paragraph;
+        pvc.sourceRect = rect;
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
 }
 
 @end

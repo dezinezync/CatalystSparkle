@@ -8,6 +8,8 @@ This is the RC 1 build for v1.8.
 
 - Various improvements for better state restoration using the newer iOS APIs. 
 
+- Sharing by selecting text in a pargraph will now also include the article's URL and enclose the selected text inside quotes. 
+
 ## Build 367
 
 - Fixes bookmarking and unbookmarking articles. 
