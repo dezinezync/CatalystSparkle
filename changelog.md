@@ -1,5 +1,7 @@
 # v1.8.0
 
+This is the RC 1 build for v1.8.
+
 ## Build 368
 
 - Improved scroll pagination. 
