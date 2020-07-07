@@ -15,7 +15,6 @@
     BOOL _didAddHorizontalConstraints;
 }
 
-@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
 @property (weak, nonatomic) IBOutlet UIView *activityView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
@@ -97,7 +96,7 @@
     
     [self.mercurialButton setImage:image forState:UIControlStateNormal];
     
-    self.mercurialButton.tintColor = mercurialed ? [theme tintColor] : [theme borderColor];
+    self.mercurialButton.tintColor = mercurialed ? [theme tintColor] : UIColor.systemGrayColor;
     
     [self.mercurialButton setNeedsDisplay];
     

@@ -11,7 +11,7 @@
 #import "YetiThemeKit.h"
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/AlertManager.h>
@@ -43,7 +43,10 @@
     AddFeedVC *vc = [[AddFeedVC alloc] init];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalInPresentation = UIModalPresentationAutomatic;
+    
+#if !TARGET_OS_MACCATALYST
+    nav.modalInPresentation = YES;
+#endif
     
     return nav;
 }
@@ -70,6 +73,10 @@
     
     [self setupSearchController];
     [self setupDefaultViews];
+    
+#if TARGET_OS_MACCATALYST
+    self.navigationController.navigationBar.translucent = NO;
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -198,10 +205,8 @@
     Feed *feed = [self.DS objectAtIndexPath:indexPath];
     
     if (feed) {
-        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
-        vc.customFeed = NO;
+        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
         vc.exploring = YES;
-        vc.customFeed = FeedTypeFeed;
         
         [self.navigationController pushViewController:vc animated:YES];
     }

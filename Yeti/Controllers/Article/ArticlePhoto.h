@@ -11,7 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class SDWebImageCombinedOperation;
+
 @interface ArticlePhoto : NSObject <NYTPhoto>
+
+@property (nonatomic, copy) UIImage *downloadedImage;
 
 // Redeclare all the properties as readwrite for sample/testing purposes.
 @property (nonatomic) UIImage *image;
@@ -24,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSURL * _Nonnull URL;
 @property (nonatomic, weak) UIView * _Nullable referenceView;
-@property (nonatomic) NSURLSessionTask * _Nullable task;
+@property (nonatomic) SDWebImageCombinedOperation * _Nullable task;
 
 @end
 

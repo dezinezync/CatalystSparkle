@@ -14,7 +14,7 @@
 #import "CollectionHeader.h"
 
 #import "FeedsVC.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 
 #import <DZTextKit/YetiConstants.h>
 
@@ -53,7 +53,12 @@ static NSString * const reuseIdentifier = @"Cell";
     self.collectionView.restorationIdentifier = [self.restorationIdentifier stringByAppendingString:@"-collectionView"];
     
     self.title = @"Recommended";
+    
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    self.navigationController.navigationBar.translucent = NO;
     
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -61,7 +66,10 @@ static NSString * const reuseIdentifier = @"Cell";
     self.state = ReccoStateLoading;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    self.view.backgroundColor = theme.cellColor;
     self.collectionView.backgroundColor = theme.backgroundColor;
+    
+//    self.navigationController.navigationBar.barTintColor = theme.subbarColor;
     
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsGridCell.class) bundle:nil] forCellWithReuseIdentifier:kFeedsGridCell];
@@ -335,10 +343,8 @@ static NSString * const reuseIdentifier = @"Cell";
     
     if (feed) {
         
-        DetailFeedVC *vc = [[DetailFeedVC alloc] initWithFeed:feed];
-        vc.customFeed = NO;
+        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
         vc.exploring = YES;
-        vc.customFeed = FeedTypeFeed;
         
         [self.navigationController pushViewController:vc animated:YES];
         

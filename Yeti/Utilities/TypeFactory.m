@@ -205,7 +205,16 @@ static TypeFactory * sharedTypeFactory;
 - (CGFloat)basePointSize {
     
     if (_basePointSize == 0.f) {
+        
+#if TARGET_OS_MACCATALYST
+        
+        _basePointSize = 21.f;
+        
+#else
+        
         _basePointSize = [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize;
+        
+#endif
     }
     
     return _basePointSize;
@@ -232,7 +241,16 @@ static TypeFactory * sharedTypeFactory;
 - (UIViewController *)rootController {
     
     if (!_rootController) {
-        _rootController = [UIApplication.keyWindow rootViewController];
+        weakify(self);
+        
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            strongify(self);
+            
+            self->_rootController = [UIApplication.keyWindow rootViewController];
+            
+        });
+        
     }
     
     return _rootController;
@@ -300,6 +318,12 @@ static TypeFactory * sharedTypeFactory;
     
     CGFloat maximumPointSize = SharedPrefs.useSystemSize ? 16.f : floor(SharedPrefs.fontSize  * 16.f / self.basePointSize);
     
+#if TARGET_OS_MACCATALYST
+        
+    maximumPointSize = self.basePointSize;
+        
+#endif
+    
     if (_subtitleFont == nil) {
         _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
     }
@@ -322,13 +346,23 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)boldBodyFont {
     
     if (_boldBodyFont == nil) {
-        UIFont *font = [self bodyFont];
-        UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
         
-        font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
-        font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+        weakify(self);
         
-        _boldBodyFont = font;
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            strongify(self);
+            
+            UIFont *font = [self bodyFont];
+            UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+            
+            font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
+            font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+            
+            self->_boldBodyFont = font;
+            
+        });
+        
     }
     
     return _boldBodyFont;
@@ -337,13 +371,23 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)italicBodyFont {
     
     if (_italicBodyFont == nil) {
-        UIFont *font = [self bodyFont];
-        UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
         
-        font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
-        font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+        weakify(self);
         
-        _italicBodyFont = font;
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            strongify(self);
+            
+            UIFont *font = [self bodyFont];
+            UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic];
+            
+            font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
+            font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+            
+            self->_italicBodyFont = font;
+            
+        });
+        
     }
     
     return _italicBodyFont;
@@ -352,13 +396,23 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)boldItalicBodyFont {
     
     if (_boldItalicBodyFont == nil) {
-        UIFont *font = [self bodyFont];
-        UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic|UIFontDescriptorTraitBold];
         
-        font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
-        font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+        weakify(self);
         
-        _boldItalicBodyFont = font;
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            strongify(self);
+            
+            UIFont *font = [self bodyFont];
+            UIFontDescriptor *descriptor = [[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic|UIFontDescriptorTraitBold];
+            
+            font = [UIFont fontWithDescriptor:descriptor size:font.pointSize];
+            font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:font.pointSize compatibleWithTraitCollection:self.rootController.traitCollection];
+            
+            self->_boldItalicBodyFont = font;
+            
+        });
+        
     }
     
     return _boldItalicBodyFont;

@@ -32,8 +32,10 @@
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     
     UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalInPresentation = UIModalPresentationAutomatic;
     
+#if !TARGET_OS_MACCATALYST
+    nav.modalInPresentation = YES;
+#endif
     return nav;
 }
 
@@ -45,8 +47,9 @@
     vc.folderIndexPath = indexPath;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalInPresentation = UIModalPresentationAutomatic;
-    
+#if !TARGET_OS_MACCATALYST
+    nav.modalInPresentation = YES;
+#endif
     return nav;
 }
 
@@ -64,6 +67,11 @@
         self.title = @"Edit Folder";
         self.input.text = self.folder.title;
     }
+    
+#if TARGET_OS_MACCATALYST
+    self.navigationController.navigationBar.translucent = NO;
+#endif
+    
 }
 
 - (void)didReceiveMemoryWarning {

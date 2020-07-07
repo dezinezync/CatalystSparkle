@@ -44,9 +44,8 @@
 }
 
 - (void)setup {
-#ifdef DEBUG
-    NSLog(@"Setting up two finger swipe");
-#endif
+
+    NSLogDebug(@"Setting up two finger swipe");
     
     self.state = UIGestureRecognizerStatePossible;
     self.firstTouchedPoints = [NSMutableArray array];
@@ -66,9 +65,9 @@
     
     if (touches.count >= 1) {
         self.state = UIGestureRecognizerStateBegan;
-#ifdef DEBUG
-        NSLog(@"Beginning two finger swipe");
-#endif
+
+        NSLogDebug(@"Beginning two finger swipe");
+        
         return;
     }
     
@@ -84,9 +83,8 @@
         return;
     }
     
-#ifdef DEBUG
-    NSLog(@"Moving two finger swipe");
-#endif
+    NSLogDebug(@"Moving two finger swipe");
+
     UIWindow *window = self.view.window;
     NSArray <UITouch *> *arrayOfTouches = [touches allObjects];
     
@@ -120,9 +118,8 @@
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
     [super touchesEnded:touches withEvent:event];
-#ifdef DEBUG
+
     NSLog(@"Ended two finger swipe");
-#endif
     
     if ([self twoFingersMoveUp]) {
         self.direction = TwoFingerPanUp;

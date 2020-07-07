@@ -7,6 +7,21 @@
 //
 
 #import "YetiTheme.h"
+#import "AppKitGlue.h"
+
+#if TARGET_OS_MACCATALYST
+#import "AppDelegate+Catalyst.h"
+#endif
+
+static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorContext;
+
+@interface YetiTheme () {
+    
+    BOOL _observingHighlightColor;
+    
+}
+
+@end
 
 @implementation YetiTheme
 
@@ -32,6 +47,11 @@
         [self performSelectorOnMainThread:@selector(updateAppearances) withObject:nil waitUntilDone:NO];
         return;
     }
+    
+#if TARGET_OS_MACCATALYST
+    [self ct_hookAndUpdateTintColor];
+    [self ct_updateSemanticAppKitColors];
+#endif
     
     [super updateAppearances];
     
@@ -65,5 +85,117 @@
     cell.backgroundColor = self.cellColor;
     
 }
+
+- (void)ct_hookAndUpdateTintColor {
+    
+#if TARGET_OS_MACCATALYST
+    
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    
+    [defaults addObserver:self forKeyPath:@"AppleHighlightColor" options:NSKeyValueObservingOptionNew context:DefaultsAppleHighlightColorContext];
+    
+    _observingHighlightColor = YES;
+    
+    [self ct_updateTintColor:defaults];
+    
+#endif
+    
+}
+
+#if TARGET_OS_MACCATALYST
+
+- (void)ct_updateTintColor:(NSUserDefaults *)defaults {
+    
+    NSString *systemHighlightColor = [defaults objectForKey:@"AppleHighlightColor"];
+    
+    if (systemHighlightColor == nil) {
+        
+        self.tintColor = [UIColor systemBlueColor];
+        
+        return;
+        
+    }
+    
+    NSArray *components = [systemHighlightColor componentsSeparatedByString:@" "];
+    NSString *colorName = [components lastObject];
+    
+    SEL systemColorSelector = NSSelectorFromString([NSString stringWithFormat:@"system%@Color", colorName]);
+    
+    if ([UIColor respondsToSelector:systemColorSelector] == YES) {
+        
+        UIColor * systemTintColor = [UIColor performSelector:systemColorSelector];
+        
+        if (systemTintColor != nil) {
+            
+            self.tintColor = systemTintColor;
+            
+        }
+        
+    }
+    else if ([colorName isEqualToString:@"Graphite"]) {
+        
+        self.tintColor = UIColor.systemGrayColor;
+        
+    }
+    
+}
+
+- (void)ct_updateSemanticAppKitColors {
+    
+    self.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return [UIColor colorWithRed: 0.15 green: 0.15 blue: 0.17 alpha: 1.00];
+        }
+        
+        return [UIColor colorWithRed: 0.91 green: 0.91 blue: 0.91 alpha: 1.00];
+        
+    }];
+    
+    self.borderColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+       
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            
+            return [UIColor colorWithWhite:1.f alpha:0.12f];
+            
+        }
+        
+        return [UIColor colorWithWhite:0.f alpha:0.12f];
+        
+    }];
+    
+    self.cellColor = self.backgroundColor;
+    self.tableColor = self.cellColor;
+    
+}
+
+#pragma mark -
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if ([keyPath isEqualToString:@"AppleHighlightColor"] && context == DefaultsAppleHighlightColorContext) {
+        
+        [self ct_updateTintColor:object];
+        
+        [self updateAppearances];
+        
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+    
+}
+
+- (void)dealloc {
+    
+    if (_observingHighlightColor == YES) {
+    
+        [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"AppleHighlightColor" context:DefaultsAppleHighlightColorContext];
+        
+    }
+    
+}
+
+#endif
 
 @end

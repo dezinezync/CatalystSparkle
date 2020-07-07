@@ -9,7 +9,7 @@
 #import "FeedsGridCell.h"
 #import "YetiThemeKit.h"
 
-#import <DZNetworking/UIImageView+ImageLoading.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 #import <DZKit/NSString+Extras.h>
 
 NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
@@ -49,12 +49,12 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 strongify(self);
-                [self.imageView il_setImageWithURL:formattedURL(@"%@", url)];
+                [self.imageView sd_setImageWithURL:formattedURL(@"%@", url)];
             });
         }
         @catch (NSException *exc) {
             // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            NSLog(@"ArticleCell setImage: %@", exc);
+            NSLog(@"FeedsGridCell setImage: %@", exc);
         }
     }
     

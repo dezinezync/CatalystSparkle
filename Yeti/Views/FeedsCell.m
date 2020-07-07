@@ -8,7 +8,7 @@
 
 #import "FeedsCell.h"
 #import <DZKit/NSString+Extras.h>
-#import <DZNetworking/UIImageView+ImageLoading.h>
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #import "FeedsManager.h"
 #import "YetiThemeKit.h"
@@ -84,7 +84,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.feed = nil;
     
-    [self.faviconView il_cancelImageLoading];
+    [self.faviconView sd_cancelCurrentImageLoad];
     
     self.faviconView.layer.cornerRadius = 4.f;
     self.faviconView.cacheImage = NO;
@@ -188,7 +188,11 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.feed = feed;
     
     self.titleLabel.text = feed.displayTitle;
-    self.countLabel.text = (feed.unread ?: @0).stringValue;
+    
+    NSNumber *unreadCount = feed.unread ?: @0;
+    
+    self.countLabel.text = unreadCount.stringValue;
+    self.countLabel.hidden = unreadCount.integerValue == 0;
     
     NSString *url = [feed faviconURI];
     
@@ -199,17 +203,22 @@ static void *KVO_UNREAD = &KVO_UNREAD;
         @try {
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
                 strongify(self);
-                [self.faviconView il_setImageWithURL:formattedURL(@"%@", url) success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
+                
+                UIImage *placeholder = [[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                
+                [self.faviconView sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:placeholder options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                     
                     self.faviconView.contentMode = UIViewContentModeScaleAspectFit;
                     
-                } error:nil];
+                }];
+                
             });
         }
         @catch (NSException *exc) {
             // this catches the -[UIImageView _updateImageViewForOldImage:newImage:] crash
-            NSLog(@"ArticleCell setImage: %@", exc);
+            NSLog(@"FeedsCell setImage: %@", exc);
         }
     }
     
@@ -219,6 +228,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
 #pragma mark - a11y
 
 - (NSString *)accessibilityLabel {
+    
     NSInteger count = [self.countLabel.text integerValue];
     NSString *title = self.titleLabel.text;
     
@@ -278,6 +288,7 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     NSNumber *totalUnread = self.feed ? self.feed.unread : @(0);
     
     self.countLabel.text = [(totalUnread ?: @0) stringValue];
+    self.countLabel.hidden = totalUnread.integerValue == 0;
 }
 
 @end

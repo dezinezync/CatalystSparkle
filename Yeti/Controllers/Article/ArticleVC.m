@@ -8,15 +8,16 @@
 
 #import "ArticleVC+Toolbar.h"
 #import "FeedsManager+KVS.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "ArticleAuthorView.h"
+
+#import "AppDelegate.h"
 
 #import "Content.h"
 #import <DZTextKit/DZTextKitViews.h>
 #import <DZTextKit/YetiConstants.h>
 #import <DZTextKit/CheckWifi.h>
 
-#import <DZNetworking/UIImageView+ImageLoading.h>
 #import <DZTextKit/NSAttributedString+Trimming.h>
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -35,6 +36,12 @@
 #import "YTExtractor.h"
 #import <DZTextKit/NSString+ImageProxy.h>
 
+#if TARGET_OS_MACCATALYST
+
+#import <AppKit/NSWorkspace.h>
+
+#endif
+
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -45,7 +52,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate, TextSharing> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -76,8 +83,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
-
-@property (nonatomic, strong) ImageLoader *articlesImageLoader;
 
 @end
 
@@ -110,7 +115,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     self.navigationItem.leftItemsSupplementBackButton = YES;
     
     self.state = ArticleStateLoading;
-    self.articlesImageLoader = [ImageLoader new];
+    
+#if TARGET_OS_MACCATALYST
+    
+    self.scrollView.contentInset = UIEdgeInsetsMake(44.f, 0, 44.f, 0);
+    
+#else
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -139,7 +149,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    
+#endif
+
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
     
     [self didUpdateTheme];
@@ -193,15 +204,35 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     [super viewWillAppear:animated];
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
     
-    if (!_hasRendered) {
-        [self.loader startAnimating];
+    [UIMenuSystem.mainSystem setNeedsRebuild];
+    
+#else
+    
+    if (SharedPrefs.hideBars == YES) {
+        
+        self.navigationController.hidesBarsOnSwipe = YES;
+        
+        [self.navigationController.barHideOnSwipeGestureRecognizer addTarget:self action:@selector(didUpdateNavBarAppearance:)];
+        
     }
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
+    
+#endif
+    
+    if (!_hasRendered) {
+        
+        [self.loader startAnimating];
+        
+    }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
 }
@@ -216,22 +247,27 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [super viewWillDisappear:animated];
+    
+#if !TARGET_OS_MACCATALYST
+    
+    if (SharedPrefs.hideBars == YES) {
+        
+        self.navigationController.hidesBarsOnSwipe = NO;
+        
+        [self.navigationController.barHideOnSwipeGestureRecognizer removeTarget:self action:@selector(didUpdateNavBarAppearance:)];
+        
+    }
+    
+#endif
+    
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    
-    NSCache *cache = [SharedImageLoader valueForKeyPath:@"cache"];
-    
-    if (cache) {
-        [cache removeAllObjects];
-    }
-    
-    cache = [self.articlesImageLoader valueForKeyPath:@"cache"];
-    
-    if (cache) {
-        [cache removeAllObjects];
-    }
-    
 //    [self.navigationController popViewControllerAnimated:NO];
 }
 
@@ -249,9 +285,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)dealloc {
     
-    if (self.articlesImageLoader != nil) {
-        [self.articlesImageLoader.cache removeAllObjects];
-    }
+    [UIMenuSystem.mainSystem setNeedsRebuild];
     
     @try {
         [NSNotificationCenter.defaultCenter removeObserver:self];
@@ -261,6 +295,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #pragma mark -
 
 - (void)setupHelperView {
+    
+#if TARGET_OS_MACCATALYST
+    return;
+#endif
     
     if (self.providerDelegate == nil)
         return;
@@ -410,6 +448,18 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 }
 
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    
+    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+        
+        [self updateImagesForNewInterfaceStyle];
+        
+    }
+    
+    [super traitCollectionDidChange:previousTraitCollection];
+    
+}
+
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
@@ -421,6 +471,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             strongify(self);
             
             [self setupToolbar:newCollection];
+            
         }];
     }
     else
@@ -500,6 +551,54 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
         }
     }];
+}
+
+- (void)updateImagesForNewInterfaceStyle {
+    
+    UIUserInterfaceStyle style = self.traitCollection.userInterfaceStyle;
+    
+    for (Image *imageView in self.images) { @autoreleasepool {
+        
+        Image *view = nil;
+        
+        if ([imageView respondsToSelector:@selector(imageView)] && [imageView.imageView respondsToSelector:@selector(image)]) {
+            
+            view = imageView;
+            
+        }
+//        else if ([imageView respondsToSelector:@selector(image)]) {
+//            
+//            view =
+//            
+//        }
+        
+        if (view != nil) {
+            
+            if (style == UIUserInterfaceStyleDark && view.darkModeURL != nil) {
+                
+                if ([[view.imageView sd_imageURL] isEqual:view.darkModeURL] == NO) {
+                    
+                    [view cancelImageLoading];
+                    [view setImageWithURL:view.darkModeURL];
+                    
+                }
+                
+            }
+            else {
+                
+                if ([[view.imageView sd_imageURL] isEqual:view.URL] == NO) {
+                    
+                    [view cancelImageLoading];
+                    [view setImageWithURL:view.URL];
+                    
+                }
+                
+            }
+            
+        }
+        
+    } }
+    
 }
 
 #pragma mark - <ArticleHandler>
@@ -672,9 +771,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         strongify(self);
         
-        // v1.2 will automatically mark the articles as read upon successfully fetching.
-        [self updateFeedAndFolder:responseObject];
-        
         [self _setupArticle:responseObject start:start isChangingArticle:isChangingArticle];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -687,28 +783,51 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
-- (void)updateFeedAndFolder:(FeedItem *)item {
+- (BOOL)imageURLAppearsInContent:(NSString *)url {
     
-    Feed *feed = [MyFeedsManager feedForID:item.feedID];
-    
-    if (feed != nil) {
-        
-        MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - 1);
-        
-        feed.unread = @(MAX(0, feed.unread.integerValue - 1));
-        
-        if (feed.folderID != nil) {
-            Folder *folder = [MyFeedsManager folderForID:feed.folderID];
+    Content *appearing = [self.item.content rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
+       
+        if (([objx.type isEqualToString:@"image"] || [objx.type isEqualToString:@"img"])) {
             
-            if (folder != nil) {
-                [folder willChangeValueForKey:propSel(unreadCount)];
-                // simply tell the unreadCount property that it has been updated.
-                // KVO should handle the rest for us
-                [folder didChangeValueForKey:propSel(unreadCount)];
+            if ([objx.url isEqualToString:url]) {
+                
+                return YES;
+                
             }
+            
+            if (objx.srcset != nil) {
+                
+                NSArray *values = [objx.srcset allValues];
+                
+                values = [values rz_map:^id(id objxx, NSUInteger idxxx, NSArray *arrayxx) {
+                   
+                    if ([objxx isKindOfClass:NSDictionary.class]) {
+                        
+                        return [(NSDictionary *)objxx allValues];
+                        
+                    }
+                    
+                    return objxx;
+                    
+                }];
+                
+                values = [values rz_flatten];
+                
+                if ([values indexOfObject:url] != NSNotFound) {
+                    
+                    return YES;
+                    
+                }
+                
+            }
+        
         }
         
-    }
+        return NO;
+        
+    }];
+    
+    return appearing != nil;
     
 }
 
@@ -722,6 +841,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.item = responseObject;
     
+    if (self.item.isRead == NO) {
+        [self didTapRead:nil];
+    }
+    
     BOOL isYoutubeVideo = [self.item.articleURL containsString:@"youtube.com/watch"];
     
     // add Body
@@ -730,23 +853,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // iOS 13 shouldn't need it and handle it well.
     if (self.item.content.count > 20) {
         self->_deferredProcessing = YES;
-    }
-    
-    /*
-     * In the event of a Youtube video, we add the video itself
-     * instead of the cover and then the video.
-     */
-    if (isYoutubeVideo == NO && self.item.coverImage) {
-        Content *content = [Content new];
-        content.type = @"image";
-        content.url = self.item.coverImage;
-        
-        weakify(self);
-        
-        asyncMain(^{
-            strongify(self);
-            [self addImage:content];
-        });
     }
     
     if (isYoutubeVideo == YES) {
@@ -762,7 +868,30 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSMutableArray <NSString *> *imagesFromEnclosures = @[].mutableCopy;
     
     if (self.item.coverImage != nil) {
-        [imagesFromEnclosures addObject:self.item.coverImage];
+        
+        if ([self imageURLAppearsInContent:self.item.coverImage] == NO) {
+            
+            [imagesFromEnclosures addObject:self.item.coverImage];
+            
+            /*
+             * In the event of a Youtube video, we add the video itself
+             * instead of the cover and then the video.
+             */
+            if (isYoutubeVideo == NO && self.item.coverImage) {
+                Content *content = [Content new];
+                content.type = @"image";
+                content.url = self.item.coverImage;
+
+                weakify(self);
+
+                asyncMain(^{
+                    strongify(self);
+                    [self addImage:content];
+                });
+            }
+            
+        }
+        
     }
     
     if (self.item.enclosures && self.item.enclosures.count) {
@@ -773,7 +902,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         // check for images
         NSArray <Enclosure *> *enclosures = [self.item.enclosures rz_filter:^BOOL(Enclosure *obj, NSUInteger idx, NSArray *array) {
            
-            return obj.type && [IMAGE_TYPES containsObject:obj.type];
+            BOOL isImage = obj.type && [IMAGE_TYPES containsObject:obj.type];
+            
+            // ensure it doesn't appear in the content
+            if (isImage) {
+                
+                isImage = ![self imageURLAppearsInContent:obj.url.absoluteString];
+                
+            }
+            
+            return isImage;
             
         }];
         
@@ -976,10 +1114,29 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
+#if TARGET_OS_MACCATALYST
+    
+    baseFontSize *= 1.42f;
+    baseFontSize = floor(baseFontSize);
+    
+#endif
 
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
+    
+    ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
+    authorView.delegate = self;
+    
+    if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
+        
+        authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        
+        authorView.titleLabel.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
+        para.alignment = NSTextAlignmentRight;
+        
+    }
 
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
                                      NSForegroundColorAttributeName: theme.titleColor,
@@ -988,15 +1145,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                                      };
 
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:self.item.articleTitle attributes:baseAttributes];
-    
-    ArticleAuthorView *authorView = [[ArticleAuthorView alloc] initWithNib];
-    authorView.delegate = self;
-    
-    if ([Paragraph languageDirectionForText:self.item.articleTitle] == NSLocaleLanguageDirectionRightToLeft) {
-        authorView.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-        authorView.titleLabel.textAlignment = NSTextAlignmentRight;
-        authorView.blogLabel.textAlignment = NSTextAlignmentRight;
-    }
     
     // this will be reused later after setting up the label.
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
@@ -1029,7 +1177,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // came from a push notification
     // or the providerDelegate is a non-base-DetailFeedVC (eg. DetailCustomVC)
     if (self.providerDelegate == nil ||
-        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:NSClassFromString(@"DetailFeedVC")] == NO)) {
+        (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
         
         // the blog label should redirect to the blog
         authorView.blogLabel.textColor = theme.tintColor;
@@ -1310,6 +1458,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
+    
+    para.textSharingDelegate = self;
+    
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
 #endif
@@ -1457,7 +1608,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     heading.backgroundColor = UIColor.redColor;
 #endif
 #endif
-    heading.level = content.level.integerValue;
+    heading.level = content && content.level ? content.level.integerValue : 1;
     
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
@@ -1550,7 +1701,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
             || ([content.url containsString:@"deal"])
             || ([content.url containsString:@"amaz"]
-            || [content.url containsString:@"i2.wp.com/9to5mac.com"])
+            || [content.url containsString:@"i2.wp.com"])
         )) {
         return;
     }
@@ -1615,36 +1766,55 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     imageView.content = content;
     
-    [self.images addPointer:(__bridge void *)imageView];
-    imageView.idx = self.images.count - 1;
-    
     CGFloat width = self.scrollView.bounds.size.width;
     
-    NSString *url = [content urlCompliantWithUsersPreferenceForWidth:width];
+    NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
+    NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
+    
+    if (url == nil && darkModeURL == nil) {
+        
+        [self.stackView removeArrangedSubview:imageView];
+        [imageView removeFromSuperview];
+        
+        imageView = nil;
+        
+        return;
+    }
+    
+    [self.images addPointer:(__bridge void *)imageView];
+    imageView.idx = self.images.count - 1;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
     imageView.userInteractionEnabled = YES;
     
     [imageView addGestureRecognizer:tap];
     
-    NSURLComponents *comps = [NSURLComponents componentsWithString:url];
+    NSURLComponents *comps = [NSURLComponents componentsWithString:url.absoluteString];
     
     if (comps.host == nil) {
-#ifdef DEBUG
-        NSLog(@"No hostname for URL: %@", url);
-#endif
         
+        NSLogDebug(@"No hostname for URL: %@", url);
+
         NSURLComponents *articleURLComps = [NSURLComponents componentsWithString:self.item.articleURL];
         
-        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url];
-#ifdef DEBUG
-        NSLog(@"Attempted fixed URL: %@", articleURLComps.URL);
-#endif
+        articleURLComps.path = [articleURLComps.path stringByAppendingPathComponent:url.absoluteString];
+
+        NSLogDebug(@"Attempted fixed URL: %@", articleURLComps.URL);
         
-        url = articleURLComps.URL.absoluteString;
+        url = articleURLComps.URL;
+        
+        if (darkModeURL != nil) {
+                
+            articleURLComps.path = darkModeURL.absoluteString;
+            
+            darkModeURL = articleURLComps.URL;
+            
+        }
+        
     }
     
-    imageView.URL = [NSURL URLWithString:url];
+    imageView.URL = url;
+    imageView.darkModeURL = darkModeURL;
     
     [self addLinebreak];
     
@@ -1930,17 +2100,19 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 if (thumbnail == nil || [thumbnail isBlank] == YES) {}
                 else {
-
-                    [imageView il_setImageWithURL:thumbnail success:^(UIImage * _Nonnull image, NSURL * _Nonnull URL) {
-
-    //                    [playerController.player addObserver:self forKeyPath:propSel(rate) options:NSKeyValueObservingOptionNew context:KVO_PlayerRate];
+                    
+                    [imageView sd_setImageWithURL:[NSURL URLWithString:thumbnail] placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                         
-                        NSLog(@"Video player image has been set: %@", URL);
+                        if (error != nil) {
+                            
+                            NSLog(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
+                            
+                            return;
+                            
+                        }
                         
-                    } error:^(NSError * _Nonnull error) {
-
-                        NSLog(@"Video player failed to set image: %@\nError:%@", videoInfo.coverImage, error.localizedDescription);
-
+                        NSLog(@"Video player image has been set: %@", imageURL);
+                        
                     }];
                     
                 }
@@ -2057,6 +2229,33 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 #pragma mark - Actions
 
+- (void)didUpdateNavBarAppearance:(UIPanGestureRecognizer *)sender {
+    
+    if (self.helperView == nil) {
+        return;
+    }
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        [self.helperView layoutIfNeeded];
+        
+        if (self.navigationController.isNavigationBarHidden == YES) {
+            self.helperView.bottomConstraint.constant = -32.f + 120.f;
+        }
+        else {
+            self.helperView.bottomConstraint.constant = -32.f;
+        }
+        
+        [UIView animateWithDuration:1 animations:^{
+           
+            [self.helperView layoutIfNeeded];
+            
+        }];
+        
+    }
+    
+}
+
 - (void)didTapOnBlogLabel:(UITapGestureRecognizer *)sender {
     
     if (sender.state != UIGestureRecognizerStateEnded) {
@@ -2073,9 +2272,31 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    DetailFeedVC *feedVC = [[DetailFeedVC alloc] initWithFeed:feed];
+    FeedVC *feedVC = [[FeedVC alloc] initWithFeed:feed];
     
-    [self.navigationController pushViewController:feedVC animated:YES];
+    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
+        
+        [self.navigationController pushViewController:feedVC animated:YES];
+        
+    }
+    else {
+        
+        UIViewController *vc = self.to_splitViewController.secondaryViewController;
+        
+        if ([vc isKindOfClass:UINavigationController.class] == YES) {
+            
+            [(UINavigationController *)vc pushViewController:feedVC animated:YES];
+            
+        }
+        else {
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            
+            [self.to_splitViewController showSecondaryViewController:nav sender:self];
+            
+        }
+        
+    }
     
 }
 
@@ -2239,15 +2460,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 imageview.loading = YES;
                 
-                __weak ImageLoader *weakImageLoader = self.articlesImageLoader;
+                if (imageview.darkModeURL != nil && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                    [imageview setImageWithURL:imageview.darkModeURL];
+                }
+                else {
+                    [imageview setImageWithURL:imageview.URL];
+                }
                 
-                [imageview il_setImageWithURL:imageview.URL imageLoader:weakImageLoader];
             }
+            
         }
         else if (imageview.imageView.image && !contains) {
             
             if (imageview.isLoading) {
-                [imageview il_cancelImageLoading];
+                [imageview cancelImageLoading];
                 imageview.loading = NO;
             }
             
@@ -2580,9 +2806,21 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         formatted = formattedURL(@"yeti://external?link=%@", link);
     }
     
-    asyncMain(^{
+    runOnMainQueueWithoutDeadlocking(^{
+        
+#if TARGET_OS_MACCATALYST
+            
+        [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
+        
+#else
+        
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
+        
+#endif
+
+        
     });
+    
 }
 
 - (CGRect)boundingRectIn:(UITextView *)textview forCharacterRange:(NSRange)range
@@ -2751,6 +2989,36 @@ NSString * const kArticleData = @"ArticleData";
 NSString * const kScrollViewSize = @"ScrollViewContentSize";
 NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSDictionary *article = [activity.userInfo valueForKey:@"article"];
+    
+    if (article == nil) {
+        return;
+    }
+    
+//    CGSize size = CGSizeFromString([article valueForKey:kScrollViewSize]);
+    CGPoint offset = CGPointFromString([article valueForKey:kScrollViewOffset]);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.scrollView setContentOffset:offset animated:NO];
+    });
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+    
+    NSString *contentSize = NSStringFromCGSize(self.scrollView.contentSize);
+    NSString *contentOffset = NSStringFromCGPoint(self.scrollView.contentOffset);
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"article": @{
+                                                         kScrollViewSize: contentSize,
+                                                         kScrollViewOffset: contentOffset
+    }
+    }];
+    
+}
+
 + (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     
     FeedItem *item = [coder decodeObjectForKey:kArticleData];
@@ -2846,9 +3114,9 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
         UILabel *label = (UILabel *)[interaction view];
         
         CGSize textBounds = [label sizeThatFits:bounds.size];
-#ifdef DEBUG
-        NSLog(@"textBounds: %@\nBounds: %@", [NSValue valueWithCGSize:textBounds], [NSValue valueWithCGRect:bounds]);
-#endif
+
+        NSLogDebug(@"textBounds: %@\nBounds: %@", [NSValue valueWithCGSize:textBounds], [NSValue valueWithCGRect:bounds]);
+
         bounds.size = textBounds;
         
         // inset it so we get some padding.
@@ -2878,6 +3146,27 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
     return UIPointerStyle(effect: .automatic(preview), shape: .path(starView.starPath))
     */
+}
+
+#pragma mark - <TextSharing>
+
+- (void)shareText:(NSString *)text paragraph:(Paragraph *)paragraph rect:(CGRect)rect {
+    
+    text = formattedString(@"\"%@\"", text);
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, [NSURL URLWithString:self.item.articleURL]] applicationActivities:nil];
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        pvc.sourceView = paragraph;
+        pvc.sourceRect = rect;
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
 }
 
 @end

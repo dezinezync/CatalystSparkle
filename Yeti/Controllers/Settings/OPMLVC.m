@@ -179,7 +179,6 @@
 
 - (IBAction)didTapImport:(UIButton *)sender {
     
-#if TESTFLIGHT == 0
     if (MyFeedsManager.subscription == nil || [MyFeedsManager.subscription hasExpired]) {
         // A subscription is required to import Feeds from an OPML file.
         if (MyFeedsManager.subscription == nil) {
@@ -193,7 +192,7 @@
         UIViewController *presenting = self.presentingViewController;
         
         StoreVC *storeVC = [[StoreVC alloc] initWithStyle:UITableViewStylePlain];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:storeVC];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:storeVC];
 //        storeVC.checkAndShowError = YES;
         
         weakify(presenting);
@@ -216,7 +215,7 @@
         }];
         return;
     }
-#endif
+
     // get the UTI for an extension
     NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
     
