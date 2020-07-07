@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ArticleAuthorView : NibView
 
+@property (weak, nonatomic) IBOutlet UIStackView *mainStackView;
+
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *blogLabel;
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;

@@ -11,12 +11,14 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/AlertManager.h>
 
+#import "AppDelegate.h"
+
 #import "YetiThemeKit.h"
 
 #import <DZTextKit/Paragraph.h>
 #import "FeedsManager.h"
 
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "EmptyVC.h"
 #import "SplitVC.h"
 #import "CustomizeVC.h"
@@ -29,7 +31,7 @@
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
-    UIImage * readImage = [UIImage systemImageNamed:@"circle"],
+    UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
             * bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")],
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
@@ -193,15 +195,15 @@
         nav = (id)(vc.viewControllers.firstObject);
     }
     
-    DetailFeedVC *top = (DetailFeedVC *)[nav topViewController];
+    FeedVC *top = (FeedVC *)[nav topViewController];
     
-    if (top != nil && ([top isKindOfClass:DetailFeedVC.class] || [top.class isSubclassOfClass:DetailFeedVC.class])) {
-        NSArray <NSIndexPath *> *selectedItems = [top.collectionView indexPathsForSelectedItems];
+    if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
+        NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];
         
         NSIndexPath *selected = selectedItems.count ? [selectedItems firstObject] : nil;
         
         if (selected != nil) {
-            [top.collectionView deselectItemAtIndexPath:selected animated:YES];
+            [top.tableView deselectRowAtIndexPath:selected animated:YES];
         }
     }
 }
@@ -216,13 +218,24 @@
     
     UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[title, @" ", URL] applicationActivities:nil];
     
-//    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (sender && [sender isKindOfClass:UIBarButtonItem.class]) {
     
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         pvc.barButtonItem = sender;
         pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
         
-//    }
+    }
+#if TARGET_OS_MACCATALYST
+    else if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
+      
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.sourceView = self.view;
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 240.f, 36.f, self.view.bounds.size.width, 1);
+//        pvc.barButtonItem = (UIBarButtonItem *)sender;
+//        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        
+    }
+#endif
     
     [self presentViewController:avc animated:YES completion:nil];
     
@@ -230,11 +243,13 @@
 
 - (void)didTapBookmark:(UIBarButtonItem *)button {
     
-    if (![button respondsToSelector:@selector(setEnabled:)]) {
-        button = [self.navigationItem.rightBarButtonItems objectAtIndex:2];
-    }
+    BOOL isButton = button && [button respondsToSelector:@selector(setEnabled:)];
     
-    button.enabled = NO;
+    if (isButton) {
+        
+        button.enabled = NO;
+        
+    }
     
     weakify(self);
     
@@ -243,14 +258,19 @@
         strongify(self);
         
         void (^bookmarkCallback)(BOOL success) = ^void(BOOL success) {
+            
             if (success == YES) {
-               
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                       
-                       UIImage *image = self.item.isBookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
-                       
-                       [button setImage:image];
-                   });
+                
+                if (isButton) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        UIImage *image = self.item.isBookmarked ? [UIImage systemImageNamed:@"bookmark.fill"] : [UIImage systemImageNamed:@"bookmark"];
+                        
+                        [button setImage:image];
+                    });
+                    
+                }
                    
                }
                else {
@@ -261,18 +281,22 @@
                    [self.providerDelegate userMarkedArticle:self.item bookmarked:self.item.bookmarked];
                }
             
-               weakify(self);
-               
-               dispatch_async(dispatch_get_main_queue(), ^{
-                  
-                   strongify(self);
+            if (isButton) {
+            
+                   weakify(self);
                    
-                   button.enabled = YES;
-                   
-                   [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
-                   [[self notificationGenerator] prepare];
-                   
-               });
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                      
+                       strongify(self);
+                       
+                       button.enabled = YES;
+                       
+                       [[self notificationGenerator] notificationOccurred:UINotificationFeedbackTypeSuccess];
+                       [[self notificationGenerator] prepare];
+                       
+                   });
+                
+            }
         };
         
         if (self.item.isBookmarked) {
@@ -286,7 +310,9 @@
        
         [AlertManager showGenericAlertWithTitle:@"Service Error" message:error.localizedDescription];
         
-        button.enabled = YES;
+        if (isButton) {
+            button.enabled = YES;
+        }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -302,16 +328,21 @@
 
 - (void)didTapRead:(UIBarButtonItem *)button {
     
-    if (![button respondsToSelector:@selector(setEnabled:)]) {
-        button = [self.navigationItem.rightBarButtonItems objectAtIndex:3];
+    BOOL isButton = button && [button respondsToSelector:@selector(setEnabled:)];
+    
+    if (isButton) {
+        button.enabled = NO;
     }
     
-    button.enabled = NO;
+    [MyFeedsManager article:self.item markAsRead:(button == nil ? YES : !self.item.isRead)];
     
-    [MyFeedsManager article:self.item markAsRead:!self.item.isRead];
     self.item.read = !self.item.isRead;
     
-    button.image = self.item.isRead ? [UIImage systemImageNamed:@"circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+    if (isButton) {
+        
+        button.image = self.item.isRead ? [UIImage systemImageNamed:@"smallcircle.fill.circle"] : [UIImage systemImageNamed:@"largecircle.fill.circle"];
+        
+    }
     
     if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
         
@@ -319,7 +350,9 @@
         
     }
     
-    button.enabled = YES;
+    if (isButton) {
+        button.enabled = YES;
+    }
     
     weakify(self);
     
@@ -335,6 +368,15 @@
 }
 
 - (void)openInBrowser {
+    
+#if TARGET_OS_MACCATALYST
+    
+    [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
+    
+    return;
+    
+#endif
+    
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];

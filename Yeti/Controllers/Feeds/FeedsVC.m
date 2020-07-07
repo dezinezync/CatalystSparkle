@@ -10,10 +10,11 @@
 #import "FeedsManager.h"
 #import "FeedsCell.h"
 #import "FolderCell.h"
-#import "DetailFeedVC.h"
-#import "DetailCustomVC.h"
+
+#import "UnreadVC.h"
+#import "BookmarksVC.h"
 #import "TodayVC.h"
-#import "DetailFolderVC.h"
+#import "FolderVC.h"
 
 #import "UIRefreshControl+Manual.h"
 
@@ -50,10 +51,10 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL _fetchingCounters;
     
     BOOL _hasOpenedUnread;
+    
+    NSUInteger _continueActivityCount;
 }
 
-@property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
-@property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
 @property (nonatomic, weak) UIView *hairlineView;
 
 @property (nonatomic, weak) UILabel *progressLabel;
@@ -88,9 +89,8 @@ static void *KVO_Unread = &KVO_Unread;
 //    [self setupToolbar];
     
     MyDBManager.syncProgressBlock = ^(CGFloat progress) {
-#ifdef DEBUG
-        NSLog(@"Sync Progress: %@", @(progress));
-#endif
+        
+        NSLogDebug(@"Sync Progress: %@", @(progress));
         
         if (progress == 0.f) {
             
@@ -173,6 +173,8 @@ static void *KVO_Unread = &KVO_Unread;
         
         [self fetchLatestCounters];
     }
+    
+    self.navigationController.toolbarHidden = YES;
     
 //    if (PrefsManager.sharedInstance.useToolbar == YES) {
 //        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
@@ -371,7 +373,9 @@ static void *KVO_Unread = &KVO_Unread;
             }
         }
         
-        ocell.countLabel.hidden = !showUnreadCounter;
+        if (ocell.countLabel.isHidden == NO) {
+            ocell.countLabel.hidden = !showUnreadCounter;
+        }
         
         return ocell;
         
@@ -434,6 +438,12 @@ static void *KVO_Unread = &KVO_Unread;
 
 - (void)setupNavigationBar {
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
@@ -479,6 +489,8 @@ static void *KVO_Unread = &KVO_Unread;
 //        self.navigationController.toolbarHidden = NO;
 //    }
     
+#endif
+    
 }
 
 - (NSArray <UIBarButtonItem *> *)toolbarItems {
@@ -495,18 +507,28 @@ static void *KVO_Unread = &KVO_Unread;
         progressLabel.textColor = YTThemeKit.theme.subtitleColor;
         progressLabel.textAlignment = NSTextAlignmentCenter;
         progressLabel.frame = CGRectMake(0, 0, frame.size.width, 0);
-        [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+        
+        NSLayoutConstraint *labelWidthConstraint = [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
+        labelWidthConstraint.priority = 999;
+        
         progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
-//#ifdef DEBUG
+
+        //#ifdef DEBUG
 //        progressLabel.backgroundColor = UIColor.redColor;
 //#endif
+        
         UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         progressView.progressTintColor = YTThemeKit.theme.tintColor;
         progressView.trackTintColor = YTThemeKit.theme.borderColor;
         progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
         progressView.layer.cornerRadius = 2.f;
         progressView.translatesAutoresizingMaskIntoConstraints = NO;
-        [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)].active = YES;
+        
+        NSLayoutConstraint *widthConstraint = [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
+        widthConstraint.priority = 999;
+        
+        [NSLayoutConstraint activateConstraints:@[widthConstraint, labelWidthConstraint]];
+        
 //#ifdef DEBUG
 //        progressView.backgroundColor = UIColor.greenColor;
 //#endif
@@ -644,22 +666,25 @@ static void *KVO_Unread = &KVO_Unread;
     
     if (indexPath.section == 0) {
         
-        DetailCustomVC *vc = nil;
+        FeedVC *vc = nil;
         
         if (indexPath.row == 1 && PrefsManager.sharedInstance.hideBookmarks == NO) {
             
-            vc = [[TodayVC alloc] initWithFeed:nil];
-            vc.customFeed = FeedTypeCustom;
+            vc = [[TodayVC alloc] init];
+            
+        }
+        else if (indexPath.row == 0) {
+            
+            vc = [[UnreadVC alloc] init];
             
         }
         else {
             
-            vc = [[DetailCustomVC alloc] initWithFeed:nil];
-            vc.customFeed = FeedTypeCustom;
-            vc.bookmarksManager = self.bookmarksManager;
-            vc.unread = indexPath.row == 0;
+            vc = [[BookmarksVC alloc] init];
             
         }
+        
+        vc.bookmarksManager = self.bookmarksManager;
         
         BOOL animated = YES;
         
@@ -680,27 +705,34 @@ static void *KVO_Unread = &KVO_Unread;
             [self to_showSecondaryViewController:nav setDetailViewController:detailVC sender:self];
         }
         
+        [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
+        
         return;
     }
     
     Feed *feed = [self objectAtIndexPath:indexPath];
     
     if ([feed isKindOfClass:Feed.class]) {
+        
         UIViewController *vc;
         
         if (isPhone) {
-            vc = [[DetailFeedVC alloc] initWithFeed:feed];
-            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
+            vc = [[FeedVC alloc] initWithFeed:feed];
+            [(FeedVC *)vc setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc sender:self];
+            
+            [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
         }
         else {
-            vc = [DetailFeedVC instanceWithFeed:feed];
+            vc = [FeedVC instanceWithFeed:feed];
             
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+            [(FeedVC *)[(UINavigationController *)vc topViewController] setType:FeedVCTypeNatural];
+            [(FeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
+            
+            [self.to_splitViewController setValue:(FeedVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
         }
         
     }
@@ -711,18 +743,21 @@ static void *KVO_Unread = &KVO_Unread;
         UIViewController *vc;
         
         if (isPhone) {
-            vc = [[DetailFolderVC alloc] initWithFolder:folder];
-            [(DetailFeedVC *)vc setBookmarksManager:self.bookmarksManager];
+            vc = [[FolderVC alloc] initWithFolder:folder];
+            [(FolderVC *)vc setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc sender:self];
+            
+            [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
         }
         else {
-            vc = [DetailFolderVC instanceWithFolder:folder];
+            vc = [FolderVC instanceWithFolder:folder];
             
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setCustomFeed:NO];
-            [(DetailFeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+            [(FolderVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
+            
+            [self.to_splitViewController setValue:(FolderVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
         }
         
     }
@@ -732,6 +767,163 @@ static void *KVO_Unread = &KVO_Unread;
 #pragma mark - Restoration
 
 NSString * const kDS2Data = @"DS2Data";
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    if (ArticlesManager.shared.feeds.count == 0) {
+        
+        if (_continueActivityCount < 3) {
+            
+            _continueActivityCount++;
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.75 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self continueActivity:activity];
+                
+            });
+            
+        }
+        
+        return;
+        
+    }
+    
+    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    
+    if ([restorationIdentifiers.firstObject containsString:@"FeedVC-"] == NO) {
+        
+        return;
+        
+    }
+        
+    NSArray <NSString *> *components = [restorationIdentifiers.firstObject componentsSeparatedByString:@"-"];
+    
+    components = [components subarrayWithRange:NSMakeRange(1, components.count - 1)];
+    
+    if ([components.firstObject isEqualToString:@"Feed"]) {
+        
+        Feed *feed = [ArticlesManager.shared feedForID:@(components.lastObject.integerValue)];
+        
+        if (feed != nil) {
+            
+            NSIndexPath *indexPath = nil;
+            
+            if (feed.folderID != nil) {
+                
+                Folder *folder = [ArticlesManager.shared folderForID:feed.folderID];
+                
+                if (folder) {
+                    
+                    NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
+                    
+                    if (index != NSNotFound) {
+                        
+                        indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+                        
+                        FolderCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                        
+                        [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            NSUInteger index = [self indexOfObject:feed indexPath:indexPath];
+            
+            if (index != NSNotFound) {
+                
+                indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+                
+                [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+                
+            }
+            
+        }
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Unread"]) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Today"]) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+        
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Bookmarks"]) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+        
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Folder"]) {
+        
+        Folder *folder = [ArticlesManager.shared folderForID:@(components.lastObject.integerValue)];
+        
+        if (folder != nil) {
+            
+            NSUInteger index = [self indexOfObject:folder indexPath:nil];
+            
+            if (index != NSNotFound) {
+                
+                NSIndexPath * indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+                
+                [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+                
+            }
+            
+        }
+        
+    }
+    
+    // check if an Author VC was also pushed
+    if (restorationIdentifiers.count > 1 && [[restorationIdentifiers objectAtIndex:1] containsString:@"Author"] == YES) {
+        
+        components = [[restorationIdentifiers objectAtIndex:1] componentsSeparatedByString:@"-"];
+        
+        NSString *author = [[components subarrayWithRange:NSMakeRange(3, components.count - 3)] componentsJoinedByString:@"-"];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
+           
+            if (feedVC != nil) {
+                
+                [feedVC showAuthorVC:author];
+                
+            }
+            
+        });
+        
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
+        
+        if (feedVC == nil) {
+            return;
+        }
+        
+        [feedVC continueActivity:activity];
+        
+    });
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity *)activity {
+    
+    
+    
+}
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     return [[FeedsVC alloc] initWithStyle:UITableViewStyleGrouped];
@@ -908,7 +1100,12 @@ NSString * const kDS2Data = @"DS2Data";
         
         [snapshot appendItemsWithIdentifiers:orderedSet.objectEnumerator.allObjects intoSectionWithIdentifier:MainSection];
         
-        [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
+        @try {
+            [self.DDS applySnapshot:snapshot animatingDifferences:presentingSelf];
+        }
+        @catch (NSException *exc) {
+            NSLog(@"Exception updating Feeds Table: %@", exc);
+        }
         
         if (presentingSelf == YES) {
             
@@ -988,30 +1185,25 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-#if TESTFLIGHT == 1
-    // during betas and for testflight builds, this option should be left on.
-    BOOL betaVal = [Keychain boolFor:YTSubscriptionPurchased error:nil];
-
-    if (betaVal == YES) {
-        NSLog(@"Beta user has already gone through the subscription check. Ignoring.");
-        return;
-    }
-#endif
-    
     BOOL addedVal = [Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil];
     
     if (addedVal == NO) {
         NSLog(@"User hasn't added their first feed yet. Ignoring.");
         return;
     }
-#if TESTFLIGHT == 0
+
     [self subscriptionExpired:nil];
-#endif
+
 }
 
 #pragma mark - Notifications
 
 - (void)didUpdateBookmarks {
+    
+    if (SharedPrefs.hideBookmarks == YES) {
+        // row is hidden. Ignore.
+        return;
+    }
     
     if (NSThread.isMainThread == NO) {
         [self performSelectorOnMainThread:@selector(didUpdateBookmarks) withObject:nil waitUntilDone:NO];
@@ -1021,10 +1213,11 @@ NSString * const kDS2Data = @"DS2Data";
     NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
     
     for (NSIndexPath *indexpath in visible) {
+        
         // check if the bookmarks row is visible
-        if (indexpath.section == 0 && indexpath.row == 1) {
+        if (indexpath.section == 0 && indexpath.row == 2) {
             
-            FeedsCell *cell = (FeedsCell *)[self tableView:self.tableView cellForRowAtIndexPath:indexpath];
+            FeedsCell *cell = (FeedsCell *)[self.tableView cellForRowAtIndexPath:indexpath];
             
             if (cell != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -1176,7 +1369,7 @@ NSString * const kDS2Data = @"DS2Data";
     if ([Keychain boolFor:YTSubscriptionHasAddedFirstFeed error:nil]) {
         return;
     }
-#if TESTFLIGHT == 0
+
     StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
     
     vc.modalInPresentation = YES;
@@ -1201,7 +1394,7 @@ NSString * const kDS2Data = @"DS2Data";
         strongify(self);
         [self.to_splitViewController presentViewController:nav animated:YES completion:nil];
     });
-#endif
+
 }
 
 - (void)didPurchaseSubscription:(NSNotification *)note {
@@ -1223,10 +1416,40 @@ NSString * const kDS2Data = @"DS2Data";
 
 #pragma mark - <FolderInteractionDelegate>
 
-- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
+- (void)didTapFolderIcon:(Folder *)folder indexPath:(NSIndexPath *)indexPath cell:(FolderCell *)cell {
     
-    NSIndexPath *indexPath = nil;
-    __block NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
+    if (indexPath == nil) {
+        
+        // if the cell is being tapped on, it's most likely visible.
+        
+        NSArray <UITableViewCell *> *cells = self.tableView.visibleCells;
+        
+        FolderCell *cellFromTable = (FolderCell *)[cells rz_find:^BOOL(UITableViewCell *obj, NSUInteger idx, NSArray *array) {
+           
+            if ([obj isKindOfClass:FolderCell.class] && [[(FolderCell*)obj folder] isEqualToFolder:folder]) {
+                return YES;
+            }
+            
+            return NO;
+            
+        }];
+        
+        if (cellFromTable != nil) {
+            
+            indexPath = [self.tableView indexPathForCell:cellFromTable];
+            
+        }
+        
+        if (indexPath == nil) {
+            return;
+        }
+        else {
+            folder = cell.folder;
+        }
+
+    }
+    
+    NSUInteger index = indexPath.row;
     
     if (index == NSNotFound) {
         NSLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
@@ -1236,7 +1459,7 @@ NSString * const kDS2Data = @"DS2Data";
     CGPoint contentOffset = self.tableView.contentOffset;
     
     if (indexPath == nil) {
-        indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+        indexPath = [self.DDS indexPathForItemIdentifier:folder];
     }
     
     Folder *folderFromDS = [self.DDS itemIdentifierForIndexPath:indexPath];
@@ -1253,16 +1476,17 @@ NSString * const kDS2Data = @"DS2Data";
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
             
-        UIImage *image = [[UIImage systemImageNamed:([folder isExpanded] ? @"folder" : @"folder.fill")] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-        
-        cell.faviconView.image = image;
-        
-        [cell.faviconView setNeedsDisplay];
-        [cell setNeedsDisplay];
-        
         [self.tableView.layer removeAllAnimations];
         [self.tableView setContentOffset:contentOffset animated:NO];
     });
+    
+}
+
+- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    
+    [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
     
 }
 

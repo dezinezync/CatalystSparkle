@@ -58,6 +58,7 @@ PrefsManager * SharedPrefs = nil;
     self.previewLines = [self.defaults integerForKey:kPreviewLines];
     self.showTags = ([self.defaults valueForKey:kShowTags] ? [[self.defaults valueForKey:kShowTags] boolValue] : YES);
     self.useToolbar = ([self.defaults valueForKey:kUseToolbar] ? [[self.defaults valueForKey:kUseToolbar] boolValue] : NO);
+    self.hideBars = ([self.defaults valueForKey:kHideBars] ? [[self.defaults valueForKey:kHideBars] boolValue] : NO );
     
     self.useSystemSize = ([self.defaults valueForKey:kUseSystemFontSize] ? [[self.defaults valueForKey:kUseSystemFontSize] boolValue] : YES);
     self.fontSize = ([self.defaults valueForKey:kFontSize] ? [[self.defaults valueForKey:kFontSize] integerValue] : [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize);
@@ -130,6 +131,9 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(lineSpacing)]) {
         return kLineSpacing;
     }
+    else if ([key isEqualToString:propSel(hideBars)]) {
+        return kHideBars;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -167,7 +171,7 @@ PrefsManager * SharedPrefs = nil;
             
         }
         else if ([NSStringFromClass([value class]) containsString:@"Boolean"]) {
-            [self.defaults setBool:value forKey:mapping];
+            [self.defaults setBool:[value boolValue] forKey:mapping];
         }
         else {
             [self.defaults setValue:value forKey:mapping];

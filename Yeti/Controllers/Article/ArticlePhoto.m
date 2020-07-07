@@ -10,4 +10,10 @@
 
 @implementation ArticlePhoto
 
+- (UIImage *)image {
+    
+    return self.downloadedImage;
+    
+}
+
 @end

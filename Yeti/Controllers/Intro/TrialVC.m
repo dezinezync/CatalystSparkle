@@ -123,7 +123,7 @@
 
 - (IBAction)didTapRestore:(id)sender {
     
-#if defined(DEBUG) || TESTFLIGHT == 1
+#ifdef DEBUG
     dispatch_async(dispatch_get_main_queue(), ^{
         
         [Keychain add:kHasShownOnboarding boolean:YES];

@@ -21,6 +21,10 @@
 
 - (void)didTapRead:(id)sender;
 - (void)didTapBookmark:(id)sender;
+
+- (void)didTapShare:(UIBarButtonItem *)sender;
 - (void)didTapClose;
+
+- (void)openInBrowser;
 
 @end

@@ -64,6 +64,8 @@ NSString* deviceName() {
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+    
 //    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     [self didUpdateTheme];
 }
@@ -506,7 +508,7 @@ NSString* deviceName() {
     UIDevice *device = [UIDevice currentDevice];
     NSString *model = deviceName();
     NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
-    NSString *deviceUUID = device.identifierForVendor.UUIDString;
+    NSString *deviceUUID = MyFeedsManager.deviceID;
     
     NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
     NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];

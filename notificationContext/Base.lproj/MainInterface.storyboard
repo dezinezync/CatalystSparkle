@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="M4Y-Lb-cyx">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,7 +16,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="148"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" alignment="top" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="JVB-3s-cTX">
-                                <rect key="frame" x="12" y="100.5" width="296" height="39.5"/>
+                                <rect key="frame" x="12" y="108" width="296" height="32"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="748" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="Lws-sk-Mqm">
                                         <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
@@ -27,16 +27,16 @@
                                         </constraints>
                                     </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacingType="standard" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TeF-Kx-iMq">
-                                        <rect key="frame" x="40" y="0.0" width="256" height="39.5"/>
+                                        <rect key="frame" x="40" y="0.0" width="256" height="32"/>
                                         <subviews>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zMp-RN-rI0">
-                                                <rect key="frame" x="0.0" y="0.0" width="94.5" height="20.5"/>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Hello World" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zMp-RN-rI0">
+                                                <rect key="frame" x="0.0" y="0.0" width="94.5" height="13"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ns6-KV-S31">
-                                                <rect key="frame" x="0.0" y="21.5" width="79.5" height="18"/>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Hello World" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ns6-KV-S31">
+                                                <rect key="frame" x="0.0" y="14" width="79.5" height="18"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
@@ -46,22 +46,21 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="XU1-wl-cXg">
-                                <rect key="frame" x="0.0" y="8" width="320" height="84.5"/>
-                                <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XU1-wl-cXg">
+                                <rect key="frame" x="0.0" y="8" width="320" height="92"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" priority="999" constant="197" id="uOI-u0-JGu"/>
+                                    <constraint firstAttribute="width" constant="320" id="a5r-vm-CV5"/>
+                                    <constraint firstAttribute="height" priority="999" constant="197" id="uOI-u0-JGu"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="XU1-wl-cXg" firstAttribute="leading" secondItem="S3S-Oj-5AN" secondAttribute="leading" id="0UZ-pr-38m"/>
                             <constraint firstAttribute="trailing" secondItem="JVB-3s-cTX" secondAttribute="trailing" constant="12" id="EXF-m5-abx"/>
                             <constraint firstItem="JVB-3s-cTX" firstAttribute="leading" secondItem="S3S-Oj-5AN" secondAttribute="leading" constant="12" id="Gqj-Es-9jH"/>
                             <constraint firstItem="XU1-wl-cXg" firstAttribute="top" secondItem="S3S-Oj-5AN" secondAttribute="top" constant="8" id="WOQ-FN-f9A"/>
                             <constraint firstItem="JVB-3s-cTX" firstAttribute="bottom" secondItem="2BE-c3-nQJ" secondAttribute="bottom" constant="-8" id="hkI-Vn-VfV"/>
-                            <constraint firstAttribute="trailing" secondItem="XU1-wl-cXg" secondAttribute="trailing" id="ncw-SV-JyD"/>
+                            <constraint firstItem="XU1-wl-cXg" firstAttribute="leading" secondItem="S3S-Oj-5AN" secondAttribute="leading" id="seE-oS-etx"/>
                             <constraint firstItem="JVB-3s-cTX" firstAttribute="top" secondItem="XU1-wl-cXg" secondAttribute="bottom" constant="8" id="x1b-UP-pie"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="2BE-c3-nQJ"/>
@@ -70,7 +69,9 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="148"/>
                     <connections>
+                        <outlet property="coverHeight" destination="uOI-u0-JGu" id="jyb-xT-GAL"/>
                         <outlet property="coverImage" destination="XU1-wl-cXg" id="Pz1-2K-feg"/>
+                        <outlet property="coverWidth" destination="a5r-vm-CV5" id="xpZ-mw-RFW"/>
                         <outlet property="favicon" destination="Lws-sk-Mqm" id="8HC-wW-cPw"/>
                         <outlet property="mainStack" destination="JVB-3s-cTX" id="xvR-Og-3Tq"/>
                         <outlet property="subStack" destination="TeF-Kx-iMq" id="lMN-od-ang"/>

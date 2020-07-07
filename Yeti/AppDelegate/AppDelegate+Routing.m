@@ -13,7 +13,7 @@
 #import "YetiThemeKit.h"
 
 #import "FeedsVC.h"
-#import "DetailFeedVC.h"
+#import "FeedVC.h"
 #import "ArticleVC.h"
 #import "FolderCell.h"
 #import "YTNavigationController.h"
@@ -186,6 +186,11 @@
     [JLRoutes.globalRoutes addRoute:@"/external" handler:^BOOL(NSDictionary *parameters) {
         
         NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
+        
+#if TARGET_OS_MACCATALYST
+        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
+        return YES;
+#endif
         
         // check and optionally handle twitter URLs
         if ([link containsString:@"twitter.com"]) {
@@ -581,9 +586,9 @@
     // get the primary navigation controller
     UINavigationController *nav = (id)splitVC.viewControllers.firstObject;
     
-    if ([[nav topViewController] isKindOfClass:DetailFeedVC.class]) {
+    if ([[nav topViewController] isKindOfClass:FeedVC.class]) {
         // check if the current topVC is the same feed
-        if ([[[(DetailFeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
+        if ([(FeedVC *)[nav topViewController] feed] && [[[(FeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
             
             if (articleID != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -599,9 +604,9 @@
     
     if (splitVC.secondaryViewController && [splitVC.secondaryViewController isKindOfClass:UINavigationController.class] == YES) {
         
-        DetailFeedVC *feedVC = (id)[(UINavigationController *)[splitVC secondaryViewController] topViewController];
+        FeedVC *feedVC = (id)[(UINavigationController *)[splitVC secondaryViewController] topViewController];
         
-        if (feedVC != nil && [feedVC isKindOfClass:DetailFeedVC.class]) {
+        if (feedVC != nil && [feedVC isKindOfClass:FeedVC.class]) {
             
             if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
                 
@@ -679,7 +684,7 @@
         return;
     }
     
-    DetailFeedVC *feedVC = nil;
+    FeedVC *feedVC = nil;
     
     TOSplitViewController *splitVC;
     UINavigationController *nav;
@@ -694,12 +699,12 @@
             nav = (id)splitVC.primaryViewController;
         }
         
-        feedVC = (DetailFeedVC *)[nav topViewController];
+        feedVC = (FeedVC *)[nav topViewController];
     }
     @catch (NSException *exc) {}
     
     if (feedVC != nil
-        && ([feedVC isKindOfClass:DetailFeedVC.class])) {
+        && ([feedVC isKindOfClass:FeedVC.class])) {
         feedVC.loadOnReady = articleID;
     }
     else {

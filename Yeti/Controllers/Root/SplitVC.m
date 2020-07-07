@@ -18,7 +18,7 @@
 
 #import "FeedsManager.h"
 
-#import "AppDelegate.h"
+#import "AppDelegate+Catalyst.h"
 #import "TwoFingerPanGestureRecognizer.h"
 #import "MainNavController.h"
 
@@ -47,6 +47,9 @@
     }
     
     if (self = [super initWithViewControllers:controllers]) {
+        
+        self.feedsVC = nav1.viewControllers.firstObject;
+        
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
         
@@ -70,6 +73,16 @@
     
     [super viewDidLoad];
     
+    UISwipeGestureRecognizer *edgePanLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
+    edgePanLeft.numberOfTouchesRequired = 2;
+    edgePanLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    edgePanLeft.delegate = self;
+    
+    UISwipeGestureRecognizer *edgePanRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
+    edgePanRight.numberOfTouchesRequired = 2;
+    edgePanRight.direction = UISwipeGestureRecognizerDirectionRight;
+    edgePanRight.delegate = self;
+    
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;
     twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
@@ -82,6 +95,8 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
+    [self.view addGestureRecognizer:edgePanLeft];
+    [self.view addGestureRecognizer:edgePanRight];
 
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
@@ -92,15 +107,16 @@
     if (hasShownIntro == NO) {
         [self userNotFound];
     }
-#if TESTFLIGHT == 1
-    else {
-        // this ensures anyone who has already gone through the setup isn't asked to subscribe again.
-        // this value should change for the production app on the App Store
-        [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
-    }
-#endif
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
+    
+#if TARGET_OS_MACCATALYST
+    
+    UIColor *separatorColor = [MyAppDelegate appKitColorNamed:@"separatorColor"];
+    
+    self.separatorStrokeColor = separatorColor;
+    
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -200,6 +216,41 @@
 
 #pragma mark - Gestures
 
+- (void)didSwipeOnEdge:(UISwipeGestureRecognizer *)sender {
+    
+    if (self.traitCollection.horizontalSizeClass != UIUserInterfaceSizeClassRegular) {
+        return;
+    }
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        if (self.viewControllers.count == 1 && [self.viewControllers.lastObject isKindOfClass:YTNavigationController.class] == NO) {
+            return;
+        }
+        
+        if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+            
+            if (self.primaryColumnIsHidden == YES) {
+                return;
+            }
+            
+            self.primaryColumnIsHidden = YES;
+            
+        }
+        else {
+            
+            if (self.primaryColumnIsHidden == NO) {
+                return;
+            }
+            
+            self.primaryColumnIsHidden = NO;
+            
+        }
+        
+    }
+    
+}
+
 - (void)didPanWithTwoFingers:(UISwipeGestureRecognizer *)sender {
     
     NSLogDebug(@"State: %@", @(sender.state));
@@ -288,6 +339,71 @@
 }
 
 #pragma mark - <UIViewControllerRestoration>
+
+- (NSUserActivity *)continuationActivity {
+    
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"restoration"];
+    activity.persistentIdentifier = NSUUID.UUID.UUIDString;
+    
+    NSArray *controllers = [self.viewControllers rz_map:^id(UIViewController *obj, NSUInteger idx, NSArray *array) {
+        
+        if ([obj isKindOfClass:UINavigationController.class] == NO) {
+            return obj.restorationIdentifier;
+        }
+       
+        return [[(UINavigationController *)obj viewControllers] rz_map:^id(__kindof UIViewController *objx, NSUInteger idx, NSArray *array) {
+           
+            return [objx restorationIdentifier];
+            
+        }];
+        
+    }];
+    
+    controllers = [[controllers rz_flatten] rz_filter:^BOOL(NSString * obj, NSUInteger idx, NSArray *array) {
+        
+        return [obj isEqualToString:@"FeedsVC"] == NO;
+        
+    }];
+    
+    controllers = [[[NSOrderedSet orderedSetWithArray:controllers] objectEnumerator] allObjects];
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
+    
+    if (self.feedsVC) {
+        [self.feedsVC saveRestorationActivity:activity];
+    }
+    
+    if (self.feedVC) {
+        [self.feedVC saveRestorationActivity:activity];
+    }
+    
+    if (self.articleVC) {
+        [self.articleVC saveRestorationActivity:activity];
+    }
+    
+    return activity;
+    
+}
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    
+    if (restorationIdentifiers == nil || restorationIdentifiers.count == 0) {
+        return;
+    }
+    
+    NSLogDebug(@"Continuing activity: %@", restorationIdentifiers);
+    
+    NSString * first = restorationIdentifiers.firstObject;
+    
+    if ([first containsString:@"FeedVC-"] == YES) {
+        
+        [self.feedsVC continueActivity:activity];
+        
+    }
+    
+}
 
 + (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
 

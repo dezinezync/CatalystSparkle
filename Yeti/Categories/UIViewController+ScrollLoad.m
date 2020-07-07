@@ -26,22 +26,14 @@
     if (![scrollView.delegate conformsToProtocol:NSProtocolFromString(@"ScrollLoading")])
         return;
     
-    CGFloat actualPosition = scrollView.contentOffset.y + (scrollView.adjustedContentInset.top);
-    CGFloat contentHeight = scrollView.contentSize.height;
+    CGFloat scrollPositionY = (scrollView.contentOffset.y + scrollView.frame.size.height) + 300.f;
     
-    CGFloat diff = contentHeight - actualPosition - scrollView.adjustedContentInset.top;
-    CGFloat const threshold = scrollView.bounds.size.height - 120.f;
+    CGFloat contentHeight = scrollView.contentSize.height - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom) ;
     
-    BOOL percentage = (diff/threshold) > 0.70f;
-    CGFloat bottomOffset = (scrollView.bounds.size.height - scrollView.frame.origin.y - (scrollView.adjustedContentInset.top + scrollView.adjustedContentInset.bottom)) - scrollView.contentOffset.y;
+    NSLogDebug(@"Pos Y: %@ -- Content Height: %@", @(scrollPositionY), @(contentHeight));
     
-    BOOL isAtBottom = bottomOffset <= 120.f;
-    
-    BOOL contentSmallerThanContentSize = contentHeight < scrollView.bounds.size.height;
-    
-    NSLog(@"Diff:%@\nThreshold:%@\nPercent:%@\nisAtBottom:%@", @(diff), @(threshold), @(diff/threshold), @(isAtBottom));
-    
-    if (percentage || isAtBottom || contentSmallerThanContentSize) {
+    if (scrollPositionY >= contentHeight) {
+        
         id delegate = scrollView.delegate;
         
         if (delegate && [scrollView.delegate respondsToSelector:@selector(loadNextPage)]) {
@@ -52,7 +44,9 @@
                 [delegate loadNextPage];
             }
         }
+        
     }
+
 }
 
 @end

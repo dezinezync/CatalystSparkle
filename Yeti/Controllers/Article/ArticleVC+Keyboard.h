@@ -10,4 +10,8 @@
 
 @interface ArticleVC (Keyboard)
 
+- (void)didTapPreviousArticle:(id)sender;
+
+- (void)didTapNextArticle:(id)sender;
+
 @end

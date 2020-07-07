@@ -34,10 +34,8 @@ NSErrorDomain CustomizationDomain = @"com.elytra.errorDomain.customization";
         NSNumber *value = [SharedPrefs.defaults valueForKey:self.name];
         
         if (value != nil) {
-            
-#ifdef DEBUG
-            NSLog(@"Found exisiting value for %@: %@", self.name, value);
-#endif
+
+            NSLogDebug(@"Found exisiting value for %@: %@", self.name, value);
             
             _value = value;
         }

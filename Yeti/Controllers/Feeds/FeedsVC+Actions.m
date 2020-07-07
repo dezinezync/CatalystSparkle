@@ -46,9 +46,9 @@
 - (void)beginRefreshing:(UIRefreshControl *)sender {
     
     if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0)
-    && _refreshing == NO
-    && _refreshFeedsCounter < 3) {
-    
+        && _refreshing == NO
+        && _refreshFeedsCounter < 3) {
+        
         _refreshFeedsCounter++;
         
         [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -124,9 +124,9 @@
 {
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
-    YTNavigationController *nav = [[YTNavigationController alloc] initWithRootViewController:vc];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
-    [self presentViewController:nav animated:YES completion:nil];
+    [self.to_splitViewController to_showSecondaryViewController:nav sender:sender];
 
 }
 
@@ -299,7 +299,7 @@
             }];
             
             ArticlesManager.shared.feeds = feeds;
-            MyFeedsManager.totalUnread = MAX(0, MyFeedsManager.totalUnread - feed.unread.integerValue);
+            MyFeedsManager.totalUnread = MyFeedsManager.totalUnread - feed.unread.integerValue;
             
             if (completionHandler) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -842,9 +842,7 @@
         self->_presentingKnown = NO;
     });
  
-#ifdef DEBUG
-    NSLog(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
-#endif
+    NSLogDebug(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
     
     NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
     

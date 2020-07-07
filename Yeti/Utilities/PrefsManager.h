@@ -43,6 +43,7 @@ extern PrefsManager * SharedPrefs;
 @property (assign) NSInteger previewLines; // kPreviewLines
 @property (assign) BOOL showTags; // kShowTags
 @property (assign) BOOL useToolbar; // kUseToolbar
+@property (assign) BOOL hideBars; //kHideBars
 
 @property (assign) BOOL useSystemSize; // kUseSystemFontSize
 @property (assign) NSInteger fontSize; // kFontSize

@@ -13,6 +13,8 @@ extern NSString *const _Nonnull kArticleCell;
 
 @interface ArticleCell : UITableViewCell
 
++ (void)registerOnTable:(UITableView *)tableView;
+
 @property (weak, nonatomic) IBOutlet UIImageView * _Nullable markerView;
 
 @property (weak, nonatomic) IBOutlet UIImageView * _Nullable coverImageView;
