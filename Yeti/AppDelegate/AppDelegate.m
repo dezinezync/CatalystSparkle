@@ -40,9 +40,7 @@ AppDelegate *MyAppDelegate = nil;
     
     if (SharedPrefs.backgroundRefresh == YES) {
         
-        dispatch_async(self.bgTaskDispatchQueue, ^{
-            [self setupBackgroundRefresh];
-        });
+        [self setupBackgroundRefresh];
         
     }
     

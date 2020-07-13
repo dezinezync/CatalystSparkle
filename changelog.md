@@ -1,6 +1,12 @@
 # v1.8.0
 
-This is the RC 1 build for v1.8.
+This is the RC 2 build for v1.8.
+
+## Build 371
+
+- Fixes a crash on launch caused by registering the Background Task Scheduler later than the OS expects it to. 
+
+- Fixes a crash when the Article reader tried to render a header with an invalid identifier. 
 
 ## Build 368
 
