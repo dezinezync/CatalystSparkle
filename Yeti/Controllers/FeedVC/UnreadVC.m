@@ -22,7 +22,7 @@
         
         self.type = FeedVCTypeUnread;
         self.restorationClass = [self class];
-        self.restorationIdentifier = @"UnreadVC";
+        self.restorationIdentifier = @"FeedVC-Unread";
         
     }
     

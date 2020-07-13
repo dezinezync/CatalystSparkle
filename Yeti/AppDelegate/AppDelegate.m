@@ -38,6 +38,12 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
+    if (SharedPrefs.backgroundRefresh == YES) {
+        
+        [self setupBackgroundRefresh];
+        
+    }
+    
     return YES;
     
 }
@@ -72,11 +78,19 @@ AppDelegate *MyAppDelegate = nil;
     [self ct_setupToolbar:windowScene];
 #endif
     
-    [self.window makeKeyAndVisible];
+    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
     
-    if (SharedPrefs.backgroundRefresh == YES) {
-        [self setupBackgroundRefresh];
+    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == YES) {
+        
+        NSLogDebug(@"Application will restore state");
+        
+        [(SplitVC *)[self.window rootViewController] continueActivity:activity];
+        
+        [MyFeedsManager continueActivity:activity];
+        
     }
+    
+    [self.window makeKeyAndVisible];
     
 }
 
@@ -86,6 +100,12 @@ AppDelegate *MyAppDelegate = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        
+        // code to debug state restoration as of iOS 13
+#ifdef DEBUG
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDebugLogging"];
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDeveloperMode"];
+#endif
         
         MyAppDelegate = self;
         
@@ -106,16 +126,11 @@ AppDelegate *MyAppDelegate = nil;
         
         [self setupRootController];
         
-        weakify(self);
+//        weakify(self);
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
-            strongify(self);
-            
-            [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
-            
-            [self setupStoreManager];
-        });
+        [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
+        
+        [self setupStoreManager];
         
         if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil]) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -225,53 +240,76 @@ AppDelegate *MyAppDelegate = nil;
 #pragma mark - State Restoration
 
 #define kFeedsManager @"FeedsManager"
+#define kArticlesManager @"ArticlesManager"
 
-- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
-    
-    return YES;
-    
-}
+//- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+//
+//    return YES;
+//
+//}
+//
+//- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+//
+//    if (_resetting) {
+//        return NO;
+//    }
+//
+//    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
+//
+//    if (oldVersion) {
+//        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+//        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
+//        // don't restore across versions.
+//        if (isNewer) {
+//            return NO;
+//        }
+//    }
+//
+//    UIDevice *currentDevice = [UIDevice currentDevice];
+//    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
+//    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
+//    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
+//        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
+//        return NO;
+//    }
+//
+//    _restoring = YES;
+//
+//    NSLogDebug(@"Will restore application state");
+//    return _restoring;
+//}
+//
+//- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
+//
+//
+//    NSLogDebug(@"Application will save restoration data");
+//
+////    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
+////    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
+//}
+//
+//- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
+//    NSLogDebug(@"Application did restore");
+//}
 
-- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+- (NSUserActivity *)stateRestorationActivityForScene:(UIScene *)scene {
     
-    if (_resetting) {
-        return NO;
-    }
+    NSUserActivity *restorationActivity = nil;
     
-    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
-    
-    if (oldVersion) {
-        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
-        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
-        // don't restore across versions.
-        if (isNewer) {
-            return NO;
+    if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
+        
+        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
+        
+        if (restorationActivity != nil) {
+            
+            [MyFeedsManager saveRestorationActivity:restorationActivity];
+            
         }
+        
     }
     
-    UIDevice *currentDevice = [UIDevice currentDevice];
-    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
-    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
-    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
-        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
-        return NO;
-    }
+    return restorationActivity;
     
-    _restoring = YES;
-    
-    NSLogDebug(@"Will restore application state");
-    return _restoring;
-}
-
-- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
-    NSLogDebug(@"Application will save restoration data");
-    
-    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
-    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
-}
-
-- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
-    NSLogDebug(@"Application did restore");
 }
 
 #pragma mark -
@@ -308,7 +346,8 @@ AppDelegate *MyAppDelegate = nil;
              kShowMarkReadPrompt: @YES,
              kPreviewLines: @0,
              kShowTags: @YES,
-             kUseToolbar: @NO
+             kUseToolbar: @NO,
+             kHideBars: @NO
     }.mutableCopy;
     
 #if TARGET_OS_MACCATALYST
@@ -420,6 +459,20 @@ AppDelegate *MyAppDelegate = nil;
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     return [JLRoutes routeURL:url];
+}
+
+- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+    
+    if (URLContexts.count) {
+        
+        UIOpenURLContext *ctx = [URLContexts allObjects].firstObject;
+        
+        NSURL *URL = ctx.URL;
+        
+        __unused BOOL unused = [JLRoutes routeURL:URL];
+        
+    }
+    
 }
 
 @end

@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     ArticleStateEmpty
 };
 
-@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate> {
+@interface ArticleVC () <UIScrollViewDelegate, UITextViewDelegate, UIViewControllerRestoration, AVPlayerViewControllerDelegate, ArticleAuthorViewDelegate, UIPointerInteractionDelegate, TextSharing> {
     BOOL _hasRendered;
     
     BOOL _isQuoted;
@@ -212,6 +212,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #else
     
+    if (SharedPrefs.hideBars == YES) {
+        
+        self.navigationController.hidesBarsOnSwipe = YES;
+        
+        [self.navigationController.barHideOnSwipeGestureRecognizer addTarget:self action:@selector(didUpdateNavBarAppearance:)];
+        
+    }
+    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
@@ -221,7 +229,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #endif
     
     if (!_hasRendered) {
+        
         [self.loader startAnimating];
+        
     }
     
     [MyFeedsManager checkConstraintsForRequestingReview];
@@ -234,6 +244,24 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if ([self canBecomeFirstResponder] == YES) {
         [self becomeFirstResponder];
     }
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [super viewWillDisappear:animated];
+    
+#if !TARGET_OS_MACCATALYST
+    
+    if (SharedPrefs.hideBars == YES) {
+        
+        self.navigationController.hidesBarsOnSwipe = NO;
+        
+        [self.navigationController.barHideOnSwipeGestureRecognizer removeTarget:self action:@selector(didUpdateNavBarAppearance:)];
+        
+    }
+    
+#endif
     
 }
 
@@ -1430,6 +1458,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
+    
+    para.textSharingDelegate = self;
+    
 #if DEBUG_LAYOUT == 1
     para.backgroundColor = UIColor.blueColor;
 #endif
@@ -1581,7 +1612,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [heading setText:content.content ranges:content.ranges attributes:content.attributes];
     
-    if (content.identifier && ![content.identifier isBlank]) {
+    if (content.identifier && [content.identifier isKindOfClass:NSString.class] && ![content.identifier isBlank]) {
         
         // content identifiers should only be URL safe chars
         NSString *identifier = [content.identifier stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPathAllowedCharacterSet]];
@@ -1735,13 +1766,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     imageView.content = content;
     
-    [self.images addPointer:(__bridge void *)imageView];
-    imageView.idx = self.images.count - 1;
-    
     CGFloat width = self.scrollView.bounds.size.width;
     
     NSURL *url = [content urlCompliantWithUsersPreferenceForWidth:width];
     NSURL *darkModeURL = [content urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:YES];
+    
+    if (url == nil && darkModeURL == nil) {
+        
+        [self.stackView removeArrangedSubview:imageView];
+        [imageView removeFromSuperview];
+        
+        imageView = nil;
+        
+        return;
+    }
+    
+    [self.images addPointer:(__bridge void *)imageView];
+    imageView.idx = self.images.count - 1;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
     imageView.userInteractionEnabled = YES;
@@ -2187,6 +2228,33 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 #pragma mark - Actions
+
+- (void)didUpdateNavBarAppearance:(UIPanGestureRecognizer *)sender {
+    
+    if (self.helperView == nil) {
+        return;
+    }
+    
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        [self.helperView layoutIfNeeded];
+        
+        if (self.navigationController.isNavigationBarHidden == YES) {
+            self.helperView.bottomConstraint.constant = -32.f + 120.f;
+        }
+        else {
+            self.helperView.bottomConstraint.constant = -32.f;
+        }
+        
+        [UIView animateWithDuration:1 animations:^{
+           
+            [self.helperView layoutIfNeeded];
+            
+        }];
+        
+    }
+    
+}
 
 - (void)didTapOnBlogLabel:(UITapGestureRecognizer *)sender {
     
@@ -2921,6 +2989,36 @@ NSString * const kArticleData = @"ArticleData";
 NSString * const kScrollViewSize = @"ScrollViewContentSize";
 NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSDictionary *article = [activity.userInfo valueForKey:@"article"];
+    
+    if (article == nil) {
+        return;
+    }
+    
+//    CGSize size = CGSizeFromString([article valueForKey:kScrollViewSize]);
+    CGPoint offset = CGPointFromString([article valueForKey:kScrollViewOffset]);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.scrollView setContentOffset:offset animated:NO];
+    });
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+    
+    NSString *contentSize = NSStringFromCGSize(self.scrollView.contentSize);
+    NSString *contentOffset = NSStringFromCGPoint(self.scrollView.contentOffset);
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"article": @{
+                                                         kScrollViewSize: contentSize,
+                                                         kScrollViewOffset: contentOffset
+    }
+    }];
+    
+}
+
 + (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     
     FeedItem *item = [coder decodeObjectForKey:kArticleData];
@@ -3048,6 +3146,27 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
 
     return UIPointerStyle(effect: .automatic(preview), shape: .path(starView.starPath))
     */
+}
+
+#pragma mark - <TextSharing>
+
+- (void)shareText:(NSString *)text paragraph:(Paragraph *)paragraph rect:(CGRect)rect {
+    
+    text = formattedString(@"\"%@\"", text);
+    
+    UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[text, [NSURL URLWithString:self.item.articleURL]] applicationActivities:nil];
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        
+        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        pvc.sourceView = paragraph;
+        pvc.sourceRect = rect;
+        
+    }
+    
+    [self presentViewController:avc animated:YES completion:nil];
+    
 }
 
 @end

@@ -55,6 +55,8 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, weak) NSToolbar *toolbar;
 
+@property (nonatomic, weak) NSToolbarItem *shareArticleItem;
+
 #endif
 
 @end

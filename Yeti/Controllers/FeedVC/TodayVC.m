@@ -23,7 +23,7 @@
         self.type = FeedVCTypeToday;
         
         self.restorationClass = [self class];
-        self.restorationIdentifier = @"TodayVC";
+        self.restorationIdentifier = @"FeedVC-Today";
         
     }
     

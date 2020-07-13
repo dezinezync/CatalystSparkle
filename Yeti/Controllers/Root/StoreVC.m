@@ -248,10 +248,6 @@
 
 - (void)didTapRestore
 {
-#if TARGET_OS_SIMULATOR
-    [self dismissViewControllerAnimated:YES completion:nil];
-    return;
-#endif
     
     [self setButtonsState:NO];
     

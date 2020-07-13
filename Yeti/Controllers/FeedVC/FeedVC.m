@@ -15,8 +15,6 @@
 #import <DZTextKit/PaddedLabel.h>
 #import "YetiThemeKit.h"
 
-#import "ArticleVC.h"
-
 #import <DZKit/NSString+Extras.h>
 #import <DZTextKit/CheckWifi.h>
 #import <DZTextKit/NSString+ImageProxy.h>
@@ -39,6 +37,8 @@
     
     BOOL _reloadDataset;
     
+    NSUserActivity *_restorationActivity;
+    
 }
 
 @property (nonatomic, strong, readwrite) UITableViewDiffableDataSource *DS;
@@ -59,6 +59,7 @@
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
     nav.restorationIdentifier = @"FeedNavVC";
+    nav.restorationClass = [nav class];
     
     return nav;
     
@@ -70,6 +71,7 @@
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:instance];
     nav.restorationIdentifier = @"FeedNavVC";
+    nav.restorationClass = [nav class];
     
     return nav;
     
@@ -78,7 +80,11 @@
 - (instancetype)initWithFeed:(Feed *)feed {
     
     if (self = [super initWithStyle:UITableViewStylePlain]) {
+        
+        NSLogDebug(@"Feed:%@", feed.feedID);
+        
         self.feed = feed;
+        
     }
     
     return self;
@@ -358,19 +364,6 @@
     BOOL animate = (self.pagingManager.items.count > 10);
     
     [self setupData:animate];
-    
-}
-
-#pragma mark - Setters
-
-- (void)setFeed:(Feed *)feed {
-    
-    _feed = feed;
-    
-    if (_feed != nil) {
-        self.restorationIdentifier = [NSString stringWithFormat:@"FeedVC-Feed-%@", feed.feedID];
-        self.restorationClass = [self class];
-    }
     
 }
 
@@ -813,6 +806,14 @@
     vc.providerDelegate = self;
     vc.bookmarksManager = self.bookmarksManager;
     
+    [self _showArticleVC:vc];
+    
+}
+
+- (void)_showArticleVC:(ArticleVC *)vc {
+    
+    [self.to_splitViewController setValue:vc forKeyPath:@"articleVC"];
+    
     if (self.to_splitViewController == nil) {
         // in a modal stack
         [self.navigationController pushViewController:vc animated:YES];
@@ -833,6 +834,16 @@
     }
     else {
         [self presentViewController:vc animated:YES completion:nil];
+    }
+    
+    if (self->_restorationActivity != nil) {
+        
+        [vc continueActivity:self->_restorationActivity];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self->_restorationActivity = nil;
+        });
+        
     }
     
 }
@@ -959,6 +970,17 @@
 //}
 
 #pragma mark - Setters
+
+- (void)setFeed:(Feed *)feed {
+    
+    _feed = feed;
+    
+    if (_feed != nil) {
+        self.restorationIdentifier = [NSString stringWithFormat:@"FeedVC-Feed-%@", feed.feedID];
+        self.restorationClass = [self class];
+    }
+    
+}
 
 - (void)setLoadOnReady:(NSNumber *)loadOnReady
 {
@@ -1153,6 +1175,42 @@
         }
         
     }
+    
+}
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    
+    NSString * activityIdentifier = [restorationIdentifiers rz_find:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+        
+        return [obj containsString:@"ArticleVC"];
+        
+    }];
+    
+    if (activityIdentifier == nil) {
+        return;
+    }
+    
+    NSString *articleIDString = [[activityIdentifier componentsSeparatedByString:@"-"] lastObject];
+    
+    if ([articleIDString integerValue] < 0 || [articleIDString integerValue] == NSNotFound) {
+        return;
+    }
+    
+    NSUInteger articleID = articleIDString.integerValue;
+    
+    self.loadOnReady = @(articleID);
+    
+    _restorationActivity = activity;
+    
+    [self loadArticle];
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+    
+    
     
 }
 

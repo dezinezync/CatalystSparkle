@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller;
 
+- (void)showAuthorVC:(NSString *)author;
+
 @end
 
 NS_ASSUME_NONNULL_END

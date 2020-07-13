@@ -18,6 +18,7 @@
 #import <DZTextKit/Paragraph.h>
 
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/UIImage+Transform.h>
 
 #import "YetiThemeKit.h"
 
@@ -56,6 +57,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 
 @property (nonatomic, strong) SDWebImageCombinedOperation *faviconTask;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *titleLabelWidthConstraint;
+@property (nonatomic, assign) FeedVCType feedType;
 
 @end
 
@@ -167,6 +169,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     }
     
     self.article = article;
+    self.feedType = feedType;
     
     Feed *feed = [ArticlesManager.shared feedForID:self.article.feedID];
     
@@ -394,6 +397,19 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             image = nil;
         }
         
+        if (image != nil) {
+            
+            CGRect rect = attachment.bounds;
+            rect.origin = CGPointZero;
+            
+            UIImage *rounded = [image sd_roundedCornerImageWithRadius:(3.f * UIScreen.mainScreen.scale) corners:UIRectCornerAllCorners borderWidth:0.f borderColor:nil];
+            
+            if (rounded != nil) {
+                image = rounded;
+            }
+            
+        }
+        
         runOnMainQueueWithoutDeadlocking(^{
             if (image == nil) {
                 attachment.bounds = CGRectZero;
@@ -511,9 +527,11 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 
 - (void)updateMarkerView {
     
-    if (self.article.isBookmarked) {
+    if (self.article.isBookmarked && self.feedType != FeedVCTypeBookmarks) {
+        
         self.markerView.tintColor = UIColor.systemOrangeColor;
         self.markerView.image = [UIImage systemImageNamed:@"bookmark.fill"];
+        
     }
     else if (self.article.isRead == NO) {
         self.markerView.tintColor = UIColor.systemBlueColor;

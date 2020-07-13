@@ -14,6 +14,7 @@
 #import "ArticleProvider.h"
 
 #import "ArticleCell.h"
+#import "ArticleVC.h"
 
 #import "PagingManager.h"
 
@@ -74,6 +75,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 
 - (UIView * _Nonnull)viewForEmptyDataset;
 
+- (void)continueActivity:(NSUserActivity *)activity;
+
 #pragma mark -
 
 /// Loads the given article ID when the view controller is ready.
@@ -95,6 +98,10 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 @property (nonatomic, copy) errorBlock _Nullable searchOperationError;
 
 @property (nonatomic, strong) NSURLSessionTask * _Nullable searchOperation;
+
+- (void)_showArticleVC:(ArticleVC *)vc;
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
 
 @end
 

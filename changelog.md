@@ -1,5 +1,51 @@
 # v1.8.0
 
+This is the RC 2 build for v1.8.
+
+## Build 371
+
+- Fixes a crash on launch caused by registering the Background Task Scheduler later than the OS expects it to. 
+
+- Fixes a crash when the Article reader tried to render a header with an invalid identifier. 
+
+## Build 368
+
+- Improved scroll pagination. 
+
+- Various improvements for better state restoration using the newer iOS APIs. 
+
+- Sharing by selecting text in a pargraph will now also include the article's URL and enclose the selected text inside quotes. 
+
+## Build 367
+
+- Fixes bookmarking and unbookmarking articles. 
+
+- Fixes bookmarks count not updating in real-time. 
+
+- Fixes removing a bookmark would have no net-effect. 
+
+- Bookmarks List no longer shows a persistent bookmark icon. It instead now correctly defers to the Article's read status.
+
+## Build 366
+
+- Hiding bars on scroll in the Article Reader is now a preference under Settings > Misc. It is now disabled by default. 
+
+- Fixed the Dark app icon rendering incorrectly when used. 
+
+## Build 365 
+
+- Fixed loading articles after tapping a Push Notification.
+
+- Fixes showing cover images in rich push notifications.
+
+## Build 364
+
+- New App Icon
+
+- New App Icon Sets (under Settings > Misc. > App Icons)
+
+- Article Readers bars now auto-hide/show on scroll deferring more screen real-estate to the content. 
+
 ## Build 363
 
 - Fixes loading of some favicons. 

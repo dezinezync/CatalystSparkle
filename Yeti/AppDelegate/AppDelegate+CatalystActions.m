@@ -222,4 +222,14 @@
     
 }
 
+- (void)shareArticle {
+    
+    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    
+    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    
+    [vc didTapShare:self.shareArticleItem];
+    
+}
+
 @end

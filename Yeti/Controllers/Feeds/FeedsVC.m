@@ -51,10 +51,10 @@ static void *KVO_Unread = &KVO_Unread;
     BOOL _fetchingCounters;
     
     BOOL _hasOpenedUnread;
+    
+    NSUInteger _continueActivityCount;
 }
 
-@property (nonatomic, strong, readwrite) DZSectionedDatasource *DS;
-@property (nonatomic, weak, readwrite) DZBasicDatasource *DS1, *DS2;
 @property (nonatomic, weak) UIView *hairlineView;
 
 @property (nonatomic, weak) UILabel *progressLabel;
@@ -173,6 +173,8 @@ static void *KVO_Unread = &KVO_Unread;
         
         [self fetchLatestCounters];
     }
+    
+    self.navigationController.toolbarHidden = YES;
     
 //    if (PrefsManager.sharedInstance.useToolbar == YES) {
 //        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 10.f, 0);
@@ -703,12 +705,15 @@ static void *KVO_Unread = &KVO_Unread;
             [self to_showSecondaryViewController:nav setDetailViewController:detailVC sender:self];
         }
         
+        [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
+        
         return;
     }
     
     Feed *feed = [self objectAtIndexPath:indexPath];
     
     if ([feed isKindOfClass:Feed.class]) {
+        
         UIViewController *vc;
         
         if (isPhone) {
@@ -716,6 +721,8 @@ static void *KVO_Unread = &KVO_Unread;
             [(FeedVC *)vc setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc sender:self];
+            
+            [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
         }
         else {
             vc = [FeedVC instanceWithFeed:feed];
@@ -724,6 +731,8 @@ static void *KVO_Unread = &KVO_Unread;
             [(FeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
+            
+            [self.to_splitViewController setValue:(FeedVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
         }
         
     }
@@ -738,6 +747,8 @@ static void *KVO_Unread = &KVO_Unread;
             [(FolderVC *)vc setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc sender:self];
+            
+            [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
         }
         else {
             vc = [FolderVC instanceWithFolder:folder];
@@ -745,6 +756,8 @@ static void *KVO_Unread = &KVO_Unread;
             [(FolderVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
             [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
+            
+            [self.to_splitViewController setValue:(FolderVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
         }
         
     }
@@ -754,6 +767,163 @@ static void *KVO_Unread = &KVO_Unread;
 #pragma mark - Restoration
 
 NSString * const kDS2Data = @"DS2Data";
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    if (ArticlesManager.shared.feeds.count == 0) {
+        
+        if (_continueActivityCount < 3) {
+            
+            _continueActivityCount++;
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.75 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self continueActivity:activity];
+                
+            });
+            
+        }
+        
+        return;
+        
+    }
+    
+    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    
+    if ([restorationIdentifiers.firstObject containsString:@"FeedVC-"] == NO) {
+        
+        return;
+        
+    }
+        
+    NSArray <NSString *> *components = [restorationIdentifiers.firstObject componentsSeparatedByString:@"-"];
+    
+    components = [components subarrayWithRange:NSMakeRange(1, components.count - 1)];
+    
+    if ([components.firstObject isEqualToString:@"Feed"]) {
+        
+        Feed *feed = [ArticlesManager.shared feedForID:@(components.lastObject.integerValue)];
+        
+        if (feed != nil) {
+            
+            NSIndexPath *indexPath = nil;
+            
+            if (feed.folderID != nil) {
+                
+                Folder *folder = [ArticlesManager.shared folderForID:feed.folderID];
+                
+                if (folder) {
+                    
+                    NSUInteger index = [self indexOfObject:folder indexPath:indexPath];
+                    
+                    if (index != NSNotFound) {
+                        
+                        indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+                        
+                        FolderCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                        
+                        [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            NSUInteger index = [self indexOfObject:feed indexPath:indexPath];
+            
+            if (index != NSNotFound) {
+                
+                indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+                
+                [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+                
+            }
+            
+        }
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Unread"]) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Today"]) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+        
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Bookmarks"]) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+        
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+        
+    }
+    else if ([components.firstObject isEqualToString:@"Folder"]) {
+        
+        Folder *folder = [ArticlesManager.shared folderForID:@(components.lastObject.integerValue)];
+        
+        if (folder != nil) {
+            
+            NSUInteger index = [self indexOfObject:folder indexPath:nil];
+            
+            if (index != NSNotFound) {
+                
+                NSIndexPath * indexPath = [NSIndexPath indexPathForRow:index inSection:1];
+                
+                [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+                
+            }
+            
+        }
+        
+    }
+    
+    // check if an Author VC was also pushed
+    if (restorationIdentifiers.count > 1 && [[restorationIdentifiers objectAtIndex:1] containsString:@"Author"] == YES) {
+        
+        components = [[restorationIdentifiers objectAtIndex:1] componentsSeparatedByString:@"-"];
+        
+        NSString *author = [[components subarrayWithRange:NSMakeRange(3, components.count - 3)] componentsJoinedByString:@"-"];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
+           
+            if (feedVC != nil) {
+                
+                [feedVC showAuthorVC:author];
+                
+            }
+            
+        });
+        
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
+        
+        if (feedVC == nil) {
+            return;
+        }
+        
+        [feedVC continueActivity:activity];
+        
+    });
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity *)activity {
+    
+    
+    
+}
 
 + (nullable UIViewController *) viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
     return [[FeedsVC alloc] initWithStyle:UITableViewStyleGrouped];
@@ -1030,6 +1200,11 @@ NSString * const kDS2Data = @"DS2Data";
 
 - (void)didUpdateBookmarks {
     
+    if (SharedPrefs.hideBookmarks == YES) {
+        // row is hidden. Ignore.
+        return;
+    }
+    
     if (NSThread.isMainThread == NO) {
         [self performSelectorOnMainThread:@selector(didUpdateBookmarks) withObject:nil waitUntilDone:NO];
         return;
@@ -1038,10 +1213,11 @@ NSString * const kDS2Data = @"DS2Data";
     NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
     
     for (NSIndexPath *indexpath in visible) {
+        
         // check if the bookmarks row is visible
-        if (indexpath.section == 0 && indexpath.row == 1) {
+        if (indexpath.section == 0 && indexpath.row == 2) {
             
-            FeedsCell *cell = (FeedsCell *)[self tableView:self.tableView cellForRowAtIndexPath:indexpath];
+            FeedsCell *cell = (FeedsCell *)[self.tableView cellForRowAtIndexPath:indexpath];
             
             if (cell != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -1240,9 +1416,7 @@ NSString * const kDS2Data = @"DS2Data";
 
 #pragma mark - <FolderInteractionDelegate>
 
-- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
-    
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+- (void)didTapFolderIcon:(Folder *)folder indexPath:(NSIndexPath *)indexPath cell:(FolderCell *)cell {
     
     if (indexPath == nil) {
         
@@ -1305,6 +1479,14 @@ NSString * const kDS2Data = @"DS2Data";
         [self.tableView.layer removeAllAnimations];
         [self.tableView setContentOffset:contentOffset animated:NO];
     });
+    
+}
+
+- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    
+    [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
     
 }
 
