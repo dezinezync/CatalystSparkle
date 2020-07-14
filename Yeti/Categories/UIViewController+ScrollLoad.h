@@ -18,8 +18,8 @@
 
 @end
 
-@interface UIViewController (ScrollLoad)
+@interface UIViewController (ScrollLoad) <UIScrollViewDelegate>
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView;
 
 @end

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>StringsTable</key>
+	<string>Account</string>
+	<key>Icon</key>
+	<string>pref-images.png</string>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string></string>
+			<key>FooterText</key>
+			<string>The above setting only works when the Article source provides these options. If no such option is provided by the Article source, the original image is always loaded.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Resolution</string>
+			<key>Key</key>
+			<string>imageLoading</string>
+			<key>DefaultValue</key>
+			<string>Low Res</string>
+			<key>Values</key>
+			<array>
+				<string>Low Res</string>
+				<string>Medium Res</string>
+				<string>High Res</string>
+			</array>
+			<key>Titles</key>
+			<array>
+				<string>Low Res</string>
+				<string>Medium Res</string>
+				<string>High Res</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string></string>
+			<key>FooterText</key>
+			<string>The above setting is also used for galleries and Youtube video previews</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Bandwidth</string>
+			<key>Key</key>
+			<string>imageBandwidth</string>
+			<key>DefaultValue</key>
+			<string>Always load images</string>
+			<key>Values</key>
+			<array>
+				<string>Never load images</string>
+				<string>Always load images</string>
+			</array>
+			<key>Titles</key>
+			<array>
+				<string>Never load images</string>
+				<string>Always load images</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string></string>
+			<key>FooterText</key>
+			<string>Enabling this shows cover images in the feeds list. This setting is also affeected by your setting for Bandwidth.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Show Cover Images</string>
+			<key>Key</key>
+			<string>showArticleCoverImages</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string></string>
+			<key>FooterText</key>
+			<string>Elytra can optionally use the weserv.nl Image Proxy for loading images optimized to be disaplyed on this device. Images loaded via the Image Proxy are smaller in size and therefore load faster and save bandwidth.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Use Image Proxy</string>
+			<key>Key</key>
+			<string>com.dezinezync.elytra.useImageProxy</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
+	</array>
+</dict>
+</plist>

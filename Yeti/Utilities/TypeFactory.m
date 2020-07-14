@@ -208,7 +208,7 @@ static TypeFactory * sharedTypeFactory;
         
 #if TARGET_OS_MACCATALYST
         
-        _basePointSize = 21.f;
+        _basePointSize = 13.f;
         
 #else
         

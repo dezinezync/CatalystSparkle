@@ -10,16 +10,10 @@
 
 @implementation UIViewController (ScrollLoad)
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     
-    @try {
-        if ([self valueForKeyPath:@"scrollView"] == nil) {
-            return;
-        }
-    }
-    @catch (NSException *exc) {
-        // not supported
+    if (scrollView == nil) {
         return;
     }
     
