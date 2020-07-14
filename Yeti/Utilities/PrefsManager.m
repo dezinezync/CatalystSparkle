@@ -23,12 +23,18 @@ PrefsManager * SharedPrefs = nil;
 @implementation PrefsManager
 
 + (void)load {
+    
     [[PrefsManager sharedInstance] loadDefaults];
+    [[PrefsManager sharedInstance] setupNotifications];
+    
 }
 
 + (instancetype)sharedInstance {
+    
     static dispatch_once_t onceToken;
+    
     dispatch_once(&onceToken, ^{
+        
         SharedPrefs = [[PrefsManager alloc] init];
         SharedPrefs.defaults = [NSUserDefaults standardUserDefaults];
         
@@ -41,6 +47,7 @@ PrefsManager * SharedPrefs = nil;
 }
 
 - (void)loadDefaults {
+    
     self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
     self.backgroundRefresh = ([self.defaults valueForKey:kDefaultsBackgroundRefresh] ? [[self.defaults valueForKey:kDefaultsBackgroundRefresh] boolValue] : YES);
     self.notifications = [self.defaults boolForKey:kDefaultsNotifications];
@@ -64,6 +71,7 @@ PrefsManager * SharedPrefs = nil;
     self.fontSize = ([self.defaults valueForKey:kFontSize] ? [[self.defaults valueForKey:kFontSize] integerValue] : [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize);
     self.paraTitleFont = [self.defaults valueForKey:kParagraphTitleFont];
     self.lineSpacing = ([self.defaults floatForKey:kLineSpacing] ?: 1.4f);
+    
 }
 
 - (NSString *)mappingForKey:(NSString *)key {
@@ -153,7 +161,7 @@ PrefsManager * SharedPrefs = nil;
         return;
     }
     
-    if (value == nil) {
+    if (value == nil || [value isKindOfClass:NSNull.class]) {
         [self.defaults removeObjectForKey:key];
     }
     else {
@@ -199,6 +207,80 @@ PrefsManager * SharedPrefs = nil;
         });
         
     }
+    
+}
+
+#pragma mark - Notifications
+
+- (void)setupNotifications {
+    
+#if TARGET_OS_MACCATALYST
+    
+    NSUserDefaults *defaults = self.defaults;
+    
+    [defaults addObserver:self forKeyPath:propSel(fontSize) options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:kDefaultsArticleFont options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:kFontSize options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:propSel(lineSpacing) options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:propSel(paraTitleFont) options:NSKeyValueObservingOptionNew context:NULL];
+    
+#endif
+    
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    
+    if (object == self.defaults) {
+        
+        if ([keyPath isEqualToString:kLineSpacing]
+            || [keyPath isEqualToString:propSel(fontSize)]
+            || [keyPath isEqualToString:kParagraphTitleFont]
+            || [keyPath isEqualToString:kDefaultsArticleFont]
+            || [keyPath isEqualToString:propSel(lineSpacing)]
+            || [keyPath isEqualToString:propSel(paraTitleFont)]) {
+            
+            if ([keyPath isEqualToString:propSel(fontSize)]) {
+                
+                id value = [change valueForKey:NSKeyValueChangeNewKey];
+                
+                if ([value boolValue] == NO) {
+                    self.useSystemSize = YES;
+                }
+                else {
+                    self.useSystemSize = NO;
+                }
+                
+                CGFloat val = [(NSNumber *)value floatValue];
+                
+                val *= 1.2;
+                
+                [self setValue:@(val) forKey:propSel(fontSize)];
+                
+            }
+            else if ([keyPath isEqualToString:propSel(lineSpacing)]) {
+                
+                [self setValue:[change valueForKey:NSKeyValueChangeNewKey] forKey:propSel(lineSpacing)];
+                
+            }
+            else if ([keyPath isEqualToString:propSel(paraTitleFont)]) {
+                
+                [self setValue:[change valueForKey:NSKeyValueChangeNewKey] forKey:propSel(paraTitleFont)];
+                
+            }
+            
+            [self loadDefaults];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
+            });
+            
+            return;
+            
+        }
+        
+    }
+    
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     
 }
 

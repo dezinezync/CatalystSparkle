@@ -4,6 +4,8 @@
 <dict>
 	<key>StringsTable</key>
 	<string>Account</string>
+	<key>Icon</key>
+	<string>pref-images.png</string>
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>

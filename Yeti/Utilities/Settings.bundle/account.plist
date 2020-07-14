@@ -4,6 +4,8 @@
 <dict>
 	<key>StringsTable</key>
 	<string>Account</string>
+	<key>Icon</key>
+	<string>pref-account.png</string>
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
@@ -28,14 +30,6 @@
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string></string>
-			<key>FooterText</key>
-			<string>You can reset your account if you need to login again or setup using a different Apple ID.</string>
-		</dict>
-		<dict>
-			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
 			<string>Reset Account</string>
@@ -43,6 +37,8 @@
 			<string>reset_account_preference</string>
 			<key>DefaultValue</key>
 			<false/>
+			<key>Description</key>
+			<string>You can reset your account if you need to login again or setup using a different Apple ID.</string>
 		</dict>
 	</array>
 </dict>
