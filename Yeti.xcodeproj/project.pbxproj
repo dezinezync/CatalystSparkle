@@ -67,7 +67,7 @@
 		F032A773244D89AF0024AC63 /* dark.json in Resources */ = {isa = PBXBuildFile; fileRef = F032A76C244D89AF0024AC63 /* dark.json */; };
 		F035A21920617EC3005A88EE /* ActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F035A21820617EC3005A88EE /* ActionViewController.m */; };
 		F035A21C20617EC3005A88EE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F035A21A20617EC3005A88EE /* MainInterface.storyboard */; };
-		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F035A21520617EC3005A88EE /* YetiShare.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F0362B781FCEDC28009184E2 /* FeedsVC+Actions.m */; };
 		F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F03A5F6020971BAE00CE7D5E /* ThemeVC.m */; };
 		F03AC034205533D900FB111A /* CodeTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC02F205533D800FB111A /* CodeTheme.m */; };
@@ -3230,6 +3230,7 @@
 /* Begin PBXTargetDependency section */
 		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = F035A21420617EC3005A88EE /* YetiShare */;
 			targetProxy = F035A21E20617EC3005A88EE /* PBXContainerItemProxy */;
 		};
