@@ -35,12 +35,6 @@
     // so we simply return nil for now until Apple implements it
     // for catalyst 
     return nil;
-    
-    // HACK: proxy seems garbage so we always show PNG for now.
-    CGImageRef cgImage = [MyAppDelegate.sharedGlue imageForFileType:@"png"];
-    // HACK: We use mainScreen here but could have multiple screens.
-    UIImage * image = [UIImage imageWithCGImage:cgImage scale:UIScreen.mainScreen.scale orientation:UIImageOrientationUp];
-    return image;
 }
 
 @end

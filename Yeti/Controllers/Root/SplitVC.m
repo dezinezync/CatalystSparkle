@@ -101,6 +101,7 @@
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
     
+#ifndef DEBUG
     NSError *error = nil;
     BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
     
@@ -109,6 +110,7 @@
     }
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
+#endif
     
 #if TARGET_OS_MACCATALYST
     

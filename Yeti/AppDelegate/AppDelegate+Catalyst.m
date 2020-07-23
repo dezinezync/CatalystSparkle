@@ -20,7 +20,7 @@
 
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 #import <UIKit/UIMenuSystem.h>
-
+#import <AppKit/NSToolbarItemGroup.h>
 
 @interface _UIMenuBarItem : NSObject
 
@@ -55,11 +55,11 @@
     __unused BOOL unused = [self.appKitBundle load];
     
     Class appKitGlueClass = [self.appKitBundle classNamed:@"AppKitGlue"];
-    
+#if TARGET_OS_OSX
     __unused AppKitGlue *instance = [appKitGlueClass shared];
     
     self.sharedGlue = instance;
-
+#endif
 }
 
 - (void)ct_setupMenu:(id<UIMenuBuilder>)builder {
@@ -439,7 +439,11 @@
 
 - (UIColor *)appKitColorNamed:(NSString *)name {
     
-    CGColorRef values = [self.sharedGlue CTColorForName:name];
+    CGColorRef values;
+
+#if TARGET_OS_OSX
+    values = [self.sharedGlue CTColorForName:name];
+#endif
     
     if (values == nil) {
         return nil;

@@ -967,7 +967,12 @@ NSString * const kDS2Data = @"DS2Data";
         
         if (snapshot != nil) {
             
-            [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
+            if (snapshot.numberOfSections > 0) {
+                [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
+            }
+            else {
+                [self setupData];
+            }
             
         }
         
@@ -1034,7 +1039,7 @@ NSString * const kDS2Data = @"DS2Data";
     
     self->_highlightedRow = nil;
     
-    NSArray *data = [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection];
+    NSArray *data = [self.DDS.snapshot numberOfSections] > 2 ? [self.DDS.snapshot itemIdentifiersInSectionWithIdentifier:MainSection] : @[];
     
     // get a list of open folders
     NSArray <NSNumber *> *openFolders = [(NSArray <Folder *> *)[data rz_filter:^BOOL(id obj, NSUInteger idx, NSArray *array) {

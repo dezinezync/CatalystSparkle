@@ -22,6 +22,7 @@
 #if TARGET_OS_MACCATALYST
 
 #import "AppDelegate.h"
+#import <AppKit/NSToolbarItemGroup.h>
 
 #endif
 

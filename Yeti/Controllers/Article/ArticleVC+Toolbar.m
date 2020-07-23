@@ -370,11 +370,11 @@
 - (void)openInBrowser {
     
 #if TARGET_OS_MACCATALYST
-    
+#if TARGET_OS_OSX
     [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
     
     return;
-    
+#endif
 #endif
     
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);

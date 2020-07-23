@@ -64,7 +64,7 @@
         
         UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_OSX
             [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:item.articleURL] inBackground:YES];
             return;
 #endif
@@ -224,7 +224,7 @@
         
         completionHandler(YES);
         
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_OSX
             [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:item.articleURL] inBackground:YES];
             return;
 #endif
