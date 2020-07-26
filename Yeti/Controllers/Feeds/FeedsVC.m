@@ -68,7 +68,8 @@ static void *KVO_Unread = &KVO_Unread;
 @implementation FeedsVC
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
-    if (self = [super initWithStyle:style]) {
+    
+    if (self = [super initWithStyle:UITableViewStyleInsetGrouped]) {
         self.restorationIdentifier = NSStringFromClass(self.class);
     }
     
@@ -660,7 +661,7 @@ static void *KVO_Unread = &KVO_Unread;
 {
     
     BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
-                    && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     
     UIViewController *detailVC = self.to_splitViewController.detailViewController ?: [(SplitVC *)[self to_splitViewController] emptyVC];
     
@@ -696,16 +697,16 @@ static void *KVO_Unread = &KVO_Unread;
         }
         
         if (isPhone) {
-            [self to_showSecondaryViewController:vc sender:self];
+            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
         }
         else {
             UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
             nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
             
-            [self to_showSecondaryViewController:nav setDetailViewController:detailVC sender:self];
+            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
         }
         
-        [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
+        [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
         
         return;
     }
@@ -720,9 +721,9 @@ static void *KVO_Unread = &KVO_Unread;
             vc = [[FeedVC alloc] initWithFeed:feed];
             [(FeedVC *)vc setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc sender:self];
+            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
             
-            [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
+            [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
         }
         else {
             vc = [FeedVC instanceWithFeed:feed];
@@ -730,9 +731,9 @@ static void *KVO_Unread = &KVO_Unread;
             [(FeedVC *)[(UINavigationController *)vc topViewController] setType:FeedVCTypeNatural];
             [(FeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
+            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
             
-            [self.to_splitViewController setValue:(FeedVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
+            [self.splitViewController setValue:(FeedVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
         }
         
     }
@@ -746,18 +747,18 @@ static void *KVO_Unread = &KVO_Unread;
             vc = [[FolderVC alloc] initWithFolder:folder];
             [(FolderVC *)vc setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc sender:self];
+            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
             
-            [self.to_splitViewController setValue:vc forKeyPath:@"feedVC"];
+            [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
         }
         else {
             vc = [FolderVC instanceWithFolder:folder];
             
             [(FolderVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
             
-            [self to_showSecondaryViewController:vc setDetailViewController:detailVC sender:self];
+            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
             
-            [self.to_splitViewController setValue:(FolderVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
+            [self.splitViewController setValue:(FolderVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
         }
         
     }
@@ -1397,7 +1398,7 @@ NSString * const kDS2Data = @"DS2Data";
     weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        [self.to_splitViewController presentViewController:nav animated:YES completion:nil];
+        [self.splitViewController presentViewController:nav animated:YES completion:nil];
     });
 
 }

@@ -115,9 +115,9 @@
 {
     SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
     
-    YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:settingsVC];
+    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:settingsVC];
     
-    [self.to_splitViewController presentViewController:navVC animated:YES completion:nil];
+    [self.splitViewController presentViewController:navVC animated:YES completion:nil];
 }
 
 - (void)didTapRecommendations:(UIBarButtonItem *)sender
@@ -126,7 +126,7 @@
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
-    [self.to_splitViewController to_showSecondaryViewController:nav sender:sender];
+    [self.splitViewController to_showSecondaryViewController:nav sender:sender];
 
 }
 

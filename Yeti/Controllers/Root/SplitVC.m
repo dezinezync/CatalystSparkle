@@ -25,7 +25,7 @@
 #import "BookmarksMigrationVC.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
-@interface SplitVC () <TOSplitViewControllerDelegate, UIGestureRecognizerDelegate>
+@interface SplitVC () <UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) TwoFingerPanGestureRecognizer *twoFingerPan;
 
@@ -35,28 +35,21 @@
 
 - (instancetype)init {
     
-    NSArray <UIViewController *> * controllers = nil;
-    MainNavController *nav1 = [[MainNavController alloc] init];
-    
-    if (UIApplication.sharedApplication.windows.firstObject.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        controllers = @[nav1];
-    }
-    else {
-        UINavigationController *nav2 = [self emptyVC];
-        controllers = @[nav1, nav2];
-    }
-    
-    if (self = [super initWithViewControllers:controllers]) {
+    if (self = [super initWithStyle:UISplitViewControllerStyleTripleColumn]) {
         
-        self.feedsVC = nav1.viewControllers.firstObject;
-        
+        self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+            
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
         
-        self.separatorStrokeColor = UIColor.separatorColor;
-        self.delegate = self;
-        self.primaryColumnMaximumWidth = 298.f;
-        self.secondaryColumnMaximumWidth = 375.f;
+//        self.separatorStrokeColor = UIColor.separatorColor;
+//        self.delegate = self;
+//        self.primaryColumnMaximumWidth = 298.f;
+//        self.secondaryColumnMaximumWidth = 375.f;
+        
+        self.maximumPrimaryColumnWidth = 298.f;
+        self.maximumSupplementaryColumnWidth = 375.f;
+        self.presentsWithGesture = YES;
         
         [self loadViewIfNeeded];
         
@@ -72,6 +65,12 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
+        
+    });
     
     UISwipeGestureRecognizer *edgePanLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
     edgePanLeft.numberOfTouchesRequired = 2;
@@ -111,14 +110,7 @@
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
 #endif
-    
-#if TARGET_OS_MACCATALYST
-    
-    UIColor *separatorColor = [MyAppDelegate appKitColorNamed:@"separatorColor"];
-    
-    self.separatorStrokeColor = separatorColor;
-    
-#endif
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -134,15 +126,15 @@
 //#endif
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    
-    NSString *theme = SharedPrefs.theme;
-    
-    BOOL lightTheme = [theme isEqualToString:LightTheme] || [theme isEqualToString:ReaderTheme];
-    
-    return lightTheme ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
-    
-}
+//- (UIStatusBarStyle)preferredStatusBarStyle {
+//
+//    NSString *theme = SharedPrefs.theme;
+//
+//    BOOL lightTheme = [theme isEqualToString:LightTheme] || [theme isEqualToString:ReaderTheme];
+//
+//    return lightTheme ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
+//
+//}
 
 #pragma mark -
 
@@ -171,15 +163,15 @@
     return nav2;
 }
 
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    
-    [super traitCollectionDidChange:previousTraitCollection];
-    
-    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-        [MyAppDelegate loadCodeTheme];
-    }
-    
-}
+//- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+//    
+//    [super traitCollectionDidChange:previousTraitCollection];
+//    
+//    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+//        [MyAppDelegate loadCodeTheme];
+//    }
+//    
+//}
 
 #define BookmarksMigratedKey @"bookmarksMigrated"
 
@@ -218,40 +210,40 @@
 
 #pragma mark - Gestures
 
-- (void)didSwipeOnEdge:(UISwipeGestureRecognizer *)sender {
-    
-    if (self.traitCollection.horizontalSizeClass != UIUserInterfaceSizeClassRegular) {
-        return;
-    }
-    
-    if (sender.state == UIGestureRecognizerStateEnded) {
-        
-        if (self.viewControllers.count == 1 && [self.viewControllers.lastObject isKindOfClass:YTNavigationController.class] == NO) {
-            return;
-        }
-        
-        if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
-            
-            if (self.primaryColumnIsHidden == YES) {
-                return;
-            }
-            
-            self.primaryColumnIsHidden = YES;
-            
-        }
-        else {
-            
-            if (self.primaryColumnIsHidden == NO) {
-                return;
-            }
-            
-            self.primaryColumnIsHidden = NO;
-            
-        }
-        
-    }
-    
-}
+//- (void)didSwipeOnEdge:(UISwipeGestureRecognizer *)sender {
+//
+//    if (self.traitCollection.horizontalSizeClass != UIUserInterfaceSizeClassRegular) {
+//        return;
+//    }
+//
+//    if (sender.state == UIGestureRecognizerStateEnded) {
+//
+//        if (self.viewControllers.count == 1 && [self.viewControllers.lastObject isKindOfClass:YTNavigationController.class] == NO) {
+//            return;
+//        }
+//
+//        if (sender.direction == UISwipeGestureRecognizerDirectionLeft) {
+//
+//            if (self.primaryColumnIsHidden == YES) {
+//                return;
+//            }
+//
+//            self.primaryColumnIsHidden = YES;
+//
+//        }
+//        else {
+//
+//            if (self.primaryColumnIsHidden == NO) {
+//                return;
+//            }
+//
+//            self.primaryColumnIsHidden = NO;
+//
+//        }
+//
+//    }
+//
+//}
 
 - (void)didPanWithTwoFingers:(UISwipeGestureRecognizer *)sender {
     
@@ -483,41 +475,6 @@
     else {
         return NO;
     }
-}
-
-#pragma mark - <TOSplitViewControllerDelegate>
-
-- (BOOL)splitViewController:(TOSplitViewController *)splitViewController
-     collapseViewController:(UIViewController *)auxiliaryViewController
-                     ofType:(TOSplitViewControllerType)controllerType
-  ontoPrimaryViewController:(UIViewController *)primaryViewController
-              shouldAnimate:(BOOL)animate
-{
-    
-    if ([auxiliaryViewController isKindOfClass:UINavigationController.class]
-        && [[(UINavigationController *)auxiliaryViewController viewControllers].firstObject isKindOfClass:EmptyVC.class]) {
-        // do nothing for this since we want to discard the controller. 
-        return YES;
-    }
-    
-    // Return YES when you've manually handled the collapse logic
-    return NO;
-}
-
-- (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
-                      separateViewControllerOfType:(TOSplitViewControllerType)type
-                         fromPrimaryViewController:(UIViewController *)primaryViewController {
-    return nil;
-}
-
-- (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
-        primaryViewControllerForCollapsingFromType:(TOSplitViewControllerType)type {
-    return nil;
-}
-
-- (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
-           primaryViewControllerForExpandingToType:(TOSplitViewControllerType)type {
-    return nil;
 }
 
 #pragma mark - <UIGestureRecognizerDelegate>

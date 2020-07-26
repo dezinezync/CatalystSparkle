@@ -151,14 +151,6 @@
     
     [builder insertChildMenu:sortingMenu atStartOfMenuForIdentifier:UIMenuView];
     
-    NSString *sidebarToggleTitle = splitVC.primaryColumnIsHidden ? @"Show Sidebar" : @"Hide Sidebar";
-    
-    UIKeyCommand * hideSidebar = [UIKeyCommand commandWithTitle:sidebarToggleTitle image:nil action:@selector(toggleSidebar) input:@"s" modifierFlags:UIKeyModifierCommand|UIKeyModifierControl propertyList:nil];
-    
-    UIMenu *hideSidebarMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SidebarHideMenu" options:UIMenuOptionsDisplayInline children:@[hideSidebar]];
-    
-    [builder insertSiblingMenu:hideSidebarMenu afterMenuForIdentifier:@"SortingMenu"];
-    
     // Go menu
     
     ArticleVC *articleVC = nil;

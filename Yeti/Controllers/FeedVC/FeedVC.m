@@ -19,6 +19,8 @@
 #import <DZTextKit/CheckWifi.h>
 #import <DZTextKit/NSString+ImageProxy.h>
 
+#import "Coordinator.h"
+
 #if TARGET_OS_MACCATALYST
 
 #import "AppDelegate.h"
@@ -813,29 +815,7 @@
 
 - (void)_showArticleVC:(ArticleVC *)vc {
     
-    [self.to_splitViewController setValue:vc forKeyPath:@"articleVC"];
-    
-    if (self.to_splitViewController == nil) {
-        // in a modal stack
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    else if (self.to_splitViewController != nil) {
-        
-        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-
-            [self to_showDetailViewController:nav sender:self];
-            
-        }
-        else {
-            [self.navigationController pushViewController:vc animated:YES];
-        }
-        
-    }
-    else {
-        [self presentViewController:vc animated:YES completion:nil];
-    }
+    [self.mainCoordinator showArticleVC:vc];
     
     if (self->_restorationActivity != nil) {
         

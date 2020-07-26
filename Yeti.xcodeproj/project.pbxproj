@@ -52,6 +52,8 @@
 		F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459C72058FFF1002906C3 /* FeedsVC+Search.m */; };
 		F02459CB20590E6D002906C3 /* SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CA20590E6D002906C3 /* SearchResults.m */; };
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
+		F02AFA7024CBF8A50002A699 /* CustomFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = F02AFA6F24CBF8A50002A699 /* CustomFeed.m */; };
+		F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD824CABEE000E987FC /* Coordinator.m */; };
 		F02EB7BF2386C15E00DB8E72 /* TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */; };
 		F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */; };
 		F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A74F244D5F9A0024AC63 /* PrefsManager.m */; };
@@ -318,6 +320,7 @@
 		F0EB460F2494987500175B42 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F069AF85249496E100BAB6FB /* SDWebImage.framework */; };
 		F0EB46102494987500175B42 /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F069AF85249496E100BAB6FB /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */; };
+		F0EE6CD624CABCAE00E987FC /* SidebarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD524CABCAE00E987FC /* SidebarVC.m */; };
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
@@ -792,6 +795,8 @@
 		F02459CA20590E6D002906C3 /* SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchResults.m; sourceTree = "<group>"; };
 		F02459CC20590F03002906C3 /* FeedsSearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsSearchResults.h; sourceTree = "<group>"; };
 		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
+		F02AFA6E24CBF8A50002A699 /* CustomFeed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeed.h; sourceTree = "<group>"; };
+		F02AFA6F24CBF8A50002A699 /* CustomFeed.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeed.m; sourceTree = "<group>"; };
 		F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSplitViewController.m; sourceTree = "<group>"; };
 		F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TOSplitViewController.h; sourceTree = "<group>"; };
 		F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+TOSplitViewController.m"; sourceTree = "<group>"; };
@@ -1185,6 +1190,10 @@
 		F0E86493234796B80089F9EF /* ArticlePhoto.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticlePhoto.m; sourceTree = "<group>"; };
 		F0ED9812234C50F6007449AF /* StoreKeychainPersistence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreKeychainPersistence.h; sourceTree = "<group>"; };
 		F0ED9813234C50F6007449AF /* StoreKeychainPersistence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreKeychainPersistence.m; sourceTree = "<group>"; };
+		F0EE6CD424CABCAE00E987FC /* SidebarVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarVC.h; sourceTree = "<group>"; };
+		F0EE6CD524CABCAE00E987FC /* SidebarVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SidebarVC.m; sourceTree = "<group>"; };
+		F0EE6CD724CABEE000E987FC /* Coordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Coordinator.h; sourceTree = "<group>"; };
+		F0EE6CD824CABEE000E987FC /* Coordinator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Coordinator.m; sourceTree = "<group>"; };
 		F0EEC85F21ECB2420046BB12 /* reader.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = reader.css; sourceTree = "<group>"; };
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
@@ -1595,6 +1604,8 @@
 				F05041BF2461442800A65C1C /* FeedMeta.m */,
 				F05041B52461442800A65C1C /* VideoInfo.h */,
 				F05041C22461442800A65C1C /* VideoInfo.m */,
+				F02AFA6E24CBF8A50002A699 /* CustomFeed.h */,
+				F02AFA6F24CBF8A50002A699 /* CustomFeed.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1733,6 +1744,7 @@
 		F070C30E1FBABC7500912CCF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				F0EE6CB424CABC9B00E987FC /* Sidebar */,
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F0A0501921F07BD600A46524 /* NewFeed */,
 				F092C5B1246C286C007FDE8A /* FeedVC */,
@@ -1810,6 +1822,8 @@
 			children = (
 				F032A75C244D7D8C0024AC63 /* YetiTheme.h */,
 				F032A75B244D7D8C0024AC63 /* YetiTheme.m */,
+				F0EE6CD724CABEE000E987FC /* Coordinator.h */,
+				F0EE6CD824CABEE000E987FC /* Coordinator.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2291,6 +2305,15 @@
 				F0E0E6ED2457FF1D00DFFD17 /* JLRoutesTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F0EE6CB424CABC9B00E987FC /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				F0EE6CD424CABCAE00E987FC /* SidebarVC.h */,
+				F0EE6CD524CABCAE00E987FC /* SidebarVC.m */,
+			);
+			path = Sidebar;
 			sourceTree = "<group>";
 		};
 		F0F10A07244C7B21009FC108 /* Products */ = {
@@ -3120,6 +3143,7 @@
 				F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */,
 				F05041E22461442800A65C1C /* FeedMeta.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
+				F02AFA7024CBF8A50002A699 /* CustomFeed.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
 				F022B0D820DC2D9500030185 /* AccentCell.m in Sources */,
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
@@ -3165,6 +3189,7 @@
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
+				F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */,
 				F0AD76D520E2217C0003787B /* Reachability.m in Sources */,
 				F0521A072473AB8400DFB69C /* FeedVC+SearchController.m in Sources */,
 				F05041D32461442800A65C1C /* ArticlesManager.m in Sources */,
@@ -3183,6 +3208,7 @@
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */,
 				F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */,
+				F0EE6CD624CABCAE00E987FC /* SidebarVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3537,7 +3563,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3553,7 +3579,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -3588,7 +3614,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)/**";
 				INFOPLIST_FILE = Yeti/SupportingFiles/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3602,7 +3628,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

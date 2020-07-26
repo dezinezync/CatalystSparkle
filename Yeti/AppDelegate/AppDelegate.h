@@ -10,6 +10,7 @@
 #import <DZAppdelegate/DZAppdelegate.h>
 
 #import "RMStore.h"
+#import "Coordinator.h"
 
 #if TARGET_OS_MACCATALYST
 
@@ -38,6 +39,8 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
 @property (nonatomic, strong) id<RMStoreTransactionPersistor> persistence;
+
+@property (nonatomic, strong) MainCoordinator *coordinator;
 
 #pragma mark - Background Tasks
 

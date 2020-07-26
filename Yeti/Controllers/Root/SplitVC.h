@@ -14,10 +14,7 @@
 #import "FeedVC+SearchController.h"
 #import "ArticleVC.h"
 
-#import "YTNavigationController.h"
-#import "TOSplitViewController.h"
-
-@interface SplitVC : TOSplitViewController <UIViewControllerRestoration>
+@interface SplitVC : UISplitViewController <UIViewControllerRestoration>
 
 @property (nonatomic, weak) FeedsVC *feedsVC;
 

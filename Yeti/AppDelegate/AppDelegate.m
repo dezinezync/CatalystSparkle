@@ -109,6 +109,10 @@ AppDelegate *MyAppDelegate = nil;
         
         MyAppDelegate = self;
         
+        Coordinator *coordinator = [MainCoordinator new];
+        
+        self.coordinator = coordinator;
+        
 #if TARGET_OS_MACCATALYST
         [self ct_setupAppKitBundle];
 #endif
@@ -125,6 +129,8 @@ AppDelegate *MyAppDelegate = nil;
         }
         
         [self setupRootController];
+        
+        [self.coordinator start];
         
 //        weakify(self);
         
@@ -371,6 +377,8 @@ AppDelegate *MyAppDelegate = nil;
     SplitVC *splitVC = [[SplitVC alloc] init];
     
     self.window.rootViewController = splitVC;
+    
+    self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
     
     [splitVC loadViewIfNeeded];
     

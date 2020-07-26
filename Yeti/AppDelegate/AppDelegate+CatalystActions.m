@@ -68,16 +68,6 @@
     
 }
 
-- (void)toggleSidebar {
-    
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
-    
-    splitVC.primaryColumnIsHidden = !splitVC.primaryColumnIsHidden;
-    
-    [UIMenuSystem.mainSystem setNeedsRebuild];
-    
-}
-
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
     SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
