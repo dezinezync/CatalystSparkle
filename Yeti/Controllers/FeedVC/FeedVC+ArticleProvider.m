@@ -292,7 +292,10 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
             
-            [self scrollViewDidEndDecelerating:self.tableView];
+            if ([self respondsToSelector:@selector(scrollViewDidScroll:)]) {
+                [self scrollViewDidScroll:self.tableView];
+            }
+                
         });
     }
 }

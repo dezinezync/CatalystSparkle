@@ -967,7 +967,7 @@ NSString * const kDS2Data = @"DS2Data";
         
         if (snapshot != nil) {
             
-            [snapshot reloadSectionsWithIdentifiers:@[TopSection, MainSection]];
+            [snapshot reloadSectionsWithIdentifiers:snapshot.sectionIdentifiers];
             
         }
         

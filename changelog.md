@@ -1,6 +1,10 @@
 # v1.8.0
 
-This is the RC 2 build for v1.8.
+This is the RC 3 build for v1.8.
+
+## Build 373
+
+- Fixes a crash caused by triggering loading of next batch of articles when reading an article. Tapping on the previous/next buttons would cause this crash. 
 
 ## Build 371
 
