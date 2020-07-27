@@ -37,6 +37,7 @@
     
     SidebarVC *sidebar = [SidebarVC instanceWithDefaultLayout];
     sidebar.mainCoordinator = self;
+    sidebar.bookmarksManager = self.bookmarksManager;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
     

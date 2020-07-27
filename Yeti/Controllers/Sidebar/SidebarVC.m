@@ -206,6 +206,26 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:FeedsDidUpdate object:ArticlesManager.shared];
     
+    if (SharedPrefs.hideBookmarks == NO) {
+        
+        [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+            
+            NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+            
+            id object = [self.DS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:2 inSection:0]];
+            
+            if (object != nil && [object isKindOfClass:CustomFeed.class]) {
+                
+                [snapshot reloadItemsWithIdentifiers:@[object]];
+                
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                
+            }
+            
+        }];
+        
+    }
+    
     MyDBManager.syncProgressBlock = ^(CGFloat progress) {
         
         NSLogDebug(@"Sync Progress: %@", @(progress));

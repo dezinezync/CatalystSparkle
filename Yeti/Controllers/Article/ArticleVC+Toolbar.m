@@ -299,12 +299,14 @@
             }
         };
         
-        if (self.item.isBookmarked) {
-            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
-        }
-        else {
-            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
-        }
+//        if (self.item.isBookmarked) {
+//            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
+//        }
+//        else {
+//            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
+//        }
+        
+        bookmarkCallback(YES);
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
