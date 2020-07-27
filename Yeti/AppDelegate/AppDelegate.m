@@ -23,6 +23,8 @@
 #import "FeedsManager.h"
 #import "Keychain.h"
 
+#import "PhotosController.h"
+
 AppDelegate *MyAppDelegate = nil;
 
 @interface AppDelegate () {
@@ -57,7 +59,9 @@ AppDelegate *MyAppDelegate = nil;
 - (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(nonnull UISceneSession *)connectingSceneSession options:(nonnull UISceneConnectionOptions *)options {
     
     UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:UIWindowSceneSessionRoleApplication];
+    
     config.delegateClass = AppDelegate.class;
+    
     return config;
     
 }
@@ -70,6 +74,23 @@ AppDelegate *MyAppDelegate = nil;
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
     
+    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
+    
+    if (activity != nil && [activity.activityType isEqualToString:@"viewImage"] == YES) {
+        
+        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = YES;
+        
+        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+        
+        window.rootViewController = photosVC;
+        
+        [window makeKeyAndVisible];
+        
+        return;
+        
+    }
+    
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     
     __unused BOOL unused = [self commonInit:UIApplication.sharedApplication];
@@ -77,8 +98,6 @@ AppDelegate *MyAppDelegate = nil;
 #if TARGET_OS_MACCATALYST
     [self ct_setupToolbar:windowScene];
 #endif
-    
-    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
     
     if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == YES) {
         
