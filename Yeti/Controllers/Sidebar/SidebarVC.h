@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) BookmarksManager *bookmarksManager;
 
+@property (nonatomic, weak) UIRefreshControl *refreshControl;
+
 + (instancetype)instanceWithDefaultLayout;
 
 - (void)setupData;

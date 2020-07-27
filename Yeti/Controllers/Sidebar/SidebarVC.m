@@ -115,6 +115,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         self.navigationItem.searchController = searchController;
     }
     
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    [refresh addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    
+    [self.collectionView addSubview:refresh];
+    
+    self.refreshControl = refresh;
+    
 }
 
 - (void)setupDatasource {
@@ -206,6 +213,22 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:FeedsDidUpdate object:ArticlesManager.shared];
     
+    [NSNotificationCenter.defaultCenter addObserverForName:UnreadCountDidUpdate object:MyFeedsManager queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+       
+        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+        
+        id object = [self.DS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]];
+        
+        if (object != nil && [object isKindOfClass:CustomFeed.class]) {
+            
+            [snapshot reloadItemsWithIdentifiers:@[object]];
+            
+            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            
+        }
+        
+    }];
+    
     if (SharedPrefs.hideBookmarks == NO) {
         
         [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
@@ -250,9 +273,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 self->_refreshing = NO;
             }
             
-//            if ([self.refreshControl isRefreshing]) {
-//                [self.refreshControl endRefreshing];
-//            }
+            if ([self.refreshControl isRefreshing]) {
+                [self.refreshControl endRefreshing];
+            }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 
@@ -638,6 +661,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 #pragma mark - Misc
 
+- (void)beginRefreshing:(UIRefreshControl *)sender {
+    
+    if (self->_refreshing) {
+        return;
+    }
+    
+    [self sync];
+    
+}
+
 - (void)sync {
     
     if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0)
@@ -670,15 +703,15 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return;
     }
     
-//    if ([self.refreshControl isRefreshing] == NO) {
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            [self.refreshControl beginRefreshing];
-//
-//        });
-//
-//    }
+    if ([self.refreshControl isRefreshing] == NO) {
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+            [self.refreshControl beginRefreshing];
+
+        });
+
+    }
     
     _refreshing = YES;
     
