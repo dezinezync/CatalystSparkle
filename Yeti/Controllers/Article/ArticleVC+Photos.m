@@ -13,7 +13,9 @@
 #import "ArticlePhoto.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
+
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/UIImage+MultiFormat.h>
 
 @implementation ArticleVC (Photos)
 
@@ -24,6 +26,14 @@
     }
     
     Image *image = (Image *)[sender view];
+    
+#ifdef TARGET_OS_MACCATALYST
+    
+    [self ct_didTapOnImage:image];
+    
+    return;
+    
+#endif
     
     if (image.link != nil) {
         
@@ -134,6 +144,57 @@
     }];
     
 }
+
+#if TARGET_OS_MACCATALYST
+
+- (void)ct_didTapOnImage:(Image *)image {
+    
+    NSUserActivity *viewImageActivity = [[NSUserActivity alloc] initWithActivityType:@"viewImage"];
+    
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    
+    if (image.imageView.image != nil) {
+        dict[@"image"] = [image.imageView.image sd_imageData];
+    }
+    
+    if (image.URL != nil) {
+        dict[@"URL"] = image.URL;
+    }
+    
+    if (image.darkModeURL != nil) {
+        dict[@"darkURL"] = image.darkModeURL;
+    }
+    
+    if (image.content != nil && image.content.alt != nil) {
+        
+        dict[@"alt"] = image.content.alt;
+        
+    }
+    else if (image.content != nil && image.content.attributes[@"alt"] != nil) {
+     
+        dict[@"alt"] = image.content.attributes[@"alt"];
+        
+    }
+    
+    if (dict.keyEnumerator.allObjects.count == 0) {
+        return;
+    }
+    
+    [viewImageActivity addUserInfoEntriesFromDictionary:dict];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+        
+        if (error != nil) {
+            
+            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
+            
+        }
+        
+    }];
+    
+}
+
+#endif
 
 - (void)didTapOnImageWithURL:(UITapGestureRecognizer *)sender {
     

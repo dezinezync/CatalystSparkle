@@ -191,6 +191,7 @@
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0927A3424CEAF070058560B /* PhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0927A3324CEAF070058560B /* PhotosController.m */; };
 		F092C5CE246C288B007FDE8A /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5CD246C288B007FDE8A /* FeedVC.m */; };
 		F092C5D1246C2B9A007FDE8A /* FeedVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5D0246C2B9A007FDE8A /* FeedVC+Actions.m */; };
 		F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5D3246C30D8007FDE8A /* FeedVC+ArticleProvider.m */; };
@@ -1019,6 +1020,8 @@
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		F0927A3224CEAF070058560B /* PhotosController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotosController.h; sourceTree = "<group>"; };
+		F0927A3324CEAF070058560B /* PhotosController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotosController.m; sourceTree = "<group>"; };
 		F092C5CC246C288B007FDE8A /* FeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedVC.h; sourceTree = "<group>"; };
 		F092C5CD246C288B007FDE8A /* FeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedVC.m; sourceTree = "<group>"; };
 		F092C5CF246C2B9A007FDE8A /* FeedVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+Actions.h"; sourceTree = "<group>"; };
@@ -1733,6 +1736,7 @@
 		F070C30E1FBABC7500912CCF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				F0927A3124CEAEF30058560B /* Photos */,
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F0A0501921F07BD600A46524 /* NewFeed */,
 				F092C5B1246C286C007FDE8A /* FeedVC */,
@@ -2046,6 +2050,15 @@
 				F0B7C845240B7272008D8F4F /* UserNotificationsUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0927A3124CEAEF30058560B /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				F0927A3224CEAF070058560B /* PhotosController.h */,
+				F0927A3324CEAF070058560B /* PhotosController.m */,
+			);
+			path = Photos;
 			sourceTree = "<group>";
 		};
 		F092C5B1246C286C007FDE8A /* FeedVC */ = {
@@ -3065,6 +3078,7 @@
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
+				F0927A3424CEAF070058560B /* PhotosController.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
