@@ -238,7 +238,7 @@
                 photo.attributedCaptionSummary = [self captionForText:errorString];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [photosViewController updatePhoto:photo];
+                    [photosViewController reloadPhotosAnimated:NO];
                 });
                 
                 photo.task = nil;
@@ -251,7 +251,7 @@
                 
                 photo.downloadedImage = image;
                 
-                [photosViewController updatePhoto:photo];
+                [photosViewController reloadPhotosAnimated:NO];
                 
             });
             

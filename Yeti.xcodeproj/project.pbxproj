@@ -171,6 +171,7 @@
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
 		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
 		F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F074D802208DC2B4002F22CB /* WebP.framework */; };
+		F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F075752724CED198001F7D15 /* SidebarVC+Actions.m */; };
 		F0783CAA248F688500C7A280 /* elytramac.bundle in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0783C88248F685C00C7A280 /* elytramac.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = F0783CAE248F6A5800C7A280 /* AppKitGlue.m */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
@@ -334,6 +335,7 @@
 		F0F10A9E244C8020009FC108 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A94244C8020009FC108 /* DTTimePeriodCollection.m */; };
 		F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A96244C8020009FC108 /* DTTimePeriodChain.m */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
+		F0F44E4624CEFDA20044CA01 /* SidebarVC+SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */; };
 		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0FA472920CBAD150035B1F5 /* AccountFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */; };
@@ -993,6 +995,8 @@
 		F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedTextField.h; sourceTree = "<group>"; };
 		F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedTextField.m; sourceTree = "<group>"; };
 		F074D802208DC2B4002F22CB /* WebP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebP.framework; path = Carthage/Build/iOS/WebP.framework; sourceTree = SOURCE_ROOT; };
+		F075752624CED198001F7D15 /* SidebarVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+Actions.h"; sourceTree = "<group>"; };
+		F075752724CED198001F7D15 /* SidebarVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+Actions.m"; sourceTree = "<group>"; };
 		F0783C88248F685C00C7A280 /* elytramac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = elytramac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0783C8A248F685C00C7A280 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0783CAD248F6A5800C7A280 /* AppKitGlue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitGlue.h; sourceTree = "<group>"; };
@@ -1220,6 +1224,8 @@
 		F0F10A97244C8020009FC108 /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
+		F0F44E4424CEFDA20044CA01 /* SidebarVC+SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+SearchResults.h"; sourceTree = "<group>"; };
+		F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+SearchResults.m"; sourceTree = "<group>"; };
 		F0F8DBB921516EE80076156D /* NSPointerArray+AbstractionHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPointerArray+AbstractionHelpers.h"; sourceTree = "<group>"; };
 		F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSPointerArray+AbstractionHelpers.m"; sourceTree = "<group>"; };
 		F0FA472820CBAD150035B1F5 /* AccountFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountFooterView.xib; sourceTree = "<group>"; };
@@ -2325,6 +2331,10 @@
 			children = (
 				F0EE6CD424CABCAE00E987FC /* SidebarVC.h */,
 				F0EE6CD524CABCAE00E987FC /* SidebarVC.m */,
+				F075752624CED198001F7D15 /* SidebarVC+Actions.h */,
+				F075752724CED198001F7D15 /* SidebarVC+Actions.m */,
+				F0F44E4424CEFDA20044CA01 /* SidebarVC+SearchResults.h */,
+				F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -3137,6 +3147,7 @@
 				F05219E924739F8100DFB69C /* FeedVC+BarPositioning.m in Sources */,
 				F092C5D1246C2B9A007FDE8A /* FeedVC+Actions.m in Sources */,
 				F03BC4E920C9016A007B574F /* EmptyView.m in Sources */,
+				F0F44E4624CEFDA20044CA01 /* SidebarVC+SearchResults.m in Sources */,
 				F01285C323436D8D00B8C277 /* Keychain.m in Sources */,
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */,
@@ -3173,6 +3184,7 @@
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
+				F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */,
 				F0AF314B20D28F0800E074D6 /* IntroViewUUID.m in Sources */,
 				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
 				F0CDA0D12475191600DC1217 /* BookmarksVC.m in Sources */,

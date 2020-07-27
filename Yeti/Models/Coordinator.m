@@ -10,6 +10,9 @@
 #import <objc/runtime.h>
 
 #import "UnreadVC.h"
+#import "TodayVC.h"
+#import "BookmarksVC.h"
+#import "RecommendationsVC.h"
 
 @implementation MainCoordinator
 
@@ -55,37 +58,87 @@
 
 - (void)showCustomVC:(CustomFeed *)feed {
     
+    if (feed == nil) {
+        return;
+    }
+    
     if (feed.feedType == FeedVCTypeUnread) {
         
         UnreadVC *unreadVC = [[UnreadVC alloc] init];
         
-        [self _showFeedVC:unreadVC];
+        [self _showSupplementaryController:unreadVC];
+        
+    }
+    else if (feed.feedType == FeedVCTypeToday) {
+        
+        TodayVC *todayVC = [[TodayVC alloc] init];
+        
+        [self _showSupplementaryController:todayVC];
+        
+    }
+    else if (feed.feedType == FeedVCTypeBookmarks) {
+        
+        BookmarksVC *bookmarksVC = [[BookmarksVC alloc] init];
+        
+        [self _showSupplementaryController:bookmarksVC];
         
     }
     
 }
 
-- (void)_showFeedVC:(FeedVC *)feedVC {
+- (void)showFeedVC:(Feed *)feed {
     
-    if (feedVC == nil) {
+    if (feed == nil) {
         return;
     }
     
-    feedVC.mainCoordinator = self;
+    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+    
+    [self _showSupplementaryController:vc];
+    
+}
+
+- (void)_showSupplementaryController:(UIViewController *)controller {
+    
+    if (controller == nil) {
+        return;
+    }
+    
+    if ([controller isKindOfClass:UINavigationController.class] == NO) {
+        
+        controller.mainCoordinator = self;
+        
+        if ([controller isKindOfClass:FeedVC.class] == YES) {
+            
+            [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
+            
+        }
+        
+    }
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:feedVC];
-        
-        [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
+        if ([controller isKindOfClass:UINavigationController.class]) {
+            
+            [self.splitViewController setViewController:controller forColumn:UISplitViewControllerColumnSupplementary];
+            
+        }
+        else {
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
+            
+            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
+            
+        }
         
         return;
         
     }
     
     UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
-    [nav pushViewController:feedVC animated:YES];
+    
+    [nav pushViewController:controller animated:YES];
     
 }
 
@@ -114,6 +167,14 @@
         [nav pushViewController:articleVC animated:YES];
         
     }
+    
+}
+
+- (void)showRecommendations {
+    
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+
+    [self _showSupplementaryController:vc];
     
 }
 

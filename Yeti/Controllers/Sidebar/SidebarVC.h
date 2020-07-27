@@ -9,12 +9,17 @@
 #import <UIKit/UIKit.h>
 
 #import "Coordinator.h"
+#import "BarPositioning.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SidebarVC : UICollectionViewController
+@interface SidebarVC : UICollectionViewController <BarPositioning> 
+
+@property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
 + (instancetype)instanceWithDefaultLayout;
+
+- (void)setupData;
 
 - (void)sync;
 

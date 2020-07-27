@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "SidebarVC.h"
+#import "SidebarVC+SearchResults.h"
 #import "CustomFeed.h"
 
 #import <DZKit/NSString+Extras.h>
@@ -25,9 +25,13 @@
     
 }
 
-@property (nonatomic, strong) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
+@property (nonatomic, strong, readwrite) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
 @property (nonatomic, strong) UICollectionViewCellRegistration *customFeedRegister, *folderRegister, *feedRegister;
+
+@property (nonatomic, weak) UILabel *progressLabel;
+@property (nonatomic, weak) UIProgressView *syncProgressView;
+@property (nonatomic, strong) UIStackView *progressStackView;
 
 @end
 
@@ -41,7 +45,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         UICollectionLayoutListConfiguration *config = [[UICollectionLayoutListConfiguration alloc] initWithAppearance:UICollectionLayoutListAppearanceSidebar];
         
-        if (section == 0 || section == 4) {
+        if (section == 0 || section == 2) {
             
             return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
             
@@ -65,8 +69,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     self.title = @"Feeds";
 
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    [self setupNavigationBar];
     
     [self setupDatasource];
     
@@ -86,6 +89,34 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 #pragma mark - Setup
 
+- (void)setupNavigationBar {
+    
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    
+    self.navigationItem.leftBarButtonItems = @[self.splitViewController.displayModeButtonItem, self.leftBarButtonItem];
+    self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
+    
+    self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    
+    // Search Controller setup
+    {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+        searchController.searchResultsUpdater = self;
+        searchController.delegate = self;
+        searchController.obscuresBackgroundDuringPresentation = NO;
+        searchController.searchBar.placeholder = @"Search Feeds";
+        searchController.searchBar.accessibilityHint = @"Search your feeds";
+        
+        searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
+        
+        self.navigationItem.searchController = searchController;
+    }
+    
+}
+
 - (void)setupDatasource {
     
     if (self.DS != nil) {
@@ -94,18 +125,14 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, id _Nonnull item) {
         
-        if (indexPath.section == 0) {
+        if ([item isKindOfClass:CustomFeed.class]) {
             
             return [collectionView dequeueConfiguredReusableCellWithRegistration:self.customFeedRegister forIndexPath:indexPath item:item];
             
         }
-        else if (indexPath.section == 1) {
+        else if ([item isKindOfClass:Folder.class]) {
             
-            if ([item isKindOfClass:Folder.class] == YES) {
-                
-                return [collectionView dequeueConfiguredReusableCellWithRegistration:self.folderRegister forIndexPath:indexPath item:item];
-                
-            }
+            return [collectionView dequeueConfiguredReusableCellWithRegistration:self.folderRegister forIndexPath:indexPath item:item];
             
         }
         
@@ -143,13 +170,17 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (ArticlesManager.shared.feeds.count) {
         
+        NSSortDescriptor *alphaSort = [NSSortDescriptor sortDescriptorWithKey:@"displayTitle" ascending:YES selector:@selector(localizedCompare:)];
+        
         if (ArticlesManager.shared.folders.count) {
             
             for (Folder *folder in ArticlesManager.shared.folders) {
                 
                 [foldersSnapshot appendItems:@[folder]];
                 
-                [foldersSnapshot appendItems:folder.feeds.allObjects intoParentItem:folder];
+                NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
+                
+                [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
             }
             
@@ -174,6 +205,59 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 - (void)setupNotifications {
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:FeedsDidUpdate object:ArticlesManager.shared];
+    
+    MyDBManager.syncProgressBlock = ^(CGFloat progress) {
+        
+        NSLogDebug(@"Sync Progress: %@", @(progress));
+        
+        if (progress == 0.f) {
+            
+            [self.navigationController setToolbarHidden:NO animated:YES];
+            
+            self.progressLabel.text = @"Syncing...";
+            [self.progressLabel sizeToFit];
+            
+            [self.syncProgressView setProgress:progress animated:YES];
+            
+        }
+        else if (progress >= 0.95f) {
+            
+            [self.syncProgressView setProgress:progress animated:YES];
+            
+            self.progressLabel.text = @"Syncing Complete.";
+            
+            if (self->_refreshing) {
+                self->_refreshing = NO;
+            }
+            
+//            if ([self.refreshControl isRefreshing]) {
+//                [self.refreshControl endRefreshing];
+//            }
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self.navigationController setToolbarHidden:YES animated:YES];
+                
+            });
+            
+        }
+        else {
+            
+            if (progress <= 0.95f && self.navigationController.isToolbarHidden == YES) {
+                [self.navigationController setToolbarHidden:NO animated:NO];
+            }
+            
+            if (self.navigationController.isToolbarHidden == NO) {
+                
+                self.progressLabel.text = [NSString stringWithFormat:@"Synced %.f%%", progress * 100];
+                
+                [self.syncProgressView setProgress:progress animated:YES];
+                
+            }
+            
+        }
+        
+    };
     
 }
 
@@ -227,10 +311,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             content.image = [UIImage systemImageNamed:[(CustomFeed *)item imageName]];
             
-    //        UIListContentImageProperties *imageProperties = [UIListContentImageProperties new];
-    //        imageProperties.tintColor = [(CustomFeed *)item tintColor];
-    //
-    //        content.imageProperties = imageProperties;
+            content.imageProperties.tintColor = [(CustomFeed *)item tintColor];
             
             cell.contentConfiguration = content;
             
@@ -273,6 +354,33 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
             
             disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
+            
+            disclosure.actionHandler = ^{
+                
+                NSDiffableDataSourceSectionSnapshot *sectionSnapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
+                
+                UIListContentConfiguration *updatedContent = (id)[cell contentConfiguration];
+                
+                if ([sectionSnapshot isExpanded:item] == YES) {
+                    
+                    [sectionSnapshot collapseItems:@[item]];
+                    
+                    updatedContent.image = [UIImage systemImageNamed:@"folder.fill"];
+                    
+                }
+                else {
+                    
+                    [sectionSnapshot expandItems:@[item]];
+                    
+                    updatedContent.image = [UIImage systemImageNamed:@"folder"];
+                    
+                }
+                
+                cell.contentConfiguration = updatedContent;
+                
+                [self.DS applySnapshot:sectionSnapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:YES];
+                
+            };
             
             cell.accessories = @[disclosure];
             
@@ -356,7 +464,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             cell.contentConfiguration = content;
             
-            if (indexPath.section != 4) {
+            if (indexPath.section != 2) {
                 
                 cell.indentationLevel = 1;
                 
@@ -378,6 +486,103 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }
     
     return _feedRegister;
+    
+}
+
+- (UIBarButtonItem *)leftBarButtonItem {
+    
+    UIImage *settingsImage = [UIImage systemImageNamed:@"gear"];
+    
+    UIBarButtonItem *settings = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
+    settings.accessibilityLabel = @"Settings";
+    settings.accessibilityHint = @"Elytra's App Settings";
+    
+    return settings;
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
+    
+    UIImage * newFolderImage = [UIImage systemImageNamed:@"folder.badge.plus"],
+            * recommendationsImage = [UIImage systemImageNamed:@"flame"],
+            * newFeedImage = [UIImage systemImageNamed:@"plus"];
+    
+    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithImage:newFeedImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAdd:)];
+    add.accessibilityLabel = @"New Feed";
+    add.accessibilityHint = @"Add a new RSS Feed";
+    // add.width = 40.f;
+    
+    UIBarButtonItem *folder = [[UIBarButtonItem alloc] initWithImage:newFolderImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapAddFolder:)];
+    folder.accessibilityLabel = @"New Folder";
+    folder.accessibilityHint = @"Create a new folder";
+    // folder.width = 40.f;
+    
+    UIBarButtonItem *recommendations = [[UIBarButtonItem alloc] initWithImage:recommendationsImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRecommendations:)];
+    recommendations.accessibilityLabel = @"Recommendations";
+    recommendations.accessibilityHint = @"View RSS Feed Recommendations";
+    // recommendations.width = 40.f;
+    
+    return @[add, folder, recommendations];
+    
+}
+
+- (NSArray <UIBarButtonItem *> *)toolbarItems {
+    
+    if (_progressStackView == nil) {
+        
+        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - (LayoutPadding * 2), 32.f);
+        
+        UILabel *progressLabel = [[UILabel alloc] init];
+        
+        UIFont *sizedFont = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
+        
+        progressLabel.font = [UIFont monospacedDigitSystemFontOfSize:MIN(11.f, sizedFont.pointSize) weight:UIFontWeightSemibold];
+        progressLabel.textColor = UIColor.secondaryLabelColor;
+        progressLabel.textAlignment = NSTextAlignmentCenter;
+        progressLabel.frame = CGRectMake(0, 0, frame.size.width, 0);
+        
+        NSLayoutConstraint *labelWidthConstraint = [progressLabel.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
+        labelWidthConstraint.priority = 999;
+        
+        progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
+
+        //#ifdef DEBUG
+//        progressLabel.backgroundColor = UIColor.redColor;
+//#endif
+        
+        UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        progressView.progressTintColor = self.view.window.tintColor;
+        progressView.trackTintColor = UIColor.separatorColor;
+        progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
+        progressView.layer.cornerRadius = 2.f;
+        progressView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        NSLayoutConstraint *widthConstraint = [progressView.widthAnchor constraintEqualToConstant:MAX(frame.size.width, 280.f)];
+        widthConstraint.priority = 999;
+        
+        [NSLayoutConstraint activateConstraints:@[widthConstraint, labelWidthConstraint]];
+        
+//#ifdef DEBUG
+//        progressView.backgroundColor = UIColor.greenColor;
+//#endif
+        
+        UIStackView *stack = [[UIStackView alloc] initWithArrangedSubviews:@[progressLabel, progressView]];
+        stack.frame = frame;
+        stack.axis = UILayoutConstraintAxisVertical;
+        stack.distribution = UIStackViewDistributionEqualSpacing;
+        stack.spacing = 4.f;
+        stack.alignment = UIStackViewAlignmentCenter;
+        
+        _syncProgressView = progressView;
+        _progressLabel = progressLabel;
+        
+        _progressStackView = stack;
+        
+    }
+    
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:self.progressStackView];
+    
+    return @[item];
     
 }
 
@@ -406,6 +611,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         return;
     }
+    
+    [self.mainCoordinator showFeedVC:item];
     
 }
 

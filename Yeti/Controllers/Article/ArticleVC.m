@@ -546,10 +546,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self setupHelperView];
         [self scrollViewDidScroll:self.scrollView];
         
-        if (firstVisible) {
-            CGFloat yOffset = firstVisible.frame.origin.y + (self.scrollView.bounds.size.height / 2);
-            [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
-        }
+//        if (firstVisible) {
+//            CGFloat yOffset = firstVisible.frame.origin.y + (self.scrollView.bounds.size.height / 2);
+//            [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
+//        }
     }];
 }
 

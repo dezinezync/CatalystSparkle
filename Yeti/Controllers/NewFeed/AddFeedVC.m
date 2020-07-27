@@ -586,6 +586,10 @@
         return;
     }
     
+    if (self.query == nil) {
+        return;
+    }
+    
     self.DS.state = DZDatasourceLoading;
     
     NSInteger page = self.page + 1;

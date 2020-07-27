@@ -33,7 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showCustomVC:(CustomFeed *)feed;
 
+- (void)showFeedVC:(Feed *)feed;
+
 - (void)showArticleVC:(ArticleVC *)articleVC;
+
+- (void)showRecommendations;
 
 @end
 
