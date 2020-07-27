@@ -27,6 +27,8 @@
 
 @property (nonatomic, strong) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
+@property (nonatomic, strong) UICollectionViewCellRegistration *customFeedRegister, *folderRegister, *feedRegister;
+
 @end
 
 @implementation SidebarVC
@@ -90,190 +92,24 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return;
     }
     
-    weakify(self);
-    
-    UICollectionViewCellRegistration *customFeedsRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
-        
-        UIListContentConfiguration *content = [UIListContentConfiguration sidebarCellConfiguration];
-        
-        content.text = item.displayTitle;
-        
-        content.prefersSideBySideTextAndSecondaryText = YES;
-        
-        if (indexPath.item == 0) {
-            
-            if (MyFeedsManager.totalUnread > 0) {
-                content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
-            }
-            
-        }
-        
-        if (indexPath.item == 1) {
-            
-            if (MyFeedsManager.totalToday > 0) {
-                content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
-            }
-            
-        }
-        
-        if (indexPath.item == 2) {
-            
-            strongify(self);
-            
-            MainCoordinator *coordinator = [self mainCoordinator];
-            
-            BookmarksManager *manager = coordinator.bookmarksManager;
-            
-            if (manager.bookmarksCount > 0) {
-                
-                content.secondaryText = [@(manager.bookmarksCount) stringValue];
-                
-            }
-            
-        }
-        
-        content.image = [UIImage systemImageNamed:[(CustomFeed *)item imageName]];
-        
-//        UIListContentImageProperties *imageProperties = [UIListContentImageProperties new];
-//        imageProperties.tintColor = [(CustomFeed *)item tintColor];
-//
-//        content.imageProperties = imageProperties;
-        
-        cell.contentConfiguration = content;
-        
-    }];
-    
-    UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
-       
-        UIListContentConfiguration *content = [UIListContentConfiguration groupedHeaderConfiguration];
-        
-        content.text = item.title;
-        
-        if (item.unreadCount.unsignedIntegerValue > 0) {
-            
-            content.secondaryText = item.unreadCount.stringValue;
-            
-        }
-        
-        content.prefersSideBySideTextAndSecondaryText = YES;
-        
-        NSDiffableDataSourceSectionSnapshot *snapshot = [self.DS snapshotForSection:@(indexPath.section)];
-        
-        NSString *imageName = [snapshot isExpanded:item] ? @"folder" : @"folder.fill";
-        
-        content.image = [UIImage systemImageNamed:imageName];
-        
-        cell.contentConfiguration = content;
-        
-        UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
-        
-        disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
-        
-        cell.accessories = @[disclosure];
-        
-    }];
-    
-    UICollectionViewCellRegistration *feedRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
-       
-        UIListContentConfiguration *content = [cell defaultContentConfiguration];
-        
-        content.text = item.displayTitle;
-        
-        content.prefersSideBySideTextAndSecondaryText = YES;
-        
-        if (item.unread.unsignedIntegerValue > 0) {
-            
-            content.secondaryText = item.unread.stringValue;
-            
-        }
-        
-        content.image = item.faviconImage ?: [UIImage systemImageNamed:@"square.dashed"];
-        
-        if (item.faviconImage == nil) {
-
-            NSString *url = [item faviconURI];
-
-            if (url != nil && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
-
-                CGFloat maxWidth = 24.f / UIScreen.mainScreen.scale;
-
-                url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
-
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-                    __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-
-                        if (image != nil) {
-
-                            CGFloat cornerRadius = 3.f * UIScreen.mainScreen.scale;
-
-                            image = [image sd_roundedCornerImageWithRadius:cornerRadius corners:UIRectCornerAllCorners borderWidth:0.f borderColor:nil];
-
-                            item.faviconImage = image;
-
-                            NSIndexPath * feedIndexPath = [self.DS indexPathForItemIdentifier:item];
-
-                            if (feedIndexPath == nil) {
-
-                                return;
-
-                            }
-                            
-                            UICollectionViewListCell *blockCell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:feedIndexPath];
-
-                            UIListContentConfiguration *config = (UIListContentConfiguration *)[blockCell contentConfiguration];
-                            
-                            config.image = image;
-                            
-                            blockCell.contentConfiguration = config;
-
-                        }
-
-                    }];
-
-                });
-
-            }
-
-        }
-        
-        cell.contentConfiguration = content;
-        
-        if (indexPath.section != 4) {
-            
-            cell.indentationLevel = 1;
-            
-        }
-        else {
-            
-            cell.indentationLevel = 0;
-            
-        }
-        
-        UICellAccessoryDisclosureIndicator *disclosure = [UICellAccessoryDisclosureIndicator new];
-        
-        cell.accessories = @[disclosure];
-        
-    }];
-    
     self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, id _Nonnull item) {
         
         if (indexPath.section == 0) {
             
-            return [collectionView dequeueConfiguredReusableCellWithRegistration:customFeedsRegistration forIndexPath:indexPath item:item];
+            return [collectionView dequeueConfiguredReusableCellWithRegistration:self.customFeedRegister forIndexPath:indexPath item:item];
             
         }
         else if (indexPath.section == 1) {
             
             if ([item isKindOfClass:Folder.class] == YES) {
                 
-                return [collectionView dequeueConfiguredReusableCellWithRegistration:folderRegistration forIndexPath:indexPath item:item];
+                return [collectionView dequeueConfiguredReusableCellWithRegistration:self.folderRegister forIndexPath:indexPath item:item];
                 
             }
             
         }
         
-        return [collectionView dequeueConfiguredReusableCellWithRegistration:feedRegistration forIndexPath:indexPath item:item];
+        return [collectionView dequeueConfiguredReusableCellWithRegistration:self.feedRegister forIndexPath:indexPath item:item];
         
     }];
     
@@ -284,10 +120,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     NSDiffableDataSourceSectionSnapshot *snapshot = [NSDiffableDataSourceSectionSnapshot new];
     
     CustomFeed *unread = [[CustomFeed alloc] initWithTitle:@"Unread" imageName:@"largecircle.fill.circle" tintColor:UIColor.systemBlueColor feedType:FeedVCTypeUnread];
-    unread.feedID = @(0);
+    unread.feedID = @( NSUIntegerMax - 3000 );
     
     CustomFeed *today = [[CustomFeed alloc] initWithTitle:@"Today" imageName:@"calendar" tintColor:UIColor.systemRedColor feedType:FeedVCTypeToday];
-    unread.feedID = @(1);
+    unread.feedID = @(NSUIntegerMax - 2000);
     
     [snapshot appendItems:@[unread, today]];
     
@@ -295,13 +131,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         CustomFeed *bookmarks = [[CustomFeed alloc] initWithTitle:@"Bookmarks" imageName:@"bookmark.fill" tintColor:UIColor.systemOrangeColor feedType:FeedVCTypeBookmarks];
         
-        bookmarks.feedID = @(2);
+        bookmarks.feedID = @(NSUIntegerMax - 1000);
         
         [snapshot appendItems:@[bookmarks]];
         
     }
     
-    [self.DS applySnapshot:snapshot toSection:@(0) animatingDifferences:NO];
+    [self.DS applySnapshot:snapshot toSection:@(NSUIntegerMax - 300) animatingDifferences:NO];
     
     NSDiffableDataSourceSectionSnapshot *foldersSnapshot = [NSDiffableDataSourceSectionSnapshot new];
     
@@ -319,7 +155,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
         }
         
-        [self.DS applySnapshot:foldersSnapshot toSection:@(1) animatingDifferences:NO];
+        [self.DS applySnapshot:foldersSnapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:NO];
         
         if (ArticlesManager.shared.feedsWithoutFolders) {
 
@@ -327,7 +163,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             [onlyFeedsSnapshot appendItems:ArticlesManager.shared.feedsWithoutFolders];
             
-            [self.DS applySnapshot:onlyFeedsSnapshot toSection:@(2) animatingDifferences:NO];
+            [self.DS applySnapshot:onlyFeedsSnapshot toSection:@(NSUIntegerMax - 100) animatingDifferences:NO];
 
         }
         
@@ -338,6 +174,210 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 - (void)setupNotifications {
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:FeedsDidUpdate object:ArticlesManager.shared];
+    
+}
+
+#pragma mark - Getters
+
+- (UICollectionViewCellRegistration *)customFeedRegister {
+    
+    if (_customFeedRegister == nil) {
+        
+        weakify(self);
+        
+        UICollectionViewCellRegistration *customFeedsRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+            
+            UIListContentConfiguration *content = [UIListContentConfiguration sidebarCellConfiguration];
+            
+            content.text = item.displayTitle;
+            
+            content.prefersSideBySideTextAndSecondaryText = YES;
+            
+            if (indexPath.item == 0) {
+                
+                if (MyFeedsManager.totalUnread > 0) {
+                    content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
+                }
+                
+            }
+            
+            if (indexPath.item == 1) {
+                
+                if (MyFeedsManager.totalToday > 0) {
+                    content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
+                }
+                
+            }
+            
+            if (indexPath.item == 2) {
+                
+                strongify(self);
+                
+                MainCoordinator *coordinator = [self mainCoordinator];
+                
+                BookmarksManager *manager = coordinator.bookmarksManager;
+                
+                if (manager.bookmarksCount > 0) {
+                    
+                    content.secondaryText = [@(manager.bookmarksCount) stringValue];
+                    
+                }
+                
+            }
+            
+            content.image = [UIImage systemImageNamed:[(CustomFeed *)item imageName]];
+            
+    //        UIListContentImageProperties *imageProperties = [UIListContentImageProperties new];
+    //        imageProperties.tintColor = [(CustomFeed *)item tintColor];
+    //
+    //        content.imageProperties = imageProperties;
+            
+            cell.contentConfiguration = content;
+            
+        }];
+        
+        _customFeedRegister = customFeedsRegistration;
+        
+    }
+    
+    return _customFeedRegister;
+    
+}
+
+- (UICollectionViewCellRegistration *)folderRegister {
+    
+    if (_folderRegister == nil) {
+        
+        UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
+           
+            UIListContentConfiguration *content = [UIListContentConfiguration sidebarHeaderConfiguration];
+            
+            content.text = item.title;
+            
+            if (item.unreadCount.unsignedIntegerValue > 0) {
+                
+                content.secondaryText = item.unreadCount.stringValue;
+                
+            }
+            
+            content.prefersSideBySideTextAndSecondaryText = YES;
+            
+            NSDiffableDataSourceSectionSnapshot *snapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
+            
+            NSString *imageName = [snapshot isExpanded:item] ? @"folder" : @"folder.fill";
+            
+            content.image = [UIImage systemImageNamed:imageName];
+            
+            cell.contentConfiguration = content;
+            
+            UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
+            
+            disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
+            
+            cell.accessories = @[disclosure];
+            
+        }];
+        
+        _folderRegister = folderRegistration;
+        
+    }
+    
+    return _folderRegister;
+    
+}
+
+- (UICollectionViewCellRegistration *)feedRegister {
+    
+    if (_feedRegister == nil) {
+        
+        UICollectionViewCellRegistration *feedRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+           
+            UIListContentConfiguration *content = [cell defaultContentConfiguration];
+            
+            content.text = item.displayTitle;
+            
+            content.prefersSideBySideTextAndSecondaryText = YES;
+            
+            if (item.unread.unsignedIntegerValue > 0) {
+                
+                content.secondaryText = item.unread.stringValue;
+                
+            }
+            
+            content.image = item.faviconImage ?: [UIImage systemImageNamed:@"square.dashed"];
+            
+            if (item.faviconImage == nil) {
+
+                NSString *url = [item faviconURI];
+
+                if (url != nil && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+
+                    CGFloat maxWidth = 24.f / UIScreen.mainScreen.scale;
+
+                    url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
+
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+                        __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+
+                            if (image != nil) {
+
+                                CGFloat cornerRadius = 3.f * UIScreen.mainScreen.scale;
+
+                                image = [image sd_roundedCornerImageWithRadius:cornerRadius corners:UIRectCornerAllCorners borderWidth:0.f borderColor:nil];
+
+                                item.faviconImage = image;
+
+                                NSIndexPath * feedIndexPath = [self.DS indexPathForItemIdentifier:item];
+
+                                if (feedIndexPath == nil) {
+
+                                    return;
+
+                                }
+                                
+                                UICollectionViewListCell *blockCell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:feedIndexPath];
+
+                                UIListContentConfiguration *config = (UIListContentConfiguration *)[blockCell contentConfiguration];
+                                
+                                config.image = image;
+                                
+                                blockCell.contentConfiguration = config;
+
+                            }
+
+                        }];
+
+                    });
+
+                }
+
+            }
+            
+            cell.contentConfiguration = content;
+            
+            if (indexPath.section != 4) {
+                
+                cell.indentationLevel = 1;
+                
+            }
+            else {
+                
+                cell.indentationLevel = 0;
+                
+            }
+            
+            UICellAccessoryDisclosureIndicator *disclosure = [UICellAccessoryDisclosureIndicator new];
+            
+            cell.accessories = @[disclosure];
+            
+        }];
+        
+        _feedRegister = feedRegistration;
+        
+    }
+    
+    return _feedRegister;
     
 }
 

@@ -314,6 +314,7 @@
 		F0E0E6E12457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6D52457FED300DFFD17 /* NYTPhotoViewerCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6EB2457FF1D00DFFD17 /* JLRoutes.framework */; };
 		F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6EB2457FF1D00DFFD17 /* JLRoutes.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E5F4E724CEC854007E6D1E /* PhotosController.m */; };
 		F0E656872063EF0D00450959 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F070C2E51FBABC3600912CCF /* Assets.xcassets */; };
 		F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86490234793870089F9EF /* ArticleVC+Photos.m */; };
 		F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E86493234796B80089F9EF /* ArticlePhoto.m */; };
@@ -1183,6 +1184,8 @@
 		F0E0DBB122AE0F46006A2D93 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NYTPhotoViewer.xcodeproj; path = Vendors/NYTPhotoViewer/NYTPhotoViewer.xcodeproj; sourceTree = "<group>"; };
 		F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JLRoutes.xcodeproj; path = Vendors/JLRoutes/JLRoutes.xcodeproj; sourceTree = "<group>"; };
+		F0E5F4E724CEC854007E6D1E /* PhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosController.m; sourceTree = "<group>"; };
+		F0E5F4E824CEC854007E6D1E /* PhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosController.h; sourceTree = "<group>"; };
 		F0E71E731FD6FF7100408CFF /* Yeti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Yeti.entitlements; sourceTree = "<group>"; };
 		F0E8648F234793870089F9EF /* ArticleVC+Photos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArticleVC+Photos.h"; sourceTree = "<group>"; };
 		F0E86490234793870089F9EF /* ArticleVC+Photos.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ArticleVC+Photos.m"; sourceTree = "<group>"; };
@@ -1744,6 +1747,7 @@
 		F070C30E1FBABC7500912CCF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				F0E5F4E624CEC854007E6D1E /* Photos */,
 				F0EE6CB424CABC9B00E987FC /* Sidebar */,
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F0A0501921F07BD600A46524 /* NewFeed */,
@@ -2305,6 +2309,15 @@
 				F0E0E6ED2457FF1D00DFFD17 /* JLRoutesTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F0E5F4E624CEC854007E6D1E /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				F0E5F4E724CEC854007E6D1E /* PhotosController.m */,
+				F0E5F4E824CEC854007E6D1E /* PhotosController.h */,
+			);
+			path = Photos;
 			sourceTree = "<group>";
 		};
 		F0EE6CB424CABC9B00E987FC /* Sidebar */ = {
@@ -3170,6 +3183,7 @@
 				F05041D72461442800A65C1C /* PagingManager.m in Sources */,
 				F00E837322C4826D0027C45E /* RMStore.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
+				F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */,
 				F0CDA0AD2474E72000DC1217 /* UnreadVC.m in Sources */,
 				F0362B791FCEDC28009184E2 /* FeedsVC+Actions.m in Sources */,
 				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
