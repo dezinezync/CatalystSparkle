@@ -122,6 +122,8 @@ static void *KVO_Unread = &KVO_Unread;
                 
             });
             
+            [self setupData];
+            
         }
         else {
             
@@ -1025,12 +1027,16 @@ NSString * const kDS2Data = @"DS2Data";
         return;
     }
     
-    BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
+    if (MyFeedsManager.userID == nil || MyFeedsManager.userID.integerValue == 0) {
+        return;
+    }
     
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
         return;
     }
+    
+    BOOL presentingSelf = (self.navigationController.topViewController == self) || self.presentedViewController == nil;
     
     self->_highlightedRow = nil;
     
@@ -1265,6 +1271,10 @@ NSString * const kDS2Data = @"DS2Data";
 }
 
 - (void)updateNotification:(NSNotification *)note {
+    
+    if (MyFeedsManager.userID == nil) {
+        return;
+    }
     
     [self setupData];
     
