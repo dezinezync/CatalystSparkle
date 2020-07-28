@@ -1,6 +1,14 @@
 # v1.8.0
 
-This is the RC 3 build for v1.8.
+This is the RC 4 build for v1.8.
+
+## Build 374
+
+- Fixed the App Icon to use the new v2 style under Settings. 
+
+- Fixed a crash on launch issue if you have never installed Elytra previously. 
+
+- Fixed a layout bug caused on iPhone Plus/Max devices when opening a feed from the feeds list and then rotating the device. 
 
 ## Build 373
 

@@ -505,6 +505,7 @@
 - (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
                       separateViewControllerOfType:(TOSplitViewControllerType)type
                          fromPrimaryViewController:(UIViewController *)primaryViewController {
+    
     return nil;
 }
 
@@ -515,6 +516,40 @@
 
 - (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
            primaryViewControllerForExpandingToType:(TOSplitViewControllerType)type {
+    
+    if (splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+        && type == TOSplitViewControllerTypeDetail
+        && self.feedVC != nil) {
+        
+        MainNavController *mainNav = (id)self.viewControllers.firstObject;
+        
+        UIViewController *secondary = nil;
+        
+        if (self.feedVC != nil) {
+            
+            if (self.feedVC.navigationController != nil) {
+                
+                secondary = [self.feedVC.navigationController popViewControllerAnimated:NO];
+                
+            }
+            else {
+                
+                secondary = self.feedVC;
+                
+            }
+            
+            if (secondary != nil) {
+                
+                [mainNav pushViewController:secondary animated:NO];
+                
+            }
+            
+        }
+        
+        return mainNav;
+        
+    }
+    
     return nil;
 }
 

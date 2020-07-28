@@ -27,7 +27,7 @@
     
     Image *image = (Image *)[sender view];
     
-#ifdef TARGET_OS_MACCATALYST
+#if TARGET_OS_MACCATALYST
     
     [self ct_didTapOnImage:image];
     
