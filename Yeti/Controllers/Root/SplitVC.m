@@ -429,59 +429,59 @@
 
 #pragma mark - <UISplitViewControllerDelegate>
 
-- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
-
-    return nav;
-}
-
-- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
-
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
-
-    return nav;
-}
-
-- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
-    
-    // collapseSecondaryViewController:forSplitViewController causes the
-    // UINavigationController to be pushed on the the stack of the primary
-    // navgiation controller.
-    if([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
-        return [primaryViewController popViewControllerAnimated:NO];
-    }
-    else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
-
-        ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
-//        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
-
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        nav.restorationIdentifier = @"ArticleDetailNav";
-
-        return nav;
-    }
-
-    return [self emptyVC];
-
-}
-
-- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
-    
-    if ([secondaryViewController isKindOfClass:[UINavigationController class]]
-        && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:[ArticleVC class]]
-        && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
-        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-        return YES;
-    }
-    else if ([secondaryViewController isKindOfClass:YTNavigationController.class]
-             && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
-        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-        return YES;
-    }
-    else {
-        return NO;
-    }
-}
+//- (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
+//    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+//
+//    return nav;
+//}
+//
+//- (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
+//
+//    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+//
+//    return nav;
+//}
+//
+//- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
+//    
+//    // collapseSecondaryViewController:forSplitViewController causes the
+//    // UINavigationController to be pushed on the the stack of the primary
+//    // navgiation controller.
+//    if([[primaryViewController topViewController] isKindOfClass:UINavigationController.class]) {
+//        return [primaryViewController popViewControllerAnimated:NO];
+//    }
+//    else if ([[primaryViewController topViewController] isKindOfClass:ArticleVC.class]) {
+//
+//        ArticleVC *vc = (ArticleVC *)[primaryViewController popViewControllerAnimated:NO];
+////        vc.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
+//
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        nav.restorationIdentifier = @"ArticleDetailNav";
+//
+//        return nav;
+//    }
+//
+//    return [self emptyVC];
+//
+//}
+//
+//- (BOOL)splitViewController:(UISplitViewController *)splitViewController collapseSecondaryViewController:(UIViewController *)secondaryViewController ontoPrimaryViewController:(UIViewController *)primaryViewController {
+//    
+//    if ([secondaryViewController isKindOfClass:[UINavigationController class]]
+//        && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:[ArticleVC class]]
+//        && ([(ArticleVC *)[(UINavigationController *)secondaryViewController topViewController] currentArticle] == nil)) {
+//        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+//        return YES;
+//    }
+//    else if ([secondaryViewController isKindOfClass:YTNavigationController.class]
+//             && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
+//        // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+//        return YES;
+//    }
+//    else {
+//        return NO;
+//    }
+//}
 
 #pragma mark - <TOSplitViewControllerDelegate>
 
@@ -506,11 +506,41 @@
                       separateViewControllerOfType:(TOSplitViewControllerType)type
                          fromPrimaryViewController:(UIViewController *)primaryViewController {
     
-    return nil;
+    UIViewController *controller = nil;
+    
+    if (type == TOSplitViewControllerTypeDetail && self.articleVC != nil) {
+        
+        if (self.articleVC.navigationController != nil) {
+            
+            controller = [self.articleVC.navigationController popViewControllerAnimated:NO];
+            
+        }
+        else {
+            
+            controller = self.articleVC;
+            
+        }
+        
+    }
+    
+    if (controller != nil) {
+        
+        return [[UINavigationController alloc] initWithRootViewController:controller];
+        
+    }
+    
+    return controller;
 }
 
 - (nullable UIViewController *)splitViewController:(TOSplitViewController *)splitViewController
         primaryViewControllerForCollapsingFromType:(TOSplitViewControllerType)type {
+    
+    if (self.feedsVC.navigationController != nil) {
+        
+        return self.feedsVC.navigationController;
+        
+    }
+    
     return nil;
 }
 

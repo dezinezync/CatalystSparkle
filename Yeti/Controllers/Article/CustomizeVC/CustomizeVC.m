@@ -50,6 +50,10 @@
     
 }
 
+- (UIModalPresentationStyle)modalPresentationStyle {
+    return UIModalPresentationPopover;
+}
+
 #pragma mark - Getters
 
 - (NSArray *)bodyFonts {
