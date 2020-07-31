@@ -194,6 +194,13 @@
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
 		F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F08E530724D150B1004731BE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08E530624D150B1004731BE /* WidgetKit.framework */; };
+		F08E530924D150B1004731BE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08E530824D150B1004731BE /* SwiftUI.framework */; };
+		F08E530C24D150B1004731BE /* UnreadsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08E530B24D150B1004731BE /* UnreadsWidget.swift */; };
+		F08E530F24D150B2004731BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08E530E24D150B2004731BE /* Assets.xcassets */; };
+		F08E531124D150B2004731BE /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F08E530D24D150B1004731BE /* UnreadsWidget.intentdefinition */; };
+		F08E531224D150B2004731BE /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F08E530D24D150B1004731BE /* UnreadsWidget.intentdefinition */; };
+		F08E531524D150B2004731BE /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F08E530524D150B1004731BE /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F092C5CE246C288B007FDE8A /* FeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5CD246C288B007FDE8A /* FeedVC.m */; };
 		F092C5D1246C2B9A007FDE8A /* FeedVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5D0246C2B9A007FDE8A /* FeedVC+Actions.m */; };
 		F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = F092C5D3246C30D8007FDE8A /* FeedVC+ArticleProvider.m */; };
@@ -463,6 +470,13 @@
 			remoteGlobalIDString = F06A6F851FB0698900D3A819;
 			remoteInfo = DZThemeKit;
 		};
+		F08E531324D150B2004731BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F08E530424D150B1004731BE;
+			remoteInfo = UnreadsWidgetExtension;
+		};
 		F0B482612455F62C00EE5AA2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
@@ -706,6 +720,7 @@
 				F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */,
 				F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */,
 				F0783CAA248F688500C7A280 /* elytramac.bundle in Embed App Extensions */,
+				F08E531524D150B2004731BE /* UnreadsWidgetExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1028,6 +1043,14 @@
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
+		F08E530524D150B1004731BE /* UnreadsWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = UnreadsWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F08E530624D150B1004731BE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		F08E530824D150B1004731BE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		F08E530B24D150B1004731BE /* UnreadsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadsWidget.swift; sourceTree = "<group>"; };
+		F08E530D24D150B1004731BE /* UnreadsWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = UnreadsWidget.intentdefinition; sourceTree = "<group>"; };
+		F08E530E24D150B2004731BE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F08E531024D150B2004731BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F08E531624D150B2004731BE /* UnreadsWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UnreadsWidgetExtension.entitlements; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		F092C5CC246C288B007FDE8A /* FeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedVC.h; sourceTree = "<group>"; };
 		F092C5CD246C288B007FDE8A /* FeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedVC.m; sourceTree = "<group>"; };
@@ -1285,6 +1308,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F08E530224D150B1004731BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F08E530924D150B1004731BE /* SwiftUI.framework in Frameworks */,
+				F08E530724D150B1004731BE /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1686,6 +1718,7 @@
 		F070C2D01FBABC3500912CCF = {
 			isa = PBXGroup;
 			children = (
+				F08E531624D150B2004731BE /* UnreadsWidgetExtension.entitlements */,
 				F070C2DB1FBABC3500912CCF /* Yeti */,
 				F070C2F41FBABC3600912CCF /* YetiTests */,
 				F070C2FF1FBABC3600912CCF /* YetiUITests */,
@@ -1693,6 +1726,7 @@
 				F06E0F2A2134656A00CEC644 /* changelog.md */,
 				F0B7C847240B7272008D8F4F /* notificationContext */,
 				F0783C89248F685C00C7A280 /* elytramac */,
+				F08E530A24D150B1004731BE /* UnreadsWidget */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
 			);
@@ -1707,6 +1741,7 @@
 				F035A21520617EC3005A88EE /* YetiShare.appex */,
 				F0B7C842240B7272008D8F4F /* notificationContext.appex */,
 				F0783C88248F685C00C7A280 /* elytramac.bundle */,
+				F08E530524D150B1004731BE /* UnreadsWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2056,6 +2091,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F08E530A24D150B1004731BE /* UnreadsWidget */ = {
+			isa = PBXGroup;
+			children = (
+				F08E530B24D150B1004731BE /* UnreadsWidget.swift */,
+				F08E530D24D150B1004731BE /* UnreadsWidget.intentdefinition */,
+				F08E530E24D150B2004731BE /* Assets.xcassets */,
+				F08E531024D150B2004731BE /* Info.plist */,
+			);
+			path = UnreadsWidget;
+			sourceTree = "<group>";
+		};
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2068,6 +2114,8 @@
 				F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */,
 				F0B7C843240B7272008D8F4F /* UserNotifications.framework */,
 				F0B7C845240B7272008D8F4F /* UserNotificationsUI.framework */,
+				F08E530624D150B1004731BE /* WidgetKit.framework */,
+				F08E530824D150B1004731BE /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2416,6 +2464,7 @@
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 				F0B7C850240B7272008D8F4F /* PBXTargetDependency */,
 				F0783CAC248F688600C7A280 /* PBXTargetDependency */,
+				F08E531424D150B2004731BE /* PBXTargetDependency */,
 			);
 			name = Elytra;
 			productName = Yeti;
@@ -2475,6 +2524,23 @@
 			productReference = F0783C88248F685C00C7A280 /* elytramac.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
+		F08E530424D150B1004731BE /* UnreadsWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F08E533824D150B2004731BE /* Build configuration list for PBXNativeTarget "UnreadsWidgetExtension" */;
+			buildPhases = (
+				F08E530124D150B1004731BE /* Sources */,
+				F08E530224D150B1004731BE /* Frameworks */,
+				F08E530324D150B1004731BE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UnreadsWidgetExtension;
+			productName = UnreadsWidgetExtension;
+			productReference = F08E530524D150B1004731BE /* UnreadsWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F0B7C841240B7272008D8F4F /* notificationContext */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F0B7C860240B7272008D8F4F /* Build configuration list for PBXNativeTarget "notificationContext" */;
@@ -2498,6 +2564,7 @@
 		F070C2D11FBABC3500912CCF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Dezine Zync Studios";
 				TargetAttributes = {
@@ -2534,6 +2601,9 @@
 					};
 					F0783C87248F685C00C7A280 = {
 						CreatedOnToolsVersion = 11.5;
+					};
+					F08E530424D150B1004731BE = {
+						CreatedOnToolsVersion = 12.0;
 					};
 					F0B7C841240B7272008D8F4F = {
 						CreatedOnToolsVersion = 11.3;
@@ -2598,6 +2668,7 @@
 				F035A21420617EC3005A88EE /* YetiShare */,
 				F0B7C841240B7272008D8F4F /* notificationContext */,
 				F0783C87248F685C00C7A280 /* elytramac */,
+				F08E530424D150B1004731BE /* UnreadsWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -3039,6 +3110,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F08E530324D150B1004731BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F08E530F24D150B2004731BE /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0B7C840240B7272008D8F4F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3177,6 +3256,7 @@
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
 				F05041D62461442800A65C1C /* FeedsManagerErrors.m in Sources */,
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
+				F08E531224D150B2004731BE /* UnreadsWidget.intentdefinition in Sources */,
 				F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */,
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
@@ -3268,6 +3348,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F08E530124D150B1004731BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F08E530C24D150B1004731BE /* UnreadsWidget.swift in Sources */,
+				F08E531124D150B2004731BE /* UnreadsWidget.intentdefinition in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0B7C83E240B7272008D8F4F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3310,6 +3399,11 @@
 			isa = PBXTargetDependency;
 			name = DZThemeKit;
 			targetProxy = F08C5E64238660B60055946F /* PBXContainerItemProxy */;
+		};
+		F08E531424D150B2004731BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F08E530424D150B1004731BE /* UnreadsWidgetExtension */;
+			targetProxy = F08E531324D150B2004731BE /* PBXContainerItemProxy */;
 		};
 		F0B7C850240B7272008D8F4F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3562,6 +3656,7 @@
 		F070C3061FBABC3600912CCF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -3614,6 +3709,7 @@
 		F070C3071FBABC3600912CCF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -3789,6 +3885,71 @@
 			};
 			name = Release;
 		};
+		F08E531724D150B2004731BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = UnreadsWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = UnreadsWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F08E531824D150B2004731BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_ENTITLEMENTS = UnreadsWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = UnreadsWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		F0B7C852240B7272008D8F4F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3895,6 +4056,15 @@
 			buildConfigurations = (
 				F0783C8B248F685C00C7A280 /* Debug */,
 				F0783C8C248F685C00C7A280 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F08E533824D150B2004731BE /* Build configuration list for PBXNativeTarget "UnreadsWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F08E531724D150B2004731BE /* Debug */,
+				F08E531824D150B2004731BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
