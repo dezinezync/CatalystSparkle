@@ -544,7 +544,6 @@
 - (void)didTapCustomize:(UIBarButtonItem *)sender {
     
     CustomizeVC *instance = [[CustomizeVC alloc] initWithStyle:UITableViewStyleGrouped];
-    instance.modalPresentationStyle = UIModalPresentationPopover;
     
     UIPopoverPresentationController *pvc = instance.popoverPresentationController;
     pvc.barButtonItem = sender;
@@ -558,11 +557,14 @@
 
 - (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
 {
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        return UIModalPresentationPopover;
-    }
     
     return UIModalPresentationNone;
+}
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(UITraitCollection *)traitCollection {
+    
+    return UIModalPresentationNone;
+    
 }
 
 #pragma mark - Getters

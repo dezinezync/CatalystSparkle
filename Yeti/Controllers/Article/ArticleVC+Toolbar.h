@@ -8,7 +8,7 @@
 
 #import "ArticleVC+Keyboard.h"
 
-@interface ArticleVC (Toolbar) <UISearchBarDelegate>
+@interface ArticleVC (Toolbar) <UISearchBarDelegate, UIPopoverPresentationControllerDelegate>
 
 - (void)keyboardFrameChanged:(NSNotification *)note;
 
