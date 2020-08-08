@@ -457,11 +457,9 @@
 
 - (void)ct_didTapShareArticle:(NSToolbarItem *)sender {
     
-    TOSplitViewController *splitVC = (TOSplitViewController *)[[self window] rootViewController];
-    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] lastObject];
-    ArticleVC *vc = [[nav viewControllers] lastObject];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    if ([vc isKindOfClass:ArticleVC.class] == NO) {
+    if (vc != nil && [vc isKindOfClass:ArticleVC.class] == NO) {
         return;
     }
     

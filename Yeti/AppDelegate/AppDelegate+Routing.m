@@ -15,7 +15,6 @@
 #import "FeedsVC.h"
 #import "FeedVC.h"
 #import "ArticleVC.h"
-#import "FolderCell.h"
 #import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>

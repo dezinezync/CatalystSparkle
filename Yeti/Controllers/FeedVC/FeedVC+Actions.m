@@ -296,8 +296,8 @@
 
 - (void)_didFinishAllReadActionSuccessfully {
     
-    if (self.feed != nil && self.feed.unread > 0) {
-        self.feed.unread = 0;
+    if (self.feed != nil && self.feed.unread.unsignedIntegerValue > 0) {
+        self.feed.unread = @(0);
     }
     
 }

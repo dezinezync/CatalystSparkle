@@ -146,11 +146,13 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     if (indexPath.section == 0) {
         self.feed.folderID = nil;
+        self.feed.folder = nil;
     }
     else {
         Folder *newFolder = [self.DS2 objectAtIndexPath:indexPath];
         
         self.feed.folderID = newFolder.folderID;
+        self.feed.folder = newFolder;
     }
     
     NSArray <NSIndexPath *> *indices = @[indexPath];

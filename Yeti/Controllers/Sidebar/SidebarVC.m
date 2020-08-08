@@ -16,6 +16,9 @@
 
 #import "Coordinator.h"
 
+#import "FeedCell.h"
+#import "FolderCell.h"
+
 @interface SidebarVC () {
     
     // Sync
@@ -229,17 +232,17 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [NSNotificationCenter.defaultCenter addObserverForName:UnreadCountDidUpdate object:MyFeedsManager queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
        
-        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
-        
-        id object = [self.DS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]];
-        
-        if (object != nil && [object isKindOfClass:CustomFeed.class]) {
-            
-            [snapshot reloadItemsWithIdentifiers:@[object]];
-            
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
-            
-        }
+//        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+//        
+//        id object = [self.DS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]];
+//        
+//        if (object != nil && [object isKindOfClass:CustomFeed.class]) {
+//            
+//            [snapshot reloadItemsWithIdentifiers:@[object]];
+//            
+//            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+//            
+//        }
         
     }];
     
@@ -392,62 +395,15 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (_folderRegister == nil) {
         
-        UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
+        weakify(self);
+        
+        UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FolderCell.class configurationHandler:^(__kindof FolderCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
+            
+            strongify(self);
+            
+            cell.DS = self.DS;
            
-            UIListContentConfiguration *content = [UIListContentConfiguration sidebarHeaderConfiguration];
-            
-            content.text = item.title;
-            
-            if (item.unreadCount.unsignedIntegerValue > 0) {
-                
-                content.secondaryText = item.unreadCount.stringValue;
-                
-            }
-            
-            content.prefersSideBySideTextAndSecondaryText = YES;
-            
-            NSDiffableDataSourceSectionSnapshot *snapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
-            
-            NSString *imageName = [snapshot isExpanded:item] ? @"folder" : @"folder.fill";
-            
-            content.image = [UIImage systemImageNamed:imageName];
-            
-            content.imageProperties.maximumSize = CGSizeMake(24.f, 24.f);
-            
-            cell.contentConfiguration = content;
-            
-            UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
-            
-            disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
-            
-            disclosure.actionHandler = ^{
-                
-                NSDiffableDataSourceSectionSnapshot *sectionSnapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
-                
-                UIListContentConfiguration *updatedContent = (id)[cell contentConfiguration];
-                
-                if ([sectionSnapshot isExpanded:item] == YES) {
-                    
-                    [sectionSnapshot collapseItems:@[item]];
-                    
-                    updatedContent.image = [UIImage systemImageNamed:@"folder.fill"];
-                    
-                }
-                else {
-                    
-                    [sectionSnapshot expandItems:@[item]];
-                    
-                    updatedContent.image = [UIImage systemImageNamed:@"folder"];
-                    
-                }
-                
-                cell.contentConfiguration = updatedContent;
-                
-                [self.DS applySnapshot:sectionSnapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:YES];
-                
-            };
-            
-            cell.accessories = @[disclosure];
+            [cell configure:item indexPath:indexPath];
             
         }];
         
@@ -463,86 +419,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (_feedRegister == nil) {
         
-        UICollectionViewCellRegistration *feedRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+        UICollectionViewCellRegistration *feedRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FeedCell.class configurationHandler:^(__kindof FeedCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
            
-            UIListContentConfiguration *content = [cell defaultContentConfiguration];
-            
-            content.text = item.displayTitle;
-            
-            content.prefersSideBySideTextAndSecondaryText = YES;
-            
-            if (item.unread.unsignedIntegerValue > 0) {
-                
-                content.secondaryText = item.unread.stringValue;
-                
-            }
-            
-            content.image = item.faviconImage ?: [UIImage systemImageNamed:@"square.dashed"];
-            
-            if (item.faviconImage == nil) {
-
-                NSString *url = [item faviconURI];
-
-                if (url != nil && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
-
-                    CGFloat maxWidth = 24.f / UIScreen.mainScreen.scale;
-
-                    url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
-
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
-                        __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-
-                            if (image != nil) {
-
-                                CGFloat cornerRadius = 3.f * UIScreen.mainScreen.scale;
-
-                                image = [image sd_roundedCornerImageWithRadius:cornerRadius corners:UIRectCornerAllCorners borderWidth:0.f borderColor:nil];
-
-                                item.faviconImage = image;
-
-                                NSIndexPath * feedIndexPath = [self.DS indexPathForItemIdentifier:item];
-
-                                if (feedIndexPath == nil) {
-
-                                    return;
-
-                                }
-                                
-                                UICollectionViewListCell *blockCell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:feedIndexPath];
-
-                                UIListContentConfiguration *config = (UIListContentConfiguration *)[blockCell contentConfiguration];
-                                
-                                config.image = image;
-                                
-                                blockCell.contentConfiguration = config;
-
-                            }
-
-                        }];
-
-                    });
-
-                }
-
-            }
-            
-            cell.contentConfiguration = content;
-            
-            if (indexPath.section != 2) {
-                
-                cell.indentationLevel = 1;
-                
-            }
-            else {
-                
-                cell.indentationLevel = 0;
-                
-            }
-            
-            UICellAccessoryDisclosureIndicator *disclosure = [UICellAccessoryDisclosureIndicator new];
-            
-            cell.accessories = @[disclosure];
+            [cell configure:item indexPath:indexPath];
             
         }];
         

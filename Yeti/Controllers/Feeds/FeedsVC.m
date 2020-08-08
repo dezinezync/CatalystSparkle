@@ -9,7 +9,7 @@
 #import "FeedsVC+Actions.h"
 #import "FeedsManager.h"
 #import "FeedsCell.h"
-#import "FolderCell.h"
+//#import "FolderCell.h"
 
 #import "UnreadVC.h"
 #import "BookmarksVC.h"
@@ -41,7 +41,7 @@
 
 static void *KVO_Unread = &KVO_Unread;
 
-@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration, FolderInteractionDelegate> {
+@interface FeedsVC () <DZSDatasource, UIViewControllerRestoration> {
     BOOL _setupObservors;
     
     BOOL _openingOnLaunch;
@@ -304,7 +304,7 @@ static void *KVO_Unread = &KVO_Unread;
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(EmptyCell.class) bundle:nil] forCellReuseIdentifier:kEmptyCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsCell.class) bundle:nil] forCellReuseIdentifier:kFeedsCell];
-    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FolderCell.class) bundle:nil] forCellReuseIdentifier:kFolderCell];
+//    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FolderCell.class) bundle:nil] forCellReuseIdentifier:kFolderCell];
     
     self.tableView.tableFooterView = [UIView new];
     
@@ -366,10 +366,10 @@ static void *KVO_Unread = &KVO_Unread;
                 }
                 else {
                     // folder
-                    FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
-                    [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
-                    cell.interactionDelegate = self;
-                    ocell = (FeedsCell *)cell;
+//                    FolderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFolderCell forIndexPath:indexPath];
+//                    [(FolderCell *)cell configureFolder:(Folder *)obj dropDelegate:self];
+//                    cell.interactionDelegate = self;
+//                    ocell = (FeedsCell *)cell;
                 }
             }
         }
@@ -821,9 +821,9 @@ NSString * const kDS2Data = @"DS2Data";
                         
                         indexPath = [NSIndexPath indexPathForRow:index inSection:1];
                         
-                        FolderCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-                        
-                        [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
+//                        FolderCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+//                        
+//                        [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
                         
                     }
                     
@@ -1417,82 +1417,6 @@ NSString * const kDS2Data = @"DS2Data";
         }
         
     }];
-    
-}
-
-#pragma mark - <FolderInteractionDelegate>
-
-- (void)didTapFolderIcon:(Folder *)folder indexPath:(NSIndexPath *)indexPath cell:(FolderCell *)cell {
-    
-    if (indexPath == nil) {
-        
-        // if the cell is being tapped on, it's most likely visible.
-        
-        NSArray <UITableViewCell *> *cells = self.tableView.visibleCells;
-        
-        FolderCell *cellFromTable = (FolderCell *)[cells rz_find:^BOOL(UITableViewCell *obj, NSUInteger idx, NSArray *array) {
-           
-            if ([obj isKindOfClass:FolderCell.class] && [[(FolderCell*)obj folder] isEqualToFolder:folder]) {
-                return YES;
-            }
-            
-            return NO;
-            
-        }];
-        
-        if (cellFromTable != nil) {
-            
-            indexPath = [self.tableView indexPathForCell:cellFromTable];
-            
-        }
-        
-        if (indexPath == nil) {
-            return;
-        }
-        else {
-            folder = cell.folder;
-        }
-
-    }
-    
-    NSUInteger index = indexPath.row;
-    
-    if (index == NSNotFound) {
-        NSLogDebug(@"The folder:%@-%@ was not found in the Datasource", folder.folderID, folder.title);
-        return;
-    }
-    
-    CGPoint contentOffset = self.tableView.contentOffset;
-    
-    if (indexPath == nil) {
-        indexPath = [self.DDS indexPathForItemIdentifier:folder];
-    }
-    
-    Folder *folderFromDS = [self.DDS itemIdentifierForIndexPath:indexPath];
-    
-    folderFromDS.expanded = folderFromDS.isExpanded ? NO : YES;
-    
-    [self setupData];
-    
-    [self.feedbackGenerator selectionChanged];
-    [self.feedbackGenerator prepare];
-    
-    weakify(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        strongify(self);
-            
-        [self.tableView.layer removeAllAnimations];
-        [self.tableView setContentOffset:contentOffset animated:NO];
-    });
-    
-}
-
-- (void)didTapFolderIcon:(Folder *)folder cell:(FolderCell *)cell {
-    
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    
-    [self didTapFolderIcon:folder indexPath:indexPath cell:cell];
     
 }
 

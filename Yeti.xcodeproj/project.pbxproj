@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F004560B24DE81DB0094A6A3 /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560A24DE81DB0094A6A3 /* FeedCell.m */; };
+		F004561024DE85B60094A6A3 /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560F24DE85B60094A6A3 /* FolderCell.m */; };
 		F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1623F432CA002BCF41 /* CustomizeVC.m */; };
 		F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */; };
 		F00B0C1D23F4390B002BCF41 /* CustomizeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */; };
@@ -264,8 +266,6 @@
 		F0B7C84A240B7272008D8F4F /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B7C849240B7272008D8F4F /* NotificationViewController.m */; };
 		F0B7C84D240B7272008D8F4F /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B7C84B240B7272008D8F4F /* MainInterface.storyboard */; };
 		F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0B7C842240B7272008D8F4F /* notificationContext.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0BAE4D821523C7B00249A5E /* FolderCell.m */; };
-		F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BAE4D921523C7B00249A5E /* FolderCell.xib */; };
 		F0BFD6FA24580543009A863C /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; };
 		F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */; };
 		F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C7E3D020627809001E4BE4 /* NewFeedVC.m */; };
@@ -677,6 +677,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F004560624DE7F6C0094A6A3 /* UnreadCountObservor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnreadCountObservor.h; sourceTree = "<group>"; };
+		F004560924DE81DB0094A6A3 /* FeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedCell.h; sourceTree = "<group>"; };
+		F004560A24DE81DB0094A6A3 /* FeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedCell.m; sourceTree = "<group>"; };
+		F004560E24DE85B60094A6A3 /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
+		F004560F24DE85B60094A6A3 /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
 		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
 		F00B0C1523F432CA002BCF41 /* CustomizeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeVC.h; sourceTree = "<group>"; };
 		F00B0C1623F432CA002BCF41 /* CustomizeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizeVC.m; sourceTree = "<group>"; };
@@ -1059,9 +1064,6 @@
 		F0B7C849240B7272008D8F4F /* NotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
 		F0B7C84C240B7272008D8F4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		F0B7C84E240B7272008D8F4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F0BAE4D721523C7B00249A5E /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
-		F0BAE4D821523C7B00249A5E /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
-		F0BAE4D921523C7B00249A5E /* FolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderCell.xib; sourceTree = "<group>"; };
 		F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZNetworking.xcodeproj; path = Vendors/DZNetworking/DZNetworking.xcodeproj; sourceTree = "<group>"; };
 		F0C6E047234AFCF8001EED23 /* StoreReceiptVerifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreReceiptVerifier.h; sourceTree = "<group>"; };
 		F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreReceiptVerifier.m; sourceTree = "<group>"; };
@@ -1502,6 +1504,7 @@
 		F05041AD2461442800A65C1C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F004560624DE7F6C0094A6A3 /* UnreadCountObservor.h */,
 				F05041BC2461442800A65C1C /* Feed.h */,
 				F05041B32461442800A65C1C /* Feed.m */,
 				F05041C12461442800A65C1C /* Folder.h */,
@@ -1864,9 +1867,6 @@
 				F070C3491FBADF8D00912CCF /* FeedsCell.h */,
 				F070C34A1FBADF8D00912CCF /* FeedsCell.m */,
 				F070C34B1FBADF8D00912CCF /* FeedsCell.xib */,
-				F0BAE4D721523C7B00249A5E /* FolderCell.h */,
-				F0BAE4D821523C7B00249A5E /* FolderCell.m */,
-				F0BAE4D921523C7B00249A5E /* FolderCell.xib */,
 				F0D071F2205E76A500A042CD /* SettingsCell.h */,
 				F0D071F3205E76A500A042CD /* SettingsCell.m */,
 				F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */,
@@ -2232,6 +2232,10 @@
 				F075752724CED198001F7D15 /* SidebarVC+Actions.m */,
 				F0F44E4424CEFDA20044CA01 /* SidebarVC+SearchResults.h */,
 				F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */,
+				F004560924DE81DB0094A6A3 /* FeedCell.h */,
+				F004560A24DE81DB0094A6A3 /* FeedCell.m */,
+				F004560E24DE85B60094A6A3 /* FolderCell.h */,
+				F004560F24DE85B60094A6A3 /* FolderCell.m */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -2763,7 +2767,6 @@
 				F00B0FA220F487090012EB03 /* EmptyCell.xib in Resources */,
 				F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */,
 				F0A5AE9020C19CB400CFA1D2 /* IBMPlexSerif-SemiBoldItalic.ttf in Resources */,
-				F0BAE4DC21523C7B00249A5E /* FolderCell.xib in Resources */,
 				F0A5AE9A20C19CB400CFA1D2 /* IBMPlexSerif-ThinItalic.ttf in Resources */,
 				F0A495B624711CE500E9BA13 /* ArticleCell.xib in Resources */,
 				F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */,
@@ -2994,7 +2997,6 @@
 				F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */,
 				F070C3341FBAC37600912CCF /* FeedsVC.m in Sources */,
 				F05041E12461442800A65C1C /* Content.m in Sources */,
-				F0BAE4DA21523C7B00249A5E /* FolderCell.m in Sources */,
 				F0650657236036A90015F2C4 /* PushVC.m in Sources */,
 				F064A5372157678900A385AD /* IdentityVC.m in Sources */,
 				F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */,
@@ -3022,6 +3024,7 @@
 				F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */,
 				F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */,
 				F05041E22461442800A65C1C /* FeedMeta.m in Sources */,
+				F004560B24DE81DB0094A6A3 /* FeedCell.m in Sources */,
 				F06B766420C27CD000FBCDE7 /* YTNavigationController.m in Sources */,
 				F02AFA7024CBF8A50002A699 /* CustomFeed.m in Sources */,
 				F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */,
@@ -3085,6 +3088,7 @@
 				F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
 				F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */,
+				F004561024DE85B60094A6A3 /* FolderCell.m in Sources */,
 				F07DCA3B20C517D20068ED51 /* UITableViewController+KeyboardScroll.m in Sources */,
 				F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */,
 				F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */,
@@ -3452,6 +3456,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -3502,6 +3507,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
