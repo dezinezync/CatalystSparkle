@@ -16,9 +16,6 @@
 [submodule "Yeti/Vendors/DZThemeKit"]
 	path = Yeti/Vendors/DZThemeKit
 	url = git@github.com:DZNS/DZThemeKit.git
-[submodule "Yeti/Vendors/TOSplitViewController"]
-	path = Yeti/Vendors/TOSplitViewController
-	url = git@github.com:dezinezync/TOSplitViewController.git
 [submodule "Yeti/Vendors/YapDatabase"]
 	path = Yeti/Vendors/YapDatabase
 	url = https://github.com/yapstudios/YapDatabase.git
@@ -31,9 +28,6 @@
 [submodule "Yeti/Vendors/JLRoutes"]
 	path = Yeti/Vendors/JLRoutes
 	url = https://github.com/joeldev/JLRoutes.git
-[submodule "Yeti/Vendors/NYTPhotoViewer"]
-	path = Yeti/Vendors/NYTPhotoViewer
-	url = https://github.com/nytimes/NYTPhotoViewer.git
 [submodule "DBManager"]
 	path = Yeti/DBManager
 	url = git@github.com:dezinezync/YTDBManager.git
