@@ -581,14 +581,28 @@
     
     weakify(self);
     
-    TOSplitViewController *splitVC = (id)UIApplication.keyWindow.rootViewController;
+    // check if the current feedVC is the same feed
     
-    // get the primary navigation controller
-    UINavigationController *nav = (id)splitVC.viewControllers.firstObject;
+    if (self.coordinator.feedVC != nil
+        && self.coordinator.feedVC.type == FeedVCTypeNatural
+        && [self.coordinator.feedVC.feed.feedID isEqualToNumber:feedID])
+    {
+        
+        if (articleID != nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                [self showArticle:articleID];
+            });
+        }
+        
+    }
     
-    if ([[nav topViewController] isKindOfClass:FeedVC.class]) {
-        // check if the current topVC is the same feed
-        if ([(FeedVC *)[nav topViewController] feed] && [[[(FeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
+    else if (self.coordinator.feedVC != nil) {
+        
+        FeedVC *feedVC = self.coordinator.feedVC;
+        
+        if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
             
             if (articleID != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -599,47 +613,25 @@
             }
             
             return;
-        }
-    }
-    
-    if (splitVC.secondaryViewController && [splitVC.secondaryViewController isKindOfClass:UINavigationController.class] == YES) {
-        
-        FeedVC *feedVC = (id)[(UINavigationController *)[splitVC secondaryViewController] topViewController];
-        
-        if (feedVC != nil && [feedVC isKindOfClass:FeedVC.class]) {
             
-            if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
-                
-                if (articleID != nil) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        strongify(self);
-                        
-                        [self showArticle:articleID];
-                    });
+        }
+        else if ([feedVC.tableView indexPathsForSelectedRows].count > 0) {
+            
+            /*
+             * The feedID is clearly different or is a custom feed. So deselect the selected items.
+             */
+            
+            NSArray <NSIndexPath *> * selectedItems = [feedVC.tableView indexPathsForSelectedRows];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                for (NSIndexPath *indexPath in selectedItems) {
+                    
+                    [feedVC.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                    
                 }
                 
-                return;
-                
-            }
-            else if ([feedVC.collectionView indexPathsForSelectedItems].count > 0) {
-                
-                /*
-                 * The feedID is clearly different or is a custom feed. So deselect the selected items.
-                 */
-                
-                NSArray <NSIndexPath *> * selectedItems = [feedVC.collectionView indexPathsForSelectedItems];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                    for (NSIndexPath *indexPath in selectedItems) {
-                        
-                        [feedVC.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-                        
-                    }
-                    
-                });
-                
-            }
+            });
             
         }
         
@@ -653,24 +645,7 @@
     
     ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
     
-    UITraitCollection *rootTraits = self.window.rootViewController.traitCollection;
-    
-    if (rootTraits.userInterfaceIdiom == UIUserInterfaceIdiomPad
-        && rootTraits.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        
-        // show as detail
-        
-        UINavigationController *detailNav = [[UINavigationController alloc] initWithRootViewController:articleVC];
-        
-        TOSplitViewController * splitVC = (id)self.window.rootViewController;
-        
-        [splitVC to_showDetailViewController:detailNav sender:nav];
-        
-        return;
-        
-    }
-    
-    [nav pushViewController:articleVC animated:YES];
+    [self.coordinator showArticleVC:articleVC];
     
 }
 
@@ -684,45 +659,17 @@
         return;
     }
     
-    FeedVC *feedVC = nil;
-    
-    TOSplitViewController *splitVC;
-    UINavigationController *nav;
-    
-    @try {
-        splitVC = (TOSplitViewController *)[UIApplication.keyWindow rootViewController];
-        
-        if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            nav = (id)splitVC.secondaryViewController;
-        }
-        else {
-            nav = (id)splitVC.primaryViewController;
-        }
-        
-        feedVC = (FeedVC *)[nav topViewController];
-    }
-    @catch (NSException *exc) {}
-    
-    if (feedVC != nil
-        && ([feedVC isKindOfClass:FeedVC.class])) {
-        feedVC.loadOnReady = articleID;
+    if (self.coordinator.feedVC != nil) {
+        self.coordinator.feedVC.loadOnReady = articleID;
     }
     else {
+        
         FeedItem *item = [FeedItem new];
         item.identifier = articleID;
         
         ArticleVC *instance = [[ArticleVC alloc] initWithItem:item];
         
-        @try {
-            if (splitVC.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-                [nav pushViewController:instance animated:YES];
-            }
-            else {
-                nav = [[UINavigationController alloc] initWithRootViewController:instance];
-                [splitVC showDetailViewController:nav sender:nil];
-            }
-        }
-        @catch (NSException *exc) {}
+        [self.coordinator showArticleVC:instance];
     }
 }
 

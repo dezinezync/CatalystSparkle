@@ -10,7 +10,7 @@
 #define Prefix_pch
 
 #import <DZKit/DZUtilities.h>
-#import "TOSplitViewController.h"
+#import "SplitVC.h"
 
 #ifndef NSLogDebug
 #ifdef DEBUG

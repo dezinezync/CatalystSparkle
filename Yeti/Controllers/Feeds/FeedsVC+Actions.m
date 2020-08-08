@@ -126,7 +126,7 @@
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
-    [self.splitViewController to_showSecondaryViewController:nav sender:sender];
+//    [self.splitViewController to_showSecondaryViewController:nav sender:sender];
 
 }
 
@@ -695,7 +695,7 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
-    if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         
         pvc.sourceView = self.tableView;
@@ -756,7 +756,7 @@
 
 - (void)showActivityController:(UIActivityViewController *)avc indexPath:(NSIndexPath *)indexPath {
     
-    if (indexPath != nil && self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (indexPath != nil && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         pvc.sourceView = self.tableView;
@@ -787,7 +787,7 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
                 UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
                 
                 pvc.sourceView = self.tableView;
@@ -821,7 +821,7 @@
 //        
 //    }
     
-    [self.to_splitViewController presentViewController:nav animated:YES completion:^{
+    [self.splitViewController presentViewController:nav animated:YES completion:^{
         
         self->_presentingKnown = YES;
         

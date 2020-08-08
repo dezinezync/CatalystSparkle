@@ -10,7 +10,7 @@
 
 #import <DZTextKit/Image.h>
 #import <DZTextKit/Gallery.h>
-#import "ArticlePhoto.h"
+//#import "ArticlePhoto.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 
@@ -21,6 +21,7 @@
 
 - (void)didTapOnImage:(UITapGestureRecognizer *)sender {
     
+    /*
     if (sender.state != UIGestureRecognizerStateEnded) {
         return;
     }
@@ -142,12 +143,14 @@
         [self photosViewController:photosViewController didNavigateToPhoto:_images.firstObject atIndex:0];
         
     }];
+     */
     
 }
 
 #if TARGET_OS_MACCATALYST
 
 - (void)ct_didTapOnImage:(Image *)image {
+    /*
     
     NSUserActivity *viewImageActivity = [[NSUserActivity alloc] initWithActivityType:@"viewImage"];
     
@@ -191,6 +194,7 @@
         }
         
     }];
+     */
     
 }
 
@@ -207,6 +211,7 @@
     
 }
 
+/*
 #pragma mark - <NYTPhotosViewControllerDelegate>
 
 - (NSAttributedString *)captionForText:(NSString *)text {
@@ -296,5 +301,6 @@
     self.photosDS = nil;
     
 }
+ */
 
 @end

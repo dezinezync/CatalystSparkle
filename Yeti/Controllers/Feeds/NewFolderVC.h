@@ -9,7 +9,7 @@
 #import "NewFeedVC.h"
 
 #import "Folder.h"
-#import "FeedsVC.h"
+#import "SidebarVC.h"
 
 @interface NewFolderVC : NewFeedVC
 

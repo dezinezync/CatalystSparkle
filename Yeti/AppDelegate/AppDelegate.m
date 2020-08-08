@@ -78,14 +78,14 @@ AppDelegate *MyAppDelegate = nil;
     
     if (activity != nil && [activity.activityType isEqualToString:@"viewImage"] == YES) {
         
-        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
-        window.canResizeToFitContent = YES;
-        
-        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
-        
-        window.rootViewController = photosVC;
-        
-        [window makeKeyAndVisible];
+//        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
+//        window.canResizeToFitContent = YES;
+//        
+//        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+//        
+//        window.rootViewController = photosVC;
+//        
+//        [window makeKeyAndVisible];
         
         return;
         

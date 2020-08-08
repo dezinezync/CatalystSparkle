@@ -11,12 +11,16 @@
 #import "NewFolderVC.h"
 #import "SettingsVC.h"
 
+#import "Coordinator.h"
+
 @implementation SidebarVC (Actions)
 
 - (void)didTapAdd:(UIBarButtonItem *)add
 {
     
     UINavigationController *nav = [AddFeedVC instanceInNavController];
+    
+    nav.viewControllers.firstObject.mainCoordinator = self.mainCoordinator;
     
     [self presentViewController:nav animated:YES completion:nil];
     
@@ -26,6 +30,8 @@
     
     UINavigationController *nav = [NewFolderVC instanceInNavController];
     
+    nav.viewControllers.firstObject.mainCoordinator = self.mainCoordinator;
+    
     [self presentViewController:nav animated:YES completion:nil];
     
 }
@@ -33,6 +39,8 @@
 - (void)didTapSettings
 {
     SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
+    
+    settingsVC.mainCoordinator = self.mainCoordinator;
     
     UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:settingsVC];
     

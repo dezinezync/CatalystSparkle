@@ -54,8 +54,6 @@
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
 		F02AFA7024CBF8A50002A699 /* CustomFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = F02AFA6F24CBF8A50002A699 /* CustomFeed.m */; };
 		F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD824CABEE000E987FC /* Coordinator.m */; };
-		F02EB7BF2386C15E00DB8E72 /* TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */; };
-		F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */; };
 		F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A74F244D5F9A0024AC63 /* PrefsManager.m */; };
 		F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A759244D7D680024AC63 /* YetiThemeKit.m */; };
 		F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A75B244D7D8C0024AC63 /* YetiTheme.m */; };
@@ -208,12 +206,6 @@
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */; };
 		F0A0501C21F07BFF00A46524 /* AddFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0501B21F07BFF00A46524 /* AddFeedVC.m */; };
-		F0A39B12245A955600A9B26E /* PINRemoteImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B11245A955600A9B26E /* PINRemoteImage.framework */; };
-		F0A39B13245A955600A9B26E /* PINRemoteImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B11245A955600A9B26E /* PINRemoteImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F0A39B15245A956E00A9B26E /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B14245A956E00A9B26E /* PINCache.framework */; };
-		F0A39B16245A956E00A9B26E /* PINCache.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B14245A956E00A9B26E /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F0A39B18245A958200A9B26E /* PINOperation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B17245A958200A9B26E /* PINOperation.framework */; };
-		F0A39B19245A958200A9B26E /* PINOperation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0A39B17245A958200A9B26E /* PINOperation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A495B524711CE500E9BA13 /* ArticleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A495B324711CE500E9BA13 /* ArticleCell.m */; };
 		F0A495B624711CE500E9BA13 /* ArticleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A495B424711CE500E9BA13 /* ArticleCell.xib */; };
@@ -309,10 +301,6 @@
 		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
 		F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
 		F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0DBB122AE0F46006A2D93 /* WebKit.framework */; };
-		F0E0E6DE2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6D32457FED300DFFD17 /* NYTPhotoViewer.framework */; };
-		F0E0E6DF2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6D32457FED300DFFD17 /* NYTPhotoViewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F0E0E6E02457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6D52457FED300DFFD17 /* NYTPhotoViewerCore.framework */; };
-		F0E0E6E12457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6D52457FED300DFFD17 /* NYTPhotoViewerCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6EB2457FF1D00DFFD17 /* JLRoutes.framework */; };
 		F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6EB2457FF1D00DFFD17 /* JLRoutes.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E5F4E724CEC854007E6D1E /* PhotosController.m */; };
@@ -603,48 +591,6 @@
 			remoteGlobalIDString = F0E7CC3E1F0B7C6D00A6ECBC;
 			remoteInfo = ColumnApp;
 		};
-		F0E0E6D22457FED300DFFD17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 111084061C875B5000699670;
-			remoteInfo = NYTPhotoViewer;
-		};
-		F0E0E6D42457FED300DFFD17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 11FBDA831C8774AC00018169;
-			remoteInfo = NYTPhotoViewerCore;
-		};
-		F0E0E6D62457FED300DFFD17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 111084101C875B5000699670;
-			remoteInfo = NYTPhotoViewerTests;
-		};
-		F0E0E6D82457FED300DFFD17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1110846A1C876A2B00699670;
-			remoteInfo = Example;
-		};
-		F0E0E6DA2457FED300DFFD17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 11FBDADC1C877BD600018169;
-			remoteInfo = "Example-Swift";
-		};
-		F0E0E6DC2457FEE900DFFD17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 111084051C875B5000699670;
-			remoteInfo = NYTPhotoViewer;
-		};
 		F0E0E6E82457FF1D00DFFD17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */;
@@ -718,16 +664,11 @@
 			files = (
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
-				F0E0E6DF2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Embed Frameworks */,
 				F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */,
-				F0A39B16245A956E00A9B26E /* PINCache.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
 				F0658EA5244C80F3002AC231 /* DZTextKit.framework in Embed Frameworks */,
-				F0E0E6E12457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Embed Frameworks */,
 				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
 				F0EB46102494987500175B42 /* SDWebImage.framework in Embed Frameworks */,
-				F0A39B13245A955600A9B26E /* PINRemoteImage.framework in Embed Frameworks */,
-				F0A39B19245A958200A9B26E /* PINOperation.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -800,10 +741,6 @@
 		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
 		F02AFA6E24CBF8A50002A699 /* CustomFeed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeed.h; sourceTree = "<group>"; };
 		F02AFA6F24CBF8A50002A699 /* CustomFeed.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeed.m; sourceTree = "<group>"; };
-		F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TOSplitViewController.m; sourceTree = "<group>"; };
-		F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TOSplitViewController.h; sourceTree = "<group>"; };
-		F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+TOSplitViewController.m"; sourceTree = "<group>"; };
-		F02EB7B32386C15E00DB8E72 /* UINavigationController+TOSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+TOSplitViewController.h"; sourceTree = "<group>"; };
 		F032A739244D5F9A0024AC63 /* PrefsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsManager.h; sourceTree = "<group>"; };
 		F032A74F244D5F9A0024AC63 /* PrefsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsManager.m; sourceTree = "<group>"; };
 		F032A758244D7D670024AC63 /* YetiThemeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiThemeKit.h; sourceTree = "<group>"; };
@@ -1186,7 +1123,6 @@
 		F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsGridCell.m; sourceTree = "<group>"; };
 		F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsGridCell.xib; sourceTree = "<group>"; };
 		F0E0DBB122AE0F46006A2D93 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = NYTPhotoViewer.xcodeproj; path = Vendors/NYTPhotoViewer/NYTPhotoViewer.xcodeproj; sourceTree = "<group>"; };
 		F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JLRoutes.xcodeproj; path = Vendors/JLRoutes/JLRoutes.xcodeproj; sourceTree = "<group>"; };
 		F0E5F4E724CEC854007E6D1E /* PhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosController.m; sourceTree = "<group>"; };
 		F0E5F4E824CEC854007E6D1E /* PhotosController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosController.h; sourceTree = "<group>"; };
@@ -1247,20 +1183,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0A39B12245A955600A9B26E /* PINRemoteImage.framework in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
-				F0A39B18245A958200A9B26E /* PINOperation.framework in Frameworks */,
 				F0EB460F2494987500175B42 /* SDWebImage.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
 				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
-				F0E0E6DE2457FEFE00DFFD17 /* NYTPhotoViewer.framework in Frameworks */,
 				F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */,
-				F0A39B15245A956E00A9B26E /* PINCache.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
-				F0E0E6E02457FEFF00DFFD17 /* NYTPhotoViewerCore.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
 				F0658EA4244C80F3002AC231 /* DZTextKit.framework in Frameworks */,
@@ -1459,26 +1390,6 @@
 				F01E6E0F24AC6C2500D1BD6E /* red-dark@3x.png */,
 			);
 			path = "red-dark";
-			sourceTree = "<group>";
-		};
-		F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */ = {
-			isa = PBXGroup;
-			children = (
-				F02EB7B02386C15E00DB8E72 /* TOSplitViewController.h */,
-				F02EB7AF2386C15E00DB8E72 /* TOSplitViewController.m */,
-				F02EB7B12386C15E00DB8E72 /* Categories */,
-			);
-			name = TOSplitViewController;
-			path = Vendors/TOSplitViewController/TOSplitViewController;
-			sourceTree = "<group>";
-		};
-		F02EB7B12386C15E00DB8E72 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				F02EB7B22386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m */,
-				F02EB7B32386C15E00DB8E72 /* UINavigationController+TOSplitViewController.h */,
-			);
-			path = Categories;
 			sourceTree = "<group>";
 		};
 		F032A765244D89AF0024AC63 /* themes */ = {
@@ -2280,11 +2191,9 @@
 			children = (
 				F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */,
 				F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */,
-				F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */,
 				F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */,
 				F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */,
 				F0F10A06244C7B21009FC108 /* DZTextKit.xcodeproj */,
-				F02EB7AE2386C15E00DB8E72 /* TOSplitViewController */,
 				F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */,
 				F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */,
 				F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */,
@@ -2293,18 +2202,6 @@
 				F0F10A87244C8020009FC108 /* DateTools */,
 			);
 			name = Vendors;
-			sourceTree = "<group>";
-		};
-		F0E0E6C72457FED300DFFD17 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F0E0E6D32457FED300DFFD17 /* NYTPhotoViewer.framework */,
-				F0E0E6D52457FED300DFFD17 /* NYTPhotoViewerCore.framework */,
-				F0E0E6D72457FED300DFFD17 /* NYTPhotoViewerTests.xctest */,
-				F0E0E6D92457FED300DFFD17 /* Example.app */,
-				F0E0E6DB2457FED300DFFD17 /* Example-Swift.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		F0E0E6E32457FF1D00DFFD17 /* Products */ = {
@@ -2409,7 +2306,6 @@
 				F0BFD74D24580590009A863C /* PBXTargetDependency */,
 				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
-				F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */,
 				F0F10A85244C7FED009FC108 /* PBXTargetDependency */,
 				F08C5E65238660B60055946F /* PBXTargetDependency */,
 				F08C5E2F2386579C0055946F /* PBXTargetDependency */,
@@ -2576,10 +2472,6 @@
 				{
 					ProductGroup = F0E0E6E32457FF1D00DFFD17 /* Products */;
 					ProjectRef = F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */;
-				},
-				{
-					ProductGroup = F0E0E6C72457FED300DFFD17 /* Products */;
-					ProjectRef = F0E0E6C62457FED300DFFD17 /* NYTPhotoViewer.xcodeproj */;
 				},
 				{
 					ProductGroup = F069AF7C249496E100BAB6FB /* Products */;
@@ -2797,41 +2689,6 @@
 			fileType = wrapper.application;
 			path = ColumnApp.app;
 			remoteRef = F0E0E6B42457FEC000DFFD17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0E0E6D32457FED300DFFD17 /* NYTPhotoViewer.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = NYTPhotoViewer.framework;
-			remoteRef = F0E0E6D22457FED300DFFD17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0E0E6D52457FED300DFFD17 /* NYTPhotoViewerCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = NYTPhotoViewerCore.framework;
-			remoteRef = F0E0E6D42457FED300DFFD17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0E0E6D72457FED300DFFD17 /* NYTPhotoViewerTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = NYTPhotoViewerTests.xctest;
-			remoteRef = F0E0E6D62457FED300DFFD17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0E0E6D92457FED300DFFD17 /* Example.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Example.app;
-			remoteRef = F0E0E6D82457FED300DFFD17 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0E0E6DB2457FED300DFFD17 /* Example-Swift.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "Example-Swift.app";
-			remoteRef = F0E0E6DA2457FED300DFFD17 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F0E0E6E92457FF1D00DFFD17 /* libJLRoutes.a */ = {
@@ -3094,7 +2951,6 @@
 				F0CDA0D724752C6C00DC1217 /* AuthorVC.m in Sources */,
 				F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */,
 				F0D071FB205E88AC00A042CD /* ImageLoadingVC.m in Sources */,
-				F02EB7BF2386C15E00DB8E72 /* TOSplitViewController.m in Sources */,
 				F05041DC2461442800A65C1C /* Feed.m in Sources */,
 				F02459CB20590E6D002906C3 /* SearchResults.m in Sources */,
 				F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */,
@@ -3173,7 +3029,6 @@
 				F06C666522B2ABBA00D425E9 /* UIViewController+Stateful.m in Sources */,
 				F0DB58FF23F578E20008D871 /* CustomizationThemeCell.m in Sources */,
 				F05041E82461442800A65C1C /* DBManager+CloudCore.m in Sources */,
-				F02EB7C02386C15E00DB8E72 /* UINavigationController+TOSplitViewController.m in Sources */,
 				F03A5F6120971BAE00CE7D5E /* ThemeVC.m in Sources */,
 				F05041D62461442800A65C1C /* FeedsManagerErrors.m in Sources */,
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
@@ -3326,11 +3181,6 @@
 			isa = PBXTargetDependency;
 			name = "YapDatabase-iOS";
 			targetProxy = F0BFD74C24580590009A863C /* PBXContainerItemProxy */;
-		};
-		F0E0E6DD2457FEE900DFFD17 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = NYTPhotoViewer;
-			targetProxy = F0E0E6DC2457FEE900DFFD17 /* PBXContainerItemProxy */;
 		};
 		F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -660,108 +660,108 @@ static void *KVO_Unread = &KVO_Unread;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
-                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
-    
-    UIViewController *detailVC = self.to_splitViewController.detailViewController ?: [(SplitVC *)[self to_splitViewController] emptyVC];
-    
-    if (indexPath.section == 0) {
-        
-        FeedVC *vc = nil;
-        
-        if (indexPath.row == 1 && PrefsManager.sharedInstance.hideBookmarks == NO) {
-            
-            vc = [[TodayVC alloc] init];
-            
-        }
-        else if (indexPath.row == 0) {
-            
-            vc = [[UnreadVC alloc] init];
-            
-        }
-        else {
-            
-            vc = [[BookmarksVC alloc] init];
-            
-        }
-        
-        vc.bookmarksManager = self.bookmarksManager;
-        
-        BOOL animated = YES;
-        
-        // we dont want an animated push on the navigation stack
-        // when the app is launched and the user wants this behavior
-        if (_openingOnLaunch == YES) {
-            animated = NO;
-            _openingOnLaunch = NO;
-        }
-        
-        if (isPhone) {
-            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
-        }
-        else {
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-            nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
-            
-            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
-        }
-        
-        [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
-        
-        return;
-    }
-    
-    Feed *feed = [self objectAtIndexPath:indexPath];
-    
-    if ([feed isKindOfClass:Feed.class]) {
-        
-        UIViewController *vc;
-        
-        if (isPhone) {
-            vc = [[FeedVC alloc] initWithFeed:feed];
-            [(FeedVC *)vc setBookmarksManager:self.bookmarksManager];
-            
-            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
-            
-            [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
-        }
-        else {
-            vc = [FeedVC instanceWithFeed:feed];
-            
-            [(FeedVC *)[(UINavigationController *)vc topViewController] setType:FeedVCTypeNatural];
-            [(FeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
-            
-            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
-            
-            [self.splitViewController setValue:(FeedVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
-        }
-        
-    }
-    else {
-        // it's a folder
-        Folder *folder = (Folder *)feed;
-        
-        UIViewController *vc;
-        
-        if (isPhone) {
-            vc = [[FolderVC alloc] initWithFolder:folder];
-            [(FolderVC *)vc setBookmarksManager:self.bookmarksManager];
-            
-            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
-            
-            [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
-        }
-        else {
-            vc = [FolderVC instanceWithFolder:folder];
-            
-            [(FolderVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
-            
-            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
-            
-            [self.splitViewController setValue:(FolderVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
-        }
-        
-    }
+//    BOOL isPhone = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone
+//                    && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+//    
+//    UIViewController *detailVC = self.to_splitViewController.detailViewController ?: [(SplitVC *)[self to_splitViewController] emptyVC];
+//    
+//    if (indexPath.section == 0) {
+//        
+//        FeedVC *vc = nil;
+//        
+//        if (indexPath.row == 1 && PrefsManager.sharedInstance.hideBookmarks == NO) {
+//            
+//            vc = [[TodayVC alloc] init];
+//            
+//        }
+//        else if (indexPath.row == 0) {
+//            
+//            vc = [[UnreadVC alloc] init];
+//            
+//        }
+//        else {
+//            
+//            vc = [[BookmarksVC alloc] init];
+//            
+//        }
+//        
+//        vc.bookmarksManager = self.bookmarksManager;
+//        
+//        BOOL animated = YES;
+//        
+//        // we dont want an animated push on the navigation stack
+//        // when the app is launched and the user wants this behavior
+//        if (_openingOnLaunch == YES) {
+//            animated = NO;
+//            _openingOnLaunch = NO;
+//        }
+//        
+//        if (isPhone) {
+//            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
+//        }
+//        else {
+//            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//            nav.restorationIdentifier = formattedString(@"%@-nav", indexPath.row == 0 ? @"unread" : @"bookmarks");
+//            
+//            [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSupplementary];
+//        }
+//        
+//        [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
+//        
+//        return;
+//    }
+//    
+//    Feed *feed = [self objectAtIndexPath:indexPath];
+//    
+//    if ([feed isKindOfClass:Feed.class]) {
+//        
+//        UIViewController *vc;
+//        
+//        if (isPhone) {
+//            vc = [[FeedVC alloc] initWithFeed:feed];
+//            [(FeedVC *)vc setBookmarksManager:self.bookmarksManager];
+//            
+//            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
+//            
+//            [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
+//        }
+//        else {
+//            vc = [FeedVC instanceWithFeed:feed];
+//            
+//            [(FeedVC *)[(UINavigationController *)vc topViewController] setType:FeedVCTypeNatural];
+//            [(FeedVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+//            
+//            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
+//            
+//            [self.splitViewController setValue:(FeedVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
+//        }
+//        
+//    }
+//    else {
+//        // it's a folder
+//        Folder *folder = (Folder *)feed;
+//        
+//        UIViewController *vc;
+//        
+//        if (isPhone) {
+//            vc = [[FolderVC alloc] initWithFolder:folder];
+//            [(FolderVC *)vc setBookmarksManager:self.bookmarksManager];
+//            
+//            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
+//            
+//            [self.splitViewController setValue:vc forKeyPath:@"feedVC"];
+//        }
+//        else {
+//            vc = [FolderVC instanceWithFolder:folder];
+//            
+//            [(FolderVC *)[(UINavigationController *)vc topViewController] setBookmarksManager:self.bookmarksManager];
+//            
+//            [self.splitViewController setViewController:vc forColumn:UISplitViewControllerColumnSupplementary];
+//            
+//            [self.splitViewController setValue:(FolderVC *)[(UINavigationController *)vc topViewController] forKeyPath:@"feedVC"];
+//        }
+//        
+//    }
     
 }
 
@@ -886,37 +886,37 @@ NSString * const kDS2Data = @"DS2Data";
     }
     
     // check if an Author VC was also pushed
-    if (restorationIdentifiers.count > 1 && [[restorationIdentifiers objectAtIndex:1] containsString:@"Author"] == YES) {
-        
-        components = [[restorationIdentifiers objectAtIndex:1] componentsSeparatedByString:@"-"];
-        
-        NSString *author = [[components subarrayWithRange:NSMakeRange(3, components.count - 3)] componentsJoinedByString:@"-"];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
-           
-            if (feedVC != nil) {
-                
-                [feedVC showAuthorVC:author];
-                
-            }
-            
-        });
-        
-    }
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
-        
-        if (feedVC == nil) {
-            return;
-        }
-        
-        [feedVC continueActivity:activity];
-        
-    });
+//    if (restorationIdentifiers.count > 1 && [[restorationIdentifiers objectAtIndex:1] containsString:@"Author"] == YES) {
+//        
+//        components = [[restorationIdentifiers objectAtIndex:1] componentsSeparatedByString:@"-"];
+//        
+//        NSString *author = [[components subarrayWithRange:NSMakeRange(3, components.count - 3)] componentsJoinedByString:@"-"];
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            
+//            FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
+//           
+//            if (feedVC != nil) {
+//                
+//                [feedVC showAuthorVC:author];
+//                
+//            }
+//            
+//        });
+//        
+//    }
+//    
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        
+//        FeedVC *feedVC = [self.to_splitViewController valueForKeyPath:@"feedVC"];
+//        
+//        if (feedVC == nil) {
+//            return;
+//        }
+//        
+//        [feedVC continueActivity:activity];
+//        
+//    });
     
 }
 

@@ -466,15 +466,15 @@
     });
 }
 
-- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
-    
-    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
-    
-}
+//- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
+//
+//    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
+//
+//}
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
     
-    if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         

@@ -7,6 +7,7 @@
 //
 
 #import "PhotosController.h"
+/*
 #import <NYTPhotoViewerCore/NYTPhotoViewerCore.h>
 
 #import <SDWebImage/SDWebImageManager.h>
@@ -188,3 +189,4 @@
 }
 
 @end
+*/

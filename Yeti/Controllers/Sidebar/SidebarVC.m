@@ -14,6 +14,8 @@
 
 #import <DZTextKit/NSString+ImageProxy.h>
 
+#import "Coordinator.h"
+
 @interface SidebarVC () {
     
     // Sync
@@ -43,7 +45,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     UICollectionViewCompositionalLayout *layout = [[UICollectionViewCompositionalLayout alloc] initWithSectionProvider:^NSCollectionLayoutSection * _Nullable(NSInteger section, id<NSCollectionLayoutEnvironment> _Nonnull environment) {
         
-        UICollectionLayoutListConfiguration *config = [[UICollectionLayoutListConfiguration alloc] initWithAppearance:UICollectionLayoutListAppearanceSidebar];
+        UICollectionLayoutListAppearance appearance;
+        
+        if (environment.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            appearance = UICollectionLayoutListAppearancePlain;
+        }
+        else {
+            appearance = UICollectionLayoutListAppearanceSidebar;
+        }
+        
+        UICollectionLayoutListConfiguration *config = [[UICollectionLayoutListConfiguration alloc] initWithAppearance:appearance];
         
         if (section == 0 || section == 2) {
             
@@ -68,6 +79,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     [super viewDidLoad];
     
     self.title = @"Feeds";
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        self.collectionView.backgroundColor = UIColor.systemBackgroundColor;
+    }
 
     [self setupNavigationBar];
     
@@ -117,8 +132,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
     [refresh addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
-    
-    [self.collectionView addSubview:refresh];
+    self.collectionView.refreshControl = refresh;
     
     self.refreshControl = refresh;
     
@@ -306,6 +320,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 #pragma mark - Getters
 
+- (UICollectionViewDiffableDataSource *)datasource {
+    
+    return self.DS;
+    
+}
+
 - (UICollectionViewCellRegistration *)customFeedRegister {
     
     if (_customFeedRegister == nil) {
@@ -391,6 +411,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             NSString *imageName = [snapshot isExpanded:item] ? @"folder" : @"folder.fill";
             
             content.image = [UIImage systemImageNamed:imageName];
+            
+            content.imageProperties.maximumSize = CGSizeMake(24.f, 24.f);
             
             cell.contentConfiguration = content;
             

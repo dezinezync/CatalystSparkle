@@ -99,10 +99,46 @@
     
 }
 
+- (void)showArticleVC:(ArticleVC *)articleVC {
+    
+    if (articleVC == nil) {
+        return;
+    }
+    
+    articleVC.mainCoordinator = self;
+    
+    [self _showDetailController:articleVC];
+    
+}
+
+- (void)showRecommendations {
+    
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+
+    [self _showSupplementaryController:vc];
+    
+}
+
+- (void)showEmptyVC {
+    
+    EmptyVC *vc = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
+    
+    [self _showDetailController:vc];
+    
+}
+
+#pragma mark - Helpers
+
 - (void)_showSupplementaryController:(UIViewController *)controller {
     
     if (controller == nil) {
         return;
+    }
+    
+    if ([controller isKindOfClass:FeedVC.class]) {
+        
+        self.feedVC = (FeedVC *)controller;
+        
     }
     
     if ([controller isKindOfClass:UINavigationController.class] == NO) {
@@ -143,39 +179,41 @@
     
 }
 
-- (void)showArticleVC:(ArticleVC *)articleVC {
+- (void)_showDetailController:(UIViewController *)controller {
     
-    if (articleVC == nil) {
+    if (controller == nil) {
         return;
     }
     
-    articleVC.mainCoordinator = self;
+    if ([controller isKindOfClass:ArticleVC.class]) {
+        
+        self.articleVC = (ArticleVC *)controller;
+        
+    }
     
     if (self.splitViewController.presentedViewController != nil && [self.splitViewController.presentedViewController isKindOfClass:UINavigationController.class]) {
         // in a modal stack
-        [(UINavigationController *)[self.splitViewController presentedViewController] pushViewController:articleVC animated:YES];
+        [(UINavigationController *)[self.splitViewController presentedViewController] pushViewController:controller animated:YES];
     }
     else if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:articleVC];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
 
         [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSecondary];
         
     }
     else {
         
+        // We never push the empty VC on the navigation stack
+        // on compact devices
+        if ([controller isKindOfClass:EmptyVC.class]) {
+            return;
+        }
+        
         UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
-        [nav pushViewController:articleVC animated:YES];
+        [nav pushViewController:controller animated:YES];
         
     }
-    
-}
-
-- (void)showRecommendations {
-    
-    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
-
-    [self _showSupplementaryController:vc];
     
 }
 

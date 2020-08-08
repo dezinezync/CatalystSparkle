@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "Coordinator.h"
 #import "BarPositioning.h"
 
 NS_ASSUME_NONNULL_BEGIN

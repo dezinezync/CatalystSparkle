@@ -37,7 +37,12 @@
     
     if (self = [super initWithStyle:UISplitViewControllerStyleTripleColumn]) {
         
-        self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+        if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleNone;
+        }
+        else {
+            self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+        }
             
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
@@ -72,16 +77,6 @@
         
     });
     
-    UISwipeGestureRecognizer *edgePanLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
-    edgePanLeft.numberOfTouchesRequired = 2;
-    edgePanLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-    edgePanLeft.delegate = self;
-    
-    UISwipeGestureRecognizer *edgePanRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
-    edgePanRight.numberOfTouchesRequired = 2;
-    edgePanRight.direction = UISwipeGestureRecognizerDirectionRight;
-    edgePanRight.delegate = self;
-    
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;
     twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
@@ -94,9 +89,7 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
-    [self.view addGestureRecognizer:edgePanLeft];
-    [self.view addGestureRecognizer:edgePanRight];
-
+    
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
     

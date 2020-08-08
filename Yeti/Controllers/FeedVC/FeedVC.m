@@ -165,24 +165,24 @@
     
 }
 
-- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    
-    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
-    
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-        
-        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
-            
-            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
-        }
-        else {
-            self.navigationItem.leftBarButtonItem = nil;
-        }
-        
-    } completion:nil];
-    
-}
+//- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+//    
+//    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+//    
+//    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+//        
+//        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
+//            
+//            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
+//        }
+//        else {
+//            self.navigationItem.leftBarButtonItem = nil;
+//        }
+//        
+//    } completion:nil];
+//    
+//}
 
 - (void)dealloc {
     
@@ -1062,7 +1062,7 @@
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
         
-        [self to_showDetailViewController:vc sender:self];
+        [self.mainCoordinator showArticleVC:vc];
         
         return;
     }

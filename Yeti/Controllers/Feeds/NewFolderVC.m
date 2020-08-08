@@ -7,6 +7,7 @@
 //
 
 #import "NewFolderVC.h"
+#import "Coordinator.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/AlertManager.h>
@@ -106,9 +107,7 @@
     
     self->_isUpdating = YES;
     
-    TOSplitViewController *splitVC = (id)self.presentingViewController;
-    
-    FeedsVC *feedsVC = (id)[[(UINavigationController *)[splitVC primaryViewController] viewControllers] firstObject];
+    SidebarVC *sidebarVC = self.mainCoordinator.sidebarVC;
     
     if (self.folder) {
         // editing the title
@@ -123,9 +122,7 @@
                 
                 self.cancelButton.enabled = YES;
                 
-                if (feedsVC != nil) {
-                    [feedsVC setupData];
-                }
+                [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
@@ -163,9 +160,7 @@
                 
                 self.cancelButton.enabled = YES;
                 
-                if (feedsVC != nil) {
-                    [feedsVC setupData];
-                }
+                [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
