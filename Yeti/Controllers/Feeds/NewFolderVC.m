@@ -40,11 +40,10 @@
     return nav;
 }
 
-+ (UINavigationController *)instanceWithFolder:(Folder *)folder feedsVC:(FeedsVC * _Nonnull)feedsVC indexPath:(NSIndexPath *)indexPath
++ (UINavigationController *)instanceWithFolder:(Folder *)folder indexPath:(NSIndexPath *)indexPath
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     vc.folder = folder;
-    vc.feedsVC = feedsVC;
     vc.folderIndexPath = indexPath;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -118,7 +117,7 @@
                 
                 self->_isUpdating = NO;
                 
-                [self.feedsVC setupData];
+                [self.mainCoordinator.sidebarVC setupData];
                 
                 self.cancelButton.enabled = YES;
                 

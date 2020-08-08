@@ -54,6 +54,7 @@
         
     }
 
+    self.sidebarVC = sidebar;
     
 }
 

@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sync;
 
+#pragma mark - Actions Extension
+
+@property (nonatomic, weak) UITextField *alertTextField;
+@property (nonatomic, weak) UIAlertAction *alertDoneAction;
+@property (nonatomic, weak) Feed *alertFeed;
+@property (nonatomic, strong) NSIndexPath *alertIndexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

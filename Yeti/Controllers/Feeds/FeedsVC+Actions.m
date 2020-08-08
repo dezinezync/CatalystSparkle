@@ -227,7 +227,7 @@
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Rename Folder" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
-            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
+            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
             
             strongify(self);
             
@@ -478,7 +478,7 @@
             
             UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
-                UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
+                UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self presentViewController:nav animated:YES completion:nil];
@@ -613,7 +613,7 @@
            
             strongify(self);
             
-            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder feedsVC:self indexPath:indexPath];
+            UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self presentViewController:nav animated:YES completion:^{
