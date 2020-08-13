@@ -231,18 +231,19 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:FeedsDidUpdate object:ArticlesManager.shared];
     
     [NSNotificationCenter.defaultCenter addObserverForName:UnreadCountDidUpdate object:MyFeedsManager queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
        
-//        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
-//        
-//        id object = [self.DS itemIdentifierForIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]];
-//        
-//        if (object != nil && [object isKindOfClass:CustomFeed.class]) {
-//            
-//            [snapshot reloadItemsWithIdentifiers:@[object]];
-//            
-//            [self.DS applySnapshot:snapshot animatingDifferences:YES];
-//            
-//        }
+        UICollectionViewListCell *cell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        
+        if (cell != nil) {
+            
+            UIListContentConfiguration *content = (UIListContentConfiguration *)[cell contentConfiguration];
+            
+            content.secondaryText = MyFeedsManager.totalUnread > 0 ? @(MyFeedsManager.totalUnread).stringValue : nil;
+            
+            cell.contentConfiguration = content;
+        }
         
     }];
     
@@ -326,110 +327,6 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 - (UICollectionViewDiffableDataSource *)datasource {
     
     return self.DS;
-    
-}
-
-- (UICollectionViewCellRegistration *)customFeedRegister {
-    
-    if (_customFeedRegister == nil) {
-        
-        weakify(self);
-        
-        UICollectionViewCellRegistration *customFeedsRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
-            
-            UIListContentConfiguration *content = [UIListContentConfiguration sidebarCellConfiguration];
-            
-            content.text = item.displayTitle;
-            
-            content.prefersSideBySideTextAndSecondaryText = YES;
-            
-            if (indexPath.item == 0) {
-                
-                if (MyFeedsManager.totalUnread > 0) {
-                    content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
-                }
-                
-            }
-            
-            if (indexPath.item == 1) {
-                
-                if (MyFeedsManager.totalToday > 0) {
-                    content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
-                }
-                
-            }
-            
-            if (indexPath.item == 2) {
-                
-                strongify(self);
-                
-                MainCoordinator *coordinator = [self mainCoordinator];
-                
-                BookmarksManager *manager = coordinator.bookmarksManager;
-                
-                if (manager.bookmarksCount > 0) {
-                    
-                    content.secondaryText = [@(manager.bookmarksCount) stringValue];
-                    
-                }
-                
-            }
-            
-            content.image = [UIImage systemImageNamed:[(CustomFeed *)item imageName]];
-            
-            content.imageProperties.tintColor = [(CustomFeed *)item tintColor];
-            
-            cell.contentConfiguration = content;
-            
-        }];
-        
-        _customFeedRegister = customFeedsRegistration;
-        
-    }
-    
-    return _customFeedRegister;
-    
-}
-
-- (UICollectionViewCellRegistration *)folderRegister {
-    
-    if (_folderRegister == nil) {
-        
-        weakify(self);
-        
-        UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FolderCell.class configurationHandler:^(__kindof FolderCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
-            
-            strongify(self);
-            
-            cell.DS = self.DS;
-           
-            [cell configure:item indexPath:indexPath];
-            
-        }];
-        
-        _folderRegister = folderRegistration;
-        
-    }
-    
-    return _folderRegister;
-    
-}
-
-- (UICollectionViewCellRegistration *)feedRegister {
-    
-    if (_feedRegister == nil) {
-        
-        UICollectionViewCellRegistration *feedRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FeedCell.class configurationHandler:^(__kindof FeedCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
-           
-            [cell configure:item indexPath:indexPath];
-            
-        }];
-        
-        _feedRegister = feedRegistration;
-        
-    }
-    
-    return _feedRegister;
     
 }
 
@@ -530,6 +427,116 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 }
 
+#pragma mark - Cell Registrations
+
+- (UICollectionViewCellRegistration *)customFeedRegister {
+    
+    if (_customFeedRegister == nil) {
+        
+        weakify(self);
+        
+        UICollectionViewCellRegistration *customFeedsRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+            
+            UIListContentConfiguration *content = [UIListContentConfiguration sidebarCellConfiguration];
+            
+            content.text = item.displayTitle;
+            
+            content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+            
+            content.prefersSideBySideTextAndSecondaryText = YES;
+            
+            if (indexPath.item == 0) {
+                
+                if (MyFeedsManager.totalUnread > 0) {
+                    content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
+                }
+                
+            }
+            
+            if (indexPath.item == 1) {
+                
+                if (MyFeedsManager.totalToday > 0) {
+                    content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
+                }
+                
+            }
+            
+            if (indexPath.item == 2) {
+                
+                strongify(self);
+                
+                MainCoordinator *coordinator = [self mainCoordinator];
+                
+                BookmarksManager *manager = coordinator.bookmarksManager;
+                
+                if (manager.bookmarksCount > 0) {
+                    
+                    content.secondaryText = [@(manager.bookmarksCount) stringValue];
+                    
+                }
+                
+            }
+            
+            content.image = [UIImage systemImageNamed:[(CustomFeed *)item imageName]];
+            
+            content.imageProperties.tintColor = [(CustomFeed *)item tintColor];
+            
+            cell.contentConfiguration = content;
+            
+        }];
+        
+        _customFeedRegister = customFeedsRegistration;
+        
+    }
+    
+    return _customFeedRegister;
+    
+}
+
+- (UICollectionViewCellRegistration *)folderRegister {
+    
+    if (_folderRegister == nil) {
+        
+        weakify(self);
+        
+        UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FolderCell.class configurationHandler:^(__kindof FolderCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
+            
+            strongify(self);
+            
+            cell.DS = self.DS;
+           
+            [cell configure:item indexPath:indexPath];
+            
+        }];
+        
+        _folderRegister = folderRegistration;
+        
+    }
+    
+    return _folderRegister;
+    
+}
+
+- (UICollectionViewCellRegistration *)feedRegister {
+    
+    if (_feedRegister == nil) {
+        
+        UICollectionViewCellRegistration *feedRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FeedCell.class configurationHandler:^(__kindof FeedCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+           
+            cell.DS = self.DS;
+            
+            [cell configure:item indexPath:indexPath];
+            
+        }];
+        
+        _feedRegister = feedRegistration;
+        
+    }
+    
+    return _feedRegister;
+    
+}
+
 #pragma mark - <UICollectionViewDelegate>
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -580,16 +587,30 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         _refreshFeedsCounter++;
         
+        weakify(self);
+        
         [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self sync];
+                
+                strongify(self);
+                
+                if (self->_refreshFeedsCounter > 0) {
+                    [self sync];
+                }
+                
             });
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self sync];
+                
+                strongify(self);
+                
+                if (self->_refreshFeedsCounter > 0) {
+                    [self sync];
+                }
+                
             });
             
         }];
@@ -601,6 +622,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     _refreshFeedsCounter = 0;
     
     if (_refreshing == YES) {
+        return;
+    }
+    
+    if ([MyDBManager isSyncing]) {
         return;
     }
     
@@ -640,24 +665,18 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
         
-        if (snapshot != nil) {
-            
-            if (snapshot.numberOfSections > 0) {
-                [snapshot reloadSectionsWithIdentifiers:snapshot.sectionIdentifiers];
-            }
-            else {
-                snapshot = nil;
-                [self setupData];
-            }
-            
+        if (snapshot == nil) {
+
+            [self setupData];
+
+        }
+
+        if ([self.refreshControl isRefreshing]) {
+            [self.refreshControl endRefreshing];
         }
         
-//        if ([self.refreshControl isRefreshing]) {
-//            [self.refreshControl endRefreshing];
-//        }
-        
-        if (snapshot != nil) {
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+        if (self->_refreshFeedsCounter > 0) {
+            self->_refreshFeedsCounter = 0;
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

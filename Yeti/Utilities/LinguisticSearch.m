@@ -12,6 +12,14 @@
 
 #import "DTTimePeriod.h"
 
+#ifndef NSLogDebug
+#ifdef DEBUG
+#   define NSLogDebug(...) NSLog(__VA_ARGS__)
+#else
+#   define NSLogDebug(...) (void)0
+#endif
+#endif
+
 LinguisticPairType const LinguisticPairTypeDates = @"linguisticPair.dates";
 LinguisticPairType const LinguisticPairTypeOthers = @"linguisticPair.others";
 LinguisticPairType const LinguisticPairTypeContext = @"linguisticPair.context";

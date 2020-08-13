@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FeedCell : UICollectionViewListCell <UnreadCountObservor>
 
 @property (nonatomic, weak, nullable) Feed *feed;
+@property (nonatomic, weak, nullable) UICollectionViewDiffableDataSource *DS;
 
 - (void)configure:(nonnull Feed *)feed indexPath:(nonnull NSIndexPath *)indexPath;
 

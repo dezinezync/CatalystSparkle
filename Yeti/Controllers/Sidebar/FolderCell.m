@@ -8,6 +8,12 @@
 
 #import "FolderCell.h"
 
+@interface FolderCell ()
+
+@property (nonatomic, copy, readwrite) NSNumber *folderID;
+
+@end
+
 @implementation FolderCell
 
 - (void)configure:(Folder *)item indexPath:(NSIndexPath *)indexPath {
@@ -20,6 +26,7 @@
     
     UIListContentConfiguration *content = [UIListContentConfiguration sidebarHeaderConfiguration];
     
+    content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     content.text = item.title;
     
     if (SharedPrefs.showUnreadCounts == YES) {
@@ -31,6 +38,8 @@
             content.secondaryText = item.unreadCount.stringValue;
             
         }
+        
+        content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
         
     }
     
@@ -75,29 +84,26 @@
 
 - (void)unreadCountChangedTo:(NSNumber *)count {
     
-    /*
-     * in iOS 14 - Beta 4, when a cell is expanded,
-     * the primary cell is hidden and replaced with
-     * with a visible cell at the same index path.
-     * Because of this, we cannot reference *self* here.
-     */
-    
-    FolderCell *cell = (id)[(UICollectionView *)[self.DS valueForKey:@"collectionView"] cellForItemAtIndexPath:[self.DS indexPathForItemIdentifier:self.folder]];
-    
-    if (cell == nil) {
+    if (self.DS == nil) {
         return;
     }
     
-    UIListContentConfiguration *content = (id)[cell contentConfiguration];
+    NSIndexPath *indexPath = [self.DS indexPathForItemIdentifier:self.folder];
     
-    if (count.unsignedIntegerValue > 0) {
-        content.secondaryText = count.stringValue;
-    }
-    else {
-        content.secondaryText = nil;
+    if (indexPath == nil) {
+        return;
     }
     
-    cell.contentConfiguration = content;
+    @try {
+        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+        
+        [snapshot reloadItemsWithIdentifiers:@[self.folder]];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    }
+    @catch (NSException *exception) {
+        
+    }
     
 }
 

@@ -40,11 +40,13 @@
     }
     
     content.imageProperties.maximumSize = CGSizeMake(24.f, 24.f);
-
+    content.imageProperties.cornerRadius = 3.f;
+    content.imageProperties.reservedLayoutSize = content.imageProperties.maximumSize;
+    
     content.image = item.faviconImage ?: [UIImage systemImageNamed:@"square.dashed"];
     
     [self setupFavicon];
-    
+
     self.contentConfiguration = content;
 
     if (indexPath.section != 2) {
@@ -66,49 +68,70 @@
 
 - (void)setupFavicon {
     
-    if (self.feed.faviconImage == nil) {
+    NSIndexPath *indexPath = [self.DS indexPathForItemIdentifier:self.feed];
+    
+    if (indexPath == nil) {
+        return;
+    }
+    
+    Feed *feed = [self.DS itemIdentifierForIndexPath:indexPath];
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    if (feed.faviconImage != nil) {
+        return;
+    }
 
-        NSString *url = [self.feed faviconURI];
+    NSString *url = [feed faviconURI];
 
-        if (url != nil && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+    if (url != nil && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
 
-            CGFloat maxWidth = 24.f * UIScreen.mainScreen.scale;
+        CGFloat maxWidth = 48.f * UIScreen.mainScreen.scale;
 
-            url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.f];
-            
-            weakify(self);
+        url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.8f];
+        
+        weakify(self);
 
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
-                __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+            __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                
+                strongify(self);
+                
+                if (self.feed == nil) {
+                    return;
+                }
+                
+                if (self.DS == nil) {
+                    return;
+                }
+                
+                if (feed.faviconImage != nil) {
+                    return;
+                }
+
+                if (image != nil) {
+
+                    feed.faviconImage = image;
                     
-                    strongify(self);
-                    
-                    if (self.feed == nil) {
-                        return;
+                    @try {
+                        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+                        
+                        [snapshot reloadItemsWithIdentifiers:@[feed]];
+                        
+                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                    }
+                    @catch (NSException *exception) {
+                        
                     }
 
-                    if (image != nil) {
+                }
 
-                        CGFloat cornerRadius = 3.f * UIScreen.mainScreen.scale;
+            }];
 
-                        image = [image sd_roundedCornerImageWithRadius:cornerRadius corners:UIRectCornerAllCorners borderWidth:0.f borderColor:nil];
-
-                        self.feed.faviconImage = image;
-
-                        UIListContentConfiguration *config = (UIListContentConfiguration *)[self contentConfiguration];
-                        
-                        config.image = image;
-                        
-                        self.contentConfiguration = config;
-
-                    }
-
-                }];
-
-            });
-
-        }
+        });
 
     }
     
@@ -137,16 +160,26 @@
 
 - (void)unreadCountChangedTo:(NSNumber *)count {
     
-    UIListContentConfiguration *content = (id)[self contentConfiguration];
-    
-    if (count.unsignedIntegerValue > 0) {
-        content.secondaryText = count.stringValue;
-    }
-    else {
-        content.secondaryText = nil;
+    if (self.DS == nil) {
+        return;
     }
     
-    self.contentConfiguration = content;
+    NSIndexPath *indexPath = [self.DS indexPathForItemIdentifier:self.feed];
+    
+    if (indexPath == nil) {
+        return;
+    }
+    
+    @try {
+        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+        
+        [snapshot reloadItemsWithIdentifiers:@[self.feed]];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    }
+    @catch (NSException *exception) {
+        
+    }
     
 }
 

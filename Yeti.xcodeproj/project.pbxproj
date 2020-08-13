@@ -170,7 +170,6 @@
 		F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F070C3581FBAE7A200912CCF /* ArticleVC.xib */; };
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
 		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
-		F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F074D802208DC2B4002F22CB /* WebP.framework */; };
 		F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F075752724CED198001F7D15 /* SidebarVC+Actions.m */; };
 		F0783CAA248F688500C7A280 /* elytramac.bundle in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0783C88248F685C00C7A280 /* elytramac.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = F0783CAE248F6A5800C7A280 /* AppKitGlue.m */; };
@@ -211,7 +210,6 @@
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
 		F0A495B524711CE500E9BA13 /* ArticleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A495B324711CE500E9BA13 /* ArticleCell.m */; };
 		F0A495B624711CE500E9BA13 /* ArticleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A495B424711CE500E9BA13 /* ArticleCell.xib */; };
-		F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589EF205A4E7E00488015 /* LinguisticSearch.m */; };
 		F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A589F4205A580300488015 /* LinguisticSearch.m */; };
 		F0A5AE6420C197EF00CFA1D2 /* Merriweather-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AE5C20C197EE00CFA1D2 /* Merriweather-Bold.ttf */; };
@@ -246,6 +244,14 @@
 		F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEA920C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf */; };
 		F0A5AEC020C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */; };
 		F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */; };
+		F0A6575724E51BF100F3BCF9 /* FeedTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A6575624E51BF100F3BCF9 /* FeedTests.m */; };
+		F0A6577324E51C0500F3BCF9 /* Feed.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041B32461442800A65C1C /* Feed.m */; };
+		F0A6577424E51D1A00F3BCF9 /* Author.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041B72461442800A65C1C /* Author.m */; };
+		F0A6577524E51D3800F3BCF9 /* VideoInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041C22461442800A65C1C /* VideoInfo.m */; };
+		F0A6577624E51D3F00F3BCF9 /* Range.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041B92461442800A65C1C /* Range.m */; };
+		F0A6577724E51D4200F3BCF9 /* Content.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041BA2461442800A65C1C /* Content.m */; };
+		F0A6577924E51DCD00F3BCF9 /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041B42461442800A65C1C /* FeedItem.m */; };
+		F0A6577A24E51DDF00F3BCF9 /* Enclosure.m in Sources */ = {isa = PBXBuildFile; fileRef = F05041B12461442800A65C1C /* Enclosure.m */; };
 		F0AD76D520E2217C0003787B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AD76D420E2217C0003787B /* Reachability.m */; };
 		F0AD76D720E2217C0003787B /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AD76D420E2217C0003787B /* Reachability.m */; };
 		F0AF313A20D27F7700E074D6 /* IntroVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF313820D27F7700E074D6 /* IntroVC.m */; };
@@ -936,7 +942,6 @@
 		F0710D282062D3090097CCD5 /* NewVCAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewVCAnimator.m; sourceTree = "<group>"; };
 		F0710D2A2062DAB70097CCD5 /* PaddedTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaddedTextField.h; sourceTree = "<group>"; };
 		F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedTextField.m; sourceTree = "<group>"; };
-		F074D802208DC2B4002F22CB /* WebP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebP.framework; path = Carthage/Build/iOS/WebP.framework; sourceTree = SOURCE_ROOT; };
 		F075752624CED198001F7D15 /* SidebarVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+Actions.h"; sourceTree = "<group>"; };
 		F075752724CED198001F7D15 /* SidebarVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+Actions.m"; sourceTree = "<group>"; };
 		F0783C88248F685C00C7A280 /* elytramac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = elytramac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1036,6 +1041,8 @@
 		F0A5AEA920C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
 		F0A5AEAA20C19DA200CFA1D2 /* IBMPlexSans-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-ThinItalic.ttf"; sourceTree = "<group>"; };
 		F0A5AEAB20C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-MediumItalic.ttf"; sourceTree = "<group>"; };
+		F0A6575624E51BF100F3BCF9 /* FeedTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedTests.m; sourceTree = "<group>"; };
+		F0A6577824E51D8900F3BCF9 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		F0A7B8F220FA21C00056A2C0 /* _YetiStoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _YetiStoreVC.h; sourceTree = "<group>"; };
 		F0A7B8F320FA21C00056A2C0 /* _YetiStoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _YetiStoreVC.m; sourceTree = "<group>"; };
 		F0AD76D320E2217C0003787B /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -1191,7 +1198,6 @@
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
-				F074D805208DC2F3002F22CB /* WebP.framework in Frameworks */,
 				F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
@@ -1651,6 +1657,8 @@
 				F0A589EF205A4E7E00488015 /* LinguisticSearch.m */,
 				F04E92C021B5488900AD1FB2 /* YTExtractorTests.m */,
 				F0DA1E3B23374EF9008FF4B1 /* MetaData.m */,
+				F0A6575624E51BF100F3BCF9 /* FeedTests.m */,
+				F0A6577824E51D8900F3BCF9 /* Prefix.pch */,
 			);
 			path = YetiTests;
 			sourceTree = "<group>";
@@ -1855,7 +1863,6 @@
 			isa = PBXGroup;
 			children = (
 				F00E830622C4826D0027C45E /* RMStore */,
-				F074D802208DC2B4002F22CB /* WebP.framework */,
 				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
 			);
 			path = Frameworks;
@@ -3101,13 +3108,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0A589F0205A4E7E00488015 /* LinguisticSearch.m in Sources */,
 				F04E92C321B5489900AD1FB2 /* NSString+Components.m in Sources */,
+				F0A6577524E51D3800F3BCF9 /* VideoInfo.m in Sources */,
 				F04E92C121B5488900AD1FB2 /* YTExtractorTests.m in Sources */,
+				F0A6577424E51D1A00F3BCF9 /* Author.m in Sources */,
+				F0A6577324E51C0500F3BCF9 /* Feed.m in Sources */,
 				F0A589F6205A580800488015 /* LinguisticSearch.m in Sources */,
+				F0A6577A24E51DDF00F3BCF9 /* Enclosure.m in Sources */,
 				F070C2F61FBABC3600912CCF /* YetiTests.m in Sources */,
+				F0A6577724E51D4200F3BCF9 /* Content.m in Sources */,
+				F0A6575724E51BF100F3BCF9 /* FeedTests.m in Sources */,
 				F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */,
+				F0A6577624E51D3F00F3BCF9 /* Range.m in Sources */,
 				F04E92C221B5489700AD1FB2 /* YTExtractor.m in Sources */,
+				F0A6577924E51DCD00F3BCF9 /* FeedItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3526,6 +3540,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_PREFIX_HEADER = YetiTests/Prefix.pch;
 				INFOPLIST_FILE = YetiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3549,6 +3564,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_PREFIX_HEADER = YetiTests/Prefix.pch;
 				INFOPLIST_FILE = YetiTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
