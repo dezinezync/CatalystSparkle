@@ -78,6 +78,12 @@
         
         config = [UIContextMenuConfiguration configurationWithIdentifier:formattedString(@"folder-%@", folder.folderID) previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
             
+            UIAction * feed = [UIAction actionWithTitle:@"Folder Feed" image:[UIImage systemImageNamed:@"list.bullet.below.rectangle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+               
+                [self.mainCoordinator showFolderFeed:folder];
+                
+            }];
+            
             UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
                 UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
@@ -98,7 +104,7 @@
             
             delete.attributes = UIMenuElementAttributesDestructive;
             
-            NSArray <UIAction *> *actions = @[rename, delete];
+            NSArray <UIAction *> *actions = @[feed, rename, delete];
             
             UIMenu *menu = [UIMenu menuWithTitle:@"Feed Menu" children:actions];
             

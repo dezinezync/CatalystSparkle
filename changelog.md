@@ -1,5 +1,17 @@
 # v2.0.0
 
+## Build 5
+
+- Prevents an issue causing the app to sync data twice upon successfully launching. 
+
+- Fixes the icons layout issue from **Build 3** causing   
+    - Icons to be incorrectly sized in a lot of cases 
+    - Icons of one feed to be applied to a different feed 
+
+- Moves Folder Feed access to the Folder's context menu. (No way to detect a tap right now on the Folder's row.)
+
+- Reliably updates Folder and Feed unread counts. 
+
 ## Build 3
 
 - All new triple column support using Apple's own UI Framework. This is much more reliable that my own implementation from v1. 

@@ -39,9 +39,9 @@
             
         }
         
-        content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
-        
     }
+    
+    content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
     
     content.prefersSideBySideTextAndSecondaryText = YES;
     
@@ -82,28 +82,31 @@
     
 }
 
-- (void)unreadCountChangedTo:(NSNumber *)count {
+- (void)unreadCountChangedFor:(Folder *)folder to:(NSNumber *)count {
     
-    if (self.DS == nil) {
-        return;
+    /*
+     * in iOS 14 - Beta 4, when a cell is expanded,
+     * the primary cell is hidden and replaced with
+     * with a visible cell at the same index path.
+     * Because of this, we cannot reference *self* here.
+     */
+       
+    FolderCell *cell = (id)[(UICollectionView *)[self.DS valueForKey:@"collectionView"] cellForItemAtIndexPath:[self.DS indexPathForItemIdentifier:folder]];
+
+    if (cell == nil) {
+       return;
     }
     
-    NSIndexPath *indexPath = [self.DS indexPathForItemIdentifier:self.folder];
-    
-    if (indexPath == nil) {
-        return;
-    }
-    
-    @try {
-        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+    UIListContentConfiguration *content = (id)[cell contentConfiguration];
         
-        [snapshot reloadItemsWithIdentifiers:@[self.folder]];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    if (count.unsignedIntegerValue > 0) {
+        content.secondaryText = count.stringValue;
     }
-    @catch (NSException *exception) {
-        
+    else {
+        content.secondaryText = nil;
     }
+    
+    cell.contentConfiguration = content;
     
 }
 

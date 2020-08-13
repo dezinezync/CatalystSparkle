@@ -45,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showFeedVC:(Feed *)feed;
 
+- (void)showFolderFeed:(Folder *)folder;
+
 - (void)showArticleVC:(ArticleVC *)articleVC;
 
 - (void)showRecommendations;

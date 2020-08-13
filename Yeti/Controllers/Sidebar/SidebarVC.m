@@ -240,7 +240,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             UIListContentConfiguration *content = (UIListContentConfiguration *)[cell contentConfiguration];
             
-            content.secondaryText = MyFeedsManager.totalUnread > 0 ? @(MyFeedsManager.totalUnread).stringValue : nil;
+            if (SharedPrefs.showUnreadCounts == YES) {
+                
+                content.secondaryText = MyFeedsManager.totalUnread > 0 ? @(MyFeedsManager.totalUnread).stringValue : nil;
+                
+            }
+            else {
+                
+                content.secondaryText = nil;
+                
+            }
             
             cell.contentConfiguration = content;
         }

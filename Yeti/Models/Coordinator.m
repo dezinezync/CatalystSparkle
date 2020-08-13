@@ -13,6 +13,7 @@
 #import "TodayVC.h"
 #import "BookmarksVC.h"
 #import "RecommendationsVC.h"
+#import "FolderVC.h"
 
 @implementation MainCoordinator
 
@@ -95,6 +96,18 @@
     }
     
     FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+    
+    [self _showSupplementaryController:vc];
+    
+}
+
+- (void)showFolderFeed:(Folder *)folder {
+    
+    if (folder == nil) {
+        return;
+    }
+    
+    FolderVC *vc = [[FolderVC alloc] initWithFolder:folder];
     
     [self _showSupplementaryController:vc];
     

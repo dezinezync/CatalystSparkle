@@ -27,17 +27,17 @@
     
     content.text = item.displayTitle;
     
-    content.prefersSideBySideTextAndSecondaryText = YES;
-
     if (SharedPrefs.showUnreadCounts == YES) {
         
         item.unreadCountObservor = self;
-
+        
         if (item.unread.unsignedIntegerValue > 0) {
             content.secondaryText = item.unread.stringValue;
         }
-
+        
     }
+    
+    content.prefersSideBySideTextAndSecondaryText = YES;
     
     content.imageProperties.maximumSize = CGSizeMake(24.f, 24.f);
     content.imageProperties.cornerRadius = 3.f;
@@ -64,6 +64,16 @@
     
     self.accessories = @[disclosure];
     
+}
+
+- (void)prepareForReuse {
+
+    if (self.feed != nil && self.feed.unreadCountObservor == self) {
+        self.feed.unreadCountObservor = nil;
+    }
+
+    [super prepareForReuse];
+
 }
 
 - (void)setupFavicon {
@@ -116,16 +126,7 @@
 
                     feed.faviconImage = image;
                     
-                    @try {
-                        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
-                        
-                        [snapshot reloadItemsWithIdentifiers:@[feed]];
-                        
-                        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-                    }
-                    @catch (NSException *exception) {
-                        
-                    }
+                    [self updateCellFaviconImageFor:feed];
 
                 }
 
@@ -158,28 +159,52 @@
     
 }
 
-- (void)unreadCountChangedTo:(NSNumber *)count {
+- (void)unreadCountChangedFor:(Feed *)feed to:(NSNumber *)count {
     
-    if (self.DS == nil) {
+    /*
+     * in iOS 14 - Beta 4, when a cell is expanded,
+     * the primary cell is hidden and replaced with
+     * with a visible cell at the same index path.
+     * Because of this, we cannot reference *self* here.
+     */
+       
+    FeedCell *cell = (id)[(UICollectionView *)[self.DS valueForKey:@"collectionView"] cellForItemAtIndexPath:[self.DS indexPathForItemIdentifier:feed]];
+
+    if (cell == nil) {
+       return;
+    }
+    
+    UIListContentConfiguration *content = (id)[cell contentConfiguration];
+        
+    if (count.unsignedIntegerValue > 0) {
+        content.secondaryText = count.stringValue;
+    }
+    else {
+        content.secondaryText = nil;
+    }
+    
+    [cell setContentConfiguration:content];
+    
+}
+    
+- (void)updateCellFaviconImageFor:(Feed *)feed {
+    
+    if (feed.faviconImage == nil) {
+        // Nothing to update
         return;
     }
     
-    NSIndexPath *indexPath = [self.DS indexPathForItemIdentifier:self.feed];
-    
-    if (indexPath == nil) {
-        return;
+    FeedCell *cell = (id)[(UICollectionView *)[self.DS valueForKey:@"collectionView"] cellForItemAtIndexPath:[self.DS indexPathForItemIdentifier:feed]];
+
+    if (cell == nil) {
+       return;
     }
     
-    @try {
-        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+    UIListContentConfiguration *content = (id)[cell contentConfiguration];
         
-        [snapshot reloadItemsWithIdentifiers:@[self.feed]];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-    }
-    @catch (NSException *exception) {
-        
-    }
+    content.image = feed.faviconImage;
+    
+    [cell setContentConfiguration:content];
     
 }
 
