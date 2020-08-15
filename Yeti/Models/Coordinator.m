@@ -153,22 +153,18 @@
         
         self.feedVC = (FeedVC *)controller;
         
+        [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
+        
     }
     
     if ([controller isKindOfClass:UINavigationController.class] == NO) {
         
         controller.mainCoordinator = self;
         
-        if ([controller isKindOfClass:FeedVC.class] == YES) {
-            
-            [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
-            
-        }
-        
     }
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        && self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
         
         if ([controller isKindOfClass:UINavigationController.class]) {
             
