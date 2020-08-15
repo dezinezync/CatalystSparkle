@@ -295,7 +295,7 @@
         
         title = kNewFeedToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed-dark"];
+        image = [UIImage systemImageNamed:@"plus"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFeed)];
         
@@ -304,7 +304,7 @@
         //
         title = kNewFolderToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder-dark"];
+        image = [UIImage systemImageNamed:@"folder.badge.plus"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFolder)];
         
@@ -313,7 +313,7 @@
         //
         title = kRefreshAllToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all-dark"];
+        image = [UIImage systemImageNamed:@"bolt.circle"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
         
@@ -331,7 +331,7 @@
         
         title = kRefreshFeedToolbarIdentifier[1];
         
-        UIImage *image = [self dynamicImageWithLightImageName:@"refresh-feed" darkImageName:@"refresh-feed-dark"];
+        UIImage *image = [UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapRefreshFeed:)];
         
@@ -351,7 +351,7 @@
         //
         title = kShareArticleToolbarIdentifier[1];
 
-        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share-dark"];
+        image = [UIImage systemImageNamed:@"square.and.arrow.up"];
         
         NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
         item3.image = image;

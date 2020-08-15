@@ -63,6 +63,17 @@
 //#if TARGET_OS_MACCATALYST
 //    disclosure.actionHandler = ^{
 //        
+//        NSDiffableDataSourceSectionSnapshot *snapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
+//        
+//        if ([snapshot isExpanded:item]) {
+//            [snapshot collapseItems:item.feeds.allObjects];
+//        }
+//        else {
+//            [snapshot expandItems:item.feeds.allObjects];
+//        }
+//        
+//        [self.DS applySnapshot:snapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:YES];
+//        
 //    };
 //#endif
     
