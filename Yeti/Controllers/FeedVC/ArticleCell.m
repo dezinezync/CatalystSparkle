@@ -214,6 +214,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             NSString * titleContent = [self.article textFromContent];
             
             self.titleLabel.text = titleContent;
+            self.titleLabel.numberOfLines = MAX(3, SharedPrefs.previewLines);
             self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
             
         }
@@ -316,11 +317,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
         return;
     }
-    
-//#if TARGET_OS_MACCATALYST
-//    self.titleLabel.attributedText = attrs;
-//    return;
-//#endif
     
     NSString *url = [feed faviconURI];
     

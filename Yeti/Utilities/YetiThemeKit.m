@@ -36,16 +36,6 @@ NSArray <NSString *> * _themeNames;
     return YES;
 }
 
-- (void)setTheme:(YetiTheme *)theme {
-    
-    [super setTheme:theme];
-    
-    Paragraph.tk_theme = theme;
-    Gallery.tk_theme = theme;
-    Image.tk_theme = theme;
-    
-}
-
 + (NSArray <NSString *> *)themeNames {
     
     if (_themeNames == nil) {

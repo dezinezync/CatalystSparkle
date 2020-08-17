@@ -420,15 +420,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    Paragraph.tk_theme = theme;
-    Image.tk_theme = theme;
-    Gallery.tk_theme = theme;
-    
-    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.scrollView.backgroundColor = UIColor.systemBackgroundColor;
     
     [self setupArticle:self.currentArticle];
     

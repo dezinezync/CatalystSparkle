@@ -206,15 +206,7 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
-    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        
-        pvc.sourceView = self.tableView;
-        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
-        pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
-    }
-    
-    [self presentViewController:avc animated:YES completion:nil];
+    [self showActivityController:(id)avc indexPath:indexPath];
     
 }
 
@@ -361,8 +353,10 @@
     if (indexPath != nil && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
-        pvc.sourceView = self.tableView;
-        pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
+        pvc.sourceView = self.collectionView;
+        UICollectionViewLayoutAttributes *attrs = [self.collectionView layoutAttributesForItemAtIndexPath:indexPath];
+        
+        pvc.sourceRect = attrs.frame;
         
     }
     
@@ -387,19 +381,7 @@
         
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[URL] applicationActivities:@[]];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-                UIPopoverPresentationController *pvc = activityVC.popoverPresentationController;
-                
-                pvc.sourceView = self.tableView;
-                pvc.sourceRect = [self.tableView rectForRowAtIndexPath:indexPath];
-                pvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
-            }
-            
-            [self presentViewController:activityVC animated:YES completion:nil];
-            
-        });
+        [self showActivityController:activityVC indexPath:indexPath];
     }
     
 }

@@ -641,10 +641,10 @@
     NSString *subtitle = nil;
     
     if ([_sortingOption isEqualToString:YTSortAllDesc] || [_sortingOption isEqualToString:YTSortAllAsc]) {
-        subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+        subtitle = formattedString(@"No recent articles are available from %@", [self.feed displayTitle]);
     }
     else {
-        subtitle = formattedString(@"No recent unread articles are available from %@", self.feed.title);
+        subtitle = formattedString(@"No recent unread articles are available from %@", [self.feed displayTitle]);
     }
     
     return subtitle;

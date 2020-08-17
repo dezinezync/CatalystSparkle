@@ -8,6 +8,12 @@
 
 - Fixes an issue where marking currently loaded articles as read in the Unread view would prevent new articles from loading.  
 
+- Selecting the Custom Feeds now updates their selected state similar to regular feeds. 
+
+- If you have setup a custom title for a Feed, the custom title will now show up correctly for the empty state. 
+
+- Fixed a crash caused when trying to share a Feed's URL or its website's URL.
+
 ## Build 5
 
 - Prevents an issue causing the app to sync data twice upon successfully launching. 
