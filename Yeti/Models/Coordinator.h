@@ -53,6 +53,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showEmptyVC;
 
+- (void)showNewFolderVC:(Folder *)folder indexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL completed))completionHandler;
+
 @end
 
 @interface UIViewController (Coordination)

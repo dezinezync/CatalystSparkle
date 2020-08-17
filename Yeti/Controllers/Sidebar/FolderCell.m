@@ -41,7 +41,13 @@
         
     }
     
-    content.textProperties.color = UIColor.secondaryLabelColor;
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+        content.textProperties.color = UIColor.secondaryLabelColor;
+    }
+    else {
+        content.textProperties.color = UIColor.labelColor;
+    }
+    
     content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
     
     content.prefersSideBySideTextAndSecondaryText = YES;

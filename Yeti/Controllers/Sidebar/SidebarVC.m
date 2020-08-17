@@ -44,7 +44,7 @@
 
 static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
-+ (instancetype)instanceWithDefaultLayout {
+- (instancetype)initWithDefaultLayout {
     
     UICollectionViewCompositionalLayout *layout = [[UICollectionViewCompositionalLayout alloc] initWithSectionProvider:^NSCollectionLayoutSection * _Nullable(NSInteger section, id<NSCollectionLayoutEnvironment> _Nonnull environment) {
         
@@ -61,21 +61,97 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         config.showsSeparators = NO;
         
-        if (section == 0 || section == 2) {
+        if (section == 0) {
             
             return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
             
         }
         
-        config.headerMode = UICollectionLayoutListHeaderModeFirstItemInSection;
+        if (section != 2) {
+            // this is only applicable for feeds with folders
+            config.headerMode = UICollectionLayoutListHeaderModeFirstItemInSection;
+        }
+        
+        weakify(self);
+        
+        config.trailingSwipeActionsConfigurationProvider = ^UISwipeActionsConfiguration *(NSIndexPath * indexPath) {
+            
+            strongify(self);
+            
+            Feed *feed = [self.DS itemIdentifierForIndexPath:indexPath];
+            Folder *folder = nil;
+            
+            if ([feed isKindOfClass:Folder.class]) {
+                folder = (Folder *)feed;
+            }
+            
+            UIContextualAction *delete = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"Delete" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+                
+                if (folder) {
+                    
+                    [self confirmFolderDelete:folder completionHandler:completionHandler];
+                    
+                    return;
+                }
+                
+                [self confirmFeedDelete:feed completionHandler:completionHandler];
+                
+            }];
+
+            UISwipeActionsConfiguration *configuration = nil;
+            
+            if (folder) {
+                UIContextualAction *rename = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Rename" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+                   
+                    [self.mainCoordinator showNewFolderVC:folder indexPath:indexPath completionHandler:completionHandler];
+                    
+                }];
+                
+                rename.backgroundColor = self.view.tintColor;
+                
+                configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, rename]];
+            }
+            else {
+                
+                UIContextualAction *move = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Move" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+                   
+                    completionHandler(YES);
+                    
+                    [self feed_didTapMove:feed indexPath:indexPath];
+                    
+                }];
+                
+                move.backgroundColor = [UIColor colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
+                
+                UIContextualAction *share = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Share" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+                   
+                    completionHandler(YES);
+                    
+                    [self feed_didTapShare:feed indexPath:indexPath];
+                    
+                }];
+                
+                share.backgroundColor = [UIColor colorWithRed:126/255.f green:211/255.f blue:33/255.f alpha:1.f];
+                
+                configuration = [UISwipeActionsConfiguration configurationWithActions:@[delete, move, share]];
+                
+            }
+            
+            configuration.performsFirstActionWithFullSwipe = YES;
+            
+            return configuration;
+            
+        };
         
         return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
         
     }];
     
-    SidebarVC *instance = [[SidebarVC alloc] initWithCollectionViewLayout:layout];
+    if (self = [super initWithCollectionViewLayout:layout]) {
+        
+    }
     
-    return instance;
+    return self;
     
 }
 

@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UIRefreshControl *refreshControl;
 
-+ (instancetype)instanceWithDefaultLayout;
+- (instancetype)initWithDefaultLayout;
 
 - (void)setupData;
 

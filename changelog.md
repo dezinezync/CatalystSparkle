@@ -1,5 +1,9 @@
 # v2.0.0
 
+## Build 6
+
+- Implements Trailing Swipe actions on Feed Cells.
+
 ## Build 5
 
 - Prevents an issue causing the app to sync data twice upon successfully launching. 

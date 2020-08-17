@@ -56,7 +56,7 @@
     
 }
 
-#pragma mark - <UITableViewDelegate>
+#pragma mark - <UICollectionViewDelegate>
 
 - (UIContextMenuConfiguration *)collectionView:(UICollectionView *)collectionView contextMenuConfigurationForItemAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
     

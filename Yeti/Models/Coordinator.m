@@ -14,6 +14,7 @@
 #import "BookmarksVC.h"
 #import "RecommendationsVC.h"
 #import "FolderVC.h"
+#import "NewFolderVC.h"
 
 @implementation MainCoordinator
 
@@ -36,7 +37,7 @@
         NSAssert(self.splitViewController != nil, @"A split view controller is needed to start the coordinator.");
     }
     
-    SidebarVC *sidebar = [SidebarVC instanceWithDefaultLayout];
+    SidebarVC *sidebar = [[SidebarVC alloc] initWithDefaultLayout];
     sidebar.mainCoordinator = self;
     sidebar.bookmarksManager = self.bookmarksManager;
     
@@ -138,6 +139,24 @@
     EmptyVC *vc = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
     
     [self _showDetailController:vc];
+    
+}
+
+- (void)showNewFolderVC:(Folder *)folder indexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL))completionHandler {
+    
+    UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
+    
+    runOnMainQueueWithoutDeadlocking(^{
+       
+        [self.splitViewController presentViewController:nav animated:YES completion:^{
+            
+            if (completionHandler) {
+                completionHandler(YES);
+            }
+            
+        }];
+        
+    });
     
 }
 
