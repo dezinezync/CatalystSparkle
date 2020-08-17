@@ -12,7 +12,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SidebarVC : UICollectionViewController <BarPositioning> 
+@interface SidebarVC : UICollectionViewController <BarPositioning> {
+    // Used by the move folders delegate
+    BOOL _presentingKnown;
+}
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 

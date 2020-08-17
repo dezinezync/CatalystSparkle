@@ -513,5 +513,55 @@
     
 }
 
+#pragma mark - <MoveFoldersDelegate>
+
+- (void)feed:(Feed *)feed didMoveFromFolder:(Folder *)sourceFolder toFolder:(Folder *)destinationFolder {
+    
+    if (sourceFolder == nil && destinationFolder == nil) {
+        // no change occurred.
+        return;
+    }
+    
+    [self setupData];
+    return;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self->_presentingKnown = NO;
+    });
+ 
+    NSLogDebug(@"Feed %@ moved from %@ - %@", feed.displayTitle, sourceFolder ? sourceFolder.title : @"nil", destinationFolder ? destinationFolder.title : @"nil");
+    
+    NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+    
+    if (sourceFolder != nil && sourceFolder.isExpanded == YES) {
+     
+        if (destinationFolder != nil) {
+            
+            NSIndexPath *indexPathOfFolder = [self.DS indexPathForItemIdentifier:(id)destinationFolder];
+            
+            if (indexPathOfFolder == nil) {
+                return;
+            }
+            
+            if (destinationFolder.isExpanded == YES) {
+                [snapshot moveItemWithIdentifier:feed afterItemWithIdentifier:destinationFolder];
+            }
+            else {
+                [snapshot deleteItemsWithIdentifiers:@[feed]];
+            }
+            
+        }
+        else {
+            [snapshot deleteItemsWithIdentifiers:@[feed]];
+        }
+        
+    }
+    else {
+        [snapshot deleteItemsWithIdentifiers:@[feed]];
+    }
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    
+}
 
 @end
