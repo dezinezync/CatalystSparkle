@@ -16,6 +16,7 @@
 
 #import "Coordinator.h"
 
+#import "CustomFeedCell.h"
 #import "FeedCell.h"
 #import "FolderCell.h"
 
@@ -548,57 +549,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         weakify(self);
         
-        UICollectionViewCellRegistration *customFeedsRegistration = [UICollectionViewCellRegistration registrationWithCellClass:UICollectionViewListCell.class configurationHandler:^(__kindof UICollectionViewListCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+        UICollectionViewCellRegistration *customFeedsRegistration = [UICollectionViewCellRegistration registrationWithCellClass:CustomFeedCell.class configurationHandler:^(__kindof CustomFeedCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, CustomFeed *  _Nonnull item) {
             
-            UIListContentConfiguration *content = [UIListContentConfiguration sidebarCellConfiguration];
+            strongify(self);
             
-            content.text = item.displayTitle;
+            cell.mainCoordinator = self.mainCoordinator;
             
-#if TARGET_OS_MACCATALYST
-            content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-#else
-            content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
-#endif
-            
-            content.prefersSideBySideTextAndSecondaryText = YES;
-            
-            if (indexPath.item == 0) {
-                
-                if (MyFeedsManager.totalUnread > 0) {
-                    content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
-                }
-                
-            }
-            
-            if (indexPath.item == 1) {
-                
-                if (MyFeedsManager.totalToday > 0) {
-                    content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
-                }
-                
-            }
-            
-            if (indexPath.item == 2) {
-                
-                strongify(self);
-                
-                MainCoordinator *coordinator = [self mainCoordinator];
-                
-                BookmarksManager *manager = coordinator.bookmarksManager;
-                
-                if (manager.bookmarksCount > 0) {
-                    
-                    content.secondaryText = [@(manager.bookmarksCount) stringValue];
-                    
-                }
-                
-            }
-            
-            content.image = [UIImage systemImageNamed:[(CustomFeed *)item imageName]];
-            
-            content.imageProperties.tintColor = [(CustomFeed *)item tintColor];
-            
-            cell.contentConfiguration = content;
+            [cell configure:item indexPath:indexPath];
             
         }];
         

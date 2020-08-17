@@ -18,6 +18,7 @@
 		F0123C4C224D216300EDFF92 /* ArticleAuthorView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0123C4B224D216300EDFF92 /* ArticleAuthorView.m */; };
 		F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */; };
 		F01285C323436D8D00B8C277 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
+		F012909F24EA5908007F8363 /* CustomFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F012909E24EA5908007F8363 /* CustomFeedCell.m */; };
 		F013E6E321A116EE00BAA151 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = F013E6E221A116EE00BAA151 /* MainNavController.m */; };
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
@@ -704,6 +705,8 @@
 		F0123C58224D217300EDFF92 /* ArticleAuthorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleAuthorView.xib; sourceTree = "<group>"; };
 		F01285BF23436D8D00B8C277 /* Keychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keychain.h; sourceTree = "<group>"; };
 		F01285C123436D8D00B8C277 /* Keychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Keychain.m; sourceTree = "<group>"; };
+		F012909D24EA5908007F8363 /* CustomFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeedCell.h; sourceTree = "<group>"; };
+		F012909E24EA5908007F8363 /* CustomFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeedCell.m; sourceTree = "<group>"; };
 		F013E6E121A116EE00BAA151 /* MainNavController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainNavController.h; sourceTree = "<group>"; };
 		F013E6E221A116EE00BAA151 /* MainNavController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainNavController.m; sourceTree = "<group>"; };
 		F018A2CC205D0F0B001E682B /* SettingsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
@@ -2243,6 +2246,8 @@
 				F004560A24DE81DB0094A6A3 /* FeedCell.m */,
 				F004560E24DE85B60094A6A3 /* FolderCell.h */,
 				F004560F24DE85B60094A6A3 /* FolderCell.m */,
+				F012909D24EA5908007F8363 /* CustomFeedCell.h */,
+				F012909E24EA5908007F8363 /* CustomFeedCell.m */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -2955,6 +2960,7 @@
 				F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */,
 				F044B3C92338A6E900DD8E90 /* BookmarksMigrationVC.m in Sources */,
 				F05041DA2461442800A65C1C /* Enclosure.m in Sources */,
+				F012909F24EA5908007F8363 /* CustomFeedCell.m in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,

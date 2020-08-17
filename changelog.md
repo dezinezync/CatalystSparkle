@@ -4,7 +4,9 @@
 
 - Implements Trailing Swipe actions on Feed Cells.
 
-- Fixes marking articles as read in bulk locking up the app.
+- Fixes marking articles as read in bulk locking up the app. 
+
+- Fixes an issue where marking currently loaded articles as read in the Unread view would prevent new articles from loading.  
 
 ## Build 5
 
