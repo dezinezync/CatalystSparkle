@@ -4,6 +4,8 @@
 
 - Implements Trailing Swipe actions on Feed Cells.
 
+- Fixes marking articles as read in bulk locking up the app.
+
 ## Build 5
 
 - Prevents an issue causing the app to sync data twice upon successfully launching. 
