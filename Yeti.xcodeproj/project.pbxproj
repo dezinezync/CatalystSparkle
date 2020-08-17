@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -2454,7 +2454,7 @@
 				};
 			};
 			buildConfigurationList = F070C2D41FBABC3500912CCF /* Build configuration list for PBXProject "Yeti" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
