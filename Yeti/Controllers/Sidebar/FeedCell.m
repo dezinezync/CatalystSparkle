@@ -39,7 +39,12 @@
     
     content.prefersSideBySideTextAndSecondaryText = YES;
     
+#if TARGET_OS_MACCATALYST
+    content.imageProperties.maximumSize = CGSizeMake(16.f, 16.f);
+#else
     content.imageProperties.maximumSize = CGSizeMake(24.f, 24.f);
+#endif
+    
     content.imageProperties.cornerRadius = 3.f;
     content.imageProperties.reservedLayoutSize = content.imageProperties.maximumSize;
     

@@ -24,9 +24,9 @@
         return;
     }
     
-    UIListContentConfiguration *content = [UIListContentConfiguration sidebarHeaderConfiguration];
+    UIListContentConfiguration *content = [UIListContentConfiguration sidebarSubtitleCellConfiguration];
     
-    content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     content.text = item.title;
     
     if (SharedPrefs.showUnreadCounts == YES) {
@@ -41,6 +41,7 @@
         
     }
     
+    content.textProperties.color = UIColor.secondaryLabelColor;
     content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
     
     content.prefersSideBySideTextAndSecondaryText = YES;
@@ -58,6 +59,29 @@
     UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
     
     disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
+    
+#if TARGET_OS_MACCATALYST
+    disclosure.actionHandler = ^{
+        
+        NSDiffableDataSourceSectionSnapshot *snapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
+        
+        if ([snapshot isExpanded:item]) {
+            
+            NSLogDebug(@"item was expanded");
+            
+            [snapshot collapseItems:@[item]];
+        }
+        else {
+            
+            NSLogDebug(@"item was collapsed");
+            
+            [snapshot expandItems:@[item]];
+        }
+        
+        [self.DS applySnapshot:snapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:YES];
+        
+    };
+#endif
     
     self.accessories = @[disclosure];
     

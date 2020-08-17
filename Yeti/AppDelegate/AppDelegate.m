@@ -377,7 +377,7 @@ AppDelegate *MyAppDelegate = nil;
     
 #if TARGET_OS_MACCATALYST
     dict[kUseSystemFontSize] = @NO;
-    dict[kFontSize] = @(23.f);
+//    dict[kFontSize] = @(23.f);
 #endif
     
     return dict;

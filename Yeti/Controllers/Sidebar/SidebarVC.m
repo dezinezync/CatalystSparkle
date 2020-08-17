@@ -59,6 +59,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         UICollectionLayoutListConfiguration *config = [[UICollectionLayoutListConfiguration alloc] initWithAppearance:appearance];
         
+        config.showsSeparators = NO;
+        
         if (section == 0 || section == 2) {
             
             return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
@@ -109,12 +111,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)setupNavigationBar {
     
+#if TARGET_OS_MACCATALYST
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+#else
+    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
     
     self.navigationItem.leftBarButtonItems = @[self.splitViewController.displayModeButtonItem, self.leftBarButtonItem];
     self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
-    
+#endif
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     // Search Controller setup
@@ -135,6 +141,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
     [refresh addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    refresh.attributedTitle = self.lastUpdateAttributedString;
+    
     self.collectionView.refreshControl = refresh;
     
     self.refreshControl = refresh;
@@ -198,9 +206,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         if (ArticlesManager.shared.folders.count) {
             
+            [foldersSnapshot appendItems:ArticlesManager.shared.folders];
+            
             for (Folder *folder in ArticlesManager.shared.folders) {
-                
-                [foldersSnapshot appendItems:@[folder]];
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
                 
@@ -436,6 +444,26 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 }
 
+- (NSAttributedString *)lastUpdateAttributedString {
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateStyle = NSDateFormatterShortStyle;
+    formatter.timeStyle = NSDateFormatterShortStyle;
+    
+    NSString *dateString = [formatter stringFromDate:(MyFeedsManager.unreadLastUpdate ?: NSDate.date)];
+    
+    NSString *formatted = formattedString(@"Last update: %@", dateString);
+    
+    NSDictionary *attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:11.f],
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor
+                                 };
+    
+    NSAttributedString *attrs = [[NSAttributedString alloc] initWithString:formatted attributes:attributes];
+    
+    return attrs;
+    
+}
+
 #pragma mark - Cell Registrations
 
 - (UICollectionViewCellRegistration *)customFeedRegister {
@@ -450,7 +478,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             content.text = item.displayTitle;
             
+#if TARGET_OS_MACCATALYST
+            content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+#else
             content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+#endif
             
             content.prefersSideBySideTextAndSecondaryText = YES;
             
@@ -511,9 +543,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FolderCell.class configurationHandler:^(__kindof FolderCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
             
             strongify(self);
-            
+
             cell.DS = self.DS;
-           
+
             [cell configure:item indexPath:indexPath];
             
         }];

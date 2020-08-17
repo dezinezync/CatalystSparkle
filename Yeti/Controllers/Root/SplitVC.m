@@ -54,6 +54,12 @@
         
         self.maximumPrimaryColumnWidth = 298.f;
         self.maximumSupplementaryColumnWidth = 375.f;
+        
+#if TARGET_OS_MACCATALYST
+        self.maximumPrimaryColumnWidth = 220.f;
+        self.maximumSupplementaryColumnWidth = 320.f;
+#endif
+        
         self.presentsWithGesture = YES;
         
         [self loadViewIfNeeded];

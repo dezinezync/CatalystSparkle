@@ -125,29 +125,17 @@
                 return;
             }
             
-            SplitVC *vc = (SplitVC *)(self.window.rootViewController);
-
-            if (!vc) {
-                return;
-            }
-
-            UINavigationController *nav = (UINavigationController *)[[vc viewControllers] firstObject];
-
-            if (!nav) {
-                return;
-            }
-
-            FeedsVC *feedsVC = [[nav viewControllers] firstObject];
-
-            if (!feedsVC) {
+            SidebarVC *vc = self.coordinator.sidebarVC;
+            
+            if (vc == nil) {
                 return;
             }
             
             [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
-                [feedsVC setupData];
+                [vc setupData];
 
-                [feedsVC.refreshControl setAttributedTitle:[feedsVC lastUpdateAttributedString]];
+                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
                 
             } error:nil];
             

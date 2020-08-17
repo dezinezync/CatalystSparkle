@@ -113,7 +113,15 @@
     
     [super viewWillAppear:animated];
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
+
+#endif 
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
@@ -205,7 +213,7 @@
     
 #if TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.hidden = YES;
+    return;
     
 #else
     
