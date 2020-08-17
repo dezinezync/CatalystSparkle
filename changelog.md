@@ -1,5 +1,9 @@
 # v2.0.0
 
+## Build 7
+
+- Images are once again openable in fullscreen mode.  
+
 ## Build 6
 
 - Implements Trailing Swipe actions on Feed Cells.

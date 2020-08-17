@@ -57,6 +57,15 @@
 		F02459CE20590F03002906C3 /* FeedsSearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F02459CD20590F03002906C3 /* FeedsSearchResults.m */; };
 		F02AFA7024CBF8A50002A699 /* CustomFeed.m in Sources */ = {isa = PBXBuildFile; fileRef = F02AFA6F24CBF8A50002A699 /* CustomFeed.m */; };
 		F02AFA9024CC00F80002A699 /* Coordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EE6CD824CABEE000E987FC /* Coordinator.m */; };
+		F02B704B24EA7E5C00DD607F /* IDMPhotoBrowser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */; };
+		F02B704C24EA7E5C00DD607F /* IDMPBLocalizations.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */; };
+		F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702424EA7E5C00DD607F /* IDMTapDetectingImageView.m */; };
+		F02B704E24EA7E5C00DD607F /* IDMUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702524EA7E5C00DD607F /* IDMUtils.m */; };
+		F02B704F24EA7E5C00DD607F /* IDMCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702724EA7E5C00DD607F /* IDMCaptionView.m */; };
+		F02B705024EA7E5C00DD607F /* IDMPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702824EA7E5C00DD607F /* IDMPhoto.m */; };
+		F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702924EA7E5C00DD607F /* IDMZoomingScrollView.m */; };
+		F02B705224EA7E5C00DD607F /* IDMPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702B24EA7E5C00DD607F /* IDMPhotoBrowser.m */; };
+		F02B705324EA7E5C00DD607F /* IDMTapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = F02B702D24EA7E5C00DD607F /* IDMTapDetectingView.m */; };
 		F032A750244D5F9A0024AC63 /* PrefsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A74F244D5F9A0024AC63 /* PrefsManager.m */; };
 		F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A759244D7D680024AC63 /* YetiThemeKit.m */; };
 		F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = F032A75B244D7D8C0024AC63 /* YetiTheme.m */; };
@@ -755,6 +764,24 @@
 		F02459CD20590F03002906C3 /* FeedsSearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsSearchResults.m; sourceTree = "<group>"; };
 		F02AFA6E24CBF8A50002A699 /* CustomFeed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomFeed.h; sourceTree = "<group>"; };
 		F02AFA6F24CBF8A50002A699 /* CustomFeed.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomFeed.m; sourceTree = "<group>"; };
+		F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPhotoBrowser.bundle; sourceTree = "<group>"; };
+		F02B701F24EA7E5C00DD607F /* IDMCaptionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMCaptionView.h; sourceTree = "<group>"; };
+		F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IDMPBLocalizations.bundle; sourceTree = "<group>"; };
+		F02B702124EA7E5C00DD607F /* IDMZoomingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMZoomingScrollView.h; sourceTree = "<group>"; };
+		F02B702224EA7E5C00DD607F /* IDMPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMPhoto.h; sourceTree = "<group>"; };
+		F02B702324EA7E5C00DD607F /* IDMPhotoBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMPhotoBrowser.h; sourceTree = "<group>"; };
+		F02B702424EA7E5C00DD607F /* IDMTapDetectingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMTapDetectingImageView.m; sourceTree = "<group>"; };
+		F02B702524EA7E5C00DD607F /* IDMUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMUtils.m; sourceTree = "<group>"; };
+		F02B702624EA7E5C00DD607F /* IDMTapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMTapDetectingView.h; sourceTree = "<group>"; };
+		F02B702724EA7E5C00DD607F /* IDMCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMCaptionView.m; sourceTree = "<group>"; };
+		F02B702824EA7E5C00DD607F /* IDMPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMPhoto.m; sourceTree = "<group>"; };
+		F02B702924EA7E5C00DD607F /* IDMZoomingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMZoomingScrollView.m; sourceTree = "<group>"; };
+		F02B702A24EA7E5C00DD607F /* IDMPhotoProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMPhotoProtocol.h; sourceTree = "<group>"; };
+		F02B702B24EA7E5C00DD607F /* IDMPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMPhotoBrowser.m; sourceTree = "<group>"; };
+		F02B702C24EA7E5C00DD607F /* IDMPBConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMPBConstants.h; sourceTree = "<group>"; };
+		F02B702D24EA7E5C00DD607F /* IDMTapDetectingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IDMTapDetectingView.m; sourceTree = "<group>"; };
+		F02B702E24EA7E5C00DD607F /* IDMUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMUtils.h; sourceTree = "<group>"; };
+		F02B702F24EA7E5C00DD607F /* IDMTapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDMTapDetectingImageView.h; sourceTree = "<group>"; };
 		F032A739244D5F9A0024AC63 /* PrefsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefsManager.h; sourceTree = "<group>"; };
 		F032A74F244D5F9A0024AC63 /* PrefsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrefsManager.m; sourceTree = "<group>"; };
 		F032A758244D7D670024AC63 /* YetiThemeKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YetiThemeKit.h; sourceTree = "<group>"; };
@@ -1401,6 +1428,32 @@
 				F01E6E0F24AC6C2500D1BD6E /* red-dark@3x.png */,
 			);
 			path = "red-dark";
+			sourceTree = "<group>";
+		};
+		F02B701D24EA7E5C00DD607F /* IDMPhotoBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				F02B701E24EA7E5C00DD607F /* IDMPhotoBrowser.bundle */,
+				F02B701F24EA7E5C00DD607F /* IDMCaptionView.h */,
+				F02B702024EA7E5C00DD607F /* IDMPBLocalizations.bundle */,
+				F02B702124EA7E5C00DD607F /* IDMZoomingScrollView.h */,
+				F02B702224EA7E5C00DD607F /* IDMPhoto.h */,
+				F02B702324EA7E5C00DD607F /* IDMPhotoBrowser.h */,
+				F02B702424EA7E5C00DD607F /* IDMTapDetectingImageView.m */,
+				F02B702524EA7E5C00DD607F /* IDMUtils.m */,
+				F02B702624EA7E5C00DD607F /* IDMTapDetectingView.h */,
+				F02B702724EA7E5C00DD607F /* IDMCaptionView.m */,
+				F02B702824EA7E5C00DD607F /* IDMPhoto.m */,
+				F02B702924EA7E5C00DD607F /* IDMZoomingScrollView.m */,
+				F02B702A24EA7E5C00DD607F /* IDMPhotoProtocol.h */,
+				F02B702B24EA7E5C00DD607F /* IDMPhotoBrowser.m */,
+				F02B702C24EA7E5C00DD607F /* IDMPBConstants.h */,
+				F02B702D24EA7E5C00DD607F /* IDMTapDetectingView.m */,
+				F02B702E24EA7E5C00DD607F /* IDMUtils.h */,
+				F02B702F24EA7E5C00DD607F /* IDMTapDetectingImageView.h */,
+			);
+			name = IDMPhotoBrowser;
+			path = Vendors/IDMPhotoBrowser/IDMPhotoBrowser;
 			sourceTree = "<group>";
 		};
 		F032A765244D89AF0024AC63 /* themes */ = {
@@ -2199,6 +2252,7 @@
 		F0D3002D1FE263330040D10D /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				F02B701D24EA7E5C00DD607F /* IDMPhotoBrowser */,
 				F069AF7B249496E100BAB6FB /* SDWebImage.xcodeproj */,
 				F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */,
 				F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */,
@@ -2227,8 +2281,8 @@
 		F0E5F4E624CEC854007E6D1E /* Photos */ = {
 			isa = PBXGroup;
 			children = (
-				F0E5F4E724CEC854007E6D1E /* PhotosController.m */,
 				F0E5F4E824CEC854007E6D1E /* PhotosController.h */,
+				F0E5F4E724CEC854007E6D1E /* PhotosController.m */,
 			);
 			path = Photos;
 			sourceTree = "<group>";
@@ -2790,6 +2844,7 @@
 				F01E6E1524AC6C2500D1BD6E /* gold-dark@3x.png in Resources */,
 				F032A76F244D89AF0024AC63 /* light-dark.json in Resources */,
 				F070C35A1FBAE7A200912CCF /* ArticleVC.xib in Resources */,
+				F02B704C24EA7E5C00DD607F /* IDMPBLocalizations.bundle in Resources */,
 				F01E6E1E24AC6C2500D1BD6E /* gold~ipad@2x.png in Resources */,
 				F0469DF420A0528000163C4E /* black.css in Resources */,
 				F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
@@ -2848,6 +2903,7 @@
 				F0A5AEB420C19DA200CFA1D2 /* IBMPlexSans-LightItalic.ttf in Resources */,
 				F0A5AEBE20C19DA200CFA1D2 /* IBMPlexSans-Thin.ttf in Resources */,
 				F0B21BBC208C7F4F007E5A3B /* NewFolderVC.xib in Resources */,
+				F02B704B24EA7E5C00DD607F /* IDMPhotoBrowser.bundle in Resources */,
 				F01E6E1724AC6C2500D1BD6E /* gold-dark.png in Resources */,
 				F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */,
 				F064A5332157638500A385AD /* LaunchVC.xib in Resources */,
@@ -2985,8 +3041,11 @@
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,
 				F03AC034205533D900FB111A /* CodeTheme.m in Sources */,
+				F02B705224EA7E5C00DD607F /* IDMPhotoBrowser.m in Sources */,
 				F05041E72461442800A65C1C /* FeedOperation.m in Sources */,
+				F02B704F24EA7E5C00DD607F /* IDMCaptionView.m in Sources */,
 				F0F10A9E244C8020009FC108 /* DTTimePeriodCollection.m in Sources */,
+				F02B705324EA7E5C00DD607F /* IDMTapDetectingView.m in Sources */,
 				F022B0DF20DC30DE00030185 /* AccentButton.m in Sources */,
 				F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */,
 				F0B21BBB208C7F4F007E5A3B /* NewFolderVC.m in Sources */,
@@ -3023,11 +3082,13 @@
 				F02459C82058FFF1002906C3 /* FeedsVC+Search.m in Sources */,
 				F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */,
 				F0A589F5205A580300488015 /* LinguisticSearch.m in Sources */,
+				F02B705124EA7E5C00DD607F /* IDMZoomingScrollView.m in Sources */,
 				F070C3591FBAE7A200912CCF /* ArticleVC.m in Sources */,
 				F0C7E3D220627809001E4BE4 /* NewFeedVC.m in Sources */,
 				F092C5CE246C288B007FDE8A /* FeedVC.m in Sources */,
 				F0D01CCB2118683B003A01DD /* MiscVC.m in Sources */,
 				F05041DB2461442800A65C1C /* MetaOpenGraph.m in Sources */,
+				F02B704E24EA7E5C00DD607F /* IDMUtils.m in Sources */,
 				F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */,
 				F0F10A9C244C8020009FC108 /* DTConstants.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
@@ -3053,6 +3114,7 @@
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
 				F0F10A9D244C8020009FC108 /* DTError.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
+				F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */,
@@ -3075,6 +3137,7 @@
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
 				F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,
 				F0D07201205E960900A042CD /* ExternalAppsVC.m in Sources */,
+				F02B705024EA7E5C00DD607F /* IDMPhoto.m in Sources */,
 				F05041D92461442800A65C1C /* Subscription.m in Sources */,
 				F0B69C9F21B920A10032FD5A /* YTPlayer.m in Sources */,
 				F0A495B524711CE500E9BA13 /* ArticleCell.m in Sources */,
