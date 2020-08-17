@@ -206,9 +206,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         if (ArticlesManager.shared.folders.count) {
             
+            [foldersSnapshot appendItems:ArticlesManager.shared.folders];
+            
             for (Folder *folder in ArticlesManager.shared.folders) {
-                
-                [foldersSnapshot appendItems:@[folder]];
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
                 
@@ -543,9 +543,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         UICollectionViewCellRegistration *folderRegistration = [UICollectionViewCellRegistration registrationWithCellClass:FolderCell.class configurationHandler:^(__kindof FolderCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Folder *  _Nonnull item) {
             
             strongify(self);
-            
+
             cell.DS = self.DS;
-           
+
             [cell configure:item indexPath:indexPath];
             
         }];
