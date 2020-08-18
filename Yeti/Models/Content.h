@@ -1,11 +1,13 @@
 #import <DZKit/DZObject.h>
 #import "Range.h"
 
-#import <DZKit/DZDatasourceModel.h>
+#import "PrefsManager.h"
 
 @interface Content : DZObject <NSSecureCoding, NSCopying> {
 
 }
+
+@property (class, nonatomic, weak) PrefsManager *tk_prefsManager;
 
 @property (nonatomic, copy) NSString *content;
 @property (nonatomic, copy) NSArray <Range *> * ranges;
@@ -18,7 +20,7 @@
 @property (nonatomic, strong) NSDictionary *attributes;
 @property (nonatomic, copy) NSString *videoID;
 
-/// Determines if this Content block was programatically created from the enclosures. 
+/// Determines if this Content block was programatically created from the enclosures.
 @property (nonatomic, assign) BOOL fromEnclosure;
 
 // for images
@@ -34,6 +36,8 @@
 
 - (NSDictionary *)dictionaryRepresentation;
 
-- (NSString *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width;
+- (NSURL *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width;
+
+- (NSURL *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width darkModeOnly:(BOOL)darkModeOnly;
 
 @end

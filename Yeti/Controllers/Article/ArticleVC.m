@@ -14,16 +14,15 @@
 #import "AppDelegate.h"
 
 #import "Content.h"
-#import <DZTextKit/DZTextKitViews.h>
-#import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/CheckWifi.h>
+#import "YetiConstants.h"
+#import "CheckWifi.h"
 
-#import <DZTextKit/NSAttributedString+Trimming.h>
+#import "NSAttributedString+Trimming.h"
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
-#import <DZTextKit/NSString+HTML.h>
+#import "NSString+HTML.h"
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
@@ -34,7 +33,22 @@
 #import "YetiThemeKit.h"
 #import "YTPlayer.h"
 #import "YTExtractor.h"
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
+
+#import "Paragraph.h"
+#import "Heading.h"
+#import "Blockquote.h"
+#import "List.h"
+#import "Aside.h"
+#import "Youtube.h"
+#import "Image.h"
+#import "PaddedLabel.h"
+#import "Gallery.h"
+#import "GalleryCell.h"
+#import "LineBreak.h"
+#import "Code.h"
+#import "Tweet.h"
+#import "TweetImage.h"
 
 #if TARGET_OS_MACCATALYST
 

@@ -8,10 +8,10 @@
 
 #import "ImportVC.h"
 #import "YetiThemeKit.h"
-#import <DZTextKit/NSString+GTMNSStringHTMLAdditions.h>
+#import "NSString+GTMNSStringHTMLAdditions.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
-#import <DZKit/DZBasicDatasource.h>
+
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSString+Extras.h>
 
@@ -50,10 +50,10 @@ NSString *const kImportCell = @"importCell";
 
 @end
 
-@interface ImportVC () <DZDatasource>
+@interface ImportVC () 
 
 @property (nonatomic, weak) UIView *hairlineView;
-@property (nonatomic, strong) DZBasicDatasource *DS;
+//@property (nonatomic, strong) DZBasicDatasource *DS;
 
 @property (nonatomic, assign) NSInteger lastImported;
 @property (nonatomic, assign) NSInteger total;
@@ -85,7 +85,7 @@ NSString *const kImportCell = @"importCell";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    self.DS.data = self.unmappedFeeds;
+//    self.DS.data = self.unmappedFeeds;
 
 }
 
@@ -114,8 +114,8 @@ NSString *const kImportCell = @"importCell";
 - (void)setupTable {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
-    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
+//    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
+//    self.DS.delegate = self;
     
     self.tableView.tableFooterView = [UIView new];
     self.tableView.backgroundColor = theme.tableColor;
@@ -185,19 +185,19 @@ NSString *const kImportCell = @"importCell";
     cell.textLabel.textColor = theme.titleColor;
     cell.detailTextLabel.textColor = theme.captionColor;
     
-    id obj = [self.DS objectAtIndexPath:indexPath];
-    
-    if ([obj isKindOfClass:Feed.class]) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        cell.textLabel.text = [(Feed *)obj title];
-        cell.detailTextLabel.text = [(Feed *)obj url];
-    }
-    else {
-        cell.textLabel.text = [obj valueForKey:@"url"];
-        
-        NSString *folder = [obj valueForKey:@"folder"];
-        cell.detailTextLabel.text = folder;
-    }
+//    id obj = [self.DS objectAtIndexPath:indexPath];
+//
+//    if ([obj isKindOfClass:Feed.class]) {
+//        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+//        cell.textLabel.text = [(Feed *)obj title];
+//        cell.detailTextLabel.text = [(Feed *)obj url];
+//    }
+//    else {
+//        cell.textLabel.text = [obj valueForKey:@"url"];
+//
+//        NSString *folder = [obj valueForKey:@"folder"];
+//        cell.detailTextLabel.text = folder;
+//    }
     
     cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
     

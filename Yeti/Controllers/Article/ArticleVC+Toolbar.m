@@ -15,7 +15,7 @@
 
 #import "YetiThemeKit.h"
 
-#import <DZTextKit/Paragraph.h>
+#import "Paragraph.h"
 #import "FeedsManager.h"
 
 #import "FeedVC.h"
@@ -23,7 +23,7 @@
 #import "SplitVC.h"
 #import "CustomizeVC.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 

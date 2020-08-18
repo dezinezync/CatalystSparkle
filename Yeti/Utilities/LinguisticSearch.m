@@ -12,14 +12,6 @@
 
 #import "DTTimePeriod.h"
 
-#ifndef NSLogDebug
-#ifdef DEBUG
-#   define NSLogDebug(...) NSLog(__VA_ARGS__)
-#else
-#   define NSLogDebug(...) (void)0
-#endif
-#endif
-
 LinguisticPairType const LinguisticPairTypeDates = @"linguisticPair.dates";
 LinguisticPairType const LinguisticPairTypeOthers = @"linguisticPair.others";
 LinguisticPairType const LinguisticPairTypeContext = @"linguisticPair.context";
@@ -43,9 +35,9 @@ static NSArray<NSString *> *_knownDateTags;
     NSMutableArray <LinguisticTagPair> *tokens = @[].mutableCopy;
     
     [linguisticTagger enumerateTagsInRange:NSMakeRange(0, text.length) scheme:NSLinguisticTagSchemeNameTypeOrLexicalClass options:options usingBlock:^(NSLinguisticTag  _Nullable tag, NSRange tokenRange, NSRange sentenceRange, BOOL * _Nonnull stop) {
-        
-        NSLogDebug(@"Tag: %@\nToken: %@\nSentence: %@", tag, [text substringWithRange:tokenRange], [text substringWithRange:sentenceRange]);
-        
+#ifdef DEBUG
+        NSLog(@"Tag: %@\nToken: %@\nSentence: %@", tag, [text substringWithRange:tokenRange], [text substringWithRange:sentenceRange]);
+#endif
         [tokens addObject:@{tag: [text substringWithRange:tokenRange]}];
     }];
     

@@ -7,15 +7,15 @@
 //
 
 #import "YetiThemeKit.h"
-#import <DZTextKit/UIColor+Hex.h>
-#import <DZTextKit/YetiConstants.h>
+#import "UIColor+Hex.h"
+#import "YetiConstants.h"
 
 #import <DZKit/NSString+Extras.h>
 #import "YetiTheme.h"
 
-#import <DZTextKit/Paragraph.h>
-#import <DZTextKit/Image.h>
-#import <DZTextKit/Gallery.h>
+#import "Paragraph.h"
+#import "Image.h"
+#import "Gallery.h"
 
 YetiThemeKit * YTThemeKit;
 

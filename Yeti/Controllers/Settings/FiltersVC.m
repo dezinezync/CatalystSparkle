@@ -7,7 +7,6 @@
 //
 
 #import "FiltersVC.h"
-#import <DZKit/DZSectionedDatasource.h>
 #import "FilterInputCell.h"
 
 #import "FeedsManager.h"
@@ -18,12 +17,12 @@
 
 NSString *const kFiltersCell = @"filterCell";
 
-@interface FiltersVC () <DZSDatasource, UITextFieldDelegate> {
+@interface FiltersVC () <UITextFieldDelegate> {
     NSString *_keywordInput;
 }
 
-@property (nonatomic, strong) DZSectionedDatasource *DS;
-@property (nonatomic, weak) DZBasicDatasource *DS2;
+//@property (nonatomic, strong) DZSectionedDatasource *DS;
+//@property (nonatomic, weak) DZBasicDatasource *DS2;
 
 @end
 
@@ -39,16 +38,16 @@ NSString *const kFiltersCell = @"filterCell";
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kFiltersCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FilterInputCell.class) bundle:nil] forCellReuseIdentifier:kFilterInputCell];
     
-    self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
-    
-    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-    DS1.data = @[@"input"];
-    
-    DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
-    
-    self.DS.datasources = @[DS1, DS2];
-    self.DS2 = [self.DS.datasources lastObject];
+//    self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
+//    self.DS.delegate = self;
+//
+//    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
+//    DS1.data = @[@"input"];
+//
+//    DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
+//
+//    self.DS.datasources = @[DS1, DS2];
+//    self.DS2 = [self.DS.datasources lastObject];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -61,7 +60,7 @@ NSString *const kFiltersCell = @"filterCell";
         
         strongify(self);
         
-        self.DS2.data = [responseObject reverseObjectEnumerator].allObjects;
+//        self.DS2.data = [responseObject reverseObjectEnumerator].allObjects;
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
@@ -92,7 +91,7 @@ NSString *const kFiltersCell = @"filterCell";
     
     if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kFiltersCell forIndexPath:indexPath];
-        cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
+//        cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
         
         cell.textLabel.textColor = theme.titleColor;
         cell.detailTextLabel.textColor = theme.captionColor;
@@ -134,24 +133,24 @@ NSString *const kFiltersCell = @"filterCell";
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
-        NSString *word = [self.DS2 objectAtIndexPath:indexPath];
+//        NSString *word = [self.DS2 objectAtIndexPath:indexPath];
         
         weakify(self);
         
-        [MyFeedsManager removeFilter:word success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if ([responseObject boolValue]) {
-                strongify(self);
-                self.DS2.data = [self.DS2.data rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                    return ![obj isEqualToString:word];
-                }];
-            }
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
-            
-        }];
+//        [MyFeedsManager removeFilter:word success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            if ([responseObject boolValue]) {
+//                strongify(self);
+////                self.DS2.data = [self.DS2.data rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+////                    return ![obj isEqualToString:word];
+////                }];
+//            }
+//            
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
+//            
+//        }];
         
     }
 }
@@ -173,8 +172,8 @@ NSString *const kFiltersCell = @"filterCell";
     NSString *keyword = [self->_keywordInput copy];
     
     // Immediately add the filter
-    NSArray *data = [@[keyword] arrayByAddingObjectsFromArray:self.DS2.data];
-    self.DS2.data = data;
+//    NSArray *data = [@[keyword] arrayByAddingObjectsFromArray:self.DS2.data];
+//    self.DS2.data = data;
     self->_keywordInput = nil;
     
     asyncMain(^{
@@ -188,12 +187,12 @@ NSString *const kFiltersCell = @"filterCell";
         
         strongify(self);
         
-        NSArray *keywords = self.DS2.data;
-        keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-            return [obj isEqualToString:keyword] == NO;
-        }];
-        
-        self.DS2.data = keywords;
+//        NSArray *keywords = self.DS2.data;
+//        keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+//            return [obj isEqualToString:keyword] == NO;
+//        }];
+//        
+//        self.DS2.data = keywords;
         
     }];
     

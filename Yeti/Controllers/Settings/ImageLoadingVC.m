@@ -7,8 +7,8 @@
 //
 
 #import "ImageLoadingVC.h"
-#import <DZTextKit/LayoutConstants.h>
-#import <DZTextKit/YetiConstants.h>
+#import "LayoutConstants.h"
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 #import "PrefsManager.h"
 

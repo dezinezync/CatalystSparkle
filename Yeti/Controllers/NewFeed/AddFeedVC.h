@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "NewFeedDeckController.h"
 
-#import <DZKit/DZBasicDatasource.h>
 #import <DZKit/NSString+Extras.h>
 
 #import "UIViewController+ScrollLoad.h"
@@ -27,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *errorTitle;
 @property (nonatomic, copy) NSString *errorBody;
 
-@property (nonatomic, strong, readonly) DZBasicDatasource *DS;
+//@property (nonatomic, strong, readonly) DZBasicDatasource *DS;
 
 @property (weak) NSURLSessionTask *networkTask;
 

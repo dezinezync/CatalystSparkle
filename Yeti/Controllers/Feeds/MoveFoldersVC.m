@@ -7,7 +7,6 @@
 //
 
 #import "MoveFoldersVC.h"
-#import <DZKit/DZSectionedDatasource.h>
 
 #import <DZKit/AlertManager.h>
 #import "YetiThemeKit.h"
@@ -15,12 +14,12 @@
 
 static NSString *const kMoveFolderCell = @"movefoldercell";
 
-@interface MoveFoldersVC () <DZSDatasource> {
+@interface MoveFoldersVC () {
     BOOL _hasCalledDelegate;
 }
 
-@property (nonatomic, strong) DZSectionedDatasource *DS;
-@property (nonatomic, weak) DZBasicDatasource *DS2;
+//@property (nonatomic, strong) DZSectionedDatasource *DS;
+//@property (nonatomic, weak) DZBasicDatasource *DS2;
 
 @property (nonatomic, weak, readwrite) Feed *feed;
 @property (nonatomic, copy) NSNumber *originalFolderID;
@@ -48,18 +47,18 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     self.title = @"Move to Folder";
     
-    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-    DS1.data = @[@"None"];
-    
-    DZBasicDatasource *DS2= [[DZBasicDatasource alloc] init];
-    DS2.data = [ArticlesManager.shared folders];
-    
-    DZSectionedDatasource *DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
-    DS.datasources = @[DS1, DS2];
-    DS.delegate = self;
-    
-    self.DS = DS;
-    self.DS2 = [[self.DS datasources] lastObject];
+//    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
+//    DS1.data = @[@"None"];
+//
+//    DZBasicDatasource *DS2= [[DZBasicDatasource alloc] init];
+//    DS2.data = [ArticlesManager.shared folders];
+//
+//    DZSectionedDatasource *DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
+//    DS.datasources = @[DS1, DS2];
+//    DS.delegate = self;
+//
+//    self.DS = DS;
+//    self.DS2 = [[self.DS datasources] lastObject];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMoveFolderCell];
     
@@ -101,27 +100,27 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMoveFolderCell forIndexPath:indexPath];
     
     // Configure the cell...
-    if (indexPath.section == 0) {
-        cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
-        
-        if (self.feed.folderID == nil) {
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        }
-        else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
-    }
-    else {
-        Folder *folder = (Folder *)[self.DS objectAtIndexPath:indexPath];
-        cell.textLabel.text = [folder title];
-        
-        if (self.feed.folderID && [self.feed.folderID isEqualToNumber:folder.folderID]) {
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        }
-        else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
-    }
+//    if (indexPath.section == 0) {
+//        cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
+//        
+//        if (self.feed.folderID == nil) {
+//            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+//        }
+//        else {
+//            cell.accessoryType = UITableViewCellAccessoryNone;
+//        }
+//    }
+//    else {
+//        Folder *folder = (Folder *)[self.DS objectAtIndexPath:indexPath];
+//        cell.textLabel.text = [folder title];
+//        
+//        if (self.feed.folderID && [self.feed.folderID isEqualToNumber:folder.folderID]) {
+//            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+//        }
+//        else {
+//            cell.accessoryType = UITableViewCellAccessoryNone;
+//        }
+//    }
     
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     cell.textLabel.textColor = theme.titleColor;
@@ -149,10 +148,10 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         self.feed.folder = nil;
     }
     else {
-        Folder *newFolder = [self.DS2 objectAtIndexPath:indexPath];
-        
-        self.feed.folderID = newFolder.folderID;
-        self.feed.folder = newFolder;
+//        Folder *newFolder = [self.DS2 objectAtIndexPath:indexPath];
+//
+//        self.feed.folderID = newFolder.folderID;
+//        self.feed.folder = newFolder;
     }
     
     NSArray <NSIndexPath *> *indices = @[indexPath];
@@ -161,14 +160,14 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         
         __block NSUInteger index = NSNotFound;
         
-        [self.DS2.data enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            
-            if ([obj.folderID isEqualToNumber:currentFolder]) {
-                index = idx;
-                *stop = YES;
-            }
-            
-        }];
+//        [self.DS2.data enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//            
+//            if ([obj.folderID isEqualToNumber:currentFolder]) {
+//                index = idx;
+//                *stop = YES;
+//            }
+//            
+//        }];
         
         if (index != NSNotFound) {
             indices = [indices arrayByAddingObject:[NSIndexPath indexPathForRow:index inSection:1]];

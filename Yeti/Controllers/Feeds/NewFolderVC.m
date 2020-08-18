@@ -15,7 +15,7 @@
 #import "FeedsManager.h"
 #import "YTNavigationController.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 @interface NewFolderVC () {
     BOOL _isUpdating;

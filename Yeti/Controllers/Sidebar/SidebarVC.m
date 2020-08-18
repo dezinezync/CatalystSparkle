@@ -12,7 +12,7 @@
 #import <DZKit/NSString+Extras.h>
 #import <SDWebImage/SDWebImageManager.h>
 
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
 
 #import "Coordinator.h"
 

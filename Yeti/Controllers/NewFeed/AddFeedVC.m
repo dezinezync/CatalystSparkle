@@ -19,12 +19,10 @@
 
 #import "AppDelegate+Routing.h"
 
-@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, DZDatasource, UISearchResultsUpdating, ScrollLoading>
+@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, ScrollLoading>
 
 @property (nonatomic, strong) UIActivityIndicatorView *loaderView;
 @property (nonatomic, strong) UILabel *errorLabel;
-
-@property (nonatomic, strong, readwrite) DZBasicDatasource *DS;
 
 @property (nonatomic, assign) NSInteger selected;
 @property (nonatomic, copy) NSString *query;
@@ -67,9 +65,9 @@
     self.selected = NSNotFound;
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
-    
-    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
+//
+//    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
+//    self.DS.delegate = self;
     
     [self setupSearchController];
     [self setupDefaultViews];
@@ -122,20 +120,20 @@
         return self.errorLabel;
     }
     
-    if (self.DS.state == DZDatasourceLoading) {
-        [self.loaderView startAnimating];
-        return self.loaderView;
-    }
-    else {
-        if ([self.loaderView isAnimating]) {
-            [self.loaderView stopAnimating];
-        }
-    }
-    
-    if (self.DS.state == DZDatasourceError && self.page == 0) {
-        [self setupErrorLabel];
-        return self.errorLabel;
-    }
+//    if (self.DS.state == DZDatasourceLoading) {
+//        [self.loaderView startAnimating];
+//        return self.loaderView;
+//    }
+//    else {
+//        if ([self.loaderView isAnimating]) {
+//            [self.loaderView stopAnimating];
+//        }
+//    }
+//
+//    if (self.DS.state == DZDatasourceError && self.page == 0) {
+//        [self setupErrorLabel];
+//        return self.errorLabel;
+//    }
     
     // the user entered a URL which has no RSS feeds on it
     if (self.searchBar.selectedScopeButtonIndex == 0) {
@@ -151,14 +149,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
-    
+//    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+//
     AddFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:kAddFeedCell forIndexPath:indexPath];
-    
-    [cell configure:feed];
-    
-    cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    
+//
+//    [cell configure:feed];
+//
+//    cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+//
     return cell;
     
 }
@@ -202,17 +200,17 @@
         [self.searchBar resignFirstResponder];
     }
     
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
-    
-    if (feed) {
-        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-        vc.exploring = YES;
-        
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    else {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    }
+//    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+//
+//    if (feed) {
+//        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+//        vc.exploring = YES;
+//
+//        [self.navigationController pushViewController:vc animated:YES];
+//    }
+//    else {
+//        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+//    }
 
 }
 
@@ -251,9 +249,9 @@
     self.tableView.tableFooterView = [UIView new];
     
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AddFeedCell.class) bundle:nil] forCellReuseIdentifier:kAddFeedCell];
-    self.DS.addAnimation = UITableViewRowAnimationTop;
-    self.DS.deleteAnimation = UITableViewRowAnimationFade;
-    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+//    self.DS.addAnimation = UITableViewRowAnimationTop;
+//    self.DS.deleteAnimation = UITableViewRowAnimationFade;
+//    self.DS.reloadAnimation = UITableViewRowAnimationFade;
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose:)];
     
@@ -398,78 +396,78 @@
         [self.searchBar resignFirstResponder];
     }
     
-    if (self.selected != NSNotFound) {
-        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
-        
-        if (feed == nil) {
-            self.selected = NSNotFound;
-            return;
-        }
-        
-        NSString *path = feed.url;
-        
-        NSURL *URL = [NSURL URLWithString:path];
-        
-        weakify(self);
-        
-        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            if ([responseObject isKindOfClass:Feed.class]) {
-                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
-                
-                weakify(self);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                    [self.notificationGenerator prepare];
-                });
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.selected = NSNotFound;
-                    [self didTapClose:nil];
-                });
-                
-                return;
-            }
-            
-            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
-            
-            asyncMain(^{
-                self.cancelButton.enabled = YES;
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            if (error.code == 304) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    self.selected = NSNotFound;
-                    [self didTapClose:nil];
-                    
-                });
-                return;
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-                [self.notificationGenerator prepare];
-            });
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.cancelButton.enabled = YES;
-            });
-            
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-            
-        }];
-        
-        return;
-    }
+//    if (self.selected != NSNotFound) {
+//        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
+//        
+//        if (feed == nil) {
+//            self.selected = NSNotFound;
+//            return;
+//        }
+//        
+//        NSString *path = feed.url;
+//        
+//        NSURL *URL = [NSURL URLWithString:path];
+//        
+//        weakify(self);
+//        
+//        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            strongify(self);
+//            
+//            if ([responseObject isKindOfClass:Feed.class]) {
+//                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
+//                
+//                weakify(self);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+//                    [self.notificationGenerator prepare];
+//                });
+//                
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    self.selected = NSNotFound;
+//                    [self didTapClose:nil];
+//                });
+//                
+//                return;
+//            }
+//            
+//            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+//            
+//            asyncMain(^{
+//                self.cancelButton.enabled = YES;
+//            });
+//            
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            strongify(self);
+//            
+//            if (error.code == 304) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    
+//                    self.selected = NSNotFound;
+//                    [self didTapClose:nil];
+//                    
+//                });
+//                return;
+//            }
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+//                [self.notificationGenerator prepare];
+//            });
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                self.cancelButton.enabled = YES;
+//            });
+//            
+//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+//            
+//        }];
+//        
+//        return;
+//    }
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
@@ -498,8 +496,8 @@
         self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         // this prevents it from switching to the tab and then running the search
         self.searchBar.text = nil;
-        self.DS.data = @[];
-        self.DS.state = DZDatasourceDefault;
+//        self.DS.data = @[];
+//        self.DS.state = DZDatasourceDefault;
         
         if ([self.searchBar isFirstResponder] == NO) {
             [self.searchBar becomeFirstResponder];
@@ -558,8 +556,8 @@
     self.loadedLast = NO;
     self.selected = NSNotFound;
     
-    self.DS.data = @[];
-    self.DS.state = DZDatasourceLoading;
+//    self.DS.data = @[];
+//    self.DS.state = DZDatasourceLoading;
     
     [self loadNextPage];
 }
@@ -573,61 +571,63 @@
 #pragma mark - <ScrollLoading>
 
 - (BOOL)isLoadingNext {
-    return self.DS.state == DZDatasourceLoading;
+    return NO;
+//    return self.DS.state == DZDatasourceLoading;
 }
 
 - (BOOL)cantLoadNext {
-    return self.loadedLast || self.DS.state == DZDatasourceError;
+    return YES;
+//    return self.loadedLast || self.DS.state == DZDatasourceError;
 }
 
 - (void)loadNextPage {
     
-    if (self.DS.state != DZDatasourceLoaded && self.page != 0) {
-        return;
-    }
-    
-    if (self.query == nil) {
-        return;
-    }
-    
-    self.DS.state = DZDatasourceLoading;
-    
-    NSInteger page = self.page + 1;
-    
-    self.networkTask = [MyFeedsManager search:self.query scope:self.searchBar.selectedScopeButtonIndex page:page success:^(NSArray <Feed *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.DS.state = DZDatasourceLoaded;
-        
-        if (page == 1) {
-            self.DS.data = responseObject;
-        }
-        else {
-            NSArray *existing = self.DS.data;
-            NSArray *newSet = [existing arrayByAddingObjectsFromArray:responseObject];
-            
-            self.DS.data = newSet;
-        }
-        
-        self.loadedLast = responseObject.count < 20;
-        
-        self.page = page;
-        
-        NSLogDebug(@"%ld search results", responseObject.count);
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.DS.state = DZDatasourceError;
-        
-        if (page == 1) {
-            self.errorTitle = @"Error Loading Results";
-            self.errorBody = error.localizedDescription;
-        }
-        else {
-            // Do nothing
-            NSLog(@"Error loading search query: %@", error);
-        }
-        
-    }];
+//    if (self.DS.state != DZDatasourceLoaded && self.page != 0) {
+//        return;
+//    }
+//
+//    if (self.query == nil) {
+//        return;
+//    }
+//
+//    self.DS.state = DZDatasourceLoading;
+//
+//    NSInteger page = self.page + 1;
+//
+//    self.networkTask = [MyFeedsManager search:self.query scope:self.searchBar.selectedScopeButtonIndex page:page success:^(NSArray <Feed *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.DS.state = DZDatasourceLoaded;
+//
+//        if (page == 1) {
+//            self.DS.data = responseObject;
+//        }
+//        else {
+//            NSArray *existing = self.DS.data;
+//            NSArray *newSet = [existing arrayByAddingObjectsFromArray:responseObject];
+//
+//            self.DS.data = newSet;
+//        }
+//
+//        self.loadedLast = responseObject.count < 20;
+//
+//        self.page = page;
+//
+//        NSLogDebug(@"%ld search results", responseObject.count);
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.DS.state = DZDatasourceError;
+//
+//        if (page == 1) {
+//            self.errorTitle = @"Error Loading Results";
+//            self.errorBody = error.localizedDescription;
+//        }
+//        else {
+//            // Do nothing
+//            NSLog(@"Error loading search query: %@", error);
+//        }
+//
+//    }];
     
 }
 
@@ -666,7 +666,7 @@
         
     }
     
-    self.DS.state = DZDatasourceLoading;
+//    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -693,8 +693,8 @@
                 return obj.url && ([obj.url containsString:@"wp-json"] == NO);
             }];
             
-            self.DS.data = feeds;
-            self.DS.state = DZDatasourceLoaded;
+//            self.DS.data = feeds;
+//            self.DS.state = DZDatasourceLoaded;
             
             weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -731,7 +731,7 @@
         
 //        [MyAppDelegate _dismissAddingFeedDialog];
         
-        self.DS.state = DZDatasourceError;
+//        self.DS.state = DZDatasourceError;
         
         weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{

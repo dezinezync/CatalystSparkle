@@ -13,7 +13,7 @@
 #import "YetiThemeKit.h"
 #import "StoreFooter.h"
 #import "FeedsManager.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

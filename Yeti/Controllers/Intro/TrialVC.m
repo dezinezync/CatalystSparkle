@@ -12,7 +12,7 @@
 
 #import "RMStore.h"
 #import "UIImage+Color.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>

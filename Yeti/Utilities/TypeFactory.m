@@ -8,7 +8,7 @@
 
 #import "TypeFactory.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
-#import <DZTextKit/Paragraph.h>
+#import "Paragraph.h"
 
 BOOL IS_PAD (UIViewController *viewController) {
     return viewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad;

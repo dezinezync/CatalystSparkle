@@ -1,10 +1,19 @@
 #import "Content.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
-#import "YetiConstants.h"
 
 #import "NSString+ImageProxy.h"
 
+static PrefsManager *_prefsManager=  nil;
+
 @implementation Content
+
++ (void)setTk_prefsManager:(PrefsManager *)tk_prefsManager {
+    _prefsManager = tk_prefsManager;
+}
+
++ (PrefsManager *)tk_prefsManager {
+    return _prefsManager;
+}
 
 + (BOOL)supportsSecureCoding {
     return YES;
@@ -211,7 +220,7 @@
         [self setValue:value forKey:@"images"];
     }
     else
-        DDLogWarn(@"%@ : %@-%@", NSStringFromClass(self.class), key, value);
+        NSLog(@"Warn: %@ : %@-%@", NSStringFromClass(self.class), key, value);
 }
 
 
@@ -296,68 +305,178 @@
 
 #ifndef SHARE_EXTENSION
 
-- (NSString *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width
-{
+- (NSURL *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width {
+    
+    return [self urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:NO];
+    
+}
+
+- (NSURL *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width darkModeOnly:(BOOL)darkModeOnly {
+    
     NSString *url = (self.url ?: [self.attributes valueForKey:@"src"]);
     
     BOOL usedSRCSet = NO;
     
-    NSString *sizePreference = SharedPrefs.imageLoading;
+    NSString *sizePreference = Content.tk_prefsManager.imageLoading;
     
     if (self.srcset && [self.srcset allKeys].count > 1) {
+        
         NSArray <NSString *> * sizes = [self.srcset allKeys];
         
-        if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
-            // match keys a little below the width
-            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                CGFloat compare = obj.floatValue;
-                return (compare < width && (compare - 100.f) <= width);
-            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-                return [obj1 compare:obj2 options:NSNumericSearch];
-            }];
+        __block BOOL canUseDark = NO;
+        
+        if (darkModeOnly == YES && [sizes indexOfObject:@"dark"] != NSNotFound) {
             
-            if (available.count) {
-                url = [self.srcset valueForKey:available.lastObject];
-                usedSRCSet = YES;
-            }
-        }
-        else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
-            // match keys a little above the width
-            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                CGFloat compare = obj.floatValue;
-                return (compare > width && (compare - 100.f) <= width);
-            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-                return [obj1 compare:obj2 options:NSNumericSearch];
-            }];
+            runOnMainQueueWithoutDeadlocking(^{
+                
+                UIApplication *app = UIApplication.sharedApplication;
+                NSArray <UIWindow *> *windows = app.windows;
+                
+                UIWindow *keywindow = [windows rz_find:^BOOL(UIWindow *obj, NSUInteger idx, NSArray *array) {
+                    return obj.isKeyWindow;
+                }];
+                
+                if (keywindow && keywindow.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                    
+                    canUseDark = YES;
+                    
+                }
+                
+            });
             
-            if (available.count) {
-                url = [self.srcset valueForKey:available.lastObject];
-                usedSRCSet = YES;
-            }
         }
-        else {
-            // match keys much higher than our width
-            NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                CGFloat compare = obj.floatValue;
-                return (compare > width && (compare + 200.f) >= width);
-            }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-                return [obj1 compare:obj2 options:NSNumericSearch];
-            }];
+        
+        BOOL assignedDarkImage = NO;
+        
+        if (canUseDark) {
             
-            if (available.count) {
-                url = [self.srcset valueForKey:available.lastObject];
-                usedSRCSet = YES;
+            sizes = [[self.srcset valueForKey:@"dark"] allKeys];
+            
+            NSLog(@"Using dark srcset for %@", url);
+            
+            if ( ([sizes indexOfObject:@"1x"] != NSNotFound) || ([sizes indexOfObject:@"2x"] != NSNotFound) ) {
+                
+                NSDictionary <NSString *, NSString *> *source = [self.srcset valueForKey:@"dark"];
+                
+                if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
+                    
+                    NSString *urlFromSource = [source valueForKey:@"1x"];
+                    
+                    if (urlFromSource != nil) {
+                        
+                        url = urlFromSource;
+                        usedSRCSet = YES;
+                        assignedDarkImage = YES;
+                        
+                    }
+                    
+                }
+                else {
+                    
+                    NSString *urlFromSource = [source valueForKey:@"3x"];
+                    
+                    if (urlFromSource != nil) {
+                        
+                        url = urlFromSource;
+                        usedSRCSet = YES;
+                        assignedDarkImage = YES;
+                        
+                    }
+                    else {
+                        
+                        NSString *urlFromSource = [source valueForKey:@"2x"];
+                        
+                        if (urlFromSource != nil) {
+                            
+                            url = urlFromSource;
+                            usedSRCSet = YES;
+                            assignedDarkImage = YES;
+                            
+                        }
+                        else {
+                            
+                            NSString *urlFromSource = [source valueForKey:@"1x"];
+                            
+                            if (urlFromSource != nil) {
+                                
+                                url = urlFromSource;
+                                usedSRCSet = YES;
+                                assignedDarkImage = YES;
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
             }
-            else if ([self.attributes valueForKey:@"data-large-file"]) {
-                url = [self.attributes valueForKey:@"data-large-file"];
-                usedSRCSet = YES;
-            }
+            
         }
+        
+        if (assignedDarkImage == NO) {
+            
+            NSDictionary *source = self.srcset;
+            
+            if (canUseDark) {
+                source = [self.srcset objectForKey:@"dark"];
+            }
+            
+            if ([sizePreference isEqualToString:ImageLoadingLowRes]) {
+                // match keys a little below the width
+                NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                    CGFloat compare = obj.floatValue;
+                    return (compare < width && (compare - 100.f) <= width);
+                }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                    return [obj1 compare:obj2 options:NSNumericSearch];
+                }];
+                
+                if (available.count) {
+                    url = [source valueForKey:available.lastObject];
+                    usedSRCSet = YES;
+                }
+            }
+            else if ([sizePreference isEqualToString:ImageLoadingMediumRes]) {
+                // match keys a little above the width
+                NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                    CGFloat compare = obj.floatValue;
+                    return (compare > width && (compare - 100.f) <= width);
+                }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                    return [obj1 compare:obj2 options:NSNumericSearch];
+                }];
+                
+                if (available.count) {
+                    url = [source valueForKey:available.lastObject];
+                    usedSRCSet = YES;
+                }
+            }
+            else {
+                // match keys much higher than our width
+                NSArray <NSString *> *available = [[sizes rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                    CGFloat compare = obj.floatValue;
+                    return (compare > width && (compare + 200.f) >= width);
+                }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                    return [obj1 compare:obj2 options:NSNumericSearch];
+                }];
+                
+                if (available.count) {
+                    url = [source valueForKey:available.lastObject];
+                    usedSRCSet = YES;
+                }
+                else if ([self.attributes valueForKey:@"data-large-file"]) {
+                    url = [self.attributes valueForKey:@"data-large-file"];
+                    usedSRCSet = YES;
+                }
+            }
+            
+        }
+        
     }
     
-    url = [url pathForImageProxy:usedSRCSet maxWidth:width quality:0.f];
+    url = [url pathForImageProxy:usedSRCSet maxWidth:( width ) quality:0.9f];
     
-    return url;
+    return [NSURL URLWithString:url];
 }
 
 #endif

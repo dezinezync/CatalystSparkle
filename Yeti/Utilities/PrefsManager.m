@@ -7,9 +7,9 @@
 //
 
 #import "PrefsManager.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
-#import <DZTextKit/Paragraph.h>
+#import "Paragraph.h"
 #import "Content.h"
 
 PrefsManager * SharedPrefs = nil;

@@ -8,8 +8,8 @@
 
 #import "ArticleVC+Photos.h"
 
-#import <DZTextKit/Image.h>
-#import <DZTextKit/Gallery.h>
+#import "Image.h"
+#import "Gallery.h"
 
 #import "IDMPhotoBrowser.h"
 

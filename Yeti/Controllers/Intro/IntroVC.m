@@ -13,7 +13,7 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "FeedsManager.h"
-#import <DZTextKit/PaddedLabel.h>
+#import "PaddedLabel.h"
 
 #import "LaunchVC.h"
 #import "YetiThemeKit.h"

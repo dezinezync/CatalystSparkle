@@ -7,20 +7,17 @@
 //
 
 #import "SplitVC.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "Keychain.h"
 
 #import "YetiThemeKit.h"
 #import "CodeParser.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import "YTUserID.h"
-
 #import "FeedsManager.h"
 
 #import "AppDelegate+Catalyst.h"
 #import "TwoFingerPanGestureRecognizer.h"
-#import "MainNavController.h"
 
 #import "BookmarksMigrationVC.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
@@ -155,7 +152,7 @@
 
 - (UINavigationController *)emptyVC {
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-    YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
+    UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:vc2];
     nav2.restorationIdentifier = @"emptyNav";
 //    vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
     
@@ -423,19 +420,19 @@
 #pragma mark - <UISplitViewControllerDelegate>
 
 - (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+    UINavigationController *nav = splitViewController.viewControllers.firstObject;
 
     return nav;
 }
 
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
 
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+    UINavigationController *nav = splitViewController.viewControllers.firstObject;
 
     return nav;
 }
 
-- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
+- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UINavigationController *)primaryViewController {
     
     // collapseSecondaryViewController:forSplitViewController causes the
     // UINavigationController to be pushed on the the stack of the primary
@@ -466,7 +463,7 @@
         // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
         return YES;
     }
-    else if ([secondaryViewController isKindOfClass:YTNavigationController.class]
+    else if ([secondaryViewController isKindOfClass:UINavigationController.class]
              && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
         // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
         return YES;

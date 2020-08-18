@@ -8,7 +8,7 @@
 
 #import "ArticleVC+Toolbar.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
-#import <DZTextKit/Gallery.h>
+#import "Gallery.h"
 
 @implementation ArticleVC (Keyboard)
 

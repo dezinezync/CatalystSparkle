@@ -12,12 +12,12 @@
 
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
-#import <DZTextKit/PaddedLabel.h>
+#import "PaddedLabel.h"
 #import "YetiThemeKit.h"
 
 #import <DZKit/NSString+Extras.h>
-#import <DZTextKit/CheckWifi.h>
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "CheckWifi.h"
+#import "NSString+ImageProxy.h"
 
 #import "Coordinator.h"
 

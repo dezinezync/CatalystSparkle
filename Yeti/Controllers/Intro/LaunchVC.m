@@ -8,7 +8,6 @@
 
 #import "LaunchVC.h"
 #import "TrialVC.h"
-#import "IdentityVC.h"
 
 #import "YetiThemeKit.h"
 
@@ -92,14 +91,6 @@
     self.subtitleLabel.textColor = theme.subtitleColor;
 }
 
-- (IBAction)didTapButton:(id)sender {
-    
-    IdentityVC *vc = [[IdentityVC alloc] initWithNibName:NSStringFromClass(IdentityVC.class) bundle:nil];
-    
-    [self showViewController:vc sender:self];
-    
-}
-
 - (void)didTapSignIn:(id)sender {
     
     if (sender != self.signinButton) {
@@ -164,7 +155,7 @@
             if ([error.localizedDescription isEqualToString:@"User not found"]) {
                 // create the new user.
                 
-                MyFeedsManager.userIDManager.UUIDString = userIdentifier;
+                MyFeedsManager.user.uuid = userIdentifier;
                 
                 [MyFeedsManager updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                     
@@ -173,7 +164,7 @@
                     NSDictionary *user = [responseObject objectForKey:@"user"];
                     NSNumber *userID = [user objectForKey:@"id"];
                     
-                    MyFeedsManager.userIDManager.userID = userID;
+                    MyFeedsManager.user.userID = userID;
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];

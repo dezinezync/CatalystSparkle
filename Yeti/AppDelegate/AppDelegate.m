@@ -13,13 +13,13 @@
 #import <JLRoutes/JLRoutes.h>
 #import "YetiThemeKit.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "CodeParser.h"
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
 #import "SplitVC.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "FeedsManager.h"
 #import "Keychain.h"
 

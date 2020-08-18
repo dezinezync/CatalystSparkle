@@ -33,7 +33,7 @@
 
 #import "EmptyCell.h"
 #import "StoreVC.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "Keychain.h"
 
 #import <StoreKit/SKStoreReviewController.h>

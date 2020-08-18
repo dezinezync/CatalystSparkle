@@ -12,10 +12,10 @@
 
 #import <DZKit/NSString+Extras.h>
 
-#import <DZTextKit/UIImage+Sizing.h>
-#import <DZTextKit/CheckWifi.h>
-#import <DZTextKit/NSString+ImageProxy.h>
-#import <DZTextKit/Paragraph.h>
+#import "UIImage+Sizing.h"
+#import "CheckWifi.h"
+#import "NSString+ImageProxy.h"
+#import "Paragraph.h"
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+Transform.h>

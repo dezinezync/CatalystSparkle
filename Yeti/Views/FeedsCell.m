@@ -16,7 +16,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 

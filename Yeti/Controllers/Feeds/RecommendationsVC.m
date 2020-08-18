@@ -16,7 +16,7 @@
 #import "FeedsVC.h"
 #import "FeedVC.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import "Coordinator.h"
 

@@ -1,8 +1,7 @@
 #import <DZKit/DZObject.h>
 #import "Enclosure.h"
-#import <DZKit/DZDatasourceModel.h>
 
-@interface FeedItem : DZObject <NSSecureCoding, NSCopying, DZDatasourceModel> {
+@interface FeedItem : DZObject <NSSecureCoding, NSCopying> {
 
 }
 
@@ -26,13 +25,15 @@
 @property (nonatomic, copy) NSString *mediaRating;
 @property (nonatomic, copy) NSString *mediaCredit;
 
-@property (nonatomic, strong) NSArray <NSString *> *keywords;
 @property (nonatomic, strong) NSArray <Enclosure *> *enclosures;
 
 @property (nonatomic, copy) NSNumber *feedID;
 @property (nonatomic, copy) NSString *summary;
 
 @property (nonatomic, assign) BOOL mercury;
+
+/// Applicable for micor-blog content only
+@property (nonatomic, strong) NSString *textFromContent;
 
 // used for encoding and decoding
 @property (class, nonatomic, strong) NSDateFormatter *formatter;

@@ -9,10 +9,9 @@
 #import "AppDelegate+Routing.h"
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 
-#import "FeedsVC.h"
 #import "FeedVC.h"
 #import "ArticleVC.h"
 #import "YTNavigationController.h"
@@ -21,7 +20,6 @@
 #import <SafariServices/SafariServices.h>
 
 #import <DZKit/UIAlertController+Extended.h>
-#import <DZKit/DZSectionedDatasource.h>
 #import <DZKit/NSString+Extras.h>
 
 @implementation AppDelegate (Routing)
@@ -351,7 +349,7 @@
         delay += 0.25;
     }
     
-    if ([[nav topViewController] isKindOfClass:FeedsVC.class] == NO) {
+    if ([[nav topViewController] isKindOfClass:SidebarVC.class] == NO) {
         [nav popViewControllerAnimated:YES];
         delay += 0.25;
     }
