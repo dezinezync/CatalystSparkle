@@ -21,6 +21,8 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 //@property (nonatomic, strong) DZSectionedDatasource *DS;
 //@property (nonatomic, weak) DZBasicDatasource *DS2;
 
+@property (nonatomic, strong) UITableViewDiffableDataSource *DS;
+
 @property (nonatomic, weak, readwrite) Feed *feed;
 @property (nonatomic, copy) NSNumber *originalFolderID;
 
@@ -34,7 +36,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     vc.feed = feed;
     vc.delegate = delegate;
     
-    YTNavigationController *navVC = [[YTNavigationController alloc] initWithRootViewController:vc];
+    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:vc];
     navVC.modalPresentationStyle = UIModalPresentationFormSheet;
     
     return navVC;
@@ -47,20 +49,9 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     
     self.title = @"Move to Folder";
     
-//    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-//    DS1.data = @[@"None"];
-//
-//    DZBasicDatasource *DS2= [[DZBasicDatasource alloc] init];
-//    DS2.data = [ArticlesManager.shared folders];
-//
-//    DZSectionedDatasource *DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
-//    DS.datasources = @[DS1, DS2];
-//    DS.delegate = self;
-//
-//    self.DS = DS;
-//    self.DS2 = [[self.DS datasources] lastObject];
-    
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMoveFolderCell];
+    
+    [self setupDatasource];
     
     UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(didTapCancel)];
     self.navigationItem.leftBarButtonItem = cancel;
@@ -76,6 +67,73 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Setups
+
+- (void)setupDatasource {
+    
+    self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, Folder * _Nonnull item) {
+       
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMoveFolderCell forIndexPath:indexPath];
+        
+        // Configure the cell...
+        if (indexPath.section == 0) {
+            cell.textLabel.text = @"None";
+            
+            if (self.feed.folderID == nil) {
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            }
+            else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+        }
+        else {
+            cell.textLabel.text = [item title];
+            
+            if (self.feed.folderID && [self.feed.folderID isEqualToNumber:item.folderID]) {
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            }
+            else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+        }
+        
+        cell.textLabel.textColor = UIColor.labelColor;
+        cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
+        
+        if (cell.selectedBackgroundView == nil) {
+            cell.selectedBackgroundView = [UIView new];
+        }
+        
+        cell.selectedBackgroundView.backgroundColor = [tableView.tintColor colorWithAlphaComponent:0.3f];
+        
+        return cell;
+        
+    }];
+    
+    if (self.originalFolderID != nil) {
+        
+        
+        
+    }
+    
+    [self setupData];
+    
+}
+
+- (void)setupData {
+    
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    
+    [snapshot appendSectionsWithIdentifiers:@[@0, @1]];
+    
+    [snapshot appendItemsWithIdentifiers:@[@"None"] intoSectionWithIdentifier:@0];
+    
+    [snapshot appendItemsWithIdentifiers:ArticlesManager.shared.folders intoSectionWithIdentifier:@1];
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:NO];
+    
 }
 
 #pragma mark - Setter
@@ -96,89 +154,60 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMoveFolderCell forIndexPath:indexPath];
-    
-    // Configure the cell...
-//    if (indexPath.section == 0) {
-//        cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
-//        
-//        if (self.feed.folderID == nil) {
-//            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-//        }
-//        else {
-//            cell.accessoryType = UITableViewCellAccessoryNone;
-//        }
-//    }
-//    else {
-//        Folder *folder = (Folder *)[self.DS objectAtIndexPath:indexPath];
-//        cell.textLabel.text = [folder title];
-//        
-//        if (self.feed.folderID && [self.feed.folderID isEqualToNumber:folder.folderID]) {
-//            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-//        }
-//        else {
-//            cell.accessoryType = UITableViewCellAccessoryNone;
-//        }
-//    }
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
-    
-    cell.backgroundColor = theme.cellColor;
-    
-    if (cell.selectedBackgroundView == nil) {
-        cell.selectedBackgroundView = [UIView new];
-    }
-    
-    cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
-    
-    return cell;
-}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
     // get the current folder ID so we can reload that cell. This may be nil
-    NSNumber *currentFolder = self.feed.folderID;
+    Folder *currentFolder = self.feed.folder;
     
     if (indexPath.section == 0) {
+        
         self.feed.folderID = nil;
         self.feed.folder = nil;
+        
     }
     else {
-//        Folder *newFolder = [self.DS2 objectAtIndexPath:indexPath];
-//
-//        self.feed.folderID = newFolder.folderID;
-//        self.feed.folder = newFolder;
+        
+        Folder *newFolder = [self.DS itemIdentifierForIndexPath:indexPath];
+
+        self.feed.folderID = newFolder.folderID;
+        self.feed.folder = newFolder;
+        
     }
     
     NSArray <NSIndexPath *> *indices = @[indexPath];
     
     if (currentFolder != nil) {
         
-        __block NSUInteger index = NSNotFound;
+        NSIndexPath *oldIndexPath = [self.DS indexPathForItemIdentifier:currentFolder];
         
-//        [self.DS2.data enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//            
-//            if ([obj.folderID isEqualToNumber:currentFolder]) {
-//                index = idx;
-//                *stop = YES;
-//            }
-//            
-//        }];
-        
-        if (index != NSNotFound) {
-            indices = [indices arrayByAddingObject:[NSIndexPath indexPathForRow:index inSection:1]];
-        }
+        indices = [indices arrayByAddingObject:oldIndexPath];
         
     }
     else {
         indices = [indices arrayByAddingObject:[NSIndexPath indexPathForRow:0 inSection:0]];
     }
     
-    [self.tableView reloadRowsAtIndexPaths:indices withRowAnimation:UITableViewRowAnimationNone];
+    if (indices.count) {
+        
+        NSMutableSet *items = [NSMutableSet setWithCapacity:indices.count];
+        
+        for (NSIndexPath *indexPath in indices) {
+            
+            id obj = [self.DS itemIdentifierForIndexPath:indexPath];
+            
+            if (obj) {
+                [items addObject:obj];
+            }
+            
+        }
+        
+        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+        [snapshot reloadItemsWithIdentifiers:items.objectEnumerator.allObjects];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+        
+    }
     
 }
 
