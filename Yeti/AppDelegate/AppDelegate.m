@@ -128,7 +128,7 @@ AppDelegate *MyAppDelegate = nil;
         
         MyAppDelegate = self;
         
-        Coordinator *coordinator = [MainCoordinator new];
+        MainCoordinator *coordinator = [MainCoordinator new];
         
         self.coordinator = coordinator;
         
@@ -394,6 +394,8 @@ AppDelegate *MyAppDelegate = nil;
     [YetiThemeKit loadThemeKit];
     
     SplitVC *splitVC = [[SplitVC alloc] init];
+    
+    splitVC.mainCoordinator = self.coordinator;
     
     self.window.rootViewController = splitVC;
     

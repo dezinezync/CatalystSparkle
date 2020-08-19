@@ -15,6 +15,7 @@
 #import "RecommendationsVC.h"
 #import "FolderVC.h"
 #import "NewFolderVC.h"
+#import "LaunchVC.h"
 
 @implementation MainCoordinator
 
@@ -157,6 +158,22 @@
         }];
         
     });
+    
+}
+
+- (void)showLaunchVC {
+    
+    if (self.splitViewController.presentingViewController != nil) {
+        return;
+    }
+    
+    LaunchVC *vc = [[LaunchVC alloc] initWithNibName:NSStringFromClass(LaunchVC.class) bundle:nil];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    nav.modalInPresentation = YES;
+    
+    [self.splitViewController presentViewController:nav animated:YES completion:nil];
     
 }
 

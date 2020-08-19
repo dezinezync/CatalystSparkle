@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 #import <sys/utsname.h>
 
+FMNotification _Nonnull const UserNotFound = @"com.yeti.note.userNotFound";
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 FMNotification _Nonnull const UnreadCountDidUpdate = @"com.yeti.note.unreadCountDidUpdate";

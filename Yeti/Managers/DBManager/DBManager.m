@@ -196,6 +196,8 @@ NSString *const kNotificationsKey = @"notifications";
             
         }
         
+        [MyFeedsManager setValue:user forKey:@"user"];
+        
     }];
     
 }
@@ -824,6 +826,10 @@ NSString *const kNotificationsKey = @"notifications";
 - (void)setupSync {
     
     if (self.isSyncSetup == YES) {
+        return;
+    }
+    
+    if (MyFeedsManager.user == nil) {
         return;
     }
     

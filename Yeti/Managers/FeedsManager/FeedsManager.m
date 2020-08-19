@@ -69,8 +69,8 @@ NSArray <NSString *> * _defaultsKeys;
 - (instancetype)init {
     if (self = [super init]) {
         
-        [DBManager initialize];
-        [MyDBManager registerCloudCoreExtension];
+//        [DBManager initialize];
+        [DBManager.sharedInstance registerCloudCoreExtension];
         
         self.user = [MyDBManager getUser];
         
@@ -3304,18 +3304,10 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)updateUserInformation:(successBlock)successCB error:(errorBlock)errorCB
-{
-    if (!MyFeedsManager.user.uuid) {
-        if (errorCB) {
-            NSError *error = [NSError errorWithDomain:@"FeedManager" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"A User ID is not currently present"}];
-            errorCB(error, nil, nil);
-        }
-        
-        return;
-    }
+- (void)createUser:(NSString *)uuid success:(successBlock)successCB error:(errorBlock)errorCB {
     
-    [self.session PUT:@"/user" parameters:@{@"uuid": MyFeedsManager.user.uuid} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session PUT:@"/user" parameters:@{@"uuid": uuid} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
         error = [self errorFromResponse:error.userInfo];
         
         if (errorCB)
@@ -3344,19 +3336,22 @@ NSArray <NSString *> * _defaultsKeys;
     
     [self.session GET:@"/user" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        NSDictionary *user = [responseObject objectForKey:@"user"];
+        NSDictionary *userObj = [responseObject objectForKey:@"user"];
         
 //        BOOL appleID = [[user valueForKey:@"appleid"] boolValue];
         
-        NSString * userID = [user valueForKey:@"id"];
+        NSNumber * userID = [userObj valueForKey:@"id"];
         
-        self.user.uuid = uuid;
-        self.user.userID = @(userID.integerValue);
+        User *user = [User new];
+        user.userID = userID;
+        user.uuid = uuid;
         
         if (successCB) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                successCB(responseObject, response, task);
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                successCB(user, response, task);
             });
+            
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

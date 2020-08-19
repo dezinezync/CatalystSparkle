@@ -65,6 +65,8 @@ extern DBManager * MyDBManager;
 
 - (User *)getUser;
 
+- (void)setUser:(User *)user;
+
 - (void)setFeeds:(NSArray <Feed *> *)feeds;
 
 - (void)setFolders:(NSArray <Folder *> *)folders;

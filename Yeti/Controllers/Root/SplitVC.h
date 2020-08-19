@@ -8,15 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "IntroVC.h"
-#import "FeedsVC+Actions.h"
 #import "EmptyVC.h"
 #import "FeedVC+SearchController.h"
 #import "ArticleVC.h"
 
 @interface SplitVC : UISplitViewController <UIViewControllerRestoration>
-
-@property (nonatomic, weak) FeedsVC *feedsVC;
 
 @property (nonatomic, weak) FeedVC *feedVC;
 

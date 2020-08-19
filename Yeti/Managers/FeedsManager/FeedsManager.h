@@ -203,7 +203,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)updateUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
+- (void)createUser:(NSString *)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 

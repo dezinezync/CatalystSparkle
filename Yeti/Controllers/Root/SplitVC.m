@@ -95,17 +95,6 @@
     
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
-    
-#ifndef DEBUG
-    NSError *error = nil;
-    BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
-    
-    if (hasShownIntro == NO) {
-        [self userNotFound];
-    }
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
-#endif
 
 }
 
@@ -117,20 +106,19 @@
         [self checkIfBookmarksShouldBeMigrated];
     }
     
-//#ifdef DEBUG
-//    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
-//#endif
+#ifndef DEBUG
+    NSError *error = nil;
+    BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
+    
+    if (hasShownIntro == NO) {
+        return [self userNotFound];
+    }
+#endif
+    
+    if (MyFeedsManager.user == nil) {
+        return [self userNotFound];
+    }
 }
-
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//
-//    NSString *theme = SharedPrefs.theme;
-//
-//    BOOL lightTheme = [theme isEqualToString:LightTheme] || [theme isEqualToString:ReaderTheme];
-//
-//    return lightTheme ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
-//
-//}
 
 #pragma mark -
 
@@ -143,11 +131,7 @@
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-    IntroVC *vc = [[IntroVC alloc] init];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self presentViewController:vc animated:YES completion:nil];
-    });
+    [self.mainCoordinator showLaunchVC];
 }
 
 - (UINavigationController *)emptyVC {
@@ -181,8 +165,7 @@
     
     BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
     
-    FeedsVC *feedsVC = [[(UINavigationController *)[self.viewControllers firstObject] viewControllers] firstObject];
-    vc.bookmarksManager = feedsVC.bookmarksManager;
+    vc.bookmarksManager = self.mainCoordinator.bookmarksManager;
     
     weakify(vc);
     
@@ -359,9 +342,9 @@
     
     [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
     
-    if (self.feedsVC) {
-        [self.feedsVC saveRestorationActivity:activity];
-    }
+//    if (self.mainCoordinator.sidebarVC) {
+//        [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
+//    }
     
     if (self.feedVC) {
         [self.feedVC saveRestorationActivity:activity];
@@ -389,7 +372,7 @@
     
     if ([first containsString:@"FeedVC-"] == YES) {
         
-        [self.feedsVC continueActivity:activity];
+//        [self.feedsVC continueActivity:activity];
         
     }
     

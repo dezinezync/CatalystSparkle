@@ -16,8 +16,9 @@
 
 #define YETI_EXPORT FOUNDATION_EXPORT
 
-typedef NSString * FMNotification;
+typedef NSNotificationName FMNotification;
 
+extern FMNotification _Nonnull const UserNotFound;
 extern FMNotification _Nonnull const FeedDidUpReadCount;
 extern FMNotification _Nonnull const FeedsDidUpdate;
 extern FMNotification _Nonnull const UnreadCountDidUpdate;
