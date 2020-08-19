@@ -3153,6 +3153,8 @@ NSArray <NSString *> * _defaultsKeys;
     
     [self.bookmarksManager _removeAllBookmarks:nil];
     
+    [MyDBManager setUser:nil];
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (defaults) {
         [defaults removeObjectForKey:kAccountID];
@@ -3170,13 +3172,6 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     [defaults synchronize];
-    
-//    [Keychain remove:kAccountID];
-//    [Keychain remove:kUserID];
-//    [Keychain remove:kUUIDString];
-//    [Keychain remove:kHasShownOnboarding];
-//    [Keychain remove:YTSubscriptionHasAddedFirstFeed];
-//    [Keychain remove:kIsSubscribingToPushNotifications];
     
     [Keychain removeAllItems];
     

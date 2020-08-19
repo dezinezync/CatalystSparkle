@@ -63,9 +63,9 @@ extern DBManager * MyDBManager;
 
 #pragma mark - Methods
 
-- (User *)getUser;
+- (User * _Nullable)getUser;
 
-- (void)setUser:(User *)user;
+- (void)setUser:(User * _Nullable)user;
 
 - (void)setFeeds:(NSArray <Feed *> *)feeds;
 
