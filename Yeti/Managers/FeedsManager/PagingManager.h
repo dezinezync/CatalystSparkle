@@ -20,6 +20,8 @@ typedef void (^genericErrorBlock)(NSError *error);
 
 - (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams itemsKey:(NSString * _Nullable)itemsKey;
 
+- (instancetype)initWithPath:(NSString * _Nonnull)path queryParams:(NSDictionary * _Nonnull)queryParams body:(NSDictionary * _Nullable)body itemsKey:(NSString * _Nonnull)itemsKey method:(NSString * _Nonnull)method;
+
 /// The base path to request the data on
 @property (nonatomic, copy, readonly) NSString *path;
 

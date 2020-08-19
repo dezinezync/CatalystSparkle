@@ -823,7 +823,16 @@
 
 - (void)_showArticleVC:(ArticleVC *)vc {
     
-    [self.mainCoordinator showArticleVC:vc];
+    if (self.mainCoordinator != nil) {
+        
+        [self.mainCoordinator showArticleVC:vc];
+        
+    }
+    else {
+        
+        [self.navigationController pushViewController:vc animated:YES];
+        
+    }
     
     if (self->_restorationActivity != nil) {
         

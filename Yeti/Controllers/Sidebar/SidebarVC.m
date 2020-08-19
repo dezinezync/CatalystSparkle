@@ -178,6 +178,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+}
+
 - (void)dealloc {
     
     [NSNotificationCenter.defaultCenter removeObserver:self];

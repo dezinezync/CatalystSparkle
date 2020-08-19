@@ -27,17 +27,25 @@
     
     content.text = item.displayTitle;
     
-    if (SharedPrefs.showUnreadCounts == YES) {
-        
-        item.unreadCountObservor = self;
-        
-        if (item.unread.unsignedIntegerValue > 0) {
-            content.secondaryText = item.unread.stringValue;
-        }
+    if (self.isExploring == YES) {
+     
+        content.secondaryText = item.url;
         
     }
+    else {
+
+        if (SharedPrefs.showUnreadCounts == YES) {
+            
+            item.unreadCountObservor = self;
+            
+            if (item.unread.unsignedIntegerValue > 0) {
+                content.secondaryText = item.unread.stringValue;
+            }
+            
+        }
+    }
     
-    content.prefersSideBySideTextAndSecondaryText = YES;
+    content.prefersSideBySideTextAndSecondaryText = self.isExploring == NO;
     
 #if TARGET_OS_MACCATALYST
     content.imageProperties.maximumSize = CGSizeMake(16.f, 16.f);
@@ -65,9 +73,13 @@
 
     }
     
-    UICellAccessoryDisclosureIndicator *disclosure = [UICellAccessoryDisclosureIndicator new];
-    
-    self.accessories = @[disclosure];
+    if (self.isExploring == NO) {
+        
+        UICellAccessoryDisclosureIndicator *disclosure = [UICellAccessoryDisclosureIndicator new];
+        
+        self.accessories = @[disclosure];
+        
+    }
     
 }
 

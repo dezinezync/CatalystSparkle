@@ -7,17 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "NewFeedDeckController.h"
 
 #import <DZKit/NSString+Extras.h>
 
 #import "UIViewController+ScrollLoad.h"
+#import "UIViewController+Stateful.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AddFeedVC : UITableViewController
+@interface AddFeedVC : UICollectionViewController <ControllerState>
 
-+ (NewFeedDeckController *)instanceInNavController;
++ (UINavigationController *)instanceInNavController;
 
 @property (atomic, assign) NSInteger page;
 
@@ -26,9 +26,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *errorTitle;
 @property (nonatomic, copy) NSString *errorBody;
 
-//@property (nonatomic, strong, readonly) DZBasicDatasource *DS;
-
 @property (weak) NSURLSessionTask *networkTask;
+
+@property (atomic, assign) StateType controllerState;
+
+@property (nonatomic, strong) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
 @end
 

@@ -33,6 +33,9 @@
 
 @property (nonatomic, assign, getter=isLoading) BOOL loading;
 
+@property (nonatomic, copy) NSDictionary *HTTPBody;
+@property (nonatomic, copy) NSString *HTTPMethod;
+
 @end
 
 @implementation PagingManager
@@ -40,17 +43,44 @@
 - (instancetype)initWithPath:(NSString *)path queryParams:(NSDictionary *)queryParams itemsKey:(NSString *)itemsKey {
     
     if (self = [super init]) {
+        
         self.path = path;
         self.queryParams = queryParams;
         self.itemsKey = itemsKey;
+        self.HTTPMethod = @"GET";
         
-        self.uniqueItems = [NSMutableOrderedSet new];
-        self.page = 1;
-        self.total = 0;
-        self.hasNextPage = YES;
+        [self commonSetup];
+        
     }
     
     return self;
+    
+}
+
+- (instancetype)initWithPath:(NSString *)path queryParams:(NSDictionary *)queryParams body:(NSDictionary *)body itemsKey:(NSString *)itemsKey method:(NSString *)method {
+    
+    if (self = [super init]) {
+        
+        self.path = path;
+        self.queryParams = queryParams;
+        self.itemsKey = itemsKey;
+        self.HTTPMethod = method;
+        self.HTTPBody = body;
+        
+        [self commonSetup];
+        
+    }
+    
+    return self;
+    
+}
+
+- (void)commonSetup {
+    
+    self.uniqueItems = [NSMutableOrderedSet new];
+    self.page = 1;
+    self.total = 0;
+    self.hasNextPage = YES;
     
 }
 
@@ -101,7 +131,17 @@
         params[@"total"] = @(self.total);
     }
     
-    [MyFeedsManager.session GET:self.path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSString *path = self.path;
+    
+    NSString *url = [NSURL URLWithString:path relativeToURL:MyFeedsManager.session.baseURL].absoluteString;;
+    
+    id queryString = [MyFeedsManager.session stringifyQueryParams:self.queryParams];
+    
+    if (queryString) {
+        url = [url stringByAppendingFormat:@"?%@", queryString];
+    }
+    
+    [MyFeedsManager.session performRequestWithURI:url method:self.HTTPMethod params:self.HTTPBody success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -117,6 +157,13 @@
         
         if (total != nil) {
             self.total = total.integerValue;
+        }
+        else {
+            
+            if (items != nil) {
+                self.total = items.count;
+            }
+            
         }
         
         [self processHeaders:response];
@@ -152,6 +199,7 @@
     links = [response valueForHTTPHeaderField:@"link"];
     
     if (links != nil) {
+        
         NSMutableDictionary <NSString *, NSString *> *linkItems = [NSMutableDictionary new];
         
         NSArray <NSString *> *parts = [links componentsSeparatedByString:@","];
