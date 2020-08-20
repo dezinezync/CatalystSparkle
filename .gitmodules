@@ -31,3 +31,6 @@
 [submodule "Yeti/Vendors/IDMPhotoBrowser"]
 	path = Yeti/Vendors/IDMPhotoBrowser
 	url = git@github.com:dezinezync/IDMPhotoBrowser.git
+[submodule "UnreadsWidget/Vendors/SDWebImageSwiftUI"]
+	path = UnreadsWidget/Vendors/SDWebImageSwiftUI
+	url = git@github.com:SDWebImage/SDWebImageSwiftUI.git
