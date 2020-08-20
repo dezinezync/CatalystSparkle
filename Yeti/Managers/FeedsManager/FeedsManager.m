@@ -3091,9 +3091,11 @@ NSArray <NSString *> * _defaultsKeys;
         
         if ([self.user.subscription hasExpired] == YES) {
             
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:nil];
-            });
+            self.user.subscription = nil;
+            
+            [MyDBManager setUser:self.user];
+            
+            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
             
         }
         
