@@ -44,7 +44,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, strong, readonly) DZURLSession * _Nonnull session, * _Nonnull backgroundSession;
 
-@property (atomic, strong, readonly) User * _Nullable user;
+@property (nonatomic, strong, readonly) User * _Nullable user;
 
 @property (atomic) NSNumber * _Nullable userID;
 
@@ -203,7 +203,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getUserInformation:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)createUser:(NSString *)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
+- (void)createUser:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 

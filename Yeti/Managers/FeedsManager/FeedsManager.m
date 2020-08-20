@@ -35,7 +35,7 @@ NSArray <NSString *> * _defaultsKeys;
 @property (nonatomic, strong, readwrite) DZURLSession * _Nonnull session, * _Nullable backgroundSession;
 @property (nonatomic, strong, readwrite) Reachability * _Nonnull reachability;
 
-@property (atomic, strong, readwrite) User * _Nullable user;
+@property (nonatomic, strong, readwrite) User * _Nullable user;
 
 @property (nonatomic, copy, readwrite) NSString *deviceID;
 
@@ -67,17 +67,14 @@ NSArray <NSString *> * _defaultsKeys;
 #pragma mark -
 
 - (instancetype)init {
+    
     if (self = [super init]) {
         
-//        [DBManager initialize];
+        [self setupNotifications];
+        
         [DBManager.sharedInstance registerCloudCoreExtension];
         
         self.user = [MyDBManager getUser];
-        
-//        NSLog(@"%@", MyFeedsManager.bookmarks);
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
         
         NSError *error = nil;
         
@@ -121,6 +118,15 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     return self;
+}
+
+- (void)setupNotifications {
+    
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
+    [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+    
 }
 
 - (NSNumber *)userID {
@@ -1848,7 +1854,7 @@ NSArray <NSString *> * _defaultsKeys;
             if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
-                self.subscription = sub;
+                self.user.subscription = sub;
                 
                 if (successCB) {
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1861,7 +1867,7 @@ NSArray <NSString *> * _defaultsKeys;
                 NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
                 sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
                 
-                self.subscription = sub;
+                self.user.subscription = sub;
                 
                 if (errorCB) {
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1904,13 +1910,15 @@ NSArray <NSString *> * _defaultsKeys;
 //            if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
-                self.subscription = sub;
+                self.user.subscription = sub;
                 
                 if (successCB) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         successCB(responseObject, response, task);
                     });
                 }
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionPurchased object:nil];
 //            }
 //            else {
 //                Subscription *sub = [Subscription new];
@@ -1938,7 +1946,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             strongify(self);
             
-            self.subscription = sub;
+            self.user.subscription = sub;
             
             NSError * err = [self errorFromResponse:error.userInfo];
             
@@ -1958,7 +1966,7 @@ NSArray <NSString *> * _defaultsKeys;
 
     weakify(self);
 
-    [self.session GET:@"/store" parameters:@{@"userID": [MyFeedsManager userID]} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [self.session GET:@"/store" parameters:@{@"userID": self.user.userID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
@@ -1966,12 +1974,14 @@ NSArray <NSString *> * _defaultsKeys;
             if ([[responseObject valueForKey:@"status"] boolValue]) {
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
-                self.subscription = sub;
+                self.user.subscription = sub;
                 
                 if (successCB) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    runOnMainQueueWithoutDeadlocking(^{
                         successCB(responseObject, response, task);
                     });
+                    
                 }
             }
             else {
@@ -1979,10 +1989,11 @@ NSArray <NSString *> * _defaultsKeys;
                 NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
                 sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
                 
-                 self.subscription = sub;
+                 self.user.subscription = sub;
                 
                 if (errorCB) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    runOnMainQueueWithoutDeadlocking(^{
                         errorCB(sub.error, response, task);
                     });
                 }
@@ -2000,7 +2011,7 @@ NSArray <NSString *> * _defaultsKeys;
             
             strongify(self);
             
-            self.subscription = sub;
+            self.user.subscription = sub;
             
             NSError * err = [self errorFromResponse:error.userInfo];
             
@@ -2730,17 +2741,31 @@ NSArray <NSString *> * _defaultsKeys;
     }
 }
 
-- (void)setSubscription:(Subscription *)subscription {
+- (void)setUserID:(NSNumber *)userID {
+    self.user.userID = userID;
+}
+
+- (void)setUser:(User *)user {
+    
+    if (NSThread.isMainThread == NO) {
+        return [self performSelectorOnMainThread:@selector(setUser:) withObject:user waitUntilDone:NO];
+    }
+    
+    _user = user;
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+    
+    if (user == nil) {
+        return;
+    }
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     @synchronized (self) {
         
-        self->_subscription = subscription;
-        
         [self setupSubscriptionNotification];
         
-        if (subscription == nil) {
+        if (self.subscription == nil) {
             
             [defaults setValue:@"No Subscription" forKey:@"subscriptionString"];
             [defaults synchronize];
@@ -2785,15 +2810,10 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)setUserID:(NSNumber *)userID {
-    self.user.userID = userID;
-}
-
 #pragma mark - Getters
 
-
 - (Subscription *)subscription {
-    return self->_subscription;
+    return self.user.subscription;
 }
 
 - (Reachability *)reachability {
@@ -3027,18 +3047,57 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)userDidUpdate {
     
-    if ([self userID] == nil) {
+    if (self.user == nil) {
         return;
     }
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UserDidUpdate object:nil];
     
     weakify(self);
+    
     // user ID can be nil at this point
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         strongify(self);
+        
         [self updateBookmarksFromServer];
+        
     });
+    
+    if (self.user.subscription == nil) {
+        
+        [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+         
+            NSLog(@"Successfully fetched subscription: %@", self.user.subscription);
+            
+            if ([self.user.subscription hasExpired] == YES) {
+                
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:nil];
+                });
+                
+            }
+            
+            [MyDBManager setUser:self.user];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Fetching Subscription" message:error.localizedDescription];
+            
+        }];
+        
+    }
+    else {
+        
+        if ([self.user.subscription hasExpired] == YES) {
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:nil];
+            });
+            
+        }
+        
+    }
     
 }
 
@@ -3063,6 +3122,10 @@ NSArray <NSString *> * _defaultsKeys;
 #pragma mark -
 
 - (void)setupSubscriptionNotification {
+    
+    if (self.subscription == nil) {
+        return;
+    }
     
     // clear all existing notifications
     [self clearExistingNotifications];

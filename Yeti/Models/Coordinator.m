@@ -16,6 +16,7 @@
 #import "FolderVC.h"
 #import "NewFolderVC.h"
 #import "LaunchVC.h"
+#import "StoreVC.h"
 
 @implementation MainCoordinator
 
@@ -172,6 +173,22 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
     nav.modalInPresentation = YES;
+    
+    [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    
+}
+
+- (void)showSubscriptionsInterface {
+    
+    StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    nav.modalInPresentation = YES;
+    
+    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:vc action:@selector(didTapDone:)];
+    
+    vc.navigationItem.rightBarButtonItem = done;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
     

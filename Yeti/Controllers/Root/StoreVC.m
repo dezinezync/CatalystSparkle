@@ -67,7 +67,7 @@
     
     [[DZActivityIndicatorManager shared] incrementCount];
     
-    [[RMStore defaultStore] requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
+    [RMStore.defaultStore requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         
         self.selectedProduct = NSNotFound;
         

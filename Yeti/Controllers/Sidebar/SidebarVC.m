@@ -20,6 +20,8 @@
 #import "FeedCell.h"
 #import "FolderCell.h"
 
+#import "Keychain.h"
+
 @interface SidebarVC () {
     
     // Sync
@@ -419,6 +421,41 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         }
         
     };
+    
+    [NSNotificationCenter.defaultCenter addObserverForName:YTSubscriptionHasExpiredOrIsInvalid object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+       
+        // dont run when the app is in the background or inactive
+        if (UIApplication.sharedApplication.applicationState != UIApplicationStateActive) {
+            return;
+        }
+        
+        // if we're already presenting a VC, don't run.
+        // this is most likely the onboarding process
+        if (self.presentedViewController != nil || self.splitViewController.presentedViewController != nil) {
+            return;
+        }
+        
+        [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            obj.enabled = NO;
+            
+        }];
+        
+        [self.mainCoordinator showSubscriptionsInterface];
+        
+    }];
+    
+    [NSNotificationCenter.defaultCenter addObserverForName:YTSubscriptionPurchased object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+        
+        [self.navigationItem.rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            if (obj.isEnabled == NO) {
+                obj.enabled = YES;
+            }
+            
+        }];
+        
+    }];
     
 }
 
