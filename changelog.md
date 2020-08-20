@@ -1,6 +1,6 @@
 # v2.0.0
 
-## Build 8
+## Build 7
 
 - Images are once again openable in fullscreen mode.
 
