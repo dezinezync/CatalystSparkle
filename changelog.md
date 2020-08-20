@@ -2,7 +2,9 @@
 
 ## Build 7
 
-- Images are once again openable in fullscreen mode.  
+- Images are once again openable in fullscreen mode.
+
+- Preliminary Widgets support. Contains a Counters (Small) Widget and a Unread Articles (medium and large) widget. 
 
 ## Build 6
 
