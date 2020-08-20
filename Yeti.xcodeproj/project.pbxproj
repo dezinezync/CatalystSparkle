@@ -133,7 +133,6 @@
 		F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */; };
 		F048E4A924EE84D1009A46F4 /* WidgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4A824EE84D1009A46F4 /* WidgetManager.swift */; };
 		F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA8924EE58780045C986 /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F048E4C124EEB0BF009A46F4 /* SDWebImageSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA9824EE58FF0045C986 /* SDWebImageSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */; };
 		F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F04CFAC52154B57B00AA7B5E /* StoreVC.m */; };
 		F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BB21B5427B00AD1FB2 /* YTExtractor.m */; };
@@ -325,7 +324,8 @@
 		F0D98F5824EE4C8500B1F9F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */; };
 		F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
 		F0D98F5B24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
-		F0D98F5E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0D9AC9524EEC1390023E11F /* SDWebImageSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA9824EE58FF0045C986 /* SDWebImageSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
 		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
@@ -717,10 +717,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */,
 				F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */,
 				F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */,
 				F0783CAA248F688500C7A280 /* elytramac.bundle in Embed App Extensions */,
-				F0D98F5E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -731,7 +731,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F048E4C124EEB0BF009A46F4 /* SDWebImageSwiftUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -742,6 +741,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F0D9AC9524EEC1390023E11F /* SDWebImageSwiftUI.framework in Embed Frameworks */,
 				F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
@@ -4106,6 +4106,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 2.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
@@ -4142,6 +4143,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MARKETING_VERSION = 2.0.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
