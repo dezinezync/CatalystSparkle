@@ -52,19 +52,61 @@ NSString *const kNotificationsKey = @"notifications";
 
 + (NSString *)databasePath
 {
+    
+    NSFileManager *fileManager = NSFileManager.defaultManager;
+    
     NSString *databaseName = @"elytra.sqlite";
     
 #ifdef DEBUG
     databaseName = @"elytra-debug.sqlite";
 #endif
     
-    NSURL *baseURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory
-                                                            inDomain:NSUserDomainMask
-                                                   appropriateForURL:nil
-                                                              create:YES
-                                                               error:NULL];
+    NSURL *baseURL = [fileManager URLForDirectory:NSApplicationSupportDirectory
+                                         inDomain:NSUserDomainMask
+                                appropriateForURL:nil
+                                           create:YES
+                                            error:NULL];
+    
+    NSURL *containerURL = [fileManager containerURLForSecurityApplicationGroupIdentifier:@"group.elytra"];
+    
+    NSUserDefaults * sharedDefs = NSUserDefaults.standardUserDefaults;
     
     NSURL *databaseURL = [baseURL URLByAppendingPathComponent:databaseName isDirectory:NO];
+    
+    // https://stackoverflow.com/a/29704581/1387258
+    if (containerURL != nil) {
+        
+        if (![sharedDefs boolForKey:@"YapDatabaseDataMovedToSharedContainer"]) {
+        
+            NSURL* oldLocation = [baseURL URLByAppendingPathComponent:databaseName isDirectory:NO];
+            NSURL* newLocation = [containerURL URLByAppendingPathComponent:databaseName isDirectory:NO];
+
+            if ([fileManager fileExistsAtPath:oldLocation.filePathURL.path])
+            {
+                //Check if a new file exists. This can happen when the watch app is run before
+                if ([fileManager fileExistsAtPath:newLocation.filePathURL.path]) {
+                    [fileManager removeItemAtURL:newLocation error:nil];
+                }
+                
+                NSError *error = nil;
+
+                [fileManager moveItemAtURL:oldLocation toURL:newLocation error:&error];
+                
+                if (error == nil) {
+                    [sharedDefs setBool:YES forKey:@"YapDatabaseDataMovedToSharedContainer"];
+                    [sharedDefs synchronize];
+                    
+                    databaseURL = [containerURL URLByAppendingPathComponent:databaseName isDirectory:NO];
+                }
+                
+            }
+
+        }
+        else {
+            databaseURL = [containerURL URLByAppendingPathComponent:databaseName isDirectory:NO];
+        }
+        
+    }
     
     return databaseURL.filePathURL.path;
 }
@@ -518,7 +560,7 @@ NSString *const kNotificationsKey = @"notifications";
     // In a previous version of the app, the "MyTodo" class was named "MyTodoItem".
     // We renamed the class in a recent version.
     
-    [NSKeyedUnarchiver setClass:[Feed class] forClassName:@"Feed"];
+    [NSKeyedUnarchiver setClass:Feed.class forClassName:@"Feed"];
     [NSKeyedUnarchiver setClass:FeedItem.class forClassName:@"FeedItem"];
     
     // Create the database
