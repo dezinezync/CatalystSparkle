@@ -8,7 +8,7 @@
 
 #import "ExternalAppsVC.h"
 #import "SettingsCell.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 
 @interface ExternalAppsVC ()

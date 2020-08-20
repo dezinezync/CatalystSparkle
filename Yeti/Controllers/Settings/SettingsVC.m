@@ -8,8 +8,8 @@
 
 #import "SettingsVC.h"
 #import "SettingsCell.h"
-#import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/UIColor+HEX.h>
+#import "YetiConstants.h"
+#import "UIColor+HEX.h"
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -514,7 +514,7 @@ NSString* deviceName() {
     NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
     NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
     
-    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.userIDManager.UUIDString, appVersion, buildNumber);
+    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
     
     attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
     

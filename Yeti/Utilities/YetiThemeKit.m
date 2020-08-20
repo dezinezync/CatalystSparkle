@@ -7,15 +7,15 @@
 //
 
 #import "YetiThemeKit.h"
-#import <DZTextKit/UIColor+Hex.h>
-#import <DZTextKit/YetiConstants.h>
+#import "UIColor+Hex.h"
+#import "YetiConstants.h"
 
 #import <DZKit/NSString+Extras.h>
 #import "YetiTheme.h"
 
-#import <DZTextKit/Paragraph.h>
-#import <DZTextKit/Image.h>
-#import <DZTextKit/Gallery.h>
+#import "Paragraph.h"
+#import "Image.h"
+#import "Gallery.h"
 
 YetiThemeKit * YTThemeKit;
 
@@ -34,16 +34,6 @@ NSArray <NSString *> * _themeNames;
 
 - (BOOL)autoReloadWindow {
     return YES;
-}
-
-- (void)setTheme:(YetiTheme *)theme {
-    
-    [super setTheme:theme];
-    
-    Paragraph.tk_theme = theme;
-    Gallery.tk_theme = theme;
-    Image.tk_theme = theme;
-    
 }
 
 + (NSArray <NSString *> *)themeNames {

@@ -13,7 +13,7 @@
 #import "YetiThemeKit.h"
 #import "StoreFooter.h"
 #import "FeedsManager.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -67,7 +67,7 @@
     
     [[DZActivityIndicatorManager shared] incrementCount];
     
-    [[RMStore defaultStore] requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
+    [RMStore.defaultStore requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         
         self.selectedProduct = NSNotFound;
         

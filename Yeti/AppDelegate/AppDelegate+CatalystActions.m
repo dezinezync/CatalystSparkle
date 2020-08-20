@@ -114,19 +114,17 @@
         return;
     }
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
     
-    FeedsVC *vc = (FeedsVC *)[[(UINavigationController *)[splitVC.viewControllers firstObject] viewControllers] firstObject];
+    [vc.collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
     
-    [vc.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-    
-    [vc tableView:vc.tableView didSelectRowAtIndexPath:indexPath];
+    [vc collectionView:vc.collectionView didSelectItemAtIndexPath:indexPath];
     
 }
 
 - (void)goToUnread {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     
     [self goToIndexPath:indexPath];
     
@@ -134,7 +132,7 @@
 
 - (void)goToToday {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
     
     [self goToIndexPath:indexPath];
     
@@ -142,7 +140,7 @@
 
 - (void)goToBookmarks {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:2 inSection:0];
     
     [self goToIndexPath:indexPath];
     

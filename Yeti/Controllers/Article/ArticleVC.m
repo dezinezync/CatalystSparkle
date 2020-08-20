@@ -14,16 +14,15 @@
 #import "AppDelegate.h"
 
 #import "Content.h"
-#import <DZTextKit/DZTextKitViews.h>
-#import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/CheckWifi.h>
+#import "YetiConstants.h"
+#import "CheckWifi.h"
 
-#import <DZTextKit/NSAttributedString+Trimming.h>
+#import "NSAttributedString+Trimming.h"
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
-#import <DZTextKit/NSString+HTML.h>
+#import "NSString+HTML.h"
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
@@ -34,7 +33,22 @@
 #import "YetiThemeKit.h"
 #import "YTPlayer.h"
 #import "YTExtractor.h"
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
+
+#import "Paragraph.h"
+#import "Heading.h"
+#import "Blockquote.h"
+#import "List.h"
+#import "Aside.h"
+#import "Youtube.h"
+#import "Image.h"
+#import "PaddedLabel.h"
+#import "Gallery.h"
+#import "GalleryCell.h"
+#import "LineBreak.h"
+#import "Code.h"
+#import "Tweet.h"
+#import "TweetImage.h"
 
 #if TARGET_OS_MACCATALYST
 
@@ -124,8 +138,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
-    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        || self.to_splitViewController.view.bounds.size.height < 814.f) {
+    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        || self.splitViewController.view.bounds.size.height < 814.f) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
@@ -137,8 +151,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if (self.to_splitViewController.view.bounds.size.height > 814.f
-             && self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    else if (self.splitViewController.view.bounds.size.height > 814.f
+             && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
@@ -420,15 +434,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    Paragraph.tk_theme = theme;
-    Image.tk_theme = theme;
-    Gallery.tk_theme = theme;
-    
-    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.scrollView.backgroundColor = UIColor.systemBackgroundColor;
     
     [self setupArticle:self.currentArticle];
     
@@ -1114,13 +1122,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
-    
-#if TARGET_OS_MACCATALYST
-    
-    baseFontSize *= 1.42f;
-    baseFontSize = floor(baseFontSize);
-    
-#endif
 
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
@@ -2272,31 +2273,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    FeedVC *feedVC = [[FeedVC alloc] initWithFeed:feed];
-    
-    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-        
-        [self.navigationController pushViewController:feedVC animated:YES];
-        
-    }
-    else {
-        
-        UIViewController *vc = self.to_splitViewController.secondaryViewController;
-        
-        if ([vc isKindOfClass:UINavigationController.class] == YES) {
-            
-            [(UINavigationController *)vc pushViewController:feedVC animated:YES];
-            
-        }
-        else {
-            
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-            
-            [self.to_splitViewController showSecondaryViewController:nav sender:self];
-            
-        }
-        
-    }
+    [self.mainCoordinator showFeedVC:feed];
     
 }
 
@@ -2870,7 +2847,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (_searchView == nil) {
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        CGRect frame = CGRectMake(0, 0, self.to_splitViewController.view.bounds.size.width, 52.f);
+        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];

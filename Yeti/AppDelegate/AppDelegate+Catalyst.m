@@ -275,7 +275,7 @@
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
-    return @[kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarFlexibleSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
+    return @[NSToolbarToggleSidebarItemIdentifier, kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarFlexibleSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
     
 }
 
@@ -295,7 +295,7 @@
         
         title = kNewFeedToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"new-feed" darkImageName:@"new-feed-dark"];
+        image = [UIImage systemImageNamed:@"plus"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFeed)];
         
@@ -304,7 +304,7 @@
         //
         title = kNewFolderToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"new-folder" darkImageName:@"new-folder-dark"];
+        image = [UIImage systemImageNamed:@"folder.badge.plus"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFolder)];
         
@@ -313,7 +313,7 @@
         //
         title = kRefreshAllToolbarIdentifier[1];
         
-        image = [self dynamicImageWithLightImageName:@"refresh-all" darkImageName:@"refresh-all-dark"];
+        image = [UIImage systemImageNamed:@"bolt.circle"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
         
@@ -323,6 +323,8 @@
                
         [group setSubitems:@[item1, item2, item3]];
         
+        group.navigational = NO;
+        
         return group;
         
     }
@@ -331,7 +333,7 @@
         
         title = kRefreshFeedToolbarIdentifier[1];
         
-        UIImage *image = [self dynamicImageWithLightImageName:@"refresh-feed" darkImageName:@"refresh-feed-dark"];
+        UIImage *image = [UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"];
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapRefreshFeed:)];
         
@@ -351,7 +353,7 @@
         //
         title = kShareArticleToolbarIdentifier[1];
 
-        image = [self dynamicImageWithLightImageName:@"share" darkImageName:@"share-dark"];
+        image = [UIImage systemImageNamed:@"square.and.arrow.up"];
         
         NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
         item3.image = image;
@@ -457,11 +459,9 @@
 
 - (void)ct_didTapShareArticle:(NSToolbarItem *)sender {
     
-    TOSplitViewController *splitVC = (TOSplitViewController *)[[self window] rootViewController];
-    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] lastObject];
-    ArticleVC *vc = [[nav viewControllers] lastObject];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    if ([vc isKindOfClass:ArticleVC.class] == NO) {
+    if (vc != nil && [vc isKindOfClass:ArticleVC.class] == NO) {
         return;
     }
     

@@ -13,6 +13,10 @@
 #import "TodayVC.h"
 #import "BookmarksVC.h"
 #import "RecommendationsVC.h"
+#import "FolderVC.h"
+#import "NewFolderVC.h"
+#import "LaunchVC.h"
+#import "StoreVC.h"
 
 @implementation MainCoordinator
 
@@ -35,7 +39,7 @@
         NSAssert(self.splitViewController != nil, @"A split view controller is needed to start the coordinator.");
     }
     
-    SidebarVC *sidebar = [SidebarVC instanceWithDefaultLayout];
+    SidebarVC *sidebar = [[SidebarVC alloc] initWithDefaultLayout];
     sidebar.mainCoordinator = self;
     sidebar.bookmarksManager = self.bookmarksManager;
     
@@ -54,6 +58,7 @@
         
     }
 
+    self.sidebarVC = sidebar;
     
 }
 
@@ -99,26 +104,120 @@
     
 }
 
+- (void)showFolderFeed:(Folder *)folder {
+    
+    if (folder == nil) {
+        return;
+    }
+    
+    FolderVC *vc = [[FolderVC alloc] initWithFolder:folder];
+    
+    [self _showSupplementaryController:vc];
+    
+}
+
+- (void)showArticleVC:(ArticleVC *)articleVC {
+    
+    if (articleVC == nil) {
+        return;
+    }
+    
+    articleVC.mainCoordinator = self;
+    
+    [self _showDetailController:articleVC];
+    
+}
+
+- (void)showRecommendations {
+    
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+
+    [self _showSupplementaryController:vc];
+    
+}
+
+- (void)showEmptyVC {
+    
+    EmptyVC *vc = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
+    
+    [self _showDetailController:vc];
+    
+}
+
+- (void)showNewFolderVC:(Folder *)folder indexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL))completionHandler {
+    
+    UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
+    
+    runOnMainQueueWithoutDeadlocking(^{
+       
+        [self.splitViewController presentViewController:nav animated:YES completion:^{
+            
+            if (completionHandler) {
+                completionHandler(YES);
+            }
+            
+        }];
+        
+    });
+    
+}
+
+- (void)showLaunchVC {
+    
+    if (self.splitViewController.presentingViewController != nil) {
+        return;
+    }
+    
+    LaunchVC *vc = [[LaunchVC alloc] initWithNibName:NSStringFromClass(LaunchVC.class) bundle:nil];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    nav.modalInPresentation = YES;
+    
+    [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    
+}
+
+- (void)showSubscriptionsInterface {
+    
+    StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    nav.modalInPresentation = YES;
+    
+    UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:vc action:@selector(didTapDone:)];
+    
+    vc.navigationItem.rightBarButtonItem = done;
+    
+    [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    
+}
+
+#pragma mark - Helpers
+
 - (void)_showSupplementaryController:(UIViewController *)controller {
     
     if (controller == nil) {
         return;
     }
     
+    if ([controller isKindOfClass:FeedVC.class]) {
+        
+        self.feedVC = (FeedVC *)controller;
+        
+        [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
+        
+    }
+    
     if ([controller isKindOfClass:UINavigationController.class] == NO) {
         
         controller.mainCoordinator = self;
         
-        if ([controller isKindOfClass:FeedVC.class] == YES) {
-            
-            [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
-            
-        }
-        
     }
     
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        && self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
         
         if ([controller isKindOfClass:UINavigationController.class]) {
             
@@ -143,39 +242,41 @@
     
 }
 
-- (void)showArticleVC:(ArticleVC *)articleVC {
+- (void)_showDetailController:(UIViewController *)controller {
     
-    if (articleVC == nil) {
+    if (controller == nil) {
         return;
     }
     
-    articleVC.mainCoordinator = self;
+    if ([controller isKindOfClass:ArticleVC.class]) {
+        
+        self.articleVC = (ArticleVC *)controller;
+        
+    }
     
     if (self.splitViewController.presentedViewController != nil && [self.splitViewController.presentedViewController isKindOfClass:UINavigationController.class]) {
         // in a modal stack
-        [(UINavigationController *)[self.splitViewController presentedViewController] pushViewController:articleVC animated:YES];
+        [(UINavigationController *)[self.splitViewController presentedViewController] pushViewController:controller animated:YES];
     }
     else if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:articleVC];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:controller];
 
         [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSecondary];
         
     }
     else {
         
+        // We never push the empty VC on the navigation stack
+        // on compact devices
+        if ([controller isKindOfClass:EmptyVC.class]) {
+            return;
+        }
+        
         UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
-        [nav pushViewController:articleVC animated:YES];
+        [nav pushViewController:controller animated:YES];
         
     }
-    
-}
-
-- (void)showRecommendations {
-    
-    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
-
-    [self _showSupplementaryController:vc];
     
 }
 

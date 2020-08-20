@@ -12,12 +12,12 @@
 
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
-#import <DZTextKit/PaddedLabel.h>
+#import "PaddedLabel.h"
 #import "YetiThemeKit.h"
 
 #import <DZKit/NSString+Extras.h>
-#import <DZTextKit/CheckWifi.h>
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "CheckWifi.h"
+#import "NSString+ImageProxy.h"
 
 #import "Coordinator.h"
 
@@ -113,7 +113,15 @@
     
     [super viewWillAppear:animated];
     
+#if TARGET_OS_MACCATALYST
+        
+    self.navigationController.navigationBar.hidden = YES;
+    
+#else
+    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
+
+#endif 
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
@@ -165,24 +173,24 @@
     
 }
 
-- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-    
-    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
-    
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-        
-        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
-            
-            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
-        }
-        else {
-            self.navigationItem.leftBarButtonItem = nil;
-        }
-        
-    } completion:nil];
-    
-}
+//- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+//    
+//    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+//    
+//    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+//        
+//        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+//            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
+//            
+//            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
+//        }
+//        else {
+//            self.navigationItem.leftBarButtonItem = nil;
+//        }
+//        
+//    } completion:nil];
+//    
+//}
 
 - (void)dealloc {
     
@@ -205,7 +213,7 @@
     
 #if TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.hidden = YES;
+    return;
     
 #else
     
@@ -633,10 +641,10 @@
     NSString *subtitle = nil;
     
     if ([_sortingOption isEqualToString:YTSortAllDesc] || [_sortingOption isEqualToString:YTSortAllAsc]) {
-        subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+        subtitle = formattedString(@"No recent articles are available from %@", [self.feed displayTitle]);
     }
     else {
-        subtitle = formattedString(@"No recent unread articles are available from %@", self.feed.title);
+        subtitle = formattedString(@"No recent unread articles are available from %@", [self.feed displayTitle]);
     }
     
     return subtitle;
@@ -815,7 +823,16 @@
 
 - (void)_showArticleVC:(ArticleVC *)vc {
     
-    [self.mainCoordinator showArticleVC:vc];
+    if (self.mainCoordinator != nil) {
+        
+        [self.mainCoordinator showArticleVC:vc];
+        
+    }
+    else {
+        
+        [self.navigationController pushViewController:vc animated:YES];
+        
+    }
     
     if (self->_restorationActivity != nil) {
         
@@ -1062,7 +1079,7 @@
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
         
-        [self to_showDetailViewController:vc sender:self];
+        [self.mainCoordinator showArticleVC:vc];
         
         return;
     }

@@ -9,10 +9,10 @@
 #import "AccountVC.h"
 #import "SettingsCell.h"
 #import "FeedsManager.h"
-#import <DZTextKit/UIColor+HEX.h>
+#import "UIColor+HEX.h"
 
-#import <DZTextKit/LayoutConstants.h>
-#import <DZTextKit/YetiConstants.h>
+#import "LayoutConstants.h"
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 #import "AccountFooterView.h"
 #import "DZWebViewController.h"
@@ -21,7 +21,7 @@
 #import "SplitVC.h"
 
 #import "StoreVC.h"
-#import <DZTextKit/PaddedLabel.h>
+#import "PaddedLabel.h"
 
 #import <AuthenticationServices/AuthenticationServices.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
@@ -90,7 +90,7 @@
     
     NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
     
-    NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
+    NSString *UUID = MyFeedsManager.user.uuid;
     
     if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
         return 2;
@@ -156,7 +156,7 @@
                         cell.textLabel.text = nil;
                         cell.textLabel.accessibilityValue = @"Account Label";
                         
-                        cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUIDString;
+                        cell.detailTextLabel.text = MyFeedsManager.user.uuid;
                         cell.detailTextLabel.textAlignment = NSTextAlignmentCenter;
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
@@ -228,7 +228,7 @@
            
             UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
-                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
+                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
                 
             }];
             
@@ -326,7 +326,7 @@
     [self deactivateFromAPI];
     return;
     
-    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.userIDManager.UUIDString);
+    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.user.uuid);
     
     DZMessagingController.shared.delegate = self;
     
@@ -360,11 +360,11 @@
             NSString *UUID = [user valueForKey:@"uuid"];
             NSNumber *userID = [user valueForKey:@"id"];
             
-//            if ([MyFeedsManager.userIDManager.userID isEqualToNumber:userID]) {
+//            if ([MyFeedsManager.user.userID isEqualToNumber:userID]) {
 //                return;
 //            }
             
-            MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUID];
+            MyFeedsManager.user.uuid = UUID;
             MyFeedsManager.userID = userID;
             
             asyncMain(^{

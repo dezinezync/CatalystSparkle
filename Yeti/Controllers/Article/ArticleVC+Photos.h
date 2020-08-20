@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ArticleVC (Photos) <NYTPhotosViewControllerDelegate>
+@interface ArticleVC (Photos) /* <NYTPhotosViewControllerDelegate> */
 
 - (void)didTapOnImage:(UITapGestureRecognizer *)sender API_AVAILABLE(ios(13.0));
 

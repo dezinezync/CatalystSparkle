@@ -191,19 +191,8 @@
                 [self _markVisibleRowsRead];
             }
             
-            if (self.type == FeedVCTypeUnread || self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
-                
-                self.pagingManager = nil;
-                
-                self.controllerState = StateLoading;
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [self loadNextPage];
-                });
-                
-            }
-            
         });
+        
     };
     
     if (showPrompt) {
@@ -296,8 +285,8 @@
 
 - (void)_didFinishAllReadActionSuccessfully {
     
-    if (self.feed != nil && self.feed.unread > 0) {
-        self.feed.unread = 0;
+    if (self.feed != nil && self.feed.unread.unsignedIntegerValue > 0) {
+        self.feed.unread = @(0);
     }
     
 }
@@ -466,15 +455,15 @@
     });
 }
 
-- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
-    
-    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
-    
-}
+//- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
+//
+//    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
+//
+//}
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
     
-    if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         

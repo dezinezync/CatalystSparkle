@@ -16,8 +16,10 @@
 
 #import "BookmarksManager.h"
 
+/*
 #import <NYTPhotoViewer/NYTPhotosViewController.h>
 #import <NYTPhotoViewer/NYTPhotoViewerArrayDataSource.h>
+*/
 
 @class Content;
 
@@ -54,7 +56,7 @@
 
 @property (nonatomic, strong, readonly) NSPointerArray * _Nullable images;
 
-@property (nonatomic, strong) NYTPhotoViewerArrayDataSource * _Nullable photosDS;
+// @property (nonatomic, strong) NYTPhotoViewerArrayDataSource * _Nullable photosDS;
 
 #pragma mark - Opening URLs
 

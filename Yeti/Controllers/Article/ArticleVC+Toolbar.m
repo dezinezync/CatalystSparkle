@@ -15,7 +15,7 @@
 
 #import "YetiThemeKit.h"
 
-#import <DZTextKit/Paragraph.h>
+#import "Paragraph.h"
 #import "FeedsManager.h"
 
 #import "FeedVC.h"
@@ -23,7 +23,7 @@
 #import "SplitVC.h"
 #import "CustomizeVC.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
@@ -166,7 +166,7 @@
         self.navigationController.toolbarHidden = NO;
     }
     
-    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
+    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.splitViewController != nil) {
         
         UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose)];
         
@@ -182,20 +182,9 @@
 
 - (void)didTapClose {
     
-    SplitVC *vc = (SplitVC *)[self to_splitViewController];
+    [self.mainCoordinator showEmptyVC];
     
-    [vc to_showDetailViewController:[vc emptyVC] sender:self];
-    
-    UINavigationController *nav = nil;
-    
-    if (vc.viewControllers.count > 2) {
-        nav = (id)[vc.viewControllers objectAtIndex:1];
-    }
-    else {
-        nav = (id)(vc.viewControllers.firstObject);
-    }
-    
-    FeedVC *top = (FeedVC *)[nav topViewController];
+    FeedVC *top = self.mainCoordinator.feedVC;
     
     if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
         NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];

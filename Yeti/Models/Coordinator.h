@@ -29,15 +29,35 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) BookmarksManager *bookmarksManager;
 
+#pragma mark - Controller References
+
+@property (nonatomic, weak) SidebarVC *sidebarVC;
+
+@property (nonatomic, weak, nullable) FeedVC *feedVC;
+
+@property (nonatomic, weak, nullable) ArticleVC *articleVC;
+
+#pragma mark - Methods
+
 - (void)start;
 
 - (void)showCustomVC:(CustomFeed *)feed;
 
 - (void)showFeedVC:(Feed *)feed;
 
+- (void)showFolderFeed:(Folder *)folder;
+
 - (void)showArticleVC:(ArticleVC *)articleVC;
 
 - (void)showRecommendations;
+
+- (void)showEmptyVC;
+
+- (void)showNewFolderVC:(Folder *)folder indexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL completed))completionHandler;
+
+- (void)showLaunchVC;
+
+- (void)showSubscriptionsInterface;
 
 @end
 

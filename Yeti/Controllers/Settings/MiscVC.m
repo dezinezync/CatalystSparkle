@@ -9,7 +9,7 @@
 #import "MiscVC.h"
 #import "YetiThemeKit.h"
 #import "SettingsCell.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "PreviewLinesVC.h"
 #import "PrefsManager.h"
 

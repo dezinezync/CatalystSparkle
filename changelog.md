@@ -1,79 +1,47 @@
-# v1.8.0
+# v2.0.0
 
-This is the RC 3 build for v1.8.
+## Build 7
 
-## Build 373
+- Images are once again openable in fullscreen mode.  
 
-- Fixes a crash caused by triggering loading of next batch of articles when reading an article. Tapping on the previous/next buttons would cause this crash. 
+## Build 6
 
-## Build 371
+- Implements Trailing Swipe actions on Feed Cells.
 
-- Fixes a crash on launch caused by registering the Background Task Scheduler later than the OS expects it to. 
+- Fixes marking articles as read in bulk locking up the app. 
 
-- Fixes a crash when the Article reader tried to render a header with an invalid identifier. 
+- Fixes an issue where marking currently loaded articles as read in the Unread view would prevent new articles from loading.  
 
-## Build 368
+- Selecting the Custom Feeds now updates their selected state similar to regular feeds. 
 
-- Improved scroll pagination. 
+- If you have setup a custom title for a Feed, the custom title will now show up correctly for the empty state. 
 
-- Various improvements for better state restoration using the newer iOS APIs. 
+- Fixed a crash caused when trying to share a Feed's URL or its website's URL.
 
-- Sharing by selecting text in a pargraph will now also include the article's URL and enclose the selected text inside quotes. 
+## Build 5
 
-## Build 367
+- Prevents an issue causing the app to sync data twice upon successfully launching. 
 
-- Fixes bookmarking and unbookmarking articles. 
+- Fixes the icons layout issue from **Build 3** causing   
+    - Icons to be incorrectly sized in a lot of cases 
+    - Icons of one feed to be applied to a different feed 
 
-- Fixes bookmarks count not updating in real-time. 
+- Moves Folder Feed access to the Folder's context menu. (No way to detect a tap right now on the Folder's row.)
 
-- Fixes removing a bookmark would have no net-effect. 
+- Reliably updates Folder and Feed unread counts. 
 
-- Bookmarks List no longer shows a persistent bookmark icon. It instead now correctly defers to the Article's read status.
+## Build 3
 
-## Build 366
+- All new triple column support using Apple's own UI Framework. This is much more reliable that my own implementation from v1. 
 
-- Hiding bars on scroll in the Article Reader is now a preference under Settings > Misc. It is now disabled by default. 
+- An all new Sidebar Interface. This uses Apple's latest UI Framework for displaying your folders and feeds. 
 
-- Fixed the Dark app icon rendering incorrectly when used. 
+- Unread counts update more reliabily as you read through your content. 
 
-## Build 365 
+- Improved underlying code for managing the initial state of the app. 
 
-- Fixed loading articles after tapping a Push Notification.
+### Known Issues & Other Notes
 
-- Fixes showing cover images in rich push notifications.
+- Custom theme settings may not apply to the new Sidebar VC. Custom theming will be removed in a future update. 
 
-## Build 364
-
-- New App Icon
-
-- New App Icon Sets (under Settings > Misc. > App Icons)
-
-- Article Readers bars now auto-hide/show on scroll deferring more screen real-estate to the content. 
-
-## Build 363
-
-- Fixes loading of some favicons. 
-
-- Fixes reloading of stale data in some cases. 
-
-## Build 362
-
-- If the source supports it, the separate "dark mode" image will be used when available. 
-
-- Background Refresh now uses Apple's new API released in iOS 13.  
-
-- A new controller which shows your Articles. You can now search for articles which have been loaded locally and on the server as well. The server option will only match titles,  keywords and author names whereas the local version will only match the author and article's title. 
-
-- The recommendations view is now shown inline. 
-
-- A new horizontal two finger swipe gesture for iPadOS to show and hide the Feeds Interface. This works globally.  
-
-- Fixes some leaks caused when loading images over the network. 
-
-- The app should now use much less RAM (in most cases, 50% less memory). 
-
-- The app should now consume approx. 10% less power when in foreground. 
-
-- Added Swipe Actions to Article List items. 
-
-- New Contextual Action for articles: "View articles by Author". Quickly lets you view all articles by a particular author. 
+- No changes to the Articles List or Article Renderer in this update.  

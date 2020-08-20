@@ -7,6 +7,7 @@
 //
 
 #import "NewFolderVC.h"
+#import "Coordinator.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/AlertManager.h>
@@ -14,7 +15,7 @@
 #import "FeedsManager.h"
 #import "YTNavigationController.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 @interface NewFolderVC () {
     BOOL _isUpdating;
@@ -39,11 +40,10 @@
     return nav;
 }
 
-+ (UINavigationController *)instanceWithFolder:(Folder *)folder feedsVC:(FeedsVC * _Nonnull)feedsVC indexPath:(NSIndexPath *)indexPath
++ (UINavigationController *)instanceWithFolder:(Folder *)folder indexPath:(NSIndexPath *)indexPath
 {
     NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     vc.folder = folder;
-    vc.feedsVC = feedsVC;
     vc.folderIndexPath = indexPath;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -106,9 +106,7 @@
     
     self->_isUpdating = YES;
     
-    TOSplitViewController *splitVC = (id)self.presentingViewController;
-    
-    FeedsVC *feedsVC = (id)[[(UINavigationController *)[splitVC primaryViewController] viewControllers] firstObject];
+    SidebarVC *sidebarVC = self.mainCoordinator.sidebarVC;
     
     if (self.folder) {
         // editing the title
@@ -119,13 +117,11 @@
                 
                 self->_isUpdating = NO;
                 
-                [self.feedsVC setupData];
+                [self.mainCoordinator.sidebarVC setupData];
                 
                 self.cancelButton.enabled = YES;
                 
-                if (feedsVC != nil) {
-                    [feedsVC setupData];
-                }
+                [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];
@@ -163,9 +159,7 @@
                 
                 self.cancelButton.enabled = YES;
                 
-                if (feedsVC != nil) {
-                    [feedsVC setupData];
-                }
+                [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
                 [self didTapCancel];

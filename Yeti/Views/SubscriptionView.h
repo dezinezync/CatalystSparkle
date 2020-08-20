@@ -7,7 +7,7 @@
 //
 
 #import <DZKit/DZKit.h>
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -11,7 +11,7 @@
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <DZKit/NSString+Extras.h>
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
 
 NSString *const kAddFeedCell = @"com.yeti.cells.addFeed";
 

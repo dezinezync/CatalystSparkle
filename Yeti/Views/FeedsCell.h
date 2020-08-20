@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <DZTextKit/Image.h>
+#import "Image.h"
 #import "Feed.h"
 
 extern NSString *const _Nonnull kFeedsCell;

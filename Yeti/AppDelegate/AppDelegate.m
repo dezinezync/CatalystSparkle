@@ -13,13 +13,13 @@
 #import <JLRoutes/JLRoutes.h>
 #import "YetiThemeKit.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "CodeParser.h"
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 
 #import "SplitVC.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "FeedsManager.h"
 #import "Keychain.h"
 
@@ -78,14 +78,14 @@ AppDelegate *MyAppDelegate = nil;
     
     if (activity != nil && [activity.activityType isEqualToString:@"viewImage"] == YES) {
         
-        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
-        window.canResizeToFitContent = YES;
-        
-        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
-        
-        window.rootViewController = photosVC;
-        
-        [window makeKeyAndVisible];
+//        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
+//        window.canResizeToFitContent = YES;
+//        
+//        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+//        
+//        window.rootViewController = photosVC;
+//        
+//        [window makeKeyAndVisible];
         
         return;
         
@@ -121,14 +121,14 @@ AppDelegate *MyAppDelegate = nil;
     dispatch_once(&onceToken, ^{
         
         // code to debug state restoration as of iOS 13
-#ifdef DEBUG
-    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDebugLogging"];
-    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDeveloperMode"];
-#endif
+//#ifdef DEBUG
+//    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDebugLogging"];
+//    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDeveloperMode"];
+//#endif
         
         MyAppDelegate = self;
         
-        Coordinator *coordinator = [MainCoordinator new];
+        MainCoordinator *coordinator = [MainCoordinator new];
         
         self.coordinator = coordinator;
         
@@ -377,7 +377,7 @@ AppDelegate *MyAppDelegate = nil;
     
 #if TARGET_OS_MACCATALYST
     dict[kUseSystemFontSize] = @NO;
-    dict[kFontSize] = @(23.f);
+//    dict[kFontSize] = @(23.f);
 #endif
     
     return dict;
@@ -394,6 +394,8 @@ AppDelegate *MyAppDelegate = nil;
     [YetiThemeKit loadThemeKit];
     
     SplitVC *splitVC = [[SplitVC alloc] init];
+    
+    splitVC.mainCoordinator = self.coordinator;
     
     self.window.rootViewController = splitVC;
     

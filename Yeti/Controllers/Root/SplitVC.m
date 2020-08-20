@@ -7,20 +7,17 @@
 //
 
 #import "SplitVC.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "Keychain.h"
 
 #import "YetiThemeKit.h"
 #import "CodeParser.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import "YTUserID.h"
-
 #import "FeedsManager.h"
 
 #import "AppDelegate+Catalyst.h"
 #import "TwoFingerPanGestureRecognizer.h"
-#import "MainNavController.h"
 
 #import "BookmarksMigrationVC.h"
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
@@ -37,7 +34,12 @@
     
     if (self = [super initWithStyle:UISplitViewControllerStyleTripleColumn]) {
         
-        self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+        if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+            self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleNone;
+        }
+        else {
+            self.primaryBackgroundStyle = UISplitViewControllerBackgroundStyleSidebar;
+        }
             
         self.restorationIdentifier = NSStringFromClass(self.class);
 //        self.restorationClass = self.class;
@@ -49,6 +51,12 @@
         
         self.maximumPrimaryColumnWidth = 298.f;
         self.maximumSupplementaryColumnWidth = 375.f;
+        
+#if TARGET_OS_MACCATALYST
+        self.maximumPrimaryColumnWidth = 220.f;
+        self.maximumSupplementaryColumnWidth = 320.f;
+#endif
+        
         self.presentsWithGesture = YES;
         
         [self loadViewIfNeeded];
@@ -72,16 +80,6 @@
         
     });
     
-    UISwipeGestureRecognizer *edgePanLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
-    edgePanLeft.numberOfTouchesRequired = 2;
-    edgePanLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-    edgePanLeft.delegate = self;
-    
-    UISwipeGestureRecognizer *edgePanRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didSwipeOnEdge:)];
-    edgePanRight.numberOfTouchesRequired = 2;
-    edgePanRight.direction = UISwipeGestureRecognizerDirectionRight;
-    edgePanRight.delegate = self;
-    
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;
     twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
@@ -94,22 +92,9 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
-    [self.view addGestureRecognizer:edgePanLeft];
-    [self.view addGestureRecognizer:edgePanRight];
-
+    
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
-    
-#ifndef DEBUG
-    NSError *error = nil;
-    BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
-    
-    if (hasShownIntro == NO) {
-        [self userNotFound];
-    }
-    
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userNotFound) name:YTUserNotFound object:nil];
-#endif
 
 }
 
@@ -121,20 +106,19 @@
         [self checkIfBookmarksShouldBeMigrated];
     }
     
-//#ifdef DEBUG
-//    [NSNotificationCenter.defaultCenter postNotificationName:YTUserNotFound object:nil];
-//#endif
+#ifndef DEBUG
+    NSError *error = nil;
+    BOOL hasShownIntro = [Keychain boolFor:kHasShownOnboarding error:&error];
+    
+    if (hasShownIntro == NO) {
+        return [self userNotFound];
+    }
+#endif
+    
+    if (MyFeedsManager.user == nil) {
+        return [self userNotFound];
+    }
 }
-
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//
-//    NSString *theme = SharedPrefs.theme;
-//
-//    BOOL lightTheme = [theme isEqualToString:LightTheme] || [theme isEqualToString:ReaderTheme];
-//
-//    return lightTheme ? UIStatusBarStyleDefault : UIStatusBarStyleLightContent;
-//
-//}
 
 #pragma mark -
 
@@ -147,16 +131,12 @@
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
-    IntroVC *vc = [[IntroVC alloc] init];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self presentViewController:vc animated:YES completion:nil];
-    });
+    [self.mainCoordinator showLaunchVC];
 }
 
 - (UINavigationController *)emptyVC {
     EmptyVC *vc2 = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-    YTNavigationController *nav2 = [[YTNavigationController alloc] initWithRootViewController:vc2];
+    UINavigationController *nav2 = [[UINavigationController alloc] initWithRootViewController:vc2];
     nav2.restorationIdentifier = @"emptyNav";
 //    vc2.navigationItem.leftBarButtonItem = self.displayModeButtonItem;
     
@@ -185,8 +165,7 @@
     
     BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
     
-    FeedsVC *feedsVC = [[(UINavigationController *)[self.viewControllers firstObject] viewControllers] firstObject];
-    vc.bookmarksManager = feedsVC.bookmarksManager;
+    vc.bookmarksManager = self.mainCoordinator.bookmarksManager;
     
     weakify(vc);
     
@@ -363,9 +342,9 @@
     
     [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
     
-    if (self.feedsVC) {
-        [self.feedsVC saveRestorationActivity:activity];
-    }
+//    if (self.mainCoordinator.sidebarVC) {
+//        [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
+//    }
     
     if (self.feedVC) {
         [self.feedVC saveRestorationActivity:activity];
@@ -393,7 +372,7 @@
     
     if ([first containsString:@"FeedVC-"] == YES) {
         
-        [self.feedsVC continueActivity:activity];
+//        [self.feedsVC continueActivity:activity];
         
     }
     
@@ -424,19 +403,19 @@
 #pragma mark - <UISplitViewControllerDelegate>
 
 - (UIViewController *)primaryViewControllerForCollapsingSplitViewController:(UISplitViewController *)splitViewController {
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+    UINavigationController *nav = splitViewController.viewControllers.firstObject;
 
     return nav;
 }
 
 - (UIViewController *)primaryViewControllerForExpandingSplitViewController:(UISplitViewController *)splitViewController {
 
-    YTNavigationController *nav = splitViewController.viewControllers.firstObject;
+    UINavigationController *nav = splitViewController.viewControllers.firstObject;
 
     return nav;
 }
 
-- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(YTNavigationController *)primaryViewController {
+- (nullable UIViewController *)splitViewController:(UISplitViewController *)splitViewController separateSecondaryViewControllerFromPrimaryViewController:(UINavigationController *)primaryViewController {
     
     // collapseSecondaryViewController:forSplitViewController causes the
     // UINavigationController to be pushed on the the stack of the primary
@@ -467,7 +446,7 @@
         // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
         return YES;
     }
-    else if ([secondaryViewController isKindOfClass:YTNavigationController.class]
+    else if ([secondaryViewController isKindOfClass:UINavigationController.class]
              && [[(UINavigationController *)secondaryViewController topViewController] isKindOfClass:EmptyVC.class]) {
         // Return YES to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
         return YES;

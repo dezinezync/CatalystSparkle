@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-#import "Coordinator.h"
 #import "BarPositioning.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SidebarVC : UICollectionViewController <BarPositioning> 
+@interface SidebarVC : UICollectionViewController <BarPositioning> {
+    // Used by the move folders delegate
+    BOOL _presentingKnown;
+}
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
@@ -21,11 +23,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) UIRefreshControl *refreshControl;
 
-+ (instancetype)instanceWithDefaultLayout;
+- (instancetype)initWithDefaultLayout;
 
 - (void)setupData;
 
 - (void)sync;
+
+- (NSAttributedString *)lastUpdateAttributedString;
+
+#pragma mark - Actions Extension
+
+@property (nonatomic, weak) UITextField *alertTextField;
+@property (nonatomic, weak) UIAlertAction *alertDoneAction;
+@property (nonatomic, weak) Feed *alertFeed;
+@property (nonatomic, strong) NSIndexPath *alertIndexPath;
 
 @end
 

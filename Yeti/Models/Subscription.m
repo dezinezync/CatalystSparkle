@@ -7,9 +7,6 @@
 //
 
 #import "Subscription.h"
-#import <DZKit/DZCloudObject.h>
-#import "FeedsManager.h"
-#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 @implementation Subscription
@@ -145,7 +142,7 @@
         if ([self.error.localizedDescription isEqualToString:@"No subscription found for this account."]) {
             
             // check if they have added their first feed
-            id addedFirst = [Keychain stringFor:YTSubscriptionHasAddedFirstFeed error:nil];
+            id addedFirst = [Keychain stringFor:@"com.dezinezync.elytra.pro.hasAddedFirstFeed" error:nil];
             BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
             
             // they have added their first feed but haven't purchased a subscription.

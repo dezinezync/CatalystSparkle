@@ -1,13 +1,16 @@
 
 #import <DZKit/DZObject.h>
-#import <DZKit/DZDatasourceModel.h>
 #import "NSPointerArray+AbstractionHelpers.h"
+
+#import "UnreadCountObservor.h"
 
 @class Feed;
 
-@interface Folder : DZObject <NSSecureCoding, NSCopying, DZDatasourceModel> {
+@interface Folder : DZObject <NSSecureCoding, NSCopying> {
 
 }
+
+@property (nonatomic, weak) id <UnreadCountObservor> unreadCountObservor;
 
 @property (nonatomic, copy) NSString *created;
 // weakly references Feed objects
@@ -30,5 +33,7 @@
 - (BOOL)isEqualToFolder:(Folder *)folder;
 
 @property (nonatomic, readonly) NSNumber *unreadCount;
+
+- (void)updateUnreadCount;
 
 @end
