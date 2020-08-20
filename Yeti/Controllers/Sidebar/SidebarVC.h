@@ -10,6 +10,8 @@
 
 #import "BarPositioning.h"
 
+@class WidgetManager;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SidebarVC : UICollectionViewController <BarPositioning> {

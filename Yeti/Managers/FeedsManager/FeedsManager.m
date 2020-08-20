@@ -21,10 +21,13 @@
 
 #import <DZKit/AlertManager.h>
 #import "Keychain.h"
+
 @import UserNotifications;
 
 #import "YetiConstants.h"
 #import <DeviceCheck/DeviceCheck.h>
+
+#import "Elytra-Swift.h"
 
 FeedsManager * _Nonnull MyFeedsManager = nil;
 
@@ -181,6 +184,8 @@ NSArray <NSString *> * _defaultsKeys;
         
         self.totalUnread = MAX(0, unread.integerValue);
         self.totalToday = MAX(0, today.integerValue);
+        
+        [self updateSharedUnreadCounters];
         
         if (feedCounters != nil) {
                 
@@ -1214,70 +1219,45 @@ NSArray <NSString *> * _defaultsKeys;
     }}
 }
 
-- (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB
 {
     
-//    if ([self userID] == nil) {
-//        if (errorCB)
-//            errorCB(nil, nil, nil);
-//
-//        return;
-//    }
-//
-//    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @10, @"sortType":  @(sorting.integerValue)}.mutableCopy;
-//
-//#if TESTFLIGHT == 0
-//    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
-//        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
-//    }
-//#endif
-//
-//    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-//            return [FeedItem instanceFromDictionary:obj];
-//        }];
-//
-//        self.unreadLastUpdate = NSDate.date;
-//
-//        if (page == 1) {
-//            ArticlesManager.shared.unread = items;
-//        }
-//        else {
-//            if (!ArticlesManager.shared.unread) {
-//                ArticlesManager.shared.unread = items;
-//            }
-//            else {
-//                NSArray *unread = ArticlesManager.shared.unread;
-//                NSArray *prefiltered = [unread rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-//                    return !obj.isRead;
-//                }];
-//
-//                @try {
-//                    prefiltered = [prefiltered arrayByAddingObjectsFromArray:items];
-//                    ArticlesManager.shared.unread = prefiltered;
-//                }
-//                @catch (NSException *exc) {}
-//            }
-//        }
-//        // the conditional takes care of filtered article items.
-//        self.totalUnread = ArticlesManager.shared.unread.count > 0 ? [[responseObject valueForKey:@"total"] integerValue] : 0;
-//
-//        if (successCB) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                successCB(items, response, task);
-//            });
-//        }
-//
-//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//        error = [self errorFromResponse:error.userInfo];
-//
-//        if (errorCB)
-//            errorCB(error, response, task);
-//        else {
-//            NSLog(@"Unhandled network error: %@", error);
-//        }
-//    }];
+    if ([self userID] == nil) {
+        if (errorCB)
+            errorCB(nil, nil, nil);
+
+        return;
+    }
+
+    NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"page": @(page), @"limit": @(limit), @"sortType":  @(sorting.integerValue)}.mutableCopy;
+
+#if TESTFLIGHT == 0
+    if ([self subscription] != nil && [self.subscription hasExpired] == YES) {
+        params[@"upto"] = @([MyFeedsManager.subscription.expiry timeIntervalSince1970]);
+    }
+#endif
+
+    [self.session GET:@"/unread" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+
+        NSArray <FeedItem *> * items = [[responseObject valueForKey:@"articles"] rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+            return [FeedItem instanceFromDictionary:obj];
+        }];
+
+        if (successCB) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                successCB(items, response, task);
+            });
+        }
+
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        error = [self errorFromResponse:error.userInfo];
+
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            NSLog(@"Unhandled network error: %@", error);
+        }
+    }];
 }
 
 - (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
@@ -3611,6 +3591,78 @@ NSArray <NSString *> * _defaultsKeys;
             
         }
     });
+    
+}
+
+#pragma mark - Shared Containers
+
+- (NSURL *)sharedContainerURL {
+    
+    return [NSFileManager.defaultManager containerURLForSecurityApplicationGroupIdentifier:@"group.elytra"];
+    
+}
+
+- (void)writeToSharedFile:(NSString *)fileName data:(NSDictionary *)data {
+    
+    NSURL * baseURL = self.sharedContainerURL;
+    
+    NSURL *fileURL = [baseURL URLByAppendingPathComponent:fileName];
+    
+    NSFileManager *fileManager = NSFileManager.defaultManager;
+    
+    NSString *path = fileURL.filePathURL.path;
+    
+    NSError *error = nil;
+    
+    if ([fileManager fileExistsAtPath:path]) {
+        // first remove the existing file
+        NSLogDebug(@"Removing existing file from: %@", path);
+        
+        if ([fileManager removeItemAtPath:path error:&error] == NO) {
+            
+            NSLog(@"Error removing file: %@\nError: %@", path, error.localizedDescription);
+            
+            return;
+        }
+        
+    }
+    
+    if (data == nil) {
+        return;
+    }
+    
+    NSData *dataRep = [NSJSONSerialization dataWithJSONObject:data options:kNilOptions error:&error];
+    
+    if (error != nil) {
+        
+        NSLog(@"Error serialising data: %@", error.localizedDescription);
+        return;
+        
+    }
+    
+    if ([dataRep writeToFile:path atomically:YES] == NO) {
+        
+        NSLog(@"Failed to write data to %@", path);
+        
+    }
+    
+}
+
+- (void)updateSharedUnreadCounters {
+    
+    NSMutableDictionary *dict = @{}.mutableCopy;
+    
+    dict[@"unread"] = @(self.totalUnread ?: 0);
+    
+    dict[@"today"] = @(self.totalToday ?: 0);
+    
+    dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
+    
+    dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
+    
+    [self writeToSharedFile:@"counters.json" data:dict];
+    
+    [WidgetManager reloadTimelineWithName:@"CountersWidget"];
     
 }
 

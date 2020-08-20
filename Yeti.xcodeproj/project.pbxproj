@@ -131,6 +131,10 @@
 		F047F4FA20C25FB900626968 /* Spectral-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E020C25FB900626968 /* Spectral-Italic.ttf */; };
 		F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */; };
 		F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */; };
+		F048E4A924EE84D1009A46F4 /* WidgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4A824EE84D1009A46F4 /* WidgetManager.swift */; };
+		F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA8924EE58780045C986 /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F048E4C124EEB0BF009A46F4 /* SDWebImageSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA9824EE58FF0045C986 /* SDWebImageSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */; };
 		F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F04CFAC52154B57B00AA7B5E /* StoreVC.m */; };
 		F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BB21B5427B00AD1FB2 /* YTExtractor.m */; };
 		F04E92BF21B5429300AD1FB2 /* NSString+Components.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BE21B5429300AD1FB2 /* NSString+Components.m */; };
@@ -727,6 +731,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F048E4C124EEB0BF009A46F4 /* SDWebImageSwiftUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -737,6 +742,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
 				F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */,
@@ -948,6 +954,9 @@
 		F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Spectral-LightItalic.ttf"; sourceTree = "<group>"; };
 		F04815FA245FD88200F8091E /* AppDelegate+BackgroundRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+BackgroundRefresh.h"; sourceTree = "<group>"; };
 		F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+BackgroundRefresh.m"; sourceTree = "<group>"; };
+		F048E4A724EE84D0009A46F4 /* Elytra-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Elytra-Bridging-Header.h"; sourceTree = "<group>"; };
+		F048E4A824EE84D1009A46F4 /* WidgetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetManager.swift; sourceTree = "<group>"; };
+		F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountersWidget.swift; sourceTree = "<group>"; };
 		F04CFAC42154B57B00AA7B5E /* StoreVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreVC.h; sourceTree = "<group>"; };
 		F04CFAC52154B57B00AA7B5E /* StoreVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreVC.m; sourceTree = "<group>"; };
 		F04E92BA21B5427B00AD1FB2 /* YTExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YTExtractor.h; sourceTree = "<group>"; };
@@ -1712,6 +1721,7 @@
 				F0D98F5324EE4C8500B1F9F0 /* UnreadsWidget */,
 				F070C2DA1FBABC3500912CCF /* Products */,
 				F0919F631FD7C1A70098F48A /* Frameworks */,
+				F048E4A724EE84D0009A46F4 /* Elytra-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1789,6 +1799,7 @@
 		F070C30F1FBABC7A00912CCF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F048E4A824EE84D1009A46F4 /* WidgetManager.swift */,
 				F0B0EA3924EC205500D675B4 /* CheckWifi.h */,
 				F0B0EA3824EC205500D675B4 /* CheckWifi.m */,
 				F00F647D24EC1E6200E5727C /* LayoutConstants.h */,
@@ -2451,9 +2462,10 @@
 			children = (
 				F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */,
 				F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */,
+				F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */,
+				F0D98F5924EE4C8500B1F9F0 /* Info.plist */,
 				F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */,
 				F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */,
-				F0D98F5924EE4C8500B1F9F0 /* Info.plist */,
 			);
 			path = UnreadsWidget;
 			sourceTree = "<group>";
@@ -2675,7 +2687,7 @@
 					};
 					F070C2D81FBABC3500912CCF = {
 						CreatedOnToolsVersion = 9.1;
-						LastSwiftMigration = 1020;
+						LastSwiftMigration = 1200;
 						SystemCapabilities = {
 							com.apple.AutoFillCredentialProvider = {
 								enabled = 0;
@@ -3270,6 +3282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */,
+				F048E4A924EE84D1009A46F4 /* WidgetManager.swift in Sources */,
 				F044B3C92338A6E900DD8E90 /* BookmarksMigrationVC.m in Sources */,
 				F012909F24EA5908007F8363 /* CustomFeedCell.m in Sources */,
 				F00F648024EC1E9F00E5727C /* UIColor+HEX.m in Sources */,
@@ -3485,6 +3498,7 @@
 			files = (
 				F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */,
 				F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */,
+				F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3783,6 +3797,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3813,8 +3828,10 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
@@ -3836,6 +3853,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3865,7 +3883,9 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "Yeti/Views/Yeti-Bridging-Header.h";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Elytra-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**";
@@ -3924,6 +3944,7 @@
 		F070C30C1FBABC3600912CCF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
@@ -3944,6 +3965,7 @@
 		F070C30D1FBABC3600912CCF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
@@ -4087,6 +4109,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -4119,6 +4143,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;

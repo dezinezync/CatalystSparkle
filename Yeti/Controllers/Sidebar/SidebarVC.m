@@ -21,6 +21,10 @@
 #import "FolderCell.h"
 
 #import "Keychain.h"
+//#import "Elytra-Bridging-Header.h"
+#import "Elytra-Swift.h"
+//#import "WidgetCenter-Swift.h"
+
 
 @interface SidebarVC () {
     
@@ -30,6 +34,9 @@
     
     // Counters
     BOOL _fetchingCounters;
+    
+    BOOL _initialSyncCompleted;
+    BOOL _requiresUpdatingUnreadSharedData;
     
 }
 
@@ -176,13 +183,25 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [self setupNotifications];
     
-    [self sync];
+    [self updateSharedData];
 
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
+    
+    if (_initialSyncCompleted == NO) {
+        
+        [self sync];
+        
+    }
+    
+    if (_requiresUpdatingUnreadSharedData) {
+        
+        [self updateSharedUnreadsData];
+        
+    }
     
 }
 
@@ -323,7 +342,17 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:FeedsDidUpdate object:ArticlesManager.shared];
     
+    weakify(self);
+    
     [NSNotificationCenter.defaultCenter addObserverForName:UnreadCountDidUpdate object:MyFeedsManager queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+        
+        strongify(self);
+        
+        if (self->_requiresUpdatingUnreadSharedData == NO) {
+            self->_requiresUpdatingUnreadSharedData = YES;
+        }
+        
+        [MyFeedsManager updateSharedUnreadCounters];
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
        
@@ -352,6 +381,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     if (SharedPrefs.hideBookmarks == NO) {
         
         [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+            
+            [MyFeedsManager updateSharedUnreadCounters];
             
             NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
             
@@ -454,6 +485,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             }
             
         }];
+        
+    }];
+    
+    [NSNotificationCenter.defaultCenter addObserverForName:UserDidUpdate object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+        
+        strongify(self);
+       
+        if (self->_initialSyncCompleted == NO) {
+            [self sync];
+        }
         
     }];
     
@@ -692,11 +733,21 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return;
     }
     
+    self->_fetchingCounters = NO;
+    
     [self sync];
     
 }
 
 - (void)sync {
+    
+    if (MyFeedsManager.user == nil) {
+        return;
+    }
+    
+    if (_initialSyncCompleted == NO) {
+        _initialSyncCompleted = YES;
+    }
     
     if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0)
         && _refreshing == NO
@@ -759,6 +810,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     _refreshing = YES;
     
     [self fetchLatestCounters];
+    [self updateSharedData];
     
     [MyDBManager setValue:@(NO) forKey:@"syncSetup"];
     [MyDBManager setupSync];
@@ -804,6 +856,84 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         self->_refreshing = NO;
         
     }];
+    
+}
+
+- (void)updateSharedData {
+    
+    [self updateSharedUnreadsData];
+    
+}
+
+- (void)updateSharedUnreadsData {
+    
+    [MyFeedsManager getUnreadForPage:1 limit:6 sorting:YTSortUnreadDesc success:^(NSArray <FeedItem *> * items, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (items.count == 0) {
+            return;
+        }
+        
+        NSMutableArray *list = [NSMutableArray arrayWithCapacity:items.count];
+        
+        for (FeedItem *item in items) {
+            
+            NSString *title = item.articleTitle;
+            NSNumber *date = @(item.timestamp.timeIntervalSince1970);
+            NSString *author = item.author ?: @"";
+            NSString *blog = item.blogTitle;
+            NSString *imageURL = item.coverImage;
+            NSNumber *identifier = item.identifier;
+            NSNumber *blogID = item.feedID;
+            
+            if (blog == nil) {
+                
+                Feed *feed = [MyFeedsManager feedForID:item.feedID];
+                
+                if (feed != nil) {
+                    blog = [feed displayTitle];
+                }
+                else {
+                    blog = @"";
+                }
+                
+            }
+            
+            if (title == nil && item.content != nil && item.content.count > 0) {
+                
+                NSString * titleContent = [item textFromContent];
+                
+                title = titleContent;
+                
+            }
+            
+            NSMutableDictionary *listItem = [NSMutableDictionary dictionaryWithDictionary:@{
+                @"title": title,
+                @"date": date,
+                @"author": author,
+                @"blog": blog,
+                @"identifier": identifier,
+                @"blogID": blogID
+            }];
+            
+            if (imageURL != nil) {
+                listItem[@"imageURL"] = imageURL;
+            }
+            
+            [list addObject:listItem];
+            
+        }
+        
+        NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
+        
+        [MyFeedsManager writeToSharedFile:@"articles.json" data:data];
+        
+        if (list.count) {
+            
+            [WidgetManager reloadTimelineWithName:@"UnreadsWidget"];
+            
+        }
+        
+    } error:nil];
     
 }
 

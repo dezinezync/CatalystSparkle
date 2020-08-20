@@ -8,72 +8,91 @@
 
 import WidgetKit
 import SwiftUI
-import Intents
 import SDWebImageSwiftUI
 
-struct Provider: IntentTimelineProvider {
+struct UnreadsProvider: IntentTimelineProvider {
+    
+    func loadData (name: String) -> SimpleEntries? {
+        
+        let json: SimpleEntries
+        
+        if let baseURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.elytra") {
+                
+            let fileURL = baseURL.appendingPathComponent(name)
+                
+            if let data = try? Data(contentsOf: fileURL) {
+                // we're OK to parse!
+                do {
+                    
+                    let decoder = JSONDecoder();
+                    
+                    json = try decoder.decode(SimpleEntries.self, from: data)
+                    
+                    return json
+                }
+                catch {
+                    print(error.localizedDescription)
+                }
+                
+            }
+            
+        }
+        
+        return nil
+        
+    }
     
     public func snapshot(for configuration: ConfigurationIntent, with context: Context, completion: @escaping (SimpleEntries) -> ()) {
         
-        let entries =  SimpleEntries(date: Date(), entries: [
-            SimpleEntry(date: Date(), title: "iOS 14 Review with a long title to check", author: "Federico Viticci", blog: "MacStories", image: nil, imageURL: nil, configuration: configuration),
-            SimpleEntry(date: Date(), title: "iOS 15 Review", author: "John Gruber", blog: "Daring Fireball", image: nil, imageURL: nil, configuration: configuration)
-        ])
-
-        completion(entries)
+        if let jsonData = loadData(name: "articles.json") {
+            
+            return completion(jsonData)
+            
+        }
         
-    }
-
-    public func timeline(for configuration: ConfigurationIntent, with context: Context, completion: @escaping (Timeline<SimpleEntries>) -> ()) {
-        
-        var entries: [SimpleEntries] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        
-        let entryCol = SimpleEntries(date: currentDate, entries: [
-            SimpleEntry(date: Date(), title: "iOS 14 Review with a long title to check", author: "Federico Viticci", blog: "MacStories", image: nil, imageURL: nil, configuration: configuration),
-            SimpleEntry(date: Date(), title: "iOS 15 Review", author: "John Gruber", blog: "Daring Fireball", image: nil, imageURL: nil, configuration: configuration)
-        ])
-        
-        entries.append(entryCol)
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        
-        completion(timeline)
-   
     }
     
     public func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<SimpleEntries>) -> Void) {
         
-        var entries: [SimpleEntries] = []
+        if let jsonData = loadData(name: "articles.json") {
+        
+            var entries: [SimpleEntries] = []
+            
+            entries.append(jsonData)
+            
+            let timeline = Timeline(entries: entries, policy: .never)
+            
+            completion(timeline)
+            
+        }
 
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
+    }
+    
+    func placeholder(in context: Context) -> SimpleEntries {
         
-        let entryCol = SimpleEntries(date: currentDate, entries: [
-            SimpleEntry(date: Date(), title: "iOS 14 Review with a long title to check", author: "Federico Viticci", blog: "MacStories", image: nil, imageURL: nil, configuration: configuration),
-            SimpleEntry(date: Date(), title: "iOS 15 Review", author: "John Gruber", blog: "Daring Fireball", image: nil, imageURL: nil, configuration: configuration)
-        ])
+        if let jsonData = loadData(name: "articles.json") {
+            
+            return jsonData;
+            
+        }
         
-        entries.append(entryCol)
+        let entryCol = SimpleEntries(date: Date(), entries: []);
         
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        
-        completion(timeline)
+        return entryCol
         
     }
     
 }
 
-struct SimpleEntry: TimelineEntry, Hashable, Identifiable {
+struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
+    
     public let date: Date
     public let title: String
     public let author: String
     public let blog: String
-    public let image: Image?
-    public let imageURL: URL?
-    public let configuration: ConfigurationIntent?
+    public let imageURL: String?
+    public let identifier: Int
+    public let blogID: Int
     
     var hashValue : Int {
         return title.hashValue
@@ -85,7 +104,7 @@ struct SimpleEntry: TimelineEntry, Hashable, Identifiable {
     
 }
 
-struct SimpleEntries: TimelineEntry {
+struct SimpleEntries: TimelineEntry, Decodable {
     public let date: Date
     public let entries: [SimpleEntry]
 }
@@ -94,7 +113,7 @@ struct PlaceholderView : View {
     
     var body: some View {
         
-        ArticleView(entry: SimpleEntry(date: Date(), title: "Placeholder title", author: "Author", blog: "Blog", image: nil, imageURL: nil, configuration: nil))
+        ArticleView(entry: SimpleEntry(date: Date(), title: "Placeholder title", author: "Author", blog: "Blog", imageURL: nil, identifier: 0, blogID: 0))
         .redacted(reason: .placeholder)
         
     }
@@ -107,36 +126,44 @@ struct ArticleView : View {
     
     var body: some View {
         
-        ZStack {
-        
-            HStack(alignment: .center, spacing: 12) {
-                
-                VStack(alignment: .leading, spacing: 4) {
+        Link(destination:URL(string: "elytra://feed/\(entry.blogID)/article/\(entry.identifier)")!) {
+            
+            ZStack {
+            
+                HStack(alignment: .center, spacing: 12) {
                     
-                    Text(entry.title)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                        .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
+                    VStack(alignment: .leading, spacing: 4) {
+                        
+                        Text(entry.title)
+                            .font(Font.subheadline.weight(.medium))
+                            .foregroundColor(.primary)
+                            .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
+                            .lineLimit(1)
+                        
+                        Text("\(entry.author) - \(entry.blog)")
                         .lineLimit(1)
-                    
-                    Text("\(entry.author) - \(entry.blog)")
-                    .lineLimit(1)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
 
-                }
-                
-                Spacer()
-                
-                WebImage(url: URL(string: "https://blog.elytra.app/wp-content/uploads/2020/06/newAppIcon@2x.png"))
-                    .placeholder(Image(systemName: "square.dashed"))
-                    .frame(width: 40, height: 40, alignment: .trailing)
-                    .foregroundColor(.secondary)
-                    .alignmentGuide(HorizontalAlignment.trailing) { _ in
-                        0
                     }
-                    .scaledToFit()
+                    
+                    Spacer()
+                    
+                    if entry.imageURL != nil {
+                        
+                        WebImage(url: URL(string: entry.imageURL!))
+                            .placeholder(Image(systemName: "square.dashed"))
+                            .resizable()
+                            .frame(maxWidth: 44, maxHeight: 44, alignment: .trailing)
+                            .aspectRatio(contentMode: .fill)
+                            .clipped()
+                            .cornerRadius(3.0)
+                            .background(Color(UIColor.secondarySystemFill))
+                        
+                    }
+                    
+                }
                 
             }
             
@@ -148,44 +175,58 @@ struct ArticleView : View {
 
 struct UnreadsWidgetEntryView : View {
     
+    @Environment(\.widgetFamily) private var widgetFamily
+    
     var entries: SimpleEntries
 
     var body: some View {
         
-        VStack (alignment: .leading, spacing: 4) {
+        ZStack {
             
-            Text("Recent Unreads")
-                .font(.headline)
-                .foregroundColor(.purple)
-                .multilineTextAlignment(.leading)
-            
-            Spacer()
-            
-            GeometryReader { geometryProxy in
+            VStack (alignment: .leading, spacing: 8) {
                 
-                LazyVStack(alignment: .leading, spacing: 4, pinnedViews: [], content: {
-                    ForEach(0..<entries.entries.count, id: \.self) { count in
-                        ArticleView(entry: entries.entries[count])
-                    }
-                })
-//                .frame(width: geometryProxy.size.width, height: geometryProxy.size.height, alignment: .topLeading)
+                Text("Recent Unreads")
+                    .font(Font.title3.bold())
+                    .foregroundColor(Color(UIColor.systemIndigo))
+                    .multilineTextAlignment(.leading)
+                
+                if (widgetFamily == .systemMedium) {
+                    
+                    LazyVStack(alignment: .leading, spacing: 4, pinnedViews: [], content: {
+                        ForEach(0..<[entries.entries.count, 2].min()!, id: \.self) { count in
+                            ArticleView(entry: entries.entries[count])
+                        }
+                    })
+                    
+                }
+                else {
+                    
+                    LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
+                        ForEach(0..<[entries.entries.count, 6].min()!, id: \.self) { count in
+                            ArticleView(entry: entries.entries[count])
+                        }
+                    })
+                    .alignmentGuide(.top) { _ in 0 }
+                    
+                }
+                
+                Spacer(minLength: 0)
                 
             }
             
         }
         .padding()
-        
+        .background(Color(UIColor.systemBackground))
     }
 }
 
-@main
 struct UnreadsWidget: Widget {
     
     private let kind: String = "UnreadsWidget"
 
     public var body: some WidgetConfiguration {
         
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entries in
+        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: UnreadsProvider()) { entries in
             UnreadsWidgetEntryView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
         }
@@ -199,21 +240,39 @@ struct UnreadsWidget: Widget {
 
 #if DEBUG
 
-//struct UnreadsWidget_Previews: PreviewProvider {
-//
-//    static var previews: some View {
-//
-//        UnreadsWidgetEntryView(entries: [SimpleEntry(date: Date(), title: "Article Title", author: "Author", blog: "Blog", image: nil, imageURL: nil, configuration: ConfigurationIntent())])
-//            .previewContext(WidgetPreviewContext(family: .systemMedium))
-//
-//    }
-//
-//}
-
 struct UnreadsWidget_Previews: PreviewProvider {
+
     static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+        
+        let entry1 = SimpleEntry(date: Date(), title: "IBM settles LA lawsuit over The Weather Channel app selling user location data", author: "Ben Lovejoy", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/08/The-Weather-Channel-app-selling-user-location-data.jpg?quality=82&strip=all&w=1500", identifier: 15916618, blogID: 19)
+        
+        let entry2 = SimpleEntry(date: Date(), title: "Tips for searching and saving searches in Mail on Mac", author: "Sandy Writtenhouse", blog: "iDownloadBlog.com", imageURL: "https://media.idownloadblog.com/wp-content/uploads/2020/07/Mac-Mail-Search-Apple-Arcade.jpg", identifier: 15916813, blogID: 12596)
+        
+        let entry3 = SimpleEntry(date: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, identifier: 15916691, blogID: 5959)
+        
+        let entries = SimpleEntries(date: Date(), entries: [entry1, entry2, entry3])
+        
+        UnreadsWidgetEntryView(entries:entries)
+            .previewContext(WidgetPreviewContext(family: .systemLarge))
+            .previewDisplayName("Unreads Large")
+
+        UnreadsWidgetEntryView(entries:entries)
+            .previewContext(WidgetPreviewContext(family: .systemMedium))
+            .previewDisplayName("Unreads Medium")
+            .environment(\.colorScheme, .dark)
+
     }
+
 }
 
 #endif
+
+/* Bundler */
+@main
+struct ElytraWidgets: WidgetBundle {
+    @WidgetBundleBuilder
+    var body: some Widget {
+        UnreadsWidget()
+        CountersWidget()
+    }
+}
