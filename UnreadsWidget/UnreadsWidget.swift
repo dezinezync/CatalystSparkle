@@ -174,8 +174,8 @@ struct UnreadsWidget: Widget {
     
 }
 
-//#if DEBUG
-//
+#if DEBUG
+
 //struct UnreadsWidget_Previews: PreviewProvider {
 //
 //    static var previews: some View {
@@ -186,5 +186,11 @@ struct UnreadsWidget: Widget {
 //    }
 //
 //}
-//
-//#endif
+
+struct UnreadsWidget_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+    }
+}
+
+#endif
