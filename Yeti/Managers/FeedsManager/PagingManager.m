@@ -135,7 +135,7 @@
     
     NSString *url = [NSURL URLWithString:path relativeToURL:MyFeedsManager.session.baseURL].absoluteString;;
     
-    id queryString = [MyFeedsManager.session stringifyQueryParams:self.queryParams];
+    id queryString = [MyFeedsManager.session stringifyQueryParams:params];
     
     if (queryString) {
         url = [url stringByAppendingFormat:@"?%@", queryString];

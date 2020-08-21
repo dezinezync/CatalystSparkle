@@ -547,12 +547,8 @@
 
 #pragma mark - <UIAdaptivePresentationControllerDelegate>
 
-- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(nonnull UITraitCollection *)traitCollection
 {
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-        return UIModalPresentationPopover;
-    }
-    
     return UIModalPresentationNone;
 }
 

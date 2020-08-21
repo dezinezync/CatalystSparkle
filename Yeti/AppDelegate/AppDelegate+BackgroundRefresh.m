@@ -26,7 +26,9 @@
     
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+//- (void)applicationDidEnterBackground:(UIApplication *)application {
+
+- (void)sceneDidEnterBackground:(UIScene *)scene {
     
     [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
         

@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AppDelegate (BackgroundRefresh)
 
-- (void)applicationDidEnterBackground:(UIApplication *)application;
+- (void)sceneDidEnterBackground:(UIScene *)scene;
 
 - (void)setupBackgroundRefresh;
 

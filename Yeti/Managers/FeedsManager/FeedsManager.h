@@ -116,7 +116,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, copy) NSDate * _Nullable unreadLastUpdate;
 
-- (void)getUnreadForPage:(NSInteger)page sorting:(YetiSortOption _Nonnull)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+- (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption _Nonnull)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -210,6 +210,12 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 #pragma mark - Error formatting
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;
+
+#pragma mark - Shared Data
+
+- (void)writeToSharedFile:(NSString * _Nonnull)fileURL data:(NSDictionary * _Nullable)data;
+
+- (void)updateSharedUnreadCounters;
 
 #pragma mark - State Restoration
 
