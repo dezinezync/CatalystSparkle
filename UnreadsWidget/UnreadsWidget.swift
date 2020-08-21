@@ -95,8 +95,8 @@ struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
     public let blogID: Int
     public let favicon: String?
     
-    var hashValue : Int {
-        return title.hashValue
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
     }
     
     var id : Int {
@@ -205,23 +205,39 @@ struct UnreadsWidgetEntryView : View {
                     .foregroundColor(Color(UIColor.systemIndigo))
                     .multilineTextAlignment(.leading)
                 
-                if (widgetFamily == .systemMedium) {
+                if (entries.entries.count == 0) {
                     
-                    LazyVStack(alignment: .leading, spacing: 4, pinnedViews: [], content: {
-                        ForEach(0..<[entries.entries.count, 2].min()!, id: \.self) { count in
-                            ArticleView(entry: entries.entries[count])
-                        }
+                    VStack(alignment: .leading, spacing: nil, content: {
+                        
+                        Text("No new unread articles")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        
                     })
                     
                 }
                 else {
                     
-                    LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
-                        ForEach(0..<[entries.entries.count, 6].min()!, id: \.self) { count in
-                            ArticleView(entry: entries.entries[count])
-                        }
-                    })
-                    .alignmentGuide(.top) { _ in 0 }
+                    if (widgetFamily == .systemMedium) {
+                        
+                        LazyVStack(alignment: .leading, spacing: 4, pinnedViews: [], content: {
+                            ForEach(0..<[entries.entries.count, 2].min()!, id: \.self) { count in
+                                ArticleView(entry: entries.entries[count])
+                            }
+                        })
+                        
+                    }
+                    else {
+                        
+                        LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
+                            ForEach(0..<[entries.entries.count, 6].min()!, id: \.self) { count in
+                                ArticleView(entry: entries.entries[count])
+                            }
+                        })
+                        .alignmentGuide(.top) { _ in 0 }
+                        
+                    }
                     
                 }
                 
@@ -275,6 +291,13 @@ struct UnreadsWidget_Previews: PreviewProvider {
             .previewDisplayName("Unreads Large")
 
         UnreadsWidgetEntryView(entries:entries)
+            .previewContext(WidgetPreviewContext(family: .systemMedium))
+            .previewDisplayName("Unreads Medium")
+            .environment(\.colorScheme, .dark)
+        
+        let emptyEntries = SimpleEntries(date: Date(), entries: [])
+        
+        UnreadsWidgetEntryView(entries:emptyEntries)
             .previewContext(WidgetPreviewContext(family: .systemMedium))
             .previewDisplayName("Unreads Medium")
             .environment(\.colorScheme, .dark)

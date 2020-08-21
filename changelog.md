@@ -4,6 +4,10 @@
 
 - Added favicons to the Unreads Widget. 
 
+- Added empty state to the Unreads Widget.
+
+- Removed opacity from icons for the counters widget.
+
 - Fixed Counters widget incorrectly displaying bookmarks count. (Launch the app once to update the data across the widgets).
 
 ## Build 7

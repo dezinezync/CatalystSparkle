@@ -81,7 +81,7 @@ struct CountersView : View {
                 HStack(alignment:.center) {
                     
                     Image(systemName: "largecircle.fill.circle")
-                        .foregroundColor(Color(UIColor.systemBlue).opacity(0.7))
+                        .foregroundColor(Color(UIColor.systemBlue))
                         .frame(width: 24, height: 24, alignment: .center)
                     
                     Text(String(entry.unread))
@@ -96,7 +96,7 @@ struct CountersView : View {
                 HStack(alignment: .center) {
                     
                     Image(systemName: "calendar")
-                        .foregroundColor(Color(UIColor.systemRed).opacity(0.7))
+                        .foregroundColor(Color(UIColor.systemRed))
                         .frame(width: 24, height: 24, alignment: .center)
                     
                     Text(String(entry.today))
@@ -111,7 +111,7 @@ struct CountersView : View {
                 HStack(alignment: .center) {
                     
                     Image(systemName: "bookmark.fill")
-                        .foregroundColor(Color(UIColor.systemOrange).opacity(0.7))
+                        .foregroundColor(Color(UIColor.systemOrange))
                         .frame(width: 24, height: 24, alignment: .center)
                     
                     Text(String(entry.bookmarks))
@@ -143,24 +143,12 @@ struct CountersEntry: TimelineEntry, Decodable {
 
 struct CountersWidgetEntryView : View {
     
-    @Environment(\.colorScheme) private var colorScheme
-    
     var entry: CountersProvider.Entry
 
     var body: some View {
         
-        if colorScheme == .light {
-            
-            CountersView(entry: entry)
-                .background(Color(UIColor.systemBackground))
-            
-        }
-        else {
-            
-            CountersView(entry: entry)
-                .background(Color(UIColor.secondarySystemBackground))
-            
-        }
+        CountersView(entry: entry)
+            .background(Color(UIColor.systemBackground))
         
     }
     
