@@ -151,6 +151,8 @@ AppDelegate *MyAppDelegate = nil;
         
         [self.coordinator start];
         
+        MyFeedsManager.bookmarksManager = self.coordinator.bookmarksManager;
+        
 //        weakify(self);
         
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;

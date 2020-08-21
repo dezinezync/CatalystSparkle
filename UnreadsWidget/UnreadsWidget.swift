@@ -93,6 +93,7 @@ struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
     public let imageURL: String?
     public let identifier: Int
     public let blogID: Int
+    public let favicon: String?
     
     var hashValue : Int {
         return title.hashValue
@@ -113,7 +114,7 @@ struct PlaceholderView : View {
     
     var body: some View {
         
-        ArticleView(entry: SimpleEntry(date: Date(), title: "Placeholder title", author: "Author", blog: "Blog", imageURL: nil, identifier: 0, blogID: 0))
+        ArticleView(entry: SimpleEntry(date: Date(), title: "Placeholder title", author: "Author", blog: "Blog", imageURL: nil, identifier: 0, blogID: 0, favicon: ""))
         .redacted(reason: .placeholder)
         
     }
@@ -131,6 +132,20 @@ struct ArticleView : View {
             ZStack {
             
                 HStack(alignment: .center, spacing: 12) {
+                    
+                    if entry.favicon != nil {
+                       
+                        WebImage(url: URL(string: entry.favicon!))
+                            .placeholder(Image(systemName: "square.dashed"))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: 24, maxHeight: 24, alignment: .leading)
+                            .clipped()
+                            .cornerRadius(3.0)
+                            .foregroundColor(.secondary)
+                            .background(Color(UIColor.systemBackground))
+                        
+                    }
                     
                     VStack(alignment: .leading, spacing: 4) {
                         
@@ -159,7 +174,7 @@ struct ArticleView : View {
                             .aspectRatio(contentMode: .fill)
                             .clipped()
                             .cornerRadius(3.0)
-                            .background(Color(UIColor.secondarySystemFill))
+                            .background(Color(UIColor.systemBackground))
                         
                     }
                     
@@ -226,8 +241,11 @@ struct UnreadsWidget: Widget {
 
     public var body: some WidgetConfiguration {
         
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: UnreadsProvider()) { entries in
-            UnreadsWidgetEntryView(entries: entries)
+        IntentConfiguration(
+            kind: kind,
+            intent: ConfigurationIntent.self,
+            provider: UnreadsProvider()) { entries in
+                UnreadsWidgetEntryView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
         }
         .configurationDisplayName("Unread Articles")
@@ -244,11 +262,11 @@ struct UnreadsWidget_Previews: PreviewProvider {
 
     static var previews: some View {
         
-        let entry1 = SimpleEntry(date: Date(), title: "IBM settles LA lawsuit over The Weather Channel app selling user location data", author: "Ben Lovejoy", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/08/The-Weather-Channel-app-selling-user-location-data.jpg?quality=82&strip=all&w=1500", identifier: 15916618, blogID: 19)
+        let entry1 = SimpleEntry(date: Date(), title: "Apple releases second macOS Big Sur public beta", author: "Michael Potuck", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/07/macOS-Big-Sur-changes-and-features.jpg?quality=82&strip=all&w=1600", identifier: 15930957, blogID: 19, favicon: "https://s-origin.wordpress.com/wp-content/themes/vip/9to5-2015/images/favicons/9to5mac/9to5mac-touch-icon-iphone.png")
         
-        let entry2 = SimpleEntry(date: Date(), title: "Tips for searching and saving searches in Mail on Mac", author: "Sandy Writtenhouse", blog: "iDownloadBlog.com", imageURL: "https://media.idownloadblog.com/wp-content/uploads/2020/07/Mac-Mail-Search-Apple-Arcade.jpg", identifier: 15916813, blogID: 12596)
+        let entry2 = SimpleEntry(date: Date(), title: "Ghost Cruise Ships ∞", author: "Paul Kafasis", blog: "One Foot Tsunami", imageURL: "https://ichef.bbci.co.uk/news/976/cpsprodpb/B669/production/_113879664_hi061524349.jpg", identifier: 15930980, blogID: 336, favicon: "https://onefoottsunami.com/wordpress/wp-content/themes/OFTtheme/global/images/siteimages/favicon-ios.png")
         
-        let entry3 = SimpleEntry(date: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, identifier: 15916691, blogID: 5959)
+        let entry3 = SimpleEntry(date: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, identifier: 15916691, blogID: 5959, favicon: "https://tapsmart-wpengine.netdna-ssl.com/wp-content/uploads/fbrfg/apple-touch-icon-152x152.png")
         
         let entries = SimpleEntries(date: Date(), entries: [entry1, entry2, entry3])
         

@@ -11,7 +11,7 @@
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>19G73</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>12A8169g</string>
+	<string>12A8189h</string>
 	<key>INIntentDefinitionToolsVersion</key>
 	<string>12.0</string>
 	<key>INIntents</key>
@@ -28,9 +28,56 @@
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>2</integer>
+			<integer>4</integer>
 			<key>INIntentName</key>
 			<string>Configuration</string>
+			<key>INIntentParameters</key>
+			<array>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Show Favicons</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>oDQKhc</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>1</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<true/>
+						<key>INIntentParameterMetadataFalseDisplayName</key>
+						<string>No</string>
+						<key>INIntentParameterMetadataFalseDisplayNameID</key>
+						<string>YbqY96</string>
+						<key>INIntentParameterMetadataTrueDisplayName</key>
+						<string>Yes</string>
+						<key>INIntentParameterMetadataTrueDisplayNameID</key>
+						<string>T6yfkz</string>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>showFavicon</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterTag</key>
+					<integer>4</integer>
+					<key>INIntentParameterType</key>
+					<string>Boolean</string>
+				</dict>
+			</array>
 			<key>INIntentResponse</key>
 			<dict>
 				<key>INIntentResponseCodes</key>

@@ -1,5 +1,11 @@
 # v2.0.0
 
+## Build 8
+
+- Added favicons to the Unreads Widget. 
+
+- Fixed Counters widget incorrectly displaying bookmarks count. (Launch the app once to update the data across the widgets).
+
 ## Build 7
 
 - Images are once again openable in fullscreen mode.

@@ -884,18 +884,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             NSString *imageURL = item.coverImage;
             NSNumber *identifier = item.identifier;
             NSNumber *blogID = item.feedID;
+            NSString *favicon = @"";
             
-            if (blog == nil) {
-                
-                Feed *feed = [MyFeedsManager feedForID:item.feedID];
-                
-                if (feed != nil) {
-                    blog = [feed displayTitle];
-                }
-                else {
-                    blog = @"";
-                }
-                
+            Feed *feed = [MyFeedsManager feedForID:item.feedID];
+            
+            if (feed != nil) {
+                blog = [feed displayTitle];
+                favicon = [feed faviconURI] ?: @"";
+            }
+            else {
+                blog = @"";
             }
             
             if (title == nil && item.content != nil && item.content.count > 0) {
@@ -912,7 +910,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 @"author": author,
                 @"blog": blog,
                 @"identifier": identifier,
-                @"blogID": blogID
+                @"blogID": blogID,
+                @"favicon": favicon
             }];
             
             if (imageURL != nil) {
