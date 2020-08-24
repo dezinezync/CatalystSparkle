@@ -1073,9 +1073,6 @@
 		F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedDeckController.m; sourceTree = "<group>"; };
 		F0A0501A21F07BFF00A46524 /* AddFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedVC.h; sourceTree = "<group>"; };
 		F0A0501B21F07BFF00A46524 /* AddFeedVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedVC.m; sourceTree = "<group>"; };
-		F0A39B11245A955600A9B26E /* PINRemoteImage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PINRemoteImage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F0A39B14245A956E00A9B26E /* PINCache.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PINCache.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F0A39B17245A958200A9B26E /* PINOperation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PINOperation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0A4797C20637D2100A20195 /* AddFeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedCell.h; sourceTree = "<group>"; };
 		F0A4797D20637D2100A20195 /* AddFeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddFeedCell.m; sourceTree = "<group>"; };
 		F0A4798020639EB000A20195 /* ArticleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHandler.h; sourceTree = "<group>"; };
@@ -2078,9 +2075,6 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F0A39B17245A958200A9B26E /* PINOperation.framework */,
-				F0A39B14245A956E00A9B26E /* PINCache.framework */,
-				F0A39B11245A955600A9B26E /* PINRemoteImage.framework */,
 				F0448D00244463B7003B6AA7 /* CoreServices.framework */,
 				F0E0DBB122AE0F46006A2D93 /* WebKit.framework */,
 				F099465F20AD86BE00E5520F /* StoreKit.framework */,
