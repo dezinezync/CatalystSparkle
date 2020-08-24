@@ -8,7 +8,6 @@
 
 import WidgetKit
 import SwiftUI
-import SDWebImageSwiftUI
 
 struct UnreadsProvider: IntentTimelineProvider {
     
