@@ -22,12 +22,6 @@
 #import <UIKit/UIMenuSystem.h>
 #import <AppKit/NSToolbarItemGroup.h>
 
-@interface _UIMenuBarItem : NSObject
-
-+ (UIMenuItem *)separatorItem;
-
-@end
-
 @implementation AppDelegate (Catalyst)
 
 - (void)ct_setupToolbar:(UIWindowScene *)scene {
@@ -37,6 +31,10 @@
     toolbar.delegate = self;
     
     scene.titlebar.toolbar = toolbar;
+    
+//    scene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnifiedCompact;
+    
+    scene.titlebar.separatorStyle = UITitlebarSeparatorStyleAutomatic;
     
     scene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
     
@@ -275,7 +273,30 @@
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
-    return @[NSToolbarToggleSidebarItemIdentifier, kToolbarIdentifierGroups[0], NSToolbarSpaceItemIdentifier, kToolbarIdentifierGroups[1], NSToolbarFlexibleSpaceItemIdentifier, kToolbarIdentifierGroups[2]];
+    NSMutableArray *items = @[
+        kNewFeedToolbarIdentifier[0],
+        kNewFolderToolbarIdentifier[0],
+        kRefreshAllToolbarIdentifier[0],
+        NSToolbarPrimarySidebarTrackingSeparatorItemIdentifier
+    ].mutableCopy;
+    
+//    if (self.coordinator.feedVC != nil) {
+        
+        [items addObjectsFromArray:@[
+            kRefreshFeedToolbarIdentifier[0],
+            NSToolbarSupplementarySidebarTrackingSeparatorItemIdentifier
+        ]];
+        
+//    }
+    
+//    if (self.coordinator.articleVC != nil) {
+        
+        [items addObjectsFromArray:@[NSToolbarFlexibleSpaceItemIdentifier,
+                                     kShareArticleToolbarIdentifier[0]]];
+        
+//    }
+    
+    return items;
     
 }
 
@@ -290,8 +311,9 @@
     UIBarButtonItem *button = nil;
     NSString *title = nil;
     UIImage *image = nil;
+    NSToolbarItem *item = nil;
     
-    if ([itemIdentifier isEqualToString:kFeedsToolbarGroup]) {
+    if ([itemIdentifier isEqualToString:kNewFeedToolbarIdentifier[0]]) {
         
         title = kNewFeedToolbarIdentifier[1];
         
@@ -299,6 +321,72 @@
         
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFeed)];
         
+        item = [self toolbarItemWithItemIdentifier:kNewFeedToolbarIdentifier[0] title:title button:button];
+        
+        return item;
+        
+    }
+    else if ([itemIdentifier isEqualToString:kNewFolderToolbarIdentifier[0]]) {
+        
+        title = kNewFolderToolbarIdentifier[1];
+        
+        image = [UIImage systemImageNamed:@"folder.badge.plus"];
+        
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFolder)];
+        
+        item = [self toolbarItemWithItemIdentifier:kNewFolderToolbarIdentifier[0] title:title button:button];
+        
+        return item;
+        
+    }
+    else if ([itemIdentifier isEqualToString:kRefreshAllToolbarIdentifier[0]]) {
+        
+        title = kRefreshAllToolbarIdentifier[1];
+        
+        image = [UIImage systemImageNamed:@"bolt.circle"];
+
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
+
+        item = [self toolbarItemWithItemIdentifier:kRefreshAllToolbarIdentifier[0] title:title button:button];
+        
+        return item;
+        
+    }
+    else if ([itemIdentifier isEqualToString:kRefreshFeedToolbarIdentifier[0]]) {
+        
+        title = kRefreshFeedToolbarIdentifier[1];
+        
+        image = [UIImage systemImageNamed:@"arrow.triangle.2.circlepath.circle"];
+
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapRefreshFeed:)];
+
+        item = [self toolbarItemWithItemIdentifier:kRefreshFeedToolbarIdentifier[0] title:title button:button];
+        
+        return item;
+        
+    }
+    else if ([itemIdentifier isEqualToString:kShareArticleToolbarIdentifier[0]]) {
+        
+        title = kShareArticleToolbarIdentifier[1];
+        
+        image = [UIImage systemImageNamed:@"square.and.arrow.up"];
+
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(ct_didTapShareArticle:)];
+
+        item = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
+        
+        return item;
+        
+    }
+    
+    if ([itemIdentifier isEqualToString:kFeedsToolbarGroup]) {
+//
+        title = kNewFeedToolbarIdentifier[1];
+
+        image = [UIImage systemImageNamed:@"plus"];
+
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(createNewFeed)];
+
         NSToolbarItem *item1 = [self toolbarItemWithItemIdentifier:kNewFeedToolbarIdentifier[0] title:title button:button];
         
         //
@@ -313,17 +401,17 @@
         //
         title = kRefreshAllToolbarIdentifier[1];
         
-        image = [UIImage systemImageNamed:@"bolt.circle"];
-        
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
-        
-        NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kRefreshAllToolbarIdentifier[0] title:title button:button];
-        
+//        image = [UIImage systemImageNamed:@"bolt.circle"];
+//
+//        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(refreshAll)];
+//
+//        NSToolbarItem *item3 = [self toolbarItemWithItemIdentifier:kRefreshAllToolbarIdentifier[0] title:title button:button];
+//
         NSToolbarItemGroup *group = [[NSToolbarItemGroup alloc] initWithItemIdentifier:itemIdentifier];
-               
-        [group setSubitems:@[item1, item2, item3]];
-        
-        group.navigational = NO;
+
+        [group setSubitems:@[item1]];
+
+//        group.navigational = NO;
         
         return group;
         

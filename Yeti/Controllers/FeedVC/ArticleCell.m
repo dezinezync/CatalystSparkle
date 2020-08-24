@@ -333,7 +333,12 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     CGFloat expected = 7.f;  // from the above, so A:B :: C:D
     CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
     
+#if TARGET_OS_MACCATALYST
+    attachment.bounds = CGRectMake(0, yOffset + 4.f, 16.f, 16.f);
+#else
     attachment.bounds = CGRectMake(0, yOffset, 24, 24);
+#endif
+    
     NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
     
     [attachmentString appendAttributedString:attrs];

@@ -53,13 +53,18 @@
         self.maximumSupplementaryColumnWidth = 375.f;
         
 #if TARGET_OS_MACCATALYST
-        self.maximumPrimaryColumnWidth = 220.f;
-        self.maximumSupplementaryColumnWidth = 320.f;
+        self.preferredPrimaryColumnWidth = 220.f;
+        self.minimumPrimaryColumnWidth = 220.f;
+        self.maximumPrimaryColumnWidth = 298.f;
+        
+        self.preferredSupplementaryColumnWidth = 320.f;
+        self.minimumSupplementaryColumnWidth = 320.f;
+        self.maximumSupplementaryColumnWidth = 375.f;
 #endif
         
         self.presentsWithGesture = YES;
         
-        [self loadViewIfNeeded];
+//        [self loadViewIfNeeded];
         
     }
     
@@ -80,6 +85,8 @@
         
     });
     
+#if !TARGET_OS_MACCATALYST
+    
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;
     twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
@@ -92,6 +99,8 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
+    
+#endif
     
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
