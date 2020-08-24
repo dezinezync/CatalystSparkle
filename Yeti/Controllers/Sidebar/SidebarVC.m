@@ -861,7 +861,15 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)updateSharedData {
     
-    [self updateSharedUnreadsData];
+    weakify(self);
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        strongify(self);
+       
+        [self updateSharedUnreadsData];
+        
+    });
     
 }
 
@@ -869,68 +877,144 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [MyFeedsManager getUnreadForPage:1 limit:6 sorting:YTSortUnreadDesc success:^(NSArray <FeedItem *> * items, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        if (items.count == 0) {
-            return;
-        }
-        
-        NSMutableArray *list = [NSMutableArray arrayWithCapacity:items.count];
-        
-        for (FeedItem *item in items) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+           
+            NSMutableArray <NSMutableDictionary *> *list = [NSMutableArray arrayWithCapacity:items.count];
             
-            NSString *title = item.articleTitle;
-            NSNumber *date = @(item.timestamp.timeIntervalSince1970);
-            NSString *author = item.author ?: @"";
-            NSString *blog = item.blogTitle;
-            NSString *imageURL = item.coverImage;
-            NSNumber *identifier = item.identifier;
-            NSNumber *blogID = item.feedID;
-            NSString *favicon = @"";
+            NSMutableSet <NSString *> * favicons = [NSMutableSet setWithCapacity:6];
             
-            Feed *feed = [MyFeedsManager feedForID:item.feedID];
+            NSMutableSet <NSString *> *covers = [NSMutableSet setWithCapacity:6];;
             
-            if (feed != nil) {
-                blog = [feed displayTitle];
-                favicon = [feed faviconURI] ?: @"";
-            }
-            else {
-                blog = @"";
-            }
-            
-            if (title == nil && item.content != nil && item.content.count > 0) {
+            for (FeedItem *item in items) {
                 
-                NSString * titleContent = [item textFromContent];
+                NSString *title = item.articleTitle;
+                NSNumber *date = @(item.timestamp.timeIntervalSince1970);
+                NSString *author = item.author ?: @"";
+                NSString *blog = item.blogTitle;
+                NSString *imageURL = item.coverImage;
+                NSNumber *identifier = item.identifier;
+                NSNumber *blogID = item.feedID;
+                NSString *favicon = @"";
                 
-                title = titleContent;
+                Feed *feed = [MyFeedsManager feedForID:item.feedID];
+                
+                if (feed != nil) {
+                    blog = [feed displayTitle];
+                    favicon = [feed faviconURI] ?: @"";
+                }
+                else {
+                    blog = @"";
+                }
+                
+                if (title == nil && item.content != nil && item.content.count > 0) {
+                    
+                    NSString * titleContent = [item textFromContent];
+                    
+                    title = titleContent;
+                    
+                }
+                
+                NSMutableDictionary *listItem = [NSMutableDictionary dictionaryWithDictionary:@{
+                    @"title": title,
+                    @"date": date,
+                    @"author": author,
+                    @"blog": blog,
+                    @"identifier": identifier,
+                    @"blogID": blogID,
+                    @"favicon": favicon
+                }];
+                
+                if (imageURL != nil) {
+                    
+                    listItem[@"imageURL"] = imageURL;
+                    
+                    [covers addObject:imageURL];
+                    
+                }
+                
+                if ([favicon isBlank] == NO) {
+                    [favicons addObject:favicon];
+                }
+                
+                [list addObject:listItem];
                 
             }
             
-            NSMutableDictionary *listItem = [NSMutableDictionary dictionaryWithDictionary:@{
-                @"title": title,
-                @"date": date,
-                @"author": author,
-                @"blog": blog,
-                @"identifier": identifier,
-                @"blogID": blogID,
-                @"favicon": favicon
+            // fetch all images and covert to base64. Widgets currenly have an issue
+            // where the View does not reload once an image is set. Will also remove the
+            // the SDWebImageSwiftUI dep.
+            dispatch_group_t group = dispatch_group_create();
+            
+            [favicons enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+
+                dispatch_group_enter(group);
+                
+                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                    
+                    if (data != nil) {
+                        
+                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
+                        
+                        if (base64EncodedData != nil) {
+                            
+                            for (NSMutableDictionary *item in list) {
+                                
+                                if (item[@"favicon"] == obj) {
+                                    item[@"favicon"] = base64EncodedData;
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    dispatch_group_leave(group);
+                    
+                }];
+                
             }];
             
-            if (imageURL != nil) {
-                listItem[@"imageURL"] = imageURL;
-            }
+            [covers enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+                
+                dispatch_group_enter(group);
+               
+                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                    
+                    if (data != nil) {
+                        
+                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
+                        
+                        if (base64EncodedData != nil) {
+                            
+                            for (NSMutableDictionary *item in list) {
+                                
+                                if (item[@"imageURL"] == obj) {
+                                    item[@"image"] = base64EncodedData;
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    dispatch_group_leave(group);
+                    
+                }];
+                
+            }];
             
-            [list addObject:listItem];
+            dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
             
-        }
-        
-        NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
-        
-        [MyFeedsManager writeToSharedFile:@"articles.json" data:data];
-        
-        if (list.count) {
+            NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
+            
+            [MyFeedsManager writeToSharedFile:@"articles.json" data:data];
             
             [WidgetManager reloadTimelineWithName:@"UnreadsWidget"];
+
             
-        }
+        });
         
     } error:nil];
     

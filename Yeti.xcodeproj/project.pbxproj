@@ -325,7 +325,6 @@
 		F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
 		F0D98F5B24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
 		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F0D9AC9524EEC1390023E11F /* SDWebImageSwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA9824EE58FF0045C986 /* SDWebImageSwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
 		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
@@ -741,7 +740,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F0D9AC9524EEC1390023E11F /* SDWebImageSwiftUI.framework in Embed Frameworks */,
 				F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,

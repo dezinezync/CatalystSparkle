@@ -1219,8 +1219,7 @@ NSArray <NSString *> * _defaultsKeys;
     }}
 }
 
-- (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB
-{
+- (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption)sorting success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if ([self userID] == nil) {
         if (errorCB)

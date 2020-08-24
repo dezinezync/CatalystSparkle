@@ -1,6 +1,9 @@
 # v2.0.0
 
-## Build 8
+## Build 10
+-
+
+## Build 9
 
 - Added favicons to the Unreads Widget. 
 
