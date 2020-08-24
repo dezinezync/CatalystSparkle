@@ -97,11 +97,11 @@
         return;
     }
     
-#ifdef DEBUG
-    // 4800
-    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
-    
-#endif
+//#ifdef DEBUG
+//    // 4800
+//    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
+//    
+//#endif
     
     self.signinButton.enabled = NO;
     

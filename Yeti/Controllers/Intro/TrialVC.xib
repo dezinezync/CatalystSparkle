@@ -108,7 +108,6 @@ Your credit card will not be charged when your trial finishes.</string>
                 </stackView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TOb-Jk-S0d">
                     <rect key="frame" x="349" y="683.5" width="70" height="46"/>
-                    <color key="backgroundColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="46" id="2Fk-S4-WBn"/>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" priority="999" constant="320" id="GOH-8W-Wym"/>
@@ -129,16 +128,13 @@ Your credit card will not be charged when your trial finishes.</string>
                     </variation>
                     <variation key="userInterfaceIdiom=mac">
                         <mask key="constraints">
-                            <exclude reference="GOH-8W-Wym"/>
+                            <include reference="GOH-8W-Wym"/>
                         </mask>
                     </variation>
                     <variation key="heightClass=regular-widthClass=regular">
                         <mask key="constraints">
-                            <include reference="GOH-8W-Wym"/>
+                            <exclude reference="GOH-8W-Wym"/>
                         </mask>
-                    </variation>
-                    <variation key="heightClass=regular-userInterfaceIdiom=mac-widthClass=regular">
-                        <nil key="backgroundColor"/>
                     </variation>
                     <connections>
                         <action selector="didTapBuy:" destination="-1" eventType="touchUpInside" id="U1E-0s-2Tt"/>

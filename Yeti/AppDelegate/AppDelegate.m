@@ -151,6 +151,8 @@ AppDelegate *MyAppDelegate = nil;
         
         [self.coordinator start];
         
+//        [MyFeedsManager resetAccount];
+        
         MyFeedsManager.bookmarksManager = self.coordinator.bookmarksManager;
         
 //        weakify(self);

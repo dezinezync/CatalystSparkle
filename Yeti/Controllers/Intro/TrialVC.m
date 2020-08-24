@@ -79,6 +79,12 @@
     [self setButtonsState:YES];
 #endif
     
+#if TARGET_OS_MACCATALYST
+    [self.button.heightAnchor constraintEqualToConstant:32.f].active = YES;
+#else
+    [self.button setBackgroundColor:UIColor.systemIndigoColor];
+#endif
+    
 }
 
 #pragma mark - Actions

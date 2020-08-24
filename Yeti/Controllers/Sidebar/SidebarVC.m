@@ -174,6 +174,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         self.collectionView.backgroundColor = UIColor.systemBackgroundColor;
     }
+    
+#if TARGET_OS_MACCATALYST
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0, 0);
+#endif
 
     [self setupNavigationBar];
     
