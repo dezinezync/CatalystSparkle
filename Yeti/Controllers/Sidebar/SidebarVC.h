@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSAttributedString *)lastUpdateAttributedString;
 
+- (void)beginRefreshing:(UIRefreshControl *)sender;
+
 #pragma mark - Actions Extension
 
 @property (nonatomic, weak) UITextField *alertTextField;

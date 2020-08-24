@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "SplitVC.h"
 
-#import "SidebarVC.h"
+#import "SidebarVC+SearchResults.h"
 #import "FeedVC+SearchController.h"
 #import "EmptyVC.h"
 

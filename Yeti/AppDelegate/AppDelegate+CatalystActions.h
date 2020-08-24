@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)refreshAll;
 - (void)refreshFeed;
 
-- (void)toggleSidebar;
+//- (void)toggleSidebar;
 
 - (void)setSortingAllDesc;
 - (void)setSortingAllAsc;

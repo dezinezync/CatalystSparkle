@@ -17,9 +17,7 @@
 
 - (void)createNewFeed {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
-    
-    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    SidebarVC *vc = self.coordinator.sidebarVC;
     
     [vc didTapAdd:nil];
     
@@ -27,9 +25,7 @@
 
 - (void)createNewFolder {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
-    
-    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    SidebarVC *vc = self.coordinator.sidebarVC;
     
     [vc didTapAddFolder:nil];
     
@@ -37,9 +33,7 @@
 
 - (void)refreshAll {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
-    
-    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    SidebarVC *vc = self.coordinator.sidebarVC;
     
     [vc beginRefreshing:nil];
     
@@ -47,15 +41,7 @@
 
 - (void)refreshFeed {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
-    
-    UINavigationController *nav = (UINavigationController *)[splitVC.viewControllers objectAtIndex:1];
-    
-    if ([[nav visibleViewController] isKindOfClass:FeedVC.class] == NO) {
-        return;
-    }
-    
-    FeedVC *vc = (FeedVC *)[nav visibleViewController];
+    FeedVC *vc = self.coordinator.feedVC;
     
     if (vc.type != FeedVCTypeUnread || vc.type != FeedVCTypeToday) {
         return;
