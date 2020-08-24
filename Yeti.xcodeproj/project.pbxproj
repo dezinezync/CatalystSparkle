@@ -413,62 +413,6 @@
 			remoteGlobalIDString = 80B6DFEE2142B71600BCB334;
 			remoteInfo = SDWebImageMapKit;
 		};
-		F083BA9724EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 32C43DCC22FD540D00BE87F5;
-			remoteInfo = SDWebImageSwiftUI;
-		};
-		F083BA9924EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 32C43DF422FD57FD00BE87F5;
-			remoteInfo = "SDWebImageSwiftUI macOS";
-		};
-		F083BA9B24EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 32C43E0122FD581400BE87F5;
-			remoteInfo = "SDWebImageSwiftUI tvOS";
-		};
-		F083BA9D24EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 32C43E0E22FD581C00BE87F5;
-			remoteInfo = "SDWebImageSwiftUI watchOS";
-		};
-		F083BA9F24EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3211F84423DE984D00FC757F;
-			remoteInfo = SDWebImageSwiftUITests;
-		};
-		F083BAA124EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 321C1D3B23DEC17D009CF62A;
-			remoteInfo = "SDWebImageSwiftUITests macOS";
-		};
-		F083BAA324EE58FF0045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 321C1D4A23DEC185009CF62A;
-			remoteInfo = "SDWebImageSwiftUITests tvOS";
-		};
-		F083BAA524EE59230045C986 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 32C43DCB22FD540D00BE87F5;
-			remoteInfo = SDWebImageSwiftUI;
-		};
 		F08C5DF7238656620055946F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */;
@@ -1070,7 +1014,6 @@
 		F08011E22167345300F0CE81 /* OPMLDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OPMLDeckController.h; sourceTree = "<group>"; };
 		F08011E32167345300F0CE81 /* OPMLDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OPMLDeckController.m; sourceTree = "<group>"; };
 		F083BA7F24EE58780045C986 /* SDWebImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDWebImage.xcodeproj; path = Vendors/SDWebImage/SDWebImage.xcodeproj; sourceTree = "<group>"; };
-		F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDWebImageSwiftUI.xcodeproj; path = Vendors/SDWebImageSwiftUI/SDWebImageSwiftUI.xcodeproj; sourceTree = "<group>"; };
 		F085785221D1EAE200CC2B95 /* PreviewLinesVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewLinesVC.h; sourceTree = "<group>"; };
 		F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewLinesVC.m; sourceTree = "<group>"; };
 		F088CF43248E6C800010EBC0 /* YetiShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YetiShare.entitlements; sourceTree = "<group>"; };
@@ -2111,20 +2054,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F083BA8E24EE58FF0045C986 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F083BA9824EE58FF0045C986 /* SDWebImageSwiftUI.framework */,
-				F083BA9A24EE58FF0045C986 /* SDWebImageSwiftUI.framework */,
-				F083BA9C24EE58FF0045C986 /* SDWebImageSwiftUI.framework */,
-				F083BA9E24EE58FF0045C986 /* SDWebImageSwiftUI.framework */,
-				F083BAA024EE58FF0045C986 /* SDWebImageSwiftUITests.xctest */,
-				F083BAA224EE58FF0045C986 /* SDWebImageSwiftUITests macOS.xctest */,
-				F083BAA424EE58FF0045C986 /* SDWebImageSwiftUITests tvOS.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F08C5DF1238656620055946F /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2458,7 +2387,6 @@
 		F0D98F5324EE4C8500B1F9F0 /* UnreadsWidget */ = {
 			isa = PBXGroup;
 			children = (
-				F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */,
 				F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */,
 				F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */,
 				F0D98F5924EE4C8500B1F9F0 /* Info.plist */,
@@ -2660,7 +2588,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				F083BAA624EE59230045C986 /* PBXTargetDependency */,
 			);
 			name = UnreadsWidgetExtension;
 			packageProductDependencies = (
@@ -2761,10 +2688,6 @@
 					ProjectRef = F083BA7F24EE58780045C986 /* SDWebImage.xcodeproj */;
 				},
 				{
-					ProductGroup = F083BA8E24EE58FF0045C986 /* Products */;
-					ProjectRef = F083BA8D24EE58FF0045C986 /* SDWebImageSwiftUI.xcodeproj */;
-				},
-				{
 					ProductGroup = F0B482562455F62C00EE5AA2 /* Products */;
 					ProjectRef = F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */;
 				},
@@ -2809,55 +2732,6 @@
 			fileType = wrapper.framework;
 			path = SDWebImageMapKit.framework;
 			remoteRef = F083BA8A24EE58780045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BA9824EE58FF0045C986 /* SDWebImageSwiftUI.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDWebImageSwiftUI.framework;
-			remoteRef = F083BA9724EE58FF0045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BA9A24EE58FF0045C986 /* SDWebImageSwiftUI.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDWebImageSwiftUI.framework;
-			remoteRef = F083BA9924EE58FF0045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BA9C24EE58FF0045C986 /* SDWebImageSwiftUI.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDWebImageSwiftUI.framework;
-			remoteRef = F083BA9B24EE58FF0045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BA9E24EE58FF0045C986 /* SDWebImageSwiftUI.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDWebImageSwiftUI.framework;
-			remoteRef = F083BA9D24EE58FF0045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BAA024EE58FF0045C986 /* SDWebImageSwiftUITests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SDWebImageSwiftUITests.xctest;
-			remoteRef = F083BA9F24EE58FF0045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BAA224EE58FF0045C986 /* SDWebImageSwiftUITests macOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "SDWebImageSwiftUITests macOS.xctest";
-			remoteRef = F083BAA124EE58FF0045C986 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F083BAA424EE58FF0045C986 /* SDWebImageSwiftUITests tvOS.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "SDWebImageSwiftUITests tvOS.xctest";
-			remoteRef = F083BAA324EE58FF0045C986 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F08C5DF8238656620055946F /* DZAppDelegate.app */ = {
@@ -3519,11 +3393,6 @@
 			platformFilter = maccatalyst;
 			target = F0783C87248F685C00C7A280 /* elytramac */;
 			targetProxy = F0783CAB248F688600C7A280 /* PBXContainerItemProxy */;
-		};
-		F083BAA624EE59230045C986 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SDWebImageSwiftUI;
-			targetProxy = F083BAA524EE59230045C986 /* PBXContainerItemProxy */;
 		};
 		F08C5E2F2386579C0055946F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
