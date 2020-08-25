@@ -33,6 +33,8 @@
 
 - (void)refreshAll {
     
+    [MyDBManager purgeDataForResync];
+    
     SidebarVC *vc = self.coordinator.sidebarVC;
     
     [vc beginRefreshing:nil];

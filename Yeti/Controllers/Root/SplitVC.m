@@ -53,7 +53,7 @@
         self.maximumSupplementaryColumnWidth = 375.f;
         
 #if TARGET_OS_MACCATALYST
-        self.preferredPrimaryColumnWidth = 220.f;
+        self.preferredPrimaryColumnWidth = 268.f;
         self.minimumPrimaryColumnWidth = 220.f;
         self.maximumPrimaryColumnWidth = 298.f;
         

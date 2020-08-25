@@ -274,6 +274,7 @@
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
     NSArray *items = @[
+        NSToolbarToggleSidebarItemIdentifier,
         kNewFeedToolbarIdentifier[0],
         kNewFolderToolbarIdentifier[0],
         kRefreshAllToolbarIdentifier[0],

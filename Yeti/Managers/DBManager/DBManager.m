@@ -630,6 +630,9 @@ NSString *const kNotificationsKey = @"notifications";
     
     [self setupViews];
     
+//#ifdef DEBUG
+//    [self purgeDataForResync];
+//#endif
 //    [self cleanupDatabase];
     
 }

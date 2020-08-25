@@ -317,7 +317,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             NSArray *uniqueItems = [NSSet setWithArray:ArticlesManager.shared.folders].allObjects;
             
             [foldersSnapshot appendItems:uniqueItems];
-#if !TARGET_OS_MACCATALYST
+
             for (Folder *folder in uniqueItems) {
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
@@ -327,7 +327,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
             }
-#endif
+
         }
         
         [self.DS applySnapshot:foldersSnapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:NO];
