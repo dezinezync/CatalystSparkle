@@ -221,7 +221,7 @@ struct UnreadsWidgetEntryView : View {
         
         ZStack {
             
-            VStack (alignment: .leading, spacing: 4) {
+            VStack (alignment: .leading, spacing: (widgetFamily == .systemMedium ? 4 : 8)) {
                 
                 Text("Recent Unreads")
                     .font(Font.title3.bold())

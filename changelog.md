@@ -1,11 +1,13 @@
 # v2.0.0
 
 ## Build 12
-- fixed pop gesture showing the nav bar again if its hidden
+- Fixed pop gesture showing the nav bar again if its hidden
 
-- interactive pop gesture works when nav bar is hidden
+- Interactive pop gesture works when nav bar is hidden
 
-- force touch and tapping on urls now works reliably. iOS 13.4 fixes no longer needed in iOS 14. 
+- Force touch and tapping on urls now works reliably. iOS 13.4 fixes no longer needed in iOS 14. 
+
+- Fixed content for micro.blog posts not appearing in widgets.
 
 ## Build 9
 
