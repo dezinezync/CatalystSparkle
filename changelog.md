@@ -1,7 +1,11 @@
 # v2.0.0
 
-## Build 10
--
+## Build 12
+- fixed pop gesture showing the nav bar again if its hidden
+
+- interactive pop gesture works when nav bar is hidden
+
+- force touch and tapping on urls now works reliably. iOS 13.4 fixes no longer needed in iOS 14. 
 
 ## Build 9
 

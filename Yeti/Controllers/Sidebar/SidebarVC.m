@@ -914,7 +914,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     blog = @"";
                 }
                 
-                if (title == nil && item.content != nil && item.content.count > 0) {
+                if ((title == nil || [title isBlank]) && item.content != nil && item.content.count > 0) {
                     
                     NSString * titleContent = [item textFromContent];
                     
