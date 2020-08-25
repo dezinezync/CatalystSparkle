@@ -54,10 +54,8 @@ NSString* deviceName() {
     
     self.title = @"Settings";
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.tableView.backgroundColor = theme.tableColor;
-    self.view.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
@@ -65,9 +63,9 @@ NSString* deviceName() {
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+
+    self.tableView.tableFooterView = self.footerView;
     
-//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
-    [self didUpdateTheme];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,6 +74,7 @@ NSString* deviceName() {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     [self dz_smoothlyDeselectRows:self.tableView];
@@ -98,12 +97,6 @@ NSString* deviceName() {
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
-
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-//}
-
-#pragma mark -
 
 #pragma mark - Actions
 
@@ -468,33 +461,6 @@ NSString* deviceName() {
 {
     if (!_settingsUpdated)
         _settingsUpdated = YES;
-}
-
-- (void)didUpdateTheme {
-    
-    _footerView = nil;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.tableView.backgroundColor = theme.tableColor;
-    self.view.backgroundColor = theme.tableColor;
-    
-    self.tableView.tableFooterView = self.footerView;
-    
-    NSIndexPath *selected = [self.tableView indexPathForSelectedRow];
-    
-    [self.tableView reloadData];
-    
-    weakify(self);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        strongify(self);
-        
-        [self.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-        
-    });
-    
-    _hasAnimatedFooterView = NO;
 }
 
 #pragma mark -
