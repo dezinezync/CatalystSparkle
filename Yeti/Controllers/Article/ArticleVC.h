@@ -56,7 +56,7 @@
 
 @property (nonatomic, strong, readonly) NSPointerArray * _Nullable images;
 
-// @property (nonatomic, strong) NYTPhotoViewerArrayDataSource * _Nullable photosDS;
+@property (nonatomic, strong) id initialInteractivePopGestureRecognizerDelegate;
 
 #pragma mark - Opening URLs
 

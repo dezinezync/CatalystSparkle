@@ -119,6 +119,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
@@ -132,9 +133,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #if TARGET_OS_MACCATALYST
     
+    self.navigationController.navigationBar.hidden = YES;
     self.scrollView.contentInset = UIEdgeInsetsMake(24.f, 0, 44.f, 0);
     
 #else
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
@@ -167,7 +171,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
     
-    [self didUpdateTheme];
+    [self setupArticle:self.currentArticle];
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
@@ -207,26 +211,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
-//    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
     self.ytExtractor = [[YTExtractor alloc] init];
+    
+    if (self.initialInteractivePopGestureRecognizerDelegate == nil) {
+        self.initialInteractivePopGestureRecognizerDelegate = self.navigationController.interactivePopGestureRecognizer.delegate;
+    }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
 #if TARGET_OS_MACCATALYST
-        
-    self.navigationController.navigationBar.hidden = YES;
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
     
 #else
     
     if (SharedPrefs.hideBars == YES) {
+        
+        self.navigationController.interactivePopGestureRecognizer.delegate = nil;
         
         self.navigationController.hidesBarsOnSwipe = YES;
         
@@ -268,6 +274,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #if !TARGET_OS_MACCATALYST
     
     if (SharedPrefs.hideBars == YES) {
+        
+        if (self.navigationController.isNavigationBarHidden == YES) {
+            [self.navigationController setNavigationBarHidden:NO animated:NO];
+        }
+        
+        self.navigationController.interactivePopGestureRecognizer.delegate = self.initialInteractivePopGestureRecognizerDelegate;
         
         self.navigationController.hidesBarsOnSwipe = NO;
         
@@ -2653,6 +2665,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
     
+    if (interaction != UITextItemInteractionInvokeDefaultAction) {
+        return YES;
+    }
+    
     NSString *originalURL = [URL absoluteString];
     
     if (URL.host == nil) {
@@ -2699,17 +2715,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             // open the link externally since it's not available in headings
             // or the link appears to be different from the article's URL.
-            if ([self textView:textView shouldOpenURL:URL] == YES) {
-                [self openLinkExternally:absolute];
-            }
+            [self openLinkExternally:absolute];
             
             return NO;
             
         }
     }
-    
-    if (interaction == UITextItemInteractionPreview)
-        return YES;
     
     if (interaction == UITextItemInteractionPresentActions) {
         NSString * const linkedHeader = @"🔗 ";
@@ -2738,35 +2749,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else {
         
-        if ([self textView:textView shouldOpenURL:URL] == YES) {
-            [self openLinkExternally:absolute];
-        }
+        [self openLinkExternally:absolute];
         
     }
     
     return NO;
-}
-
-- (BOOL)textView:(UITextView *)textView shouldOpenURL:(NSURL *)url {
-    // https://stackoverflow.com/questions/58189447/ios-13-1-uitextview-delegate-method-shouldinteract-called-when-scrolling-on-atta
-    BOOL recognizedTapGesture = NO;
-    
-    for (UIGestureRecognizer *recognizer in textView.gestureRecognizers) {
-        if ([recognizer isKindOfClass:UITapGestureRecognizer.class] && recognizer.state == UIGestureRecognizerStateEnded) {
-            recognizedTapGesture = YES;
-            break;
-        }
-    }
-    
-    if (!recognizedTapGesture) {
-        // Tap gesture is not being recognized, this must be an early
-        // check when touches begin. Leave the link handling alone.
-        return NO;
-    }
-
-    // Do custom action here
-    return YES;
-    
 }
 
 - (void)openLinkExternally:(NSString *)link {
