@@ -174,6 +174,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         self.collectionView.backgroundColor = UIColor.systemBackgroundColor;
     }
+    
+#if TARGET_OS_MACCATALYST
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0, 0);
+#endif
 
     [self setupNavigationBar];
     
@@ -310,16 +314,20 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         if (ArticlesManager.shared.folders.count) {
             
-            [foldersSnapshot appendItems:ArticlesManager.shared.folders];
+            NSArray *uniqueItems = [NSSet setWithArray:ArticlesManager.shared.folders].allObjects;
             
-            for (Folder *folder in ArticlesManager.shared.folders) {
+            [foldersSnapshot appendItems:uniqueItems];
+
+            for (Folder *folder in uniqueItems) {
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
+                
+                feeds = [NSSet setWithArray:feeds].allObjects;
                 
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
             }
-            
+
         }
         
         [self.DS applySnapshot:foldersSnapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:NO];

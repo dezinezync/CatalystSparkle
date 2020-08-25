@@ -132,7 +132,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #if TARGET_OS_MACCATALYST
     
-    self.scrollView.contentInset = UIEdgeInsetsMake(44.f, 0, 44.f, 0);
+    self.scrollView.contentInset = UIEdgeInsetsMake(24.f, 0, 44.f, 0);
     
 #else
     
@@ -1149,6 +1149,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     // this will be reused later after setting up the label.
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
+    
+#if TARGET_OS_MACCATALYST
+    frame.size.height = 120.f;
+#endif
     
     authorView.frame = frame;
     

@@ -49,8 +49,16 @@
     
     UITraitCollection *traitCollection = UIApplication.sharedApplication.windows.firstObject.traitCollection;
     
-    if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
+    if (traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone
         && traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+            
+            UnreadVC *vc = [[UnreadVC alloc] init];
+            
+            [self _showSupplementaryController:vc];
+            
+        }
         
         EmptyVC *emptyVC = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
      

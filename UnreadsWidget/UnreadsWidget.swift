@@ -141,7 +141,7 @@ struct ArticleView : View {
                                 
                             Image(uiImage: image)
                                 .resizable()
-                                .aspectRatio(contentMode: .fit)
+                                .aspectRatio(contentMode: .fill)
                                 .frame(maxWidth: 24, maxHeight: 24, alignment: .leading)
                                 .clipped()
                                 .cornerRadius(3.0)

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17124"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -62,8 +61,8 @@
                                 <fragment content=" ">
                                     <attributes>
                                         <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                        <font key="NSFont" size="17" name=".AppleSystemUIFontEmphasized"/>
-                                        <font key="NSOriginalFont" size="17" name=".AppleSystemUIFontEmphasized"/>
+                                        <font key="NSFont" metaFont="systemBold" size="17"/>
+                                        <font key="NSOriginalFont" metaFont="systemBold" size="17"/>
                                         <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                     </attributes>
                                 </fragment>
@@ -85,7 +84,7 @@
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l78-gl-VU5" userLabel="I">
-                            <rect key="frame" x="51" y="261.5" width="570" height="42.5"/>
+                            <rect key="frame" x="52" y="261.5" width="568" height="42.5"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="600" id="SxP-x4-nW3"/>
                             </constraints>
@@ -107,12 +106,11 @@ Your credit card will not be charged when your trial finishes.</string>
                     </subviews>
                     <viewLayoutGuide key="safeArea" id="xGu-ME-b2h"/>
                 </stackView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TOb-Jk-S0d">
-                    <rect key="frame" x="224" y="683.5" width="320" height="46"/>
-                    <color key="backgroundColor" red="0.4431372549" green="0.3294117647" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TOb-Jk-S0d">
+                    <rect key="frame" x="349" y="683.5" width="70" height="46"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="46" id="2Fk-S4-WBn"/>
-                        <constraint firstAttribute="width" priority="999" constant="320" id="GOH-8W-Wym"/>
+                        <constraint firstAttribute="width" relation="lessThanOrEqual" priority="999" constant="320" id="GOH-8W-Wym"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
                     <state key="normal" title="Unlock">
@@ -128,16 +126,21 @@ Your credit card will not be charged when your trial finishes.</string>
                             <exclude reference="GOH-8W-Wym"/>
                         </mask>
                     </variation>
-                    <variation key="heightClass=regular-widthClass=regular">
+                    <variation key="userInterfaceIdiom=mac">
                         <mask key="constraints">
                             <include reference="GOH-8W-Wym"/>
+                        </mask>
+                    </variation>
+                    <variation key="heightClass=regular-widthClass=regular">
+                        <mask key="constraints">
+                            <exclude reference="GOH-8W-Wym"/>
                         </mask>
                     </variation>
                     <connections>
                         <action selector="didTapBuy:" destination="-1" eventType="touchUpInside" id="U1E-0s-2Tt"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ol8-Qq-DAl">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ol8-Qq-DAl">
                     <rect key="frame" x="354.5" y="745.5" width="59" height="33"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleCallout"/>
                     <state key="normal" title="Restore">
@@ -151,6 +154,7 @@ Your credit card will not be charged when your trial finishes.</string>
                     </connections>
                 </button>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="WLd-iM-EEY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="2I9-5M-pi7"/>
@@ -170,7 +174,6 @@ Your credit card will not be charged when your trial finishes.</string>
                 <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="TOb-Jk-S0d" secondAttribute="trailing" constant="38" id="tW8-mH-Vln"/>
                 <constraint firstItem="ol8-Qq-DAl" firstAttribute="top" secondItem="TOb-Jk-S0d" secondAttribute="bottom" constant="16" id="v14-eI-wC4"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
             <variation key="default">
                 <mask key="constraints">
                     <exclude reference="2I9-5M-pi7"/>

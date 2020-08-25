@@ -143,7 +143,7 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
-    if (sender != nil && [sender isRefreshing]) {
+    if (sender != nil) {
         self.todayManager = nil;
         self.pagingManager = self.todayManager;
         [self loadNextPage];

@@ -53,13 +53,18 @@
         self.maximumSupplementaryColumnWidth = 375.f;
         
 #if TARGET_OS_MACCATALYST
-        self.maximumPrimaryColumnWidth = 220.f;
-        self.maximumSupplementaryColumnWidth = 320.f;
+        self.preferredPrimaryColumnWidth = 268.f;
+        self.minimumPrimaryColumnWidth = 220.f;
+        self.maximumPrimaryColumnWidth = 298.f;
+        
+        self.preferredSupplementaryColumnWidth = 320.f;
+        self.minimumSupplementaryColumnWidth = 320.f;
+        self.maximumSupplementaryColumnWidth = 375.f;
 #endif
         
         self.presentsWithGesture = YES;
         
-        [self loadViewIfNeeded];
+//        [self loadViewIfNeeded];
         
     }
     
@@ -80,6 +85,8 @@
         
     });
     
+#if !TARGET_OS_MACCATALYST
+    
     UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
     twoFingerPanUp.numberOfTouchesRequired = 2;
     twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
@@ -92,6 +99,8 @@
     
     [self.view addGestureRecognizer:twoFingerPanUp];
     [self.view addGestureRecognizer:twoFingerPanDown];
+    
+#endif
     
 //    [keychain removeAllItems];
 //    [keychain removeItemForKey:kHasShownOnboarding];
@@ -461,6 +470,50 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     
     return YES;
+    
+}
+
+#pragma mark - Forward invocations
+
+- (BOOL)respondsToSelector:(SEL)aSelector {
+    
+    if ([NSStringFromSelector(aSelector) isEqualToString:@"didBeginRefreshing:"]) {
+        
+        if (self.mainCoordinator.feedVC != nil) {
+            
+            return [self.mainCoordinator.feedVC respondsToSelector:aSelector];
+            
+        }
+        
+        return NO;
+        
+    }
+    
+    return [super respondsToSelector:aSelector];
+    
+}
+
+- (NSMethodSignature*) methodSignatureForSelector:(SEL)selector {
+    
+    if ([NSStringFromSelector(selector) isEqualToString:@"didBeginRefreshing:"]) {
+        
+        if (self.mainCoordinator.feedVC != nil && [self.mainCoordinator.feedVC respondsToSelector:selector] == YES) {
+            return [self.mainCoordinator.feedVC methodSignatureForSelector:selector];
+        }
+        
+    }
+    
+    return [super methodSignatureForSelector:selector];
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
+    
+    if (anInvocation.selector == NSSelectorFromString(@"didBeginRefreshing:") && self.mainCoordinator.feedVC != nil) {
+        [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
+        return;
+    }
+    
+    [super forwardInvocation:anInvocation];
     
 }
 

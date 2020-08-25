@@ -113,12 +113,8 @@
     
     [super viewWillAppear:animated];
     
-#if TARGET_OS_MACCATALYST
+#if !TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.hidden = YES;
-    
-#else
-    
     self.navigationController.navigationBar.prefersLargeTitles = YES;
 
 #endif 
@@ -213,6 +209,8 @@
     
 #if TARGET_OS_MACCATALYST
         
+    self.navigationController.navigationBar.hidden = YES;
+    
     return;
     
 #else

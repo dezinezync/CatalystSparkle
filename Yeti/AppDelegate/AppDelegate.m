@@ -122,8 +122,8 @@ AppDelegate *MyAppDelegate = nil;
         
         // code to debug state restoration as of iOS 13
 //#ifdef DEBUG
-//    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDebugLogging"];
-//    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDeveloperMode"];
+//    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDebugLogging"];
+//    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDeveloperMode"];
 //#endif
         
         MyAppDelegate = self;
@@ -150,6 +150,8 @@ AppDelegate *MyAppDelegate = nil;
         [self setupRootController];
         
         [self.coordinator start];
+        
+//        [MyFeedsManager resetAccount];
         
         MyFeedsManager.bookmarksManager = self.coordinator.bookmarksManager;
         

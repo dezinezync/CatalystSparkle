@@ -220,7 +220,11 @@
     
     UIButton *gifButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     gifButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
+#if !TARGET_OS_MACCATALYST
     gifButton.backgroundColor = UIColor.secondarySystemFillColor;
+#endif
+    
     gifButton.layer.cornerRadius = 3.f;
     [gifButton setTitle:@"  Tap to load" forState:UIControlStateNormal];
     [gifButton setTitle:@"  Loading..." forState:UIControlStateDisabled];

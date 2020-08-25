@@ -43,20 +43,13 @@
     
     self.products = @[@"com.dezinezync.elytra.free",
                       @"com.dezinezync.elytra.non.1m"];
-    
-    self.view.layer.cornerRadius = 20.f;
-    
-    self.view.layer.cornerCurve = kCACornerCurveContinuous;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.view.backgroundColor = theme.backgroundColor;
+
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.detailTextLabel.hidden = YES;
-    self.detailTextLabel.textColor = theme.titleColor;
+    self.detailTextLabel.textColor = UIColor.labelColor;
     
     [self.button setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
-    
-    self.view.layer.cornerRadius = 20.f;
     
     NSMutableAttributedString *attrs = self.titleLabel.attributedText.mutableCopy;
     
@@ -73,19 +66,23 @@
         [attributes setObject:baseFont forKey:NSFontAttributeName];
     }
     
-    if (theme.titleColor) {
-        [attributes setObject:theme.titleColor forKey:NSForegroundColorAttributeName];
-    }
+    [attributes setObject:UIColor.labelColor forKey:NSForegroundColorAttributeName];
     
     [attrs setAttributes:attributes range:NSMakeRange(0, attrs.string.length)];
     
     self.titleLabel.attributedText = attrs;
-    self.subtitleLabel.textColor = theme.subtitleColor;
+    self.subtitleLabel.textColor = UIColor.secondaryLabelColor;
     
     [self getProducts];
     
 #ifdef DEBUG
     [self setButtonsState:YES];
+#endif
+    
+#if TARGET_OS_MACCATALYST
+    [self.button.heightAnchor constraintEqualToConstant:32.f].active = YES;
+#else
+    [self.button setBackgroundColor:UIColor.systemIndigoColor];
 #endif
     
 }

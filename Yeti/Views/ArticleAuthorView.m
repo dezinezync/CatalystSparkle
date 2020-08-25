@@ -38,7 +38,7 @@
                 label.font = font;
             }
             
-            label.textColor = [[YTThemeKit theme] subtitleColor];
+            label.textColor = UIColor.secondaryLabelColor;
             label.translatesAutoresizingMaskIntoConstraints = NO;
             label.adjustsFontForContentSizeCategory = YES;
         }
