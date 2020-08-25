@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSAttributedString *)lastUpdateAttributedString;
 
-- (void)beginRefreshing:(UIRefreshControl *)sender;
+- (void)beginRefreshing:(UIRefreshControl * _Nullable)sender;
 
 #pragma mark - Actions Extension
 

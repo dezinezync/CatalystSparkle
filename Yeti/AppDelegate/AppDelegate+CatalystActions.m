@@ -41,32 +41,15 @@
     
 }
 
-- (void)refreshFeed {
-    
-    FeedVC *vc = self.coordinator.feedVC;
-    
-    if (vc.type != FeedVCTypeUnread || vc.type != FeedVCTypeToday) {
-        return;
-    }
-    
-    UIRefreshControl *refreshControl = [(UnreadVC *)vc refreshControl];
-    [refreshControl beginRefreshing];
-    
-    [(UnreadVC *)vc didBeginRefreshing:refreshControl];
-    
-}
-
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    FeedVC *feedVC = self.coordinator.feedVC;
     
-    UINavigationController *nav = (UINavigationController *)[splitVC.viewControllers objectAtIndex:1];
-    
-    if ([[nav visibleViewController] isKindOfClass:FeedVC.class] == NO) {
+    if (feedVC == nil) {
         return;
     }
     
-    [(FeedVC *)[nav visibleViewController] setSortingOption:sortOption];
+    [feedVC setSortingOption:sortOption];
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
     
@@ -136,9 +119,11 @@
 
 - (void)switchToNextArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapNextArticle:nil];
     
@@ -146,9 +131,11 @@
 
 - (void)switchToPreviousArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapPreviousArticle:nil];
     
@@ -156,9 +143,11 @@
 
 - (void)markArticleRead {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapRead:nil];
     
@@ -168,9 +157,11 @@
 
 - (void)markArticleBookmark {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapBookmark:nil];
     
@@ -180,9 +171,11 @@
 
 - (void)openArticleInBrowser {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
     [vc openInBrowser];
     
@@ -190,9 +183,11 @@
 
 - (void)closeArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapClose];
     
@@ -200,11 +195,13 @@
 
 - (void)shareArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    ArticleVC *vc = self.coordinator.articleVC;
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    if (vc == nil) {
+        return;
+    }
     
-    [vc didTapShare:self.shareArticleItem];
+    [vc didTapShare:(id)(self.shareArticleItem)];
     
 }
 
