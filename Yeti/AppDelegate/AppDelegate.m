@@ -121,10 +121,10 @@ AppDelegate *MyAppDelegate = nil;
     dispatch_once(&onceToken, ^{
         
         // code to debug state restoration as of iOS 13
-#ifdef DEBUG
-    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDebugLogging"];
-    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDeveloperMode"];
-#endif
+//#ifdef DEBUG
+//    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDebugLogging"];
+//    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDeveloperMode"];
+//#endif
         
         MyAppDelegate = self;
         

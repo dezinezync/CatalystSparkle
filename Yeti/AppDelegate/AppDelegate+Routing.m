@@ -612,7 +612,7 @@
             return;
             
         }
-        else if ([feedVC.tableView indexPathsForSelectedRows].count > 0) {
+        else {
             
             /*
              * The feedID is clearly different or is a custom feed. So deselect the selected items.
@@ -634,15 +634,30 @@
         
     }
     
+#if !TARGET_OS_MACCATALYST
     [self popToRoot];
+#endif
     
-    FeedItem *item = [[FeedItem alloc] init];
-    item.feedID = feedID;
-    item.identifier = articleID;
-    
-    ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
-    
-    [self.coordinator showArticleVC:articleVC];
+    if (articleID != nil) {
+        
+        FeedItem *item = [[FeedItem alloc] init];
+        item.feedID = feedID;
+        item.identifier = articleID;
+        
+        ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
+        
+        [self.coordinator showArticleVC:articleVC];
+        
+    }
+    else {
+        
+        Feed *feed = [MyFeedsManager feedForID:feedID];
+        
+        if (feed != nil) {
+            [self.coordinator showFeedVC:feed];
+        }
+        
+    }
     
 }
 

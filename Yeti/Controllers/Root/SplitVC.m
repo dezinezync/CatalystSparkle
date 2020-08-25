@@ -473,4 +473,48 @@
     
 }
 
+#pragma mark - Forward invocations
+
+- (BOOL)respondsToSelector:(SEL)aSelector {
+    
+    if ([NSStringFromSelector(aSelector) isEqualToString:@"didBeginRefreshing:"]) {
+        
+        if (self.mainCoordinator.feedVC != nil) {
+            
+            return [self.mainCoordinator.feedVC respondsToSelector:aSelector];
+            
+        }
+        
+        return NO;
+        
+    }
+    
+    return [super respondsToSelector:aSelector];
+    
+}
+
+- (NSMethodSignature*) methodSignatureForSelector:(SEL)selector {
+    
+    if ([NSStringFromSelector(selector) isEqualToString:@"didBeginRefreshing:"]) {
+        
+        if (self.mainCoordinator.feedVC != nil && [self.mainCoordinator.feedVC respondsToSelector:selector] == YES) {
+            return [self.mainCoordinator.feedVC methodSignatureForSelector:selector];
+        }
+        
+    }
+    
+    return [super methodSignatureForSelector:selector];
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
+    
+    if (anInvocation.selector == NSSelectorFromString(@"didBeginRefreshing:") && self.mainCoordinator.feedVC != nil) {
+        [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
+        return;
+    }
+    
+    [super forwardInvocation:anInvocation];
+    
+}
+
 @end

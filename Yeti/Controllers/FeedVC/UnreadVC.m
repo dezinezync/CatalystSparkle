@@ -136,7 +136,7 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
-    if (sender != nil && [sender isRefreshing]) {
+    if (sender != nil) {
         self.unreadsManager = nil;
         self.pagingManager = self.unreadsManager;
         [self loadNextPage];
