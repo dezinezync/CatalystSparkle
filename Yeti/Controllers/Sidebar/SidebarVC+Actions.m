@@ -17,40 +17,23 @@
 
 @implementation SidebarVC (Actions)
 
-- (void)didTapAdd:(UIBarButtonItem *)add
-{
+- (void)didTapAdd:(UIBarButtonItem *)add {
     
-    UINavigationController *nav = [AddFeedVC instanceInNavController];
-    
-    nav.viewControllers.firstObject.mainCoordinator = self.mainCoordinator;
-    
-    [self presentViewController:nav animated:YES completion:nil];
+    [self.mainCoordinator showNewFeedVC];
     
 }
 
 - (void)didTapAddFolder:(UIBarButtonItem *)add {
     
-    UINavigationController *nav = [NewFolderVC instanceInNavController];
-    
-    nav.viewControllers.firstObject.mainCoordinator = self.mainCoordinator;
-    
-    [self presentViewController:nav animated:YES completion:nil];
+    [self.mainCoordinator showNewFolderVC];
     
 }
 
-- (void)didTapSettings
-{
-    SettingsVC *settingsVC = [[SettingsVC alloc] initWithNibName:NSStringFromClass(SettingsVC.class) bundle:nil];
-    
-    settingsVC.mainCoordinator = self.mainCoordinator;
-    
-    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:settingsVC];
-    
-    [self.splitViewController presentViewController:navVC animated:YES completion:nil];
+- (void)didTapSettings {
+    [self.mainCoordinator showSettingsVC];
 }
 
-- (void)didTapRecommendations:(UIBarButtonItem *)sender
-{
+- (void)didTapRecommendations:(UIBarButtonItem *)sender {
     
     [self.mainCoordinator showRecommendations];
     

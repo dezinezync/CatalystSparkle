@@ -66,29 +66,6 @@
     
     disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
     
-#if TARGET_OS_MACCATALYST
-    disclosure.actionHandler = ^{
-        
-        NSDiffableDataSourceSectionSnapshot *snapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
-        
-        if ([snapshot isExpanded:item]) {
-            
-            NSLogDebug(@"item was expanded");
-            
-            [snapshot collapseItems:@[item]];
-        }
-        else {
-            
-            NSLogDebug(@"item was collapsed");
-            
-            [snapshot expandItems:@[item]];
-        }
-        
-        [self.DS applySnapshot:snapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:YES];
-        
-    };
-#endif
-    
     self.accessories = @[disclosure];
     
 }

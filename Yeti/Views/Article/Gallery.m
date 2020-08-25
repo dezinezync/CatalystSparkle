@@ -174,13 +174,7 @@
         _unbounded = YES;
     }
     
-    if (([self.pageControl sizeForNumberOfPages:images.count].width - LayoutPadding) > width) {
-        _compoundedPaging = 5;
-        self.pageControl.numberOfPages = floor(images.count / _compoundedPaging);
-    }
-    else {
-        self.pageControl.numberOfPages = images.count;
-    }
+    self.pageControl.numberOfPages = images.count;
     
     [self.collectionView setNeedsUpdateConstraints];
     [self.collectionView layoutIfNeeded];

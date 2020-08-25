@@ -59,6 +59,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSubscriptionsInterface;
 
+- (void)showNewFeedVC;
+
+- (void)showNewFolderVC;
+
+- (void)showSettingsVC;
+
 @end
 
 @interface UIViewController (Coordination)

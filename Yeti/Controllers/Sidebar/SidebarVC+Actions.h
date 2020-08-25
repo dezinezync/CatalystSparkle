@@ -23,8 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Common Action Handlers
 
-- (BOOL)feedCanShowExtraShareLevel:(Feed * _Nonnull)feed;
-
 - (void)shareFeedURL:(Feed * _Nonnull)feed indexPath:(NSIndexPath * _Nonnull)indexPath;
 
 - (void)shareWebsiteURL:(Feed * _Nonnull)feed indexPath:(NSIndexPath * _Nonnull)indexPath;
