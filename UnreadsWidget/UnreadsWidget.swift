@@ -141,8 +141,8 @@ struct ArticleView : View {
                                 
                             Image(uiImage: image)
                                 .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(maxWidth: 24, maxHeight: 24, alignment: .leading)
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxWidth: 24, maxHeight: 24, alignment: .center)
                                 .clipped()
                                 .cornerRadius(3.0)
                                 .background(Color(UIColor.systemBackground))
@@ -165,7 +165,7 @@ struct ArticleView : View {
                             .font(Font.subheadline.weight(.medium))
                             .foregroundColor(.primary)
                             .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
-                            .lineLimit(1)
+                            .lineLimit(2)
                         
                         Text("\(entry.author) - \(entry.blog)")
                         .lineLimit(1)
@@ -185,10 +185,9 @@ struct ArticleView : View {
                                 
                             Image(uiImage: image)
                                 .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxWidth: 44, maxHeight: 44, alignment: .leading)
-                                .clipped()
-                                .cornerRadius(3.0)
+                                .aspectRatio(contentMode: .fill)
+                                .frame(maxWidth: 44, maxHeight: 44, alignment: .center)
+                                .cornerRadius(6.0)
                                 .background(Color(UIColor.systemBackground))
                             
                         }
@@ -222,7 +221,7 @@ struct UnreadsWidgetEntryView : View {
         
         ZStack {
             
-            VStack (alignment: .leading, spacing: 8) {
+            VStack (alignment: .leading, spacing: 4) {
                 
                 Text("Recent Unreads")
                     .font(Font.title3.bold())
@@ -255,7 +254,7 @@ struct UnreadsWidgetEntryView : View {
                     else {
                         
                         LazyVStack(alignment: .leading, spacing: 8, pinnedViews: [], content: {
-                            ForEach(0..<[entries.entries.count, 6].min()!, id: \.self) { count in
+                            ForEach(0..<[entries.entries.count, 5].min()!, id: \.self) { count in
                                 ArticleView(entry: entries.entries[count])
                             }
                         })
