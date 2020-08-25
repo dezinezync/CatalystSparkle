@@ -314,15 +314,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         if (ArticlesManager.shared.folders.count) {
             
-            NSArray *uniqueItems = [NSSet setWithArray:ArticlesManager.shared.folders].allObjects;
+            NSArray *uniqueItems = ArticlesManager.shared.folders;
             
             [foldersSnapshot appendItems:uniqueItems];
 
             for (Folder *folder in uniqueItems) {
                 
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
-                
-                feeds = [NSSet setWithArray:feeds].allObjects;
                 
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
                 
