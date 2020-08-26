@@ -10,7 +10,7 @@ import WidgetKit
 import SwiftUI
 
 struct UnreadsProvider: IntentTimelineProvider {
-    
+   
     func loadData (name: String) -> SimpleEntries? {
         
         let json: SimpleEntries
@@ -41,8 +41,8 @@ struct UnreadsProvider: IntentTimelineProvider {
         
     }
     
-    public func snapshot(for configuration: ConfigurationIntent, with context: Context, completion: @escaping (SimpleEntries) -> ()) {
-        
+    public func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntries) -> Void) {
+    
         if let jsonData = loadData(name: "articles.json") {
             
             return completion(jsonData)
