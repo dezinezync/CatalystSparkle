@@ -743,7 +743,7 @@
             return;
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
-        sfvc.preferredControlTintColor = YTThemeKit.theme.tintColor;
+        sfvc.preferredControlTintColor = self.window.tintColor;
         
         // get the top VC
         UISplitViewController *splitVC = (UISplitViewController *)[[self window] rootViewController];

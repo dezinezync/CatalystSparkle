@@ -58,14 +58,12 @@
     self.selected = NSNotFound;
     self.data = @[];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.view.backgroundColor = theme.backgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     [self.tableView registerClass:AddFeedCell.class forCellReuseIdentifier:kAddFeedCell];
     
     self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
@@ -78,7 +76,7 @@
     self.tableView.contentInset = UIEdgeInsetsMake(48.f, 0, 0, 0);
     
     self.toolbar.delegate = self;
-    self.toolbar.barTintColor = theme.articlesBarColor;
+    self.toolbar.barTintColor = UIColor.secondarySystemBackgroundColor;
     [self.toolbar setShadowImage:[UIImage new] forToolbarPosition:UIBarPositionTopAttached];
     
     self.input.layoutMargins = UIEdgeInsetsMake(0, 8.f, 0, 8.f);
@@ -86,33 +84,13 @@
     
     self.input.delegate = self;
     
-//    if (theme.isDark) {
-//        if ([theme.name isEqualToString:@"black"]) {
-//            [self.toolbar setBarStyle:UIBarStyleBlack];
-//            self.toolbar.translucent = NO;
-//        }
-//        else {
-//            [self.toolbar setBarStyle:UIBarStyleBlack];
-//            self.toolbar.translucent = YES;
-//        }
-//    }
-//    else {
-//        [self.toolbar setBarStyle:UIBarStyleDefault];
-//        self.toolbar.translucent = YES;
-//    }
-    
-    self.input.backgroundColor = theme.unreadBadgeColor;
-    self.input.textColor = theme.titleColor;
+    self.input.backgroundColor = UIColor.secondarySystemFillColor;
+    self.input.textColor = UIColor.labelColor;
     
     self.input.translatesAutoresizingMaskIntoConstraints = NO;
     self.cancelButton.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self.cancelButton.widthAnchor constraintEqualToConstant:80.f].active = YES;
-    
-//    UILabel *label = [self.input valueForKeyPath:@"_placeholderLabel"];
-//    if (label) {
-//        label.textColor = theme.captionColor;
-//    }
 
 }
 
@@ -265,13 +243,11 @@
 
 #pragma mark - <UITableViewDatasource>
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     
     PaddedLabel *label = [[PaddedLabel alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 28.f)];
-    label.backgroundColor = [theme cellColor];
-    label.textColor = theme.tintColor;
+    label.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    label.textColor = self.view.tintColor;
     label.font = [UIFont systemFontOfSize:12.f];
     label.opaque = YES;
     
@@ -284,10 +260,8 @@
     return label;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     AddFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:kAddFeedCell forIndexPath:indexPath];
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     NSString *url = self.data[indexPath.row];
     
@@ -296,19 +270,23 @@
     
     if ([url containsString:@".json"] || [url containsString:@"/json"]) {
         cell.detailTextLabel.text = @"Recommended";
-        cell.detailTextLabel.textColor = theme.tintColor;
+        cell.detailTextLabel.textColor = self.view.tintColor;
     }
     
     cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    cell.textLabel.textColor = theme.titleColor;
+    cell.textLabel.textColor = UIColor.labelColor;
     
-    cell.backgroundColor = theme.cellColor;
+    cell.backgroundColor = UIColor.systemGroupedBackgroundColor;
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+#if TARGET_OS_MACCATALYST
+    cell.selectedBackgroundView.backgroundColor = [UIColor secondarySystemBackgroundColor];
+#else
+    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     return cell;
 }

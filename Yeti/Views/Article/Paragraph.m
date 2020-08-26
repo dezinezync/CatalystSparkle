@@ -200,15 +200,6 @@ static NSParagraphStyle * _paragraphStyle = nil;
         para.lineHeightMultiple = self.bodyFont.pointSize * 1.4f;
         para.maximumLineHeight = self.bodyFont.pointSize * 1.55f;
         para.minimumLineHeight = self.bodyFont.pointSize * 1.3f;
-        
-//        __block CGFloat offset = 48.f;
-//        
-//        runOnMainQueueWithoutDeadlocking(^{
-//            if (UIApplication.keyWindow.rootViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-//                offset = offset/3.f;
-//            }
-//        });
-
     }
     
     NSLocaleLanguageDirection direction = [self.class languageDirectionForText:text];
