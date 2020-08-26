@@ -27,4 +27,6 @@
 
 - (void)openInBrowser;
 
+- (void)openArticleInNewWindow;
+
 @end

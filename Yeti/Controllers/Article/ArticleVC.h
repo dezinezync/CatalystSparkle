@@ -58,6 +58,12 @@
 
 @property (nonatomic, strong) id initialInteractivePopGestureRecognizerDelegate;
 
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, assign, getter=isExternalWindow) BOOL externalWindow;
+
+#endif
+
 #pragma mark - Opening URLs
 
 - (void)openLinkExternally:(NSString * _Nullable)link;

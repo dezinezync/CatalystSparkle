@@ -545,6 +545,26 @@
     
 }
 
+- (void)openArticleInNewWindow {
+    
+    NSUserActivity *openArticleActivity = [[NSUserActivity alloc] initWithActivityType:@"openArticle"];
+    
+    NSDictionary *dict = self.item.dictionaryRepresentation;
+    
+    [openArticleActivity addUserInfoEntriesFromDictionary:dict];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+        
+        if (error != nil) {
+            
+            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
+            
+        }
+        
+    }];
+    
+}
+
 #pragma mark - <UIAdaptivePresentationControllerDelegate>
 
 - (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(nonnull UITraitCollection *)traitCollection

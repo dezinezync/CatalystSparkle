@@ -211,9 +211,9 @@ static TypeFactory * sharedTypeFactory;
             _basePointSize = SharedPrefs.fontSize;
         }
         
-#if TARGET_OS_MACCATALYST
-        _basePointSize += 2.f;
-#endif
+//#if TARGET_OS_MACCATALYST
+//        _basePointSize += 2.f;
+//#endif
         
     }
     
@@ -272,7 +272,7 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)caption1Font {
     
     UIFontTextStyle const style = UIFontTextStyleCaption1;
-    CGFloat maximumPointSize = 13.f / self.basePointSize;
+    CGFloat maximumPointSize = 13.f * self.scale;
     
     if (_caption1Font == nil) {
         _caption1Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -286,7 +286,7 @@ static TypeFactory * sharedTypeFactory;
     
     UIFontTextStyle const style = UIFontTextStyleCaption2;
     
-    CGFloat maximumPointSize = 12.f / self.basePointSize;
+    CGFloat maximumPointSize = 12.f * self.scale;
     
     if (_caption2Font == nil) {
         _caption2Font = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -299,7 +299,7 @@ static TypeFactory * sharedTypeFactory;
     
     UIFontTextStyle const style = UIFontTextStyleFootnote;
     
-    CGFloat maximumPointSize = 11.f / self.basePointSize;
+    CGFloat maximumPointSize = 11.f * self.scale;
 
     if (_footnoteFont == nil) {
         _footnoteFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -312,7 +312,7 @@ static TypeFactory * sharedTypeFactory;
     
     UIFontTextStyle const style = UIFontTextStyleSubheadline;
     
-    CGFloat maximumPointSize = 16.f / self.basePointSize;;
+    CGFloat maximumPointSize = 16.f * self.scale;
     
     if (_subtitleFont == nil) {
         _subtitleFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];
@@ -324,7 +324,7 @@ static TypeFactory * sharedTypeFactory;
 - (UIFont *)bodyFont {
     
     UIFontTextStyle const style = UIFontTextStyleBody;
-    CGFloat maximumPointSize = self.basePointSize;
+    CGFloat maximumPointSize = self.basePointSize * self.scale;
     
     if (_bodyFont == nil) {
         _bodyFont = [self scaledFontForStyle:style maximumPointSize:maximumPointSize];

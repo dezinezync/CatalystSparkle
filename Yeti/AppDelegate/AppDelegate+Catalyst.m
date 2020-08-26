@@ -302,6 +302,18 @@
     UIImage *image = nil;
     NSToolbarItem *item = nil;
     
+    if ([itemIdentifier isEqualToString:@"com.yeti.toolbar.articleWindow"]) {
+        
+        image = [UIImage systemImageNamed:@"macwindow.on.rectangle"];
+        
+        title = @"Open in New Window";
+        
+        UIBarButtonItem * button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(openArticleInNewWindow)];
+        
+        item = [self toolbarItemWithItemIdentifier:@"com.yeti.toolbar.articleWindow" title:@"New Window" button:button];
+        
+    }
+    
     if ([itemIdentifier isEqualToString:kNewFeedToolbarIdentifier[0]]) {
         
         title = kNewFeedToolbarIdentifier[1];

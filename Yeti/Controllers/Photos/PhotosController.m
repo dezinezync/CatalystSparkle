@@ -41,10 +41,18 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
     IDMPhotoBrowser *photosVC = [[IDMPhotoBrowser alloc] initWithPhotos:@[self.photo]];
     photosVC.usePopAnimation = YES;
+    
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:17.f weight:UIImageSymbolWeightMedium];
+    
+    UIImage *shareImage = [UIImage systemImageNamed:@"square.and.arrow.up" withConfiguration:config];
+    
+    UIColor *fadedColor = [UIColor colorWithWhite:1.f alpha:0.3f];
+    
+    photosVC.actionButtonImage = [shareImage imageWithTintColor:fadedColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    photosVC.actionButtonSelectedImage = [shareImage imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
     
     self.photosVC = photosVC;
     
@@ -70,13 +78,6 @@
     if (_photo == nil) {
         
         IDMPhoto *photo = [IDMPhoto new];
-        
-//        if (self.userInfo[@"image"]) {
-//
-//            photo.image = [UIImage imageWithData:self.userInfo[@"image"]];
-//            photo.imageData = self.userInfo[@"image"];
-//
-//        }
         
         if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark && self.userInfo[@"darkURL"] != nil) {
             

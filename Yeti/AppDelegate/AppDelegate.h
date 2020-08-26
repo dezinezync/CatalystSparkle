@@ -52,6 +52,8 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) NSBundle *appKitBundle;
 
+@property (nonatomic, strong) NSSet <UIWindow *> *additionalWindows;
+
 #if TARGET_OS_OSX
 @property (nonatomic, strong) AppKitGlue *sharedGlue;
 #endif

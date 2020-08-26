@@ -40,17 +40,17 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
     
-    if (SharedPrefs.backgroundRefresh == YES) {
-        
-        [self setupBackgroundRefresh];
-        
-    }
-    
     return YES;
     
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    if (SharedPrefs.backgroundRefresh == YES) {
+        
+        [self setupBackgroundRefresh];
+        
+    }
     
     return YES;
     
@@ -72,20 +72,49 @@ AppDelegate *MyAppDelegate = nil;
         return;
     }
     
+#if TARGET_OS_MACCATALYST
+    MyAppDelegate.additionalWindows = [NSSet new];
+#endif
+    
     UIWindowScene *windowScene = (UIWindowScene *)scene;
     
     NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
     
-    if (activity != nil && [activity.activityType isEqualToString:@"viewImage"] == YES) {
+    if (activity != nil) {
         
         UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
         window.canResizeToFitContent = YES;
         
-        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+        if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
+            
+            PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+            
+            window.rootViewController = photosVC;
+            
+        }
         
-        window.rootViewController = photosVC;
+        else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
+            
+            FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
+            
+            ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+            vc.externalWindow = YES;
+            
+            scene.title = item.articleTitle ?: @"Untitled";
+            
+            window.rootViewController = vc;
+            
+        }
         
-        [window makeKeyAndVisible];
+        if (window.rootViewController != nil) {
+            
+            MyAppDelegate.additionalWindows = [MyAppDelegate.additionalWindows setByAddingObject:window];
+            
+            [window makeKeyAndVisible];
+        }
+        else {
+            window = nil;
+        }
         
         return;
         

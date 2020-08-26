@@ -28,20 +28,20 @@
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
-//        self.titleLabel.font = TypeFactory.shared.titleFont;
-//        
-//        UIFont *font = TypeFactory.shared.subtitleFont;
-//        
-//        for (UILabel *label in @[self.titleLabel, self.blogLabel, self.authorLabel]) {
-//            
-//            if (label != self.titleLabel) {
-//                label.font = font;
-//            }
-//            
-//            label.textColor = UIColor.secondaryLabelColor;
-//            label.translatesAutoresizingMaskIntoConstraints = NO;
-//            label.adjustsFontForContentSizeCategory = YES;
-//        }
+        self.titleLabel.font = TypeFactory.shared.titleFont;
+
+        UIFont *font = TypeFactory.shared.subtitleFont;
+
+        for (UILabel *label in @[self.titleLabel, self.blogLabel, self.authorLabel]) {
+
+            if (label != self.titleLabel) {
+                label.font = font;
+            }
+
+            label.textColor = UIColor.secondaryLabelColor;
+            label.translatesAutoresizingMaskIntoConstraints = NO;
+            label.adjustsFontForContentSizeCategory = YES;
+        }
         
         UIImageConfiguration *imageConfig = [UIImageSymbolConfiguration  configurationWithWeight:UIImageSymbolWeightSemibold];
         

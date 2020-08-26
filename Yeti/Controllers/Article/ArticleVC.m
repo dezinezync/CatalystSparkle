@@ -226,7 +226,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #if TARGET_OS_MACCATALYST
     
-    [UIMenuSystem.mainSystem setNeedsRebuild];
+    if (self.isExternalWindow == NO) {
+        [UIMenuSystem.mainSystem setNeedsRebuild];
+    }
     
 #else
     
@@ -260,6 +262,26 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
+    
+#if TARGET_OS_MACCATALYST
+    
+    if (self.isExternalWindow == NO) {
+    
+        NSToolbar *toolbar = [[[self.view.window windowScene] titlebar] toolbar];
+        
+        NSArray <NSToolbarItem *> *items = toolbar.items;
+        
+        if ([items rz_find:^BOOL(NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
+            return [obj.itemIdentifier isEqualToString:@"com.yeti.toolbar.articleWindow"];
+        }] == nil) {
+         
+            [toolbar insertItemWithItemIdentifier:@"com.yeti.toolbar.articleWindow" atIndex:(items.count - 1)];
+            
+        }
+        
+    }
+    
+#endif
     
     if ([self canBecomeFirstResponder] == YES) {
         [self becomeFirstResponder];
@@ -871,9 +893,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addTitle];
     
     // iOS 13 shouldn't need it and handle it well.
+#if !TARGET_OS_MACCATALYST
     if (self.item.content.count > 20) {
         self->_deferredProcessing = YES;
     }
+#endif
     
     if (isYoutubeVideo == YES) {
         
