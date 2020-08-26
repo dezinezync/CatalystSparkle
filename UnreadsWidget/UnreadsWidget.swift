@@ -137,7 +137,7 @@ struct ArticleView : View {
                         
                         let imageData = NSData(base64Encoded: entry.favicon!, options: .ignoreUnknownCharacters)
                         
-                        if let image = UIImage(data: imageData! as Data) {
+                        if imageData != nil, let image = UIImage(data: imageData! as Data) {
                                 
                             Image(uiImage: image)
                                 .resizable()
