@@ -78,11 +78,18 @@
         weakify(self);
         
         _unreadsManager.successCB = ^{
+            
             strongify(self);
             
             if (!self) {
                 return;
             }
+            
+#if TARGET_OS_MACCATALYST
+            UIWindow *window = [self.view window];
+//            NSWindow *nsWindow = [window nsWindow];
+            CGRect frame = window.frame;
+#endif
             
             if (self->_unreadsManager.page == 1) {
                 MyFeedsManager.unreadLastUpdate = NSDate.date;

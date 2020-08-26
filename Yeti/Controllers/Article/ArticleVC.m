@@ -1172,6 +1172,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     authorView.blogLabel.text = firstLine;
     authorView.authorLabel.text = sublineText;
     
+#if !TARGET_OS_MACCATALYSt
     for (UILabel *label in @[authorView.titleLabel, authorView.blogLabel, authorView.authorLabel]) {
         [label sizeToFit];
     }
@@ -1182,7 +1183,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     frame.size = fittingSize;
     authorView.frame = frame;
-    
+#endif
     authorView.mercurialed = self.item.mercury;
     
     if (self.item.mercury) {
@@ -1312,7 +1313,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
         
-        if (content.content.length) {
+        if (content.content.length && [content.type isEqualToString:@"noscript"] == NO) {
             [self addParagraph:content caption:NO];
         }
         else if (content.items) {

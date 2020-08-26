@@ -571,7 +571,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         progressLabel.translatesAutoresizingMaskIntoConstraints = NO;
 
-        //#ifdef DEBUG
+//#ifdef DEBUG
 //        progressLabel.backgroundColor = UIColor.redColor;
 //#endif
         

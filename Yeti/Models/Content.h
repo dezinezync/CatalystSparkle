@@ -7,8 +7,6 @@
 
 }
 
-@property (class, nonatomic, weak) PrefsManager *tk_prefsManager;
-
 @property (nonatomic, copy) NSString *content;
 @property (nonatomic, copy) NSArray <Range *> * ranges;
 @property (nonatomic, copy) NSString *type;

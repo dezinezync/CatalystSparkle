@@ -38,9 +38,6 @@ PrefsManager * SharedPrefs = nil;
         SharedPrefs = [[PrefsManager alloc] init];
         SharedPrefs.defaults = [NSUserDefaults standardUserDefaults];
         
-        Paragraph.tk_prefsManager = SharedPrefs;
-        Content.tk_prefsManager = SharedPrefs;
-        
     });
     
     return SharedPrefs;

@@ -20,8 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)ct_setupMenu:(id<UIMenuBuilder>)menuBuilder;
 
-- (UIColor * _Nullable)appKitColorNamed:(NSString * _Nonnull)name;
-
 @end
 
 #endif

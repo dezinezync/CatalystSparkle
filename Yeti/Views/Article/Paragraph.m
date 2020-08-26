@@ -25,29 +25,11 @@
 @implementation Paragraph
 
 static NSParagraphStyle * _paragraphStyle = nil;
-static PrefsManager *_prefsManager = nil;
-static TypeFactory *_typeFactory = nil;
 
 #pragma mark - Class Methods
 
 + (BOOL)canPresentContextMenus {
     return YES;
-}
-
-+ (void)setTk_typeFactory:(TypeFactory *)tk_typeFactory {
-    _typeFactory = tk_typeFactory;
-}
-
-+ (TypeFactory *)tk_typeFactory {
-    return _typeFactory;
-}
-
-+ (void)setTk_prefsManager:(PrefsManager *)tk_prefsManager {
-    _prefsManager = tk_prefsManager;
-}
-
-+ (PrefsManager *)tk_prefsManager {
-    return _prefsManager;
 }
 
 + (void)setParagraphStyle:(NSParagraphStyle *)paragraphStyle
@@ -59,12 +41,12 @@ static TypeFactory *_typeFactory = nil;
     
     if (!_paragraphStyle) {
         
-        UIFont *font = [Paragraph.tk_typeFactory bodyFont];
+        UIFont *font = [TypeFactory.shared bodyFont];
         
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        style.lineHeightMultiple = font.pointSize * Paragraph.tk_prefsManager.lineSpacing;
-        style.maximumLineHeight = font.pointSize * (Paragraph.tk_prefsManager.lineSpacing + 0.1f);
-        style.minimumLineHeight = font.pointSize * (Paragraph.tk_prefsManager.lineSpacing - 0.01f);
+        style.lineHeightMultiple = font.pointSize * SharedPrefs.lineSpacing;
+        style.maximumLineHeight = font.pointSize * (SharedPrefs.lineSpacing + 0.1f);
+        style.minimumLineHeight = font.pointSize * (SharedPrefs.lineSpacing - 0.01f);
         
         style.paragraphSpacing = 0.f;
         style.paragraphSpacingBefore = 0.f;
@@ -305,12 +287,12 @@ static TypeFactory *_typeFactory = nil;
             }
             else if ([range.element isEqualToString:@"sup"]) {
 //                [dict setObject:@1 forKey:@"NSSuperScript"];
-                [dict setObject:[Paragraph.tk_typeFactory caption1Font] forKey:NSFontAttributeName];
+                [dict setObject:[TypeFactory.shared caption1Font] forKey:NSFontAttributeName];
                 [dict setObject:@(6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"sub"]) {
 //                [dict setObject:@-1 forKey:@"NSSuperScript"];
-                [dict setObject:[Paragraph.tk_typeFactory caption1Font] forKey:NSFontAttributeName];
+                [dict setObject:[TypeFactory.shared caption1Font] forKey:NSFontAttributeName];
                 [dict setObject:@(-6) forKey:NSBaselineOffsetAttributeName];
             }
             else if ([range.element isEqualToString:@"anchor"] && range.url) {
@@ -324,7 +306,7 @@ static TypeFactory *_typeFactory = nil;
             }
             else if ([range.element isEqualToString:@"code"]) {
                 
-                __block UIFont *monoFont = [Paragraph.tk_typeFactory codeFont];
+                __block UIFont *monoFont = [TypeFactory.shared codeFont];
                 __block UIColor *textcolor;
 //                __block UIColor *background;
                 
@@ -517,28 +499,28 @@ static TypeFactory *_typeFactory = nil;
 - (UIFont *)bodyFont
 {
     if (self.isCaption) {
-        return [Paragraph.tk_typeFactory caption1Font];
+        return [TypeFactory.shared caption1Font];
     }
     else {
-        return Paragraph.tk_typeFactory.bodyFont;
+        return [TypeFactory.shared bodyFont];
     }
 }
 
 - (UIFont *)boldFont {
     
-    return Paragraph.tk_typeFactory.boldBodyFont;
+    return [TypeFactory.shared boldBodyFont];
     
 }
 
 - (UIFont *)italicsFont {
     
-    return Paragraph.tk_typeFactory.italicBodyFont;
+    return [TypeFactory.shared italicBodyFont];
     
 }
 
 - (UIFont *)boldItalicsFont {
     
-    return Paragraph.tk_typeFactory.boldItalicBodyFont;
+    return [TypeFactory.shared boldItalicBodyFont];
     
 }
 

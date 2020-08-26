@@ -98,10 +98,10 @@
         return NO;
     }
     
-    if ([Paragraph.tk_prefsManager.imageLoading isEqualToString:ImageLoadingNever])
+    if ([SharedPrefs.imageLoading isEqualToString:ImageLoadingNever])
         return NO;
     
-    else if([Paragraph.tk_prefsManager.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
+    else if([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingOnlyWireless]) {
         return CheckWiFi();
     }
     

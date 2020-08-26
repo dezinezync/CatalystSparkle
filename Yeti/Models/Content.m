@@ -3,17 +3,7 @@
 
 #import "NSString+ImageProxy.h"
 
-static PrefsManager *_prefsManager=  nil;
-
 @implementation Content
-
-+ (void)setTk_prefsManager:(PrefsManager *)tk_prefsManager {
-    _prefsManager = tk_prefsManager;
-}
-
-+ (PrefsManager *)tk_prefsManager {
-    return _prefsManager;
-}
 
 + (BOOL)supportsSecureCoding {
     return YES;
@@ -317,7 +307,7 @@ static PrefsManager *_prefsManager=  nil;
     
     BOOL usedSRCSet = NO;
     
-    NSString *sizePreference = Content.tk_prefsManager.imageLoading;
+    NSString *sizePreference = SharedPrefs.imageLoading;
     
     if (self.srcset && [self.srcset allKeys].count > 1) {
         

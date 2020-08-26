@@ -54,8 +54,6 @@ static TypeFactory * sharedTypeFactory;
         
         sharedTypeFactory = [[TypeFactory alloc] init];
         
-        Paragraph.tk_typeFactory = sharedTypeFactory;
-        
     });
     
     return sharedTypeFactory;

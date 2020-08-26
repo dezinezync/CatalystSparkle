@@ -32,7 +32,7 @@
     
     scene.titlebar.toolbar = toolbar;
     
-//    scene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnifiedCompact;
+    scene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnifiedCompact;
     
     scene.titlebar.separatorStyle = UITitlebarSeparatorStyleAutomatic;
     
@@ -381,75 +381,7 @@
     
 }
 
-- (UIImage *)dynamicImageWithLightImageName:(NSString *)lightImageName darkImageName:(NSString *)darkImageName {
-    
-    UITraitCollection *const scaleTraitCollection = [UITraitCollection currentTraitCollection];
-    
-    UITraitCollection *const lightUnscaledTraitCollection = [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight];
-    UITraitCollection *const darkUnscaledTraitCollection = [UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark];
-    
-    UITraitCollection *const lightScaledTraitCollection = [UITraitCollection traitCollectionWithTraitsFromCollections:@[scaleTraitCollection, lightUnscaledTraitCollection]];
-    UITraitCollection *const darkScaledTraitCollection = [UITraitCollection traitCollectionWithTraitsFromCollections:@[scaleTraitCollection, darkUnscaledTraitCollection]];
-    
-    __block UIImage *image = nil, *darkImage = nil;
-    
-    [darkScaledTraitCollection performAsCurrentTraitCollection:^{
-       
-        image = [UIImage imageNamed:lightImageName];
-        
-        if (image) {
-            image = [image imageWithConfiguration:[image.configuration configurationWithTraitCollection:[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleLight]]];
-        }
-        
-    }];
-    
-    [lightScaledTraitCollection performAsCurrentTraitCollection:^{
-
-        darkImage = [UIImage imageNamed:darkImageName];
-        
-        if (darkImage) {
-            
-            darkImage = [darkImage imageWithConfiguration:[darkImage.configuration configurationWithTraitCollection:[UITraitCollection traitCollectionWithUserInterfaceStyle:UIUserInterfaceStyleDark]]];
-            
-        }
-
-    }];
-    
-    if (image && darkImage) {
-        
-        [image.imageAsset registerImage:darkImage withTraitCollection:darkScaledTraitCollection];
-        
-    }
-    
-    return image;
-    
-}
-
-- (UIColor *)appKitColorNamed:(NSString *)name {
-    
-    CGColorRef values;
-
-#if TARGET_OS_OSX
-    values = [self.sharedGlue CTColorForName:name];
-#endif
-    
-    if (values == nil) {
-        return nil;
-    }
-    
-    UIColor *color = [UIColor colorWithCGColor:values];
-    
-    return color;
-    
-}
-
 #pragma mark - Actions
-
-- (void)ct_didTapRefreshFeed:(NSToolbarItem *)sender {
-    
-    
-    
-}
 
 - (void)ct_didTapShareArticle:(NSToolbarItem *)sender {
     

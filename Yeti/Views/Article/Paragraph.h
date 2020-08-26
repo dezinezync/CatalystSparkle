@@ -40,11 +40,6 @@
 
 @property (nonatomic, strong) NSLayoutConstraint * _Nullable leading, * _Nullable trailing;
 
-/* External Properties from App */
-@property (class, nonatomic, weak) TypeFactory * _Nullable tk_typeFactory;
-
-@property (class, nonatomic, weak) PrefsManager * _Nullable tk_prefsManager;
-
 - (void)viewWillAppear;
 - (void)viewDidDisappear;
 
