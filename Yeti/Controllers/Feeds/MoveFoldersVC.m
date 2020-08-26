@@ -59,8 +59,7 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone:)];
     self.navigationItem.rightBarButtonItem = done;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
     
 }
 

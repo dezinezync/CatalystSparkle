@@ -23,7 +23,7 @@
         return;
     }
     
-    UIListContentConfiguration *content = [UIListContentConfiguration sidebarCellConfiguration];
+    UIListContentConfiguration *content = self.isExploring ? [UIListContentConfiguration subtitleCellConfiguration] : [UIListContentConfiguration sidebarCellConfiguration];
     
     content.text = item.displayTitle;
     
@@ -47,11 +47,22 @@
     
     content.prefersSideBySideTextAndSecondaryText = self.isExploring == NO;
     
+    if (self.isExploring == NO) {
+        
 #if TARGET_OS_MACCATALYST
     content.imageProperties.maximumSize = CGSizeMake(16.f, 16.f);
 #else
     content.imageProperties.maximumSize = CGSizeMake(24.f, 24.f);
 #endif
+        
+    }
+    else {
+        
+        content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+        content.secondaryTextProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+        
+        content.imageProperties.maximumSize = CGSizeMake(32.f, 32.f);
+    }
     
     content.imageProperties.cornerRadius = 3.f;
     content.imageProperties.reservedLayoutSize = content.imageProperties.maximumSize;
@@ -62,7 +73,7 @@
 
     self.contentConfiguration = content;
 
-    if (indexPath.section != 2) {
+    if (self.isExploring == NO && indexPath.section != 2) {
 
         self.indentationLevel = 1;
 

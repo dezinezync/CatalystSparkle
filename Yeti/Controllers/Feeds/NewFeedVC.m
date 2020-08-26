@@ -38,7 +38,7 @@
 {
     NewFeedVC *vc = [[NewFeedVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalInPresentation = UIModalPresentationAutomatic;
+    nav.modalInPresentation = YES;
     
     return nav;
 }
@@ -76,8 +76,8 @@
     self.tableView.contentInset = UIEdgeInsetsMake(48.f, 0, 0, 0);
     
     self.toolbar.delegate = self;
-    self.toolbar.barTintColor = UIColor.secondarySystemBackgroundColor;
-    [self.toolbar setShadowImage:[UIImage new] forToolbarPosition:UIBarPositionTopAttached];
+//    self.toolbar.barTintColor = UIColor.secondarySystemBackgroundColor;
+//    [self.toolbar setShadowImage:[UIImage new] forToolbarPosition:UIBarPositionTopAttached];
     
     self.input.layoutMargins = UIEdgeInsetsMake(0, 8.f, 0, 8.f);
     [self.input.heightAnchor constraintEqualToConstant:36.f].active = YES;

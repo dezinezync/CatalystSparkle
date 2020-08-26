@@ -56,7 +56,9 @@
 
 @property (nonatomic, strong, readonly) NSPointerArray * _Nullable images;
 
-@property (nonatomic, strong) id initialInteractivePopGestureRecognizerDelegate;
+@property (nonatomic, assign, getter=isExploring) BOOL exploring;
+
+@property (nonatomic, strong, nullable) id initialInteractivePopGestureRecognizerDelegate;
 
 #if TARGET_OS_MACCATALYST
 

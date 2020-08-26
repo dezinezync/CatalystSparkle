@@ -113,6 +113,10 @@
     browser.accessibilityValue = @"Customize the Article Reader Interface";
     browser.accessibilityLabel = @"Customize";
     
+    if (self.isExploring) {
+        return @[share, browser];
+    }
+    
     return @[share, browser, customize];
     
 }

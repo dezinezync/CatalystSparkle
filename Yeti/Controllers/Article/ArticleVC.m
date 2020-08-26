@@ -132,7 +132,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #if TARGET_OS_MACCATALYST
     
-    self.navigationController.navigationBar.hidden = YES;
+    if (self.isExploring == NO) {
+        self.navigationController.navigationBar.hidden = YES;
+    }
+    
     self.scrollView.contentInset = UIEdgeInsetsMake(24.f, 0, 44.f, 0);
     
 #else
