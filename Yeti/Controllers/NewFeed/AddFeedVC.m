@@ -113,10 +113,7 @@
     
     [self setupSearchController];
     [self setupDefaultViews];
-    
-#if TARGET_OS_MACCATALYST
-    self.navigationController.navigationBar.translucent = NO;
-#endif
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -232,48 +229,6 @@
     
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (self.searchBar.selectedScopeButtonIndex == 0) {
-        
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        
-        if (self.selected != NSNotFound) {
-            AddFeedCell *cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selected inSection:0]];
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
-        
-        if (self.selected == indexPath.row) {
-            self.selected = NSNotFound;
-        }
-        else {
-            self.selected = indexPath.row;
-            AddFeedCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        }
-        
-        return;
-        
-    }
-    
-    if (self.searchBar.isFirstResponder == YES) {
-        [self.searchBar resignFirstResponder];
-    }
-    
-//    Feed *feed = [self.DS objectAtIndexPath:indexPath];
-//
-//    if (feed) {
-//        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-//        vc.exploring = YES;
-//
-//        [self.navigationController pushViewController:vc animated:YES];
-//    }
-//    else {
-//        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-//    }
-
-}
-
 #pragma mark - Setups
 
 - (void)setupSearchController {
@@ -322,8 +277,6 @@
         [formatted appendString:self.errorBody];
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
     para.lineHeightMultiple = 1.4f;
     para.alignment = self.errorLabel.textAlignment;
@@ -336,9 +289,7 @@
         [attributes setObject:font forKey:NSFontAttributeName];
     }
     
-    if (theme.subtitleColor != nil) {
-        [attributes setObject:theme.subtitleColor forKey:NSForegroundColorAttributeName];
-    }
+    [attributes setObject:UIColor.secondaryLabelColor forKey:NSForegroundColorAttributeName];
     
     if (para != nil) {
         [attributes setObject:para forKey:NSParagraphStyleAttributeName];
@@ -347,6 +298,7 @@
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     if (self.errorTitle) {
+        
         NSRange range = [formatted rangeOfString:self.errorTitle];
         
         para = [para mutableCopy];
@@ -360,9 +312,7 @@
             [attributes setObject:font forKey:NSFontAttributeName];
         }
         
-        if (theme.titleColor != nil) {
-            [attributes setObject:theme.titleColor forKey:NSForegroundColorAttributeName];
-        }
+        [attributes setObject:UIColor.labelColor forKey:NSForegroundColorAttributeName];
         
         if (para != nil) {
             [attributes setObject:para forKey:NSParagraphStyleAttributeName];
@@ -444,11 +394,10 @@
 - (UILabel *)errorLabel {
     
     if (_errorLabel == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 12.f, self.view.bounds.size.width - (24.f), 0.f)];
         label.preferredMaxLayoutWidth = label.bounds.size.width;
-        label.textColor = theme.subtitleColor;
+        label.textColor = UIColor.secondaryLabelColor;
         label.numberOfLines = 0;
         label.textAlignment = NSTextAlignmentCenter;
         label.translatesAutoresizingMaskIntoConstraints = NO;

@@ -303,9 +303,7 @@ static NSString * const reuseIdentifier = @"Cell";
     
     header.label.text = [text uppercaseString];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    header.backgroundColor = theme.backgroundColor;
-//    header.label.textColor = theme.isDark ? theme.captionColor : theme.titleColor;
+    header.backgroundColor = UIColor.systemBackgroundColor;
     
     return header;
 }

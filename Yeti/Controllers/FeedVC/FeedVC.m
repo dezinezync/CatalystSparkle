@@ -209,7 +209,9 @@
     
 #if TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.hidden = YES;
+    if (self.isExploring == NO) {
+        self.navigationController.navigationBar.hidden = YES;
+    }
     
     return;
     
@@ -827,6 +829,8 @@
         
     }
     else {
+        
+        vc.exploring = YES;
         
         [self.navigationController pushViewController:vc animated:YES];
         

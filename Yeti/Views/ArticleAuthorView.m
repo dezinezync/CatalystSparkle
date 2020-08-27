@@ -30,7 +30,7 @@
         
         self.titleLabel.font = TypeFactory.shared.titleFont;
 
-        UIFont *font = TypeFactory.shared.subtitleFont;
+        UIFont *font = TypeFactory.shared.caption1Font;
 
         for (UILabel *label in @[self.titleLabel, self.blogLabel, self.authorLabel]) {
 

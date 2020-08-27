@@ -30,7 +30,6 @@
 
 #import <SafariServices/SafariServices.h>
 
-#import "YetiThemeKit.h"
 #import "YTPlayer.h"
 #import "YTExtractor.h"
 #import "NSString+ImageProxy.h"
@@ -133,7 +132,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #if TARGET_OS_MACCATALYST
     
-    self.navigationController.navigationBar.hidden = YES;
+    if (self.isExploring == NO) {
+        self.navigationController.navigationBar.hidden = YES;
+    }
+    
     self.scrollView.contentInset = UIEdgeInsetsMake(24.f, 0, 44.f, 0);
     
 #else
@@ -244,11 +246,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    
 #endif
+    
+    [self didUpdateTheme];
     
     if (!_hasRendered) {
         
@@ -429,21 +429,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.loader.color = theme.captionColor;
-    self.loader.tintColor = theme.captionColor;
-    
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.scrollView.backgroundColor = UIColor.systemBackgroundColor;
     
     if (self.helperView != nil) {
-        self.helperView.backgroundColor = theme.articlesBarColor;
-        self.helperView.tintColor = theme.tintColor;
+        self.helperView.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
+        self.helperView.tintColor = self.view.tintColor;
         [self.helperView updateShadowPath];
     }
-    
-    [self setupArticle:self.currentArticle];
     
 }
 
@@ -743,12 +736,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             self.errorTitleLabel.text = @"Error loading the article";
             self.errorDescriptionLabel.text = [self.articleLoadingError localizedDescription];
             
-            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-            self.errorTitleLabel.textColor = theme.titleColor;
-            self.errorDescriptionLabel.textColor = theme.captionColor;
+            self.errorTitleLabel.textColor = UIColor.labelColor;
+            self.errorDescriptionLabel.textColor = UIColor.secondaryLabelColor;
             
             for (UILabel *label in @[self.errorTitleLabel, self.errorDescriptionLabel]) {
-                label.backgroundColor = theme.articleBackgroundColor;
+                label.backgroundColor = UIColor.systemBackgroundColor;
                 label.opaque = YES;
             }
             
@@ -1052,6 +1044,27 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             strongify(self);
             
             @autoreleasepool {
+                
+                if (idx == 0
+                    && [obj.type isEqualToString:@"paragraph"]
+                    && [obj.content isKindOfClass:NSString.class]
+                    && [obj.content containsString:@"This article was incorrectly formatted"]) {
+                    
+                    if (obj.ranges == nil) {
+                        obj.ranges = @[];
+                    }
+                    
+                    Range *rangeObj = [Range new];
+                    rangeObj.element = @"anchor";
+                    rangeObj.url = self.item.articleURL;
+                    rangeObj.range = [obj.content rangeOfString:@"click here"];
+                    
+                    if ([obj.ranges indexOfObject:rangeObj] == NSNotFound) {
+                        obj.ranges = [obj.ranges arrayByAddingObject:rangeObj];
+                    }
+                    
+                }
+                
                 [self processContent:obj index:idx imagesFromEnclosures:imagesFromEnclosures];
             }
         });
@@ -1116,8 +1129,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     NSString *author = nil;
     
     if (self.item.author) {
@@ -1176,7 +1187,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
 
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
-                                     NSForegroundColorAttributeName: theme.titleColor,
+                                     NSForegroundColorAttributeName: UIColor.labelColor,
                                      NSParagraphStyleAttributeName: para,
                                      NSKernAttributeName: @0,
                                      };
@@ -1222,7 +1233,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
         
         // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = theme.tintColor;
+        authorView.blogLabel.textColor = self.view.tintColor;
         [authorView.blogLabel setNeedsDisplay];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
@@ -1495,8 +1506,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
@@ -1638,8 +1647,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (_last && [_last isMemberOfClass:Paragraph.class]) {
         [self addLinebreak];
     }
-    
-//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
@@ -2609,9 +2616,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         weakify(required);
         
         // animate background on paragraph
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        strongify(required);
         
         required.layer.cornerRadius = 4.f;
         
@@ -2619,7 +2623,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [UIView animateWithDuration:animationDuration delay:1 options:kNilOptions animations:^{
             
-            required.backgroundColor = theme.focusColor;
+            required.backgroundColor = [UIColor.systemYellowColor colorWithAlphaComponent:0.3f];
             
             strongify(self);
             self.scrollView.userInteractionEnabled = YES;
@@ -2629,7 +2633,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             if (finished) {
                 [UIView animateWithDuration:animationDuration delay:1.5 options:kNilOptions animations:^{
                     
-                    required.backgroundColor = theme.articleBackgroundColor;
+                    required.backgroundColor = UIColor.systemBackgroundColor;
                     
                 } completion:^(BOOL finished) {
                     required.layer.cornerRadius = 0.f;
@@ -2861,7 +2865,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (UIInputView *)searchView
 {
     if (_searchView == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
         
@@ -2871,7 +2874,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         CGFloat borderHeight = 1/[[UIScreen mainScreen] scale];
         UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, borderHeight)];
-        border.backgroundColor = theme.borderColor;
+        border.backgroundColor = UIColor.separatorColor;
         border.translatesAutoresizingMaskIntoConstraints = NO;
         [border.heightAnchor constraintEqualToConstant:borderHeight].active = YES;
         
@@ -2890,7 +2893,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
         if (searchField) {
-            searchField.textColor = theme.titleColor;
+            searchField.textColor = UIColor.labelColor;
         }
         
         searchBar.backgroundColor = UIColor.clearColor;
@@ -2962,7 +2965,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.searchPrevButton = prev;
         self.searchNextButton = next;
         
-        UIColor *tint = theme.tintColor;
+        UIColor *tint = self.view.tintColor;
         prev.tintColor = tint;
         next.tintColor = tint;
         [done setTitleColor:tint forState:UIControlStateNormal];

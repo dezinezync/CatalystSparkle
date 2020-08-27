@@ -20,8 +20,6 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+Transform.h>
 
-#import "YetiThemeKit.h"
-
 #if TARGET_OS_MACCATALYST
 
 #import "AppDelegate.h"
@@ -78,16 +76,19 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     self.coverImage.layer.cornerRadius = 3.f;
     self.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.titleLabel.textColor = UIColor.labelColor;
+    self.summaryLabel.textColor = UIColor.secondaryLabelColor;
     
-    self.titleLabel.textColor = theme.titleColor;
-    self.summaryLabel.textColor = theme.subtitleColor;
-    
-    self.authorLabel.textColor = theme.subtitleColor;
-    self.timeLabel.textColor = theme.subtitleColor;
+    self.authorLabel.textColor = UIColor.secondaryLabelColor;
+    self.timeLabel.textColor = UIColor.secondaryLabelColor;
     
     self.selectedBackgroundView = [UIView new];
-    self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+    
+#if TARGET_OS_MACCATALYST
+    self.selectedBackgroundView.backgroundColor = UIColor.secondarySystemBackgroundColor;
+#else
+    self.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     [self resetUI];
     
