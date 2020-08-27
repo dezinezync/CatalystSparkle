@@ -228,7 +228,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
                 NSInteger location = range.range.location;
                 NSInteger length = range.range.length;
                 
-                if ((location + length) > attrs.length) {
+                if (length > 0 && (location + length) > attrs.length) {
                     range.range = NSMakeRange(location, attrs.length - location);
                 }
                 
