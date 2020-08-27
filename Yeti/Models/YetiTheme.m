@@ -7,7 +7,6 @@
 //
 
 #import "YetiTheme.h"
-#import "AppKitGlue.h"
 
 #if TARGET_OS_MACCATALYST
 #import "AppDelegate+Catalyst.h"

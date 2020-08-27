@@ -44,20 +44,6 @@
 
 - (void)ct_setupAppKitBundle {
     
-    NSString *pluginPath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:@"elytramac.bundle"];
-    
-    NSBundle *macBundle = [NSBundle bundleWithPath:pluginPath];
-    
-    self.appKitBundle = macBundle;
-    
-    __unused BOOL unused = [self.appKitBundle load];
-    
-    Class appKitGlueClass = [self.appKitBundle classNamed:@"AppKitGlue"];
-#if TARGET_OS_OSX
-    __unused AppKitGlue *instance = [appKitGlueClass shared];
-    
-    self.sharedGlue = instance;
-#endif
 }
 
 - (void)ct_setupMenu:(id<UIMenuBuilder>)builder {

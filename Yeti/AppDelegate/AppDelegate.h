@@ -12,12 +12,6 @@
 #import "RMStore.h"
 #import "Coordinator.h"
 
-#if TARGET_OS_MACCATALYST
-
-#import "AppKitGlue.h"
-
-#endif
-
 @class RMStoreKeychainPersistence;
 
 @class AppDelegate;
@@ -53,10 +47,6 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, strong) NSBundle *appKitBundle;
 
 @property (nonatomic, strong) NSSet <UIWindow *> *additionalWindows;
-
-#if TARGET_OS_OSX
-@property (nonatomic, strong) AppKitGlue *sharedGlue;
-#endif
 
 @property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
 

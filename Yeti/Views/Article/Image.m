@@ -353,27 +353,10 @@
 }
 
 - (void)didTapLink:(UITapGestureRecognizer *)tap {
-    
-#if TARGET_OS_MACCATALYST
-    
-    id appDelegate = [[UIApplication sharedApplication] delegate];
-    
-    id sharedGlue = [appDelegate valueForKeyPath:@"sharedGlue"];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-
-    [sharedGlue performSelector:@selector(openURL:inBackground:) withObject:[NSURL URLWithString:self.link.absoluteString] withObject:@(YES)];
-    
-#pragma clang diagnostic pop
-    
-#else
-    
     NSURL *external = formattedURL(@"yeti://external?link=%@", self.link.absoluteString);
     
     [[UIApplication sharedApplication] openURL:external options:@{} completionHandler:nil];
-    
-#endif
     
 }
 

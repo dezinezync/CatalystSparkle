@@ -2805,16 +2805,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     runOnMainQueueWithoutDeadlocking(^{
         
-#if TARGET_OS_OSX
-            
-        [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
-        
-#else
-        
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
-        
-#endif
-
         
     });
     

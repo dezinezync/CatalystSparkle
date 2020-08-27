@@ -184,10 +184,10 @@
         
         NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
         
-#if TARGET_OS_OSX
-        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
-        return YES;
-#endif
+//#if TARGET_OS_OSX
+//        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
+//        return YES;
+//#endif
         
         // check and optionally handle twitter URLs
         if ([link containsString:@"twitter.com"]) {
