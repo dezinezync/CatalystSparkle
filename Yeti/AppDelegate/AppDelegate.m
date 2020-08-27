@@ -79,7 +79,7 @@ AppDelegate *MyAppDelegate = nil;
     UIWindowScene *windowScene = (UIWindowScene *)scene;
     
     NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
-    
+
     if (activity != nil) {
         
         UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
@@ -98,8 +98,9 @@ AppDelegate *MyAppDelegate = nil;
             FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
             
             ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+#if TARGET_OS_MACCATALYST
             vc.externalWindow = YES;
-            
+#endif
             scene.title = item.articleTitle ?: @"Untitled";
             
             window.rootViewController = vc;
@@ -107,9 +108,9 @@ AppDelegate *MyAppDelegate = nil;
         }
         
         if (window.rootViewController != nil) {
-            
+#if TARGET_OS_MACCATALYST
             MyAppDelegate.additionalWindows = [MyAppDelegate.additionalWindows setByAddingObject:window];
-            
+#endif
             [window makeKeyAndVisible];
         }
         else {
