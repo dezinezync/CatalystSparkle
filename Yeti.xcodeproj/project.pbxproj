@@ -54,6 +54,8 @@
 		F018A2CF205D0F0B001E682B /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F018A2CD205D0F0B001E682B /* SettingsVC.m */; };
 		F018A2D0205D0F0B001E682B /* SettingsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F018A2CE205D0F0B001E682B /* SettingsVC.xib */; };
 		F01A34BC219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F01A34BB219C556C00D020F3 /* TwoFingerPanGestureRecognizer.m */; };
+		F01C3E4524F7DB3900C60876 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
+		F01C3E4624F7DB3900C60876 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */ = {isa = PBXBuildFile; fileRef = F01D71511FBC1A2500DF84B9 /* NSAttributedString+Trimming.m */; };
 		F01E6E1024AC6C2500D1BD6E /* red~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6DF324AC6C2500D1BD6E /* red~ipad@2x.png */; };
 		F01E6E1124AC6C2500D1BD6E /* red@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6DF424AC6C2500D1BD6E /* red@3x.png */; };
@@ -198,8 +200,6 @@
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F083BA8C24EE58950045C986 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA8924EE58780045C986 /* SDWebImage.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
-		F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
-		F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -323,7 +323,7 @@
 		F0D98F5824EE4C8500B1F9F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */; };
 		F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
 		F0D98F5B24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
-		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
 		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
@@ -363,6 +363,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F01C3E4724F7DB4500C60876 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
+			remoteInfo = DZNetworking;
+		};
 		F035A21E20617EC3005A88EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
@@ -643,13 +650,6 @@
 			remoteGlobalIDString = 5CB4EB481B45BF5B0058E91A;
 			remoteInfo = "JLRoutes-iOS";
 		};
-		F0FC5BE824F7D33700F49224 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F0FC8E4F1B4FB1D300FDA46C;
-			remoteInfo = DZNetworking;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -685,8 +685,8 @@
 				F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
-				F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */,
 				F08C5E63238660B00055946F /* DZThemeKit.framework in Embed Frameworks */,
+				F01C3E4624F7DB3900C60876 /* DZNetworking.framework in Embed Frameworks */,
 				F0B4827F2455F65600EE5AA2 /* YapDatabase.framework in Embed Frameworks */,
 				F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */,
 			);
@@ -976,7 +976,6 @@
 		F070C3001FBABC3600912CCF /* YetiUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YetiUITests.m; sourceTree = "<group>"; };
 		F070C3021FBABC3600912CCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F070C3201FBAC0E100912CCF /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OMGHTTPURLRQ.framework; path = Carthage/Build/iOS/OMGHTTPURLRQ.framework; sourceTree = SOURCE_ROOT; };
 		F070C3321FBAC37600912CCF /* FeedsVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsVC.h; sourceTree = "<group>"; };
 		F070C3331FBAC37600912CCF /* FeedsVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsVC.m; sourceTree = "<group>"; };
 		F070C3491FBADF8D00912CCF /* FeedsCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsCell.h; sourceTree = "<group>"; };
@@ -1279,11 +1278,11 @@
 			files = (
 				F083BA8C24EE58950045C986 /* SDWebImage.framework in Frameworks */,
 				F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */,
+				F01C3E4524F7DB3900C60876 /* DZNetworking.framework in Frameworks */,
 				F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */,
 				F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */,
 				F0B4827E2455F65600EE5AA2 /* YapDatabase.framework in Frameworks */,
 				F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */,
-				F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */,
 				F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */,
 				F0B4827C2455F65000EE5AA2 /* DZKit.framework in Frameworks */,
 				F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */,
@@ -1949,7 +1948,6 @@
 			isa = PBXGroup;
 			children = (
 				F00E830622C4826D0027C45E /* RMStore */,
-				F070C3241FBAC10600912CCF /* OMGHTTPURLRQ.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -2485,7 +2483,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F0FC5BE924F7D33700F49224 /* PBXTargetDependency */,
+				F01C3E4824F7DB4500C60876 /* PBXTargetDependency */,
 				F0B0EA3624EC1F3200D675B4 /* PBXTargetDependency */,
 				F0BFD6BF245804FD009A863C /* PBXTargetDependency */,
 				F0E0E6F12457FF2A00DFFD17 /* PBXTargetDependency */,
@@ -3371,6 +3369,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F01C3E4824F7DB4500C60876 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DZNetworking;
+			targetProxy = F01C3E4724F7DB4500C60876 /* PBXContainerItemProxy */;
+		};
 		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -3410,6 +3413,7 @@
 		};
 		F0D98F5D24EE4C8500B1F9F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = F0D98F4D24EE4C8500B1F9F0 /* UnreadsWidgetExtension */;
 			targetProxy = F0D98F5C24EE4C8500B1F9F0 /* PBXContainerItemProxy */;
 		};
@@ -3417,11 +3421,6 @@
 			isa = PBXTargetDependency;
 			name = "JLRoutes-iOS";
 			targetProxy = F0E0E6F02457FF2A00DFFD17 /* PBXContainerItemProxy */;
-		};
-		F0FC5BE924F7D33700F49224 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DZNetworking;
-			targetProxy = F0FC5BE824F7D33700F49224 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3684,7 +3683,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 2.0.0;
-				OTHER_CODE_SIGN_FLAGS = "--deep";
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -3741,7 +3740,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 2.0.0;
-				OTHER_CODE_SIGN_FLAGS = "--deep";
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3963,6 +3962,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 12;
+				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3979,6 +3979,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = all;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -4001,6 +4002,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 12;
+				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -4016,6 +4018,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = all;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;

@@ -87,7 +87,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 #if TARGET_OS_MACCATALYST
     self.selectedBackgroundView.backgroundColor = UIColor.secondarySystemBackgroundColor;
 #else
-    self.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
 #endif
     
     [self resetUI];
