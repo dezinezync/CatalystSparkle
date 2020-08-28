@@ -145,10 +145,16 @@
         
     }
     else if ([key isEqualToString:@"size"] && [value isKindOfClass:NSString.class]) {
-        NSArray *components = [value componentsSeparatedByString:@","];
-        if (components.count > 1) {
-            CGSize size = CGSizeMake([components[0] floatValue], [components[1] floatValue]);
-            self.size = size;
+        
+        if ([[value substringToIndex:1] isEqualToString:@"{"]) {
+            self.size = CGSizeFromString(value);
+        }
+        else {
+            NSArray *components = [value componentsSeparatedByString:@","];
+            if (components.count > 1) {
+                CGSize size = CGSizeMake([components[0] floatValue], [components[1] floatValue]);
+                self.size = size;
+            }
         }
     }
     else {
@@ -269,9 +275,7 @@
         [dictionary setObject:self.videoID forKey:@"videoID"];
     }
     
-    if (self.size.width && self.size.height) {
-        [dictionary setObject:NSStringFromCGSize(self.size) forKey:@"size"];
-    }
+    [dictionary setObject:NSStringFromCGSize(self.size) forKey:@"size"];
     
     if (self.srcset) {
         [dictionary setObject:self.srcset forKey:@"srcset"];

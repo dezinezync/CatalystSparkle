@@ -132,7 +132,6 @@
 		F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F047F4E120C25FB900626968 /* Spectral-LightItalic.ttf */; };
 		F04815FC245FD88200F8091E /* AppDelegate+BackgroundRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = F04815FB245FD88200F8091E /* AppDelegate+BackgroundRefresh.m */; };
 		F048E4A924EE84D1009A46F4 /* WidgetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4A824EE84D1009A46F4 /* WidgetManager.swift */; };
-		F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA8924EE58780045C986 /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */; };
 		F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F04CFAC52154B57B00AA7B5E /* StoreVC.m */; };
 		F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BB21B5427B00AD1FB2 /* YTExtractor.m */; };
@@ -197,6 +196,7 @@
 		F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DCA4320C51B550068ED51 /* ArticleVC+Keyboard.m */; };
 		F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F08011E32167345300F0CE81 /* OPMLDeckController.m */; };
 		F083437624F7ECD200B11D26 /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA8924EE58780045C986 /* SDWebImage.framework */; };
+		F083437724F7ED2000B11D26 /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F083BA8924EE58780045C986 /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F085785321D1EAE200CC2B95 /* PreviewLinesVC.m */; };
 		F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
 		F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -689,7 +689,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F048E4AA24EE8AA5009A46F4 /* SDWebImage.framework in Embed Frameworks */,
+				F083437724F7ED2000B11D26 /* SDWebImage.framework in Embed Frameworks */,
 				F0B4827D2455F65000EE5AA2 /* DZKit.framework in Embed Frameworks */,
 				F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */,
 				F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */,
@@ -3697,7 +3697,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 2.0.0;
-				OTHER_CODE_SIGN_FLAGS = "--deep";
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -3754,7 +3754,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 2.0.0;
-				OTHER_CODE_SIGN_FLAGS = "--deep";
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

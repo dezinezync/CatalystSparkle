@@ -1794,7 +1794,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
         frame.size.width = content.size.width;
-        frame.size.height = frame.size.width * scale;
+        
+        if (scale != INFINITY) {
+            frame.size.height = frame.size.width * scale;
+        }
+        else {
+            frame.size.height = 200.f;
+            scale = frame.size.height / frame.size.height;
+        }
+        
         imageView.frame = frame;
         
         if (content.size.width > content.size.height) {
