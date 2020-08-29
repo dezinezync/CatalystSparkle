@@ -57,7 +57,9 @@
     // remove some menu items
     [builder removeMenuForIdentifier:UIMenuFormat];
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    MainCoordinator *coordinator = MyAppDelegate.coordinator;
+    
+//    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
     
     // Add items for File menu
     UIKeyCommand *newFeed = [UIKeyCommand commandWithTitle:@"New Feed" image:nil action:@selector(createNewFeed) input:@"n" modifierFlags:UIKeyModifierCommand propertyList:nil];
@@ -77,26 +79,20 @@
     UICommand * unreadDesc = [UICommand commandWithTitle:@"Unread - Newest First" image:nil action:@selector(setSortingUnreadDesc) propertyList:nil];
     UICommand * unreadAsc = [UICommand commandWithTitle:@"Unread - Oldest First" image:nil action:@selector(setSortingUnreadAsc) propertyList:nil];
     
-    if (splitVC.viewControllers.count >= 2) {
+    if (coordinator.feedVC != nil) {
         
-        UINavigationController *navVC = (UINavigationController *)[splitVC.viewControllers objectAtIndex:1];
+        FeedVC *feedVC = coordinator.feedVC;
         
-        if ([[navVC.viewControllers firstObject]  isKindOfClass:FeedVC.class]) {
+        if (feedVC.type == FeedVCTypeUnread || feedVC.type == FeedVCTypeBookmarks) {
             
-            FeedVC *feedVC = [navVC.viewControllers firstObject];
+            unreadAsc.attributes = UIMenuElementAttributesDisabled;
+            unreadDesc.attributes = UIMenuElementAttributesDisabled;
             
-            if (feedVC.type == FeedVCTypeUnread || feedVC.type == FeedVCTypeBookmarks) {
-                
-                unreadAsc.attributes = UIMenuElementAttributesDisabled;
-                unreadDesc.attributes = UIMenuElementAttributesDisabled;
-                
-            }
-            else {
-                
-                unreadAsc.attributes = 0;
-                unreadDesc.attributes = 0;
-                
-            }
+        }
+        else {
+            
+            unreadAsc.attributes = 0;
+            unreadDesc.attributes = 0;
             
         }
         
@@ -137,14 +133,14 @@
     
     // Go menu
     
-    ArticleVC *articleVC = nil;
+    ArticleVC *articleVC = coordinator.articleVC;
     
     UIKeyCommand *nextArticle = [UIKeyCommand commandWithTitle:@"Next Article" image:nil action:@selector(switchToNextArticle) input:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
     
     UIKeyCommand *previousArticle = [UIKeyCommand commandWithTitle:@"Previous Article" image:nil action:@selector(switchToPreviousArticle) input:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
     
     // If the article VC is not visible, leave them disabled
-    if (splitVC.viewControllers.count != 3) {
+    if (articleVC == nil) {
         
         nextArticle.attributes = UIMenuElementAttributesDisabled;
         previousArticle.attributes = UIMenuElementAttributesDisabled;
@@ -152,22 +148,24 @@
     }
     else {
         
-        ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+        // we have a ArticleVC so check with its ArticleProvider for prev/next info
+        id <ArticleProvider> articleProvider = articleVC.providerDelegate;
         
-        if ([vc isKindOfClass:ArticleVC.class] == YES) {
+        if (articleProvider == nil) {
             
-            articleVC = vc;
+            nextArticle.attributes = UIMenuElementAttributesDisabled;
+            previousArticle.attributes = UIMenuElementAttributesDisabled;
             
-            // we have a ArticleVC so check with its ArticleProvider for prev/next info
-            id <ArticleProvider> articleProvider = vc.providerDelegate;
+        }
+        else {
             
-            if ([articleProvider hasNextArticleForArticle:vc.currentArticle] == NO) {
+            if ([articleProvider hasNextArticleForArticle:articleVC.currentArticle] == NO) {
                 
                 nextArticle.attributes = UIMenuElementAttributesDisabled;
                 
             }
             
-            if ([articleProvider hasPreviousArticleForArticle:vc.currentArticle] == NO) {
+            if ([articleProvider hasPreviousArticleForArticle:articleVC.currentArticle] == NO) {
                 
                 previousArticle.attributes = UIMenuElementAttributesDisabled;
                 

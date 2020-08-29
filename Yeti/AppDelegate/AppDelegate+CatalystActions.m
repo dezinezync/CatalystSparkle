@@ -17,7 +17,7 @@
 
 - (void)createNewFeed {
     
-    SidebarVC *vc = self.coordinator.sidebarVC;
+    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
     
     [vc didTapAdd:nil];
     
@@ -25,7 +25,7 @@
 
 - (void)createNewFolder {
     
-    SidebarVC *vc = self.coordinator.sidebarVC;
+    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
     
     [vc didTapAddFolder:nil];
     
@@ -35,7 +35,7 @@
     
     [MyDBManager purgeDataForResync];
     
-    SidebarVC *vc = self.coordinator.sidebarVC;
+    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
     
     [vc beginRefreshing:nil];
     
@@ -43,7 +43,7 @@
 
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
-    FeedVC *feedVC = self.coordinator.feedVC;
+    FeedVC *feedVC = MyAppDelegate.coordinator.feedVC;
     
     if (feedVC == nil) {
         return;
@@ -119,7 +119,7 @@
 
 - (void)switchToNextArticle {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -131,7 +131,7 @@
 
 - (void)switchToPreviousArticle {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -143,7 +143,7 @@
 
 - (void)markArticleRead {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -157,7 +157,7 @@
 
 - (void)markArticleBookmark {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -171,7 +171,7 @@
 
 - (void)openArticleInBrowser {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -183,7 +183,7 @@
 
 - (void)closeArticle {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -195,7 +195,7 @@
 
 - (void)shareArticle {
     
-    ArticleVC *vc = self.coordinator.articleVC;
+    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
