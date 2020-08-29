@@ -23,7 +23,7 @@
 
 @class Content;
 
-@interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning> {
+@interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning, UIContextMenuInteractionDelegate> {
     BOOL _showSearchBar;
     
     UIView *_searchHighlightingRect;

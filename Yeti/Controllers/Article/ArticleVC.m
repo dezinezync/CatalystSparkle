@@ -136,7 +136,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    self.scrollView.contentInset = UIEdgeInsetsMake(24.f, 0, 44.f, 0);
+    self.scrollView.contentInset = UIEdgeInsetsMake(-1.f, 0, 44.f, 0);
     
 #else
     
@@ -1682,6 +1682,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [prefix appendAttributedString:attrs];
         heading.attributedText = prefix;
+        
+#if TARGET_OS_MACCATALYST
+        // handle right click from here
+        UIContextMenuInteraction * interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+        
+        [heading addInteraction:interaction];
+#endif
+        // catalyst handles left click from here
         heading.delegate = self;
     }
     
@@ -2833,6 +2841,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
 }
 
+- (NSUInteger)boundingRangeIn:(UITextView *)textView forPoint:(CGPoint)point {
+    
+    NSTextStorage *textStorage = [textView textStorage];
+    NSLayoutManager *layoutManager = [[textStorage layoutManagers] firstObject];
+    NSTextContainer *textContainer = [[layoutManager textContainers] firstObject];
+    
+    CGFloat fractionalDistance = 0.f;
+    
+    NSUInteger index = [layoutManager characterIndexForPoint:point inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:&fractionalDistance];
+    
+    return index;
+    
+}
+
 #pragma mark - Getters
 
 - (UINotificationFeedbackGenerator *)notificationGenerator {
@@ -3161,6 +3183,75 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
     }
     
     [self presentViewController:avc animated:YES completion:nil];
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    if ([interaction.view isKindOfClass:Heading.class]) {
+        
+        // check if NSURL exists
+        Heading *view = (Heading *)[interaction view];
+        
+        NSUInteger index = [self boundingRangeIn:view forPoint:location];
+        
+        if (index == 0) {
+            
+            // check range for link
+            NSRange range = NSMakeRange(index, 2);
+            NSRange longest = NSMakeRange(index, 2);
+            
+            NSURL *url = [view.attributedText attribute:NSLinkAttributeName atIndex:index longestEffectiveRange:&longest inRange:range];
+            
+            if (url != nil) {
+                
+                return [self contextConfigForSharingURL:url from:view];
+                
+            }
+            
+        }
+        
+    }
+    
+    return nil;
+    
+}
+
+- (UIContextMenuConfiguration *)contextConfigForSharingURL:(NSURL *)url from:(UIView *)view {
+    
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:url previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+        
+        UIAction *share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[url] applicationActivities:nil];
+            
+            if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+                
+                UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+                pvc.sourceView = view;
+                pvc.sourceRect = view.frame;
+                
+            }
+            
+            [self presentViewController:avc animated:YES completion:nil];
+            
+        }];
+        
+        UIAction *copy = [UIAction actionWithTitle:@"Copy Link" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            UIPasteboard.generalPasteboard.URL = url;
+            
+        }];
+        
+        UIMenu *menu = [UIMenu menuWithChildren:@[share, copy]];
+        
+        return menu;
+        
+    }];
+    
+    return config;
     
 }
 

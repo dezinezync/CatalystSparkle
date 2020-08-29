@@ -48,7 +48,7 @@
 
 - (PagingManager *)unreadsManager {
     
-    if (_unreadsManager == nil) {
+    if (_unreadsManager == nil && MyFeedsManager.userID != nil) {
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
         params[@"sortType"] = @(self.sortingOption.integerValue);

@@ -447,7 +447,7 @@
 
 - (PagingManager *)pagingManager {
     
-    if (_pagingManager == nil) {
+    if (_pagingManager == nil && MyFeedsManager.userID != nil) {
         
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
