@@ -80,7 +80,7 @@ AppDelegate *MyAppDelegate = nil;
     
     NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
 
-    if (activity != nil) {
+    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == NO) {
         
         UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
         window.canResizeToFitContent = YES;
@@ -129,15 +129,15 @@ AppDelegate *MyAppDelegate = nil;
     [self ct_setupToolbar:windowScene];
 #endif
     
-    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == YES) {
-        
-        NSLogDebug(@"Application will restore state");
-        
-        [(SplitVC *)[self.window rootViewController] continueActivity:activity];
-        
-        [MyFeedsManager continueActivity:activity];
-        
-    }
+//    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == YES) {
+//
+//        NSLogDebug(@"Application will restore state");
+//
+//        [(SplitVC *)[self.window rootViewController] continueActivity:activity];
+//
+//        [MyFeedsManager continueActivity:activity];
+//
+//    }
     
     [self.window makeKeyAndVisible];
     

@@ -97,11 +97,12 @@
         return;
     }
     
-//#ifdef DEBUG
-//    // 4800
-//    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
-//    
-//#endif
+#ifdef DEBUG
+#if !TARGET_OS_MACCATALYST
+    // 4800
+    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
+#endif
+#endif
     
     self.signinButton.enabled = NO;
     
