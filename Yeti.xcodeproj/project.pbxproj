@@ -1727,7 +1727,7 @@
 		F070C30E1FBABC7500912CCF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				F0E5F4E624CEC854007E6D1E /* Photos */,
+				F0E5F4E624CEC854007E6D1E /* Catalyst */,
 				F0EE6CB424CABC9B00E987FC /* Sidebar */,
 				F070C3131FBABCA300912CCF /* Feeds */,
 				F0A0501921F07BD600A46524 /* NewFeed */,
@@ -2407,13 +2407,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F0E5F4E624CEC854007E6D1E /* Photos */ = {
+		F0E5F4E624CEC854007E6D1E /* Catalyst */ = {
 			isa = PBXGroup;
 			children = (
 				F0E5F4E824CEC854007E6D1E /* PhotosController.h */,
 				F0E5F4E724CEC854007E6D1E /* PhotosController.m */,
 			);
-			path = Photos;
+			path = Catalyst;
 			sourceTree = "<group>";
 		};
 		F0EE6CB424CABC9B00E987FC /* Sidebar */ = {
