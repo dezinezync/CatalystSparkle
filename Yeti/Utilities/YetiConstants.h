@@ -133,6 +133,8 @@ extern NSString * _Nonnull const IAPOneMonth;
 extern NSString * _Nonnull const IAPThreeMonth;
 extern NSString * _Nonnull const IAPTwelveMonth;
 extern NSString * _Nonnull const IAPLifetime;
+extern NSString * _Nonnull const IAPMonthlyAuto;
+extern NSString * _Nonnull const IAPYearlyAuto;
 
 YETI_EXPORT NSString * _Nonnull const kShowMarkReadPrompt;
 

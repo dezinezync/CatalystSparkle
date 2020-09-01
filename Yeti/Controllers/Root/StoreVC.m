@@ -20,6 +20,7 @@
 #import <DZKit/NSArray+Safe.h>
 
 #import "UIImage+Color.h"
+#import "PaddedLabel.h"
 
 @interface StoreVC () <RMStoreObserver> {
     BOOL _sendingReceipt;
@@ -27,7 +28,10 @@
 
 @property (nonatomic) NSArray *purhcasedProductIdentifiers;
 
+@property (nonatomic, strong) PaddedLabel *tableHeader;
+
 @property (nonatomic, strong) NSArray *products;
+@property (nonatomic, strong) NSArray <NSArray <NSString *> *> *sortedProducts;
 @property (nonatomic, assign) BOOL productsRequestFinished;
 @property (nonatomic, assign) NSInteger selectedProduct;
 @property (nonatomic, assign, getter=isTrialPeriod) BOOL trialPeriod;
@@ -48,17 +52,19 @@
     
     StoreFooter *footer = [[StoreFooter alloc] initWithNib];
     
-    
     [footer.buyButton addTarget:self action:@selector(didTapBuy) forControlEvents:UIControlEventTouchUpInside];
     [footer.restoreButton addTarget:self action:@selector(didTapRestore) forControlEvents:UIControlEventTouchUpInside];
     self.tableView.tableFooterView = footer;
     
     [self configureFooterView];
     
-    _products = @[IAPOneMonth,
-                  IAPThreeMonth,
-                  IAPTwelveMonth,
-                  IAPLifetime];
+    [self setupHeader];
+    
+    _sortedProducts = @[@[IAPMonthlyAuto,
+                          IAPYearlyAuto],
+                        @[IAPLifetime]];
+    
+    _products = [_sortedProducts rz_flatten];
     
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
@@ -99,103 +105,77 @@
 
     }];
     
-    [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-      
-        [self updateFooterView];
+    if (MyFeedsManager.user.subscription == nil || (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.error != nil)) {
         
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Subscription Check Failed" message:@"Elytra failed to retrive the latest status of your subscription."];
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+          
+            [self setupHeaderText];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+           
+            [AlertManager showGenericAlertWithTitle:@"Subscription Check Failed" message:@"Elytra failed to retrive the latest status of your subscription."];
+            
+        }];
         
-    }];
+    }
+    
+    self.buyButton.enabled = NO;
+    
 }
 
 - (void)configureFooterView {
+    
     StoreFooter *footer = (StoreFooter *)[self.tableView tableFooterView];
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
     
     self.buyButton = footer.buyButton;
     self.restoreButton = footer.restoreButton;
     
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.tableView.backgroundColor = theme.articleBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
     
-    footer.backgroundColor = theme.articleBackgroundColor;
+    footer.backgroundColor = UIColor.systemBackgroundColor;
     // affects normal state
-    footer.buyButton.backgroundColor = theme.tintColor;
-    [footer.buyButton setBackgroundImage:[UIImage imageWithColor:theme.tintColor] forState:UIControlStateNormal];
+    footer.buyButton.backgroundColor = self.view.tintColor;
+    
+#if !TARGET_OS_MACCATALYST
+    [footer.buyButton setBackgroundImage:[UIImage imageWithColor:self.view.tintColor] forState:UIControlStateNormal];
+#endif
     
     footer.buyButton.layer.cornerRadius = 8.f;
     footer.buyButton.clipsToBounds = YES;
     
-    UIColor *tint = theme.tintColor;
+    UIColor *tint = self.view.tintColor;
     
     [footer.buyButton setBackgroundImage:[UIImage imageWithColor:tint] forState:UIControlStateNormal];
     [footer.buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
     
     footer.buyButton.enabled = NO;
     
-    footer.footerLabel.backgroundColor = theme.articleBackgroundColor;
-    footer.footerLabel.textColor = theme.captionColor;
+    footer.footerLabel.backgroundColor = UIColor.systemBackgroundColor;
+    footer.footerLabel.textColor = UIColor.secondaryLabelColor;
     footer.footerLabel.textAlignment = NSTextAlignmentCenter;
+    footer.footerLabel.scrollEnabled = NO;
 }
 
 - (void)updateFooterView {
+    
+    [self setupHeaderText];
+    
     StoreFooter *footer = (StoreFooter *)[self.tableView tableFooterView];
     
     UITextView *textView = footer.footerLabel;
-    __block NSMutableAttributedString *attrs;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    NSMutableAttributedString *attrs;
     
     NSMutableParagraphStyle *para = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     para.alignment = NSTextAlignmentCenter;
     
     NSDictionary *attributes = @{
                                  NSFontAttributeName : textView.font,
-                                 NSForegroundColorAttributeName : theme.subtitleColor,
+                                 NSForegroundColorAttributeName : UIColor.secondaryLabelColor,
                                  NSParagraphStyleAttributeName : para
                                  };
     
-#ifdef DEBUG
-    [MyFeedsManager setValue:(MyFeedsManager.subscription ?: [Subscription new]) forKeyPath:propSel(subscription)];
-    MyFeedsManager.subscription.lifetime = YES;
-#endif
-    
-    if (MyFeedsManager.subscription && [MyFeedsManager.subscription hasExpired] == NO) {
-        
-        NSString *upto = @"";
-        
-        if ([self.purhcasedProductIdentifiers containsObject:IAPLifetime]
-            || MyFeedsManager.subscription.isLifetime == YES) {
-            upto = @"3298 LY (A.K.A. our Lifetime)";
-        }
-        else {
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            formatter.dateStyle = NSDateFormatterMediumStyle;
-            formatter.timeStyle = NSDateFormatterShortStyle;
-            formatter.locale = [NSLocale currentLocale];
-            formatter.timeZone = [NSTimeZone systemTimeZone];
-            
-            upto = [formatter stringFromDate:MyFeedsManager.subscription.expiry];
-        }
-        
-        NSString *formatted = formattedString(@"Your subscription is active up to %@.\n\nYou can read our Terms of Service and Privacy Policy.", upto);
-        
-        attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
-        
-        NSRange uptoRange = [formatted rangeOfString:upto];
-        [attrs addAttributes:@{NSForegroundColorAttributeName: [(YetiTheme *)[YTThemeKit theme] titleColor]
-                               } range:uptoRange];
-    }
-    else {
-        if (MyFeedsManager.subscription && MyFeedsManager.subscription.error && [MyFeedsManager.subscription.error.localizedDescription isEqualToString:@"No subscription found for this account."] == NO) {
-            attrs = [[NSMutableAttributedString alloc] initWithString:MyFeedsManager.subscription.error.localizedDescription attributes:@{NSFontAttributeName : textView.font, NSForegroundColorAttributeName : textView.textColor}];
-        }
-        else {
-            attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will be charged to your credit card through your iTunes account. Your subscription will not automatically renew. You will be reminded when your subscription is about to expire.\n\nYou can read our Terms of Service and Privacy Policy." attributes:attributes];
-        }
-    }
+    attrs = [[NSMutableAttributedString alloc] initWithString:@"Subscriptions will automatically renew unless canceled within 24-hours before the end of the current period. You can cancel anytime with your iTunes account settings. Any unused portion of a free trial will be forfeited if you purchase a subscription. For more information, see our Terms of Service and Privacy Policy." attributes:attributes];
     
     {
         NSRange range = [attrs.string rangeOfString:@"Terms of Service"];
@@ -219,7 +199,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         textView.attributedText = attrs.copy;
         [textView invalidateIntrinsicContentSize];
-        attrs = nil;
     });
     
 }
@@ -229,9 +208,94 @@
     [[RMStore defaultStore] removeStoreObserver:self];
 }
 
+- (void)setupHeaderText {
+    
+    PaddedLabel *tableHeader = (id)self.tableView.tableHeaderView;
+    
+    if (MyFeedsManager.user.subscription != nil) {
+        
+        if (MyFeedsManager.user.subscription.error != nil) {
+            
+            tableHeader.text = MyFeedsManager.user.subscription.error.localizedDescription;
+            
+        }
+        else {
+            
+            NSDateFormatter *formatter = [NSDateFormatter new];
+            formatter.dateStyle = NSDateFormatterMediumStyle;
+            formatter.timeStyle = NSDateFormatterShortStyle;
+            
+            if (MyFeedsManager.user.subscription.hasExpired) {
+            
+                tableHeader.text = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                
+            }
+            else {
+                
+                if (MyFeedsManager.user.subscription.isLifetime) {
+                    
+                    tableHeader.text = @"Your account has a Lifetime subscription. Enjoy!";
+                    
+                }
+                else {
+                    
+                    tableHeader.text = formattedString(@"Your subscription will expire on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    else {
+        tableHeader.text = @"Select a subscription type.";
+    }
+    
+    [tableHeader sizeToFit];
+    [tableHeader setNeedsUpdateConstraints];
+    [tableHeader setNeedsLayout];
+    
+}
+
+- (void)setupHeader {
+    
+    PaddedLabel *tableHeader = [[PaddedLabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width - 48.f, 0)];
+    tableHeader.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont systemFontOfSize:17.f weight:UIFontWeightSemibold]];
+    
+    tableHeader.textColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
+            return [UIColor colorWithRed:70.f/255.f green:78.f/255.f blue:95.f/255.f alpha:1.f];
+        }
+        else {
+            return [UIColor colorWithRed:211.f/255.f green:215.f/255.f blue:223.f/255.f alpha:1.f];
+        }
+        
+    }];
+    
+    tableHeader.translatesAutoresizingMaskIntoConstraints = NO;
+    tableHeader.numberOfLines = 0;
+    tableHeader.padding = UIEdgeInsetsMake(12.f, 0, 0.f, 0);
+
+    [tableHeader setContentHuggingPriority:UILayoutPriorityFittingSizeLevel forAxis:UILayoutConstraintAxisVertical];
+    [tableHeader setContentCompressionResistancePriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+    
+    tableHeader.backgroundColor = UIColor.systemBackgroundColor;
+    
+    self.tableView.tableHeaderView = tableHeader;
+    
+    [tableHeader.leadingAnchor constraintEqualToAnchor:self.tableView.readableContentGuide.leadingAnchor].active = YES;
+    [tableHeader.trailingAnchor constraintEqualToAnchor:self.tableView.readableContentGuide.trailingAnchor].active = YES;
+    
+    [self updateFooterView];
+    
+}
+
 #pragma mark Actions
 
 - (void)setButtonsState:(BOOL)enabled {
+    
     self.buyButton.enabled = enabled;
     self.restoreButton.enabled = enabled;
     
@@ -301,7 +365,6 @@
     
     [[DZActivityIndicatorManager shared] decrementCount];
     [self resetSelectedCellState];
-//    [self updateFooterView];
     
     [self sendReceipt];
 }
@@ -310,53 +373,7 @@
     
     // Receipt verification implementation handles this for us.
     
-    [self updateFooterView];
-    
-//    if (self->_sendingReceipt == YES) {
-//        return;
-//    }
-//
-//    self->_sendingReceipt = YES;
-//
-//    // get receipt
-//    NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
-//
-//    if (url != nil) {
-//        // get the receipt data
-//        NSData *data = [[NSData alloc] initWithContentsOfURL:url];
-//
-//        if (data) {
-//            [MyFeedsManager postAppReceipt:data success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                self->_sendingReceipt = NO;
-//
-//                [self updateFooterView];
-//
-//            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//
-//                self->_sendingReceipt = NO;
-//
-//                [AlertManager showGenericAlertWithTitle:@"App Receipt Update Failed" message:error.localizedDescription];
-//
-//                [self setButtonsState:YES];
-//
-//            }];
-//        }
-//        else {
-//            self->_sendingReceipt = NO;
-//
-//            [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was found on this device but it was empty. Please ensure you have an active internet connection."];
-//
-//            [self setButtonsState:YES];
-//        }
-//    }
-//    else {
-//        self->_sendingReceipt = NO;
-//
-//        [AlertManager showGenericAlertWithTitle:@"No AppStore Receipt" message:@"An AppStore receipt was not found on this device. Please ensure you have an active internet connection."];
-//
-//        [self setButtonsState:YES];
-//    }
+    [self setupHeaderText];
     
 }
 
@@ -403,15 +420,27 @@
 #pragma mark - Table view data source
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return @"Packs";
+    
+    if (section == 1) {
+        return @"Packs";
+    }
+    
+    return @"Auto-Renewing";
+    
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return self.sortedProducts.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.productsRequestFinished ? self.products.count : 0;
+    
+    if (self.productsRequestFinished == NO) {
+        return 0;
+    }
+    
+    return [self.sortedProducts[section] count];
+    
 }
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -424,8 +453,8 @@
     
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
@@ -451,7 +480,7 @@
         cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
     }
     
-    NSString *productID = self.products[indexPath.row];
+    NSString *productID = [self.sortedProducts[indexPath.section] objectAtIndex:indexPath.row];
     SKProduct *product = [[RMStore defaultStore] productForIdentifier:productID];
     
     cell.textLabel.text = product.localizedTitle;

@@ -63,6 +63,29 @@
             [super setValue:date forKey:key];
         }
         
+        if ([key isEqualToString:@"expiry"]) {
+            
+            NSInteger era, year, month, day;
+            
+            [NSCalendar.currentCalendar getEra:&era year:&year month:&month day:&day fromDate:date];
+            
+            if (year == 2025 && month == 12 && day == 31) {
+                self.lifetime = YES;
+            }
+            
+        }
+        
+    }
+    else if ([key isEqualToString:@"expiry"] && [value isKindOfClass:NSDate.class]) {
+        
+        NSInteger era, year, month, day;
+        
+        [NSCalendar.currentCalendar getEra:&era year:&year month:&month day:&day fromDate:value];
+        
+        if (year == 2025 && month == 12 && day == 31) {
+            self.lifetime = YES;
+        }
+        
     }
     else if ([key isEqualToString:@"preAppstore"]) {
         self.preAppstore = [value boolValue];

@@ -7,13 +7,58 @@
       "localizations" : [
         {
           "description" : "Elytra - Lifetime",
-          "displayName" : "Elytra - Lifetime",
+          "displayName" : "Lifetime",
           "locale" : "en_US"
         }
       ],
       "productID" : "com.dezinezync.elytra.life",
       "referenceName" : "Elytra-Lifetime",
       "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "2006F9B5",
+      "localizations" : [
+        {
+          "description" : "Elytra - 1 Month",
+          "displayName" : "1 Month",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.dezinezync.elytra.non.1m",
+      "referenceName" : "Elytra - 1M",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "07151EDF",
+      "localizations" : [
+        {
+          "description" : "Elytra - 3 Months",
+          "displayName" : "3 Months",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.dezinezync.elytra.non.3m",
+      "referenceName" : "Elytra - 3M",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "11.99",
+      "familyShareable" : false,
+      "internalID" : "A0926C67",
+      "localizations" : [
+        {
+          "description" : "Elytra - 1 Year",
+          "displayName" : "1 Year",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.dezinezync.elytra.non.12m",
+      "referenceName" : "Elytra - 1 Year",
+      "type" : "Consumable"
     }
   ],
   "settings" : {
@@ -39,7 +84,7 @@
           "localizations" : [
             {
               "description" : "Elytra - Monthly",
-              "displayName" : "Elytra - Monthly",
+              "displayName" : "Monthly",
               "locale" : "en_US"
             }
           ],
@@ -61,13 +106,13 @@
           "localizations" : [
             {
               "description" : "Elytra - Yearly",
-              "displayName" : "Elytra - Yearly",
+              "displayName" : "Yearly",
               "locale" : "en_US"
             }
           ],
           "productID" : "com.dezinezync.elytra.yearly",
           "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Elytra - Yearly",
+          "referenceName" : "Yearly",
           "subscriptionGroupID" : "FCD575C1",
           "type" : "RecurringSubscription"
         }

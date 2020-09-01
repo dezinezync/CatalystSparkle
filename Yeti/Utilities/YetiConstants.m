@@ -129,6 +129,9 @@ NSString * const IAPThreeMonth   = @"com.dezinezync.elytra.non.3m";
 NSString * const IAPTwelveMonth  = @"com.dezinezync.elytra.non.12m";
 NSString * const IAPLifetime     = @"com.dezinezync.elytra.life";
 
+NSString * const IAPMonthlyAuto = @"com.dezinezync.elytra.monthly";
+NSString * const IAPYearlyAuto = @"com.dezinezync.elytra.yearly";
+
 NSString * const kPreviewLines = @"com.dezinezync.elytra.summaryPreviewLines";
 
 NSString * _Nonnull const kUseSystemFontSize = @"com.dezinezync.elytra.useSystemFontSize";
