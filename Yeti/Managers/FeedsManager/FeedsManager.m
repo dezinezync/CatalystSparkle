@@ -2744,7 +2744,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         [self setupSubscriptionNotification];
         
-        if (self.subscription == nil) {
+        if (self.subscription == nil || self.subscription.expiry == nil) {
             
             [defaults setValue:@"No Subscription" forKey:@"subscriptionString"];
             [defaults synchronize];
@@ -3043,11 +3043,13 @@ NSArray <NSString *> * _defaultsKeys;
         
     });
     
-    if (self.user.subscription == nil) {
+    if (self.user.subscription == nil || self.user.subscription.expiry == nil) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
          
             NSLog(@"Successfully fetched subscription: %@", self.user.subscription);
+            
+            [MyDBManager setUser:self.user];
             
             if ([self.user.subscription hasExpired] == YES) {
                 

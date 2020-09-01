@@ -148,6 +148,15 @@
         [dict setValue:@(self.lifetime) forKey:propSel(lifetime)];
     }
     
+    if (self.expiry) {
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'.'zzz'Z'";
+        formatter.timeZone = [NSTimeZone systemTimeZone];
+        
+        [dict setValue:[formatter stringFromDate:self.expiry] forKey:propSel(expiry)];
+    }
+    
     return dict;
     
 }

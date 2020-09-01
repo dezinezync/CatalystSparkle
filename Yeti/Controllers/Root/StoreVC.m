@@ -33,7 +33,7 @@
 @property (nonatomic, strong) NSArray *products;
 @property (nonatomic, strong) NSArray <NSArray <NSString *> *> *sortedProducts;
 @property (nonatomic, assign) BOOL productsRequestFinished;
-@property (nonatomic, assign) NSInteger selectedProduct;
+@property (nonatomic, copy) NSIndexPath * selectedProduct;
 @property (nonatomic, assign, getter=isTrialPeriod) BOOL trialPeriod;
 
 @property (nonatomic, weak) UIButton *buyButton, *restoreButton;
@@ -75,7 +75,7 @@
     
     [RMStore.defaultStore requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         
-        self.selectedProduct = NSNotFound;
+        self.selectedProduct = nil;
         
         [[DZActivityIndicatorManager shared] decrementCount];
         
@@ -336,7 +336,7 @@
     
     [self setButtonsState:NO];
     
-    NSString *productID = [self.products safeObjectAtIndex:self.selectedProduct];
+    NSString *productID = [[self.sortedProducts objectAtIndex:self.selectedProduct.section] objectAtIndex:self.selectedProduct.row];
     
     if (productID == nil) {
         [AlertManager showGenericAlertWithTitle:@"No Product Selected" message:@"Please select a product to purchase."];
@@ -379,30 +379,32 @@
 
 #pragma mark - Setters
 
-- (void)setSelectedProduct:(NSInteger)selectedProduct {
+- (void)setSelectedProduct:(NSIndexPath *)selectedProduct {
     
     if (NSThread.isMainThread == NO) {
-        [self performSelectorOnMainThread:@selector(setSelectedProduct:) withObject:@(selectedProduct) waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(setSelectedProduct:) withObject:selectedProduct waitUntilDone:NO];
         return;
     }
     
     _selectedProduct = selectedProduct;
     
     StoreFooter *footer =  (StoreFooter *)[self.tableView tableFooterView];
-    footer.buyButton.enabled = _selectedProduct != NSNotFound;
+    footer.buyButton.enabled = _selectedProduct != nil;
 }
 
 #pragma mark - Helpers
 
 - (void)resetSelectedCellState {
-    if (self.selectedProduct != NSNotFound) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.selectedProduct inSection:0];
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    
+    if (self.selectedProduct != nil) {
+        
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:self.selectedProduct];
         
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
-    self.selectedProduct = NSNotFound;
+    self.selectedProduct = nil;
+    
 }
 
 - (NSDate *)date:(NSDate *)date addDays:(NSInteger)days months:(NSInteger)months years:(NSInteger)years {
@@ -504,7 +506,7 @@
     
     [self resetSelectedCellState];
     
-    self.selectedProduct = indexPath.row;
+    self.selectedProduct = indexPath;
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
