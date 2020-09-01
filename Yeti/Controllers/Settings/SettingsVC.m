@@ -54,11 +54,18 @@ NSString* deviceName() {
     
     self.title = @"Settings";
     
+#if TARGET_OS_MACCATALYST
+    
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    
+#else
     self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+#endif
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
@@ -134,7 +141,11 @@ NSString* deviceName() {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
+#if TARGET_OS_MACCATALYST
+            return 3;
+#else
             return 4;
+#endif
             break;
         case 1:
             return 6;
@@ -152,18 +163,18 @@ NSString* deviceName() {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = UIColor.labelColor;
+    cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
     
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
-    cell.backgroundColor = theme.backgroundColor;
-    
+#if !TARGET_OS_MACCATALYST
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     if (cell.accessoryView != nil) {
         cell.accessoryView = nil;
@@ -370,7 +381,15 @@ NSString* deviceName() {
                     vc = [[FiltersVC alloc] initWithStyle:style];
                     break;
                 default:
-                    vc = [[PushVC alloc] initWithStyle:UITableViewStylePlain];
+                {
+                    UITableViewStyle style = UITableViewStylePlain;
+                    
+#if TARGET_OS_MACCATALYST
+                    style = UITableViewStyleInsetGrouped;
+#endif
+                    
+                    vc = [[PushVC alloc] initWithStyle:style];
+                }
                     break;
             }
             break;
@@ -448,7 +467,15 @@ NSString* deviceName() {
     
     // Push the view controller.
     if (vc) {
+        
+#if TARGET_OS_MACCATALYST
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        
+        [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSecondary];
+#else
         [self showViewController:vc sender:self];
+#endif
+        
     }
     else {
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -501,29 +528,27 @@ NSString* deviceName() {
     {
         _footerView = [[UIView alloc] init];
         
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        _footerView.backgroundColor = theme.tableColor;
+        _footerView.backgroundColor = UIColor.systemGroupedBackgroundColor;
         
         _footerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 112.f + 16.f);
         
-        DZView *dz = [[DZView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width - 120.f)/2.f, 0, 120, 70.f) tintColor:theme.tintColor];
+        DZView *dz = [[DZView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width - 120.f)/2.f, 0, 120, 70.f) tintColor:self.view.tintColor];
         dz.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         dz.tag = 30000;
-        dz.tintColor = theme.tintColor;
-        dz.backgroundColor = theme.tableColor;
+        dz.tintColor = self.view.tintColor;
+        dz.backgroundColor = UIColor.systemGroupedBackgroundColor;
         dz.contentMode = UIViewContentModeRedraw;
         
         [_footerView addSubview:dz];
         
         UILabel *_byLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 70.f - 16.f, CGRectGetWidth(self.view.bounds), 30.f)];
-        _byLabel.textColor = theme.subtitleColor;
+        _byLabel.textColor = UIColor.secondaryLabelColor;
         _byLabel.textAlignment = NSTextAlignmentCenter;
         _byLabel.numberOfLines = 0;
         _byLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         _byLabel.transform = CGAffineTransformMakeTranslation(0, 30.f);
         _byLabel.autoresizingMask = dz.autoresizingMask;
-        _byLabel.backgroundColor = theme.tableColor;
+        _byLabel.backgroundColor = UIColor.systemGroupedBackgroundColor;
         
         [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
             

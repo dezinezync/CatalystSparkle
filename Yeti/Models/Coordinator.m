@@ -233,7 +233,24 @@
     
     UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:settingsVC];
     
+#if TARGET_OS_MACCATALYST
+    [self.splitViewController setViewController:navVC forColumn:UISplitViewControllerColumnSupplementary];
+    
+    [self showEmptyVC];
+    
+    self.emptyVC.label.text = @"Select a preferences section.";
+    
+    if (self.feedVC) {
+        self.feedVC = nil;
+    }
+    
+    if (self.articleVC) {
+        self.articleVC = nil;
+    }
+    
+#else
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];
+#endif
     
 }
 
@@ -294,6 +311,12 @@
     if ([controller isKindOfClass:ArticleVC.class]) {
         
         self.articleVC = (ArticleVC *)controller;
+        
+    }
+    
+    if ([controller isKindOfClass:EmptyVC.class]) {
+        
+        self.emptyVC = (EmptyVC *)controller;
         
     }
     

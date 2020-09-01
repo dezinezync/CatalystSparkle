@@ -242,7 +242,11 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     _isShowingCover = NO;
     
-    if ([self showImage] && SharedPrefs.articleCoverImages == YES && article.coverImage != nil) {
+    if ([self showImage]
+#if !TARGET_OS_MACCATALYST
+        && SharedPrefs.articleCoverImages == YES
+#endif
+        && article.coverImage != nil) {
         // user wants cover images shown
         _isShowingCover = YES;
         
@@ -507,7 +511,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    self.coverImage.contentMode = UIViewContentModeCenter;
+    self.coverImage.contentMode = UIViewContentModeCenter|UIViewContentModeScaleAspectFill;
     
     [self.coverImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         

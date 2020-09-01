@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)createNewFeed;
 - (void)createNewFolder;
 - (void)refreshAll;
+- (void)openSettings:(id)sender;
 
 - (void)setSortingAllDesc;
 - (void)setSortingAllAsc;

@@ -41,6 +41,12 @@
     
 }
 
+- (void)openSettings:(id)sender {
+    
+    [MyAppDelegate.coordinator showSettingsVC];
+    
+}
+
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
     FeedVC *feedVC = MyAppDelegate.coordinator.feedVC;

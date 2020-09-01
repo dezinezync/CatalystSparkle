@@ -15,6 +15,8 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "SettingsCell.h"
+
 NSString *const kFiltersCell = @"filterCell";
 
 @interface FiltersVC () <UITextFieldDelegate> {
@@ -35,7 +37,7 @@ NSString *const kFiltersCell = @"filterCell";
     self.tableView.tableFooterView = [UIView new];
     self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kFiltersCell];
+    [self.tableView registerClass:[SettingsBaseCell class] forCellReuseIdentifier:kFiltersCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FilterInputCell.class) bundle:nil] forCellReuseIdentifier:kFilterInputCell];
     
     [self setupDatasource];
@@ -77,9 +79,10 @@ NSString *const kFiltersCell = @"filterCell";
         
         if (indexPath.section == 1) {
             
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kFiltersCell forIndexPath:indexPath];
+            SettingsBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:kFiltersCell forIndexPath:indexPath];
             
             cell.textLabel.text = [self.DS itemIdentifierForIndexPath:indexPath];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             
             cell.textLabel.textColor = UIColor.labelColor;
             cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
@@ -97,10 +100,6 @@ NSString *const kFiltersCell = @"filterCell";
         
         cell.textLabel.textColor = UIColor.labelColor;
         cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
-        
-        UIView *selected = [UIView new];
-        selected.backgroundColor = [tableView.tintColor colorWithAlphaComponent:0.35f];
-        cell.selectedBackgroundView = selected;
         
         cell.textField.delegate = self;
         

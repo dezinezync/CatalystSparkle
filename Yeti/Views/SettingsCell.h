@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@interface SettingsBaseCell : UITableViewCell
+
+@end
+
 extern NSString *const kSettingsCell;
 
-@interface SettingsCell : UITableViewCell
+@interface SettingsCell : SettingsBaseCell
 
 @end
 
@@ -22,7 +26,18 @@ extern NSString *const kAccountsCell;
 
 extern NSString *const kExternalAppsCell;
 
-@interface ExternalAppsCell : UITableViewCell
+@interface ExternalAppsCell : SettingsBaseCell
 
 @end
 
+extern NSString *const kDeactivateCell;
+
+@interface DeactivateCell : SettingsBaseCell
+
+@end
+
+extern NSString *const kStoreCell;
+
+@interface StoreCell : SettingsBaseCell
+
+@end

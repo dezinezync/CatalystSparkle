@@ -62,6 +62,8 @@
         
         FeedsCell *cell = (FeedsCell *)[tableView dequeueReusableCellWithIdentifier:kFeedsCell forIndexPath:indexPath];
         
+        cell.backgroundColor = UIColor.systemBackgroundColor;
+        
         if (feed) {
             [cell configure:feed];
         }
@@ -122,39 +124,49 @@
 
 #pragma mark - Actions
 
+- (void)deleteFeedPushSubAtIndexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL completed))completionHandler {
+    
+    Feed *feed = [self.DS itemIdentifierForIndexPath:indexPath];
+    
+    if (feed) {
+        
+        [MyFeedsManager unsubscribe:feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
+                   
+                    return ([obj.feedID isEqualToNumber:feed.feedID] == NO);
+                    
+                }];
+                
+                if (completionHandler) {
+                    completionHandler(YES);
+                }
+                
+                [self setupData];
+                
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (completionHandler) {
+                completionHandler(YES);
+            }
+           
+            [AlertManager showGenericAlertWithTitle:@"Error Removing Subscription" message:error.localizedDescription];
+            
+        }];
+        
+    }
+    
+}
+
 - (NSArray <UIContextualAction *> *)contextualActionsForIndexPath:(NSIndexPath *)indexPath {
     
     UIContextualAction *delete = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"Delete" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
        
-        Feed *feed = [self.DS itemIdentifierForIndexPath:indexPath];
-        
-        if (feed) {
-            
-            [MyFeedsManager unsubscribe:feed success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    self.feeds = [self.feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                       
-                        return ([obj.feedID isEqualToNumber:feed.feedID] == NO);
-                        
-                    }];
-                    
-                    completionHandler(YES);
-                    
-                    [self setupData];
-                    
-                });
-                
-            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                
-                completionHandler(YES);
-               
-                [AlertManager showGenericAlertWithTitle:@"Error Removing Subscription" message:error.localizedDescription];
-                
-            }];
-            
-        }
+        [self deleteFeedPushSubAtIndexPath:indexPath completionHandler:completionHandler];
         
     }];
     
@@ -167,6 +179,24 @@
     NSArray <UIContextualAction *> *actions = [self contextualActionsForIndexPath:indexPath];
     
     UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:actions];
+    
+    return config;
+    
+}
+
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+    
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+        
+        UIAction *delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            [self deleteFeedPushSubAtIndexPath:indexPath completionHandler:nil];
+            
+        }];
+        
+        return [UIMenu menuWithChildren:@[delete]];
+        
+    }];
     
     return config;
     

@@ -59,8 +59,24 @@
     
     MainCoordinator *coordinator = MyAppDelegate.coordinator;
     
-//    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    UIKeyCommand *preferences = [UIKeyCommand commandWithTitle:@"Preferences" image:nil action:@selector(openSettings:) input:@"," modifierFlags:UIKeyModifierCommand propertyList:nil];
     
+    UIMenu *customPreferencesMenu = [UIMenu menuWithTitle:@"Preferences" image:nil identifier:UIMenuPreferences options:UIMenuOptionsDisplayInline children:@[preferences]];
+    
+    [builder replaceMenuForIdentifier:UIMenuPreferences withMenu:customPreferencesMenu];
+    
+//    [builder replaceChildrenOfMenuForIdentifier:UIMenuApplication fromChildrenBlock:^NSArray<UIMenuElement *> * _Nonnull(NSArray<UIMenuElement *> * _Nonnull children) {
+//
+//        children = [children rz_filter:^BOOL(UIMenuElement *obj, NSUInteger idx, NSArray *array) {
+//
+//            return [obj.]
+//
+//        }];
+//
+//        return children;
+//
+//    }];
+//
     // Add items for File menu
     UIKeyCommand *newFeed = [UIKeyCommand commandWithTitle:@"New Feed" image:nil action:@selector(createNewFeed) input:@"n" modifierFlags:UIKeyModifierCommand propertyList:nil];
     

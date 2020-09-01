@@ -22,6 +22,8 @@
 #import "UIImage+Color.h"
 #import "PaddedLabel.h"
 
+#import "SettingsCell.h"
+
 @interface StoreVC () <RMStoreObserver> {
     BOOL _sendingReceipt;
 }
@@ -49,6 +51,10 @@
     self.trialPeriod = NO;
     
     [super viewDidLoad];
+    
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    
+    [self.tableView registerClass:StoreCell.class forCellReuseIdentifier:kStoreCell];
     
     StoreFooter *footer = [[StoreFooter alloc] initWithNib];
     
@@ -130,10 +136,7 @@
     self.buyButton = footer.buyButton;
     self.restoreButton = footer.restoreButton;
     
-    self.view.backgroundColor = UIColor.systemBackgroundColor;
-    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
-    
-    footer.backgroundColor = UIColor.systemBackgroundColor;
+    footer.backgroundColor = UIColor.systemGroupedBackgroundColor;
     // affects normal state
     footer.buyButton.backgroundColor = self.view.tintColor;
     
@@ -143,15 +146,16 @@
     
     footer.buyButton.layer.cornerRadius = 8.f;
     footer.buyButton.clipsToBounds = YES;
-    
+
+#if !TARGET_OS_MACCATALYST
     UIColor *tint = self.view.tintColor;
-    
+
     [footer.buyButton setBackgroundImage:[UIImage imageWithColor:tint] forState:UIControlStateNormal];
     [footer.buyButton setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
-    
+#endif
     footer.buyButton.enabled = NO;
     
-    footer.footerLabel.backgroundColor = UIColor.systemBackgroundColor;
+    footer.footerLabel.backgroundColor = UIColor.systemGroupedBackgroundColor;
     footer.footerLabel.textColor = UIColor.secondaryLabelColor;
     footer.footerLabel.textAlignment = NSTextAlignmentCenter;
     footer.footerLabel.scrollEnabled = NO;
@@ -281,7 +285,7 @@
     [tableHeader setContentHuggingPriority:UILayoutPriorityFittingSizeLevel forAxis:UILayoutConstraintAxisVertical];
     [tableHeader setContentCompressionResistancePriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
     
-    tableHeader.backgroundColor = UIColor.systemBackgroundColor;
+    tableHeader.backgroundColor = UIColor.systemGroupedBackgroundColor;
     
     self.tableView.tableHeaderView = tableHeader;
     
@@ -457,30 +461,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    StoreCell *cell = [tableView dequeueReusableCellWithIdentifier:kStoreCell forIndexPath:indexPath];
     
-    if (cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
-        
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        cell.backgroundColor = theme.cellColor;
-        cell.textLabel.textColor = theme.titleColor;
-        cell.detailTextLabel.textColor = theme.tintColor;
-        
-        cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-        cell.textLabel.adjustsFontForContentSizeCategory = YES;
-        cell.textLabel.textColor = theme.subtitleColor;
-        
-        cell.detailTextLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
-        cell.detailTextLabel.adjustsFontForContentSizeCategory = YES;
-        cell.detailTextLabel.textColor = theme.titleColor;
-        
-        cell.selectedBackgroundView = [UIView new];
-        cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
-    }
+#if !TARGET_OS_MACCATALYST
+    cell.selectedBackgroundView = [UIView new];
+    cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     NSString *productID = [self.sortedProducts[indexPath.section] objectAtIndex:indexPath.row];
     SKProduct *product = [[RMStore defaultStore] productForIdentifier:productID];

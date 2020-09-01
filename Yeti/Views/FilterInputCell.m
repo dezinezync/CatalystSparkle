@@ -20,7 +20,7 @@ NSString *const kFilterInputCell = @"com.yeti.cell.filterinput";
     UILabel *label = [[self textField] valueForKeyPath:@"placeholderLabel"];
     
     if (label != nil) {
-        label.textColor = [(YetiTheme *)(YTThemeKit.theme) captionColor];
+        label.textColor = UIColor.tertiaryLabelColor;
     }
     
 }

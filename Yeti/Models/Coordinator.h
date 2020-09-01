@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) ArticleVC *articleVC;
 
+@property (nonatomic, weak, nullable) EmptyVC *emptyVC;
+
 #pragma mark - Methods
 
 - (void)start;
