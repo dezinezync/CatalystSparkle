@@ -1,7 +1,19 @@
 # v2.0.0
 
 ##  Build 16
- - Directional marking as read. 
+ - Directional marking as read. Long press on an article in Unread, Today or a Feed to see these options. Which articles get marked depends on your sorting preference, so please check that when testing.   
+ 
+### For example:   
+
+#### Newest First
+
+- Marking all "Older Articles" when sorting in Descending order will mark the article and all unread articles below it. 
+- Marking all "Newer Articles" when sorting in Descending order will mark the article and all unread articles above it. 
+
+#### Oldest First 
+- Marking all "Older Articles" when sorting in Ascending order will mark the article and all unread articles above it. 
+- Marking all "Newer Articles" when sorting in Ascending order will mark the article and all unread articles below it. 
+
 
 ## Build 15
 
