@@ -34,6 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender;
 
+- (void)markAllNewerRead:(NSIndexPath *)indexPath;
+
+- (void)markAllOlderRead:(NSIndexPath *)indexPath;
+
 @end
 
 NS_ASSUME_NONNULL_END

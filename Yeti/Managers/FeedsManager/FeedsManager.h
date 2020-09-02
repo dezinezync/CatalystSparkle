@@ -110,6 +110,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getYoutubeCanonicalID:(NSURL * _Nonnull)originalURL success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)markRead:(NSString *)feedID articleID:(NSNumber *)articleID direction:(NSUInteger)direction sortType:(YetiSortOption)sortType success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark - Custom Feeds
 
 - (void)updateUnreadArray;

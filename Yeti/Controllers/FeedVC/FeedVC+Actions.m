@@ -485,6 +485,138 @@
     
 }
 
+- (void)markAllNewerRead:(NSIndexPath *)indexPath {
+    
+    [self markAllDirectional:1 indexPath:indexPath];
+    
+}
+
+- (void)markAllOlderRead:(NSIndexPath *)indexPath {
+    
+    [self markAllDirectional:2 indexPath:indexPath];
+    
+}
+
+- (void)markAllDirectional:(NSInteger)direction indexPath:(NSIndexPath *)indexPath {
+    
+    YetiSortOption sorting = self.sortingOption;
+    
+    NSString *feed = nil;
+    
+    if (self.type == FeedVCTypeUnread) {
+        feed = @"unread";
+    }
+    else if (self.type == FeedVCTypeToday) {
+        feed = @"today";
+    }
+    else if (self.type == FeedVCTypeNatural) {
+        feed = self.feed.feedID.stringValue;
+    }
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
+    
+    if (item == nil) {
+        return;
+    }
+    
+    [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(NSNumber * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (responseObject.integerValue == 0) {
+            return;
+        }
+        
+        NSMutableArray <FeedItem *> *affectedIndices = @[].mutableCopy;
+        
+        if (item.isRead == NO) {
+            
+            item.read = YES;
+            
+            [affectedIndices addObject:item];
+            
+        }
+        
+        BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
+        
+        if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+            
+            // mark all items above this item
+            for (NSInteger idx = indexPath.row; idx > 0; idx--) {
+                
+                NSInteger row = indexPath.row - idx;
+                
+                if (row < 0) {
+                    continue;
+                }
+                
+                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
+                
+                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
+                
+                if (newItem && newItem.isRead == NO) {
+                    
+                    newItem.read = YES;
+                    
+                    [affectedIndices addObject:newItem];
+                    
+                }
+                
+            }
+            
+        }
+        else {
+            
+            // mark all items below this item
+            id lastItem = [[[self.DS snapshot] itemIdentifiers] lastObject];
+            NSIndexPath *lastItemIndexPath = [self.DS indexPathForItemIdentifier:lastItem];
+            
+            for (NSInteger idx = 1; idx <= lastItemIndexPath.row; idx++) {
+                
+                NSInteger row = indexPath.row + idx;
+                
+                if (row > lastItemIndexPath.row) {
+                    continue;
+                }
+                
+                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
+                
+                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
+                
+                if (newItem && newItem.isRead == NO) {
+                    
+                    newItem.read = YES;
+                    
+                    [affectedIndices addObject:newItem];
+                    
+                }
+                
+            }
+            
+        }
+        
+        NSLogDebug(@"Affected indices: %@", affectedIndices);
+        
+        if (affectedIndices.count == 0) {
+            return;
+        }
+        
+        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+        
+        [snapshot reloadItemsWithIdentifiers:affectedIndices];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
+        
+    }];
+    
+}
+
 #if TARGET_OS_MACCATALYST
 
 #endif

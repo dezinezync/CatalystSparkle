@@ -955,10 +955,9 @@ NSArray <NSString *> * _defaultsKeys;
                                 Folder *folder = [self folderForID:feed.folderID];
                                 
                                 if (folder != nil) {
-                                    [folder willChangeValueForKey:propSel(unreadCount)];
-                                    // simply tell the unreadCount property that it has been updated.
-                                    // KVO should handle the rest for us
-                                    [folder didChangeValueForKey:propSel(unreadCount)];
+                                    
+                                    [folder updateUnreadCount];
+                                    
                                 }
                             }
                             
@@ -1156,6 +1155,143 @@ NSArray <NSString *> * _defaultsKeys;
         }
         
     } error:errorCB];
+    
+}
+
+- (void)markRead:(NSString *)feedID articleID:(NSNumber *)articleID direction:(NSUInteger)direction sortType:(YetiSortOption)sortType success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSString *path = formattedString(@"/2.0/feeds/%@/markReadBatch", feedID);
+    
+    NSMutableDictionary *params = @{@"articleID": articleID,
+                                    @"direction": @(direction),
+                                    @"sortType": sortType
+    }.mutableCopy;
+    
+    if ([feedID isEqualToString:@"today"]) {
+        
+        NSDate *today = [NSDate date];
+        NSDateComponents *comps = [[NSCalendar currentCalendar] components:(NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay) fromDate:today];
+        
+        NSString *todayString = [NSString stringWithFormat:@"%@-%@-%@", @(comps.year), @(comps.month), @(comps.day)];
+        
+        params[@"date"] = todayString;
+        
+    }
+    
+    [self.session POST:path parameters:params success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        BOOL status = [[responseObject valueForKey:@"status"] boolValue];
+        
+        if (status == NO) {
+            
+            if (successCB) {
+                
+                runOnMainQueueWithoutDeadlocking(^{
+                    successCB(@0, response, task);
+                });
+                
+                
+            }
+            
+            return;
+            
+        }
+        
+        NSNumber *changed = [responseObject valueForKey:@"rows"];
+        
+        self.totalUnread = MAX(0, self.totalUnread - changed.integerValue);
+        
+        if ([feedID isEqualToString:@"unread"] == NO && [feedID isEqualToString:@"today"] == NO) {
+            
+            NSNumber *feedIDNumber = @([feedID integerValue]);
+            
+            Feed *feed = [ArticlesManager.shared feedForID:feedIDNumber];
+            
+            if (feed != nil) {
+                
+                feed.unread = @(MAX(0, feed.unread.integerValue - changed.integerValue));
+                
+                if (feed.folderID != nil) {
+                    
+                    Folder *folder = [self folderForID:feed.folderID];
+                    
+                    if (folder != nil) {
+                        
+                        [folder updateUnreadCount];
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        if (successCB) {
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                successCB(changed, response, task);
+            });
+            
+        }
+        
+        return;
+        
+        NSArray <NSNumber *> *feedIDs = [responseObject valueForKey:@"feeds"];
+        
+        // only post the notification if it's affecting a feed or folder
+        // this avoids reducing or incrementing the count for unsubscribed feeds
+        if (feedIDs != nil && feedIDs.count > 0) {
+            
+            // since all articles are being marked as read
+            // the total count drops to 0 and no unread articles
+            // will be available
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.totalUnread = 0;
+//                    ArticlesManager.shared.unread = @[];
+            });
+            
+            NSInteger const newFeedUnread = 0;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                for (NSNumber *feedID in feedIDs) {
+                    
+                    Feed *feed = [self feedForID:feedID];
+                    
+                    if (feed != nil) {
+                        
+                        feed.unread = @(newFeedUnread);
+                        
+                        if (feed.folderID != nil) {
+                            Folder *folder = [self folderForID:feed.folderID];
+                            
+                            if (folder != nil) {
+                                
+                                [folder updateUnreadCount];
+                                
+                            }
+                        }
+                        
+                    }
+                }
+            });
+        }
+     
+        if (successCB) {
+            successCB(responseObject, response, task);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (errorCB)
+            errorCB(error, response, task);
+        else {
+            NSLog(@"Unhandled network error: %@", error);
+        }
+        
+    }];
     
 }
 
@@ -1574,10 +1710,7 @@ NSArray <NSString *> * _defaultsKeys;
             
         }
         
-        [folder willChangeValueForKey:propSel(unreadCount)];
-        // simply tell the unreadCount property that it has been updated.
-        // KVO should handle the rest for us
-        [folder didChangeValueForKey:propSel(unreadCount)];
+        [folder updateUnreadCount];
         
         if (successCB) {
             
@@ -2830,7 +2963,7 @@ NSArray <NSString *> * _defaultsKeys;
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
