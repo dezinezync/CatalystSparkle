@@ -2038,9 +2038,26 @@ NSArray <NSString *> * _defaultsKeys;
             strongify(self);
             
             if ([[responseObject valueForKey:@"status"] boolValue]) {
-                Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
+                
+                NSMutableDictionary *dict = [(NSDictionary *)[responseObject valueForKey:@"subscription"] mutableCopy];
+                NSDictionary *stripeData = nil;
+                
+                // we remove this info so we can set it later.
+                // this way, values get overriden.
+                if ([dict valueForKey:@"stripe"]) {
+                    stripeData = [dict valueForKey:@"stripe"];
+                    [dict removeObjectForKey:@"stripe"];
+                }
+                
+                Subscription *sub = [Subscription instanceFromDictionary:dict];
+                
+                if (stripeData != nil) {
+                    [sub setValue:stripeData forKey:@"stripe"];
+                }
                 
                 self.user.subscription = sub;
+                
+                [MyDBManager setUser:self.user];
                 
                 if (successCB) {
                     
@@ -3136,7 +3153,7 @@ NSArray <NSString *> * _defaultsKeys;
          
             NSLog(@"Successfully fetched subscription: %@", self.user.subscription);
             
-            [MyDBManager setUser:self.user];
+//            [MyDBManager setUser:self.user];
             
             if ([self.user.subscription hasExpired] == YES) {
                 
@@ -3146,7 +3163,7 @@ NSArray <NSString *> * _defaultsKeys;
                 
             }
             
-            [MyDBManager setUser:self.user];
+//            [MyDBManager setUser:self.user];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             

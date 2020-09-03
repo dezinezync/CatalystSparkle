@@ -42,7 +42,8 @@
         self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
         self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
         self.status = [decoder decodeObjectForKey:propSel(status)];
-        self.lifetime = [decoder decodeObjectForKey:propSel(lifetime)];
+        self.lifetime = [decoder decodeBoolForKey:propSel(lifetime)];
+        self.external = [decoder decodeBoolForKey:propSel(external)];
     }
     
     return self;
@@ -63,7 +64,7 @@
             [super setValue:date forKey:key];
         }
         
-        if ([key isEqualToString:@"expiry"]) {
+        if ([key isEqualToString:@"expiry"] && self.external == NO) {
             
             NSInteger era, year, month, day;
             
@@ -76,7 +77,10 @@
         }
         
     }
-    else if ([key isEqualToString:@"expiry"] && value != nil && [value isKindOfClass:NSDate.class]) {
+    else if ([key isEqualToString:@"expiry"]
+             && value != nil
+             && [value isKindOfClass:NSDate.class]
+             && self.external == NO) {
         
         NSInteger era, year, month, day;
         
@@ -100,6 +104,38 @@
     if ([key isEqualToString:@"id"]) {
         self.identifer = value;
     }
+    else if ([key isEqualToString:@"stripe"] && value != nil) {
+        
+        if ([value isKindOfClass:NSString.class]) {
+            
+            NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
+            
+            NSArray <NSDictionary *> *items = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+            
+            if (items != nil && items.count) {
+                
+                NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                
+                items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
+                
+                NSDictionary *latest = [items lastObject];
+                
+                NSTimeInterval ending = [[latest valueForKey:@"current_period_end"] doubleValue];
+                
+                NSDate *endDate = [NSDate dateWithTimeIntervalSince1970:ending];
+                
+                NSTimeInterval timeSinceNow = [endDate timeIntervalSinceNow];
+                
+                self.external = YES;
+                self.expiry = endDate;
+                
+                self.expired = (timeSinceNow < 0);
+                
+            }
+            
+        }
+        
+    }
     else {
         
     }
@@ -112,6 +148,7 @@
     [encoder encodeDouble:@([self.created timeIntervalSince1970]).doubleValue forKey:propSel(created)];
     [encoder encodeBool:self.status.boolValue forKey:propSel(status)];
     [encoder encodeBool:self.lifetime forKey:propSel(lifetime)];
+    [encoder encodeBool:self.external forKey:propSel(external)];
 }
 
 #pragma mark -
@@ -144,9 +181,9 @@
         [dict setValue:self.status forKey:propSel(status)];
     }
     
-    if (self.lifetime) {
-        [dict setValue:@(self.lifetime) forKey:propSel(lifetime)];
-    }
+    [dict setValue:@(self.lifetime) forKey:propSel(lifetime)];
+    
+    [dict setValue:@(self.external) forKey:propSel(external)];
     
     if (self.expiry) {
         

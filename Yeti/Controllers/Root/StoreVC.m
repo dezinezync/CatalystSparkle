@@ -262,6 +262,12 @@
         tableHeader.text = @"Select a subscription type.";
     }
     
+    if (MyFeedsManager.user.subscription.isExternal) {
+        
+        tableHeader.text = formattedString(@"%@\nYour subscription is managed externally.", tableHeader.text);
+        
+    }
+    
     [tableHeader sizeToFit];
     [tableHeader setNeedsUpdateConstraints];
     [tableHeader setNeedsLayout];
@@ -271,7 +277,16 @@
 - (void)setupHeader {
     
     PaddedLabel *tableHeader = [[PaddedLabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width - 48.f, 0)];
+    
+#if TARGET_OS_MACCATALYST
+    
+    tableHeader.font = tableHeader.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont systemFontOfSize:14.f weight:UIFontWeightSemibold]];
+    
+#else
+    
     tableHeader.font = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:[UIFont systemFontOfSize:17.f weight:UIFontWeightSemibold]];
+    
+#endif
     
     tableHeader.textColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
         
@@ -460,6 +475,10 @@
 #ifdef DEBUG
     return YES;
 #endif
+    
+    if (MyFeedsManager.user.subscription.isExternal == YES && MyFeedsManager.user.subscription.hasExpired == NO) {
+        return NO;
+    }
     
     return [self.purhcasedProductIdentifiers containsObject:IAPLifetime] == NO;
     
