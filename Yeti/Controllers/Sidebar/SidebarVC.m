@@ -947,7 +947,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     return obj.coverImage == nil;
                 }];
                 
-                usableItems = [coverItems arrayByAddingObjectsFromArray:[nonCoverItems subarrayWithRange:NSMakeRange(0, additionalRequired)]];
+                if (nonCoverItems.count > 0) {
+                    
+                    additionalRequired = MAX(additionalRequired, nonCoverItems.count);
+                    
+                    usableItems = [coverItems arrayByAddingObjectsFromArray:[nonCoverItems subarrayWithRange:NSMakeRange(0, additionalRequired)]];
+                    
+                }
                 
             }
             

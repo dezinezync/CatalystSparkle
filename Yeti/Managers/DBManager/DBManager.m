@@ -467,8 +467,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 #pragma mark - Setup
 
-- (YapDatabaseSerializer)databaseSerializer
-{
+- (YapDatabaseSerializer)databaseSerializer {
     // This is actually the default serializer.
     // We just included it here for completeness.
     YapDatabaseSerializer serializer = ^(NSString *collection, NSString *key, id object) {

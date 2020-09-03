@@ -84,9 +84,9 @@
             
         }];
         
-        NSString *directionalNewerImageName = self.sortingOption == YTSortAllDesc || self.sortingOption == YTSortUnreadDesc ? @"arrow.up.circle.fill" : @"arrow.down.circle.fill";
+        NSString *directionalNewerImageName = [self.sortingOption isEqualToString:YTSortAllDesc] || [self.sortingOption isEqualToString:YTSortUnreadDesc] ? @"arrow.up.circle.fill" : @"arrow.down.circle.fill";
         
-        NSString *directionalOlderImageName = self.sortingOption == YTSortAllAsc || self.sortingOption == YTSortUnreadAsc ? @"arrow.up.circle.fill" : @"arrow.down.circle.fill";
+        NSString *directionalOlderImageName = [self.sortingOption isEqualToString:YTSortAllAsc] || [self.sortingOption isEqualToString:YTSortUnreadAsc] ? @"arrow.up.circle.fill" : @"arrow.down.circle.fill";
         
         UIAction *directionalNewer = [UIAction actionWithTitle:@"Mark Newer Read" image:[UIImage systemImageNamed:directionalNewerImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
            

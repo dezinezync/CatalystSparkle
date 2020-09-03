@@ -1,5 +1,11 @@
 # v2.0.0
 
+## Build 17
+
+- Fixes a crash on launch when number of unread articles is less than 4. This crash was caused when fetching data for the Widgets. 
+
+- Fixes the icon for the "Mark Newer Items" when sorting was done by Newest first. 
+
 ##  Build 16
  
  - Directional marking as read. Long press on an article in Unread, Today or a Feed to see these options. Which articles get marked depends on your sorting preference, so please check that when testing.
