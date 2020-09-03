@@ -1235,52 +1235,6 @@ NSArray <NSString *> * _defaultsKeys;
             
         }
         
-        return;
-        
-        NSArray <NSNumber *> *feedIDs = [responseObject valueForKey:@"feeds"];
-        
-        // only post the notification if it's affecting a feed or folder
-        // this avoids reducing or incrementing the count for unsubscribed feeds
-        if (feedIDs != nil && feedIDs.count > 0) {
-            
-            // since all articles are being marked as read
-            // the total count drops to 0 and no unread articles
-            // will be available
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.totalUnread = 0;
-//                    ArticlesManager.shared.unread = @[];
-            });
-            
-            NSInteger const newFeedUnread = 0;
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                for (NSNumber *feedID in feedIDs) {
-                    
-                    Feed *feed = [self feedForID:feedID];
-                    
-                    if (feed != nil) {
-                        
-                        feed.unread = @(newFeedUnread);
-                        
-                        if (feed.folderID != nil) {
-                            Folder *folder = [self folderForID:feed.folderID];
-                            
-                            if (folder != nil) {
-                                
-                                [folder updateUnreadCount];
-                                
-                            }
-                        }
-                        
-                    }
-                }
-            });
-        }
-     
-        if (successCB) {
-            successCB(responseObject, response, task);
-        }
-        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
@@ -2963,7 +2917,7 @@ NSArray <NSString *> * _defaultsKeys;
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif

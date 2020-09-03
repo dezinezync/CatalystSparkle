@@ -1142,7 +1142,7 @@
 		F0B21BBA208C7F4F007E5A3B /* NewFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewFolderVC.xib; sourceTree = "<group>"; };
 		F0B482552455F62C00EE5AA2 /* YapDatabase.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = YapDatabase.xcodeproj; path = Vendors/YapDatabase/YapDatabase.xcodeproj; sourceTree = "<group>"; };
 		F0B482732455F64900EE5AA2 /* DZKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZKit.xcodeproj; path = Vendors/DZKit/DZKit.xcodeproj; sourceTree = "<group>"; };
-		F0B573AC24FCB43B00364BC3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = file; name = Configuration.storekit; path = Yeti/SupportingFiles/Configuration.storekit; sourceTree = SOURCE_ROOT; };
+		F0B573AC24FCB43B00364BC3 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = Configuration.storekit; path = Yeti/SupportingFiles/Configuration.storekit; sourceTree = SOURCE_ROOT; };
 		F0B573C624FCB57A00364BC3 /* RMStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RMStore.m; path = Yeti/Vendors/RMStore/RMStore/RMStore.m; sourceTree = SOURCE_ROOT; };
 		F0B573C724FCB57A00364BC3 /* RMStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RMStore.h; path = Yeti/Vendors/RMStore/RMStore/RMStore.h; sourceTree = SOURCE_ROOT; };
 		F0B5BFA42060D57F0092DA31 /* AppDelegate+Routing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Routing.h"; sourceTree = "<group>"; };

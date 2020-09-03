@@ -271,6 +271,9 @@
 
 #define kShareArticleToolbarIdentifier   @[@"com.yeti.toolbar.shareArticle", @"Share Article"]
 
+#define kAppearanceToolbarIdentifier @"appearanceToolbarIdentifier"
+#define kOpenInBrowserToolbarIdentifier @"openInBrowserToolbarIdentifier"
+
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
     NSArray *items = @[
@@ -282,6 +285,8 @@
         kRefreshFeedToolbarIdentifier[0],
         NSToolbarSupplementarySidebarTrackingSeparatorItemIdentifier,
         NSToolbarFlexibleSpaceItemIdentifier,
+        kOpenInBrowserToolbarIdentifier,
+        kAppearanceToolbarIdentifier,
         kShareArticleToolbarIdentifier[0]
     ];
     
@@ -369,6 +374,28 @@
         item = [self toolbarItemWithItemIdentifier:kShareArticleToolbarIdentifier[0] title:title button:button];
         
     }
+    else if ([itemIdentifier isEqualToString:kAppearanceToolbarIdentifier]) {
+        
+        title = @"Appearance";
+        
+        image = [UIImage systemImageNamed:@"doc.richtext"];
+        
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didTapCustomize:)];
+        
+        item = [self toolbarItemWithItemIdentifier:kAppearanceToolbarIdentifier title:title button:button];
+        
+    }
+    else if ([itemIdentifier isEqualToString:kOpenInBrowserToolbarIdentifier]) {
+        
+        title = @"Open in Browser";
+        
+        image = [UIImage systemImageNamed:@"safari"];
+        
+        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(openInBrowser)];
+        
+        item = [self toolbarItemWithItemIdentifier:kOpenInBrowserToolbarIdentifier title:title button:button];
+        
+    }
     
 #ifdef DEBUG
     NSAssert(item != nil, @"Item should be non-nil");
@@ -386,8 +413,10 @@
         item.paletteLabel = title;
     }
     
+    item.paletteLabel = title;
+//    item.title = title;
     item.label = @"";
-    item.toolTip = nil;
+    item.toolTip = title;
     
     return item;
     

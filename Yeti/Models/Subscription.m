@@ -76,7 +76,7 @@
         }
         
     }
-    else if ([key isEqualToString:@"expiry"] && [value isKindOfClass:NSDate.class]) {
+    else if ([key isEqualToString:@"expiry"] && value != nil && [value isKindOfClass:NSDate.class]) {
         
         NSInteger era, year, month, day;
         
@@ -110,7 +110,7 @@
     [encoder encodeObject:self.environment forKey:propSel(environment)];
     [encoder encodeDouble:@([self.expiry timeIntervalSince1970]).doubleValue forKey:propSel(expiry)];
     [encoder encodeDouble:@([self.created timeIntervalSince1970]).doubleValue forKey:propSel(created)];
-    [encoder encodeBool:self.status forKey:propSel(status)];
+    [encoder encodeBool:self.status.boolValue forKey:propSel(status)];
     [encoder encodeBool:self.lifetime forKey:propSel(lifetime)];
 }
 

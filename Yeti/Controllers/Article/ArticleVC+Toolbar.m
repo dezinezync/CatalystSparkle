@@ -534,7 +534,21 @@
     instance.modalPresentationStyle = UIModalPresentationPopover;
     
     UIPopoverPresentationController *pvc = instance.popoverPresentationController;
+    
+#if TARGET_OS_MACCATALYST
+    if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
+      
+        pvc.sourceView = self.view;
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 132.f, 22.f, self.view.bounds.size.width, 1);
+        
+    }
+    else {
+        pvc.barButtonItem = sender;
+    }
+#else
     pvc.barButtonItem = sender;
+#endif
+    
     pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
     
     [self presentViewController:instance animated:YES completion:nil];

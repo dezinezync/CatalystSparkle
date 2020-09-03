@@ -111,7 +111,13 @@
 
     }];
     
-    if (MyFeedsManager.user.subscription == nil || (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.error != nil)) {
+    if (MyFeedsManager.user.subscription == nil
+        || (MyFeedsManager.user.subscription != nil &&
+            (MyFeedsManager.user.subscription.error != nil
+             || MyFeedsManager.user.subscription.expiry == nil
+             )
+            )
+        ) {
         
         [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
           

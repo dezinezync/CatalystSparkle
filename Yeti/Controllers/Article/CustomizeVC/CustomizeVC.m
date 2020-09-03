@@ -96,11 +96,9 @@
         
         CustomizeCell *cell = [tableView dequeueReusableCellWithIdentifier:kCustomizeCell forIndexPath:indexPath];
         
-        YetiTheme *theme = (id)[YTThemeKit theme];
-        
-        cell.valueTitleLabel.textColor = theme.subtitleColor;
-        cell.valueLabel.textColor = theme.titleColor;
-        cell.backgroundColor = theme.cellColor;
+        cell.valueTitleLabel.textColor = UIColor.secondaryLabelColor;
+        cell.valueLabel.textColor = UIColor.labelColor;
+        cell.backgroundColor = UIColor.systemGroupedBackgroundColor;
         
         if (indexPath.section != CUSTOMIZE_SECTION_THEME.integerValue) {
             
@@ -125,6 +123,8 @@
                         [aSwitch setOn:value];
                         
                         cell.accessoryView = aSwitch;
+                        
+                        cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         
                     }
                         break;
@@ -188,6 +188,8 @@
                             [stepper addTarget:self action:@selector(didChangeFontSize:) forControlEvents:UIControlEventValueChanged];
                             
                             cell.accessoryView = stepper;
+                            
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         }
                         
                     }
@@ -258,6 +260,8 @@
                             [stepper addTarget:self action:@selector(didChangeLineHeight:) forControlEvents:UIControlEventValueChanged];
                             
                             cell.accessoryView = stepper;
+                            
+                            cell.selectionStyle = UITableViewCellSelectionStyleNone;
                         }
                         
                     }
@@ -270,7 +274,7 @@
             
             CustomizationThemeCell * themeCell = (id)[tableView dequeueReusableCellWithIdentifier:kCustomizeThemeCell forIndexPath:indexPath];
             
-            themeCell.backgroundColor = theme.cellColor;
+            themeCell.backgroundColor = UIColor.systemBackgroundColor;
             
             NSUInteger active = [@[@"light", @"reader", @"black"] indexOfObject:SharedPrefs.theme];
             
@@ -291,7 +295,7 @@
 - (void)setupData {
     
     NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-    [snapshot appendSectionsWithIdentifiers:@[CUSTOMIZE_SECTION_TEXT, CUSTOMIZE_SECTION_PARA, CUSTOMIZE_SECTION_THEME]];
+    [snapshot appendSectionsWithIdentifiers:@[CUSTOMIZE_SECTION_TEXT, CUSTOMIZE_SECTION_PARA]];
     
     Customization *systemSize = [[Customization alloc] initWithName:propSel(useSystemSize) displayName:@"Use System Sizing"];
     Customization *font = [[Customization alloc] initWithName:propSel(articleFont) displayName:@"Font"];
@@ -304,9 +308,9 @@
     
     [snapshot appendItemsWithIdentifiers:@[paraTitleFont, lineSpacing] intoSectionWithIdentifier:CUSTOMIZE_SECTION_PARA];
     
-    Customization *theme = [[Customization alloc] initWithName:propSel(theme) displayName:@"Theme"];
-    
-    [snapshot appendItemsWithIdentifiers:@[theme] intoSectionWithIdentifier:CUSTOMIZE_SECTION_THEME];
+//    Customization *theme = [[Customization alloc] initWithName:propSel(theme) displayName:@"Theme"];
+//
+//    [snapshot appendItemsWithIdentifiers:@[theme] intoSectionWithIdentifier:CUSTOMIZE_SECTION_THEME];
     
     [self.DDS applySnapshot:snapshot animatingDifferences:NO];
     

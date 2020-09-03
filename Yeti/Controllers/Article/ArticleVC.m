@@ -275,7 +275,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             return [obj.itemIdentifier isEqualToString:@"com.yeti.toolbar.articleWindow"];
         }] == nil) {
          
-            [toolbar insertItemWithItemIdentifier:@"com.yeti.toolbar.articleWindow" atIndex:(items.count - 1)];
+            [toolbar insertItemWithItemIdentifier:@"com.yeti.toolbar.articleWindow" atIndex:(items.count - 3)];
             
         }
         
