@@ -67,6 +67,18 @@
             
             item.read = read;
             
+            if ([NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
+                
+                // adjust value for Today as well
+                if (read == YES) {
+                    self.totalToday = self.totalToday - items.count;
+                }
+                else {
+                    self.totalToday = self.totalToday + items.count;
+                }
+                
+            }
+            
             // save it back to the DB so the read state is persisted.
             [MyDBManager addArticle:item];
             

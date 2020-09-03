@@ -2762,6 +2762,27 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
+- (void)setTotalToday:(NSUInteger)totalToday {
+    
+    weakify(self);
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        strongify(self);
+        
+        if (totalToday == NSUIntegerMax) {
+            self->_totalToday = 0;
+        }
+        else {
+            self->_totalToday = MAX(totalToday, 0);
+        }
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:TodayCountDidUpdate object:self userInfo:nil];
+        
+    });
+    
+}
+
 //- (void)setBookmarks:(NSArray<FeedItem *> *)bookmarks
 //{
 //    if (bookmarks) {

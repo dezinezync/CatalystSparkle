@@ -476,7 +476,8 @@
     return YES;
 #endif
     
-    if (MyFeedsManager.user.subscription.isExternal == YES && MyFeedsManager.user.subscription.hasExpired == NO) {
+    if (MyFeedsManager.user.subscription.isExternal == YES
+        && MyFeedsManager.user.subscription.hasExpired == NO) {
         return NO;
     }
     
@@ -490,7 +491,7 @@
     
 #if !TARGET_OS_MACCATALYST
     cell.selectedBackgroundView = [UIView new];
-    cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
 #endif
     
     NSString *productID = [self.sortedProducts[indexPath.section] objectAtIndex:indexPath.row];

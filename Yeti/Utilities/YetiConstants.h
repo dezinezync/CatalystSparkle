@@ -22,6 +22,7 @@ extern FMNotification _Nonnull const UserNotFound;
 extern FMNotification _Nonnull const FeedDidUpReadCount;
 extern FMNotification _Nonnull const FeedsDidUpdate;
 extern FMNotification _Nonnull const UnreadCountDidUpdate;
+extern FMNotification _Nonnull const TodayCountDidUpdate;
 extern FMNotification _Nonnull const UserDidUpdate;
 extern FMNotification _Nonnull const BookmarksDidUpdate;
 extern FMNotification _Nonnull const SubscribedToFeed;

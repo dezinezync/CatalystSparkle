@@ -384,6 +384,36 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }];
     
+    [NSNotificationCenter.defaultCenter addObserverForName:TodayCountDidUpdate object:MyFeedsManager queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
+        
+        strongify(self);
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+       
+        UICollectionViewListCell *cell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+        
+        [MyFeedsManager updateSharedUnreadCounters];
+        
+        if (cell != nil) {
+            
+            UIListContentConfiguration *content = (UIListContentConfiguration *)[cell contentConfiguration];
+            
+            if (SharedPrefs.showUnreadCounts == YES) {
+                
+                content.secondaryText = MyFeedsManager.totalToday > 0 ? @(MyFeedsManager.totalToday).stringValue : nil;
+                
+            }
+            else {
+                
+                content.secondaryText = nil;
+                
+            }
+            
+            cell.contentConfiguration = content;
+        }
+        
+    }];
+    
     if (SharedPrefs.hideBookmarks == NO) {
         
         [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
@@ -889,9 +919,39 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             NSMutableSet <NSString *> * favicons = [NSMutableSet setWithCapacity:6];
             
-            NSMutableSet <NSString *> *covers = [NSMutableSet setWithCapacity:6];;
+            NSMutableSet <NSString *> *covers = [NSMutableSet setWithCapacity:6];
             
-            for (FeedItem *item in items) {
+            NSArray *usableItems = nil;
+            
+            NSArray *coverItems = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                return obj.coverImage != nil;
+            }];
+            
+            if (coverItems.count >= 4) {
+                usableItems = coverItems;
+            }
+            else {
+                
+                /*
+                 * A: Say we have 1 item with a cover. So we take the other 3 non-cover items
+                 *    and concat it here.
+                 *
+                 * B: Say we have 3 items with covers. We take the first non-cover item
+                 *    and use it here.
+                 */
+                
+                NSInteger coverItemsCount = coverItems.count;
+                NSInteger additionalRequired = MAX(0, 4 - coverItemsCount);
+                
+                NSArray *nonCoverItems = [items rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                    return obj.coverImage == nil;
+                }];
+                
+                usableItems = [coverItems arrayByAddingObjectsFromArray:[nonCoverItems subarrayWithRange:NSMakeRange(0, additionalRequired)]];
+                
+            }
+            
+            for (FeedItem *item in usableItems) {
                 
                 NSString *title = item.articleTitle;
                 NSNumber *date = @(item.timestamp.timeIntervalSince1970);

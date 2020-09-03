@@ -15,6 +15,7 @@ FMNotification _Nonnull const UserNotFound = @"com.yeti.note.userNotFound";
 FMNotification _Nonnull const FeedDidUpReadCount = @"com.yeti.note.feedDidUpdateReadCount";
 FMNotification _Nonnull const FeedsDidUpdate = @"com.yeti.note.feedsDidUpdate";
 FMNotification _Nonnull const UnreadCountDidUpdate = @"com.yeti.note.unreadCountDidUpdate";
+FMNotification _Nonnull const TodayCountDidUpdate = @"com.yeti.note.todayCountDidUpdate";
 FMNotification _Nonnull const UserDidUpdate = @"com.yeti.note.userDidUpdate";
 FMNotification _Nonnull const BookmarksDidUpdate = @"com.yeti.note.bookmarksDidUpdate";
 FMNotification _Nonnull const SubscribedToFeed = @"com.yeti.note.subscribedToFeed";
