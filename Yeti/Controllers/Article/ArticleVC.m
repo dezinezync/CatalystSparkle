@@ -1297,11 +1297,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL hasCover = self.item.coverImage != nil;
     BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:content.url] != NSNotFound) : NO;
     
-    if (idx == 0 && isImage && imageFromEnclosure) {
+    if (idx == 0 && isImage && imageFromEnclosure == YES) {
        return;
     }
    
-    if (idx == 0 && isImage && hasCover) {
+    if (idx == 0 && isImage && hasCover && imagesFromEnclosures.count) {
        // check if the cover image and the first image
        // are the same entities
        NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
