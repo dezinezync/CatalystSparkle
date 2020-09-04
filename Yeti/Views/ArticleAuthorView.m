@@ -31,6 +31,10 @@
         self.titleLabel.font = TypeFactory.shared.titleFont;
 
         UIFont *font = TypeFactory.shared.caption1Font;
+        
+#if !TARGET_OS_MACCATALYST
+        font = TypeFactory.shared.subtitleFont;
+#endif
 
         for (UILabel *label in @[self.titleLabel, self.blogLabel, self.authorLabel]) {
 

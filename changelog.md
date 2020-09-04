@@ -1,5 +1,11 @@
 # v2.0.0
 
+## Build 18
+
+- Fixed a crash on launch from Build 16 and 17. 
+
+- Fixed the font-size for the article author and blog name in the article reader. 
+
 ## Build 17
 
 - Fixes a crash on launch when number of unread articles is less than 4. This crash was caused when fetching data for the Widgets. 

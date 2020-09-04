@@ -61,7 +61,7 @@ NSString* deviceName() {
     
 #else
     self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
-    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemGroupedBackgroundColor;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;

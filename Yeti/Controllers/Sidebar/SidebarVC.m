@@ -949,7 +949,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 if (nonCoverItems.count > 0) {
                     
-                    additionalRequired = MAX(additionalRequired, nonCoverItems.count);
+                    additionalRequired = MIN(additionalRequired, nonCoverItems.count);
                     
                     usableItems = [coverItems arrayByAddingObjectsFromArray:[nonCoverItems subarrayWithRange:NSMakeRange(0, additionalRequired)]];
                     
