@@ -29,6 +29,14 @@
 
 @implementation ArticleVC (Toolbar)
 
+//- (void)validateCommand:(UICommand *)command {
+//
+//    if ([command.title isEqualToString:@"Find in Article"]) {
+//        command
+//    }
+//
+//}
+
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
@@ -382,7 +390,18 @@
     _showSearchBar = YES;
     
     dispatch_async(dispatch_get_main_queue(), ^{
+#if TARGET_OS_MACCATALYST
+        [self.view addSubview:self.searchView];
+        
+        UIEdgeInsets additional = self.additionalSafeAreaInsets;
+        additional.top += 52.f;
+        
+        self.additionalSafeAreaInsets = additional;
+        
+        [self viewSafeAreaInsetsDidChange];
+#else
         [self reloadInputViews];
+#endif
         [self.view setNeedsLayout];
     });
     
@@ -393,11 +412,21 @@
 
 - (void)didTapSearchDone
 {
+    
     _showSearchBar = NO;
     [self.searchBar resignFirstResponder];
     [self.searchBar setText:nil];
     
     [self.searchView removeFromSuperview];
+    
+#if TARGET_OS_MACCATALYST
+    UIEdgeInsets additional = self.additionalSafeAreaInsets;
+    additional.top -= 52.f;
+    
+    self.additionalSafeAreaInsets = additional;
+    
+    [self viewSafeAreaInsetsDidChange];
+#endif
     
     [self reloadInputViews];
 }

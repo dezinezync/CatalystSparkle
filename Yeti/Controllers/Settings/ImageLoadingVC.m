@@ -11,6 +11,7 @@
 #import "YetiConstants.h"
 #import "YetiThemeKit.h"
 #import "PrefsManager.h"
+#import "SettingsCell.h"
 
 NSString *const kXSwitchCell = @"cell.switch";
 NSString *const kXImageLoadingCell = @"cell.imageLoading";
@@ -46,8 +47,8 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
-    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:kXImageLoadingCell];
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kXSwitchCell];
+    [self.tableView registerClass:SettingsBaseCell.class forCellReuseIdentifier:kXImageLoadingCell];
+    [self.tableView registerClass:StoreCell.class forCellReuseIdentifier:kXSwitchCell];
     
     self.tableView.estimatedRowHeight = 44.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -133,6 +134,11 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     else if (section == 3) {
         return 1;
     }
+#if TARGET_OS_MACCATALYST
+    else if (section == 1) {
+        return 2;
+    }
+#endif
     return 3;
 }
 
@@ -165,15 +171,20 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
                 case 0:
                     cell.textLabel.text = ImageLoadingNever;
                     break;
+#if !TARGET_OS_MACCATALYST
                 case 1:
                     cell.textLabel.text = ImageLoadingOnlyWireless;
                     break;
+#endif
                 default:
                     cell.textLabel.text = ImageLoadingAlways;
                     break;
             }
-            
+#if TARGET_OS_MACCATALYST
+            cell.accessoryType = self.bandwidth == indexPath.row || (self.bandwidth == 2 && indexPath.row == 1) ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+#else
             cell.accessoryType = self.bandwidth == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+#endif
             break;
         case 3:
         default:
@@ -212,16 +223,14 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
             break;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = UIColor.labelColor;
+    cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
     
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
-    
-    cell.backgroundColor = theme.backgroundColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
     if (indexPath.section != 2 && indexPath.section != 3) {
         UIView *selected = [UIView new];
-        selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+        selected.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.35f];
         cell.selectedBackgroundView = selected;
     }
     
@@ -254,8 +263,13 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
 {
     if (indexPath.section == 0)
         self.selected = indexPath.row;
-    else
+    else {
+#if TARGET_OS_MACCATALYST
+        self.bandwidth = indexPath.row == 0 ? 0 : 2;
+#else
         self.bandwidth = indexPath.row;
+#endif
+    }
     
     NSIndexSet *set = [NSIndexSet indexSetWithIndex:indexPath.section];
     

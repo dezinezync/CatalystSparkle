@@ -2887,47 +2887,55 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 {
     if (_searchView == nil) {
         
-        CGRect frame = CGRectMake(0, 0, self.splitViewController.view.bounds.size.width, 52.f);
+        CGFloat heightReducer = 0.f;
+        
+#if TARGET_OS_MACCATALYST
+        heightReducer = 12.f;
+#endif
+        
+        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 52.f - heightReducer);
+        
+#if TARGET_OS_MACCATALYST
+        frame.origin.y = 36.f;
+#endif
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
+#if TARGET_OS_MACCATALYST
+//        [searchView setValue:@(UIInputViewStyleDefault) forKeyPath:@"inputViewStyle"];
+        
+        UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterial];
+        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        
+        searchView.backgroundColor = UIColor.clearColor;
+        effectView.frame = searchView.bounds;
+        
+        [searchView addSubview:effectView];
+#else
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
+#endif
         searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
         CGFloat borderHeight = 1/[[UIScreen mainScreen] scale];
-        UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, borderHeight)];
+        
+        frame = CGRectMake(0, 0, frame.size.width, borderHeight);
+        
+#if TARGET_OS_MACCATALYST
+        frame.origin.y = frame.size.height - borderHeight;
+#endif
+        
+        UIView *border = [[UIView alloc] initWithFrame:frame];
         border.backgroundColor = UIColor.separatorColor;
         border.translatesAutoresizingMaskIntoConstraints = NO;
         [border.heightAnchor constraintEqualToConstant:borderHeight].active = YES;
         
         [searchView addSubview:border];
+#if TARGET_OS_MACCATALYST
+        [border.bottomAnchor constraintEqualToAnchor:searchView.bottomAnchor constant:-borderHeight].active = YES;
+#else
         [border.topAnchor constraintEqualToAnchor:searchView.topAnchor].active = YES;
-        [border.heightAnchor constraintEqualToAnchor:searchView.heightAnchor].active = YES;
+#endif
         
-        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
-        searchBar.placeholder = @"Search Article";
-        searchBar.keyboardType = UIKeyboardTypeDefault;
-        searchBar.returnKeyType = UIReturnKeySearch;
-        searchBar.delegate = self;
-        searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        
-        UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
-        if (searchField) {
-            searchField.textColor = UIColor.labelColor;
-        }
-        
-        searchBar.backgroundColor = UIColor.clearColor;
-        searchBar.backgroundImage = nil;
-        searchBar.scopeBarBackgroundImage = nil;
-        searchBar.searchBarStyle = UISearchBarStyleMinimal;
-        searchBar.translucent = NO;
-        searchBar.accessibilityHint = @"Search for keywords in the article";
-        
-        [searchView addSubview:searchBar];
-        self.searchBar = searchBar;
-        
-        [searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
+        [border.widthAnchor constraintEqualToAnchor:searchView.widthAnchor].active = YES;
         
         UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
         [prev setImage:[UIImage systemImageNamed:@"chevron.up"] forState:UIControlStateNormal];
@@ -2982,6 +2990,35 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [done.heightAnchor constraintEqualToConstant:frame.size.height].active = YES;
         [done.trailingAnchor constraintEqualToAnchor:searchView.trailingAnchor constant:-8.f].active = YES;
         [done.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
+        
+        frame.size.height = 52.f - heightReducer;
+        frame.size.width = self.view.bounds.size.width;
+        
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - CGRectGetWidth(done.frame) - 8.f, frame.size.height - 16.f)];
+        searchBar.placeholder = @"Search Article";
+        searchBar.keyboardType = UIKeyboardTypeDefault;
+        searchBar.returnKeyType = UIReturnKeySearch;
+        searchBar.delegate = self;
+        searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
+        if (searchField) {
+            searchField.textColor = UIColor.labelColor;
+        }
+        
+        searchBar.backgroundColor = UIColor.clearColor;
+        searchBar.backgroundImage = nil;
+        searchBar.scopeBarBackgroundImage = nil;
+        searchBar.searchBarStyle = UISearchBarStyleMinimal;
+        searchBar.translucent = NO;
+        searchBar.accessibilityHint = @"Search for keywords in the article";
+        
+        [searchView addSubview:searchBar];
+        self.searchBar = searchBar;
+        
+        [searchBar.heightAnchor constraintEqualToConstant:frame.size.height - 16.f].active = YES;
         
         self.searchPrevButton = prev;
         self.searchNextButton = next;

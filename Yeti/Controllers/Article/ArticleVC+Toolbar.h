@@ -10,6 +10,8 @@
 
 @interface ArticleVC (Toolbar) <UISearchBarDelegate>
 
+- (void)validateCommand:(UICommand *)command;
+
 - (void)keyboardFrameChanged:(NSNotification *)note;
 
 - (void)setupToolbar:(UITraitCollection *)newCollection;

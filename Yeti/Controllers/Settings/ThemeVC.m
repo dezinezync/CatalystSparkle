@@ -13,6 +13,7 @@
 #import "CodeParser.h"
 #import "AccentCell.h"
 #import "PrefsManager.h"
+#import "SettingsCell.h"
 
 static void * KVO_SELECTED_BUTTON = &KVO_SELECTED_BUTTON;
 
@@ -66,12 +67,15 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
     // when adding a new font here or removing one,
     // update the method -[tableview:cellForRowAtIndexPath:]
     
+#if TARGET_OS_MACCATALYST
+    _isPhoneX = NO;
+#else
     _isPhoneX = canSupportOLED();
-    
+#endif
     self.tableView.estimatedRowHeight = 52.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kBasicCell];
+    [self.tableView registerClass:[SettingsBaseCell class] forCellReuseIdentifier:kBasicCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AccentCell.class) bundle:nil] forCellReuseIdentifier:kAccentCell];
 }
 
@@ -91,51 +95,59 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 3;
+    
+#if TARGET_OS_MACCATALYST
+    return 1;
+#endif
+    
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
+//    if (section == 0) {
+//        return [YetiThemeKit themeNames].count;
+//    }
+    
+#if !TARGET_OS_MACCATALYST
     if (section == 0) {
-        return [YetiThemeKit themeNames].count;
-    }
-    else if (section == 1) {
         return 1;
     }
-    
+#endif
     return self.class.fonts.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
     
+//    if (indexPath.section == 0) {
+//        // THEME
+//        cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
+//        cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+//
+//        YetiThemeType theme = SharedPrefs.theme;
+//
+//        NSString *themeName = YetiThemeKit.themeNames[indexPath.row];
+//
+//        cell.textLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
+//
+//        NSInteger differenceInRowCount = 1;
+//
+//        if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
+//            || ([theme isEqualToString:DarkTheme] && indexPath.row == (1 - differenceInRowCount))
+//            || ([theme isEqualToString:ReaderTheme] && indexPath.row == (2 - differenceInRowCount))
+//            || ([theme isEqualToString:BlackTheme] && indexPath.row == (3 - differenceInRowCount))) {
+//
+//            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+//
+//        }
+//        else {
+//            cell.accessoryType = UITableViewCellAccessoryNone;
+//        }
+//
+//    }
+#if !TARGET_OS_MACCATALYST
     if (indexPath.section == 0) {
-        // THEME
-        cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
-        cell.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-        
-        YetiThemeType theme = SharedPrefs.theme;
-        
-        NSString *themeName = YetiThemeKit.themeNames[indexPath.row];
-        
-        cell.textLabel.text = [themeName isEqualToString:@"light"] ? @"Default" : [themeName capitalizedString];
-        
-        NSInteger differenceInRowCount = 1;
-        
-        if (([theme isEqualToString:LightTheme] && indexPath.row == 0)
-            || ([theme isEqualToString:DarkTheme] && indexPath.row == (1 - differenceInRowCount))
-            || ([theme isEqualToString:ReaderTheme] && indexPath.row == (2 - differenceInRowCount))
-            || ([theme isEqualToString:BlackTheme] && indexPath.row == (3 - differenceInRowCount))) {
-            
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            
-        }
-        else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
-        
-    }
-    else if (indexPath.section == 1) {
         // Accent Colour
         cell = [tableView dequeueReusableCellWithIdentifier:kAccentCell forIndexPath:indexPath];
         
@@ -156,6 +168,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         
     }
     else {
+#endif
         // ARTICLE FONT
         cell = [tableView dequeueReusableCellWithIdentifier:kBasicCell forIndexPath:indexPath];
         
@@ -195,31 +208,31 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         else {
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
+#if !TARGET_OS_MACCATALYST
     }
-    
+#endif
     // Configure the cell...
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    if (indexPath.section == 1) {
+    if (indexPath.section == 0) {
         cell.selectedBackgroundView = nil;
     }
     else {
-        cell.textLabel.textColor = theme.titleColor;
-        cell.detailTextLabel.textColor = theme.captionColor;
+        cell.textLabel.textColor = UIColor.labelColor;
+        cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
         
         cell.selectedBackgroundView = [UIView new];
         
-        cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+        cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
     }
     
-    cell.backgroundColor = theme.backgroundColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
     return cell;
 }
 
+#if !TARGET_OS_MACCATALYST
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)c forRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (indexPath.section == 1 && indexPath.row == 0) {
+
+    if (indexPath.section == 0 && indexPath.row == 0) {
         AccentCell *cell = (AccentCell *)c;
         if ([cell observationInfo] != nil) {
             @try {
@@ -228,47 +241,47 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
             @catch (NSException *exc) {}
         }
     }
-    
-}
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+}
+#endif
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     NSArray <NSIndexPath *> * reloadSections = nil;
     
-    if (indexPath.section == 0) {
-        
-        NSString *val = [YetiThemeKit.themeNames objectAtIndex:indexPath.row];
-        
-        NSString *themeName = [val lowercaseString];
-        
-        if ([SharedPrefs.theme isEqualToString:themeName] == NO) {
-            
-            [SharedPrefs setValue:themeName forKey:propSel(theme)];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
-            });
-            
-            YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-            [CodeParser.sharedCodeParser loadTheme:themeName];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
-            });
-            
-            reloadSections = [self.tableView indexPathsForVisibleRows];
-            
-        }
-        
-    }
-    else if (indexPath.section == 1) {
-        
-    }
-    else if (indexPath.section == 2) {
+//    if (indexPath.section == 0) {
+//
+//        NSString *val = [YetiThemeKit.themeNames objectAtIndex:indexPath.row];
+//
+//        NSString *themeName = [val lowercaseString];
+//
+//        if ([SharedPrefs.theme isEqualToString:themeName] == NO) {
+//
+//            [SharedPrefs setValue:themeName forKey:propSel(theme)];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [NSNotificationCenter.defaultCenter postNotificationName:kWillUpdateTheme object:nil];
+//            });
+//
+//            YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
+//            [CodeParser.sharedCodeParser loadTheme:themeName];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [NSNotificationCenter.defaultCenter postNotificationName:kDidUpdateTheme object:nil];
+//            });
+//
+//            reloadSections = [self.tableView indexPathsForVisibleRows];
+//
+//        }
+//
+//    }
+//    else if (indexPath.section == 1) {
+//
+//    }
+//    else if (indexPath.section == 2) {
         
         [defaults setValue:self.class.fonts[indexPath.row] forKey:kDefaultsArticleFont];
         
@@ -283,7 +296,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         _selectedFontIndexPath = indexPath;
         
         [NSNotificationCenter.defaultCenter postNotificationName:UIContentSizeCategoryDidChangeNotification object:nil];
-    }
+//    }
     
     if (reloadSections != nil) {
         [self.tableView reloadRowsAtIndexPaths:reloadSections withRowAnimation:UITableViewRowAnimationFade];

@@ -30,6 +30,24 @@
 
 #import <sys/utsname.h>
 
+#if TARGET_OS_MACCATALYST
+typedef NS_ENUM(NSUInteger, SectionOneRows) {
+    SectionBackgroundFetch = 0,
+    SectionImageLoading = 1,
+    SectionOPML = 2,
+    SectionMisc = 3
+};
+#else
+typedef NS_ENUM(NSUInteger, SectionOneRows) {
+    SectionAppearance = 0,
+    SectionBackgroundFetch = 1,
+    SectionImageLoading = 2,
+    SectionExternalApps = 3,
+    SectionOPML = 4,
+    SectionMisc = 5
+};
+#endif
+
 NSString* deviceName() {
     struct utsname systemInfo;
     uname(&systemInfo);
@@ -148,7 +166,11 @@ NSString* deviceName() {
 #endif
             break;
         case 1:
+#if TARGET_OS_MACCATALYST
+            return 4;
+#else
             return 6;
+#endif
             break;
         case 2:
             return 4;
@@ -205,6 +227,45 @@ NSString* deviceName() {
             break;
         case 1 :
             switch (indexPath.row) {
+#if TARGET_OS_MACCATALYST
+                case 0:
+                {
+                    cell.textLabel.text = @"Background Fetch";
+                    
+                    UISwitch *sw = [[UISwitch alloc] init];
+                    [sw setOn:SharedPrefs.backgroundRefresh];
+                    [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
+                    
+                    [sw setOnTintColor:self.view.tintColor];
+                    
+                    cell.accessoryView = sw;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                }
+                    break;
+                case 1:
+                {
+                    cell.textLabel.text = @"Image Loading";
+                    cell.detailTextLabel.text = SharedPrefs.imageLoading;
+                }
+                    break;
+                case 2:
+                    cell.textLabel.text = @"Import/Export OPML";
+                    break;
+                case 3:
+                    cell.textLabel.text = @"Miscellaneous";
+                    break;
+                    break;
+                default:
+                    break;
+            }
+            
+            if (indexPath.row != 0) {
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            }
+            else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+#else
                 case 0: {
                     cell.textLabel.text = @"Appearance";
                     
@@ -252,7 +313,7 @@ NSString* deviceName() {
             else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
-            
+#endif
             break;
         default:
             switch (indexPath.row) {
@@ -395,6 +456,27 @@ NSString* deviceName() {
             break;
         case 1:
             switch (indexPath.row) {
+#if TARGET_OS_MACCATALYST
+                case 1:
+                {
+                    vc = [[ImageLoadingVC alloc] initWithStyle:style];
+                }
+                    break;
+                case 2:
+                {
+                    OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc1];
+                    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+                    
+                    vc = nav;
+                }
+                    break;
+                case 3:
+                    vc = [[MiscVC alloc] initWithStyle:style];
+                    break;
+                default:
+                    break;
+#else
                 case 0:
                 {
                     vc = [[ThemeVC alloc] initWithStyle:style];
@@ -422,6 +504,7 @@ NSString* deviceName() {
                     break;
                 default:
                     break;
+#endif
             }
             break;
         default:

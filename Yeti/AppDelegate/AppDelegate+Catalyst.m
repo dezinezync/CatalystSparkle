@@ -230,7 +230,9 @@
     
     UIKeyCommand *shareArticle = [UIKeyCommand commandWithTitle:@"Share Article" image:nil action:@selector(shareArticle) input:@"i" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
-    for (UIKeyCommand *command in @[markRead, markBookmark, openInBrowser, closeArticle, shareArticle]) {
+    UIKeyCommand *searchArticle = [UIKeyCommand commandWithTitle:@"Find in Article" image:nil action:@selector(didTapSearch) input:@"f" modifierFlags:UIKeyModifierCommand propertyList:nil];
+    
+    for (UIKeyCommand *command in @[markRead, markBookmark, openInBrowser, closeArticle, shareArticle, searchArticle]) {
         
         if (articleVC == nil) {
             
@@ -240,7 +242,7 @@
         
     }
     
-    UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle, shareArticle]];
+    UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle, shareArticle, searchArticle]];
     
     [builder insertSiblingMenu:articlesMenu beforeMenuForIdentifier:UIMenuWindow];
     
