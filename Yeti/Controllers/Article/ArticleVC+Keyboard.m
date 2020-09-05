@@ -34,11 +34,11 @@
     search.title = @"Search";
     search.discoverabilityTitle = search.title;
     
-    UIKeyCommand *scrollUp = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(scrollUp)];
+    UIKeyCommand *scrollUp = [UIKeyCommand keyCommandWithInput:@" " modifierFlags:UIKeyModifierShift action:@selector(scrollUp)];
     scrollUp.title = @"Scroll Up";
     scrollUp.discoverabilityTitle = scrollUp.title;
     
-    UIKeyCommand *scrollDown = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(scrollDown)];
+    UIKeyCommand *scrollDown = [UIKeyCommand keyCommandWithInput:@" " modifierFlags:0 action:@selector(scrollDown)];
     scrollDown.title = @"Scroll Down";
     scrollDown.discoverabilityTitle = scrollDown.title;
     
@@ -81,11 +81,20 @@
     UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
     CGPoint currentOffset = scrollView.contentOffset;
     
-    // max height of ths scrollView
-//    CGSize maxSize = scrollView.contentSize;
-    
     CGPoint targetOffset = currentOffset;
-    targetOffset.y = MAX(targetOffset.y - 150, -self.view.safeAreaInsets.top + 20.f);
+    
+    CGFloat addOffset = 150.f;
+    
+#if TARGET_OS_MACCATALYST
+    // offset by 3/4th of the page. This assumes
+    // the reader is reading the last few lines
+    // and wants to bring the lines "above the fold"
+    addOffset = floor(scrollView.bounds.size.height * 0.75f);
+#endif
+    
+    targetOffset.y -= addOffset;
+    
+    targetOffset.y = MAX(targetOffset.y, -self.view.safeAreaInsets.top);
     
     [scrollView setContentOffset:targetOffset animated:YES];
 }
@@ -99,7 +108,19 @@
     CGSize maxSize = scrollView.contentSize;
     
     CGPoint targetOffset = currentOffset;
-    targetOffset.y = MIN(targetOffset.y + 150, maxSize.height - scrollView.bounds.size.height);
+    
+    CGFloat addOffset = 150.f;
+    
+#if TARGET_OS_MACCATALYST
+    // offset by 3/4th of the page. This assumes
+    // the reader is reading the last few lines
+    // and wants to bring the lines "above the fold"
+    addOffset = floor(scrollView.bounds.size.height * 0.75f);
+#endif
+    
+    targetOffset.y += addOffset;
+    
+    targetOffset.y = MIN(targetOffset.y, maxSize.height - scrollView.bounds.size.height);
     
     [scrollView setContentOffset:targetOffset animated:YES];
 }

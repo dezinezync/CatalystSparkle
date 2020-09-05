@@ -283,9 +283,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #endif
     
-    if ([self canBecomeFirstResponder] == YES) {
-        [self becomeFirstResponder];
-    }
+    [self becomeFirstResponder];
     
 }
 
@@ -2615,10 +2613,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
         
         // if we're scrolling down, add the bottom offset so the bottom bar does not interfere
-        if (yOffset > self.scrollView.contentOffset.y)
+        if (yOffset > self.scrollView.contentOffset.y) {
             yOffset += self.scrollView.adjustedContentInset.bottom;
-        else
-            yOffset -= self.scrollView.adjustedContentInset.top;
+            yOffset += CGRectGetMidY(required.bounds);
+        }
+        else {
+            yOffset += self.scrollView.adjustedContentInset.top;
+        }
         
         weakify(self);
         
@@ -2639,6 +2640,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [UIView animateWithDuration:animationDuration delay:1 options:kNilOptions animations:^{
             
+            strongify(required);
+            
             required.backgroundColor = [UIColor.systemYellowColor colorWithAlphaComponent:0.3f];
             
             strongify(self);
@@ -2646,7 +2649,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
         } completion:^(BOOL finished) { dispatch_async(dispatch_get_main_queue(), ^{
             
+            strongify(required);
+            
             if (finished) {
+                
                 [UIView animateWithDuration:animationDuration delay:1.5 options:kNilOptions animations:^{
                     
                     required.backgroundColor = UIColor.systemBackgroundColor;
@@ -2995,6 +3001,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         frame.size.width = self.view.bounds.size.width;
         
         UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - CGRectGetWidth(done.frame) - 8.f, frame.size.height - 16.f)];
+        searchBar.searchTextField.autocorrectionType = UITextAutocorrectionTypeNo;
         searchBar.placeholder = @"Search Article";
         searchBar.keyboardType = UIKeyboardTypeDefault;
         searchBar.returnKeyType = UIReturnKeySearch;
