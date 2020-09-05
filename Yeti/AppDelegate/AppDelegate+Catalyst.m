@@ -8,6 +8,8 @@
 
 #import "AppDelegate+CatalystActions.h"
 
+#import "UITableView+Sugar.h"
+
 #if TARGET_OS_MACCATALYST
 
 #import "FeedsVC+Actions.h"
@@ -65,18 +67,6 @@
     
     [builder replaceMenuForIdentifier:UIMenuPreferences withMenu:customPreferencesMenu];
     
-//    [builder replaceChildrenOfMenuForIdentifier:UIMenuApplication fromChildrenBlock:^NSArray<UIMenuElement *> * _Nonnull(NSArray<UIMenuElement *> * _Nonnull children) {
-//
-//        children = [children rz_filter:^BOOL(UIMenuElement *obj, NSUInteger idx, NSArray *array) {
-//
-//            return [obj.]
-//
-//        }];
-//
-//        return children;
-//
-//    }];
-//
     // Add items for File menu
     UIKeyCommand *newFeed = [UIKeyCommand commandWithTitle:@"New Feed" image:nil action:@selector(createNewFeed) input:@"n" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
@@ -95,9 +85,9 @@
     UICommand * unreadDesc = [UICommand commandWithTitle:@"Unread - Newest First" image:nil action:@selector(setSortingUnreadDesc) propertyList:nil];
     UICommand * unreadAsc = [UICommand commandWithTitle:@"Unread - Oldest First" image:nil action:@selector(setSortingUnreadAsc) propertyList:nil];
     
-    if (coordinator.feedVC != nil) {
-        
-        FeedVC *feedVC = coordinator.feedVC;
+    FeedVC *feedVC = coordinator.feedVC;
+    
+    if (feedVC != nil) {
         
         if (feedVC.type == FeedVCTypeUnread || feedVC.type == FeedVCTypeBookmarks) {
             
@@ -156,7 +146,7 @@
     UIKeyCommand *previousArticle = [UIKeyCommand commandWithTitle:@"Previous Article" image:nil action:@selector(switchToPreviousArticle) input:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand propertyList:nil];
     
     // If the article VC is not visible, leave them disabled
-    if (articleVC == nil) {
+    if (feedVC == nil) {
         
         nextArticle.attributes = UIMenuElementAttributesDisabled;
         previousArticle.attributes = UIMenuElementAttributesDisabled;
@@ -164,28 +154,22 @@
     }
     else {
         
-        // we have a ArticleVC so check with its ArticleProvider for prev/next info
-        id <ArticleProvider> articleProvider = articleVC.providerDelegate;
+        NSIndexPath *selected = feedVC.tableView.indexPathForSelectedRow;
+        NSIndexPath *lastIndexPath = feedVC.tableView.indexPathForLastRow;
         
-        if (articleProvider == nil) {
-            
-            nextArticle.attributes = UIMenuElementAttributesDisabled;
-            previousArticle.attributes = UIMenuElementAttributesDisabled;
-            
-        }
-        else {
-            
-            if ([articleProvider hasNextArticleForArticle:articleVC.currentArticle] == NO) {
+        if (lastIndexPath != nil) {
+        
+            if (selected.section == lastIndexPath.section && selected.row == lastIndexPath.row) {
                 
                 nextArticle.attributes = UIMenuElementAttributesDisabled;
                 
             }
             
-            if ([articleProvider hasPreviousArticleForArticle:articleVC.currentArticle] == NO) {
-                
-                previousArticle.attributes = UIMenuElementAttributesDisabled;
-                
-            }
+        }
+        
+        if (selected.row == 0) {
+            
+            previousArticle.attributes = UIMenuElementAttributesDisabled;
             
         }
         

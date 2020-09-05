@@ -183,6 +183,7 @@
 		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
 		F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F075752724CED198001F7D15 /* SidebarVC+Actions.m */; };
 		F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = F0783CAE248F6A5800C7A280 /* AppKitGlue.m */; };
+		F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */ = {isa = PBXBuildFile; fileRef = F07889C025035E65007F3C55 /* UITableView+Sugar.m */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
@@ -999,6 +1000,8 @@
 		F0783C8A248F685C00C7A280 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0783CAD248F6A5800C7A280 /* AppKitGlue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitGlue.h; sourceTree = "<group>"; };
 		F0783CAE248F6A5800C7A280 /* AppKitGlue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppKitGlue.m; sourceTree = "<group>"; };
+		F07889BF25035E65007F3C55 /* UITableView+Sugar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITableView+Sugar.h"; sourceTree = "<group>"; };
+		F07889C025035E65007F3C55 /* UITableView+Sugar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITableView+Sugar.m"; sourceTree = "<group>"; };
 		F078B635206637B40048DBEA /* EmptyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyVC.h; sourceTree = "<group>"; };
 		F078B636206637B40048DBEA /* EmptyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyVC.m; sourceTree = "<group>"; };
 		F078B637206637B40048DBEA /* EmptyVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyVC.xib; sourceTree = "<group>"; };
@@ -1803,6 +1806,8 @@
 				F06C666422B2ABBA00D425E9 /* UIViewController+Stateful.m */,
 				F0533CB2240D463C00BB69CF /* UIRefreshControl+Manual.h */,
 				F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */,
+				F07889BF25035E65007F3C55 /* UITableView+Sugar.h */,
+				F07889C025035E65007F3C55 /* UITableView+Sugar.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -3290,6 +3295,7 @@
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F093321624EC14D10066FA41 /* BookmarksManager.m in Sources */,
 				F067D35D23F43B350034B968 /* Customization.m in Sources */,
+				F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,
 				F032A75D244D7D8C0024AC63 /* YetiTheme.m in Sources */,
 				F070C34C1FBADF8D00912CCF /* FeedsCell.m in Sources */,
