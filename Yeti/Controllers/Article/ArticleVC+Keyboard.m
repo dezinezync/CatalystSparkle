@@ -42,6 +42,18 @@
     scrollDown.title = @"Scroll Down";
     scrollDown.discoverabilityTitle = scrollDown.title;
     
+    UIKeyCommand *scrollUpAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageUp" modifierFlags:nil action:@selector(scrollUp)];
+    scrollUpAddtional.title = @"Scroll Up";
+    
+    UIKeyCommand *scrollDownAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageDown" modifierFlags:nil action:@selector(scrollDown)];
+    scrollDownAddtional.title = @"Scroll Up";
+    
+    UIKeyCommand *scrollToTop = [UIKeyCommand keyCommandWithInput:@"UIKeyInputHome" modifierFlags:nil action:@selector(scrollToTop)];
+    scrollToTop.title = @"Scroll to Top";
+    
+    UIKeyCommand *scrollToEnd = [UIKeyCommand keyCommandWithInput:@"UIKeyInputEnd" modifierFlags:nil action:@selector(scrollToEnd)];
+    scrollToTop.title = @"Scroll to End";
+    
     UIKeyCommand *previousArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapPreviousArticle:)];
     previousArticle.title = @"Previous Article";
     previousArticle.discoverabilityTitle = previousArticle.title;
@@ -62,7 +74,7 @@
     esc.title = @"Dismiss Search";
     esc.discoverabilityTitle = esc.title;
     
-    NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc];
+    NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc, scrollUpAddtional, scrollDownAddtional, scrollToTop, scrollToEnd];
     
     if ([self.providerDelegate hasNextArticleForArticle:self.item]) {
         commands = [commands arrayByAddingObject:nextArticle];
@@ -123,6 +135,27 @@
     targetOffset.y = MIN(targetOffset.y, maxSize.height - scrollView.bounds.size.height);
     
     [scrollView setContentOffset:targetOffset animated:YES];
+}
+
+- (void)scrollToTop {
+    
+    UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
+    
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.adjustedContentInset.top) animated:YES];
+    
+}
+
+
+- (void)scrollToEnd {
+    
+    UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
+    
+    CGSize contentSize = scrollView.contentSize;
+    
+    CGRect rect = CGRectMake(0, contentSize.height - scrollView.bounds.size.height, scrollView.bounds.size.width, scrollView.bounds.size.height);
+    
+    [scrollView setContentOffset:CGPointMake(0, rect.origin.y + scrollView.adjustedContentInset.bottom) animated:YES];
+    
 }
 
 - (void)updateBarButtonItems {
