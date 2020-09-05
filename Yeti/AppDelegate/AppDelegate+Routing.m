@@ -638,6 +638,21 @@
     [self popToRoot];
 #endif
     
+    if (self.coordinator.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        && self.coordinator.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        if (feedID != nil && self.coordinator.feedVC == nil) {
+            
+            Feed *feed = [MyFeedsManager feedForID:feedID];
+            
+            if (feed != nil) {
+                [self.coordinator showFeedVC:feed];
+            }
+            
+        }
+        
+    }
+    
     if (articleID != nil) {
         
         FeedItem *item = [[FeedItem alloc] init];
