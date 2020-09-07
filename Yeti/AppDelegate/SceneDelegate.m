@@ -9,6 +9,12 @@
 #import "PhotosController.h"
 #import <JLRoutes/JLRoutes.h>
 
+@interface UIViewController (ElytraStateRestoration)
+
+- (void)continueActivity:(NSUserActivity *)activity;
+
+@end
+
 @interface SceneDelegate ()
 
 @end
@@ -76,8 +82,20 @@
     [self setupRootViewController];
     
     [self.coordinator start];
+    
+    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
+        
+        [self.window.rootViewController continueActivity:activity];
+        
+    }
         
     [self.window makeKeyAndVisible];
+    
+    if (connectionOptions.URLContexts != nil) {
+        
+        [self scene:scene openURLContexts:connectionOptions.URLContexts];
+        
+    }
     
 }
 
@@ -96,7 +114,6 @@
 //    [self _checkForAppResetPref];
 
 }
-
 
 - (void)sceneWillResignActive:(UIScene *)scene {
     // Called when the scene will move from an active state to an inactive state.
@@ -128,6 +145,26 @@
         
     }
     
+}
+
+- (NSUserActivity *)stateRestorationActivityForScene:(UIScene *)scene {
+
+    NSUserActivity *restorationActivity = nil;
+
+    if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
+
+        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
+
+        if (restorationActivity != nil) {
+
+            [MyFeedsManager saveRestorationActivity:restorationActivity];
+
+        }
+
+    }
+
+    return restorationActivity;
+
 }
 
 #pragma mark -

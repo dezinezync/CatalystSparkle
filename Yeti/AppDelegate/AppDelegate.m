@@ -274,28 +274,6 @@ AppDelegate *MyAppDelegate = nil;
     
 }
 
-//- (NSUserActivity *)stateRestorationActivityForScene:(UIScene *)scene {
-//
-//    return scene.userActivity;
-//
-//    NSUserActivity *restorationActivity = nil;
-//
-//    if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
-//
-//        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
-//
-//        if (restorationActivity != nil) {
-//
-//            [MyFeedsManager saveRestorationActivity:restorationActivity];
-//
-//        }
-//
-//    }
-//
-//    return restorationActivity;
-//
-//}
-
 #pragma mark -
 
 // logs all fonts loaded by the app

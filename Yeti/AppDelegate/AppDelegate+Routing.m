@@ -14,7 +14,6 @@
 
 #import "FeedVC.h"
 #import "ArticleVC.h"
-#import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>
 #import <SafariServices/SafariServices.h>
@@ -24,10 +23,12 @@
 
 @implementation AppDelegate (Routing)
 
-- (void)popToRoot
-{
-    UISplitViewController *splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
-    YTNavigationController *nav = (YTNavigationController *)[[splitVC viewControllers] firstObject];
+- (void)popToRoot {
+    
+    SceneDelegate *scene = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    UISplitViewController *splitVC = (UISplitViewController *)[scene.window rootViewController];
+    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] firstObject];
     
     if ([[nav viewControllers] count] > 1) {
         asyncMain(^{

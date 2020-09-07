@@ -158,7 +158,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }];
     
     if (self = [super initWithCollectionViewLayout:layout]) {
-        
+        self.restorationIdentifier = NSStringFromClass(self.class);
     }
     
     return self;

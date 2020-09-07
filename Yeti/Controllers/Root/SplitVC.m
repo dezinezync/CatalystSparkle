@@ -42,12 +42,7 @@
         }
             
         self.restorationIdentifier = NSStringFromClass(self.class);
-        self.restorationClass = self.class;
-        
-//        self.separatorStrokeColor = UIColor.separatorColor;
-//        self.delegate = self;
-//        self.primaryColumnMaximumWidth = 298.f;
-//        self.secondaryColumnMaximumWidth = 375.f;
+//        self.restorationClass = self.class;
         
         self.maximumPrimaryColumnWidth = 298.f;
         self.maximumSupplementaryColumnWidth = 375.f;
@@ -69,10 +64,6 @@
     }
     
     return self;
-}
-
-- (BOOL)shouldAutomaticallyForwardAppearanceMethods {
-    return YES;
 }
 
 - (void)viewDidLoad {
