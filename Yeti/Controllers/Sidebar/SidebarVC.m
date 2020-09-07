@@ -1101,9 +1101,118 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 }
 
+#pragma mark - State Restoration
+
 - (void)continueActivity:(NSUserActivity *)activity {
     
+    NSDictionary *sidebar = [activity.userInfo valueForKey:@"sidebar"];
     
+    if (sidebar == nil) {
+        return;
+    }
+    
+    NSArray <NSNumber *> *openFolders = [sidebar objectForKey:@"openFolders"];
+    
+    if (openFolders.count) {
+        
+        NSDiffableDataSourceSectionSnapshot *sectionSnapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
+        
+        NSArray <Folder *> *foldersToOpen = [openFolders rz_map:^id(NSNumber *obj, NSUInteger idx, NSArray *array) {
+           
+            return [ArticlesManager.shared folderForID:obj];
+            
+        }];
+        
+        [sectionSnapshot expandItems:foldersToOpen];
+        
+        [self.DS applySnapshot:sectionSnapshot toSection:@(NSUIntegerMax - 200) animatingDifferences:NO];
+        
+    }
+    
+    // selected index path
+    NSNumber *selectedCustom = [sidebar valueForKey:@"selectedCustom"];
+    NSIndexPath *indexPath = nil;
+    
+    if (selectedCustom != nil) {
+        
+        if (selectedCustom.integerValue == FeedVCTypeUnread) {
+            indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
+        }
+        else if (selectedCustom.integerValue == FeedVCTypeToday) {
+            indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
+        }
+        else {
+            indexPath = [NSIndexPath indexPathForItem:2 inSection:0];
+        }
+        
+    }
+    
+    NSNumber *selectedItem = [sidebar valueForKey:@"selectedItem"];
+    
+    if (selectedItem != nil) {
+        
+        Feed *item = [ArticlesManager.shared feedForID:selectedItem];
+        
+        if (item != nil) {
+            indexPath = [self.DS indexPathForItemIdentifier:item];
+        }
+        
+    }
+    
+    if (indexPath != nil) {
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+            
+            [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
+            
+        });
+        
+    }
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+    
+    NSMutableDictionary *sidebar = @{}.mutableCopy;
+    
+    // check for open folders
+    NSDiffableDataSourceSectionSnapshot *sectionSnapshot = [self.DS snapshotForSection:@(NSUIntegerMax - 200)];
+    
+    NSMutableArray <NSNumber *> *openFolders = [NSMutableArray arrayWithCapacity:ArticlesManager.shared.folders.count];
+    
+    for (Folder *folder in ArticlesManager.shared.folders) {
+        
+        if ([sectionSnapshot isExpanded:folder]) {
+            [openFolders addObject:folder.folderID];
+        }
+        
+    }
+    
+    [sidebar setObject:openFolders forKey:@"openFolders"];
+    
+    // Check for a selected item
+    if (self.collectionView.indexPathsForSelectedItems > 0) {
+        
+        NSIndexPath *selected = self.collectionView.indexPathsForSelectedItems.firstObject;
+        
+        if (selected != nil) {
+            
+            Feed *item = [self.DS itemIdentifierForIndexPath:selected];
+            
+            if ([item isKindOfClass:CustomFeed.class]) {
+                [sidebar setObject:@([(CustomFeed *)item feedType]) forKey:@"selectedCustom"];
+            }
+            else {
+                [sidebar setObject:item.feedID forKey:@"selectedItem"];
+            }
+            
+        }
+        
+    }
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"sidebar": sidebar}];
     
 }
 

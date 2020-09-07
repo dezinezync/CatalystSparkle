@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)continueActivity:(NSUserActivity *)activity;
 
+- (void)saveRestorationActivity:(NSUserActivity *)activity;
+
 #pragma mark - Actions Extension
 
 @property (nonatomic, weak) UITextField *alertTextField;

@@ -68,6 +68,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)continueActivity:(NSUserActivity *)activity;
 
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
 #pragma mark -
 
 /// Loads the given article ID when the view controller is ready.

@@ -342,16 +342,16 @@
     
     [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
     
-//    if (self.mainCoordinator.sidebarVC) {
-//        [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
-//    }
-    
-    if (self.feedVC) {
-        [self.feedVC saveRestorationActivity:activity];
+    if (self.mainCoordinator.sidebarVC) {
+        [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
     }
     
-    if (self.articleVC) {
-        [self.articleVC saveRestorationActivity:activity];
+    if (self.mainCoordinator.feedVC) {
+        [self.mainCoordinator.feedVC saveRestorationActivity:activity];
+    }
+    
+    if (self.mainCoordinator.articleVC) {
+        [self.mainCoordinator.articleVC saveRestorationActivity:activity];
     }
     
     return activity;
@@ -368,11 +368,18 @@
     
     NSLogDebug(@"Continuing activity: %@", restorationIdentifiers);
     
-    NSString * first = restorationIdentifiers.firstObject;
-    
-    if ([first containsString:@"FeedVC-"] == YES) {
+    for (NSString *identifier in restorationIdentifiers) {
         
-        [self.mainCoordinator.sidebarVC continueActivity:activity];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            if ([identifier isEqualToString:NSStringFromClass(SidebarVC.class)]) {
+                [self.mainCoordinator.sidebarVC continueActivity:activity];
+            }
+            else if ([identifier containsString:@"FeedVC"] && self.feedVC != nil) {
+                [self.mainCoordinator.feedVC continueActivity:activity];
+            }
+            
+        });
         
     }
     
