@@ -191,6 +191,17 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    
+#if !TARGET_OS_MACCATALYST
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+#endif
+    
+    [super viewWillAppear:animated];
+    
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
@@ -222,10 +233,6 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 #if TARGET_OS_MACCATALYST
     [self.navigationController setNavigationBarHidden:YES animated:NO];
 #else
-    
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-    
     self.navigationItem.leftBarButtonItems = @[self.splitViewController.displayModeButtonItem, self.leftBarButtonItem];
     self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
 #endif
@@ -233,8 +240,6 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     // Search Controller setup
     {
-        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
-        
         UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
         searchController.searchResultsUpdater = self;
         searchController.delegate = self;
