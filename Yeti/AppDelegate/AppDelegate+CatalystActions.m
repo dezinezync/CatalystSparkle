@@ -17,7 +17,9 @@
 
 - (void)createNewFeed {
     
-    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc didTapAdd:nil];
     
@@ -25,7 +27,9 @@
 
 - (void)createNewFolder {
     
-    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc didTapAddFolder:nil];
     
@@ -33,9 +37,11 @@
 
 - (void)refreshAll {
     
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
     [MyDBManager purgeDataForResync];
     
-    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc beginRefreshing:nil];
     
@@ -43,13 +49,17 @@
 
 - (void)openSettings:(id)sender {
     
-    [MyAppDelegate.coordinator showSettingsVC];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    [sceneDelegate.coordinator showSettingsVC];
     
 }
 
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
-    FeedVC *feedVC = MyAppDelegate.coordinator.feedVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    FeedVC *feedVC = sceneDelegate.coordinator.feedVC;
     
     if (feedVC == nil) {
         return;
@@ -91,7 +101,9 @@
         return;
     }
     
-    SidebarVC *vc = MyAppDelegate.coordinator.sidebarVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc.collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
     
@@ -125,7 +137,9 @@
 
 - (void)switchToNextArticle {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -137,7 +151,9 @@
 
 - (void)switchToPreviousArticle {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -149,7 +165,9 @@
 
 - (void)markArticleRead {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -163,7 +181,9 @@
 
 - (void)markArticleBookmark {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -177,7 +197,9 @@
 
 - (void)openArticleInBrowser {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -189,7 +211,9 @@
 
 - (void)closeArticle {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -201,7 +225,9 @@
 
 - (void)shareArticle {
     
-    ArticleVC *vc = MyAppDelegate.coordinator.articleVC;
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
     if (vc == nil) {
         return;

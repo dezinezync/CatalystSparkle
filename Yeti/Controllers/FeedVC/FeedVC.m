@@ -129,8 +129,10 @@
 #if TARGET_OS_MACCATALYST
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
+    
+    SceneDelegate *sceneDelegate = (id)[self.view.window.windowScene delegate];
 
-    NSToolbarItem *refreshFeedItem = [[[[MyAppDelegate.toolbar items] rz_map:^id(__kindof NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
+    NSToolbarItem *refreshFeedItem = [[[[sceneDelegate.toolbar items] rz_map:^id(__kindof NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
         
         if ([obj isKindOfClass:NSToolbarItemGroup.class]) {
             

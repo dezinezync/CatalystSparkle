@@ -35,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)beginRefreshing:(UIRefreshControl * _Nullable)sender;
 
+- (void)continueActivity:(NSUserActivity *)activity;
+
 #pragma mark - Actions Extension
 
 @property (nonatomic, weak) UITextField *alertTextField;

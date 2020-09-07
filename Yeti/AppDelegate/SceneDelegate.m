@@ -5,7 +5,7 @@
 //  Created by Nikhil Nigade on 23/07/20.
 //
 
-#import "SceneDelegate.h"
+#import "SceneDelegate+Catalyst.h"
 #import "PhotosController.h"
 #import <JLRoutes/JLRoutes.h>
 
@@ -27,10 +27,6 @@
     if ([scene isKindOfClass:UIWindowScene.class] == NO) {
         return;
     }
-    
-    MainCoordinator *coordinator = [MainCoordinator new];
-    
-    self.coordinator = coordinator;
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
     
@@ -77,6 +73,10 @@
         
     }
     
+    MainCoordinator *coordinator = [MainCoordinator new];
+    
+    self.coordinator = coordinator;
+    
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     
     [self setupRootViewController];
@@ -88,6 +88,10 @@
         [self.window.rootViewController continueActivity:activity];
         
     }
+    
+#if TARGET_OS_MACCATALYST
+    [self ct_setupToolbar:(UIWindowScene *)scene];
+#endif
         
     [self.window makeKeyAndVisible];
     

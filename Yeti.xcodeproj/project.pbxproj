@@ -227,6 +227,7 @@
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
+		F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */; };
 		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
@@ -1074,6 +1075,8 @@
 		F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ScrollLoad.m"; sourceTree = "<group>"; };
 		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		F09CB6A821637DE200F47036 /* elytraProcessor.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = elytraProcessor.js; sourceTree = "<group>"; };
+		F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SceneDelegate+Catalyst.h"; sourceTree = "<group>"; };
+		F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SceneDelegate+Catalyst.m"; sourceTree = "<group>"; };
 		F09E96422055342000E61681 /* highlight.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = highlight.pack.js; sourceTree = "<group>"; };
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
@@ -1948,6 +1951,8 @@
 				F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */,
 				F001A8412505E8F0006175B9 /* SceneDelegate.h */,
 				F001A8272505E8F0006175B9 /* SceneDelegate.m */,
+				F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */,
+				F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -3300,6 +3305,7 @@
 				F0B0EA4024EC20D800D675B4 /* NSString+GTMNSStringHTMLAdditions.m in Sources */,
 				F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */,
 				F093321624EC14D10066FA41 /* BookmarksManager.m in Sources */,
+				F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */,
 				F067D35D23F43B350034B968 /* Customization.m in Sources */,
 				F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */,
 				F050E0B22154C16600225C6A /* StoreFooter.m in Sources */,

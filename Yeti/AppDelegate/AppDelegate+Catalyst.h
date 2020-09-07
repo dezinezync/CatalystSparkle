@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AppDelegate (Catalyst) <NSToolbarDelegate>
 
-- (void)ct_setupToolbar:(UIWindowScene *)scene;
-
 - (void)ct_setupAppKitBundle;
 
 - (void)ct_setupMenu:(id<UIMenuBuilder>)menuBuilder;

@@ -43,11 +43,7 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) NSBundle *appKitBundle;
 
-@property (nonatomic, strong) NSSet <UIWindow *> *additionalWindows;
-
 @property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
-
-@property (nonatomic, weak) NSToolbar *toolbar;
 
 @property (nonatomic, weak) NSToolbarItem *shareArticleItem;
 

@@ -372,7 +372,7 @@
     
     if ([first containsString:@"FeedVC-"] == YES) {
         
-//        [self.feedsVC continueActivity:activity];
+        [self.mainCoordinator.sidebarVC continueActivity:activity];
         
     }
     

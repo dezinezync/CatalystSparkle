@@ -253,7 +253,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
-    [refresh addTarget:self action:@selector(beginRefreshing:) forControlEvents:UIControlEventValueChanged];
+    [refresh addTarget:self action:@selector(beginRefreshingAll:) forControlEvents:UIControlEventValueChanged];
     refresh.attributedTitle = self.lastUpdateAttributedString;
     
     self.collectionView.refreshControl = refresh;
@@ -768,7 +768,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 #pragma mark - Misc
 
-- (void)beginRefreshing:(UIRefreshControl *)sender {
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
+
+- (void)beginRefreshingAll:(UIRefreshControl *)sender {
     
     if (self->_refreshing) {
         return;
@@ -1094,6 +1098,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         });
         
     } error:nil];
+    
+}
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    
     
 }
 

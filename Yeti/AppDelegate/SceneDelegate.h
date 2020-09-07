@@ -14,5 +14,11 @@
 
 @property (strong, nonatomic) MainCoordinator *coordinator;
 
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, weak) NSToolbar *toolbar;
+
+#endif
+
 @end
 
