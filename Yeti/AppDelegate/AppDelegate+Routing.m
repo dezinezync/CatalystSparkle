@@ -580,9 +580,11 @@
     
     // check if the current feedVC is the same feed
     
-    if (self.coordinator.feedVC != nil
-        && self.coordinator.feedVC.type == FeedVCTypeNatural
-        && [self.coordinator.feedVC.feed.feedID isEqualToNumber:feedID])
+    SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+    
+    if (scene.coordinator.feedVC != nil
+        && scene.coordinator.feedVC.type == FeedVCTypeNatural
+        && [scene.coordinator.feedVC.feed.feedID isEqualToNumber:feedID])
     {
         
         if (articleID != nil) {
@@ -595,9 +597,9 @@
         
     }
     
-    else if (self.coordinator.feedVC != nil) {
+    else if (scene.coordinator.feedVC != nil) {
         
-        FeedVC *feedVC = self.coordinator.feedVC;
+        FeedVC *feedVC = scene.coordinator.feedVC;
         
         if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
             
@@ -638,15 +640,15 @@
     [self popToRoot];
 #endif
     
-    if (self.coordinator.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
-        && self.coordinator.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (scene.coordinator.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        && scene.coordinator.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
-        if (feedID != nil && self.coordinator.feedVC == nil) {
+        if (feedID != nil && scene.coordinator.feedVC == nil) {
             
             Feed *feed = [MyFeedsManager feedForID:feedID];
             
             if (feed != nil) {
-                [self.coordinator showFeedVC:feed];
+                [scene.coordinator showFeedVC:feed];
             }
             
         }
@@ -661,7 +663,7 @@
         
         ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
         
-        [self.coordinator showArticleVC:articleVC];
+        [scene.coordinator showArticleVC:articleVC];
         
     }
     else {
@@ -669,7 +671,7 @@
         Feed *feed = [MyFeedsManager feedForID:feedID];
         
         if (feed != nil) {
-            [self.coordinator showFeedVC:feed];
+            [scene.coordinator showFeedVC:feed];
         }
         
     }
@@ -686,8 +688,10 @@
         return;
     }
     
-    if (self.coordinator.feedVC != nil) {
-        self.coordinator.feedVC.loadOnReady = articleID;
+    SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+    
+    if (scene.coordinator.feedVC != nil) {
+        scene.coordinator.feedVC.loadOnReady = articleID;
     }
     else {
         
@@ -696,7 +700,7 @@
         
         ArticleVC *instance = [[ArticleVC alloc] initWithItem:item];
         
-        [self.coordinator showArticleVC:instance];
+        [scene.coordinator showArticleVC:instance];
     }
 }
 

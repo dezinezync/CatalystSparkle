@@ -38,15 +38,11 @@ AppDelegate *MyAppDelegate = nil;
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(nullable NSDictionary *)launchOptions {
-    
-    return YES;
-    
-}
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     if (SharedPrefs.backgroundRefresh == YES) {
+        
+        [self commonInit:application];
         
         [self setupBackgroundRefresh];
         
@@ -58,89 +54,18 @@ AppDelegate *MyAppDelegate = nil;
 
 - (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(nonnull UISceneSession *)connectingSceneSession options:(nonnull UISceneConnectionOptions *)options {
     
-    UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:UIWindowSceneSessionRoleApplication];
+    UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"Default Configuration" sessionRole:connectingSceneSession.role];
     
-    config.delegateClass = AppDelegate.class;
+    config.delegateClass = SceneDelegate.class;
     
     return config;
     
 }
 
-- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
-    
-    if ([scene isKindOfClass:UIWindowScene.class] == NO) {
-        return;
-    }
-    
-#if TARGET_OS_MACCATALYST
-    MyAppDelegate.additionalWindows = [NSSet new];
-#endif
-    
-    UIWindowScene *windowScene = (UIWindowScene *)scene;
-    
-    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
-
-    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == NO) {
-        
-        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
-        window.canResizeToFitContent = YES;
-        
-        if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
-            
-            PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
-            
-            window.rootViewController = photosVC;
-            
-        }
-        
-        else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
-            
-            FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
-            
-            ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
-#if TARGET_OS_MACCATALYST
-            vc.externalWindow = YES;
-#endif
-            scene.title = item.articleTitle ?: @"Untitled";
-            
-            window.rootViewController = vc;
-            
-        }
-        
-        if (window.rootViewController != nil) {
-#if TARGET_OS_MACCATALYST
-            MyAppDelegate.additionalWindows = [MyAppDelegate.additionalWindows setByAddingObject:window];
-#endif
-            [window makeKeyAndVisible];
-        }
-        else {
-            window = nil;
-        }
-        
-        return;
-        
-    }
-    
-    self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
-    
-    __unused BOOL unused = [self commonInit:UIApplication.sharedApplication];
-    
-#if TARGET_OS_MACCATALYST
-    [self ct_setupToolbar:windowScene];
-#endif
-    
-//    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == YES) {
-//
-//        NSLogDebug(@"Application will restore state");
-//
-//        [(SplitVC *)[self.window rootViewController] continueActivity:activity];
-//
-//        [MyFeedsManager continueActivity:activity];
-//
-//    }
-    
-    [self.window makeKeyAndVisible];
-    
+- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet<UISceneSession *> *)sceneSessions {
+    // Called when the user discards a scene session.
+    // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+    // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 }
 
 - (BOOL)commonInit:(UIApplication *)application {
@@ -152,15 +77,11 @@ AppDelegate *MyAppDelegate = nil;
         
         // code to debug state restoration as of iOS 13
 //#ifdef DEBUG
-//    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDebugLogging"];
-//    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"UIStateRestorationDeveloperMode"];
+//    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDebugLogging"];
+//    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"UIStateRestorationDeveloperMode"];
 //#endif
         
         MyAppDelegate = self;
-        
-        MainCoordinator *coordinator = [MainCoordinator new];
-        
-        self.coordinator = coordinator;
         
 #if TARGET_OS_MACCATALYST
         [self ct_setupAppKitBundle];
@@ -177,13 +98,11 @@ AppDelegate *MyAppDelegate = nil;
             [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
         }
         
-        [self setupRootController];
-        
-        [self.coordinator start];
-        
 //        [MyFeedsManager resetAccount];
         
-        MyFeedsManager.bookmarksManager = self.coordinator.bookmarksManager;
+        SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+        
+        MyFeedsManager.bookmarksManager = scene.coordinator.bookmarksManager;
         
 //        weakify(self);
         
@@ -284,12 +203,6 @@ AppDelegate *MyAppDelegate = nil;
     
 }
 
-- (void)sceneDidBecomeActive:(UIScene *)scene {
-    
-    [self _checkForAppResetPref];
-    
-}
-
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     
     [self _checkForAppResetPref];
@@ -301,75 +214,87 @@ AppDelegate *MyAppDelegate = nil;
 #define kFeedsManager @"FeedsManager"
 #define kArticlesManager @"ArticlesManager"
 
-//- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
-//
-//    return YES;
-//
-//}
-//
-//- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
-//
-//    if (_resetting) {
-//        return NO;
-//    }
-//
-//    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
-//
-//    if (oldVersion) {
-//        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
-//        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
-//        // don't restore across versions.
-//        if (isNewer) {
-//            return NO;
-//        }
-//    }
-//
-//    UIDevice *currentDevice = [UIDevice currentDevice];
-//    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
-//    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
-//    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
-//        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
-//        return NO;
-//    }
-//
-//    _restoring = YES;
-//
-//    NSLogDebug(@"Will restore application state");
-//    return _restoring;
-//}
-//
-//- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
-//
-//
-//    NSLogDebug(@"Application will save restoration data");
-//
-////    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
-////    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
-//}
-//
-//- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
-//    NSLogDebug(@"Application did restore");
-//}
+- (BOOL)application:(UIApplication *)application shouldSaveSecureApplicationState:(nonnull NSCoder *)coder {
 
-- (NSUserActivity *)stateRestorationActivityForScene:(UIScene *)scene {
-    
-    NSUserActivity *restorationActivity = nil;
-    
-    if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
-        
-        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
-        
-        if (restorationActivity != nil) {
-            
-            [MyFeedsManager saveRestorationActivity:restorationActivity];
-            
-        }
-        
+    return YES;
+
+}
+
+- (BOOL)application:(UIApplication *)application shouldRestoreSecureApplicationState:(nonnull NSCoder *)coder {
+
+    if (_resetting) {
+        return NO;
     }
+
+    NSString *oldVersion = [coder decodeObjectForKey:UIApplicationStateRestorationBundleVersionKey];
+
+    if (oldVersion) {
+        NSString *currentVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+        BOOL isNewer = ([currentVersion compare:oldVersion options:NSNumericSearch] == NSOrderedDescending);
+        // don't restore across versions.
+        if (isNewer) {
+            return NO;
+        }
+    }
+
+    UIDevice *currentDevice = [UIDevice currentDevice];
     
-    return restorationActivity;
+    UIUserInterfaceIdiom restorationInterfaceIdiom = [[coder decodeObjectForKey:UIApplicationStateRestorationUserInterfaceIdiomKey] integerValue];
+    
+    UIUserInterfaceIdiom currentInterfaceIdiom = currentDevice.userInterfaceIdiom;
+    
+    if (restorationInterfaceIdiom != currentInterfaceIdiom) {
+        NSLogDebug(@"Ignoring restoration data for interface idiom: %@", @(restorationInterfaceIdiom));
+        return NO;
+    }
+
+    _restoring = YES;
+
+    NSLogDebug(@"Will restore application state");
+    return _restoring;
+}
+
+- (void)application:(UIApplication *)application willEncodeRestorableStateWithCoder:(NSCoder *)coder {
+
+    NSLogDebug(@"Application will save restoration data");
+
+//    [coder encodeObject:MyFeedsManager forKey:kFeedsManager];
+//    [coder encodeObject:ArticlesManager.shared forKey:@"ArticlesManager"];
+}
+
+- (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
+    NSLogDebug(@"Application did restore");
+}
+
+- (nullable UIViewController *) application:(UIApplication *)application viewControllerWithRestorationIdentifierPath:(NSArray<NSString *> *)identifierComponents coder:(NSCoder *)coder {
+    
+    SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+    
+    return scene.coordinator.splitViewController;
     
 }
+
+//- (NSUserActivity *)stateRestorationActivityForScene:(UIScene *)scene {
+//
+//    return scene.userActivity;
+//
+//    NSUserActivity *restorationActivity = nil;
+//
+//    if (self.window.rootViewController != nil && [self.window.rootViewController isKindOfClass:SplitVC.class] == YES) {
+//
+//        restorationActivity = [(SplitVC *)[self.window rootViewController] continuationActivity];
+//
+//        if (restorationActivity != nil) {
+//
+//            [MyFeedsManager saveRestorationActivity:restorationActivity];
+//
+//        }
+//
+//    }
+//
+//    return restorationActivity;
+//
+//}
 
 #pragma mark -
 
@@ -425,25 +350,7 @@ AppDelegate *MyAppDelegate = nil;
 //        return;
 //    }
     
-    [YetiThemeKit loadThemeKit];
-    
-    SplitVC *splitVC = [[SplitVC alloc] init];
-    
-    splitVC.mainCoordinator = self.coordinator;
-    
-    self.window.rootViewController = splitVC;
-    
-    self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
-    
-    [splitVC loadViewIfNeeded];
-    
-    NSString *themeName = SharedPrefs.theme;
-    
-    YTThemeKit.theme = [YTThemeKit themeNamed:themeName];
-    
     [self loadCodeTheme];
-    
-//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(refreshViews) name:ThemeDidUpdate object:nil];
     
     [self refreshViews];
     
@@ -522,20 +429,6 @@ AppDelegate *MyAppDelegate = nil;
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
     return [JLRoutes routeURL:url];
-}
-
-- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
-    
-    if (URLContexts.count) {
-        
-        UIOpenURLContext *ctx = [URLContexts allObjects].firstObject;
-        
-        NSURL *URL = ctx.URL;
-        
-        __unused BOOL unused = [JLRoutes routeURL:URL];
-        
-    }
-    
 }
 
 @end

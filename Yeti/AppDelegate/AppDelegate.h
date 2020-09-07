@@ -11,6 +11,7 @@
 
 #import "RMStore.h"
 #import "Coordinator.h"
+#import "SceneDelegate.h"
 
 @class RMStoreKeychainPersistence;
 
@@ -18,13 +19,11 @@
 
 extern AppDelegate * MyAppDelegate;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, UIWindowSceneDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate> {
     
     dispatch_queue_t _bgTaskDispatchQueue;
     
 }
-
-@property (nonatomic, strong) UIWindow *window;
 
 @property (nonatomic, weak) UIAlertController *addFeedDialog;
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
@@ -33,8 +32,6 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) id<RMStoreReceiptVerifier> receiptVerifier;
 @property (nonatomic, strong) id<RMStoreTransactionPersistor> persistence;
-
-@property (nonatomic, strong) MainCoordinator *coordinator;
 
 #pragma mark - Background Tasks
 

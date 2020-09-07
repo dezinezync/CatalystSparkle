@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F001A8272505E8F0006175B9 /* SceneDelegate.m */; };
 		F004560B24DE81DB0094A6A3 /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560A24DE81DB0094A6A3 /* FeedCell.m */; };
 		F004561024DE85B60094A6A3 /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560F24DE85B60094A6A3 /* FolderCell.m */; };
 		F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1623F432CA002BCF41 /* CustomizeVC.m */; };
@@ -704,6 +705,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F001A8272505E8F0006175B9 /* SceneDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
+		F001A8412505E8F0006175B9 /* SceneDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		F004560924DE81DB0094A6A3 /* FeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedCell.h; sourceTree = "<group>"; };
 		F004560A24DE81DB0094A6A3 /* FeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedCell.m; sourceTree = "<group>"; };
 		F004560E24DE85B60094A6A3 /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
@@ -1943,6 +1946,8 @@
 				F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */,
 				F07CA623249BA03500EA4212 /* AppDelegate+CatalystActions.h */,
 				F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */,
+				F001A8412505E8F0006175B9 /* SceneDelegate.h */,
+				F001A8272505E8F0006175B9 /* SceneDelegate.m */,
 			);
 			path = AppDelegate;
 			sourceTree = "<group>";
@@ -3262,6 +3267,7 @@
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
+				F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */,
 				F0CDA0CB24750BCC00DC1217 /* FeedVC+ContextMenus.m in Sources */,
 				F04E92BC21B5427B00AD1FB2 /* YTExtractor.m in Sources */,
 				F0E5F50824CEC854007E6D1E /* PhotosController.m in Sources */,

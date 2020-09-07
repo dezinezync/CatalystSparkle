@@ -12,7 +12,7 @@
 #import "FeedVC+SearchController.h"
 #import "ArticleVC.h"
 
-@interface SplitVC : UISplitViewController <UIViewControllerRestoration>
+@interface SplitVC : UISplitViewController <UIViewControllerRestoration, UIStateRestoring>
 
 @property (nonatomic, weak) FeedVC *feedVC;
 

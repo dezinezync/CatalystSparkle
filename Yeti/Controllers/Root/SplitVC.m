@@ -42,7 +42,7 @@
         }
             
         self.restorationIdentifier = NSStringFromClass(self.class);
-//        self.restorationClass = self.class;
+        self.restorationClass = self.class;
         
 //        self.separatorStrokeColor = UIColor.separatorColor;
 //        self.delegate = self;

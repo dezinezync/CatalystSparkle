@@ -127,7 +127,9 @@
                 return;
             }
             
-            SidebarVC *vc = self.coordinator.sidebarVC;
+            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+            
+            SidebarVC *vc = scene.coordinator.sidebarVC;
             
             if (vc == nil) {
                 return;
