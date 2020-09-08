@@ -38,6 +38,8 @@
     BOOL _initialSyncCompleted;
     BOOL _requiresUpdatingUnreadSharedData;
     
+    NSUserActivity *_restorationActivity;
+    
 }
 
 @property (nonatomic, strong, readwrite) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
@@ -764,6 +766,14 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [self.mainCoordinator showFeedVC:item];
     
+    if (self->_restorationActivity != nil) {
+        
+        [self.mainCoordinator.feedVC continueActivity:self->_restorationActivity];
+        
+        self->_restorationActivity = nil;
+        
+    }
+    
 }
 
 #pragma mark - Misc
@@ -1161,7 +1171,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (indexPath != nil) {
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        weakify(self);
+        
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            strongify(self);
+            
+            self->_restorationActivity = activity;
             
             [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
             

@@ -1182,37 +1182,40 @@
 
 - (void)continueActivity:(NSUserActivity *)activity {
     
-    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    // check if we're showing the right feed
     
-    NSString * activityIdentifier = [restorationIdentifiers rz_find:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+    
+    // check if an article is stored
+    NSNumber *selectedItem = [activity.userInfo valueForKeyPath:@"feed.selectedItem"];
+    
+    if (selectedItem) {
         
-        return [obj containsString:@"ArticleVC"];
+        self.loadOnReady = selectedItem;
         
-    }];
-    
-    if (activityIdentifier == nil) {
-        return;
+        _restorationActivity = activity;
+        
+        [self loadArticle];
+        
     }
-    
-    NSString *articleIDString = [[activityIdentifier componentsSeparatedByString:@"-"] lastObject];
-    
-    if ([articleIDString integerValue] < 0 || [articleIDString integerValue] == NSNotFound) {
-        return;
-    }
-    
-    NSUInteger articleID = articleIDString.integerValue;
-    
-    self.loadOnReady = @(articleID);
-    
-    _restorationActivity = activity;
-    
-    [self loadArticle];
     
 }
 
 - (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
     
+    NSMutableDictionary *feed = @{}.mutableCopy;
     
+    // Check for a selected item
+    NSIndexPath *selected = self.tableView.indexPathForSelectedRow;
+    
+    if (selected != nil) {
+        
+        FeedItem *item = [self.DS itemIdentifierForIndexPath:selected];
+        
+        [feed setObject:item.identifier forKey:@"selectedItem"];
+        
+    }
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"feed": feed}];
     
 }
 

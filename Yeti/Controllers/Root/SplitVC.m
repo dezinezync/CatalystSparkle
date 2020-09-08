@@ -332,11 +332,7 @@
         
     }];
     
-    controllers = [[controllers rz_flatten] rz_filter:^BOOL(NSString * obj, NSUInteger idx, NSArray *array) {
-        
-        return [obj isEqualToString:@"FeedsVC"] == NO;
-        
-    }];
+    controllers = [controllers rz_flatten];
     
     controllers = [[[NSOrderedSet orderedSetWithArray:controllers] objectEnumerator] allObjects];
     
@@ -368,20 +364,9 @@
     
     NSLogDebug(@"Continuing activity: %@", restorationIdentifiers);
     
-    for (NSString *identifier in restorationIdentifiers) {
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            if ([identifier isEqualToString:NSStringFromClass(SidebarVC.class)]) {
-                [self.mainCoordinator.sidebarVC continueActivity:activity];
-            }
-            else if ([identifier containsString:@"FeedVC"] && self.feedVC != nil) {
-                [self.mainCoordinator.feedVC continueActivity:activity];
-            }
-            
-        });
-        
-    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.mainCoordinator.sidebarVC continueActivity:activity];
+    });
     
 }
 
