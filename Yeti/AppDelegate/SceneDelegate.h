@@ -18,6 +18,8 @@
 
 @property (nonatomic, weak) NSToolbar *toolbar;
 
+@property (nonatomic, weak) NSMenuToolbarItem *sortingItem;
+
 #endif
 
 @end

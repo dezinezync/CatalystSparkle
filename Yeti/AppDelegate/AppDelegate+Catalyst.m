@@ -120,6 +120,11 @@
     
     UIMenu *sortingMenu = [UIMenu menuWithTitle:@"Sort By" image:nil identifier:@"SortingMenu" options:kNilOptions children:@[sortAllDesc, sortAllAsc, unreadDesc, unreadAsc]];
     
+    UIKeyCommand *toggleSidebar = [UIKeyCommand commandWithTitle:@"Toggle Sidebar" image:nil action:@selector(toggleSidebar:) input:@"s" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate  propertyList:nil];
+    
+    UIMenu *toggleSidebarMenu = [UIMenu menuWithTitle:@"Toggle Sidebar" image:nil identifier:@"ToggleSidebar" options:UIMenuOptionsDisplayInline children:@[toggleSidebar]];
+    
+    [builder insertChildMenu:toggleSidebarMenu atStartOfMenuForIdentifier:UIMenuView];
     [builder insertChildMenu:sortingMenu atStartOfMenuForIdentifier:UIMenuView];
     
     // Go menu

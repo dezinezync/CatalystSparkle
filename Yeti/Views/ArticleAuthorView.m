@@ -26,6 +26,8 @@
     
     if (self = [super initWithNib]) {
         
+        self.backgroundColor = UIColor.systemBackgroundColor;
+        
         self.translatesAutoresizingMaskIntoConstraints = NO;
         
         self.titleLabel.font = TypeFactory.shared.titleFont;

@@ -130,35 +130,6 @@
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
     
-    SceneDelegate *sceneDelegate = (id)[self.view.window.windowScene delegate];
-
-    NSToolbarItem *refreshFeedItem = [[[[sceneDelegate.toolbar items] rz_map:^id(__kindof NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
-        
-        if ([obj isKindOfClass:NSToolbarItemGroup.class]) {
-            
-            return [(NSToolbarItemGroup *)obj subitems];
-            
-        }
-        
-        return obj;
-        
-    }] rz_flatten] rz_find:^BOOL(NSToolbarItem * obj, NSUInteger idx, NSArray *array) {
-        
-        return [obj.itemIdentifier isEqualToString:@"com.yeti.toolbar.refreshFeed"];
-        
-    }];
-    
-    if (refreshFeedItem != nil) {
-        
-        if (self.type == FeedVCTypeToday || self.type == FeedVCTypeUnread) {
-            [refreshFeedItem setEnabled:YES];
-        }
-        else {
-            [refreshFeedItem setEnabled:NO];
-        }
-        
-    }
-    
 #endif
     
     if (_reloadDataset) {
@@ -171,24 +142,18 @@
     
 }
 
-//- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-//    
-//    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
-//    
-//    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-//        
-//        if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-//            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
-//            
-//            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
-//        }
-//        else {
-//            self.navigationItem.leftBarButtonItem = nil;
-//        }
-//        
-//    } completion:nil];
-//    
-//}
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+#if TARGET_OS_MACCATALYST
+    SceneDelegate *delegate = (id)[self.view.window.windowScene delegate];
+    
+    [delegate.toolbar removeItemAtIndex:5];
+    [delegate.toolbar insertItemWithItemIdentifier:@"com.yeti.toolbar.sortingMenu" atIndex:5];
+#endif
+    
+}
 
 - (void)dealloc {
     
@@ -674,14 +639,12 @@
         return nil;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect layoutFrame = [self.view.readableContentGuide layoutFrame];
     
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.padding = UIEdgeInsetsMake(0, layoutFrame.origin.x, 0, layoutFrame.origin.x);
     label.numberOfLines = 0;
-    label.backgroundColor = theme.cellColor;
+    label.backgroundColor = UIColor.systemBackgroundColor;
     label.opaque = YES;
     
     NSString *title = @"No Articles";
@@ -696,14 +659,14 @@
     UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     
     NSDictionary *attributes = @{NSFontAttributeName: font,
-                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
-                   NSForegroundColorAttributeName: theme.titleColor,
+                   NSForegroundColorAttributeName: UIColor.labelColor,
                    NSParagraphStyleAttributeName: para
                    };
     

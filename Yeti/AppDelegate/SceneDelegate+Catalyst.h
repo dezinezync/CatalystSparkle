@@ -12,9 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_MACCATALYST
 
-@interface SceneDelegate (Catalyst)
+@interface SceneDelegate (Catalyst) <NSToolbarDelegate>
 
 - (void)ct_setupToolbar:(UIWindowScene *)scene;
+
+- (UIImage *)imageForSortingOption:(YetiSortOption)option;
 
 @end
 

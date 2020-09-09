@@ -263,26 +263,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [super viewDidAppear:animated];
     
-#if TARGET_OS_MACCATALYST
-    
-    if (self.isExternalWindow == NO) {
-    
-        NSToolbar *toolbar = [[[self.view.window windowScene] titlebar] toolbar];
-        
-        NSArray <NSToolbarItem *> *items = toolbar.items;
-        
-        if ([items rz_find:^BOOL(NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
-            return [obj.itemIdentifier isEqualToString:@"com.yeti.toolbar.articleWindow"];
-        }] == nil) {
-         
-            [toolbar insertItemWithItemIdentifier:@"com.yeti.toolbar.articleWindow" atIndex:(items.count - 3)];
-            
-        }
-        
-    }
-    
-#endif
-    
     [self becomeFirstResponder];
     
 }

@@ -20,7 +20,7 @@
     
     scene.titlebar.toolbar = toolbar;
     
-    scene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnifiedCompact;
+    scene.titlebar.toolbarStyle = UITitlebarToolbarStyleAutomatic;
     
     scene.titlebar.separatorStyle = UITitlebarSeparatorStyleAutomatic;
     
@@ -32,33 +32,31 @@
 
 #pragma mark - <NSToolbarDelegate>
 
-#define kFeedsToolbarGroup      @"FeedsToolbarGroup"
-#define kFeedToolbarGroup       @"FeedToolbarGroup"
-#define kArticleToolbarGroup    @"ArticleToolbarGroup"
-#define kToolbarIdentifierGroups @[kFeedsToolbarGroup, kFeedToolbarGroup, kArticleToolbarGroup]
-
-#define kNewFeedToolbarIdentifier       @[@"com.yeti.toolbar.newFeed", @"New Feed"]
-#define kNewFolderToolbarIdentifier     @[@"com.yeti.toolbar.newFolder", @"New Folder"]
 #define kRefreshAllToolbarIdentifier    @[@"com.yeti.toolbar.refreshAll", @"Refresh All"]
 
 #define kRefreshFeedToolbarIdentifier   @[@"com.yeti.toolbar.refreshFeed", @"Refresh Feed"]
 
 #define kShareArticleToolbarIdentifier   @[@"com.yeti.toolbar.shareArticle", @"Share Article"]
 
+#define kNewItemToolbarIdentifier @"newItemToolbarIdentifier"
 #define kAppearanceToolbarIdentifier @"appearanceToolbarIdentifier"
 #define kOpenInBrowserToolbarIdentifier @"openInBrowserToolbarIdentifier"
+#define kOpenInNewWindowToolbarIdentifier @"com.yeti.toolbar.articleWindow"
+#define kFeedTitleViewToolbarIdentifier @"com.yeti.toolbar.feedTitle"
+#define kSortingMenuToolbarIdentifier @"com.yeti.toolbar.sortingMenu"
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
     NSArray *items = @[
-        NSToolbarToggleSidebarItemIdentifier,
-        kNewFeedToolbarIdentifier[0],
-        kNewFolderToolbarIdentifier[0],
-        kRefreshAllToolbarIdentifier[0],
+        NSToolbarFlexibleSpaceItemIdentifier,
+        kNewItemToolbarIdentifier,
         NSToolbarPrimarySidebarTrackingSeparatorItemIdentifier,
+        NSToolbarFlexibleSpaceItemIdentifier,
         kRefreshFeedToolbarIdentifier[0],
+        kSortingMenuToolbarIdentifier,
         NSToolbarSupplementarySidebarTrackingSeparatorItemIdentifier,
         NSToolbarFlexibleSpaceItemIdentifier,
+        kOpenInNewWindowToolbarIdentifier,
         kOpenInBrowserToolbarIdentifier,
         kAppearanceToolbarIdentifier,
         kShareArticleToolbarIdentifier[0]
@@ -81,7 +79,43 @@
     UIImage *image = nil;
     NSToolbarItem *item = nil;
     
-    if ([itemIdentifier isEqualToString:@"com.yeti.toolbar.articleWindow"]) {
+    if ([itemIdentifier isEqualToString:kNewItemToolbarIdentifier]) {
+        
+        image = [UIImage systemImageNamed:@"plus"];
+        
+        title = @"New";
+        
+        UIAction *newFeedAction = [UIAction actionWithTitle:@"New Feed" image:[UIImage systemImageNamed:@"plus"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [self.coordinator.sidebarVC didTapAdd:nil];
+            
+        }];
+        
+        UIAction *newFolderAction = [UIAction actionWithTitle:@"New Folder" image:[UIImage systemImageNamed:@"folder.badge.plus"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            [self.coordinator.sidebarVC didTapAddFolder:nil];
+            
+        }];
+        
+        UIAction *reccomendationsAction = [UIAction actionWithTitle:@"Recommendations" image:[UIImage systemImageNamed:@"flame"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [self.coordinator.sidebarVC didTapRecommendations:nil];
+            
+        }];
+        
+        UIMenu *menu = [UIMenu menuWithChildren:@[newFeedAction, newFolderAction, reccomendationsAction]];
+        
+//        UIBarButtonItem *menuItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd menu:menu];
+        
+        NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kNewItemToolbarIdentifier];
+        menuToolbarItem.showsIndicator = YES;
+        menuToolbarItem.itemMenu = menu;
+        menuToolbarItem.image = [UIImage systemImageNamed:@"plus"];
+        
+        item = menuToolbarItem;
+        
+    }
+    else if ([itemIdentifier isEqualToString:kOpenInNewWindowToolbarIdentifier]) {
         
         image = [UIImage systemImageNamed:@"macwindow.on.rectangle"];
         
@@ -90,29 +124,6 @@
         UIBarButtonItem * button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(openArticleInNewWindow)];
         
         item = [self toolbarItemWithItemIdentifier:@"com.yeti.toolbar.articleWindow" title:@"New Window" button:button];
-        
-    }
-    
-    else if ([itemIdentifier isEqualToString:kNewFeedToolbarIdentifier[0]]) {
-        
-        title = kNewFeedToolbarIdentifier[1];
-        
-        image = [UIImage systemImageNamed:@"plus"];
-        
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didTapAdd:)];
-        
-        item = [self toolbarItemWithItemIdentifier:kNewFeedToolbarIdentifier[0] title:title button:button];
-        
-    }
-    else if ([itemIdentifier isEqualToString:kNewFolderToolbarIdentifier[0]]) {
-        
-        title = kNewFolderToolbarIdentifier[1];
-        
-        image = [UIImage systemImageNamed:@"folder.badge.plus"];
-        
-        button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(didTapAddFolder:)];
-        
-        item = [self toolbarItemWithItemIdentifier:kNewFolderToolbarIdentifier[0] title:title button:button];
         
     }
     else if ([itemIdentifier isEqualToString:kRefreshAllToolbarIdentifier[0]]) {
@@ -170,6 +181,81 @@
         item = [self toolbarItemWithItemIdentifier:kOpenInBrowserToolbarIdentifier title:title button:button];
         
     }
+    else if ([itemIdentifier isEqualToString:kFeedTitleViewToolbarIdentifier]) {
+        
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120.f, 24.f)];
+        label.textColor = UIColor.blackColor;
+        label.font = [UIFont systemFontOfSize:13.f weight:UIFontWeightSemibold];
+        label.text = @"Feed Title";
+        label.numberOfLines = 0;
+        label.backgroundColor = UIColor.redColor;
+
+        label.translatesAutoresizingMaskIntoConstraints = YES;
+        [label setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisHorizontal];
+        [label setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisVertical];
+        [label.widthAnchor constraintEqualToConstant:120.f].active = YES;
+        [label.heightAnchor constraintEqualToConstant:24.f].active = YES;
+        
+        UIBarButtonItem *viewBarItem = [[UIBarButtonItem alloc] initWithCustomView:label];
+        
+        item = [self toolbarItemWithItemIdentifier:kFeedTitleViewToolbarIdentifier title:@"Feed Title" button:viewBarItem];
+        
+    }
+    else if ([itemIdentifier isEqualToString:kSortingMenuToolbarIdentifier]) {
+        
+        image = [self imageForSortingOption:SharedPrefs.sortingOption];
+        
+        title = @"Sort Feed";
+        
+        UIAction *unreadLatest = [UIAction actionWithTitle:@"Unread - Latest First" image:[self imageForSortingOption:YTSortUnreadDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadDesc) to:nil from:nil forEvent:nil];
+            
+            self.sortingItem.image = [self imageForSortingOption:YTSortUnreadDesc];
+            
+        }];
+        
+        UIAction *unreadOldest = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self imageForSortingOption:YTSortUnreadAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadAsc) to:nil from:nil forEvent:nil];
+            
+            self.sortingItem.image = [self imageForSortingOption:YTSortUnreadAsc];
+            
+        }];
+        
+        UIAction *allLatest = [UIAction actionWithTitle:@"All - Latest First" image:[self imageForSortingOption:YTSortAllDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [UIApplication.sharedApplication sendAction:@selector(setSortingAllDesc) to:nil from:nil forEvent:nil];
+            
+            self.sortingItem.image = [self imageForSortingOption:YTSortAllDesc];
+            
+        }];
+        
+        UIAction *allOldest = [UIAction actionWithTitle:@"All - Oldest First" image:[self imageForSortingOption:YTSortAllAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [UIApplication.sharedApplication sendAction:@selector(setSortingAllAsc) to:nil from:nil forEvent:nil];
+            
+            self.sortingItem.image = [self imageForSortingOption:YTSortAllAsc];
+            
+        }];
+        
+        if (self.coordinator.feedVC != nil && self.coordinator.feedVC.type == FeedVCTypeUnread) {
+            allLatest.attributes = UIMenuElementAttributesHidden;
+            allOldest.attributes = UIMenuElementAttributesHidden;
+        }
+        
+        UIMenu *menu = [UIMenu menuWithChildren:@[allLatest, allOldest, unreadLatest, unreadOldest]];
+        
+        NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kSortingMenuToolbarIdentifier];
+        menuToolbarItem.showsIndicator = YES;
+        menuToolbarItem.itemMenu = menu;
+        menuToolbarItem.image = [UIImage systemImageNamed:@"arrow.up.arrow.down"];
+        
+        item = menuToolbarItem;
+        
+        self.sortingItem = (NSMenuToolbarItem *)item;
+        
+    }
     
 #ifdef DEBUG
     NSAssert(item != nil, @"Item should be non-nil");
@@ -178,6 +264,8 @@
     return item;
     
 }
+
+#pragma mark - Helpers
 
 - (NSToolbarItem *)toolbarItemWithItemIdentifier:(NSToolbarItemIdentifier)itemIdentifier title:(NSString *)title button:(UIBarButtonItem *)button {
     
@@ -193,6 +281,27 @@
     item.toolTip = title;
     
     return item;
+    
+}
+
+- (UIImage *)imageForSortingOption:(YetiSortOption)option {
+    
+    UIImage *image = nil;
+    
+    if ([option isEqualToString:YTSortAllDesc]) {
+        image = [UIImage systemImageNamed:@"arrow.down.circle"];
+    }
+    else if ([option isEqualToString:YTSortAllAsc]) {
+        image = [UIImage systemImageNamed:@"arrow.up.circle"];
+    }
+    else if ([option isEqualToString:YTSortUnreadDesc]) {
+        image = [UIImage systemImageNamed:@"arrow.down.circle.fill"];
+    }
+    else if ([option isEqualToString:YTSortUnreadAsc]) {
+        image = [UIImage systemImageNamed:@"arrow.up.circle.fill"];
+    }
+    
+    return image;
     
 }
 
