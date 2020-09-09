@@ -9,6 +9,7 @@
 #import "FeedVC+ContextMenus.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
+#import "FeedHeaderView.h"
 
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
@@ -20,6 +21,9 @@
 #import "NSString+ImageProxy.h"
 
 #import "Coordinator.h"
+
+#import "NSString+ImageProxy.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #if TARGET_OS_MACCATALYST
 
@@ -260,11 +264,56 @@
     
 }
 
+- (void)setupTableHeaderView {
+    
+    FeedHeaderView *header = [[FeedHeaderView alloc] initWithNib];
+    
+    NSString *path = [self.feed faviconURI];
+    
+    if (path != nil) {
+         
+        if (SharedPrefs.imageProxy) {
+            
+            path = [path pathForImageProxy:YES maxWidth:128.f quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:SharedPrefs.imageLoading];
+            
+        }
+        
+        NSURL *url = [NSURL URLWithString:path];
+        
+        [header.faviconView sd_setImageWithURL:url];
+        
+    }
+    
+    header.titleLabel.text = self.feed.displayTitle;
+    
+    if (self.feed.summary != nil && [self.feed.summary isBlank] == NO) {
+        header.descriptionLabel.text = [self.feed.summary stringByDecodingHTMLEntities];
+    }
+    else if (self.feed.extra.title != nil && [self.feed.extra.title isBlank] == NO) {
+        header.descriptionLabel.text = [self.feed.extra.title stringByDecodingHTMLEntities];
+    }
+    
+    header.descriptionLabel.preferredMaxLayoutWidth = self.view.bounds.size.width - 24.f;
+    [header.descriptionLabel sizeToFit];
+    
+    [header.mainStackView setNeedsUpdateConstraints];
+    [header setNeedsUpdateConstraints];
+    [header setNeedsLayout];
+    
+    self.tableView.tableHeaderView = header;
+    
+}
+
 - (void)setupTableView {
     
     [self setupDatasource];
     
-    self.tableView.prefetchDataSource = self;
+    if (self.type == FeedVCTypeNatural
+        && self.feed != nil
+        && self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+        
+        [self setupTableHeaderView];
+    }
     
     self.tableView.tableFooterView = [UIView new];
     self.tableView.estimatedRowHeight =  150.f;
@@ -812,127 +861,6 @@
     }
     
 }
-
-#pragma mark - <UITableViewDatasourcePrefetching>
-//
-//- (void)tableView:(UITableView *)tableView prefetchRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
-//
-//    BOOL showImage = SharedPrefs.imageLoading != ImageLoadingNever;
-//
-//    if (CheckWiFi() == NO && showImage == YES) {
-//        showImage = NO;
-//    }
-//
-//    if (showImage == NO) {
-//        return;
-//    }
-//
-//    BOOL imageProxy = SharedPrefs.imageProxy;
-//
-//    NSMutableArray <NSURL *> *imagesToCache = [NSMutableArray new];
-//
-//    // get any cell
-//    ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPaths.firstObject];
-//
-//    for (NSIndexPath *indexPath in indexPaths) {
-//
-//        FeedItem *article = [self itemForIndexPath:indexPath];
-//
-//        if (article == nil) {
-//            continue;
-//        }
-//
-//        if (self.type != FeedVCTypeNatural) {
-//
-//            // should pre-cache the Favicon
-//            Feed *feed = [ArticlesManager.shared feedForID:article.feedID];
-//
-//            if (feed != nil) {
-//
-//                NSString *faviconURL = feed.faviconURI;
-//
-//                if (faviconURL != nil) {
-//
-//                    CGFloat maxWidth = 24.f;
-//
-//                    if (imageProxy == YES) {
-//
-//                        faviconURL = [faviconURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
-//
-//                    }
-//
-//                    if (faviconURL) {
-//
-//                        [imagesToCache addObject:[NSURL URLWithString:faviconURL]];
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//        }
-//
-//        // check for cover image
-//        NSString *coverImageURL = article.coverImage;
-//
-//        if (coverImageURL == nil && article.content != nil && article.content.count > 0) {
-//
-//            Content *content = [article.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
-//
-//                if (prev && [prev.type isEqualToString:@"image"]) {
-//                    return prev;
-//                }
-//
-//                return current;
-//            }];
-//
-//            if (content != nil) {
-//                article.coverImage = content.url;
-//                coverImageURL = article.coverImage;
-//            }
-//
-//        }
-//
-//        if (coverImageURL != nil) {
-//
-//            CGFloat maxWidth = cell.coverImage.bounds.size.width;
-//
-//            if (imageProxy == YES) {
-//
-//                coverImageURL = [coverImageURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
-//
-//            }
-//
-//            if (coverImageURL != nil) {
-//
-//                [imagesToCache addObject:[NSURL URLWithString:coverImageURL]];
-//
-//            }
-//
-//        }
-//
-//    }
-//
-//    if (imagesToCache.count > 0) {
-//
-//        self.prefetchingTasks = [SDWebImagePrefetcher.sharedImagePrefetcher prefetchURLs:imagesToCache];
-//
-//    }
-//
-//}
-//
-//- (void)tableView:(UITableView *)tableView cancelPrefetchingForRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
-//
-//    if (self.prefetchingTasks != nil) {
-//
-//        [self.prefetchingTasks cancel];
-//
-//        self.prefetchingTasks = nil;
-//
-//    }
-//
-//}
 
 #pragma mark - Setters
 
