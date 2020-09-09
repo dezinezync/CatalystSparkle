@@ -51,6 +51,7 @@
         label.translatesAutoresizingMaskIntoConstraints = NO;
         label.padding = UIEdgeInsetsMake(0, 8.f, 0, 8.f);
         label.opaque = YES;
+        label.backgroundColor = UIColor.systemBackgroundColor;
         
         [scrollView addSubview:label];
         
@@ -68,15 +69,13 @@
 #pragma mark - Overrides
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
-    
+#if !TARGET_OS_MACCATALYST
     [super setBackgroundColor:backgroundColor];
-    
-    self.scrollView.backgroundColor = backgroundColor;
 
-    for (UIView *view in self.scrollView.subviews) {
-        view.backgroundColor = backgroundColor;
-    }
-    
+    self.scrollView.backgroundColor = backgroundColor;
+#endif
+    self.label.backgroundColor = backgroundColor;
+
 }
 
 - (NSString *)accessibilityLabel {
@@ -117,10 +116,11 @@
     [self.scrollView setNeedsLayout];
     
     [self invalidateIntrinsicContentSize];
-    
+#if !TARGET_OS_MACCATALYST
     for (UIView *subview in self.scrollView.subviews) {
         subview.backgroundColor = self.backgroundColor;
     }
+#endif
 }
 
 @end

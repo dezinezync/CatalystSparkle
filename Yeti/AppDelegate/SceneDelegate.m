@@ -9,6 +9,8 @@
 #import "PhotosController.h"
 #import <JLRoutes/JLRoutes.h>
 
+#import "CodeParser.h"
+
 @interface UIViewController (ElytraStateRestoration)
 
 - (void)continueActivity:(NSUserActivity *)activity;
@@ -80,6 +82,8 @@
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     
     [self setupRootViewController];
+    
+    [self loadCodeTheme];
     
     [self.coordinator start];
     
@@ -184,6 +188,21 @@
     self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
     
     [splitVC loadViewIfNeeded];
+    
+}
+
+- (void)loadCodeTheme {
+    
+    [CodeParser.sharedCodeParser loadTheme:@"auto"];
+    
+    return;
+    
+    if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        [CodeParser.sharedCodeParser loadTheme:@"dark"];
+    }
+    else {
+        [CodeParser.sharedCodeParser loadTheme:@"light"];
+    }
     
 }
 

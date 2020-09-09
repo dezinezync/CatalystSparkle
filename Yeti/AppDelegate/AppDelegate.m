@@ -323,31 +323,11 @@ AppDelegate *MyAppDelegate = nil;
 
 - (void)setupRootController {
     
-//    if (_restoring == YES) {
-//        _restoring = NO;
-//        return;
-//    }
-    
-    [self loadCodeTheme];
-    
     [self refreshViews];
     
 }
 
 #pragma mark - Theming
-
-- (void)loadCodeTheme {
-    
-    NSString *themeName = SharedPrefs.theme;
-    
-    if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        [CodeParser.sharedCodeParser loadTheme:@"dark"];
-    }
-    else {
-        [CodeParser.sharedCodeParser loadTheme:themeName];
-    }
-    
-}
 
 // https://ngs.io/2014/10/26/refresh-ui-appearance/
 
