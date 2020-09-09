@@ -763,10 +763,13 @@
             return;
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
-        sfvc.preferredControlTintColor = self.window.tintColor;
+        
+        SceneDelegate *delegate = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate;
+        
+        sfvc.preferredControlTintColor = delegate.window.tintColor;
         
         // get the top VC
-        UISplitViewController *splitVC = (UISplitViewController *)[[self window] rootViewController];
+        UISplitViewController *splitVC = (UISplitViewController *)[[delegate window] rootViewController];
         
         UINavigationController *navVC = nil;
         

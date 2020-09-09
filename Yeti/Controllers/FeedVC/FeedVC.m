@@ -310,7 +310,7 @@
     
     if (self.type == FeedVCTypeNatural
         && self.feed != nil
-        && self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+        && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
         
         [self setupTableHeaderView];
     }
