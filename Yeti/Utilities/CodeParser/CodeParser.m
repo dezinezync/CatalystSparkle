@@ -40,7 +40,7 @@ CodeParser *MyCodeParser;
         
         NSString *hlpath = [self.bundle pathForResource:@"hljs" ofType:@"js"];
         
-        [self loadTheme:@"light"];
+        [self loadTheme:@"auto"];
         
         NSError *error = nil;
         

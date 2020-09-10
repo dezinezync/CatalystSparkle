@@ -14,8 +14,6 @@
 
 @property (strong, nonatomic) MainCoordinator *coordinator;
 
-- (void)loadCodeTheme;
-
 #if TARGET_OS_MACCATALYST
 
 @property (nonatomic, weak) NSToolbar *toolbar;

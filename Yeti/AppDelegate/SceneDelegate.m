@@ -83,8 +83,6 @@
     
     [self setupRootViewController];
     
-    [self loadCodeTheme];
-    
     [self.coordinator start];
     
     if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
@@ -188,21 +186,6 @@
     self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
     
     [splitVC loadViewIfNeeded];
-    
-}
-
-- (void)loadCodeTheme {
-    
-    [CodeParser.sharedCodeParser loadTheme:@"auto"];
-    
-    return;
-    
-    if (self.window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        [CodeParser.sharedCodeParser loadTheme:@"dark"];
-    }
-    else {
-        [CodeParser.sharedCodeParser loadTheme:@"light"];
-    }
     
 }
 

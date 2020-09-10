@@ -87,9 +87,17 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
 
 - (void)setupFont {
     
-    UIFont *base = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    UIFont *base;
+    
+    if (SharedPrefs.useSystemSize) {
+        base = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    }
+    else {
+        base = [UIFont systemFontOfSize:SharedPrefs.fontSize];
+    }
     
     base = [UIFont monospacedSystemFontOfSize:base.pointSize weight:UIFontWeightRegular];
+    
     UIFont *required = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:base];
     
     self.codeFont = required;
