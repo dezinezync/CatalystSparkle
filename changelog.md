@@ -1,5 +1,17 @@
 # v2.0.0
 
+## Build 19
+
+- Fixes showing cover images inside the Article Reader. 
+
+- Fixes opening an article from Widgets on iPads.
+
+- Slightly improved scene restoration. 
+
+- Fixed opening URLs inside the app which could sometimes crash the app entirely. 
+
+- New Code Theme for pre-formatted code blocks. 
+
 ## Build 18
 
 - Fixed a crash on launch from Build 16 and 17. 
