@@ -10,6 +10,7 @@
 #import "SettingsCell.h"
 #import "YetiConstants.h"
 #import "UIColor+HEX.h"
+#import "Coordinator.h"
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -399,7 +400,7 @@ NSString* deviceName() {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        UITableViewController *instance = (UITableViewController *)[[(UINavigationController *)[[((UISplitViewController *)self.presentingViewController) viewControllers] firstObject] viewControllers] firstObject];
+        SidebarVC *instance = self.mainCoordinator.sidebarVC;
         
         if (instance != nil) {
             
@@ -413,10 +414,7 @@ NSString* deviceName() {
                 
 //                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
                 
-                SEL selector = NSSelectorFromString(@"beginRefreshing:");
-                IMP imp = [instance methodForSelector:selector];
-                void (*func)(id, SEL, UIControl *) = (void *)imp;
-                func(instance, selector, [instance refreshControl]);
+                [instance beginRefreshing:instance.refreshControl];
                 
             });
             
