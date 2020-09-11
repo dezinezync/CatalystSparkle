@@ -1,5 +1,15 @@
 # v2.0.0
 
+## Build 21
+
+- Fixed the app crashing in the background when registering for background refresh with the OS. 
+
+- Fixed Counters widget showing 0 Bookmarks. 
+
+- Fixed launching from the Counters widget not setting up the app as expected. 
+
+- The Article Helper view (bottom bar) now has the correct tint color. 
+
 ## Build 20 
 
 - Fixed selecting a tint color on iOS crashing the app. 

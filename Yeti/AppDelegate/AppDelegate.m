@@ -40,11 +40,7 @@ AppDelegate *MyAppDelegate = nil;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    if (SharedPrefs.backgroundRefresh == YES) {
-        
-        [self commonInit:application];
-        
-    }
+    [self commonInit:application];
     
     return YES;
     
@@ -99,8 +95,6 @@ AppDelegate *MyAppDelegate = nil;
 //        [MyFeedsManager resetAccount];
         
         SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
-        
-        MyFeedsManager.bookmarksManager = scene.coordinator.bookmarksManager;
         
 //        weakify(self);
         

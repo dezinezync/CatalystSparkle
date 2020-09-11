@@ -30,6 +30,8 @@
         self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
         self.bookmarksManager = [[BookmarksManager alloc] init];
         
+        MyFeedsManager.bookmarksManager = self.bookmarksManager;
+        
     }
     
     return self;

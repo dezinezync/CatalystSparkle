@@ -134,7 +134,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
         self.textContainer.widthTracksTextView = YES;
         self.textContainer.heightTracksTextView = YES;
         
-        [self updateStyle:nil];
+//        [self updateStyle:nil];
     }
     
     return self;
@@ -426,7 +426,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (void)layoutSubviews {
     
-    [self setBackgroundColor:self.backgroundColor];
+//    [self setBackgroundColor:self.backgroundColor];
     
     [super layoutSubviews];
     

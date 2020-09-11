@@ -47,12 +47,14 @@
     
     NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
 
-    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == NO) {
+    if (activity != nil) {
         
-        UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
-        window.canResizeToFitContent = YES;
+        UIWindow *window = nil;
         
         if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
+            
+            window = [[UIWindow alloc] initWithWindowScene:windowScene];
+            window.canResizeToFitContent = YES;
             
             PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
             
@@ -61,6 +63,9 @@
         }
         
         else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
+            
+            window = [[UIWindow alloc] initWithWindowScene:windowScene];
+            window.canResizeToFitContent = YES;
             
             FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
             
@@ -74,17 +79,17 @@
             
         }
         
-        if (window.rootViewController != nil) {
+        if (window != nil && window.rootViewController != nil) {
                 
             self.window = window;
             
             [window makeKeyAndVisible];
+            
+            return;
         }
         else {
             window = nil;
         }
-        
-        return;
         
     }
     
@@ -115,6 +120,8 @@
 #if TARGET_OS_MACCATALYST
     [self ct_setupToolbar:(UIWindowScene *)scene];
 #endif
+    
+    [self setupBackgroundRefresh];
         
     [self.window makeKeyAndVisible];
     

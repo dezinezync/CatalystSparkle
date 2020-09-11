@@ -263,6 +263,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [super viewDidAppear:animated];
     
+    if (self.helperView != nil) {
+        self.helperView.tintColor = self.view.tintColor;
+    }
+    
     [self becomeFirstResponder];
     
 }
