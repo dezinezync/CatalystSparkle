@@ -11,18 +11,31 @@
 
 #import "YetiThemeKit.h"
 
+#define backgroundRefreshIdentifier @"com.yeti.refresh"
+
 @interface UIViewController (ElytraStateRestoration)
 
 - (void)continueActivity:(NSUserActivity *)activity;
 
 @end
 
-@interface SceneDelegate ()
+@interface SceneDelegate () {
+    dispatch_queue_t _bgTaskDispatchQueue;
+}
 
 @end
 
 @implementation SceneDelegate
 
+- (dispatch_queue_t)bgTaskDispatchQueue {
+    
+    if (_bgTaskDispatchQueue == nil) {
+        _bgTaskDispatchQueue = dispatch_queue_create("BGTaskScheduler", DISPATCH_QUEUE_SERIAL);
+    }
+    
+    return _bgTaskDispatchQueue;
+    
+}
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
     
@@ -124,8 +137,8 @@
 - (void)sceneDidBecomeActive:(UIScene *)scene {
     // Called when the scene has moved from an inactive state to an active state.
     // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-// @TODO Implement from AppDelegate
-//    [self _checkForAppResetPref];
+
+    [self _checkForAppResetPref];
 
 }
 
@@ -145,6 +158,37 @@
     // Called as the scene transitions from the foreground to the background.
     // Use this method to save data, release shared resources, and store enough scene-specific state information
     // to restore the scene back to its current state.
+    [BGTaskScheduler.sharedScheduler getPendingTaskRequestsWithCompletionHandler:^(NSArray<BGTaskRequest *> * _Nonnull taskRequests) {
+        
+        BOOL cancelling = NO;
+        
+        if (taskRequests != nil && taskRequests.count > 0) {
+            
+            [BGTaskScheduler.sharedScheduler cancelAllTaskRequests];
+            
+            cancelling = YES;
+            
+        }
+        
+        [self scheduleBackgroundRefresh];
+        
+        if (cancelling == YES) {
+            
+#ifdef DEBUG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+
+            dispatch_async(self.bgTaskDispatchQueue, ^{
+                [[BGTaskScheduler sharedScheduler] performSelector:NSSelectorFromString(@"_simulateLaunchForTaskWithIdentifier:") withObject:backgroundRefreshIdentifier];
+            });
+
+#pragma clang diagnostic pop
+#endif
+            
+        }
+        
+    }];
+    
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
@@ -194,6 +238,110 @@
     self.coordinator.splitViewController = (SplitVC *)[self.window rootViewController];
     
     [splitVC loadViewIfNeeded];
+    
+}
+
+#pragma mark - Background Refresh
+
+- (void)scheduleBackgroundRefresh {
+    
+    // Note from NetNewsWire code
+    // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
+    // task scheduler can hang indefinitely.
+    dispatch_async(self.bgTaskDispatchQueue, ^{
+        
+        BGAppRefreshTaskRequest *request = [[BGAppRefreshTaskRequest alloc] initWithIdentifier:backgroundRefreshIdentifier];
+//    request.requiresExternalPower = NO;
+//    request.requiresNetworkConnectivity = YES;
+
+            // 1 hour from backgrounding
+        #ifdef DEBUG
+            request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:1];
+        #else
+            request.earliestBeginDate = [NSDate dateWithTimeIntervalSinceNow:(60 * 60)];
+        #endif
+
+        NSError *error = nil;
+
+        BOOL done = [[BGTaskScheduler sharedScheduler] submitTaskRequest:request error:&error];
+
+        if (done == NO) {
+
+            if (error != nil && error.code != 1) {
+
+                NSLog(@"Error submitting bg refresh request: %@", error.localizedDescription);
+
+            }
+
+        }
+        
+    });
+    
+}
+
+- (void)setupBackgroundRefresh {
+    
+    weakify(self);
+    
+    BOOL registered = [[BGTaskScheduler sharedScheduler] registerForTaskWithIdentifier:backgroundRefreshIdentifier usingQueue:nil launchHandler:^(__kindof BGAppRefreshTask * _Nonnull task) {
+        
+        NSLog(@"Woken to perform account refresh.");
+        
+        strongify(self);
+        
+        // schedule next refresh
+        [self scheduleBackgroundRefresh];
+       
+        [MyDBManager setupSync:task completionHandler:^(BOOL completed) {
+            
+            if (completed == NO) {
+                return;
+            }
+            
+            SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+            
+            SidebarVC *vc = scene.coordinator.sidebarVC;
+            
+            if (vc == nil) {
+                return;
+            }
+            
+            [MyFeedsManager getCountersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                [vc setupData];
+
+                [vc.refreshControl setAttributedTitle:[vc lastUpdateAttributedString]];
+                
+            } error:nil];
+            
+        }];
+
+        
+    }];
+    
+    NSLog(@"Registered background refresh task: %@", @(registered));
+    
+}
+
+- (void)_checkForAppResetPref {
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
+    
+//#ifdef DEBUG
+//    reset = YES;
+//#endif
+    
+    if (reset) {
+        [MyFeedsManager resetAccount];
+        
+        SplitVC *v = self.coordinator.splitViewController;
+        [v userNotFound];
+        
+        [defaults setBool:NO forKey:kResetAccountSettingsPref];
+        [defaults synchronize];
+    }
     
 }
 

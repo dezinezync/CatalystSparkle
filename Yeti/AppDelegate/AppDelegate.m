@@ -44,8 +44,6 @@ AppDelegate *MyAppDelegate = nil;
         
         [self commonInit:application];
         
-        [self setupBackgroundRefresh];
-        
     }
     
     return YES;
@@ -178,36 +176,6 @@ AppDelegate *MyAppDelegate = nil;
 }
 
 #pragma mark -
-
-- (void)_checkForAppResetPref {
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    BOOL reset = [defaults boolForKey:kResetAccountSettingsPref];
-    
-    _resetting = reset;
-    
-//#ifdef DEBUG
-//    reset = YES;
-//#endif
-    
-    if (reset) {
-        [MyFeedsManager resetAccount];
-        
-        SplitVC *v = (SplitVC *)[UIApplication.keyWindow rootViewController];
-        [v userNotFound];
-        
-        [defaults setBool:NO forKey:kResetAccountSettingsPref];
-        [defaults synchronize];
-    }
-    
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    
-    [self _checkForAppResetPref];
-
-}
 
 #pragma mark - State Restoration
 

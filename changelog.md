@@ -8,7 +8,9 @@
 
 - Fixed I/O View not appearing when importing / exporting OPML files.
 
-- 
+- Fixed background refresh not working or crashing the app. 
+
+- Fixed Resetting Account not working. 
 
 ## Build 19
 
