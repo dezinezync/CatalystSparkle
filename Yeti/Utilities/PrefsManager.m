@@ -45,7 +45,9 @@ PrefsManager * SharedPrefs = nil;
 
 - (void)loadDefaults {
     
-    self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
+//    self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
+    self.theme = LightTheme;
+    
     self.backgroundRefresh = ([self.defaults valueForKey:kDefaultsBackgroundRefresh] ? [[self.defaults valueForKey:kDefaultsBackgroundRefresh] boolValue] : YES);
     self.notifications = [self.defaults boolForKey:kDefaultsNotifications];
     self.imageLoading = [self.defaults stringForKey:kDefaultsImageLoading] ?: ImageLoadingAlways;
@@ -68,6 +70,10 @@ PrefsManager * SharedPrefs = nil;
     self.fontSize = ([self.defaults valueForKey:kFontSize] ? [[self.defaults valueForKey:kFontSize] integerValue] : [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize);
     self.paraTitleFont = [self.defaults valueForKey:kParagraphTitleFont];
     self.lineSpacing = ([self.defaults floatForKey:kLineSpacing] ?: 1.4f);
+    
+    NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
+    
+    self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] || 0;
     
 }
 

@@ -1,5 +1,15 @@
 # v2.0.0
 
+## Build 20 
+
+- Fixed selecting a tint color on iOS crashing the app. 
+
+- Fixed tint color not applying when launching the app. 
+
+- Fixed I/O View not appearing when importing / exporting OPML files.
+
+- 
+
 ## Build 19
 
 - Fixes showing cover images inside the Article Reader. 

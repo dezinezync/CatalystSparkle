@@ -31,8 +31,7 @@
     
     [self.tableView registerClass:ExternalAppsCell.class forCellReuseIdentifier:kExternalAppsCell];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     
     UIApplication *app = [UIApplication sharedApplication];
     
@@ -136,18 +135,11 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kExternalAppsCell forIndexPath:indexPath];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
-    
-    cell.backgroundColor = theme.backgroundColor;
-    
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [[self.view tintColor] colorWithAlphaComponent:0.3f];
     
     NSArray <NSString *> * appsArray = nil;
     NSString *sectionKey;

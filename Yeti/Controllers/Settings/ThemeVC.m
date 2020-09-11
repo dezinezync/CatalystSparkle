@@ -156,8 +156,8 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         // get selection for current theme or default value
-        YetiThemeType themeType = SharedPrefs.theme;
-        NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
+//        YetiThemeType themeType = SharedPrefs.theme;
+        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
         NSInteger colorIndex = [NSUserDefaults.standardUserDefaults integerForKey:defaultsKey] ?: [theme tintColorIndex].integerValue;
         
         [(AccentCell *)cell didTapButton:buttons[colorIndex]];
@@ -324,8 +324,8 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         NSArray <UIColor *> *colours = [YetiThemeKit colours];
         
         NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-        YetiThemeType themeType = SharedPrefs.theme;
-        NSString *defaultsKey = formattedString(@"theme-%@-color", themeType);
+
+        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
         
         UIButton *selectedButton = [object valueForKeyPath:keyPath];
         
@@ -334,15 +334,11 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         
         [defaults setInteger:buttonIndex forKey:defaultsKey];
         
-        [(YetiTheme *)[YTThemeKit theme] setTintColor:selectedColor];
-        
         for (UIWindow *window in [UIApplication.sharedApplication windows]) {
             window.tintColor = selectedColor;
         };
         
-//        [NSNotificationCenter.defaultCenter postNotificationName:ThemeDidUpdate object:nil];
-        
-        NSIndexSet * reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 3)];;
+        NSIndexSet * reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];;
         
         [self.tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];
         

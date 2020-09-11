@@ -9,7 +9,7 @@
 #import "PhotosController.h"
 #import <JLRoutes/JLRoutes.h>
 
-#import "CodeParser.h"
+#import "YetiThemeKit.h"
 
 @interface UIViewController (ElytraStateRestoration)
 
@@ -80,6 +80,14 @@
     self.coordinator = coordinator;
     
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+    
+#if !TARGET_OS_MACCATALYST
+    UIColor *selectedColor = [[YetiThemeKit colours] objectAtIndex:SharedPrefs.iOSTintColorIndex];
+    
+     for (UIWindow *window in [UIApplication.sharedApplication windows]) {
+         window.tintColor = selectedColor;
+     };
+#endif
     
     [self setupRootViewController];
     

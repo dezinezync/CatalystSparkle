@@ -8,6 +8,8 @@
 
 #import "Blockquote.h"
 
+#define LEFT_BORDER_ALPHA 0.3f
+
 @interface Blockquote () {
     UIFont *_bodyFont;
 }
@@ -25,7 +27,7 @@
         self.clipsToBounds = NO;
         
         UIView * leftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 2.f, self.bounds.size.height)];
-        leftBorder.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3];
+        leftBorder.backgroundColor = [self.tintColor colorWithAlphaComponent:LEFT_BORDER_ALPHA];
         leftBorder.opaque = YES;
         leftBorder.translatesAutoresizingMaskIntoConstraints = NO;
         leftBorder.clipsToBounds = YES;
@@ -51,16 +53,13 @@
     return @"Quote";
 }
 
-//- (UIFont *)bodyFont {
-//    
-//    if (!_bodyFont) {
-//        UIFont *base = [super bodyFont];
-//        _bodyFont = [UIFont fontWithName:base.fontName size:(base.pointSize - 1.f)];
-//    }
-//    
-//    return _bodyFont;
-//    
-//}
+- (void)didMoveToSuperview {
+    
+    if (self.superview != nil) {
+        self.leftBorder.backgroundColor = [self.superview.tintColor colorWithAlphaComponent:LEFT_BORDER_ALPHA];
+    }
+    
+}
 
 - (UIColor *)textColor {
     return [UIColor.labelColor colorWithAlphaComponent:0.9f];

@@ -56,8 +56,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     self.tableView.estimatedSectionFooterHeight = 80.f;
     self.tableView.sectionFooterHeight = UITableViewAutomaticDimension;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
 }
 
 - (void)didReceiveMemoryWarning {
