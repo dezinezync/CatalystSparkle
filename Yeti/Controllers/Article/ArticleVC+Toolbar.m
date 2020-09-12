@@ -453,7 +453,7 @@
         
         [UIView animateWithDuration:0.2 animations:^{
             strongify(self);
-            self->_searchHighlightingRect.frame = prevValue.CGRectValue;
+            self->_searchHighlightingRect.frame = CGRectInset(prevValue.CGRectValue, -4.f, 0.f);
         }];
         
         [self scrollToRangeRect:prevValue];
@@ -485,7 +485,7 @@
     NSValue *nextValue = _searchingRects[_searchCurrentIndex+1];
     if (nextValue) {
         _searchCurrentIndex++;
-        _searchHighlightingRect.frame = nextValue.CGRectValue;
+        self->_searchHighlightingRect.frame = CGRectInset(nextValue.CGRectValue, -4.f, 0.f);
         [self scrollToRangeRect:nextValue];
     }
     
@@ -522,12 +522,8 @@
         return;
     
     if (!NSThread.isMainThread) {
-        weakify(self);
         
-        asyncMain(^{
-            strongify(self);
-            [self scrollToRangeRect:value];
-        });
+        [self performSelectorOnMainThread:@selector(scrollToRangeRect:) withObject:value waitUntilDone:NO];
         
         return;
     }
@@ -553,7 +549,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        self->_searchHighlightingRect.frame = frame;
+        self->_searchHighlightingRect.frame = CGRectInset(frame, -4.f, 0.f);
     });
 }
 
@@ -736,13 +732,13 @@
     }
     
     if (!_searchHighlightingRect) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         // use the first rect's value
         _searchHighlightingRect = [[UIView alloc] initWithFrame:CGRectZero];
-        _searchHighlightingRect.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+        _searchHighlightingRect.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         _searchHighlightingRect.autoresizingMask = UIViewAutoresizingNone;
         _searchHighlightingRect.translatesAutoresizingMaskIntoConstraints = NO;
-        _searchHighlightingRect.layer.cornerRadius = 2.f;
+        _searchHighlightingRect.layer.cornerRadius = 4.f;
         _searchHighlightingRect.layer.masksToBounds = YES;
         
         // add it to the scrollview

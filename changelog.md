@@ -1,5 +1,15 @@
 # v2.0.0
 
+## Build 22
+
+- Improved styling for inline code blocks. 
+
+- Fixed the searched word not being highlighted. The highlighting frame got a transparent color set. 
+
+- Fixed code blocks appearing out of order. A year old bug finally fixed! 
+
+- Fixed some pre-formatted quotes appearing as single-line code blocks.
+
 ## Build 21
 
 - Fixed the app crashing in the background when registering for background refresh with the OS. 

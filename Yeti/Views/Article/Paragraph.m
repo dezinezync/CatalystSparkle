@@ -307,7 +307,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
                         textcolor = UIColor.labelColor;
                     }
                     else {
-                        textcolor = self.tintColor;
+                        textcolor = UIColor.secondaryLabelColor;
                     }
                     
                 });
@@ -426,7 +426,7 @@ static NSParagraphStyle * _paragraphStyle = nil;
 
 - (void)layoutSubviews {
     
-//    [self setBackgroundColor:self.backgroundColor];
+    [self setBackgroundColor:UIColor.systemBackgroundColor];
     
     [super layoutSubviews];
     

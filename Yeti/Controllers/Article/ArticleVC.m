@@ -1911,9 +1911,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.images addPointer:(__bridge void *)gallery];
     gallery.idx = self.images.count - 1;
     
+    _last = gallery;
+    
 }
 
 - (void)addQuote:(Content *)content {
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - 48.f, 32.f);
     
     if (!content.content && (!content.items || content.items.count == 0))
@@ -2206,6 +2209,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)addPre:(Content *)content {
     
+    /**
+     * We make a pretty gross assumption here
+     * that all code blocks have atleast one tab
+     * or two spaces (accounts for 4 spaces as well) 
+     * in them for formatting purposes. Our convertor
+     * preserves these tabs for preformatted blocks.
+     */
+    if (content.content != nil
+        && ([content.content rangeOfString:@"\\t" options:NSRegularExpressionSearch].location == NSNotFound
+            && [content.content rangeOfString:@"  " options:NSRegularExpressionSearch].location == NSNotFound
+            && [content.content rangeOfString:@"\\n" options:NSRegularExpressionSearch].location == NSNotFound)) {
+        
+        [self addQuote:content];
+        return;
+        
+    }
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     Code *code = [[Code alloc] initWithFrame:frame];
     code.backgroundColor = CodeParser.sharedCodeParser.theme.backgroundColor;
@@ -2220,6 +2240,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     [self.stackView addArrangedSubview:code];
+    
+    _last = code;
     
 }
 

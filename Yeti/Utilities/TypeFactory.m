@@ -414,7 +414,7 @@ static TypeFactory * sharedTypeFactory;
     
     if (_codeFont == nil) {
         UIFont *font = self.bodyFont;
-        font = [UIFont monospacedDigitSystemFontOfSize:font.pointSize weight:UIFontWeightRegular];
+        font = [UIFont monospacedSystemFontOfSize:font.pointSize weight:UIFontWeightMedium];
         font = [[UIFontMetrics defaultMetrics] scaledFontForFont:font maximumPointSize:maximumPointSize compatibleWithTraitCollection:self.rootController.traitCollection];
         
         _codeFont = font;

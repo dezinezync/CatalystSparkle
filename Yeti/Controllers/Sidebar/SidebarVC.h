@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSAttributedString *)lastUpdateAttributedString;
 
-- (void)beginRefreshing:(UIRefreshControl * _Nullable)sender;
+- (void)beginRefreshingAll:(UIRefreshControl * _Nullable)sender;
 
 - (void)continueActivity:(NSUserActivity *)activity;
 

@@ -414,7 +414,7 @@ NSString* deviceName() {
                 
 //                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
                 
-                [instance beginRefreshing:instance.refreshControl];
+                [instance beginRefreshingAll:instance.refreshControl];
                 
             });
             
