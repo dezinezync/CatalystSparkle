@@ -219,7 +219,7 @@
 
 - (void)showNewFolderVC {
     
-    UINavigationController *nav = [NewFolderVC instanceInNavController];
+    UINavigationController *nav = [[UINavigationController alloc] init];
     
     nav.viewControllers.firstObject.mainCoordinator = self;
     

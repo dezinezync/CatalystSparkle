@@ -12,6 +12,8 @@
 
 - Updated Feed Sorting options to use a menu interface instead of an options controller. 
 
+- The Add Feed interface now shows Recommendations for its default state to help improve finding and adding new feeds. 
+
 ## Build 21
 
 - Fixed the app crashing in the background when registering for background refresh with the OS. 

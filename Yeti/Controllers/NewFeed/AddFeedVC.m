@@ -20,6 +20,8 @@
 #import "AppDelegate+Routing.h"
 #import "PagingManager.h"
 
+#import "RecommendationsVC.h"
+
 #import "FeedCell.h"
 
 @interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, ScrollLoading>
@@ -38,6 +40,10 @@
 @property (nonatomic, strong) UICollectionViewCellRegistration * feedCellRegister;
 
 @property (nonatomic, strong) PagingManager *pagingManager;
+
+@property (nonatomic, strong) RecommendationsVC *recommendationsVC;
+
+@property (nonatomic, weak) UIView *recommendationsView;
 
 @end
 
@@ -84,6 +90,10 @@
     self.selected = NSNotFound;
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.navigationController.navigationBar.translucent = YES;
+    
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
 
     self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * collectionView, NSIndexPath * indexPath, Feed * item) {
         
@@ -114,6 +124,14 @@
     [self setupSearchController];
     [self setupDefaultViews];
 
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -241,7 +259,7 @@
     searchController.obscuresBackgroundDuringPresentation = NO;
     searchController.definesPresentationContext = YES;
     
-    searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
+    searchController.searchBar.scopeButtonTitles = @[@"Feed URL", @"Feed Name", @"Keywords"];
     
     searchController.automaticallyShowsScopeBar = YES;
     
@@ -262,6 +280,26 @@
     
     self.navigationItem.rightBarButtonItem = cancelButton;
     self.cancelButton = self.navigationItem.rightBarButtonItem;
+    
+    [self setupRecommendationsView];
+    
+}
+
+- (void)setupRecommendationsView {
+    
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+    
+    vc.view.frame = self.view.bounds;
+    
+    [self.view addSubview:vc.view];
+    [self addChildViewController:vc];
+    
+    [vc didMoveToParentViewController:self];
+    
+    self.recommendationsVC = vc;
+    self.recommendationsView = vc.view;
+    
+    [vc collectionView].keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
 }
 
@@ -631,6 +669,12 @@
         [self.searchBar resignFirstResponder];
         [self.searchBar becomeFirstResponder];
     }
+    
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    
+    self.recommendationsView.hidden = ([searchText isBlank] == NO);
     
 }
 

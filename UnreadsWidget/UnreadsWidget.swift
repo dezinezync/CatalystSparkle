@@ -153,13 +153,6 @@ struct ArticleView : View {
                                 .alignmentGuide(VerticalAlignment.top) { _ in 0 }
                             
                         }
-                        else {
-                            
-                            Image(systemName: "sqaure.dashed")
-                                .frame(maxWidth: 24, maxHeight: 24, alignment: .leading)
-                                .foregroundColor(.secondary)
-                            
-                        }
                         
                     }
                     

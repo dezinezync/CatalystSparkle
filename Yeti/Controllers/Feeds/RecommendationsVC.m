@@ -224,13 +224,14 @@ static NSString * const reuseIdentifier = @"Cell";
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     if (self.state == ReccoStateLoaded) {
-        return 4;
+        return 3;
     }
     
     return 0;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    
     if (!self.recommendations) {
         return 0;
     }
@@ -242,15 +243,15 @@ static NSString * const reuseIdentifier = @"Cell";
     }
     
     switch (section) {
-        case 1:
+        case 0:
             return MIN(MAX_CELLS, [self.recommendations[@"mostRead"] count]);
             break;
-        case 2:
+        case 1:
             return MIN(MAX_CELLS, [self.recommendations[@"highestSubs"] count]);
             break;
-        case 0:
-            return MIN(20, [self.recommendations[@"similar"] count]);
-            break;
+//        case 0:
+//            return MIN(20, [self.recommendations[@"similar"] count]);
+//            break;
         default:
             return MIN(MAX_CELLS, [self.recommendations[@"trending"] count]);
             break;
@@ -265,15 +266,15 @@ static NSString * const reuseIdentifier = @"Cell";
     Feed *feed = nil;
     
     switch (indexPath.section) {
-        case 1:
+        case 0:
             feed = [self.recommendations[@"mostRead"] safeObjectAtIndex:indexPath.item];
             break;
-        case 2:
+        case 1:
             feed = [self.recommendations[@"highestSubs"] safeObjectAtIndex:indexPath.item];
             break;
-        case 0:
-            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
-            break;
+//        case 0:
+//            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
+//            break;
         default:
             feed = [self.recommendations[@"trending"] safeObjectAtIndex:indexPath.item];
             break;
@@ -291,15 +292,15 @@ static NSString * const reuseIdentifier = @"Cell";
     NSString *text = nil;
     
     switch (indexPath.section) {
-        case 1:
+        case 0:
             text = @"Most Read";
             break;
-        case 2:
+        case 1:
             text = @"Most Subscribers";
             break;
-        case 0:
-            text = @"Similar";
-            break;
+//        case 0:
+//            text = @"Similar";
+//            break;
         default:
             text = @"Trending";
             break;
@@ -319,15 +320,15 @@ static NSString * const reuseIdentifier = @"Cell";
     Feed *feed = nil;
     
     switch (indexPath.section) {
-        case 1:
+        case 0:
             feed = [self.recommendations[@"mostRead"] safeObjectAtIndex:indexPath.item];
             break;
-        case 2:
+        case 1:
             feed = [self.recommendations[@"highestSubs"] safeObjectAtIndex:indexPath.item];
             break;
-        case 0:
-            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
-            break;
+//        case 0:
+//            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
+//            break;
         default:
             feed = [self.recommendations[@"trending"] safeObjectAtIndex:indexPath.item];
             break;

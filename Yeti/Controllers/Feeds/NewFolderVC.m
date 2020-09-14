@@ -30,7 +30,7 @@
 
 + (UINavigationController *)instanceInNavController
 {
-    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(UIViewController.class) bundle:nil];
     
     UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
@@ -42,7 +42,7 @@
 
 + (UINavigationController *)instanceWithFolder:(Folder *)folder indexPath:(NSIndexPath *)indexPath
 {
-    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(UIViewController.class) bundle:nil];
     vc.folder = folder;
     vc.folderIndexPath = indexPath;
     
@@ -59,14 +59,14 @@
     
     self.title = @"New Folder";
     
-    self.input.placeholder = @"Folder Name (3-32 chars)";
-    self.input.keyboardType = UIKeyboardTypeDefault;
-    
-    if (self.folder) {
-        // editing
-        self.title = @"Edit Folder";
-        self.input.text = self.folder.title;
-    }
+//    self.input.placeholder = @"Folder Name (3-32 chars)";
+//    self.input.keyboardType = UIKeyboardTypeDefault;
+//
+//    if (self.folder) {
+//        // editing
+//        self.title = @"Edit Folder";
+//        self.input.text = self.folder.title;
+//    }
     
 #if TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.translucent = NO;
@@ -100,7 +100,7 @@
     }
     
     textField.enabled = NO;
-    self.cancelButton.enabled = NO;
+//    self.cancelButton.enabled = NO;
     
     weakify(self);
     
@@ -119,12 +119,12 @@
                 
                 [self.mainCoordinator.sidebarVC setupData];
                 
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
                 [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                [self didTapCancel];
+//                [self didTapCancel];
                 
             });
 
@@ -143,7 +143,7 @@
                 [self.notificationGenerator prepare];
                 
                 textField.enabled = YES;
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
             });
             
@@ -157,12 +157,12 @@
                 
                 self->_isUpdating = NO;
                 
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
                 [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                [self didTapCancel];
+//                [self didTapCancel];
                 
             });
             
@@ -179,7 +179,7 @@
                 [self.notificationGenerator prepare];
                 
                 textField.enabled = YES;
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
             });
             
