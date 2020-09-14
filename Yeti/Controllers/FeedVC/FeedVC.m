@@ -293,7 +293,37 @@
         header.descriptionLabel.text = [self.feed.extra.title stringByDecodingHTMLEntities];
     }
     
-    header.descriptionLabel.preferredMaxLayoutWidth = self.view.bounds.size.width - 24.f;
+    BOOL isPushFromHub = (self.feed.hubSubscribed && self.feed.hub);
+    BOOL isPushFromRPC = self.feed.rpcCount > 0;
+    
+    if (isPushFromHub || isPushFromRPC) {
+        
+        UIButton *notificationsButton = header.notificationsButton;
+        
+        if (self.feed.isSubscribed) {
+            
+            notificationsButton.accessibilityValue = @"Unsubscribe from notifications";
+            
+            [notificationsButton setImage:[UIImage systemImageNamed:@"bell.fill"] forState:UIControlStateNormal];
+            [notificationsButton setNeedsDisplay];
+            
+        }
+        else {
+            notificationsButton.accessibilityValue = @"Subscribe to notifications";
+        }
+        
+        notificationsButton.hidden = NO;
+        
+        [notificationsButton addTarget:self action:@selector(didTapNotifications:) forControlEvents:UIControlEventTouchUpInside];
+        
+        header.descriptionLabel.preferredMaxLayoutWidth = self.view.bounds.size.width - 24.f - 24.f - 12.f;
+        
+    }
+    else {
+        header.notificationsButton.hidden = YES;
+        header.descriptionLabel.preferredMaxLayoutWidth = self.view.bounds.size.width - 24.f;
+    }
+    
     [header.descriptionLabel sizeToFit];
     
     [header.mainStackView setNeedsUpdateConstraints];

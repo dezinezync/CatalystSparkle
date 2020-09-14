@@ -134,7 +134,7 @@
     
     if (showPrompt) {
         
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark currently loaded articles as read?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -200,7 +200,7 @@
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -242,11 +242,20 @@
             strongify(self);
             self.feed.subscribed = NO;
             
-            asyncMain(^{
+            if ([sender isKindOfClass:UIBarButtonItem.class]) {
+                
                 sender.enabled = YES;
                 sender.image = [UIImage systemImageNamed:@"bell.slash"];
                 sender.accessibilityValue = @"Subscribe to notifications";
-            });
+                
+            }
+            else if ([sender isKindOfClass:UIButton.class]) {
+                
+                sender.enabled = YES;
+                [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bell.slash"] forState:UIControlStateNormal];
+                sender.accessibilityValue = @"Subscribe to notifications";
+                
+            }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
@@ -312,10 +321,23 @@
         
         self.feed.subscribed = YES;
         
-        asyncMain(^{
-            sender.enabled = YES;
-            sender.image = [UIImage systemImageNamed:@"bell.fill"];
-            sender.accessibilityValue = @"Unsubscribe from notifications";
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            if ([sender isKindOfClass:UIBarButtonItem.class]) {
+                
+                sender.enabled = YES;
+                sender.image = [UIImage systemImageNamed:@"bell.fill"];
+                sender.accessibilityValue = @"Unsubscribe from notifications";
+                
+            }
+            else if ([sender isKindOfClass:UIButton.class]) {
+                
+                sender.enabled = YES;
+                [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bell.fill"] forState:UIControlStateNormal];
+                sender.accessibilityValue = @"Unsubscribe from notifications";
+                
+            }
+            
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -399,7 +421,7 @@
 //}
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
-    
+#if !TARGET_OS_MACCATALYST
     if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
@@ -417,7 +439,7 @@
         }
         
     }
-    
+#endif
     [self presentViewController:avc animated:YES completion:nil];
     
 }

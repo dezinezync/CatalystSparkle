@@ -61,6 +61,8 @@
             
             window.rootViewController = photosVC;
             
+            windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 338.f);
+            
         }
         
         else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
@@ -74,7 +76,17 @@
 #if TARGET_OS_MACCATALYST
             vc.externalWindow = YES;
 #endif
-            scene.title = item.articleTitle ?: @"Untitled";
+            
+            Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
+            
+            if (item.articleTitle) {
+                scene.title = formattedString(@"%@ - %@", item.articleTitle, feed.displayTitle);
+            }
+            else {
+                scene.title = feed.displayTitle;
+            }
+            
+            windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 400.f);
             
             window.rootViewController = vc;
             
@@ -93,6 +105,8 @@
         }
         
     }
+    
+    [self setupBackgroundRefresh];
     
     self.coordinator = MyAppDelegate.coordinator;
     
@@ -119,8 +133,6 @@
 #if TARGET_OS_MACCATALYST
     [self ct_setupToolbar:(UIWindowScene *)scene];
 #endif
-    
-    [self setupBackgroundRefresh];
         
     [self.window makeKeyAndVisible];
     

@@ -3,6 +3,7 @@
     <device id="mac" appearance="light" renderMode="macOS"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17124"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -16,7 +17,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="XaG-0j-d59">
-                    <rect key="frame" x="12" y="4" width="390" height="75"/>
+                    <rect key="frame" x="12" y="4" width="390" height="59"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="jWl-Xq-BfZ">
                             <rect key="frame" x="0.0" y="0.0" width="390" height="24"/>
@@ -35,12 +36,28 @@
                                 </label>
                             </subviews>
                         </stackView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" text="This is long summary of the feed being viewed to test multiline text in the view in compact state" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TwB-IP-YaF">
-                            <rect key="frame" x="0.0" y="28" width="390" height="47"/>
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                            <color key="textColor" systemColor="secondaryLabelColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                        <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Ceu-NA-LLA">
+                            <rect key="frame" x="0.0" y="28" width="390" height="31"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ng8-jX-6PU">
+                                    <rect key="frame" x="0.0" y="-3.5" width="24" height="37.5"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" priority="999" constant="24" id="ktu-jd-1Hp"/>
+                                        <constraint firstAttribute="height" constant="999" id="ub8-2y-gu6"/>
+                                    </constraints>
+                                    <state key="normal">
+                                        <imageReference key="image" image="bell.slash" catalog="system" symbolScale="default"/>
+                                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="semibold"/>
+                                    </state>
+                                </button>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" text="This is long summary of the feed being viewed to test multiline text in the view in compact state" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TwB-IP-YaF">
+                                    <rect key="frame" x="32" y="0.0" width="358" height="31"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                    <color key="textColor" systemColor="secondaryLabelColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
                     </subviews>
                 </stackView>
             </subviews>
@@ -59,19 +76,21 @@
                 <outlet property="descriptionLabel" destination="TwB-IP-YaF" id="zPL-be-n4l"/>
                 <outlet property="faviconView" destination="1CN-e7-md8" id="4lU-Ff-3TK"/>
                 <outlet property="mainStackView" destination="XaG-0j-d59" id="4vy-ex-11a"/>
+                <outlet property="notificationsButton" destination="ng8-jX-6PU" id="JFE-Za-D9U"/>
                 <outlet property="titleLabel" destination="0AZ-Tr-Vh7" id="1a1-vJ-WpT"/>
                 <outlet property="titleStackView" destination="jWl-Xq-BfZ" id="UnI-za-3Zl"/>
             </connections>
-            <point key="canvasLocation" x="295.5" y="-162.5"/>
+            <point key="canvasLocation" x="249" y="-178"/>
         </view>
     </objects>
     <resources>
+        <image name="bell.slash" catalog="system" width="124" height="128"/>
         <image name="square.dashed" catalog="system" width="128" height="114"/>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.0" blue="0.0" alpha="0.49803921568627452" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

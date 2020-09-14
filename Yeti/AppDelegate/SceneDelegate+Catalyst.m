@@ -44,6 +44,7 @@
 #define kOpenInNewWindowToolbarIdentifier @"com.yeti.toolbar.articleWindow"
 #define kFeedTitleViewToolbarIdentifier @"com.yeti.toolbar.feedTitle"
 #define kSortingMenuToolbarIdentifier @"com.yeti.toolbar.sortingMenu"
+#define kMarkItemsMenuToolbarIdentifier @"com.yeti.toolbar.markItems"
 
 - (NSArray<NSToolbarItemIdentifier> *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
     
@@ -54,6 +55,7 @@
         NSToolbarFlexibleSpaceItemIdentifier,
         kRefreshFeedToolbarIdentifier[0],
         kSortingMenuToolbarIdentifier,
+        kMarkItemsMenuToolbarIdentifier,
         NSToolbarSupplementarySidebarTrackingSeparatorItemIdentifier,
         NSToolbarFlexibleSpaceItemIdentifier,
         kOpenInNewWindowToolbarIdentifier,
@@ -203,39 +205,39 @@
     }
     else if ([itemIdentifier isEqualToString:kSortingMenuToolbarIdentifier]) {
         
-        image = [self.mainCoordinator imageForSortingOption:SharedPrefs.sortingOption];
+        image = [self.coordinator imageForSortingOption:SharedPrefs.sortingOption];
         
         title = @"Sort Feed";
         
-        UIAction *unreadLatest = [UIAction actionWithTitle:@"Unread - Latest First" image:[self imageForSortingOption:YTSortUnreadDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        UIAction *unreadLatest = [UIAction actionWithTitle:@"Unread - Latest First" image:[self.coordinator imageForSortingOption:YTSortUnreadDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
            
             [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadDesc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortUnreadDesc];
+            self.sortingItem.image = [self.coordinator imageForSortingOption:YTSortUnreadDesc];
             
         }];
         
-        UIAction *unreadOldest = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self imageForSortingOption:YTSortUnreadAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        UIAction *unreadOldest = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self.coordinator imageForSortingOption:YTSortUnreadAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
             [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadAsc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortUnreadAsc];
+            self.sortingItem.image = [self.coordinator imageForSortingOption:YTSortUnreadAsc];
             
         }];
         
-        UIAction *allLatest = [UIAction actionWithTitle:@"All - Latest First" image:[self imageForSortingOption:YTSortAllDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        UIAction *allLatest = [UIAction actionWithTitle:@"All - Latest First" image:[self.coordinator imageForSortingOption:YTSortAllDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
            
             [UIApplication.sharedApplication sendAction:@selector(setSortingAllDesc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortAllDesc];
+            self.sortingItem.image = [self.coordinator imageForSortingOption:YTSortAllDesc];
             
         }];
         
-        UIAction *allOldest = [UIAction actionWithTitle:@"All - Oldest First" image:[self imageForSortingOption:YTSortAllAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+        UIAction *allOldest = [UIAction actionWithTitle:@"All - Oldest First" image:[self.coordinator imageForSortingOption:YTSortAllAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
            
             [UIApplication.sharedApplication sendAction:@selector(setSortingAllAsc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortAllAsc];
+            self.sortingItem.image = [self.coordinator imageForSortingOption:YTSortAllAsc];
             
         }];
         
@@ -254,6 +256,38 @@
         item = menuToolbarItem;
         
         self.sortingItem = (NSMenuToolbarItem *)item;
+        
+    }
+    else if ([itemIdentifier isEqualToString:kMarkItemsMenuToolbarIdentifier]) {
+        
+        UIAction *markCurrent = [UIAction actionWithTitle:@"Mark Current Read" image:[UIImage systemImageNamed:@"text.badge.checkmark"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            if (self.coordinator.feedVC == nil) {
+                return;
+            }
+            
+            [self.coordinator.feedVC didTapAllRead:nil];
+            
+        }];
+        
+        UIAction *markAll = [UIAction actionWithTitle:@"Mark All Read" image:[UIImage systemImageNamed:@"checkmark"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            if (self.coordinator.feedVC == nil) {
+                return;
+            }
+            
+            [self.coordinator.feedVC didLongPressOnAllRead:nil];
+            
+        }];
+        
+        UIMenu *menu = [UIMenu menuWithChildren:@[markCurrent, markAll]];
+        
+        NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kMarkItemsMenuToolbarIdentifier];
+        menuToolbarItem.showsIndicator = YES;
+        menuToolbarItem.itemMenu = menu;
+        menuToolbarItem.image = [UIImage systemImageNamed:@"checkmark"];
+        
+        item = menuToolbarItem;
         
     }
     

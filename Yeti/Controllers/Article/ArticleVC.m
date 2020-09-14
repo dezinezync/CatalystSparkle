@@ -1735,12 +1735,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    // 9mac ads
+    // 9mac ads and some tracking scripts
     if (content.url && (
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
             || ([content.url containsString:@"deal"])
             || ([content.url containsString:@"amaz"]
-            || [content.url containsString:@"i2.wp.com"])
+            || [content.url containsString:@"i2.wp.com"]
+            || [[content.url lastPathComponent] containsString:@".php"]
+            || [[content.url lastPathComponent] containsString:@".js"])
         )) {
         return;
     }

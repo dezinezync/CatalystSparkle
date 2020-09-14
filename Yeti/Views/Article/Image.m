@@ -318,18 +318,20 @@
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            
             [sender removeFromSuperview];
+            
+            SDAnimatedImage *image = [[SDAnimatedImage alloc] initWithData:data];
+            
+            SizedAnimatedImage *imageView = (SizedAnimatedImage *)[self imageView];
+            
+            imageView.image = image;
+            imageView.clearBufferWhenStopped = YES;
+            imageView.autoPlayAnimatedImage = NO;
+            
+            [self setupAnimationControls];
+            
         });
-        
-        SDAnimatedImage *image = [[SDAnimatedImage alloc] initWithData:data];
-        
-        SizedAnimatedImage *imageView = (SizedAnimatedImage *)[self imageView];
-        
-        imageView.image = image;
-        imageView.clearBufferWhenStopped = YES;
-        imageView.autoPlayAnimatedImage = NO;
-        
-        [self setupAnimationControls];
         
     });
     

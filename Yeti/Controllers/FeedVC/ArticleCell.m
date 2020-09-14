@@ -135,7 +135,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     [super tintColorDidChange];
     
-    self.markerView.tintColor = self.tintColor;
+    [self updateMarkerView];
     
 }
 

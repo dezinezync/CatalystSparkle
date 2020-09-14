@@ -43,7 +43,7 @@
     
     SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
-    [vc beginRefreshing:nil];
+    [vc beginRefreshingAll:vc.refreshControl];
     
 }
 
