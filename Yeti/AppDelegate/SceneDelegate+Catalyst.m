@@ -203,7 +203,7 @@
     }
     else if ([itemIdentifier isEqualToString:kSortingMenuToolbarIdentifier]) {
         
-        image = [self imageForSortingOption:SharedPrefs.sortingOption];
+        image = [self.mainCoordinator imageForSortingOption:SharedPrefs.sortingOption];
         
         title = @"Sort Feed";
         
@@ -211,7 +211,7 @@
            
             [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadDesc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self imageForSortingOption:YTSortUnreadDesc];
+            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortUnreadDesc];
             
         }];
         
@@ -219,7 +219,7 @@
             
             [UIApplication.sharedApplication sendAction:@selector(setSortingUnreadAsc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self imageForSortingOption:YTSortUnreadAsc];
+            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortUnreadAsc];
             
         }];
         
@@ -227,7 +227,7 @@
            
             [UIApplication.sharedApplication sendAction:@selector(setSortingAllDesc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self imageForSortingOption:YTSortAllDesc];
+            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortAllDesc];
             
         }];
         
@@ -235,7 +235,7 @@
            
             [UIApplication.sharedApplication sendAction:@selector(setSortingAllAsc) to:nil from:nil forEvent:nil];
             
-            self.sortingItem.image = [self imageForSortingOption:YTSortAllAsc];
+            self.sortingItem.image = [self.mainCoordinator imageForSortingOption:YTSortAllAsc];
             
         }];
         
@@ -281,27 +281,6 @@
     item.toolTip = title;
     
     return item;
-    
-}
-
-- (UIImage *)imageForSortingOption:(YetiSortOption)option {
-    
-    UIImage *image = nil;
-    
-    if ([option isEqualToString:YTSortAllDesc]) {
-        image = [UIImage systemImageNamed:@"arrow.down.circle"];
-    }
-    else if ([option isEqualToString:YTSortAllAsc]) {
-        image = [UIImage systemImageNamed:@"arrow.up.circle"];
-    }
-    else if ([option isEqualToString:YTSortUnreadDesc]) {
-        image = [UIImage systemImageNamed:@"arrow.down.circle.fill"];
-    }
-    else if ([option isEqualToString:YTSortUnreadAsc]) {
-        image = [UIImage systemImageNamed:@"arrow.up.circle.fill"];
-    }
-    
-    return image;
     
 }
 

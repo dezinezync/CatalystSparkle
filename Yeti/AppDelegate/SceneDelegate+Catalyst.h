@@ -16,8 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)ct_setupToolbar:(UIWindowScene *)scene;
 
-- (UIImage *)imageForSortingOption:(YetiSortOption)option;
-
 @end
 
 #endif

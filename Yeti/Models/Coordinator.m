@@ -348,6 +348,29 @@
     
 }
 
+#pragma mark - Helpers
+
+- (UIImage *)imageForSortingOption:(YetiSortOption)option {
+    
+    UIImage *image = nil;
+    
+    if ([option isEqualToString:YTSortAllDesc]) {
+        image = [UIImage systemImageNamed:@"arrow.down.circle"];
+    }
+    else if ([option isEqualToString:YTSortAllAsc]) {
+        image = [UIImage systemImageNamed:@"arrow.up.circle"];
+    }
+    else if ([option isEqualToString:YTSortUnreadDesc]) {
+        image = [UIImage systemImageNamed:@"arrow.down.circle.fill"];
+    }
+    else if ([option isEqualToString:YTSortUnreadAsc]) {
+        image = [UIImage systemImageNamed:@"arrow.up.circle.fill"];
+    }
+    
+    return image;
+    
+}
+
 @end
 
 static void *UIViewControllerMainCoordinatorKey;

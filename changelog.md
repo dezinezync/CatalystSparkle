@@ -10,6 +10,8 @@
 
 - Fixed some pre-formatted quotes appearing as single-line code blocks.
 
+- Updated Feed Sorting options to use a menu interface instead of an options controller. 
+
 ## Build 21
 
 - Fixed the app crashing in the background when registering for background refresh with the OS. 

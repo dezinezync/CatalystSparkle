@@ -67,11 +67,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSettingsVC;
 
+#pragma mark - Helpers
+
+- (UIImage *)imageForSortingOption:(YetiSortOption)option;
+
 @end
 
 @interface UIViewController (Coordination)
-
-@property (nonatomic, weak) Coordinator *coordinator;
 
 @property (nonatomic, weak) MainCoordinator *mainCoordinator;
 

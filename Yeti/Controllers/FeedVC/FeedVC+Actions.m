@@ -12,6 +12,8 @@
 #import <DZKit/AlertManager.h>
 #import "Keychain.h"
 
+#import "Coordinator.h"
+
 #import <UserNotifications/UserNotifications.h>
 
 @implementation FeedVC (Actions)
@@ -22,76 +24,11 @@
     
     if (sender != nil && [sender isKindOfClass:UIBarButtonItem.class]) {
         
-        UIColor *tintColor = nil;
-        UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+        UIImage *image = [self.mainCoordinator imageForSortingOption:option];
         
         sender.image = image;
-        sender.tintColor = tintColor;
         
     }
-    
-}
-
-- (void)didTapSortOptions:(UIBarButtonItem *)sender {
-    
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"All - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortAllDesc sender:sender];
-        
-    }];
-    
-    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"All - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortAllAsc sender:sender];
-
-        
-    }];
-    
-    UIAlertAction *unreadDesc = [UIAlertAction actionWithTitle:@"Unread - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortUnreadDesc sender:sender];
-        
-    }];
-    
-    UIAlertAction *unreadAsc = [UIAlertAction actionWithTitle:@"Unread - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortUnreadAsc sender:sender];
-        
-    }];
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    @try {
-        
-        UIImage * image = [SortImageProvider imageForSortingOption:YTSortAllDesc tintColor:nil];
-        
-        [allDesc setValue:image forKeyPath:@"image"];
-        
-        image = [SortImageProvider imageForSortingOption:YTSortAllAsc tintColor:nil];
-        
-        [allAsc setValue:image forKeyPath:@"image"];
-        
-        image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:nil];
-        
-        [unreadDesc setValue:image forKeyPath:@"image"];
-        
-        image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:nil];
-        
-        [unreadAsc setValue:image forKeyPath:@"image"];
-
-    }
-    @catch (NSException *exc) {
-        
-    }
-    
-    [avc addAction:allDesc];
-    [avc addAction:allAsc];
-    [avc addAction:unreadDesc];
-    [avc addAction:unreadAsc];
-    
-    [self presentAllReadController:avc fromSender:sender];
     
 }
 

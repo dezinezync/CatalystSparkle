@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedVC (Actions)
 
+- (void)updateSortingOptionTo:(YetiSortOption)option sender:(UIBarButtonItem *)sender;
+
 - (void)loadArticle;
 
 - (void)_markVisibleRowsRead;
@@ -27,10 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)subscribeToFeed:(UIBarButtonItem *)sender;
 
 - (void)subscribedToFeed:(NSNotification *)note;
-
-- (void)didTapSidebarButton:(UIBarButtonItem *)sender;
-
-- (void)didTapSortOptions:(UIBarButtonItem *)sender;
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender;
 
