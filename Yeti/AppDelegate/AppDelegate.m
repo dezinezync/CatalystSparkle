@@ -94,7 +94,7 @@ AppDelegate *MyAppDelegate = nil;
         
 //        [MyFeedsManager resetAccount];
         
-        SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
+        self.coordinator = [MainCoordinator new];
         
 //        weakify(self);
         

@@ -4,145 +4,17 @@
 <dict>
 	<key>StringsTable</key>
 	<string>Root</string>
-	<key>Icon</key>
-	<string>pref-general.png</string>
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
 			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string></string>
-			<key>FooterText</key>
-			<string>Background Refresh updates the app by fetching new data from the servers automatically. </string>
-		</dict>
-		<dict>
-			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Background Refresh</string>
+			<string>Reset Account</string>
 			<key>Key</key>
-			<string>backgroundRefresh</string>
+			<string>reset_account_preference</string>
 			<key>DefaultValue</key>
 			<false/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string></string>
-			<key>FooterText</key>
-			<string>Set whether you want to see the number of unread articles in each section.</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Unread Counters</string>
-			<key>Key</key>
-			<string>com.dezinezync.elytra.showUnreadCounts</string>
-			<key>DefaultValue</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string></string>
-			<key>FooterText</key>
-			<string>You can optionally hide the Bookmarks Tab from the Feeds Interface.</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Hide Bookmarks</string>
-			<key>Key</key>
-			<string>com.dezinezync.elytra.hideBookmarksTab</string>
-			<key>DefaultValue</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string></string>
-			<key>FooterText</key>
-			<string>When this setting is enabled, the app will open the Unreads Interface upon launch.</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Open Unread</string>
-			<key>Key</key>
-			<string>com.dezinezync.elytra.openUnreadOnLaunch</string>
-			<key>DefaultValue</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string></string>
-			<key>FooterText</key>
-			<string>Number of summary lines to show when viewing the list of Articles.</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Title</key>
-			<string>Summary Lines</string>
-			<key>Key</key>
-			<string>com.dezinezync.elytra.summaryPreviewLines</string>
-			<key>DefaultValue</key>
-			<string>0</string>
-			<key>Titles</key>
-			<array>
-				<string>0 Lines</string>
-				<string>1 Line</string>
-				<string>2 Lines</string>
-				<string>3 Lines</string>
-				<string>4 Lines</string>
-			</array>
-			<key>Values</key>
-			<array>
-				<string>0</string>
-				<string>1</string>
-				<string>2</string>
-				<string>3</string>
-				<string>4</string>
-			</array>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>Account</string>
-			<key>Key</key>
-			<string>account</string>
-			<key>File</key>
-			<string>account</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>Images</string>
-			<key>Key</key>
-			<string>images</string>
-			<key>File</key>
-			<string>images</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-			<key>Title</key>
-			<string>Reader</string>
-			<key>Key</key>
-			<string>article</string>
-			<key>File</key>
-			<string>article</string>
 		</dict>
 	</array>
 </dict>

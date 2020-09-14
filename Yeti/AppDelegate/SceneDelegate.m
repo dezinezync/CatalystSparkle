@@ -10,6 +10,7 @@
 #import <JLRoutes/JLRoutes.h>
 
 #import "YetiThemeKit.h"
+#import "AppDelegate.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
@@ -93,9 +94,7 @@
         
     }
     
-    MainCoordinator *coordinator = [MainCoordinator new];
-    
-    self.coordinator = coordinator;
+    self.coordinator = MyAppDelegate.coordinator;
     
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
     
@@ -288,6 +287,10 @@
 
 - (void)setupBackgroundRefresh {
     
+    if (MyAppDelegate.bgTaskHandlerRegistered == YES) {
+        return;
+    }
+    
     weakify(self);
     
     BOOL registered = [[BGTaskScheduler sharedScheduler] registerForTaskWithIdentifier:backgroundRefreshIdentifier usingQueue:nil launchHandler:^(__kindof BGAppRefreshTask * _Nonnull task) {
@@ -325,6 +328,8 @@
 
         
     }];
+    
+    MyAppDelegate.bgTaskHandlerRegistered = registered;
     
     NSLog(@"Registered background refresh task: %@", @(registered));
     

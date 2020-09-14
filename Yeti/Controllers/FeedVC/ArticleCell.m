@@ -131,10 +131,12 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (void)tintColorDidChange {
+    
+    [super tintColorDidChange];
+    
+    self.markerView.tintColor = self.tintColor;
+    
 }
 
 #pragma mark - Configurations
@@ -534,7 +536,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     else if (self.article.isRead == NO) {
-        self.markerView.tintColor = UIColor.systemBlueColor;
+        self.markerView.tintColor = self.tintColor;
         self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
     }
     else {

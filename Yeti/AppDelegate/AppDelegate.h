@@ -39,6 +39,10 @@ extern AppDelegate * MyAppDelegate;
 
 - (void)loadCodeTheme;
 
+@property (nonatomic, strong) MainCoordinator *coordinator;
+
+@property (nonatomic, assign) BOOL bgTaskHandlerRegistered;
+
 #if TARGET_OS_MACCATALYST
 
 @property (nonatomic, strong) NSBundle *appKitBundle;

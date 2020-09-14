@@ -339,12 +339,10 @@
     self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * tableView, NSIndexPath * indexPath, FeedItem * article) {
         
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
-
-        [cell configure:article feedType:self.type];
         
-//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-//
-//        cell.textLabel.text = article.articleTitle;
+        cell.tintColor = self.view.tintColor;
+        
+        [cell configure:article feedType:self.type];
         
         return cell;
         
