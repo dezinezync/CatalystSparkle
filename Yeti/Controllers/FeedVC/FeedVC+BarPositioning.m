@@ -114,7 +114,10 @@
     UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage menu:menu];
     sorting.width = 32.f;
     
-    if (!(self.feed.hubSubscribed && self.feed.hub)) {
+    BOOL isPushFromHub = (self.feed.hubSubscribed && self.feed.hub);
+    BOOL isPushFromRPC = self.feed.rpcCount > 0;
+    
+    if (isPushFromHub == NO && isPushFromRPC == NO) {
         NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
         
         if ([self showsSortingButton]) {
