@@ -1,5 +1,11 @@
 # v2.0.0
 
+## Build 23
+
+- Minor fixes everywhere. 
+
+- New Folder/Edit Folder interface now uses a basic interface which is faster to use IMO.  
+
 ## Build 22
 
 - Improved styling for inline code blocks. 
