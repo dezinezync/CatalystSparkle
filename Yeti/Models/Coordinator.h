@@ -55,8 +55,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showEmptyVC;
 
-- (void)showNewFolderVC:(Folder *)folder indexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL completed))completionHandler;
-
 - (void)showLaunchVC;
 
 - (void)showSubscriptionsInterface;
@@ -64,6 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showNewFeedVC;
 
 - (void)showNewFolderVC;
+
+- (void)showRenameFolderVC:(Folder *)folder;
 
 - (void)showSettingsVC;
 

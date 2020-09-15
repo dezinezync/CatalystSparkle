@@ -59,73 +59,18 @@
     
     UIKeyCommand *refresh = [UIKeyCommand commandWithTitle:@"Refresh" image:nil action:@selector(refreshAll) input:@"r" modifierFlags:UIKeyModifierCommand propertyList:nil];
     
-    UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"NewFeedMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh]];
+    UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh]];
     
-    [builder insertChildMenu:newFeedMenu atStartOfMenuForIdentifier:UIMenuFile];
+    [builder replaceMenuForIdentifier:UIMenuNewScene withMenu:newFeedMenu];
     
-    // Add items for View Menu
-    UICommand * sortAllDesc = [UICommand commandWithTitle:@"All - Newest First" image:nil action:@selector(setSortingAllDesc) propertyList:nil];
-    UICommand * sortAllAsc = [UICommand commandWithTitle:@"All - Oldest First" image:nil action:@selector(setSortingAllAsc) propertyList:nil];
-    
-    UICommand * unreadDesc = [UICommand commandWithTitle:@"Unread - Newest First" image:nil action:@selector(setSortingUnreadDesc) propertyList:nil];
-    UICommand * unreadAsc = [UICommand commandWithTitle:@"Unread - Oldest First" image:nil action:@selector(setSortingUnreadAsc) propertyList:nil];
-    
+
     FeedVC *feedVC = coordinator.feedVC;
-    
-    if (feedVC != nil) {
-        
-        if (feedVC.type == FeedVCTypeUnread || feedVC.type == FeedVCTypeBookmarks) {
-            
-            unreadAsc.attributes = UIMenuElementAttributesDisabled;
-            unreadDesc.attributes = UIMenuElementAttributesDisabled;
-            
-        }
-        else {
-            
-            unreadAsc.attributes = 0;
-            unreadDesc.attributes = 0;
-            
-        }
-        
-        UICommand *active = nil;
-        
-        switch (SharedPrefs.sortingOption.integerValue) {
-            case 0:
-                active = sortAllDesc;
-                break;
-            case 1:
-                active = sortAllAsc;
-                break;
-            case 2:
-                active = unreadDesc;
-                break;
-            default:
-                active = unreadAsc;
-                break;
-        }
-        
-        active.state = UIMenuElementStateOn;
-        
-        NSArray *inactive = [@[sortAllDesc, sortAllAsc, unreadDesc, unreadAsc] rz_filter:^BOOL(UICommand * obj, NSUInteger idx, NSArray *array) {
-            
-            return obj != active;
-            
-        }];
-        
-        for (UICommand *obj in inactive) {
-            obj.state = UIMenuElementStateOff;
-        }
-        
-    }
-    
-    UIMenu *sortingMenu = [UIMenu menuWithTitle:@"Sort By" image:nil identifier:@"SortingMenu" options:kNilOptions children:@[sortAllDesc, sortAllAsc, unreadDesc, unreadAsc]];
     
     UIKeyCommand *toggleSidebar = [UIKeyCommand commandWithTitle:@"Toggle Sidebar" image:nil action:@selector(toggleSidebar:) input:@"s" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate  propertyList:nil];
     
     UIMenu *toggleSidebarMenu = [UIMenu menuWithTitle:@"Toggle Sidebar" image:nil identifier:@"ToggleSidebar" options:UIMenuOptionsDisplayInline children:@[toggleSidebar]];
     
     [builder insertChildMenu:toggleSidebarMenu atStartOfMenuForIdentifier:UIMenuView];
-    [builder insertChildMenu:sortingMenu atStartOfMenuForIdentifier:UIMenuView];
     
     // Go menu
     

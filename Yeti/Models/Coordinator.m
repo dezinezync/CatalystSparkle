@@ -18,8 +18,15 @@
 #import "LaunchVC.h"
 #import "StoreVC.h"
 #import "AddFeedVC.h"
-#import "NewFolderVC.h"
+#import "NewFolderController.h"
 #import "SettingsVC.h"
+#import <DZKit/AlertManager.h>
+
+@interface MainCoordinator ()
+
+@property (nonatomic, strong) NewFolderController *folderController;
+
+@end
 
 @implementation MainCoordinator
 
@@ -157,24 +164,6 @@
     
 }
 
-- (void)showNewFolderVC:(Folder *)folder indexPath:(NSIndexPath *)indexPath completionHandler:(void (^)(BOOL))completionHandler {
-    
-    UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
-    
-    runOnMainQueueWithoutDeadlocking(^{
-       
-        [self.splitViewController presentViewController:nav animated:YES completion:^{
-            
-            if (completionHandler) {
-                completionHandler(YES);
-            }
-            
-        }];
-        
-    });
-    
-}
-
 - (void)showLaunchVC {
     
     if (self.splitViewController.presentingViewController != nil) {
@@ -219,11 +208,51 @@
 
 - (void)showNewFolderVC {
     
-    UINavigationController *nav = [[UINavigationController alloc] init];
+    if (self.folderController != nil && self.folderController.completed == NO) {
+        return;
+    }
     
-    nav.viewControllers.firstObject.mainCoordinator = self;
+    self.folderController = [[NewFolderController alloc] initWithFolder:nil coordinator:self completion:^(Folder * _Nullable folder, BOOL completed, NSError * _Nullable error) {
+       
+        if (error != nil) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Creating New Folder" message:error.localizedDescription];
+            
+        }
+        else if (completed) {
+            
+            [self.sidebarVC setupData];
+            
+        }
+        
+    }];
     
-    [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    [self.folderController start];
+    
+}
+
+- (void)showRenameFolderVC:(Folder *)folder {
+    
+    if (self.folderController != nil && self.folderController.completed == NO) {
+        return;
+    }
+    
+    self.folderController = [[NewFolderController alloc] initWithFolder:folder coordinator:self completion:^(Folder * _Nullable folder, BOOL completed, NSError * _Nullable error) {
+       
+        if (error != nil) {
+            
+            [AlertManager showGenericAlertWithTitle:@"Error Updating Folder" message:error.localizedDescription];
+            
+        }
+        else if (completed) {
+            
+            [self.sidebarVC setupData];
+            
+        }
+        
+    }];
+    
+    [self.folderController start];
     
 }
 

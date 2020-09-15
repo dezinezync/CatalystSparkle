@@ -69,13 +69,7 @@
             
             UIAction * rename = [UIAction actionWithTitle:@"Rename" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
-                UINavigationController *nav = [NewFolderVC instanceWithFolder:folder indexPath:indexPath];
-                
-                nav.viewControllers.firstObject.mainCoordinator = self.mainCoordinator;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self presentViewController:nav animated:YES completion:nil];
-                });
+                [self.mainCoordinator showRenameFolderVC:folder];
                 
             }];
             

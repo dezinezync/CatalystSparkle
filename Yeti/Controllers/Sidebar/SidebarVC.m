@@ -115,7 +115,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             if (folder) {
                 UIContextualAction *rename = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Rename" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
                    
-                    [self.mainCoordinator showNewFolderVC:folder indexPath:indexPath completionHandler:completionHandler];
+                    [self.mainCoordinator showRenameFolderVC:folder];
                     
                 }];
                 

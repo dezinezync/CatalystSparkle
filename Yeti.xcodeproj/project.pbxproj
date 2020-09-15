@@ -113,6 +113,7 @@
 		F03AC036205533D900FB111A /* HTMLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F03AC033205533D900FB111A /* HTMLUtils.m */; };
 		F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
 		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
+		F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */ = {isa = PBXBuildFile; fileRef = F03C4EBC2510CE8A008561DB /* NewFolderController.m */; };
 		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0448D00244463B7003B6AA7 /* CoreServices.framework */; };
@@ -884,6 +885,8 @@
 		F03BC4E320C9015A007B574F /* EmptyView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyView.xib; sourceTree = "<group>"; };
 		F03BC4E720C9016A007B574F /* EmptyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyView.h; sourceTree = "<group>"; };
 		F03BC4E820C9016A007B574F /* EmptyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyView.m; sourceTree = "<group>"; };
+		F03C4EBB2510CE8A008561DB /* NewFolderController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderController.h; sourceTree = "<group>"; };
+		F03C4EBC2510CE8A008561DB /* NewFolderController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderController.m; sourceTree = "<group>"; };
 		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
 		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
@@ -2213,6 +2216,8 @@
 			children = (
 				F0A0501A21F07BFF00A46524 /* AddFeedVC.h */,
 				F0A0501B21F07BFF00A46524 /* AddFeedVC.m */,
+				F03C4EBB2510CE8A008561DB /* NewFolderController.h */,
+				F03C4EBC2510CE8A008561DB /* NewFolderController.m */,
 			);
 			path = NewFeed;
 			sourceTree = "<group>";
@@ -3181,6 +3186,7 @@
 				F078B638206637B40048DBEA /* EmptyVC.m in Sources */,
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
+				F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,
