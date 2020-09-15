@@ -4,7 +4,9 @@
 
 - Minor fixes everywhere. 
 
-- New Folder/Edit Folder interface now uses a basic interface which is faster to use IMO.  
+- New Folder/Edit Folder interface now uses a basic interface which is faster to use IMO. 
+
+Unless we encounter any breaking bugs, this version will be shipped for review. 
 
 ## Build 22
 
@@ -65,95 +67,3 @@
 - Fixes a crash on launch when number of unread articles is less than 4. This crash was caused when fetching data for the Widgets. 
 
 - Fixes the icon for the "Mark Newer Items" when sorting was done by Newest first. 
-
-##  Build 16
- 
- - Directional marking as read. Long press on an article in Unread, Today or a Feed to see these options. Which articles get marked depends on your sorting preference, so please check that when testing.
- 
-### For example:   
-
-#### Newest First
-
-- Marking all "Older Articles" when sorting in Descending order will mark the article and all unread articles below it. 
-- Marking all "Newer Articles" when sorting in Descending order will mark the article and all unread articles above it. 
-
-#### Oldest First 
-- Marking all "Older Articles" when sorting in Ascending order will mark the article and all unread articles above it. 
-- Marking all "Newer Articles" when sorting in Ascending order will mark the article and all unread articles below it. 
-
-- Fixed an issue where reading an article from today would not decrement the "Unread Today" counter. 
-
-- Improved layout for the Unreads Widget in full size. 
-
-## Build 15
-
-- Testing renewable subscriptions. Manual Subs have been disabled for now. Please test these. The Monthly sub only lasts for 5min. The Yearly sub will last for 1 hour. 
-
-- Fixed an issue where the app would launch with a blank screen. This was a regression introduced in build 12. 
-
-## Build 12
-- Fixed pop gesture showing the nav bar again if its hidden
-
-- Interactive pop gesture works when nav bar is hidden
-
-- Force touch and tapping on urls now works reliably. iOS 13.4 fixes no longer needed in iOS 14. 
-
-- Fixed content for micro.blog posts not appearing in widgets.
-
-## Build 9
-
-- Added favicons to the Unreads Widget. 
-
-- Added empty state to the Unreads Widget.
-
-- Removed opacity from icons for the counters widget.
-
-- Fixed Counters widget incorrectly displaying bookmarks count. (Launch the app once to update the data across the widgets).
-
-## Build 7
-
-- Images are once again openable in fullscreen mode.
-
-- Preliminary Widgets support. Contains a Counters (Small) Widget and a Unread Articles (medium and large) widget. 
-
-## Build 6
-
-- Implements Trailing Swipe actions on Feed Cells.
-
-- Fixes marking articles as read in bulk locking up the app. 
-
-- Fixes an issue where marking currently loaded articles as read in the Unread view would prevent new articles from loading.  
-
-- Selecting the Custom Feeds now updates their selected state similar to regular feeds. 
-
-- If you have setup a custom title for a Feed, the custom title will now show up correctly for the empty state. 
-
-- Fixed a crash caused when trying to share a Feed's URL or its website's URL.
-
-## Build 5
-
-- Prevents an issue causing the app to sync data twice upon successfully launching. 
-
-- Fixes the icons layout issue from **Build 3** causing   
-    - Icons to be incorrectly sized in a lot of cases 
-    - Icons of one feed to be applied to a different feed 
-
-- Moves Folder Feed access to the Folder's context menu. (No way to detect a tap right now on the Folder's row.)
-
-- Reliably updates Folder and Feed unread counts. 
-
-## Build 3
-
-- All new triple column support using Apple's own UI Framework. This is much more reliable that my own implementation from v1. 
-
-- An all new Sidebar Interface. This uses Apple's latest UI Framework for displaying your folders and feeds. 
-
-- Unread counts update more reliabily as you read through your content. 
-
-- Improved underlying code for managing the initial state of the app. 
-
-### Known Issues & Other Notes
-
-- Custom theme settings may not apply to the new Sidebar VC. Custom theming will be removed in a future update. 
-
-- No changes to the Articles List or Article Renderer in this update.  
