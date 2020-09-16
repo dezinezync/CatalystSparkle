@@ -18,6 +18,7 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSArray+Safe.h>
+#import <DZKit/NSString+Extras.h>
 
 #import "UIImage+Color.h"
 #import "PaddedLabel.h"
@@ -279,7 +280,7 @@
     NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
     para.lineSpacing = 1.5f;
     
-    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications for supported feeds\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
+    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications\n-Available on iPhone, iPad and macOS (Coming soon)\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
     
     NSDictionary *bottomLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
                                            NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
@@ -529,7 +530,83 @@
     NSString *productID = [self.sortedProducts[indexPath.section] objectAtIndex:indexPath.row];
     SKProduct *product = [[RMStore defaultStore] productForIdentifier:productID];
     
-    cell.textLabel.text = product.localizedTitle;
+    NSString *title = product.localizedTitle;
+    
+    if (title == nil || [title isBlank]) {
+        
+        if (indexPath.section == 0) {
+         
+            if ([product.productIdentifier isEqualToString:IAPMonthlyAuto]) {
+                title = @"Monthly Subscription";
+            }
+            else {
+                title = @"Yearly Subscription";
+            }
+            
+        }
+        else {
+            
+            title = @"Lifetime Subscription";
+            
+        }
+        
+    }
+    
+    NSString *additional = nil;
+    
+    if (product.subscriptionPeriod != nil) {
+        
+        SKProductPeriodUnit unit = [product subscriptionPeriod].unit;
+        
+        if (unit == SKProductPeriodUnitMonth) {
+            additional = @"Charged every month";
+        }
+        else if (unit == SKProductPeriodUnitYear) {
+            additional = @"Charged every year";
+        }
+        
+    }
+    else if ([product.productIdentifier isEqualToString:IAPLifetime]) {
+        
+        additional = @"One Time Cost";
+        
+    }
+    
+    if (additional != nil) {
+        
+        title = formattedString(@"%@\n%@", title, additional);
+        
+    }
+    
+    cell.textLabel.numberOfLines = 2;
+    
+    if (additional != nil) {
+        
+        NSDictionary *base = @{NSForegroundColorAttributeName: UIColor.labelColor,
+                               NSFontAttributeName: cell.textLabel.font
+        };
+        
+        UIFont *caption = [UIFont preferredFontForTextStyle:UIFontTextStyleCaption1];
+        
+        NSDictionary *additionalAttributes = @{NSForegroundColorAttributeName: UIColor.secondaryLabelColor,
+                                               NSFontAttributeName: caption
+                                               
+        };
+        
+        NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:title attributes:base];
+        
+        NSRange additionalRange = [title rangeOfString:additional];
+        
+        [attrs setAttributes:additionalAttributes range:additionalRange];
+        
+        cell.textLabel.attributedText = attrs;
+        
+    }
+    else {
+        cell.textLabel.textColor = UIColor.labelColor;
+        cell.textLabel.text = title;
+    }
+    
     cell.detailTextLabel.text = [RMStore localizedPriceOfProduct:product];
     
     if ([productID isEqualToString:IAPLifetime] && [self.purhcasedProductIdentifiers containsObject:IAPLifetime]) {
@@ -556,6 +633,16 @@
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    CGRect footerRect = self.tableView.tableFooterView.frame;
+    CGPoint contentOffset = self.tableView.contentOffset;
+    
+    UIEdgeInsets adjusted = self.view.safeAreaInsets;
+    
+    contentOffset.y = CGRectGetMinY(footerRect)/2.f - (adjusted.top + adjusted.bottom);
+    
+    [self.tableView setContentOffset:contentOffset animated:YES];
+    
 }
 
 #pragma mark RMStoreObserver
