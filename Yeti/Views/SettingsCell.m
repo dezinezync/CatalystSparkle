@@ -12,6 +12,24 @@
 NSString *const kSettingsCell = @"com.yeti.cell.settings";
 NSString *const kAccountsCell = @"com.yeti.cell.accounts";
 NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
+NSString *const kDeactivateCell = @"com.yeti.cell.deactivateCell";
+NSString *const kStoreCell = @"com.yeti.cell.storeCell";
+
+@implementation SettingsBaseCell
+
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize withHorizontalFittingPriority:(UILayoutPriority)horizontalFittingPriority verticalFittingPriority:(UILayoutPriority)verticalFittingPriority {
+    
+    CGSize size = [super systemLayoutSizeFittingSize:targetSize withHorizontalFittingPriority:horizontalFittingPriority verticalFittingPriority:verticalFittingPriority];
+    
+#if TARGET_OS_MACCATALYST
+    size.height += 12.f;
+#endif
+    
+    return size;
+    
+}
+
+@end
 
 @implementation SettingsCell
 
@@ -19,23 +37,9 @@ NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
 {
     if (self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier]) {
         
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        UIView *selected = [UIView new];
-        selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
-        self.selectedBackgroundView = selected;
-        
     }
     
     return self;
-}
-
-- (CGSize)intrinsicContentSize {
-    
-    CGSize size = [super intrinsicContentSize];
-    
-    return size;
-    
 }
 
 @end
@@ -44,8 +48,8 @@ NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    if (self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier]) {
-        self.detailTextLabel.textColor = [UIColor colorWithWhite:0.38f alpha:1.f];
+    if (self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier]) {
+        self.textLabel.textColor = UIColor.secondaryLabelColor;
     }
     
     return self;
@@ -60,6 +64,39 @@ NSString *const kExternalAppsCell = @"com.yeti.cell.externalApps";
     if (self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier]) {
         self.imageView.layer.cornerRadius = 6.5f;
         self.imageView.layer.masksToBounds = YES;
+    }
+    
+    return self;
+}
+
+@end
+
+@implementation DeactivateCell
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    if (self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier]) {
+        self.textLabel.textColor = UIColor.systemRedColor;
+        self.textLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    
+    return self;
+}
+
+@end
+
+@implementation StoreCell
+
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    if (self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier]) {
+        
+        self.textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+        self.textLabel.textColor = UIColor.secondaryLabelColor;
+        
+        self.detailTextLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+        self.detailTextLabel.textColor = UIColor.labelColor;
+        
     }
     
     return self;

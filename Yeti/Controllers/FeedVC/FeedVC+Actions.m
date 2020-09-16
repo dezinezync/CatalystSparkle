@@ -12,6 +12,8 @@
 #import <DZKit/AlertManager.h>
 #import "Keychain.h"
 
+#import "Coordinator.h"
+
 #import <UserNotifications/UserNotifications.h>
 
 @implementation FeedVC (Actions)
@@ -22,76 +24,11 @@
     
     if (sender != nil && [sender isKindOfClass:UIBarButtonItem.class]) {
         
-        UIColor *tintColor = nil;
-        UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+        UIImage *image = [self.mainCoordinator imageForSortingOption:option];
         
         sender.image = image;
-        sender.tintColor = tintColor;
         
     }
-    
-}
-
-- (void)didTapSortOptions:(UIBarButtonItem *)sender {
-    
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"All - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortAllDesc sender:sender];
-        
-    }];
-    
-    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"All - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortAllAsc sender:sender];
-
-        
-    }];
-    
-    UIAlertAction *unreadDesc = [UIAlertAction actionWithTitle:@"Unread - Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortUnreadDesc sender:sender];
-        
-    }];
-    
-    UIAlertAction *unreadAsc = [UIAlertAction actionWithTitle:@"Unread - Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [self updateSortingOptionTo:YTSortUnreadAsc sender:sender];
-        
-    }];
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    @try {
-        
-        UIImage * image = [SortImageProvider imageForSortingOption:YTSortAllDesc tintColor:nil];
-        
-        [allDesc setValue:image forKeyPath:@"image"];
-        
-        image = [SortImageProvider imageForSortingOption:YTSortAllAsc tintColor:nil];
-        
-        [allAsc setValue:image forKeyPath:@"image"];
-        
-        image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:nil];
-        
-        [unreadDesc setValue:image forKeyPath:@"image"];
-        
-        image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:nil];
-        
-        [unreadAsc setValue:image forKeyPath:@"image"];
-
-    }
-    @catch (NSException *exc) {
-        
-    }
-    
-    [avc addAction:allDesc];
-    [avc addAction:allAsc];
-    [avc addAction:unreadDesc];
-    [avc addAction:unreadAsc];
-    
-    [self presentAllReadController:avc fromSender:sender];
     
 }
 
@@ -191,24 +128,13 @@
                 [self _markVisibleRowsRead];
             }
             
-            if (self.type == FeedVCTypeUnread || self.sortingOption == YTSortUnreadAsc || self.sortingOption == YTSortUnreadDesc) {
-                
-                self.pagingManager = nil;
-                
-                self.controllerState = StateLoading;
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [self loadNextPage];
-                });
-                
-            }
-            
         });
+        
     };
     
     if (showPrompt) {
         
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark currently loaded articles as read?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -274,7 +200,7 @@
     };
     
     if (showPrompt) {
-        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertController *avc = [UIAlertController alertControllerWithTitle:nil message:@"Mark all Articles as read including back-dated articles?" preferredStyle:UIAlertControllerStyleAlert];
         
         [avc addAction:[UIAlertAction actionWithTitle:@"Mark all Read" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -296,8 +222,9 @@
 
 - (void)_didFinishAllReadActionSuccessfully {
     
-    if (self.feed != nil && self.feed.unread > 0) {
-        self.feed.unread = 0;
+    if (self.feed != nil && self.feed.unread.unsignedIntegerValue > 0) {
+        MyFeedsManager.totalUnread -= self.feed.unread.unsignedIntegerValue;
+        self.feed.unread = @(0);
     }
     
 }
@@ -316,11 +243,20 @@
             strongify(self);
             self.feed.subscribed = NO;
             
-            asyncMain(^{
+            if ([sender isKindOfClass:UIBarButtonItem.class]) {
+                
                 sender.enabled = YES;
                 sender.image = [UIImage systemImageNamed:@"bell.slash"];
                 sender.accessibilityValue = @"Subscribe to notifications";
-            });
+                
+            }
+            else if ([sender isKindOfClass:UIButton.class]) {
+                
+                sender.enabled = YES;
+                [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bell.slash"] forState:UIControlStateNormal];
+                sender.accessibilityValue = @"Subscribe to notifications";
+                
+            }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
@@ -386,10 +322,23 @@
         
         self.feed.subscribed = YES;
         
-        asyncMain(^{
-            sender.enabled = YES;
-            sender.image = [UIImage systemImageNamed:@"bell.fill"];
-            sender.accessibilityValue = @"Unsubscribe from notifications";
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            if ([sender isKindOfClass:UIBarButtonItem.class]) {
+                
+                sender.enabled = YES;
+                sender.image = [UIImage systemImageNamed:@"bell.fill"];
+                sender.accessibilityValue = @"Unsubscribe from notifications";
+                
+            }
+            else if ([sender isKindOfClass:UIButton.class]) {
+                
+                sender.enabled = YES;
+                [(UIButton *)sender setImage:[UIImage systemImageNamed:@"bell.fill"] forState:UIControlStateNormal];
+                sender.accessibilityValue = @"Unsubscribe from notifications";
+                
+            }
+            
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -466,15 +415,15 @@
     });
 }
 
-- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
-    
-    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
-    
-}
+//- (void)didTapSidebarButton:(UIBarButtonItem *)sender {
+//
+//    self.to_splitViewController.primaryColumnIsHidden = !self.to_splitViewController.primaryColumnIsHidden;
+//
+//}
 
 - (void)presentAllReadController:(UIAlertController *)avc fromSender:(id)sender {
-    
-    if (self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+#if !TARGET_OS_MACCATALYST
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad || self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         
@@ -491,8 +440,140 @@
         }
         
     }
-    
+#endif
     [self presentViewController:avc animated:YES completion:nil];
+    
+}
+
+- (void)markAllNewerRead:(NSIndexPath *)indexPath {
+    
+    [self markAllDirectional:1 indexPath:indexPath];
+    
+}
+
+- (void)markAllOlderRead:(NSIndexPath *)indexPath {
+    
+    [self markAllDirectional:2 indexPath:indexPath];
+    
+}
+
+- (void)markAllDirectional:(NSInteger)direction indexPath:(NSIndexPath *)indexPath {
+    
+    YetiSortOption sorting = self.sortingOption;
+    
+    NSString *feed = nil;
+    
+    if (self.type == FeedVCTypeUnread) {
+        feed = @"unread";
+    }
+    else if (self.type == FeedVCTypeToday) {
+        feed = @"today";
+    }
+    else if (self.type == FeedVCTypeNatural) {
+        feed = self.feed.feedID.stringValue;
+    }
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
+    
+    if (item == nil) {
+        return;
+    }
+    
+    [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(NSNumber * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (responseObject.integerValue == 0) {
+            return;
+        }
+        
+        NSMutableArray <FeedItem *> *affectedIndices = @[].mutableCopy;
+        
+        if (item.isRead == NO) {
+            
+            item.read = YES;
+            
+            [affectedIndices addObject:item];
+            
+        }
+        
+        BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
+        
+        if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+            
+            // mark all items above this item
+            for (NSInteger idx = indexPath.row; idx > 0; idx--) {
+                
+                NSInteger row = indexPath.row - idx;
+                
+                if (row < 0) {
+                    continue;
+                }
+                
+                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
+                
+                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
+                
+                if (newItem && newItem.isRead == NO) {
+                    
+                    newItem.read = YES;
+                    
+                    [affectedIndices addObject:newItem];
+                    
+                }
+                
+            }
+            
+        }
+        else {
+            
+            // mark all items below this item
+            id lastItem = [[[self.DS snapshot] itemIdentifiers] lastObject];
+            NSIndexPath *lastItemIndexPath = [self.DS indexPathForItemIdentifier:lastItem];
+            
+            for (NSInteger idx = 1; idx <= lastItemIndexPath.row; idx++) {
+                
+                NSInteger row = indexPath.row + idx;
+                
+                if (row > lastItemIndexPath.row) {
+                    continue;
+                }
+                
+                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
+                
+                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
+                
+                if (newItem && newItem.isRead == NO) {
+                    
+                    newItem.read = YES;
+                    
+                    [affectedIndices addObject:newItem];
+                    
+                }
+                
+            }
+            
+        }
+        
+        NSLogDebug(@"Affected indices: %@", affectedIndices);
+        
+        if (affectedIndices.count == 0) {
+            return;
+        }
+        
+        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
+        
+        [snapshot reloadItemsWithIdentifiers:affectedIndices];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
+        
+    }];
     
 }
 

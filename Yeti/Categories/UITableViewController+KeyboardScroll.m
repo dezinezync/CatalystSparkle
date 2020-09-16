@@ -72,7 +72,7 @@ static char highlightedRowKey;
                     
                 if (DDS != nil) {
                     
-                    NSInteger numberOfItems = [[DDS snapshot] itemIdentifiersInSectionWithIdentifier:sectionIdentifier].count;
+                    NSInteger numberOfItems = [[(UITableViewDiffableDataSource *)DDS snapshot] itemIdentifiersInSectionWithIdentifier:sectionIdentifier].count;
                     
                     indexPath = [NSIndexPath indexPathForRow:(numberOfItems - 1) inSection:section];
                     

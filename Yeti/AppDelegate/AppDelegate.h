@@ -10,12 +10,8 @@
 #import <DZAppdelegate/DZAppdelegate.h>
 
 #import "RMStore.h"
-
-#if TARGET_OS_MACCATALYST
-
-#import "AppKitGlue.h"
-
-#endif
+#import "Coordinator.h"
+#import "SceneDelegate.h"
 
 @class RMStoreKeychainPersistence;
 
@@ -23,13 +19,11 @@
 
 extern AppDelegate * MyAppDelegate;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, UIWindowSceneDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate> {
     
     dispatch_queue_t _bgTaskDispatchQueue;
     
 }
-
-@property (nonatomic, strong) UIWindow *window;
 
 @property (nonatomic, weak) UIAlertController *addFeedDialog;
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
@@ -45,15 +39,15 @@ extern AppDelegate * MyAppDelegate;
 
 - (void)loadCodeTheme;
 
+@property (nonatomic, strong) MainCoordinator *coordinator;
+
+@property (nonatomic, assign) BOOL bgTaskHandlerRegistered;
+
 #if TARGET_OS_MACCATALYST
 
 @property (nonatomic, strong) NSBundle *appKitBundle;
 
-@property (nonatomic, strong) AppKitGlue *sharedGlue;
-
 @property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
-
-@property (nonatomic, weak) NSToolbar *toolbar;
 
 @property (nonatomic, weak) NSToolbarItem *shareArticleItem;
 

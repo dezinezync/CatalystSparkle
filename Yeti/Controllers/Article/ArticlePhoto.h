@@ -7,13 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <NYTPhotoViewer/NYTPhoto.h>
+//#import <NYTPhotoViewer/NYTPhoto.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class SDWebImageCombinedOperation;
 
-@interface ArticlePhoto : NSObject <NYTPhoto>
+@interface ArticlePhoto : NSObject /* <NYTPhoto> */
 
 @property (nonatomic, copy) UIImage *downloadedImage;
 

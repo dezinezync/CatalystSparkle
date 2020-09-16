@@ -12,9 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AppDelegate (BackgroundRefresh)
 
-- (void)applicationDidEnterBackground:(UIApplication *)application;
-
-- (void)setupBackgroundRefresh;
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(nonnull NSString *)identifier completionHandler:(nonnull void (^)(void))completionHandler;
 
 @end
 

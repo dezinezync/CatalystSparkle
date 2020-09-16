@@ -7,9 +7,9 @@
 //
 
 #import "PrefsManager.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
-#import <DZTextKit/Paragraph.h>
+#import "Paragraph.h"
 #import "Content.h"
 
 PrefsManager * SharedPrefs = nil;
@@ -38,9 +38,6 @@ PrefsManager * SharedPrefs = nil;
         SharedPrefs = [[PrefsManager alloc] init];
         SharedPrefs.defaults = [NSUserDefaults standardUserDefaults];
         
-        Paragraph.tk_prefsManager = SharedPrefs;
-        Content.tk_prefsManager = SharedPrefs;
-        
     });
     
     return SharedPrefs;
@@ -48,7 +45,9 @@ PrefsManager * SharedPrefs = nil;
 
 - (void)loadDefaults {
     
-    self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
+//    self.theme = [self.defaults stringForKey:kDefaultsTheme] ?: LightTheme;
+    self.theme = LightTheme;
+    
     self.backgroundRefresh = ([self.defaults valueForKey:kDefaultsBackgroundRefresh] ? [[self.defaults valueForKey:kDefaultsBackgroundRefresh] boolValue] : YES);
     self.notifications = [self.defaults boolForKey:kDefaultsNotifications];
     self.imageLoading = [self.defaults stringForKey:kDefaultsImageLoading] ?: ImageLoadingAlways;
@@ -71,6 +70,10 @@ PrefsManager * SharedPrefs = nil;
     self.fontSize = ([self.defaults valueForKey:kFontSize] ? [[self.defaults valueForKey:kFontSize] integerValue] : [UIFont preferredFontForTextStyle:UIFontTextStyleBody].pointSize);
     self.paraTitleFont = [self.defaults valueForKey:kParagraphTitleFont];
     self.lineSpacing = ([self.defaults floatForKey:kLineSpacing] ?: 1.4f);
+    
+    NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
+    
+    self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] || 0;
     
 }
 
@@ -243,16 +246,14 @@ PrefsManager * SharedPrefs = nil;
                 
                 id value = [change valueForKey:NSKeyValueChangeNewKey];
                 
-                if ([value boolValue] == NO) {
-                    self.useSystemSize = YES;
+                if ([value boolValue] == NO || [value floatValue] == 0.f) {
+                    [self setValue:@(YES) forKey:propSel(useSystemSize)];
                 }
                 else {
-                    self.useSystemSize = NO;
+                    [self setValue:@(NO) forKey:propSel(useSystemSize)];
                 }
                 
                 CGFloat val = [(NSNumber *)value floatValue];
-                
-                val *= 1.2;
                 
                 [self setValue:@(val) forKey:propSel(fontSize)];
                 

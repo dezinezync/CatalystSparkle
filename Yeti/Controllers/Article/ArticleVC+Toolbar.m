@@ -15,7 +15,7 @@
 
 #import "YetiThemeKit.h"
 
-#import <DZTextKit/Paragraph.h>
+#import "Paragraph.h"
 #import "FeedsManager.h"
 
 #import "FeedVC.h"
@@ -23,11 +23,19 @@
 #import "SplitVC.h"
 #import "CustomizeVC.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @implementation ArticleVC (Toolbar)
+
+//- (void)validateCommand:(UICommand *)command {
+//
+//    if ([command.title isEqualToString:@"Find in Article"]) {
+//        command
+//    }
+//
+//}
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
@@ -113,6 +121,10 @@
     browser.accessibilityValue = @"Customize the Article Reader Interface";
     browser.accessibilityLabel = @"Customize";
     
+    if (self.isExploring) {
+        return @[share, browser];
+    }
+    
     return @[share, browser, customize];
     
 }
@@ -166,7 +178,7 @@
         self.navigationController.toolbarHidden = NO;
     }
     
-    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.to_splitViewController != nil) {
+    if (newCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular && self.splitViewController != nil) {
         
         UIBarButtonItem *close = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose)];
         
@@ -182,20 +194,9 @@
 
 - (void)didTapClose {
     
-    SplitVC *vc = (SplitVC *)[self to_splitViewController];
+    [self.mainCoordinator showEmptyVC];
     
-    [vc to_showDetailViewController:[vc emptyVC] sender:self];
-    
-    UINavigationController *nav = nil;
-    
-    if (vc.viewControllers.count > 2) {
-        nav = (id)[vc.viewControllers objectAtIndex:1];
-    }
-    else {
-        nav = (id)(vc.viewControllers.firstObject);
-    }
-    
-    FeedVC *top = (FeedVC *)[nav topViewController];
+    FeedVC *top = self.mainCoordinator.feedVC;
     
     if (top != nil && ([top isKindOfClass:FeedVC.class] || [top.class isSubclassOfClass:FeedVC.class])) {
         NSArray <NSIndexPath *> *selectedItems = [top.tableView indexPathsForSelectedRows];
@@ -230,7 +231,7 @@
       
         UIPopoverPresentationController *pvc = avc.popoverPresentationController;
         pvc.sourceView = self.view;
-        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 240.f, 36.f, self.view.bounds.size.width, 1);
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 200.f, 36.f, self.view.bounds.size.width, 1);
 //        pvc.barButtonItem = (UIBarButtonItem *)sender;
 //        pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
         
@@ -299,12 +300,14 @@
             }
         };
         
-        if (self.item.isBookmarked) {
-            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
-        }
-        else {
-            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
-        }
+//        if (self.item.isBookmarked) {
+//            [self.bookmarksManager addBookmark:self.item completion:bookmarkCallback];
+//        }
+//        else {
+//            [self.bookmarksManager removeBookmark:self.item completion:bookmarkCallback];
+//        }
+        
+        bookmarkCallback(YES);
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
@@ -369,14 +372,6 @@
 
 - (void)openInBrowser {
     
-#if TARGET_OS_MACCATALYST
-    
-    [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
-    
-    return;
-    
-#endif
-    
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
@@ -395,7 +390,18 @@
     _showSearchBar = YES;
     
     dispatch_async(dispatch_get_main_queue(), ^{
+#if TARGET_OS_MACCATALYST
+        [self.view addSubview:self.searchView];
+        
+        UIEdgeInsets additional = self.additionalSafeAreaInsets;
+        additional.top += 52.f;
+        
+        self.additionalSafeAreaInsets = additional;
+        
+        [self viewSafeAreaInsetsDidChange];
+#else
         [self reloadInputViews];
+#endif
         [self.view setNeedsLayout];
     });
     
@@ -406,11 +412,21 @@
 
 - (void)didTapSearchDone
 {
+    
     _showSearchBar = NO;
     [self.searchBar resignFirstResponder];
     [self.searchBar setText:nil];
     
     [self.searchView removeFromSuperview];
+    
+#if TARGET_OS_MACCATALYST
+    UIEdgeInsets additional = self.additionalSafeAreaInsets;
+    additional.top -= 52.f;
+    
+    self.additionalSafeAreaInsets = additional;
+    
+    [self viewSafeAreaInsetsDidChange];
+#endif
     
     [self reloadInputViews];
 }
@@ -437,7 +453,7 @@
         
         [UIView animateWithDuration:0.2 animations:^{
             strongify(self);
-            self->_searchHighlightingRect.frame = prevValue.CGRectValue;
+            self->_searchHighlightingRect.frame = CGRectInset(prevValue.CGRectValue, -4.f, 0.f);
         }];
         
         [self scrollToRangeRect:prevValue];
@@ -469,7 +485,7 @@
     NSValue *nextValue = _searchingRects[_searchCurrentIndex+1];
     if (nextValue) {
         _searchCurrentIndex++;
-        _searchHighlightingRect.frame = nextValue.CGRectValue;
+        self->_searchHighlightingRect.frame = CGRectInset(nextValue.CGRectValue, -4.f, 0.f);
         [self scrollToRangeRect:nextValue];
     }
     
@@ -506,12 +522,8 @@
         return;
     
     if (!NSThread.isMainThread) {
-        weakify(self);
         
-        asyncMain(^{
-            strongify(self);
-            [self scrollToRangeRect:value];
-        });
+        [self performSelectorOnMainThread:@selector(scrollToRangeRect:) withObject:value waitUntilDone:NO];
         
         return;
     }
@@ -537,34 +549,62 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         strongify(self);
-        self->_searchHighlightingRect.frame = frame;
+        self->_searchHighlightingRect.frame = CGRectInset(frame, -4.f, 0.f);
     });
 }
 
 - (void)didTapCustomize:(UIBarButtonItem *)sender {
     
     CustomizeVC *instance = [[CustomizeVC alloc] initWithStyle:UITableViewStyleGrouped];
+    instance.modalPresentationStyle = UIModalPresentationPopover;
     
     UIPopoverPresentationController *pvc = instance.popoverPresentationController;
+    
+#if TARGET_OS_MACCATALYST
+    if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
+      
+        pvc.sourceView = self.view;
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 132.f, 22.f, self.view.bounds.size.width, 1);
+        
+    }
+    else {
+        pvc.barButtonItem = sender;
+    }
+#else
     pvc.barButtonItem = sender;
+#endif
+    
     pvc.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
     
     [self presentViewController:instance animated:YES completion:nil];
     
 }
 
-#pragma mark - <UIAdaptivePresentationControllerDelegate>
-
-- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
-{
+- (void)openArticleInNewWindow {
     
-    return UIModalPresentationNone;
+    NSUserActivity *openArticleActivity = [[NSUserActivity alloc] initWithActivityType:@"openArticle"];
+    
+    NSDictionary *dict = self.item.dictionaryRepresentation;
+    
+    [openArticleActivity addUserInfoEntriesFromDictionary:dict];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+        
+        if (error != nil) {
+            
+            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
+            
+        }
+        
+    }];
+    
 }
 
-- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(UITraitCollection *)traitCollection {
-    
+#pragma mark - <UIAdaptivePresentationControllerDelegate>
+
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller traitCollection:(nonnull UITraitCollection *)traitCollection
+{
     return UIModalPresentationNone;
-    
 }
 
 #pragma mark - Getters
@@ -692,13 +732,13 @@
     }
     
     if (!_searchHighlightingRect) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+        
         // use the first rect's value
         _searchHighlightingRect = [[UIView alloc] initWithFrame:CGRectZero];
-        _searchHighlightingRect.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+        _searchHighlightingRect.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         _searchHighlightingRect.autoresizingMask = UIViewAutoresizingNone;
         _searchHighlightingRect.translatesAutoresizingMaskIntoConstraints = NO;
-        _searchHighlightingRect.layer.cornerRadius = 2.f;
+        _searchHighlightingRect.layer.cornerRadius = 4.f;
         _searchHighlightingRect.layer.masksToBounds = YES;
         
         // add it to the scrollview

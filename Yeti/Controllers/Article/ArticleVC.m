@@ -14,16 +14,15 @@
 #import "AppDelegate.h"
 
 #import "Content.h"
-#import <DZTextKit/DZTextKitViews.h>
-#import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/CheckWifi.h>
+#import "YetiConstants.h"
+#import "CheckWifi.h"
 
-#import <DZTextKit/NSAttributedString+Trimming.h>
+#import "NSAttributedString+Trimming.h"
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 #import "NSDate+DateTools.h"
-#import <DZTextKit/NSString+HTML.h>
+#import "NSString+HTML.h"
 #import "NSString+Levenshtein.h"
 #import "CodeParser.h"
 
@@ -31,10 +30,24 @@
 
 #import <SafariServices/SafariServices.h>
 
-#import "YetiThemeKit.h"
 #import "YTPlayer.h"
 #import "YTExtractor.h"
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
+
+#import "Paragraph.h"
+#import "Heading.h"
+#import "Blockquote.h"
+#import "List.h"
+#import "Aside.h"
+#import "Youtube.h"
+#import "Image.h"
+#import "PaddedLabel.h"
+#import "Gallery.h"
+#import "GalleryCell.h"
+#import "LineBreak.h"
+#import "Code.h"
+#import "Tweet.h"
+#import "TweetImage.h"
 
 #if TARGET_OS_MACCATALYST
 
@@ -105,6 +118,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
@@ -118,14 +132,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #if TARGET_OS_MACCATALYST
     
-    self.scrollView.contentInset = UIEdgeInsetsMake(44.f, 0, 44.f, 0);
+    if (self.isExploring == NO) {
+        self.navigationController.navigationBar.hidden = YES;
+    }
+    
+    self.scrollView.contentInset = UIEdgeInsetsMake(-1.f, 0, 44.f, 0);
     
 #else
     
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
     
-    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
-        || self.to_splitViewController.view.bounds.size.height < 814.f) {
+    if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
+        || self.splitViewController.view.bounds.size.height < 814.f) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
@@ -137,8 +157,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
-    else if (self.to_splitViewController.view.bounds.size.height > 814.f
-             && self.to_splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+    else if (self.splitViewController.view.bounds.size.height > 814.f
+             && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
@@ -153,7 +173,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
     
-    [self didUpdateTheme];
+    [self setupArticle:self.currentArticle];
     
     UILayoutGuide *readable = self.scrollView.readableContentGuide;
     
@@ -193,26 +213,30 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidShowNotification object:nil];
     [center addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidHideNotification object:nil];
     [center addObserver:self selector:@selector(didChangePreferredContentSize) name:UserUpdatedPreferredFontMetrics object:nil];
-//    [center addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
     
     self.state = (self.item.content && self.item.content.count) ? ArticleStateLoaded : ArticleStateLoading;
     
     self.ytExtractor = [[YTExtractor alloc] init];
+    
+    if (self.initialInteractivePopGestureRecognizerDelegate == nil) {
+        self.initialInteractivePopGestureRecognizerDelegate = self.navigationController.interactivePopGestureRecognizer.delegate;
+    }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
 #if TARGET_OS_MACCATALYST
-        
-    self.navigationController.navigationBar.hidden = YES;
     
-    [UIMenuSystem.mainSystem setNeedsRebuild];
+    if (self.isExternalWindow == NO) {
+        [UIMenuSystem.mainSystem setNeedsRebuild];
+    }
     
 #else
     
     if (SharedPrefs.hideBars == YES) {
+        
+        self.navigationController.interactivePopGestureRecognizer.delegate = nil;
         
         self.navigationController.hidesBarsOnSwipe = YES;
         
@@ -222,11 +246,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    
 #endif
+    
+    [self didUpdateTheme];
     
     if (!_hasRendered) {
         
@@ -241,9 +263,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [super viewDidAppear:animated];
     
-    if ([self canBecomeFirstResponder] == YES) {
-        [self becomeFirstResponder];
+    if (self.helperView != nil) {
+        self.helperView.tintColor = self.view.tintColor;
     }
+    
+    [self becomeFirstResponder];
     
 }
 
@@ -254,6 +278,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 #if !TARGET_OS_MACCATALYST
     
     if (SharedPrefs.hideBars == YES) {
+        
+        if (self.navigationController.isNavigationBarHidden == YES) {
+            [self.navigationController setNavigationBarHidden:NO animated:NO];
+        }
+        
+        self.navigationController.interactivePopGestureRecognizer.delegate = self.initialInteractivePopGestureRecognizerDelegate;
         
         self.navigationController.hidesBarsOnSwipe = NO;
         
@@ -381,21 +411,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.loader.color = theme.captionColor;
-    self.loader.tintColor = theme.captionColor;
-    
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.scrollView.backgroundColor = UIColor.systemBackgroundColor;
     
     if (self.helperView != nil) {
-        self.helperView.backgroundColor = theme.articlesBarColor;
-        self.helperView.tintColor = theme.tintColor;
+        self.helperView.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
+        self.helperView.tintColor = self.view.tintColor;
         [self.helperView updateShadowPath];
     }
-    
-    [self setupArticle:self.currentArticle];
     
 }
 
@@ -420,15 +443,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.scrollView.superview insertSubview:snapshotView aboveSubview:self.scrollView];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    Paragraph.tk_theme = theme;
-    Image.tk_theme = theme;
-    Gallery.tk_theme = theme;
-    
-    self.navigationController.view.backgroundColor = theme.articleBackgroundColor;
-    self.view.backgroundColor = theme.articleBackgroundColor;
-    self.scrollView.backgroundColor = theme.articleBackgroundColor;
+    self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.scrollView.backgroundColor = UIColor.systemBackgroundColor;
     
     [self setupArticle:self.currentArticle];
     
@@ -546,10 +563,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self setupHelperView];
         [self scrollViewDidScroll:self.scrollView];
         
-        if (firstVisible) {
-            CGFloat yOffset = firstVisible.frame.origin.y + (self.scrollView.bounds.size.height / 2);
-            [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
-        }
+//        if (firstVisible) {
+//            CGFloat yOffset = firstVisible.frame.origin.y + (self.scrollView.bounds.size.height / 2);
+//            [self.scrollView setContentOffset:CGPointMake(0, yOffset)];
+//        }
     }];
 }
 
@@ -701,12 +718,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             self.errorTitleLabel.text = @"Error loading the article";
             self.errorDescriptionLabel.text = [self.articleLoadingError localizedDescription];
             
-            YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-            self.errorTitleLabel.textColor = theme.titleColor;
-            self.errorDescriptionLabel.textColor = theme.captionColor;
+            self.errorTitleLabel.textColor = UIColor.labelColor;
+            self.errorDescriptionLabel.textColor = UIColor.secondaryLabelColor;
             
             for (UILabel *label in @[self.errorTitleLabel, self.errorDescriptionLabel]) {
-                label.backgroundColor = theme.articleBackgroundColor;
+                label.backgroundColor = UIColor.systemBackgroundColor;
                 label.opaque = YES;
             }
             
@@ -851,9 +867,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self addTitle];
     
     // iOS 13 shouldn't need it and handle it well.
+#if !TARGET_OS_MACCATALYST
     if (self.item.content.count > 20) {
         self->_deferredProcessing = YES;
     }
+#endif
     
     if (isYoutubeVideo == YES) {
         
@@ -1008,6 +1026,27 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             strongify(self);
             
             @autoreleasepool {
+                
+                if (idx == 0
+                    && [obj.type isEqualToString:@"paragraph"]
+                    && [obj.content isKindOfClass:NSString.class]
+                    && [obj.content containsString:@"This article was incorrectly formatted"]) {
+                    
+                    if (obj.ranges == nil) {
+                        obj.ranges = @[];
+                    }
+                    
+                    Range *rangeObj = [Range new];
+                    rangeObj.element = @"anchor";
+                    rangeObj.url = self.item.articleURL;
+                    rangeObj.range = [obj.content rangeOfString:@"click here"];
+                    
+                    if ([obj.ranges indexOfObject:rangeObj] == NSNotFound) {
+                        obj.ranges = [obj.ranges arrayByAddingObject:rangeObj];
+                    }
+                    
+                }
+                
                 [self processContent:obj index:idx imagesFromEnclosures:imagesFromEnclosures];
             }
         });
@@ -1072,8 +1111,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     NSString *author = nil;
     
     if (self.item.author) {
@@ -1114,13 +1151,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
-    
-#if TARGET_OS_MACCATALYST
-    
-    baseFontSize *= 1.42f;
-    baseFontSize = floor(baseFontSize);
-    
-#endif
 
     UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
@@ -1139,7 +1169,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
 
     NSDictionary *baseAttributes = @{NSFontAttributeName : titleFont,
-                                     NSForegroundColorAttributeName: theme.titleColor,
+                                     NSForegroundColorAttributeName: UIColor.labelColor,
                                      NSParagraphStyleAttributeName: para,
                                      NSKernAttributeName: @0,
                                      };
@@ -1149,12 +1179,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // this will be reused later after setting up the label.
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 48.f);
     
+#if TARGET_OS_MACCATALYST
+    frame.size.height = 120.f;
+#endif
+    
     authorView.frame = frame;
     
     authorView.titleLabel.attributedText = attrs;
     authorView.blogLabel.text = firstLine;
     authorView.authorLabel.text = sublineText;
     
+#if !TARGET_OS_MACCATALYSt
     for (UILabel *label in @[authorView.titleLabel, authorView.blogLabel, authorView.authorLabel]) {
         [label sizeToFit];
     }
@@ -1165,7 +1200,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     frame.size = fittingSize;
     authorView.frame = frame;
-    
+#endif
     authorView.mercurialed = self.item.mercury;
     
     if (self.item.mercury) {
@@ -1180,7 +1215,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
         
         // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = theme.tintColor;
+        authorView.blogLabel.textColor = self.view.tintColor;
         [authorView.blogLabel setNeedsDisplay];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];
@@ -1244,11 +1279,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL hasCover = self.item.coverImage != nil;
     BOOL imageFromEnclosure = isImage ? ([imagesFromEnclosures indexOfObject:content.url] != NSNotFound) : NO;
     
-    if (idx == 0 && isImage && imageFromEnclosure) {
+    if (idx == 0 && isImage && imageFromEnclosure == YES) {
        return;
     }
    
-    if (idx == 0 && isImage && hasCover) {
+    if (idx == 0 && isImage && hasCover && imagesFromEnclosures.count) {
        // check if the cover image and the first image
        // are the same entities
        NSURLComponents *coverComponents = [NSURLComponents componentsWithString:self.item.coverImage];
@@ -1295,7 +1330,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"paragraph"] || [content.type isEqualToString:@"cite"] || [content.type isEqualToString:@"span"]) {
         
-        if (content.content.length) {
+        if (content.content.length && [content.type isEqualToString:@"noscript"] == NO) {
             [self addParagraph:content caption:NO];
         }
         else if (content.items) {
@@ -1453,8 +1488,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
     }
     
-//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, LayoutPadding * 2);
         
     Paragraph *para = [[Paragraph alloc] initWithFrame:frame];
@@ -1597,8 +1630,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [self addLinebreak];
     }
     
-//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 0);
     
     Heading *heading = [[Heading alloc] initWithFrame:frame];
@@ -1633,6 +1664,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [prefix appendAttributedString:attrs];
         heading.attributedText = prefix;
+        
+#if TARGET_OS_MACCATALYST
+        // handle right click from here
+        UIContextMenuInteraction * interaction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+        
+        [heading addInteraction:interaction];
+#endif
+        // catalyst handles left click from here
         heading.delegate = self;
     }
     
@@ -1696,12 +1735,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    // 9mac ads
+    // 9mac ads and some tracking scripts
     if (content.url && (
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
             || ([content.url containsString:@"deal"])
             || ([content.url containsString:@"amaz"]
-            || [content.url containsString:@"i2.wp.com"])
+            || [content.url containsString:@"i2.wp.com"]
+            || [[content.url lastPathComponent] containsString:@".php"]
+            || [[content.url lastPathComponent] containsString:@".js"])
         )) {
         return;
     }
@@ -1745,7 +1786,15 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     if (!CGSizeEqualToSize(content.size, CGSizeZero) && scale != NAN) {
         frame.size.width = content.size.width;
-        frame.size.height = frame.size.width * scale;
+        
+        if (scale != INFINITY) {
+            frame.size.height = frame.size.width * scale;
+        }
+        else {
+            frame.size.height = 200.f;
+            scale = frame.size.height / frame.size.height;
+        }
+        
         imageView.frame = frame;
         
         if (content.size.width > content.size.height) {
@@ -1864,9 +1913,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.images addPointer:(__bridge void *)gallery];
     gallery.idx = self.images.count - 1;
     
+    _last = gallery;
+    
 }
 
 - (void)addQuote:(Content *)content {
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width - 48.f, 32.f);
     
     if (!content.content && (!content.items || content.items.count == 0))
@@ -2159,6 +2211,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (void)addPre:(Content *)content {
     
+    /**
+     * We make a pretty gross assumption here
+     * that all code blocks have atleast one tab
+     * or two spaces (accounts for 4 spaces as well) 
+     * in them for formatting purposes. Our convertor
+     * preserves these tabs for preformatted blocks.
+     */
+    if (content.content != nil
+        && ([content.content rangeOfString:@"\\t" options:NSRegularExpressionSearch].location == NSNotFound
+            && [content.content rangeOfString:@"  " options:NSRegularExpressionSearch].location == NSNotFound
+            && [content.content rangeOfString:@"\\n" options:NSRegularExpressionSearch].location == NSNotFound)) {
+        
+        [self addQuote:content];
+        return;
+        
+    }
+    
     CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 32.f);
     Code *code = [[Code alloc] initWithFrame:frame];
     code.backgroundColor = CodeParser.sharedCodeParser.theme.backgroundColor;
@@ -2173,6 +2242,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     [self.stackView addArrangedSubview:code];
+    
+    _last = code;
     
 }
 
@@ -2272,31 +2343,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
-    FeedVC *feedVC = [[FeedVC alloc] initWithFeed:feed];
-    
-    if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-        
-        [self.navigationController pushViewController:feedVC animated:YES];
-        
-    }
-    else {
-        
-        UIViewController *vc = self.to_splitViewController.secondaryViewController;
-        
-        if ([vc isKindOfClass:UINavigationController.class] == YES) {
-            
-            [(UINavigationController *)vc pushViewController:feedVC animated:YES];
-            
-        }
-        else {
-            
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-            
-            [self.to_splitViewController showSecondaryViewController:nav sender:self];
-            
-        }
-        
-    }
+    [self.mainCoordinator showFeedVC:feed];
     
 }
 
@@ -2574,10 +2621,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         CGFloat yOffset = MIN(frame.origin.y - 160, (self.scrollView.contentSize.height - self.scrollView.bounds.size.height));
         
         // if we're scrolling down, add the bottom offset so the bottom bar does not interfere
-        if (yOffset > self.scrollView.contentOffset.y)
+        if (yOffset > self.scrollView.contentOffset.y) {
             yOffset += self.scrollView.adjustedContentInset.bottom;
-        else
-            yOffset -= self.scrollView.adjustedContentInset.top;
+            yOffset += CGRectGetMidY(required.bounds);
+        }
+        else {
+            yOffset += self.scrollView.adjustedContentInset.top;
+        }
         
         weakify(self);
         
@@ -2591,9 +2641,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         weakify(required);
         
         // animate background on paragraph
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        strongify(required);
         
         required.layer.cornerRadius = 4.f;
         
@@ -2601,17 +2648,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
         [UIView animateWithDuration:animationDuration delay:1 options:kNilOptions animations:^{
             
-            required.backgroundColor = theme.focusColor;
+            strongify(required);
+            
+            required.backgroundColor = [UIColor.systemYellowColor colorWithAlphaComponent:0.3f];
             
             strongify(self);
             self.scrollView.userInteractionEnabled = YES;
             
         } completion:^(BOOL finished) { dispatch_async(dispatch_get_main_queue(), ^{
             
+            strongify(required);
+            
             if (finished) {
+                
                 [UIView animateWithDuration:animationDuration delay:1.5 options:kNilOptions animations:^{
                     
-                    required.backgroundColor = theme.articleBackgroundColor;
+                    required.backgroundColor = UIColor.systemBackgroundColor;
                     
                 } completion:^(BOOL finished) {
                     required.layer.cornerRadius = 0.f;
@@ -2672,6 +2724,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
     
+    if (interaction != UITextItemInteractionInvokeDefaultAction) {
+        return YES;
+    }
+    
     NSString *originalURL = [URL absoluteString];
     
     if (URL.host == nil) {
@@ -2718,17 +2774,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             // open the link externally since it's not available in headings
             // or the link appears to be different from the article's URL.
-            if ([self textView:textView shouldOpenURL:URL] == YES) {
-                [self openLinkExternally:absolute];
-            }
+            [self openLinkExternally:absolute];
             
             return NO;
             
         }
     }
-    
-    if (interaction == UITextItemInteractionPreview)
-        return YES;
     
     if (interaction == UITextItemInteractionPresentActions) {
         NSString * const linkedHeader = @"🔗 ";
@@ -2757,35 +2808,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else {
         
-        if ([self textView:textView shouldOpenURL:URL] == YES) {
-            [self openLinkExternally:absolute];
-        }
+        [self openLinkExternally:absolute];
         
     }
     
     return NO;
-}
-
-- (BOOL)textView:(UITextView *)textView shouldOpenURL:(NSURL *)url {
-    // https://stackoverflow.com/questions/58189447/ios-13-1-uitextview-delegate-method-shouldinteract-called-when-scrolling-on-atta
-    BOOL recognizedTapGesture = NO;
-    
-    for (UIGestureRecognizer *recognizer in textView.gestureRecognizers) {
-        if ([recognizer isKindOfClass:UITapGestureRecognizer.class] && recognizer.state == UIGestureRecognizerStateEnded) {
-            recognizedTapGesture = YES;
-            break;
-        }
-    }
-    
-    if (!recognizedTapGesture) {
-        // Tap gesture is not being recognized, this must be an early
-        // check when touches begin. Leave the link handling alone.
-        return NO;
-    }
-
-    // Do custom action here
-    return YES;
-    
 }
 
 - (void)openLinkExternally:(NSString *)link {
@@ -2808,16 +2835,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     runOnMainQueueWithoutDeadlocking(^{
         
-#if TARGET_OS_MACCATALYST
-            
-        [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:self.item.articleURL] inBackground:YES];
-        
-#else
-        
         [[UIApplication sharedApplication] openURL:formatted options:@{} completionHandler:nil];
-        
-#endif
-
         
     });
     
@@ -2835,6 +2853,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [layoutManager characterRangeForGlyphRange:range actualGlyphRange:&glyphRange];
     
     return [layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:textContainer];
+}
+
+- (NSUInteger)boundingRangeIn:(UITextView *)textView forPoint:(CGPoint)point {
+    
+    NSTextStorage *textStorage = [textView textStorage];
+    NSLayoutManager *layoutManager = [[textStorage layoutManagers] firstObject];
+    NSTextContainer *textContainer = [[layoutManager textContainers] firstObject];
+    
+    CGFloat fractionalDistance = 0.f;
+    
+    NSUInteger index = [layoutManager characterIndexForPoint:point inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:&fractionalDistance];
+    
+    return index;
+    
 }
 
 #pragma mark - Getters
@@ -2868,49 +2900,56 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (UIInputView *)searchView
 {
     if (_searchView == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        CGRect frame = CGRectMake(0, 0, self.to_splitViewController.view.bounds.size.width, 52.f);
+        CGFloat heightReducer = 0.f;
+        
+#if TARGET_OS_MACCATALYST
+        heightReducer = 12.f;
+#endif
+        
+        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, 52.f - heightReducer);
+        
+#if TARGET_OS_MACCATALYST
+        frame.origin.y = 36.f;
+#endif
         
         UIInputView * searchView = [[UIInputView alloc] initWithFrame:frame];
+#if TARGET_OS_MACCATALYST
+//        [searchView setValue:@(UIInputViewStyleDefault) forKeyPath:@"inputViewStyle"];
+        
+        UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemChromeMaterial];
+        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        
+        searchView.backgroundColor = UIColor.clearColor;
+        effectView.frame = searchView.bounds;
+        
+        [searchView addSubview:effectView];
+#else
         [searchView setValue:@(UIInputViewStyleKeyboard) forKeyPath:@"inputViewStyle"];
+#endif
         searchView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
         CGFloat borderHeight = 1/[[UIScreen mainScreen] scale];
-        UIView *border = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, borderHeight)];
-        border.backgroundColor = theme.borderColor;
+        
+        frame = CGRectMake(0, 0, frame.size.width, borderHeight);
+        
+#if TARGET_OS_MACCATALYST
+        frame.origin.y = frame.size.height - borderHeight;
+#endif
+        
+        UIView *border = [[UIView alloc] initWithFrame:frame];
+        border.backgroundColor = UIColor.separatorColor;
         border.translatesAutoresizingMaskIntoConstraints = NO;
         [border.heightAnchor constraintEqualToConstant:borderHeight].active = YES;
         
         [searchView addSubview:border];
+#if TARGET_OS_MACCATALYST
+        [border.bottomAnchor constraintEqualToAnchor:searchView.bottomAnchor constant:-borderHeight].active = YES;
+#else
         [border.topAnchor constraintEqualToAnchor:searchView.topAnchor].active = YES;
-        [border.heightAnchor constraintEqualToAnchor:searchView.heightAnchor].active = YES;
+#endif
         
-        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - 56.f , frame.size.height - 16.f)];
-        searchBar.placeholder = @"Search Article";
-        searchBar.keyboardType = UIKeyboardTypeDefault;
-        searchBar.returnKeyType = UIReturnKeySearch;
-        searchBar.delegate = self;
-        searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
-        searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        
-        UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
-        if (searchField) {
-            searchField.textColor = theme.titleColor;
-        }
-        
-        searchBar.backgroundColor = UIColor.clearColor;
-        searchBar.backgroundImage = nil;
-        searchBar.scopeBarBackgroundImage = nil;
-        searchBar.searchBarStyle = UISearchBarStyleMinimal;
-        searchBar.translucent = NO;
-        searchBar.accessibilityHint = @"Search for keywords in the article";
-        
-        [searchView addSubview:searchBar];
-        self.searchBar = searchBar;
-        
-        [searchBar.heightAnchor constraintEqualToConstant:36.f].active = YES;
+        [border.widthAnchor constraintEqualToAnchor:searchView.widthAnchor].active = YES;
         
         UIButton *prev = [UIButton buttonWithType:UIButtonTypeSystem];
         [prev setImage:[UIImage systemImageNamed:@"chevron.up"] forState:UIControlStateNormal];
@@ -2966,10 +3005,40 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         [done.trailingAnchor constraintEqualToAnchor:searchView.trailingAnchor constant:-8.f].active = YES;
         [done.centerYAnchor constraintEqualToAnchor:searchView.centerYAnchor].active = YES;
         
+        frame.size.height = 52.f - heightReducer;
+        frame.size.width = self.view.bounds.size.width;
+        
+        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(64.f, 8.f, frame.size.width - 64.f - CGRectGetWidth(done.frame) - 8.f, frame.size.height - 16.f)];
+        searchBar.searchTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+        searchBar.placeholder = @"Search Article";
+        searchBar.keyboardType = UIKeyboardTypeDefault;
+        searchBar.returnKeyType = UIReturnKeySearch;
+        searchBar.delegate = self;
+        searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        UITextField *searchField = [searchBar valueForKeyPath:@"searchField"];
+        if (searchField) {
+            searchField.textColor = UIColor.labelColor;
+        }
+        
+        searchBar.backgroundColor = UIColor.clearColor;
+        searchBar.backgroundImage = nil;
+        searchBar.scopeBarBackgroundImage = nil;
+        searchBar.searchBarStyle = UISearchBarStyleMinimal;
+        searchBar.translucent = NO;
+        searchBar.accessibilityHint = @"Search for keywords in the article";
+        
+        [searchView addSubview:searchBar];
+        self.searchBar = searchBar;
+        
+        [searchBar.heightAnchor constraintEqualToConstant:frame.size.height - 16.f].active = YES;
+        
         self.searchPrevButton = prev;
         self.searchNextButton = next;
         
-        UIColor *tint = theme.tintColor;
+        UIColor *tint = self.view.tintColor;
         prev.tintColor = tint;
         next.tintColor = tint;
         [done setTitleColor:tint forState:UIControlStateNormal];
@@ -3166,6 +3235,75 @@ NSString * const kScrollViewOffset = @"ScrollViewOffset";
     }
     
     [self presentViewController:avc animated:YES completion:nil];
+    
+}
+
+#pragma mark - <UIContextMenuInteractionDelegate>
+
+- (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
+    
+    if ([interaction.view isKindOfClass:Heading.class]) {
+        
+        // check if NSURL exists
+        Heading *view = (Heading *)[interaction view];
+        
+        NSUInteger index = [self boundingRangeIn:view forPoint:location];
+        
+        if (index == 0) {
+            
+            // check range for link
+            NSRange range = NSMakeRange(index, 2);
+            NSRange longest = NSMakeRange(index, 2);
+            
+            NSURL *url = [view.attributedText attribute:NSLinkAttributeName atIndex:index longestEffectiveRange:&longest inRange:range];
+            
+            if (url != nil) {
+                
+                return [self contextConfigForSharingURL:url from:view];
+                
+            }
+            
+        }
+        
+    }
+    
+    return nil;
+    
+}
+
+- (UIContextMenuConfiguration *)contextConfigForSharingURL:(NSURL *)url from:(UIView *)view {
+    
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:url previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
+        
+        UIAction *share = [UIAction actionWithTitle:@"Share" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            UIActivityViewController *avc = [[UIActivityViewController alloc] initWithActivityItems:@[url] applicationActivities:nil];
+            
+            if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {
+                
+                UIPopoverPresentationController *pvc = avc.popoverPresentationController;
+                pvc.sourceView = view;
+                pvc.sourceRect = view.frame;
+                
+            }
+            
+            [self presentViewController:avc animated:YES completion:nil];
+            
+        }];
+        
+        UIAction *copy = [UIAction actionWithTitle:@"Copy Link" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            
+            UIPasteboard.generalPasteboard.URL = url;
+            
+        }];
+        
+        UIMenu *menu = [UIMenu menuWithChildren:@[share, copy]];
+        
+        return menu;
+        
+    }];
+    
+    return config;
     
 }
 

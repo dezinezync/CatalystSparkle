@@ -16,7 +16,9 @@
 #import "FeedsVC.h"
 #import "FeedVC.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
+
+#import "Coordinator.h"
 
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/UIViewController+AnimatedDeselect.h>
@@ -54,28 +56,23 @@ static NSString * const reuseIdentifier = @"Cell";
     
     self.title = @"Recommended";
     
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     self.navigationController.navigationBar.prefersLargeTitles = YES;
-    
-    self.navigationItem.hidesSearchBarWhenScrolling = NO;
-    self.navigationController.navigationBar.translucent = NO;
     
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
     
     self.state = ReccoStateLoading;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-//    self.view.backgroundColor = theme.cellColor;
-    self.collectionView.backgroundColor = theme.backgroundColor;
-    
-//    self.navigationController.navigationBar.barTintColor = theme.subbarColor;
-    
     // Register cell classes
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(FeedsGridCell.class) bundle:nil] forCellWithReuseIdentifier:kFeedsGridCell];
+    
     [self.collectionView registerNib:[UINib nibWithNibName:NSStringFromClass(CollectionHeader.class) bundle:nil] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kCollectionHeader];
     
     // Do any additional setup after loading the view.
+    
+#if TARGET_OS_MACCATALYST
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -227,13 +224,14 @@ static NSString * const reuseIdentifier = @"Cell";
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     if (self.state == ReccoStateLoaded) {
-        return 4;
+        return 3;
     }
     
     return 0;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    
     if (!self.recommendations) {
         return 0;
     }
@@ -245,15 +243,15 @@ static NSString * const reuseIdentifier = @"Cell";
     }
     
     switch (section) {
-        case 1:
+        case 0:
             return MIN(MAX_CELLS, [self.recommendations[@"mostRead"] count]);
             break;
-        case 2:
+        case 1:
             return MIN(MAX_CELLS, [self.recommendations[@"highestSubs"] count]);
             break;
-        case 0:
-            return MIN(20, [self.recommendations[@"similar"] count]);
-            break;
+//        case 0:
+//            return MIN(20, [self.recommendations[@"similar"] count]);
+//            break;
         default:
             return MIN(MAX_CELLS, [self.recommendations[@"trending"] count]);
             break;
@@ -268,15 +266,15 @@ static NSString * const reuseIdentifier = @"Cell";
     Feed *feed = nil;
     
     switch (indexPath.section) {
-        case 1:
+        case 0:
             feed = [self.recommendations[@"mostRead"] safeObjectAtIndex:indexPath.item];
             break;
-        case 2:
+        case 1:
             feed = [self.recommendations[@"highestSubs"] safeObjectAtIndex:indexPath.item];
             break;
-        case 0:
-            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
-            break;
+//        case 0:
+//            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
+//            break;
         default:
             feed = [self.recommendations[@"trending"] safeObjectAtIndex:indexPath.item];
             break;
@@ -294,15 +292,15 @@ static NSString * const reuseIdentifier = @"Cell";
     NSString *text = nil;
     
     switch (indexPath.section) {
-        case 1:
+        case 0:
             text = @"Most Read";
             break;
-        case 2:
+        case 1:
             text = @"Most Subscribers";
             break;
-        case 0:
-            text = @"Similar";
-            break;
+//        case 0:
+//            text = @"Similar";
+//            break;
         default:
             text = @"Trending";
             break;
@@ -310,9 +308,7 @@ static NSString * const reuseIdentifier = @"Cell";
     
     header.label.text = [text uppercaseString];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    header.backgroundColor = theme.backgroundColor;
-//    header.label.textColor = theme.isDark ? theme.captionColor : theme.titleColor;
+    header.backgroundColor = UIColor.systemBackgroundColor;
     
     return header;
 }
@@ -324,15 +320,15 @@ static NSString * const reuseIdentifier = @"Cell";
     Feed *feed = nil;
     
     switch (indexPath.section) {
-        case 1:
+        case 0:
             feed = [self.recommendations[@"mostRead"] safeObjectAtIndex:indexPath.item];
             break;
-        case 2:
+        case 1:
             feed = [self.recommendations[@"highestSubs"] safeObjectAtIndex:indexPath.item];
             break;
-        case 0:
-            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
-            break;
+//        case 0:
+//            feed = [self.recommendations[@"similar"] safeObjectAtIndex:indexPath.item];
+//            break;
         default:
             feed = [self.recommendations[@"trending"] safeObjectAtIndex:indexPath.item];
             break;
@@ -344,6 +340,7 @@ static NSString * const reuseIdentifier = @"Cell";
     if (feed) {
         
         FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+        vc.mainCoordinator = self.mainCoordinator;
         vc.exploring = YES;
         
         [self.navigationController pushViewController:vc animated:YES];

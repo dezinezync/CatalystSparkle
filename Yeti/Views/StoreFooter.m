@@ -21,6 +21,10 @@
     {
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         self.footerLabel.text = nil;
+        
+#if TARGET_OS_MACCATALYST
+        [self.buyButton setTitle:@"Buy Now" forState:UIControlStateNormal];
+#endif
     }
     
     return self;

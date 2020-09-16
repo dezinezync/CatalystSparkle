@@ -8,8 +8,9 @@
 
 #import "SettingsVC.h"
 #import "SettingsCell.h"
-#import <DZTextKit/YetiConstants.h>
-#import <DZTextKit/UIColor+HEX.h>
+#import "YetiConstants.h"
+#import "UIColor+HEX.h"
+#import "Coordinator.h"
 
 #import "AccountVC.h"
 #import "ImageLoadingVC.h"
@@ -29,6 +30,24 @@
 #import "DBManager+CloudCore.h"
 
 #import <sys/utsname.h>
+
+#if TARGET_OS_MACCATALYST
+typedef NS_ENUM(NSUInteger, SectionOneRows) {
+    SectionBackgroundFetch = 0,
+    SectionImageLoading = 1,
+    SectionOPML = 2,
+    SectionMisc = 3
+};
+#else
+typedef NS_ENUM(NSUInteger, SectionOneRows) {
+    SectionAppearance = 0,
+    SectionBackgroundFetch = 1,
+    SectionImageLoading = 2,
+    SectionExternalApps = 3,
+    SectionOPML = 4,
+    SectionMisc = 5
+};
+#endif
 
 NSString* deviceName() {
     struct utsname systemInfo;
@@ -54,20 +73,25 @@ NSString* deviceName() {
     
     self.title = @"Settings";
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+#if TARGET_OS_MACCATALYST
     
-    self.tableView.backgroundColor = theme.tableColor;
-    self.view.backgroundColor = theme.tableColor;
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    
+#else
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.view.backgroundColor = UIColor.systemGroupedBackgroundColor;
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+#endif
     
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"xmark"] style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+
+    self.tableView.tableFooterView = self.footerView;
     
-//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
-    [self didUpdateTheme];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,6 +100,7 @@ NSString* deviceName() {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     [self dz_smoothlyDeselectRows:self.tableView];
@@ -98,12 +123,6 @@ NSString* deviceName() {
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
-
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-//}
-
-#pragma mark -
 
 #pragma mark - Actions
 
@@ -141,10 +160,18 @@ NSString* deviceName() {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
+#if TARGET_OS_MACCATALYST
+            return 3;
+#else
             return 4;
+#endif
             break;
         case 1:
+#if TARGET_OS_MACCATALYST
+            return 4;
+#else
             return 6;
+#endif
             break;
         case 2:
             return 4;
@@ -159,18 +186,18 @@ NSString* deviceName() {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = UIColor.labelColor;
+    cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
     
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
-    cell.backgroundColor = theme.backgroundColor;
-    
+#if !TARGET_OS_MACCATALYST
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     if (cell.accessoryView != nil) {
         cell.accessoryView = nil;
@@ -201,6 +228,45 @@ NSString* deviceName() {
             break;
         case 1 :
             switch (indexPath.row) {
+#if TARGET_OS_MACCATALYST
+                case 0:
+                {
+                    cell.textLabel.text = @"Background Fetch";
+                    
+                    UISwitch *sw = [[UISwitch alloc] init];
+                    [sw setOn:SharedPrefs.backgroundRefresh];
+                    [sw addTarget:self action:@selector(didChangeBackgroundRefreshPreference:) forControlEvents:UIControlEventValueChanged];
+                    
+                    [sw setOnTintColor:self.view.tintColor];
+                    
+                    cell.accessoryView = sw;
+                    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                }
+                    break;
+                case 1:
+                {
+                    cell.textLabel.text = @"Image Loading";
+                    cell.detailTextLabel.text = SharedPrefs.imageLoading;
+                }
+                    break;
+                case 2:
+                    cell.textLabel.text = @"Import/Export OPML";
+                    break;
+                case 3:
+                    cell.textLabel.text = @"Miscellaneous";
+                    break;
+                    break;
+                default:
+                    break;
+            }
+            
+            if (indexPath.row != 0) {
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            }
+            else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
+#else
                 case 0: {
                     cell.textLabel.text = @"Appearance";
                     
@@ -248,7 +314,7 @@ NSString* deviceName() {
             else {
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
-            
+#endif
             break;
         default:
             switch (indexPath.row) {
@@ -334,7 +400,7 @@ NSString* deviceName() {
         
         [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
-        UITableViewController *instance = (UITableViewController *)[[(UINavigationController *)[[((UISplitViewController *)self.presentingViewController) viewControllers] firstObject] viewControllers] firstObject];
+        SidebarVC *instance = self.mainCoordinator.sidebarVC;
         
         if (instance != nil) {
             
@@ -348,10 +414,7 @@ NSString* deviceName() {
                 
 //                [instance performSelector:NSSelectorFromString(@"") withObject:instance.refreshControl];
                 
-                SEL selector = NSSelectorFromString(@"beginRefreshing:");
-                IMP imp = [instance methodForSelector:selector];
-                void (*func)(id, SEL, UIControl *) = (void *)imp;
-                func(instance, selector, [instance refreshControl]);
+                [instance beginRefreshingAll:instance.refreshControl];
                 
             });
             
@@ -377,12 +440,41 @@ NSString* deviceName() {
                     vc = [[FiltersVC alloc] initWithStyle:style];
                     break;
                 default:
-                    vc = [[PushVC alloc] initWithStyle:UITableViewStylePlain];
+                {
+                    UITableViewStyle style = UITableViewStylePlain;
+                    
+#if TARGET_OS_MACCATALYST
+                    style = UITableViewStyleInsetGrouped;
+#endif
+                    
+                    vc = [[PushVC alloc] initWithStyle:style];
+                }
                     break;
             }
             break;
         case 1:
             switch (indexPath.row) {
+#if TARGET_OS_MACCATALYST
+                case 1:
+                {
+                    vc = [[ImageLoadingVC alloc] initWithStyle:style];
+                }
+                    break;
+                case 2:
+                {
+                    OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc1];
+                    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+                    
+                    vc = nav;
+                }
+                    break;
+                case 3:
+                    vc = [[MiscVC alloc] initWithStyle:style];
+                    break;
+                default:
+                    break;
+#else
                 case 0:
                 {
                     vc = [[ThemeVC alloc] initWithStyle:style];
@@ -410,6 +502,7 @@ NSString* deviceName() {
                     break;
                 default:
                     break;
+#endif
             }
             break;
         default:
@@ -455,7 +548,15 @@ NSString* deviceName() {
     
     // Push the view controller.
     if (vc) {
+        
+#if TARGET_OS_MACCATALYST
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        
+        [self.splitViewController setViewController:nav forColumn:UISplitViewControllerColumnSecondary];
+#else
         [self showViewController:vc sender:self];
+#endif
+        
     }
     else {
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -468,33 +569,6 @@ NSString* deviceName() {
 {
     if (!_settingsUpdated)
         _settingsUpdated = YES;
-}
-
-- (void)didUpdateTheme {
-    
-    _footerView = nil;
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.tableView.backgroundColor = theme.tableColor;
-    self.view.backgroundColor = theme.tableColor;
-    
-    self.tableView.tableFooterView = self.footerView;
-    
-    NSIndexPath *selected = [self.tableView indexPathForSelectedRow];
-    
-    [self.tableView reloadData];
-    
-    weakify(self);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        strongify(self);
-        
-        [self.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionMiddle];
-        
-    });
-    
-    _hasAnimatedFooterView = NO;
 }
 
 #pragma mark -
@@ -514,7 +588,7 @@ NSString* deviceName() {
     NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
     NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
     
-    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.userIDManager.UUIDString, appVersion, buildNumber);
+    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
     
     attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -535,29 +609,27 @@ NSString* deviceName() {
     {
         _footerView = [[UIView alloc] init];
         
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
-        _footerView.backgroundColor = theme.tableColor;
+        _footerView.backgroundColor = UIColor.systemGroupedBackgroundColor;
         
         _footerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 112.f + 16.f);
         
-        DZView *dz = [[DZView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width - 120.f)/2.f, 0, 120, 70.f) tintColor:theme.tintColor];
+        DZView *dz = [[DZView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width - 120.f)/2.f, 0, 120, 70.f) tintColor:self.view.tintColor];
         dz.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         dz.tag = 30000;
-        dz.tintColor = theme.tintColor;
-        dz.backgroundColor = theme.tableColor;
+        dz.tintColor = self.view.tintColor;
+        dz.backgroundColor = UIColor.systemGroupedBackgroundColor;
         dz.contentMode = UIViewContentModeRedraw;
         
         [_footerView addSubview:dz];
         
         UILabel *_byLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 70.f - 16.f, CGRectGetWidth(self.view.bounds), 30.f)];
-        _byLabel.textColor = theme.subtitleColor;
+        _byLabel.textColor = UIColor.secondaryLabelColor;
         _byLabel.textAlignment = NSTextAlignmentCenter;
         _byLabel.numberOfLines = 0;
         _byLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         _byLabel.transform = CGAffineTransformMakeTranslation(0, 30.f);
         _byLabel.autoresizingMask = dz.autoresizingMask;
-        _byLabel.backgroundColor = theme.tableColor;
+        _byLabel.backgroundColor = UIColor.systemGroupedBackgroundColor;
         
         [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
             

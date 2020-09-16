@@ -1,87 +1,69 @@
-# v1.8.0
+# v2.0.0
 
-This is the RC 4 build for v1.8.
+## Build 24
 
-## Build 374
+- Minor fixes everywhere. 
 
-- Fixed the App Icon to use the new v2 style under Settings. 
+- New Folder/Edit Folder interface now uses a basic interface which is faster to use IMO. 
 
-- Fixed a crash on launch issue if you have never installed Elytra previously. 
+Unless we encounter any breaking bugs, this version will be shipped for review. 
 
-- Fixed a layout bug caused on iPhone Plus/Max devices when opening a feed from the feeds list and then rotating the device. 
+## Build 22
 
-## Build 373
+- Improved styling for inline code blocks. 
 
-- Fixes a crash caused by triggering loading of next batch of articles when reading an article. Tapping on the previous/next buttons would cause this crash. 
+- Fixed the searched word not being highlighted. The highlighting frame got a transparent color set. 
 
-## Build 371
+- Fixed code blocks appearing out of order. A year old bug finally fixed! 
 
-- Fixes a crash on launch caused by registering the Background Task Scheduler later than the OS expects it to. 
+- Fixed some pre-formatted quotes appearing as single-line code blocks.
 
-- Fixes a crash when the Article reader tried to render a header with an invalid identifier. 
+- Updated Feed Sorting options to use a menu interface instead of an options controller. 
 
-## Build 368
+- The Add Feed interface now shows Recommendations for its default state to help improve finding and adding new feeds. 
 
-- Improved scroll pagination. 
+## Build 21
 
-- Various improvements for better state restoration using the newer iOS APIs. 
+- Fixed the app crashing in the background when registering for background refresh with the OS. 
 
-- Sharing by selecting text in a pargraph will now also include the article's URL and enclose the selected text inside quotes. 
+- Fixed Counters widget showing 0 Bookmarks. 
 
-## Build 367
+- Fixed launching from the Counters widget not setting up the app as expected. 
 
-- Fixes bookmarking and unbookmarking articles. 
+- The Article Helper view (bottom bar) now has the correct tint color. 
 
-- Fixes bookmarks count not updating in real-time. 
+## Build 20 
 
-- Fixes removing a bookmark would have no net-effect. 
+- Fixed selecting a tint color on iOS crashing the app. 
 
-- Bookmarks List no longer shows a persistent bookmark icon. It instead now correctly defers to the Article's read status.
+- Fixed tint color not applying when launching the app. 
 
-## Build 366
+- Fixed I/O View not appearing when importing / exporting OPML files.
 
-- Hiding bars on scroll in the Article Reader is now a preference under Settings > Misc. It is now disabled by default. 
+- Fixed background refresh not working or crashing the app. 
 
-- Fixed the Dark app icon rendering incorrectly when used. 
+- Fixed Resetting Account not working. 
 
-## Build 365 
+## Build 19
 
-- Fixed loading articles after tapping a Push Notification.
+- Fixes showing cover images inside the Article Reader. 
 
-- Fixes showing cover images in rich push notifications.
+- Fixes opening an article from Widgets on iPads.
 
-## Build 364
+- Slightly improved scene restoration. 
 
-- New App Icon
+- Fixed opening URLs inside the app which could sometimes crash the app entirely. 
 
-- New App Icon Sets (under Settings > Misc. > App Icons)
+- New Code Theme for pre-formatted code blocks. 
 
-- Article Readers bars now auto-hide/show on scroll deferring more screen real-estate to the content. 
+## Build 18
 
-## Build 363
+- Fixed a crash on launch from Build 16 and 17. 
 
-- Fixes loading of some favicons. 
+- Fixed the font-size for the article author and blog name in the article reader. 
 
-- Fixes reloading of stale data in some cases. 
+## Build 17
 
-## Build 362
+- Fixes a crash on launch when number of unread articles is less than 4. This crash was caused when fetching data for the Widgets. 
 
-- If the source supports it, the separate "dark mode" image will be used when available. 
-
-- Background Refresh now uses Apple's new API released in iOS 13.  
-
-- A new controller which shows your Articles. You can now search for articles which have been loaded locally and on the server as well. The server option will only match titles,  keywords and author names whereas the local version will only match the author and article's title. 
-
-- The recommendations view is now shown inline. 
-
-- A new horizontal two finger swipe gesture for iPadOS to show and hide the Feeds Interface. This works globally.  
-
-- Fixes some leaks caused when loading images over the network. 
-
-- The app should now use much less RAM (in most cases, 50% less memory). 
-
-- The app should now consume approx. 10% less power when in foreground. 
-
-- Added Swipe Actions to Article List items. 
-
-- New Contextual Action for articles: "View articles by Author". Quickly lets you view all articles by a particular author. 
+- Fixes the icon for the "Mark Newer Items" when sorting was done by Newest first. 

@@ -9,7 +9,7 @@
 #import "MiscVC.h"
 #import "YetiThemeKit.h"
 #import "SettingsCell.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "PreviewLinesVC.h"
 #import "PrefsManager.h"
 
@@ -47,10 +47,13 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     [super viewDidLoad];
     
     self.title = @"Miscellaneous";
-    
+#if TARGET_OS_MACCATALYST
+    self.sections = @[@"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar", @"Hide Bars"];
+#else
     self.sections = @[@"App Icon", @"Unread Counters", @"Mark Read Prompt", @"Hide Bookmarks", @"Open Unread", @"Preview", @"Use Toolbar", @"Hide Bars"];
+#endif
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMiscSettingsCell];
+    [self.tableView registerClass:SettingsBaseCell.class forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
 }
 
@@ -78,19 +81,20 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
+#if !TARGET_OS_MACCATALYST
     if (section == 0) {
         return AppIconLastIndex;
     }
-    
+#endif
     return 1;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+#if !TARGET_OS_MACCATALYST
     if (section == 0) {
         return @"App Icon";
     }
-    
+#endif
     return nil;
 }
 
@@ -128,21 +132,20 @@ typedef NS_ENUM(NSInteger, AppIconName) {
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
+#if !TARGET_OS_MACCATALYST
     if (indexPath.section == 0) {
+        
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMiscSettingsCell forIndexPath:indexPath];
         
-        cell.textLabel.textColor = theme.titleColor;
+        cell.textLabel.textColor = UIColor.labelColor;
         
-        cell.backgroundColor = theme.backgroundColor;
+        cell.backgroundColor = UIColor.systemBackgroundColor;
         
         if (cell.selectedBackgroundView == nil) {
             cell.selectedBackgroundView = [UIView new];
         }
         
-        cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+        cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         
         NSString *selectedIcon = UIApplication.sharedApplication.alternateIconName;
         
@@ -171,22 +174,22 @@ typedef NS_ENUM(NSInteger, AppIconName) {
         }
         
         cell.selectedBackgroundView = [UIView new];
-        cell.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+        cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         
         return cell;
     }
-    
+#endif
     SettingsCell *cell = [tableView dequeueReusableCellWithIdentifier:kSettingsCell forIndexPath:indexPath];
     
-    cell.textLabel.textColor = theme.titleColor;
+    cell.textLabel.textColor = UIColor.labelColor;
     
-    cell.backgroundColor = theme.backgroundColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
     
     UISwitch *sw = [[UISwitch alloc] init];
     
@@ -213,8 +216,13 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     else  if ([sectionName isEqualToString:@"Open Unread"]) {
         cell.textLabel.text = sectionName;
         
+#if TARGET_OS_MACCATALYST
+        [sw setOn:YES animated:NO];
+        sw.enabled = NO;
+#else
         [sw setOn:SharedPrefs.openUnread];
         [sw addTarget:self action:@selector(didChangeUnreadPref:) forControlEvents:UIControlEventValueChanged];
+#endif
     }
     else if ([sectionName isEqualToString:@"Use Toolbar"]) {
         cell.textLabel.text = sectionName;

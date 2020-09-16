@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "SettingsChanges.h"
 
 @interface ImageLoadingVC : UITableViewController <SettingsNotifier>

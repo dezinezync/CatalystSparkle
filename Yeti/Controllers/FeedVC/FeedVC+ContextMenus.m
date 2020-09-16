@@ -28,7 +28,9 @@
         
         if (item.isRead == YES) {
             
-            read = [UIAction actionWithTitle:@"Unread" image:[UIImage systemImageNamed:@"circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            read = [UIAction actionWithTitle:@"Mark Unread" image:[UIImage systemImageNamed:@"circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [MyFeedsManager article:item markAsRead:NO];
                 
                 [self userMarkedArticle:item read:NO];
                 
@@ -36,7 +38,9 @@
             
         }
         else {
-            read = [UIAction actionWithTitle:@"Read" image:[UIImage systemImageNamed:@"largecircle.fill.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            read = [UIAction actionWithTitle:@"Mark Read" image:[UIImage systemImageNamed:@"largecircle.fill.circle"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [MyFeedsManager article:item markAsRead:YES];
                 
                 [self userMarkedArticle:item read:YES];
                 
@@ -64,11 +68,6 @@
         
         UIAction *browser = [UIAction actionWithTitle:@"Open in Browser" image:[UIImage systemImageNamed:@"safari"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
-#if TARGET_OS_MACCATALYST
-            [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:item.articleURL] inBackground:YES];
-            return;
-#endif
-        
             NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -82,6 +81,22 @@
         UIAction *share = [UIAction actionWithTitle:@"Share Article" image:[UIImage systemImageNamed:@"square.and.arrow.up"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
             [self wantsToShare:item indexPath:indexPath];
+            
+        }];
+        
+        NSString *directionalNewerImageName = [self.sortingOption isEqualToString:YTSortAllDesc] || [self.sortingOption isEqualToString:YTSortUnreadDesc] ? @"arrow.up.circle.fill" : @"arrow.down.circle.fill";
+        
+        NSString *directionalOlderImageName = [self.sortingOption isEqualToString:YTSortAllAsc] || [self.sortingOption isEqualToString:YTSortUnreadAsc] ? @"arrow.up.circle.fill" : @"arrow.down.circle.fill";
+        
+        UIAction *directionalNewer = [UIAction actionWithTitle:@"Mark Newer Read" image:[UIImage systemImageNamed:directionalNewerImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [self markAllNewerRead:indexPath];
+            
+        }];
+        
+        UIAction *directionalOlder = [UIAction actionWithTitle:@"Mark Older Read" image:[UIImage systemImageNamed:directionalOlderImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+           
+            [self markAllOlderRead:indexPath];
             
         }];
         
@@ -114,13 +129,19 @@
                     
                 }];
                 
-                return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share, authorAction]];
+                return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share, authorAction, directionalNewer, directionalOlder]];
                 
             }
             
         }
         
-        return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share]];
+        if (self.type == FeedVCTypeAuthor || self.type == FeedVCTypeBookmarks || self.type == FeedTypeFolder) {
+            
+            return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share, directionalNewer, directionalOlder]];
+            
+        }
+        
+        return [UIMenu menuWithTitle:@"Article Actions" children:@[read, bookmark, browser, share, directionalNewer, directionalOlder]];
         
     }];
     
@@ -144,6 +165,8 @@
         
         read = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Unread" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
             
+            [MyFeedsManager article:item markAsRead:NO];
+            
             [self userMarkedArticle:item read:NO];
             
             completionHandler(YES);
@@ -156,6 +179,8 @@
     else {
         
         read = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Read" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+            
+            [MyFeedsManager article:item markAsRead:YES];
             
             [self userMarkedArticle:item read:YES];
             
@@ -223,11 +248,6 @@
     UIContextualAction *browser = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Browser" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
         
         completionHandler(YES);
-        
-#if TARGET_OS_MACCATALYST
-            [MyAppDelegate.sharedGlue openURL:[NSURL URLWithString:item.articleURL] inBackground:YES];
-            return;
-#endif
         
         NSURL *URL = formattedURL(@"yeti://external?link=%@", item.articleURL);
         

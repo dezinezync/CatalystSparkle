@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SettingsChanges.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 @interface ThemeVC : UITableViewController <SettingsNotifier>
 

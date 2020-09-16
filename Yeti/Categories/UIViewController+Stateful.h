@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, StateType) {
 
 @protocol ControllerState <NSObject>
 
-@property (atomic, assign) StateType controllerState NS_AVAILABLE_IOS(13.0);
+@property (atomic, assign) StateType controllerState;
 
 @optional
 

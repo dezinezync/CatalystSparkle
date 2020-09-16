@@ -9,28 +9,26 @@
 #import "AppDelegate+Routing.h"
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 
-#import "FeedsVC.h"
 #import "FeedVC.h"
 #import "ArticleVC.h"
-#import "FolderCell.h"
-#import "YTNavigationController.h"
 
 #import <DZKit/AlertManager.h>
 #import <SafariServices/SafariServices.h>
 
 #import <DZKit/UIAlertController+Extended.h>
-#import <DZKit/DZSectionedDatasource.h>
 #import <DZKit/NSString+Extras.h>
 
 @implementation AppDelegate (Routing)
 
-- (void)popToRoot
-{
-    UISplitViewController *splitVC = (UISplitViewController *)[UIApplication.keyWindow rootViewController];
-    YTNavigationController *nav = (YTNavigationController *)[[splitVC viewControllers] firstObject];
+- (void)popToRoot {
+    
+    SceneDelegate *scene = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
+    
+    UISplitViewController *splitVC = (UISplitViewController *)[scene.window rootViewController];
+    UINavigationController *nav = (UINavigationController *)[[splitVC viewControllers] firstObject];
     
     if ([[nav viewControllers] count] > 1) {
         asyncMain(^{
@@ -187,10 +185,10 @@
         
         NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
         
-#if TARGET_OS_MACCATALYST
-        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
-        return YES;
-#endif
+//#if TARGET_OS_OSX
+//        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
+//        return YES;
+//#endif
         
         // check and optionally handle twitter URLs
         if ([link containsString:@"twitter.com"]) {
@@ -352,7 +350,7 @@
         delay += 0.25;
     }
     
-    if ([[nav topViewController] isKindOfClass:FeedsVC.class] == NO) {
+    if ([[nav topViewController] isKindOfClass:SidebarVC.class] == NO) {
         [nav popViewControllerAnimated:YES];
         delay += 0.25;
     }
@@ -581,14 +579,30 @@
     
     weakify(self);
     
-    TOSplitViewController *splitVC = (id)UIApplication.keyWindow.rootViewController;
+    // check if the current feedVC is the same feed
     
-    // get the primary navigation controller
-    UINavigationController *nav = (id)splitVC.viewControllers.firstObject;
+    SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
     
-    if ([[nav topViewController] isKindOfClass:FeedVC.class]) {
-        // check if the current topVC is the same feed
-        if ([(FeedVC *)[nav topViewController] feed] && [[[(FeedVC *)[nav topViewController] feed] feedID] isEqualToNumber:feedID]) {
+    if (scene.coordinator.feedVC != nil
+        && scene.coordinator.feedVC.type == FeedVCTypeNatural
+        && [scene.coordinator.feedVC.feed.feedID isEqualToNumber:feedID])
+    {
+        
+        if (articleID != nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
+                
+                [self showArticle:articleID];
+            });
+        }
+        
+    }
+    
+    else if (scene.coordinator.feedVC != nil) {
+        
+        FeedVC *feedVC = scene.coordinator.feedVC;
+        
+        if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
             
             if (articleID != nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -599,78 +613,69 @@
             }
             
             return;
-        }
-    }
-    
-    if (splitVC.secondaryViewController && [splitVC.secondaryViewController isKindOfClass:UINavigationController.class] == YES) {
-        
-        FeedVC *feedVC = (id)[(UINavigationController *)[splitVC secondaryViewController] topViewController];
-        
-        if (feedVC != nil && [feedVC isKindOfClass:FeedVC.class]) {
             
-            if (feedVC.feed != nil && [feedVC.feed.feedID isEqualToNumber:feedID]) {
-                
-                if (articleID != nil) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        strongify(self);
-                        
-                        [self showArticle:articleID];
-                    });
+        }
+        else {
+            
+            /*
+             * The feedID is clearly different or is a custom feed. So deselect the selected items.
+             */
+            
+            NSArray <NSIndexPath *> * selectedItems = [feedVC.tableView indexPathsForSelectedRows];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                for (NSIndexPath *indexPath in selectedItems) {
+                    
+                    [feedVC.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                    
                 }
                 
-                return;
-                
-            }
-            else if ([feedVC.collectionView indexPathsForSelectedItems].count > 0) {
-                
-                /*
-                 * The feedID is clearly different or is a custom feed. So deselect the selected items.
-                 */
-                
-                NSArray <NSIndexPath *> * selectedItems = [feedVC.collectionView indexPathsForSelectedItems];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                   
-                    for (NSIndexPath *indexPath in selectedItems) {
-                        
-                        [feedVC.collectionView deselectItemAtIndexPath:indexPath animated:YES];
-                        
-                    }
-                    
-                });
-                
+            });
+            
+        }
+        
+    }
+    
+#if !TARGET_OS_MACCATALYST
+    [self popToRoot];
+#endif
+    
+    if (scene.coordinator.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad
+        && scene.coordinator.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        if (feedID != nil && scene.coordinator.feedVC == nil) {
+            
+            Feed *feed = [MyFeedsManager feedForID:feedID];
+            
+            if (feed != nil) {
+                [scene.coordinator showFeedVC:feed];
             }
             
         }
         
     }
     
-    [self popToRoot];
-    
-    FeedItem *item = [[FeedItem alloc] init];
-    item.feedID = feedID;
-    item.identifier = articleID;
-    
-    ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
-    
-    UITraitCollection *rootTraits = self.window.rootViewController.traitCollection;
-    
-    if (rootTraits.userInterfaceIdiom == UIUserInterfaceIdiomPad
-        && rootTraits.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (articleID != nil) {
         
-        // show as detail
+        FeedItem *item = [[FeedItem alloc] init];
+        item.feedID = feedID;
+        item.identifier = articleID;
         
-        UINavigationController *detailNav = [[UINavigationController alloc] initWithRootViewController:articleVC];
+        ArticleVC *articleVC = [[ArticleVC alloc] initWithItem:item];
         
-        TOSplitViewController * splitVC = (id)self.window.rootViewController;
-        
-        [splitVC to_showDetailViewController:detailNav sender:nav];
-        
-        return;
+        [scene.coordinator showArticleVC:articleVC];
         
     }
-    
-    [nav pushViewController:articleVC animated:YES];
+    else {
+        
+        Feed *feed = [MyFeedsManager feedForID:feedID];
+        
+        if (feed != nil) {
+            [scene.coordinator showFeedVC:feed];
+        }
+        
+    }
     
 }
 
@@ -684,45 +689,19 @@
         return;
     }
     
-    FeedVC *feedVC = nil;
+    SceneDelegate * scene = (id)[[UIApplication.sharedApplication.connectedScenes.allObjects firstObject] delegate];
     
-    TOSplitViewController *splitVC;
-    UINavigationController *nav;
-    
-    @try {
-        splitVC = (TOSplitViewController *)[UIApplication.keyWindow rootViewController];
-        
-        if (splitVC.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-            nav = (id)splitVC.secondaryViewController;
-        }
-        else {
-            nav = (id)splitVC.primaryViewController;
-        }
-        
-        feedVC = (FeedVC *)[nav topViewController];
-    }
-    @catch (NSException *exc) {}
-    
-    if (feedVC != nil
-        && ([feedVC isKindOfClass:FeedVC.class])) {
-        feedVC.loadOnReady = articleID;
+    if (scene.coordinator.feedVC != nil) {
+        scene.coordinator.feedVC.loadOnReady = articleID;
     }
     else {
+        
         FeedItem *item = [FeedItem new];
         item.identifier = articleID;
         
         ArticleVC *instance = [[ArticleVC alloc] initWithItem:item];
         
-        @try {
-            if (splitVC.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact) {
-                [nav pushViewController:instance animated:YES];
-            }
-            else {
-                nav = [[UINavigationController alloc] initWithRootViewController:instance];
-                [splitVC showDetailViewController:nav sender:nil];
-            }
-        }
-        @catch (NSException *exc) {}
+        [scene.coordinator showArticleVC:instance];
     }
 }
 
@@ -784,10 +763,13 @@
             return;
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
-        sfvc.preferredControlTintColor = YTThemeKit.theme.tintColor;
+        
+        SceneDelegate *delegate = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate;
+        
+        sfvc.preferredControlTintColor = delegate.window.tintColor;
         
         // get the top VC
-        UISplitViewController *splitVC = (UISplitViewController *)[[self window] rootViewController];
+        UISplitViewController *splitVC = (UISplitViewController *)[[delegate window] rootViewController];
         
         UINavigationController *navVC = nil;
         

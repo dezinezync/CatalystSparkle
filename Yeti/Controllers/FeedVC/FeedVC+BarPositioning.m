@@ -7,6 +7,7 @@
 //
 
 #import "FeedVC+BarPositioning.h"
+#import "Coordinator.h"
 
 @implementation FeedVC (BarPositioning)
 
@@ -31,7 +32,11 @@
     // sorting button
     YetiSortOption option = SharedPrefs.sortingOption;
     
-    if (self.type == FeedVCTypeUnread || self.type == FeedVCTypeBookmarks) {
+    NSArray *enabledOptions = @[];
+    
+    if (self.type == FeedVCTypeUnread) {
+        
+        enabledOptions = @[YTSortUnreadDesc, YTSortUnreadAsc];
         
         // when the active option is either of these two, we don't need
         // to do anything extra
@@ -48,15 +53,71 @@
         }
         
     }
+    else {
+        
+        enabledOptions = @[YTSortUnreadDesc, YTSortUnreadAsc, YTSortAllDesc, YTSortAllAsc];
+        
+    }
     
-    UIColor *tintColor = nil;
-    UIImage *sortingImage = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
+    UIImage *sortingImage = [self.mainCoordinator imageForSortingOption:option];
     
-    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSortOptions:)];
-    sorting.tintColor = tintColor;
+    enabledOptions = [enabledOptions rz_map:^id(YetiSortOption obj, NSUInteger idx, NSArray *array) {
+        
+        UIAction *__action = nil;
+       
+        if ([obj isEqualToString:YTSortUnreadDesc]) {
+            
+            __action = [UIAction actionWithTitle:@"Unread - Latest First" image:[self.mainCoordinator imageForSortingOption:YTSortUnreadDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+               
+                [self updateSortingOptionTo:YTSortUnreadDesc sender:action.sender];
+                
+            }];
+            
+        }
+        
+        else if ([obj isEqualToString:YTSortUnreadAsc]) {
+            
+            __action = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self.mainCoordinator imageForSortingOption:YTSortUnreadAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self updateSortingOptionTo:YTSortUnreadAsc sender:action.sender];
+                
+            }];
+            
+        }
+        
+        else if ([obj isEqualToString:YTSortAllDesc]) {
+            
+            __action = [UIAction actionWithTitle:@"All - Latest First" image:[self.mainCoordinator imageForSortingOption:YTSortAllDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self updateSortingOptionTo:YTSortAllDesc sender:action.sender];
+                
+            }];
+            
+        }
+        
+        else {
+            
+            __action = [UIAction actionWithTitle:@"All - Oldest First" image:[self.mainCoordinator imageForSortingOption:YTSortAllAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                [self updateSortingOptionTo:YTSortAllAsc sender:action.sender];
+                
+            }];
+            
+        }
+        
+        return __action;
+        
+    }];
+
+    UIMenu *menu = [UIMenu menuWithChildren:enabledOptions];
+    
+    UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage menu:menu];
     sorting.width = 32.f;
     
-    if (!(self.feed.hubSubscribed && self.feed.hub)) {
+    BOOL isPushFromHub = (self.feed.hubSubscribed && self.feed.hub);
+    BOOL isPushFromRPC = self.feed.rpcCount > 0;
+    
+    if (isPushFromHub == NO && isPushFromRPC == NO) {
         NSMutableArray *buttons = @[allReadBackDated, allRead].mutableCopy;
         
         if ([self showsSortingButton]) {

@@ -16,12 +16,14 @@
 
 #import "BookmarksManager.h"
 
+/*
 #import <NYTPhotoViewer/NYTPhotosViewController.h>
 #import <NYTPhotoViewer/NYTPhotoViewerArrayDataSource.h>
+*/
 
 @class Content;
 
-@interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning> {
+@interface ArticleVC : UIViewController <ArticleHandler, UIViewControllerRestoration, BarPositioning, UIContextMenuInteractionDelegate> {
     BOOL _showSearchBar;
     
     UIView *_searchHighlightingRect;
@@ -54,7 +56,15 @@
 
 @property (nonatomic, strong, readonly) NSPointerArray * _Nullable images;
 
-@property (nonatomic, strong) NYTPhotoViewerArrayDataSource * _Nullable photosDS;
+@property (nonatomic, assign, getter=isExploring) BOOL exploring;
+
+@property (nonatomic, strong, nullable) id initialInteractivePopGestureRecognizerDelegate;
+
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, assign, getter=isExternalWindow) BOOL externalWindow;
+
+#endif
 
 #pragma mark - Opening URLs
 

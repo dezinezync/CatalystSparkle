@@ -7,17 +7,23 @@
 //
 
 #import "NSString+ImageProxy.h"
-#import "YetiConstants.h"
 
 @implementation NSString (ImageProxy)
 
-- (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality {
+- (NSString *)pathForImageProxy:(BOOL)usedSRCSet
+                       maxWidth:(CGFloat)maxWidth
+                        quality:(CGFloat)quality {
     
-    return [self pathForImageProxy:usedSRCSet maxWidth:maxWidth quality:quality firstFrameForGIF:NO];
+    return [self pathForImageProxy:usedSRCSet maxWidth:maxWidth quality:quality firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
     
 }
 
-- (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality firstFrameForGIF:(BOOL)firstFrameForGIF {
+- (NSString *)pathForImageProxy:(BOOL)usedSRCSet
+                       maxWidth:(CGFloat)maxWidth
+                        quality:(CGFloat)quality
+               firstFrameForGIF:(BOOL)firstFrameForGIF
+                  useImageProxy:(BOOL) useImageProxy
+                   sizePreference:(ImageLoadingOption)sizePreference {
     
     NSString *copy = [self copy];
     
@@ -72,9 +78,8 @@
         return copy;
     }
     
-    NSString *sizePreference = SharedPrefs.imageLoading;
     
-    if (SharedPrefs.imageProxy) {
+    if (useImageProxy) {
         
         if (fabs(quality) <= 0) {
             
@@ -94,16 +99,24 @@
             
         }
         
-        copy = formattedString(@"https://images.weserv.nl/?url=%@", copy);
+        copy = formattedString(@"https://images.weserv.nl/?url=%@", [copy stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet]);
         
-        if (usedSRCSet == NO) {
+        CGFloat scale = UIScreen.mainScreen.scale;
+        
+//        if (usedSRCSet == NO) {
             
             NSString *extension = [self pathExtension] ?: @"jpeg";
-            
-            copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@&we", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality));
-        }
         
-//        DDLogInfo(@"weserv.nl proxy URL: %@", copy);
+        NSString *name = [[self lastPathComponent] stringByReplacingOccurrencesOfString:extension withString:@""];
+        
+            maxWidth = maxWidth/scale;
+        
+        maxWidth += 200.f;
+            
+            copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@&filename=%@@%@x.%@&we", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality), name, @(scale), extension);
+//        }
+        
+//        NSLog(@"weserv.nl proxy URL: %@", copy);
         
     }
     

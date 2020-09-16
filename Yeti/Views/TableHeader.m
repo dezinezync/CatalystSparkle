@@ -13,8 +13,7 @@
 
 - (void)didMoveToSuperview {
     if (self.superview) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        self.backgroundColor = theme.cellColor;
+        self.backgroundColor = UIColor.systemBackgroundColor;
     }
 }
 

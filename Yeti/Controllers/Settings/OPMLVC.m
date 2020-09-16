@@ -8,7 +8,6 @@
 
 #import "OPMLVC.h"
 #import "FeedsManager.h"
-#import "YetiThemeKit.h"
 #import "YTNavigationController.h"
 #import "FeedsManager.h"
 #import "StoreVC.h"
@@ -53,25 +52,26 @@
     
     // Do any additional setup after loading the view from its nib.
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.view.backgroundColor = theme.opmlViewColor;
+    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
     
-    self.detailsTitleLabel.textColor = theme.titleColor;
-    self.detailsSubtitleLabel.textColor = theme.subtitleColor;
+    self.detailsTitleLabel.textColor = UIColor.labelColor;
+    self.detailsSubtitleLabel.textColor = UIColor.secondaryLabelColor;
     
-    self.detailsView.backgroundColor = theme.opmlViewColor;
+    self.detailsView.backgroundColor = UIColor.systemBackgroundColor;
     self.detailsView.hidden = YES;
 
-    self.ioTitleLabel.textColor = theme.titleColor;
-    self.ioSubtitleLabel.textColor = theme.subtitleColor;
+    self.ioTitleLabel.textColor = UIColor.labelColor;
+    self.ioSubtitleLabel.textColor = UIColor.secondaryLabelColor;
     
-    self.ioView.backgroundColor = theme.opmlViewColor;
+    self.ioView.backgroundColor = UIColor.systemBackgroundColor;
     self.ioView.hidden = YES;
     
     [self.ioDoneButton addTarget:self action:@selector(didTapCancel:) forControlEvents:UIControlEventTouchUpInside];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     if (!_hasSetup) {
@@ -81,6 +81,15 @@
     else if (self.state == OPMLStateExport) {
         [self didTapCancel:nil];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+    
+    self.importButton.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.2f];
+    self.exportButton.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.2f];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -106,8 +115,6 @@
     
     NSTimeInterval duration = 0.35;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     if (state == OPMLStateNone) {
         
         UIView *view = self.detailsView.isHidden ? self.ioView : self.detailsView;
@@ -120,7 +127,7 @@
     else if (state == OPMLStateDefault) {
         
         for (UIButton *button in @[self.importButton, self.exportButton]) {
-            button.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+            button.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         }
         
         self.detailsView.alpha = 0.f;
@@ -150,6 +157,8 @@
         else {
             self.ioTitleLabel.text = @"Exporting OPML";
             self.ioSubtitleLabel.text = @"Preparing your file";
+            
+            self.ioDoneButton.enabled = NO;
         }
         
         if (current == OPMLStateDefault) {
@@ -220,7 +229,9 @@
     NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
     
     NSArray <NSString *> *documentTypes = @[(__bridge NSString *)kUTTypeXML, typeForExt];
-    
+    /**
+     * Proposed new method crashes on Beta 6
+     */
     UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
     
     importVC.delegate = self;
@@ -318,7 +329,7 @@
             
             self->_navigationControllerFrame = self.navigationController.view.frame;
             
-            UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initWithURLs:@[fileURL] inMode:UIDocumentPickerModeMoveToService];
+            UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[fileURL]];
             
             [self presentViewController:exportVC animated:YES completion:nil];
             
@@ -412,7 +423,7 @@
         self.ioSubtitleLabel.text = @"Uploaded. The import process will begin shortly.";
         [self.ioSubtitleLabel sizeToFit];
         
-        self.ioDoneButton.enabled = YES;
+//        self.ioDoneButton.enabled = YES;
         self.ioProgressView.progress = 1.f;
     });
     
@@ -430,6 +441,8 @@
         strongify(self);
 
         [self.navigationController pushViewController:importVC animated:YES];
+        
+        self.ioDoneButton.enabled = YES;
 
     });
 }

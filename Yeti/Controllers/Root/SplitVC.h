@@ -8,18 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "IntroVC.h"
-#import "FeedsVC+Actions.h"
 #import "EmptyVC.h"
 #import "FeedVC+SearchController.h"
 #import "ArticleVC.h"
 
-#import "YTNavigationController.h"
-#import "TOSplitViewController.h"
-
-@interface SplitVC : TOSplitViewController <UIViewControllerRestoration>
-
-@property (nonatomic, weak) FeedsVC *feedsVC;
+@interface SplitVC : UISplitViewController <UIViewControllerRestoration, UIStateRestoring>
 
 @property (nonatomic, weak) FeedVC *feedVC;
 

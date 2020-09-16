@@ -7,6 +7,7 @@
 //
 
 #import "UnreadVC.h"
+#import "SceneDelegate.h"
 
 @interface UnreadVC ()
 
@@ -48,7 +49,7 @@
 
 - (PagingManager *)unreadsManager {
     
-    if (_unreadsManager == nil) {
+    if (_unreadsManager == nil && MyFeedsManager.userID != nil) {
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
         params[@"sortType"] = @(self.sortingOption.integerValue);
@@ -78,11 +79,18 @@
         weakify(self);
         
         _unreadsManager.successCB = ^{
+            
             strongify(self);
             
             if (!self) {
                 return;
             }
+            
+#if TARGET_OS_MACCATALYST
+            UIWindow *window = [self.view window];
+//            NSWindow *nsWindow = [window nsWindow];
+            CGRect frame = window.frame;
+#endif
             
             if (self->_unreadsManager.page == 1) {
                 MyFeedsManager.unreadLastUpdate = NSDate.date;
@@ -136,7 +144,7 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
-    if (sender != nil && [sender isRefreshing]) {
+    if (sender != nil) {
         self.unreadsManager = nil;
         self.pagingManager = self.unreadsManager;
         [self loadNextPage];
@@ -156,67 +164,6 @@
     
     self.unreadsManager = nil;
     self.pagingManager = self.unreadsManager;
-    
-}
-
-- (void)updateSortingOptionTo:(YetiSortOption)option sender:(UIBarButtonItem *)sender {
-    
-    self.sortingOption = option;
-    
-    UIColor *tintColor = nil;
-    UIImage *image = [SortImageProvider imageForSortingOption:option tintColor:&tintColor];
-    
-    sender.image = image;
-    sender.tintColor = tintColor;
-    
-}
-
-- (void)didTapSortOptions:(UIBarButtonItem *)sender {
-    
-    UIAlertController *avc = [UIAlertController alertControllerWithTitle:@"Sorting Options" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    weakify(self);
-    
-    UIAlertAction *allDesc = [UIAlertAction actionWithTitle:@"Newest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        strongify(self);
-        
-        [self updateSortingOptionTo:YTSortUnreadDesc sender:sender];
-        
-    }];
-    
-    UIAlertAction *allAsc = [UIAlertAction actionWithTitle:@"Oldest First" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        strongify(self);
-        
-        [self updateSortingOptionTo:YTSortUnreadAsc sender:sender];
-        
-    }];
-    
-    [avc addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    
-    @try {
-        
-        UIColor *tintColor = nil;
-        UIImage * image = [SortImageProvider imageForSortingOption:YTSortUnreadDesc tintColor:&tintColor];
-        
-        [allDesc setValue:image forKeyPath:@"image"];
-        
-        tintColor = nil;
-        image = [SortImageProvider imageForSortingOption:YTSortUnreadAsc tintColor:&tintColor];
-        
-        [allAsc setValue:image forKeyPath:@"image"];
-
-
-    }
-    @catch (NSException *exc) {
-        
-    }
-    
-    [avc addAction:allDesc];
-    [avc addAction:allAsc];
-    
-    [self presentAllReadController:avc fromSender:sender];
     
 }
 

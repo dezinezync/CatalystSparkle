@@ -7,7 +7,7 @@
 //
 
 #import "PreviewLinesVC.h"
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 #import "PrefsManager.h"
 
