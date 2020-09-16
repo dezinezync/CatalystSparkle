@@ -223,6 +223,7 @@
 - (void)_didFinishAllReadActionSuccessfully {
     
     if (self.feed != nil && self.feed.unread.unsignedIntegerValue > 0) {
+        MyFeedsManager.totalUnread -= self.feed.unread.unsignedIntegerValue;
         self.feed.unread = @(0);
     }
     
