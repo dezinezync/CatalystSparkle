@@ -7,7 +7,6 @@
 //
 
 #import "FiltersVC.h"
-#import <DZKit/DZSectionedDatasource.h>
 #import "FilterInputCell.h"
 
 #import "FeedsManager.h"
@@ -16,14 +15,15 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "SettingsCell.h"
+
 NSString *const kFiltersCell = @"filterCell";
 
-@interface FiltersVC () <DZSDatasource, UITextFieldDelegate> {
+@interface FiltersVC () <UITextFieldDelegate> {
     NSString *_keywordInput;
 }
 
-@property (nonatomic, strong) DZSectionedDatasource *DS;
-@property (nonatomic, weak) DZBasicDatasource *DS2;
+@property (nonatomic, strong) UITableViewDiffableDataSource *DS;
 
 @end
 
@@ -35,20 +35,13 @@ NSString *const kFiltersCell = @"filterCell";
     self.title = @"Filters";
     
     self.tableView.tableFooterView = [UIView new];
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kFiltersCell];
+    [self.tableView registerClass:[SettingsBaseCell class] forCellReuseIdentifier:kFiltersCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FilterInputCell.class) bundle:nil] forCellReuseIdentifier:kFilterInputCell];
     
-    self.DS = [[DZSectionedDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
-    
-    DZBasicDatasource *DS1 = [[DZBasicDatasource alloc] init];
-    DS1.data = @[@"input"];
-    
-    DZBasicDatasource *DS2 = [[DZBasicDatasource alloc] init];
-    
-    self.DS.datasources = @[DS1, DS2];
-    self.DS2 = [self.DS.datasources lastObject];
+    [self setupDatasource];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -61,7 +54,7 @@ NSString *const kFiltersCell = @"filterCell";
         
         strongify(self);
         
-        self.DS2.data = [responseObject reverseObjectEnumerator].allObjects;
+        [self setupData:[responseObject reverseObjectEnumerator].allObjects];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
@@ -76,6 +69,64 @@ NSString *const kFiltersCell = @"filterCell";
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Setup
+
+- (void)setupDatasource {
+    
+    weakify(self);
+    
+    self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull item) {
+        
+        if (indexPath.section == 1) {
+            
+            SettingsBaseCell *cell = [tableView dequeueReusableCellWithIdentifier:kFiltersCell forIndexPath:indexPath];
+            
+            cell.textLabel.text = [self.DS itemIdentifierForIndexPath:indexPath];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            cell.textLabel.textColor = UIColor.labelColor;
+            cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
+            
+            return cell;
+        }
+        
+        FilterInputCell *cell = [tableView dequeueReusableCellWithIdentifier:kFilterInputCell forIndexPath:indexPath];
+        
+        strongify(self);
+        
+        if (self->_keywordInput) {
+            cell.textField.text = self->_keywordInput;
+        }
+        
+        cell.textLabel.textColor = UIColor.labelColor;
+        cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
+        
+        cell.textField.delegate = self;
+        
+        return cell;
+        
+        
+    }];
+    
+    [self setupData:nil];
+    
+}
+
+- (void)setupData:(NSArray <NSString *> *)filters {
+    
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    
+    [snapshot appendSectionsWithIdentifiers:@[@0, @1]];
+    [snapshot appendItemsWithIdentifiers:@[@"input"] intoSectionWithIdentifier:@0];
+    
+    if (filters != nil) {
+        [snapshot appendItemsWithIdentifiers:(filters ?: @[]) intoSectionWithIdentifier:@1];
+    }
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:(filters != nil)];
+    
+}
+
 #pragma mark - Table view data source
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -86,74 +137,86 @@ NSString *const kFiltersCell = @"filterCell";
     return nil;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)deleteKeyword:(NSString *)keyword {
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    if (indexPath.section == 1) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kFiltersCell forIndexPath:indexPath];
-        cell.textLabel.text = [self.DS objectAtIndexPath:indexPath];
-        
-        cell.textLabel.textColor = theme.titleColor;
-        cell.detailTextLabel.textColor = theme.captionColor;
-        
-        cell.backgroundColor = theme.cellColor;
-        
-        return cell;
+    if (keyword == nil) {
+        return;
     }
     
-    FilterInputCell *cell = [tableView dequeueReusableCellWithIdentifier:kFilterInputCell forIndexPath:indexPath];
+    weakify(self);
     
-    if (_keywordInput) {
-        cell.textField.text = _keywordInput;
-    }
+    [MyFeedsManager removeFilter:keyword success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([responseObject boolValue]) {
+            
+            strongify(self);
+            
+            NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+            
+            keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+                return ![obj isEqualToString:keyword];
+            }];
+            
+            [self setupData:keywords];
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
+        
+    }];
     
-    cell.label.textColor = theme.titleColor;
-    
-    cell.textField.textColor = theme.titleColor;
-    cell.textField.backgroundColor = theme.backgroundColor;
-    
-    cell.backgroundColor = theme.cellColor;
-    
-    UIView *selected = [UIView new];
-    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
-    cell.selectedBackgroundView = selected;
-    
-    cell.textField.delegate = self;
-    
-    return cell;
 }
 
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return indexPath.section == 1;
+- (UIAction *)deleteActionForIndexPath:(NSIndexPath *)indexPath {
+    
+    UIAction *delete = [UIAction actionWithTitle:@"Delete" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+       
+        NSString *keyword = [self.DS itemIdentifierForIndexPath:indexPath];
+        
+        [self deleteKeyword:keyword];
+        
+    }];
+    
+    delete.attributes = UIMenuElementAttributesDestructive;
+    
+    return delete;
+    
 }
 
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        NSString *word = [self.DS2 objectAtIndexPath:indexPath];
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+    
+    UIContextMenuConfiguration *config = [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu * _Nullable(NSArray<UIMenuElement *> * _Nonnull suggestedActions) {
         
-        weakify(self);
+        UIAction *delete = [self deleteActionForIndexPath:indexPath];
         
-        [MyFeedsManager removeFilter:word success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if ([responseObject boolValue]) {
-                strongify(self);
-                self.DS2.data = [self.DS2.data rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                    return ![obj isEqualToString:word];
-                }];
-            }
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            [AlertManager showGenericAlertWithTitle:@"Failed to Delete Filter" message:error.localizedDescription];
-            
-        }];
+        return [UIMenu menuWithTitle:@"Keyword Actions" children:@[delete]];
         
-    }
+    }];
+    
+    return config;
+    
+}
+
+- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UIContextualAction *delete = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"Delete" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+       
+        NSString *keyword = [self.DS itemIdentifierForIndexPath:indexPath];
+        
+        [self deleteKeyword:keyword];
+        
+        completionHandler(YES);
+        
+    }];
+    
+    UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:@[delete]];
+    
+    config.performsFirstActionWithFullSwipe = YES;
+    
+    return config;
+    
 }
 
 #pragma mark - <UITextFieldDelegate>
@@ -173,8 +236,16 @@ NSString *const kFiltersCell = @"filterCell";
     NSString *keyword = [self->_keywordInput copy];
     
     // Immediately add the filter
-    NSArray *data = [@[keyword] arrayByAddingObjectsFromArray:self.DS2.data];
-    self.DS2.data = data;
+    NSArray *data = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
+    
+    if (data == nil) {
+        data = @[];
+    }
+    
+    data = [data arrayByAddingObject:keyword];
+    
+    [self setupData:data];
+    
     self->_keywordInput = nil;
     
     asyncMain(^{
@@ -188,12 +259,12 @@ NSString *const kFiltersCell = @"filterCell";
         
         strongify(self);
         
-        NSArray *keywords = self.DS2.data;
+        NSArray *keywords = [self.DS.snapshot itemIdentifiersInSectionWithIdentifier:@1];
         keywords = [keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
             return [obj isEqualToString:keyword] == NO;
         }];
         
-        self.DS2.data = keywords;
+        [self setupData:keywords];
         
     }];
     

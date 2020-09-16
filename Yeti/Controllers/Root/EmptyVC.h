@@ -10,4 +10,6 @@
 
 @interface EmptyVC : UIViewController
 
+@property (weak, nonatomic) IBOutlet UILabel *label;
+
 @end

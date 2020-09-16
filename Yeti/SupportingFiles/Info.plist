@@ -217,7 +217,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>377</string>
+	<string>24</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -246,6 +246,10 @@
 	<string>Copyright © 2016-2020 Nikhil Nigade</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save images you select from articles to your photos.  </string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>ConfigurationIntent</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Merriweather-Black.ttf</string>
@@ -304,10 +308,10 @@
 			<key>UIWindowSceneSessionRoleApplication</key>
 			<array>
 				<dict>
-					<key>UISceneDelegateClassName</key>
-					<string>AppDelegate</string>
 					<key>UISceneConfigurationName</key>
 					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>SceneDelegate</string>
 				</dict>
 			</array>
 		</dict>

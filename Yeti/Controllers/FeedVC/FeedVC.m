@@ -9,19 +9,26 @@
 #import "FeedVC+ContextMenus.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
+#import "FeedHeaderView.h"
 
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
-#import <DZTextKit/PaddedLabel.h>
+#import "PaddedLabel.h"
 #import "YetiThemeKit.h"
 
 #import <DZKit/NSString+Extras.h>
-#import <DZTextKit/CheckWifi.h>
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "CheckWifi.h"
+#import "NSString+ImageProxy.h"
+
+#import "Coordinator.h"
+
+#import "NSString+ImageProxy.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #if TARGET_OS_MACCATALYST
 
 #import "AppDelegate.h"
+#import <AppKit/NSToolbarItemGroup.h>
 
 #endif
 
@@ -110,7 +117,11 @@
     
     [super viewWillAppear:animated];
     
+#if !TARGET_OS_MACCATALYST
+        
     self.navigationController.navigationBar.prefersLargeTitles = YES;
+
+#endif 
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
@@ -122,33 +133,6 @@
 #if TARGET_OS_MACCATALYST
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
-
-    NSToolbarItem *refreshFeedItem = [[[[MyAppDelegate.toolbar items] rz_map:^id(__kindof NSToolbarItem *obj, NSUInteger idx, NSArray *array) {
-        
-        if ([obj isKindOfClass:NSToolbarItemGroup.class]) {
-            
-            return [(NSToolbarItemGroup *)obj subitems];
-            
-        }
-        
-        return obj;
-        
-    }] rz_flatten] rz_find:^BOOL(NSToolbarItem * obj, NSUInteger idx, NSArray *array) {
-        
-        return [obj.itemIdentifier isEqualToString:@"com.yeti.toolbar.refreshFeed"];
-        
-    }];
-    
-    if (refreshFeedItem != nil) {
-        
-        if (self.type == FeedVCTypeToday || self.type == FeedVCTypeUnread) {
-            [refreshFeedItem setEnabled:YES];
-        }
-        else {
-            [refreshFeedItem setEnabled:NO];
-        }
-        
-    }
     
 #endif
     
@@ -162,22 +146,16 @@
     
 }
 
-- (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+- (void)viewDidAppear:(BOOL)animated {
     
-    [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    [super viewDidAppear:animated];
     
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-        
-        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            UIImage *image = [UIImage systemImageNamed:@"sidebar.left"];
-            
-            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(didTapSidebarButton:)];
-        }
-        else {
-            self.navigationItem.leftBarButtonItem = nil;
-        }
-        
-    } completion:nil];
+#if TARGET_OS_MACCATALYST
+    SceneDelegate *delegate = (id)[self.view.window.windowScene delegate];
+    
+    [delegate.toolbar removeItemAtIndex:5];
+    [delegate.toolbar insertItemWithItemIdentifier:@"com.yeti.toolbar.sortingMenu" atIndex:5];
+#endif
     
 }
 
@@ -202,7 +180,11 @@
     
 #if TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.hidden = YES;
+    if (self.isExploring == NO) {
+        self.navigationController.navigationBar.hidden = YES;
+    }
+    
+    return;
     
 #else
     
@@ -282,11 +264,86 @@
     
 }
 
+- (void)setupTableHeaderView {
+    
+    FeedHeaderView *header = [[FeedHeaderView alloc] initWithNib];
+    
+    NSString *path = [self.feed faviconURI];
+    
+    if (path != nil) {
+         
+        if (SharedPrefs.imageProxy) {
+            
+            path = [path pathForImageProxy:YES maxWidth:128.f quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:SharedPrefs.imageLoading];
+            
+        }
+        
+        NSURL *url = [NSURL URLWithString:path];
+        
+        [header.faviconView sd_setImageWithURL:url];
+        
+    }
+    
+    header.titleLabel.text = self.feed.displayTitle;
+    
+    if (self.feed.summary != nil && [self.feed.summary isBlank] == NO) {
+        header.descriptionLabel.text = [self.feed.summary stringByDecodingHTMLEntities];
+    }
+    else if (self.feed.extra.title != nil && [self.feed.extra.title isBlank] == NO) {
+        header.descriptionLabel.text = [self.feed.extra.title stringByDecodingHTMLEntities];
+    }
+    
+    BOOL isPushFromHub = (self.feed.hubSubscribed && self.feed.hub);
+    BOOL isPushFromRPC = self.feed.rpcCount > 0;
+    
+    if (isPushFromHub || isPushFromRPC) {
+        
+        UIButton *notificationsButton = header.notificationsButton;
+        
+        if (self.feed.isSubscribed) {
+            
+            notificationsButton.accessibilityValue = @"Unsubscribe from notifications";
+            
+            [notificationsButton setImage:[UIImage systemImageNamed:@"bell.fill"] forState:UIControlStateNormal];
+            [notificationsButton setNeedsDisplay];
+            
+        }
+        else {
+            notificationsButton.accessibilityValue = @"Subscribe to notifications";
+        }
+        
+        notificationsButton.hidden = NO;
+        
+        [notificationsButton addTarget:self action:@selector(didTapNotifications:) forControlEvents:UIControlEventTouchUpInside];
+        
+        header.descriptionLabel.preferredMaxLayoutWidth = self.view.bounds.size.width - 24.f - 24.f - 12.f;
+        
+    }
+    else {
+        header.notificationsButton.hidden = YES;
+        header.descriptionLabel.preferredMaxLayoutWidth = self.view.bounds.size.width - 24.f;
+    }
+    
+    [header.descriptionLabel sizeToFit];
+    
+    [header.mainStackView setNeedsUpdateConstraints];
+    [header setNeedsUpdateConstraints];
+    [header setNeedsLayout];
+    
+    self.tableView.tableHeaderView = header;
+    
+}
+
 - (void)setupTableView {
     
     [self setupDatasource];
     
-    self.tableView.prefetchDataSource = self;
+    if (self.type == FeedVCTypeNatural
+        && self.feed != nil
+        && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+        
+        [self setupTableHeaderView];
+    }
     
     self.tableView.tableFooterView = [UIView new];
     self.tableView.estimatedRowHeight =  150.f;
@@ -312,12 +369,10 @@
     self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * tableView, NSIndexPath * indexPath, FeedItem * article) {
         
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
-
-        [cell configure:article feedType:self.type];
         
-//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-//
-//        cell.textLabel.text = article.articleTitle;
+        cell.tintColor = self.view.tintColor;
+        
+        [cell configure:article feedType:self.type];
         
         return cell;
         
@@ -436,7 +491,7 @@
 
 - (PagingManager *)pagingManager {
     
-    if (_pagingManager == nil) {
+    if (_pagingManager == nil && MyFeedsManager.userID != nil) {
         
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
@@ -630,10 +685,10 @@
     NSString *subtitle = nil;
     
     if ([_sortingOption isEqualToString:YTSortAllDesc] || [_sortingOption isEqualToString:YTSortAllAsc]) {
-        subtitle = formattedString(@"No recent articles are available from %@", self.feed.title);
+        subtitle = formattedString(@"No recent articles are available from %@", [self.feed displayTitle]);
     }
     else {
-        subtitle = formattedString(@"No recent unread articles are available from %@", self.feed.title);
+        subtitle = formattedString(@"No recent unread articles are available from %@", [self.feed displayTitle]);
     }
     
     return subtitle;
@@ -661,14 +716,12 @@
         return nil;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect layoutFrame = [self.view.readableContentGuide layoutFrame];
     
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.padding = UIEdgeInsetsMake(0, layoutFrame.origin.x, 0, layoutFrame.origin.x);
     label.numberOfLines = 0;
-    label.backgroundColor = theme.cellColor;
+    label.backgroundColor = UIColor.systemBackgroundColor;
     label.opaque = YES;
     
     NSString *title = @"No Articles";
@@ -683,14 +736,14 @@
     UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     
     NSDictionary *attributes = @{NSFontAttributeName: font,
-                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
-                   NSForegroundColorAttributeName: theme.titleColor,
+                   NSForegroundColorAttributeName: UIColor.labelColor,
                    NSParagraphStyleAttributeName: para
                    };
     
@@ -812,28 +865,17 @@
 
 - (void)_showArticleVC:(ArticleVC *)vc {
     
-    [self.to_splitViewController setValue:vc forKeyPath:@"articleVC"];
-    
-    if (self.to_splitViewController == nil) {
-        // in a modal stack
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    else if (self.to_splitViewController != nil) {
+    if (self.mainCoordinator != nil) {
         
-        if (self.to_splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-            
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-
-            [self to_showDetailViewController:nav sender:self];
-            
-        }
-        else {
-            [self.navigationController pushViewController:vc animated:YES];
-        }
+        [self.mainCoordinator showArticleVC:vc];
         
     }
     else {
-        [self presentViewController:vc animated:YES completion:nil];
+        
+        vc.exploring = YES;
+        
+        [self.navigationController pushViewController:vc animated:YES];
+        
     }
     
     if (self->_restorationActivity != nil) {
@@ -847,127 +889,6 @@
     }
     
 }
-
-#pragma mark - <UITableViewDatasourcePrefetching>
-//
-//- (void)tableView:(UITableView *)tableView prefetchRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
-//
-//    BOOL showImage = SharedPrefs.imageLoading != ImageLoadingNever;
-//
-//    if (CheckWiFi() == NO && showImage == YES) {
-//        showImage = NO;
-//    }
-//
-//    if (showImage == NO) {
-//        return;
-//    }
-//
-//    BOOL imageProxy = SharedPrefs.imageProxy;
-//
-//    NSMutableArray <NSURL *> *imagesToCache = [NSMutableArray new];
-//
-//    // get any cell
-//    ArticleCell *cell = [tableView cellForRowAtIndexPath:indexPaths.firstObject];
-//
-//    for (NSIndexPath *indexPath in indexPaths) {
-//
-//        FeedItem *article = [self itemForIndexPath:indexPath];
-//
-//        if (article == nil) {
-//            continue;
-//        }
-//
-//        if (self.type != FeedVCTypeNatural) {
-//
-//            // should pre-cache the Favicon
-//            Feed *feed = [ArticlesManager.shared feedForID:article.feedID];
-//
-//            if (feed != nil) {
-//
-//                NSString *faviconURL = feed.faviconURI;
-//
-//                if (faviconURL != nil) {
-//
-//                    CGFloat maxWidth = 24.f;
-//
-//                    if (imageProxy == YES) {
-//
-//                        faviconURL = [faviconURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
-//
-//                    }
-//
-//                    if (faviconURL) {
-//
-//                        [imagesToCache addObject:[NSURL URLWithString:faviconURL]];
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//        }
-//
-//        // check for cover image
-//        NSString *coverImageURL = article.coverImage;
-//
-//        if (coverImageURL == nil && article.content != nil && article.content.count > 0) {
-//
-//            Content *content = [article.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
-//
-//                if (prev && [prev.type isEqualToString:@"image"]) {
-//                    return prev;
-//                }
-//
-//                return current;
-//            }];
-//
-//            if (content != nil) {
-//                article.coverImage = content.url;
-//                coverImageURL = article.coverImage;
-//            }
-//
-//        }
-//
-//        if (coverImageURL != nil) {
-//
-//            CGFloat maxWidth = cell.coverImage.bounds.size.width;
-//
-//            if (imageProxy == YES) {
-//
-//                coverImageURL = [coverImageURL pathForImageProxy:NO maxWidth:maxWidth quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
-//
-//            }
-//
-//            if (coverImageURL != nil) {
-//
-//                [imagesToCache addObject:[NSURL URLWithString:coverImageURL]];
-//
-//            }
-//
-//        }
-//
-//    }
-//
-//    if (imagesToCache.count > 0) {
-//
-//        self.prefetchingTasks = [SDWebImagePrefetcher.sharedImagePrefetcher prefetchURLs:imagesToCache];
-//
-//    }
-//
-//}
-//
-//- (void)tableView:(UITableView *)tableView cancelPrefetchingForRowsAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths {
-//
-//    if (self.prefetchingTasks != nil) {
-//
-//        [self.prefetchingTasks cancel];
-//
-//        self.prefetchingTasks = nil;
-//
-//    }
-//
-//}
 
 #pragma mark - Setters
 
@@ -1081,7 +1002,7 @@
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
         
-        [self to_showDetailViewController:vc sender:self];
+        [self.mainCoordinator showArticleVC:vc];
         
         return;
     }
@@ -1180,37 +1101,40 @@
 
 - (void)continueActivity:(NSUserActivity *)activity {
     
-    NSArray <NSString *> *restorationIdentifiers = [activity.userInfo valueForKey:@"controllers"];
+    // check if we're showing the right feed
     
-    NSString * activityIdentifier = [restorationIdentifiers rz_find:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+    
+    // check if an article is stored
+    NSNumber *selectedItem = [activity.userInfo valueForKeyPath:@"feed.selectedItem"];
+    
+    if (selectedItem) {
         
-        return [obj containsString:@"ArticleVC"];
+        self.loadOnReady = selectedItem;
         
-    }];
-    
-    if (activityIdentifier == nil) {
-        return;
+        _restorationActivity = activity;
+        
+        [self loadArticle];
+        
     }
-    
-    NSString *articleIDString = [[activityIdentifier componentsSeparatedByString:@"-"] lastObject];
-    
-    if ([articleIDString integerValue] < 0 || [articleIDString integerValue] == NSNotFound) {
-        return;
-    }
-    
-    NSUInteger articleID = articleIDString.integerValue;
-    
-    self.loadOnReady = @(articleID);
-    
-    _restorationActivity = activity;
-    
-    [self loadArticle];
     
 }
 
 - (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
     
+    NSMutableDictionary *feed = @{}.mutableCopy;
     
+    // Check for a selected item
+    NSIndexPath *selected = self.tableView.indexPathForSelectedRow;
+    
+    if (selected != nil) {
+        
+        FeedItem *item = [self.DS itemIdentifierForIndexPath:selected];
+        
+        [feed setObject:item.identifier forKey:@"selectedItem"];
+        
+    }
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"feed": feed}];
     
 }
 

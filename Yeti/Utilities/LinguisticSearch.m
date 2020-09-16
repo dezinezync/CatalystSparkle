@@ -35,9 +35,9 @@ static NSArray<NSString *> *_knownDateTags;
     NSMutableArray <LinguisticTagPair> *tokens = @[].mutableCopy;
     
     [linguisticTagger enumerateTagsInRange:NSMakeRange(0, text.length) scheme:NSLinguisticTagSchemeNameTypeOrLexicalClass options:options usingBlock:^(NSLinguisticTag  _Nullable tag, NSRange tokenRange, NSRange sentenceRange, BOOL * _Nonnull stop) {
-        
-        NSLogDebug(@"Tag: %@\nToken: %@\nSentence: %@", tag, [text substringWithRange:tokenRange], [text substringWithRange:sentenceRange]);
-        
+#ifdef DEBUG
+        NSLog(@"Tag: %@\nToken: %@\nSentence: %@", tag, [text substringWithRange:tokenRange], [text substringWithRange:sentenceRange]);
+#endif
         [tokens addObject:@{tag: [text substringWithRange:tokenRange]}];
     }];
     

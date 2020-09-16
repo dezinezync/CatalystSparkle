@@ -7,7 +7,6 @@
 //
 
 #import "YetiTheme.h"
-#import "AppKitGlue.h"
 
 #if TARGET_OS_MACCATALYST
 #import "AppDelegate+Catalyst.h"
@@ -59,7 +58,7 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     
     for (UIWindow *window in [UIApplication.sharedApplication windows]) {
         if (window.rootViewController && ![NSStringFromClass(window.class) hasPrefix:@"UIText"]) {
-            window.rootViewController.view.backgroundColor = self.backgroundColor;
+//            window.rootViewController.view.backgroundColor = self.backgroundColor;
             window.tintColor = self.tintColor;
         }
 
@@ -71,18 +70,6 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     
     [navBar setLargeTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
     [navBar setTitleTextAttributes:@{NSForegroundColorAttributeName: self.titleColor}];
-    
-//    textField.keyboardAppearance = textView.keyboardAppearance;z
-    
-    Class splitVCClass = NSClassFromString(@"SplitVC");
-    Class navClass = NSClassFromString(@"YTNavigationController");
-    Class settingsClass = NSClassFromString(@"SettingsVC");
-    
-    UITableView *tableView = [UITableView appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
-    tableView.backgroundColor = self.tableColor;
-    
-    UITableViewCell *cell = [UITableViewCell appearanceWhenContainedInInstancesOfClasses:@[splitVCClass, navClass, settingsClass]];
-    cell.backgroundColor = self.cellColor;
     
 }
 

@@ -17,9 +17,9 @@
 
 - (void)createNewFeed {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc didTapAdd:nil];
     
@@ -27,9 +27,9 @@
 
 - (void)createNewFolder {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
     [vc didTapAddFolder:nil];
     
@@ -37,58 +37,35 @@
 
 - (void)refreshAll {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    FeedsVC *vc = (FeedsVC *)[(UINavigationController *)[[splitVC viewControllers] firstObject] visibleViewController];
+    [MyDBManager purgeDataForResync];
     
-    [vc beginRefreshing:nil];
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
-}
-
-- (void)refreshFeed {
-    
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
-    
-    UINavigationController *nav = (UINavigationController *)[splitVC.viewControllers objectAtIndex:1];
-    
-    if ([[nav visibleViewController] isKindOfClass:FeedVC.class] == NO) {
-        return;
-    }
-    
-    FeedVC *vc = (FeedVC *)[nav visibleViewController];
-    
-    if (vc.type != FeedVCTypeUnread || vc.type != FeedVCTypeToday) {
-        return;
-    }
-    
-    UIRefreshControl *refreshControl = [(UnreadVC *)vc refreshControl];
-    [refreshControl beginRefreshing];
-    
-    [(UnreadVC *)vc didBeginRefreshing:refreshControl];
+    [vc beginRefreshingAll:vc.refreshControl];
     
 }
 
-- (void)toggleSidebar {
+- (void)openSettings:(id)sender {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    splitVC.primaryColumnIsHidden = !splitVC.primaryColumnIsHidden;
-    
-    [UIMenuSystem.mainSystem setNeedsRebuild];
+    [sceneDelegate.coordinator showSettingsVC];
     
 }
 
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    UINavigationController *nav = (UINavigationController *)[splitVC.viewControllers objectAtIndex:1];
+    FeedVC *feedVC = sceneDelegate.coordinator.feedVC;
     
-    if ([[nav visibleViewController] isKindOfClass:FeedVC.class] == NO) {
+    if (feedVC == nil) {
         return;
     }
     
-    [(FeedVC *)[nav visibleViewController] setSortingOption:sortOption];
+    [feedVC setSortingOption:sortOption];
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
     
@@ -124,19 +101,19 @@
         return;
     }
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    FeedsVC *vc = (FeedsVC *)[[(UINavigationController *)[splitVC.viewControllers firstObject] viewControllers] firstObject];
+    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
     
-    [vc.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    [vc.collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
     
-    [vc tableView:vc.tableView didSelectRowAtIndexPath:indexPath];
+    [vc collectionView:vc.collectionView didSelectItemAtIndexPath:indexPath];
     
 }
 
 - (void)goToUnread {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
     
     [self goToIndexPath:indexPath];
     
@@ -144,7 +121,7 @@
 
 - (void)goToToday {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
     
     [self goToIndexPath:indexPath];
     
@@ -152,7 +129,7 @@
 
 - (void)goToBookmarks {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:2 inSection:0];
     
     [self goToIndexPath:indexPath];
     
@@ -160,9 +137,13 @@
 
 - (void)switchToNextArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapNextArticle:nil];
     
@@ -170,9 +151,13 @@
 
 - (void)switchToPreviousArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapPreviousArticle:nil];
     
@@ -180,9 +165,13 @@
 
 - (void)markArticleRead {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapRead:nil];
     
@@ -192,9 +181,13 @@
 
 - (void)markArticleBookmark {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapBookmark:nil];
     
@@ -204,9 +197,13 @@
 
 - (void)openArticleInBrowser {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    
+    if (vc == nil) {
+        return;
+    }
     
     [vc openInBrowser];
     
@@ -214,9 +211,13 @@
 
 - (void)closeArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    
+    if (vc == nil) {
+        return;
+    }
     
     [vc didTapClose];
     
@@ -224,11 +225,15 @@
 
 - (void)shareArticle {
     
-    SplitVC *splitVC = (SplitVC *)[[MyAppDelegate window] rootViewController];
+    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
-    ArticleVC *vc = (ArticleVC *)[(UINavigationController *)[[splitVC viewControllers] lastObject] visibleViewController];
+    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
     
-    [vc didTapShare:self.shareArticleItem];
+    if (vc == nil) {
+        return;
+    }
+    
+    [vc didTapShare:(id)(self.shareArticleItem)];
     
 }
 

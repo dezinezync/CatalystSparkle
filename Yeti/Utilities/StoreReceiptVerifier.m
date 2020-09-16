@@ -62,6 +62,18 @@
         
     }
     
+#if TESTING_STOREKIT
+    
+    if (successBlock) {
+        
+        runOnMainQueueWithoutDeadlocking(successBlock);
+        
+    }
+    
+    return;
+    
+#endif
+    
     [MyFeedsManager postAppReceipt:receipt success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (successBlock) {

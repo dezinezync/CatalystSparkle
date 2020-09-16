@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,6 +44,7 @@ extern PrefsManager * SharedPrefs;
 @property (assign) BOOL showTags; // kShowTags
 @property (assign) BOOL useToolbar; // kUseToolbar
 @property (assign) BOOL hideBars; //kHideBars
+@property (assign) NSInteger iOSTintColorIndex;
 
 @property (assign) BOOL useSystemSize; // kUseSystemFontSize
 @property (assign) NSInteger fontSize; // kFontSize

@@ -18,21 +18,12 @@
 
 #import "PagingManager.h"
 
-#import "Feed.h"
+#import "CustomFeed.h"
 
 #import "BookmarksManager.h"
 #import "BarPositioning.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-typedef NS_ENUM(NSInteger, FeedVCType) {
-    FeedVCTypeNatural,
-    FeedVCTypeUnread,
-    FeedVCTypeBookmarks,
-    FeedVCTypeToday,
-    FeedVCTypeFolder,
-    FeedVCTypeAuthor
-};
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading >
 
@@ -76,6 +67,8 @@ typedef NS_ENUM(NSInteger, FeedVCType) {
 - (UIView * _Nonnull)viewForEmptyDataset;
 
 - (void)continueActivity:(NSUserActivity *)activity;
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
 
 #pragma mark -
 

@@ -18,13 +18,16 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 
 #import "AppDelegate+Routing.h"
+#import "PagingManager.h"
 
-@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, DZDatasource, UISearchResultsUpdating, ScrollLoading>
+#import "RecommendationsVC.h"
+
+#import "FeedCell.h"
+
+@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, ScrollLoading>
 
 @property (nonatomic, strong) UIActivityIndicatorView *loaderView;
 @property (nonatomic, strong) UILabel *errorLabel;
-
-@property (nonatomic, strong, readwrite) DZBasicDatasource *DS;
 
 @property (nonatomic, assign) NSInteger selected;
 @property (nonatomic, copy) NSString *query;
@@ -34,13 +37,33 @@
 
 @property (nonatomic, strong) UINotificationFeedbackGenerator *notificationGenerator;
 
+@property (nonatomic, strong) UICollectionViewCellRegistration * feedCellRegister;
+
+@property (nonatomic, strong) PagingManager *pagingManager;
+
+@property (nonatomic, strong) RecommendationsVC *recommendationsVC;
+
+@property (nonatomic, weak) UIView *recommendationsView;
+
 @end
 
 @implementation AddFeedVC
 
 + (UINavigationController *)instanceInNavController {
     
-    AddFeedVC *vc = [[AddFeedVC alloc] init];
+    UICollectionViewCompositionalLayout *layout = [[UICollectionViewCompositionalLayout alloc] initWithSectionProvider:^NSCollectionLayoutSection * _Nullable(NSInteger section, id<NSCollectionLayoutEnvironment> _Nonnull environment) {
+        
+        UICollectionLayoutListAppearance appearance = UICollectionLayoutListAppearancePlain;
+        
+        UICollectionLayoutListConfiguration *config = [[UICollectionLayoutListConfiguration alloc] initWithAppearance:appearance];
+        
+        config.showsSeparators = NO;
+        
+        return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
+        
+    }];
+    
+    AddFeedVC *vc = [[AddFeedVC alloc] initWithCollectionViewLayout:layout];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
@@ -67,16 +90,48 @@
     self.selected = NSNotFound;
     
     self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.navigationController.navigationBar.translucent = YES;
     
-    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
+
+    self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * collectionView, NSIndexPath * indexPath, Feed * item) {
+        
+        FeedCell *cell = [collectionView dequeueConfiguredReusableCellWithRegistration:self.feedCellRegister forIndexPath:indexPath item:item];
+        
+        NSArray <NSIndexPath *> *selectedIndices = [collectionView indexPathsForSelectedItems];
+        
+        if (selectedIndices.count > 0) {
+            
+            NSIndexPath *isCurrent = [selectedIndices rz_find:^BOOL(NSIndexPath *obj, NSUInteger idx, NSArray *array) {
+               
+                return obj.section == indexPath.section && obj.item == indexPath.item;
+                
+            }];
+            
+            if (isCurrent != nil) {
+                
+                cell.accessories = @[[UICellAccessoryCheckmark new]];
+                
+            }
+            
+        }
+        
+        return cell;
+        
+    }];
     
     [self setupSearchController];
     [self setupDefaultViews];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
     
-#if TARGET_OS_MACCATALYST
-    self.navigationController.navigationBar.translucent = NO;
-#endif
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -122,7 +177,7 @@
         return self.errorLabel;
     }
     
-    if (self.DS.state == DZDatasourceLoading) {
+    if (self.controllerState == StateLoading) {
         [self.loaderView startAnimating];
         return self.loaderView;
     }
@@ -132,7 +187,7 @@
         }
     }
     
-    if (self.DS.state == DZDatasourceError && self.page == 0) {
+    if (self.controllerState == StateErrored) {
         [self setupErrorLabel];
         return self.errorLabel;
     }
@@ -149,49 +204,31 @@
     return nil;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
-    
-    AddFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:kAddFeedCell forIndexPath:indexPath];
-    
-    [cell configure:feed];
-    
-    cell.accessoryType = self.selected == indexPath.row ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
-    
-    return cell;
-    
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        cell.separatorInset = UIEdgeInsetsZero;
-    }
-    else {
-        cell.separatorInset = UIEdgeInsetsMake(0, tableView.readableContentGuide.layoutFrame.origin.x, 0, tableView.readableContentGuide.layoutFrame.origin.x);
-    }
-    
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if (self.searchBar.selectedScopeButtonIndex == 0) {
         
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        [collectionView deselectItemAtIndexPath:indexPath animated:YES];
         
         if (self.selected != NSNotFound) {
-            AddFeedCell *cell = [tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selected inSection:0]];
-            cell.accessoryType = UITableViewCellAccessoryNone;
+            
+            FeedCell *cell = (id)[collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.selected inSection:0]];
+            
+            cell.accessories = @[];
+            [cell setNeedsUpdateConfiguration];
+            
         }
         
-        if (self.selected == indexPath.row) {
+        if (self.selected == indexPath.item) {
             self.selected = NSNotFound;
         }
         else {
-            self.selected = indexPath.row;
-            AddFeedCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            self.selected = indexPath.item;
+            
+            FeedCell *cell = (id)[collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.selected inSection:0]];
+            
+            cell.accessories = @[[UICellAccessoryCheckmark new]];
+            [cell setNeedsUpdateConfiguration];
         }
         
         return;
@@ -202,18 +239,12 @@
         [self.searchBar resignFirstResponder];
     }
     
-    Feed *feed = [self.DS objectAtIndexPath:indexPath];
+    Feed * feed = [self.DS itemIdentifierForIndexPath:indexPath];
     
-    if (feed) {
-        FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-        vc.exploring = YES;
-        
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-    else {
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    }
-
+    FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
+    vc.exploring = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+    
 }
 
 #pragma mark - Setups
@@ -228,7 +259,7 @@
     searchController.obscuresBackgroundDuringPresentation = NO;
     searchController.definesPresentationContext = YES;
     
-    searchController.searchBar.scopeButtonTitles = @[@"URL", @"Name", @"Keywords"];
+    searchController.searchBar.scopeButtonTitles = @[@"Feed URL", @"Feed Name", @"Keywords"];
     
     searchController.automaticallyShowsScopeBar = YES;
     
@@ -242,23 +273,33 @@
 
 - (void)setupDefaultViews {
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.view.backgroundColor = theme.backgroundColor;
-    self.tableView.backgroundColor = theme.tableColor;
-    self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
-    
-    self.tableView.tableFooterView = [UIView new];
-    
-    [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AddFeedCell.class) bundle:nil] forCellReuseIdentifier:kAddFeedCell];
-    self.DS.addAnimation = UITableViewRowAnimationTop;
-    self.DS.deleteAnimation = UITableViewRowAnimationFade;
-    self.DS.reloadAnimation = UITableViewRowAnimationFade;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.collectionView.backgroundColor = UIColor.systemBackgroundColor;
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose:)];
     
     self.navigationItem.rightBarButtonItem = cancelButton;
     self.cancelButton = self.navigationItem.rightBarButtonItem;
+    
+    [self setupRecommendationsView];
+    
+}
+
+- (void)setupRecommendationsView {
+    
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+    
+    vc.view.frame = self.view.bounds;
+    
+    [self.view addSubview:vc.view];
+    [self addChildViewController:vc];
+    
+    [vc didMoveToParentViewController:self];
+    
+    self.recommendationsVC = vc;
+    self.recommendationsView = vc.view;
+    
+    [vc collectionView].keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     
 }
 
@@ -274,8 +315,6 @@
         [formatted appendString:self.errorBody];
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
     para.lineHeightMultiple = 1.4f;
     para.alignment = self.errorLabel.textAlignment;
@@ -288,9 +327,7 @@
         [attributes setObject:font forKey:NSFontAttributeName];
     }
     
-    if (theme.subtitleColor != nil) {
-        [attributes setObject:theme.subtitleColor forKey:NSForegroundColorAttributeName];
-    }
+    [attributes setObject:UIColor.secondaryLabelColor forKey:NSForegroundColorAttributeName];
     
     if (para != nil) {
         [attributes setObject:para forKey:NSParagraphStyleAttributeName];
@@ -299,6 +336,7 @@
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     if (self.errorTitle) {
+        
         NSRange range = [formatted rangeOfString:self.errorTitle];
         
         para = [para mutableCopy];
@@ -312,9 +350,7 @@
             [attributes setObject:font forKey:NSFontAttributeName];
         }
         
-        if (theme.titleColor != nil) {
-            [attributes setObject:theme.titleColor forKey:NSForegroundColorAttributeName];
-        }
+        [attributes setObject:UIColor.labelColor forKey:NSForegroundColorAttributeName];
         
         if (para != nil) {
             [attributes setObject:para forKey:NSParagraphStyleAttributeName];
@@ -330,6 +366,41 @@
 }
 
 #pragma mark - Getters
+
+- (void)setupData:(NSArray <Feed *> *)feeds {
+    
+    if (NSThread.isMainThread == NO) {
+        return [self performSelectorOnMainThread:@selector(setupData:) withObject:feeds waitUntilDone:NO];
+    }
+    
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    [snapshot appendSectionsWithIdentifiers:@[@0]];
+    
+    if (feeds != nil) {
+        [snapshot appendItemsWithIdentifiers:feeds intoSectionWithIdentifier:@0];
+    }
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    
+}
+
+- (UICollectionViewCellRegistration *)feedCellRegister {
+    
+    if (_feedCellRegister == nil) {
+        
+        _feedCellRegister = [UICollectionViewCellRegistration registrationWithCellClass:FeedCell.class configurationHandler:^(__kindof FeedCell * _Nonnull cell, NSIndexPath * _Nonnull indexPath, Feed *  _Nonnull item) {
+           
+            cell.DS = self.DS;
+            cell.exploring = YES;
+            [cell configure:item indexPath:indexPath];
+            
+        }];
+        
+    }
+    
+    return _feedCellRegister;
+    
+}
 
 - (UINotificationFeedbackGenerator *)notificationGenerator {
     if (_notificationGenerator == nil) {
@@ -361,11 +432,10 @@
 - (UILabel *)errorLabel {
     
     if (_errorLabel == nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 12.f, self.view.bounds.size.width - (24.f), 0.f)];
         label.preferredMaxLayoutWidth = label.bounds.size.width;
-        label.textColor = theme.subtitleColor;
+        label.textColor = UIColor.secondaryLabelColor;
         label.numberOfLines = 0;
         label.textAlignment = NSTextAlignmentCenter;
         label.translatesAutoresizingMaskIntoConstraints = NO;
@@ -374,6 +444,84 @@
     }
     
     return _errorLabel;
+    
+}
+
+- (PagingManager *)pagingManager {
+    
+    if (_pagingManager == nil) {
+        
+        NSString * query = self.query ?: @"";
+        NSUInteger scope = self.searchBar.selectedScopeButtonIndex;
+        
+        NSDictionary *body = @{@"query": query, @"scope": @(scope)};
+        
+        NSDictionary *queryParams = @{@"userID": MyFeedsManager.user.userID};
+        
+        NSString *path = @"/1.2/search";
+        
+        PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:queryParams body:body itemsKey:@"feeds" method:@"POST"];
+        
+        _pagingManager = pagingManager;
+    }
+    
+    if (_pagingManager.preProcessorCB == nil) {
+        
+        _pagingManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
+          
+            NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+                Feed *feed = [Feed instanceFromDictionary:obj];
+                return feed;
+            }];
+            
+            return retval;
+            
+        };
+        
+    }
+    
+    if (_pagingManager.successCB == nil) {
+        
+        weakify(self);
+        
+        _pagingManager.successCB = ^{
+            strongify(self);
+            
+            if (!self) {
+                return;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
+                    [self loadNextPage];
+                }
+            });
+            
+            [self setupData:self.pagingManager.items];
+            
+            self.controllerState = StateLoaded;
+
+        };
+    }
+    
+    if (_pagingManager.errorCB == nil) {
+        weakify(self);
+        
+        _pagingManager.errorCB = ^(NSError * _Nonnull error) {
+            NSLog(@"%@", error);
+            
+            strongify(self);
+            
+            if (!self)
+                return;
+            
+            self.controllerState = StateErrored;
+        };
+    }
+    
+    _pagingManager.objectClass = FeedItem.class;
+    
+    return _pagingManager;
     
 }
 
@@ -398,78 +546,78 @@
         [self.searchBar resignFirstResponder];
     }
     
-    if (self.selected != NSNotFound) {
-        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
-        
-        if (feed == nil) {
-            self.selected = NSNotFound;
-            return;
-        }
-        
-        NSString *path = feed.url;
-        
-        NSURL *URL = [NSURL URLWithString:path];
-        
-        weakify(self);
-        
-        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            if ([responseObject isKindOfClass:Feed.class]) {
-                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
-                
-                weakify(self);
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    strongify(self);
-                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                    [self.notificationGenerator prepare];
-                });
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.selected = NSNotFound;
-                    [self didTapClose:nil];
-                });
-                
-                return;
-            }
-            
-            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
-            
-            asyncMain(^{
-                self.cancelButton.enabled = YES;
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            strongify(self);
-            
-            if (error.code == 304) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    self.selected = NSNotFound;
-                    [self didTapClose:nil];
-                    
-                });
-                return;
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-
-                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-                [self.notificationGenerator prepare];
-            });
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.cancelButton.enabled = YES;
-            });
-            
-            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-            
-        }];
-        
-        return;
-    }
+//    if (self.selected != NSNotFound) {
+//        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
+//        
+//        if (feed == nil) {
+//            self.selected = NSNotFound;
+//            return;
+//        }
+//        
+//        NSString *path = feed.url;
+//        
+//        NSURL *URL = [NSURL URLWithString:path];
+//        
+//        weakify(self);
+//        
+//        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            strongify(self);
+//            
+//            if ([responseObject isKindOfClass:Feed.class]) {
+//                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
+//                
+//                weakify(self);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    strongify(self);
+//                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+//                    [self.notificationGenerator prepare];
+//                });
+//                
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    self.selected = NSNotFound;
+//                    [self didTapClose:nil];
+//                });
+//                
+//                return;
+//            }
+//            
+//            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+//            
+//            asyncMain(^{
+//                self.cancelButton.enabled = YES;
+//            });
+//            
+//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//            
+//            strongify(self);
+//            
+//            if (error.code == 304) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    
+//                    self.selected = NSNotFound;
+//                    [self didTapClose:nil];
+//                    
+//                });
+//                return;
+//            }
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+//                [self.notificationGenerator prepare];
+//            });
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                self.cancelButton.enabled = YES;
+//            });
+//            
+//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+//            
+//        }];
+//        
+//        return;
+//    }
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
@@ -498,8 +646,8 @@
         self.searchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;
         // this prevents it from switching to the tab and then running the search
         self.searchBar.text = nil;
-        self.DS.data = @[];
-        self.DS.state = DZDatasourceDefault;
+        self.controllerState = StateDefault;
+//        self.DS.data = @[];
         
         if ([self.searchBar isFirstResponder] == NO) {
             [self.searchBar becomeFirstResponder];
@@ -524,6 +672,12 @@
     
 }
 
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    
+    self.recommendationsView.hidden = ([searchText isBlank] == NO);
+    
+}
+
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
     
     if (searchBar.selectedScopeButtonIndex == 0) {
@@ -531,10 +685,6 @@
         [self searchByURL:searchBar.text];
         
         return;
-    }
-    
-    if (self.networkTask != nil) {
-        [self.networkTask cancel];
     }
     
     NSString *query = self.searchBar.text;
@@ -549,17 +699,16 @@
     
     if (self.searchBar.selectedScopeButtonIndex == 0) {
         // add the feed normally
-        
         return;
     }
     
-    self.page = 0;
-    self.query = query;
-    self.loadedLast = NO;
+    self.query = [query stringByStrippingWhitespace];
+    
     self.selected = NSNotFound;
     
-    self.DS.data = @[];
-    self.DS.state = DZDatasourceLoading;
+    [self setupData:@[]];
+    
+    self.pagingManager = nil;
     
     [self loadNextPage];
 }
@@ -571,61 +720,89 @@
 }
 
 #pragma mark - <ScrollLoading>
-
 - (BOOL)isLoadingNext {
-    return self.DS.state == DZDatasourceLoading;
-}
-
-- (BOOL)cantLoadNext {
-    return self.loadedLast || self.DS.state == DZDatasourceError;
+    
+    if (self.navigationItem.searchController.presentingViewController != nil) {
+        return YES;
+    }
+    
+    return self.controllerState == StateLoading;
+    
 }
 
 - (void)loadNextPage {
     
-    if (self.DS.state != DZDatasourceLoaded && self.page != 0) {
+    if (self.pagingManager.hasNextPage == NO && self.pagingManager.page != 1) {
         return;
     }
     
-    self.DS.state = DZDatasourceLoading;
+    if (self.controllerState == StateLoading) {
+        return;
+    }
     
-    NSInteger page = self.page + 1;
+    if (self.query == nil || [self.query isBlank] == YES) {
+        return;
+    }
     
-    self.networkTask = [MyFeedsManager search:self.query scope:self.searchBar.selectedScopeButtonIndex page:page success:^(NSArray <Feed *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.DS.state = DZDatasourceLoaded;
-        
-        if (page == 1) {
-            self.DS.data = responseObject;
-        }
-        else {
-            NSArray *existing = self.DS.data;
-            NSArray *newSet = [existing arrayByAddingObjectsFromArray:responseObject];
-            
-            self.DS.data = newSet;
-        }
-        
-        self.loadedLast = responseObject.count < 20;
-        
-        self.page = page;
-        
-        NSLogDebug(@"%ld search results", responseObject.count);
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        
-        self.DS.state = DZDatasourceError;
-        
-        if (page == 1) {
-            self.errorTitle = @"Error Loading Results";
-            self.errorBody = error.localizedDescription;
-        }
-        else {
-            // Do nothing
-            NSLog(@"Error loading search query: %@", error);
-        }
-        
-    }];
+    self.controllerState = StateLoading;
+    
+    [self.pagingManager loadNextPage];
     
 }
+
+- (BOOL)cantLoadNext {
+    return !self.pagingManager.hasNextPage;
+}
+//- (void)loadNextPage {
+//
+//    if (self.DS.state != DZDatasourceLoaded && self.page != 0) {
+//        return;
+//    }
+//
+//    if (self.query == nil) {
+//        return;
+//    }
+//
+//    self.DS.state = DZDatasourceLoading;
+//
+//    NSInteger page = self.page + 1;
+//
+//    self.networkTask = [MyFeedsManager search:self.query scope:self.searchBar.selectedScopeButtonIndex page:page success:^(NSArray <Feed *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.DS.state = DZDatasourceLoaded;
+//
+//        if (page == 1) {
+//            self.DS.data = responseObject;
+//        }
+//        else {
+//            NSArray *existing = self.DS.data;
+//            NSArray *newSet = [existing arrayByAddingObjectsFromArray:responseObject];
+//
+//            self.DS.data = newSet;
+//        }
+//
+//        self.loadedLast = responseObject.count < 20;
+//
+//        self.page = page;
+//
+//        NSLogDebug(@"%ld search results", responseObject.count);
+//
+//    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+//
+//        self.DS.state = DZDatasourceError;
+//
+//        if (page == 1) {
+//            self.errorTitle = @"Error Loading Results";
+//            self.errorBody = error.localizedDescription;
+//        }
+//        else {
+//            // Do nothing
+//            NSLog(@"Error loading search query: %@", error);
+//        }
+//
+//    }];
+//
+//}
 
 #pragma mark -
 
@@ -662,7 +839,7 @@
         
     }
     
-    self.DS.state = DZDatasourceLoading;
+//    self.DS.state = DZDatasourceLoading;
     
     weakify(self);
     
@@ -689,8 +866,8 @@
                 return obj.url && ([obj.url containsString:@"wp-json"] == NO);
             }];
             
-            self.DS.data = feeds;
-            self.DS.state = DZDatasourceLoaded;
+//            self.DS.data = feeds;
+//            self.DS.state = DZDatasourceLoaded;
             
             weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -727,7 +904,7 @@
         
 //        [MyAppDelegate _dismissAddingFeedDialog];
         
-        self.DS.state = DZDatasourceError;
+//        self.DS.state = DZDatasourceError;
         
         weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{

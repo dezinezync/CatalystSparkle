@@ -8,10 +8,10 @@
 
 #import "ImportVC.h"
 #import "YetiThemeKit.h"
-#import <DZTextKit/NSString+GTMNSStringHTMLAdditions.h>
+#import "NSString+GTMNSStringHTMLAdditions.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
-#import <DZKit/DZBasicDatasource.h>
+
 #import <DZKit/NSArray+Safe.h>
 #import <DZKit/NSString+Extras.h>
 
@@ -50,10 +50,10 @@ NSString *const kImportCell = @"importCell";
 
 @end
 
-@interface ImportVC () <DZDatasource>
+@interface ImportVC () 
 
 @property (nonatomic, weak) UIView *hairlineView;
-@property (nonatomic, strong) DZBasicDatasource *DS;
+@property (nonatomic, strong) UITableViewDiffableDataSource *DS;
 
 @property (nonatomic, assign) NSInteger lastImported;
 @property (nonatomic, assign) NSInteger total;
@@ -85,7 +85,7 @@ NSString *const kImportCell = @"importCell";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    self.DS.data = self.unmappedFeeds;
+    [self setupData];
 
 }
 
@@ -111,11 +111,22 @@ NSString *const kImportCell = @"importCell";
 
 #pragma mark - Setup
 
+- (void)setupData {
+    
+    if (self.unmappedFeeds == nil || self.unmappedFeeds.count == 0) {
+        return;
+    }
+    
+    NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+    [snapshot appendSectionsWithIdentifiers:@[@0]];
+    [snapshot appendItemsWithIdentifiers:self.unmappedFeeds intoSectionWithIdentifier:@0];
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:NO];
+    
+}
+
 - (void)setupTable {
     YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.DS = [[DZBasicDatasource alloc] initWithView:self.tableView];
-    self.DS.delegate = self;
     
     self.tableView.tableFooterView = [UIView new];
     self.tableView.backgroundColor = theme.tableColor;
@@ -123,6 +134,35 @@ NSString *const kImportCell = @"importCell";
     self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
     
     [self.tableView registerClass:ImportCell.class forCellReuseIdentifier:kImportCell];
+    
+    self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * _Nonnull tableView, NSIndexPath * _Nonnull indexPath, id _Nonnull obj) {
+       
+        ImportCell *cell = [tableView dequeueReusableCellWithIdentifier:kImportCell forIndexPath:indexPath];
+        
+        // Configure the cell...
+        cell.textLabel.textColor = UIColor.labelColor;
+        cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
+        
+        if ([obj isKindOfClass:Feed.class]) {
+            
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            cell.textLabel.text = [(Feed *)obj title];
+            cell.detailTextLabel.text = [(Feed *)obj url];
+            
+        }
+        else {
+            cell.textLabel.text = [obj valueForKey:@"url"];
+    
+            NSString *folder = [obj valueForKey:@"folder"];
+            cell.detailTextLabel.text = folder;
+        }
+        
+        cell.selectedBackgroundView.backgroundColor = [tableView.tintColor colorWithAlphaComponent:0.3f];
+        
+        return cell;
+        
+    }];
+    
 }
 
 #pragma mark - Actions
@@ -151,12 +191,14 @@ NSString *const kImportCell = @"importCell";
             
             [UIApplication sharedApplication].idleTimerDisabled = NO;
         }
+        
     });
 }
 
 - (void)setExistingFolders:(NSArray<Folder *> *)existingFolders {
     
     if (existingFolders != nil) {
+        
         existingFolders = [existingFolders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
             
             if ([obj isKindOfClass:NSDictionary.class]) {
@@ -167,41 +209,11 @@ NSString *const kImportCell = @"importCell";
             return obj;
             
         }];
+        
     }
     
     _existingFolders = existingFolders;
     
-}
-
-#pragma mark - Table view data source
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    ImportCell *cell = [tableView dequeueReusableCellWithIdentifier:kImportCell forIndexPath:indexPath];
-    
-    // Configure the cell...
-    cell.backgroundColor = theme.cellColor;
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
-    
-    id obj = [self.DS objectAtIndexPath:indexPath];
-    
-    if ([obj isKindOfClass:Feed.class]) {
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        cell.textLabel.text = [(Feed *)obj title];
-        cell.detailTextLabel.text = [(Feed *)obj url];
-    }
-    else {
-        cell.textLabel.text = [obj valueForKey:@"url"];
-        
-        NSString *folder = [obj valueForKey:@"folder"];
-        cell.detailTextLabel.text = folder;
-    }
-    
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
-    
-    return cell;
 }
 
 #pragma mark - Importing
@@ -321,7 +333,6 @@ NSString *const kImportCell = @"importCell";
         strongify(self);
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.lastImported inSection:0];
-//        [self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
         [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
         
     });

@@ -9,10 +9,10 @@
 #import "AccountVC.h"
 #import "SettingsCell.h"
 #import "FeedsManager.h"
-#import <DZTextKit/UIColor+HEX.h>
+#import "UIColor+HEX.h"
 
-#import <DZTextKit/LayoutConstants.h>
-#import <DZTextKit/YetiConstants.h>
+#import "LayoutConstants.h"
+#import "YetiConstants.h"
 #import "YetiThemeKit.h"
 #import "AccountFooterView.h"
 #import "DZWebViewController.h"
@@ -21,7 +21,7 @@
 #import "SplitVC.h"
 
 #import "StoreVC.h"
-#import <DZTextKit/PaddedLabel.h>
+#import "PaddedLabel.h"
 
 #import <AuthenticationServices/AuthenticationServices.h>
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
@@ -46,8 +46,12 @@
     
     self.title = @"Account";
     
+#if TARGET_OS_MACCATALYST
+    self.navigationController.navigationBar.prefersLargeTitles = NO;
+#else
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+#endif
     
     self.tableView.estimatedRowHeight = 44.f + (LayoutPadding * 2.f);
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -56,10 +60,9 @@
     self.tableView.sectionFooterHeight = UITableViewAutomaticDimension;
     
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
-    [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"deactivateCell"];
+    [self.tableView registerClass:DeactivateCell.class forCellReuseIdentifier:kDeactivateCell];
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
@@ -75,7 +78,11 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     
     if (section == 0) {
-        return @"If you deactivate your account and wish to activate it again, please email me on support@elytra.app with the above UUID. You can long tap the UUID to copy it.";
+#if TARGET_OS_MACCATALYST
+        return @"";
+#else
+        return @"If you deactivate your account and wish to activate it again, please email me on support@elytra.app with the above UUID. You can use the context menu/right click to copy the ID.";
+#endif
     }
     else if (section == 2) {
         return @"Connect your Apple ID to your Elytra account. This will enable you to sign in on other platforms as well. Elytra from v1.6 will only use the Apple ID mechanism.";
@@ -90,7 +97,7 @@
     
     NSRegularExpression *exp = [NSRegularExpression regularExpressionWithPattern:@"\\d{6}\\.[a-zA-Z0-9]{32}\\.\\d{4}" options:kNilOptions error:nil];
     
-    NSString *UUID = MyFeedsManager.userIDManager.UUIDString;
+    NSString *UUID = MyFeedsManager.user.uuid;
     
     if (exp != nil && [exp numberOfMatchesInString:UUID options:kNilOptions range:NSMakeRange(0, UUID.length)] > 0) {
         return 2;
@@ -121,31 +128,31 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSString *identifier = (indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2)) ? @"deactivateCell" : kAccountsCell;
+    NSString *identifier = (indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2)) ? kDeactivateCell : kAccountsCell;
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
     
-    if (!cell) {
-        if ([identifier isEqualToString:kAccountsCell]) {
-            cell = [[AccountsCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kAccountsCell];
-        }
-        else {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"deactivateCell"];
-        }
-    }
+//    if (!cell) {
+//        if ([identifier isEqualToString:kAccountsCell]) {
+//            cell = [[AccountsCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:kAccountsCell];
+//        }
+//        else {
+//            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"deactivateCell"];
+//        }
+//    }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = UIColor.labelColor;
+    cell.detailTextLabel.textColor = UIColor.tertiaryLabelColor;
     
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
-    cell.backgroundColor = theme.backgroundColor;
-    
+#if !TARGET_OS_MACCATALYST
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     switch (indexPath.section) {
         case 0:
@@ -153,21 +160,11 @@
                 switch (indexPath.row) {
                     case 0:
                     {
-                        cell.textLabel.text = nil;
-                        cell.textLabel.accessibilityValue = @"Account Label";
-                        
-                        cell.detailTextLabel.text = MyFeedsManager.userIDManager.UUIDString;
-                        cell.detailTextLabel.textAlignment = NSTextAlignmentCenter;
+                        cell.textLabel.text = MyFeedsManager.user.uuid;
+                        cell.textLabel.accessibilityValue = @"Account ID";
                         cell.selectionStyle = UITableViewCellSelectionStyleNone;
                     }
                         break;
-//                    case 1:
-//                    {
-//                        cell.textLabel.text = @"Change Account ID";
-//                        cell.textLabel.textColor = theme.tintColor;
-//                        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-//                    }
-//                        break;
                     default:
                         cell.textLabel.text = @"Deactivate Account";
                         cell.textLabel.textColor = UIColor.redColor;
@@ -228,7 +225,7 @@
            
             UIAction *copyItem = [UIAction actionWithTitle:@"Copy Account ID" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
-                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
+                [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
                 
             }];
             
@@ -277,7 +274,13 @@
    }
    else if (indexPath.section == 1) {
        
-       StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+       UITableViewStyle style = UITableViewStyleGrouped;
+       
+#if TARGET_OS_MACCATALYST
+       style = UITableViewStyleInsetGrouped;
+#endif
+       
+       StoreVC *vc = [[StoreVC alloc] initWithStyle:style];
 //       vc.inStack = YES;
        [self showViewController:vc sender:self];
        
@@ -326,7 +329,7 @@
     [self deactivateFromAPI];
     return;
     
-    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.userIDManager.UUIDString);
+    NSString *formatted = formattedString(@"Deactivate Account: %@<br />User Conset: Yes<br />User confirmed subscription cancelled: Yes", MyFeedsManager.user.uuid);
     
     DZMessagingController.shared.delegate = self;
     
@@ -360,11 +363,11 @@
             NSString *UUID = [user valueForKey:@"uuid"];
             NSNumber *userID = [user valueForKey:@"id"];
             
-//            if ([MyFeedsManager.userIDManager.userID isEqualToNumber:userID]) {
+//            if ([MyFeedsManager.user.userID isEqualToNumber:userID]) {
 //                return;
 //            }
             
-            MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:UUID];
+            MyFeedsManager.user.uuid = UUID;
             MyFeedsManager.userID = userID;
             
             asyncMain(^{

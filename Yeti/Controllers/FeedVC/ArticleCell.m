@@ -12,15 +12,13 @@
 
 #import <DZKit/NSString+Extras.h>
 
-#import <DZTextKit/UIImage+Sizing.h>
-#import <DZTextKit/CheckWifi.h>
-#import <DZTextKit/NSString+ImageProxy.h>
-#import <DZTextKit/Paragraph.h>
+#import "UIImage+Sizing.h"
+#import "CheckWifi.h"
+#import "NSString+ImageProxy.h"
+#import "Paragraph.h"
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+Transform.h>
-
-#import "YetiThemeKit.h"
 
 #if TARGET_OS_MACCATALYST
 
@@ -35,12 +33,6 @@
     // so we simply return nil for now until Apple implements it
     // for catalyst 
     return nil;
-    
-    // HACK: proxy seems garbage so we always show PNG for now.
-    CGImageRef cgImage = [MyAppDelegate.sharedGlue imageForFileType:@"png"];
-    // HACK: We use mainScreen here but could have multiple screens.
-    UIImage * image = [UIImage imageWithCGImage:cgImage scale:UIScreen.mainScreen.scale orientation:UIImageOrientationUp];
-    return image;
 }
 
 @end
@@ -84,16 +76,19 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     self.coverImage.layer.cornerRadius = 3.f;
     self.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    self.titleLabel.textColor = UIColor.labelColor;
+    self.summaryLabel.textColor = UIColor.secondaryLabelColor;
     
-    self.titleLabel.textColor = theme.titleColor;
-    self.summaryLabel.textColor = theme.subtitleColor;
-    
-    self.authorLabel.textColor = theme.subtitleColor;
-    self.timeLabel.textColor = theme.subtitleColor;
+    self.authorLabel.textColor = UIColor.secondaryLabelColor;
+    self.timeLabel.textColor = UIColor.secondaryLabelColor;
     
     self.selectedBackgroundView = [UIView new];
-    self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.3f];
+    
+#if TARGET_OS_MACCATALYST
+    self.selectedBackgroundView.backgroundColor = UIColor.secondarySystemBackgroundColor;
+#else
+    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
     [self resetUI];
     
@@ -136,10 +131,12 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
 }
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
+- (void)tintColorDidChange {
+    
+    [super tintColorDidChange];
+    
+    [self updateMarkerView];
+    
 }
 
 #pragma mark - Configurations
@@ -220,6 +217,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             NSString * titleContent = [self.article textFromContent];
             
             self.titleLabel.text = titleContent;
+            self.titleLabel.numberOfLines = MAX(3, SharedPrefs.previewLines);
             self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
             
         }
@@ -246,7 +244,11 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     _isShowingCover = NO;
     
-    if ([self showImage] && SharedPrefs.articleCoverImages == YES && article.coverImage != nil) {
+    if ([self showImage]
+#if !TARGET_OS_MACCATALYST
+        && SharedPrefs.articleCoverImages == YES
+#endif
+        && article.coverImage != nil) {
         // user wants cover images shown
         _isShowingCover = YES;
         
@@ -323,11 +325,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         return;
     }
     
-//#if TARGET_OS_MACCATALYST
-//    self.titleLabel.attributedText = attrs;
-//    return;
-//#endif
-    
     NSString *url = [feed faviconURI];
     
     if (url != nil && [url isBlank] == NO) {
@@ -343,7 +340,12 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     CGFloat expected = 7.f;  // from the above, so A:B :: C:D
     CGFloat yOffset = (baseline / fontSize) * expected * -1.f;
     
+#if TARGET_OS_MACCATALYST
+    attachment.bounds = CGRectMake(0, yOffset + 4.f, 16.f, 16.f);
+#else
     attachment.bounds = CGRectMake(0, yOffset, 24, 24);
+#endif
+    
     NSMutableAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment].mutableCopy;
     
     [attachmentString appendAttributedString:attrs];
@@ -511,7 +513,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     
-    self.coverImage.contentMode = UIViewContentModeCenter;
+    self.coverImage.contentMode = UIViewContentModeCenter|UIViewContentModeScaleAspectFill;
     
     [self.coverImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
@@ -534,7 +536,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     else if (self.article.isRead == NO) {
-        self.markerView.tintColor = UIColor.systemBlueColor;
+        self.markerView.tintColor = self.tintColor;
         self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
     }
     else {

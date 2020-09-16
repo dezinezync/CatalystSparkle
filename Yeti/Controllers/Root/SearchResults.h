@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <DZKit/DZBasicDatasource.h>
 
 @interface SearchResults : UITableViewController
 
-@property (nonatomic, strong) DZBasicDatasource *DS;
+//@property (nonatomic, strong) DZBasicDatasource *DS;
 
 @end

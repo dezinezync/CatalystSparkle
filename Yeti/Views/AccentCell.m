@@ -21,9 +21,11 @@ NSString *const kAccentCell = @"com.yeti.cell.accentColour";
     NSArray <UIColor *> *colours = [YetiThemeKit colours];
     
     [self.stackView.arrangedSubviews enumerateObjectsUsingBlock:^(__kindof AccentButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
         UIColor *colour = colours[idx];
         [obj setBackgroundColor:colour];
         obj.layer.cornerRadius = 12.f;
+        obj.translatesAutoresizingMaskIntoConstraints = NO;
         
         [obj addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
     }];

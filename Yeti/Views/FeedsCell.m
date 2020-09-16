@@ -11,12 +11,11 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #import "FeedsManager.h"
-#import "YetiThemeKit.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
-#import <DZTextKit/NSString+ImageProxy.h>
+#import "NSString+ImageProxy.h"
 
 NSString *const kFeedsCell = @"com.yeti.cells.feeds";
 
@@ -59,19 +58,17 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     
     self.indentationWidth = 28.f;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.backgroundColor = theme.cellColor;
+    self.backgroundColor = UIColor.systemBackgroundColor;
 
-    self.titleLabel.textColor = theme.titleColor;
+    self.titleLabel.textColor = UIColor.labelColor;
     self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
     
-    self.countLabel.backgroundColor = theme.unreadBadgeColor;
-    self.countLabel.textColor = theme.unreadTextColor;
+//    self.countLabel.backgroundColor = theme.unreadBadgeColor;
+//    self.countLabel.textColor = theme.unreadTextColor;
     
-    UIView *selected = [UIView new];
-    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
-    self.selectedBackgroundView = selected;
+//    UIView *selected = [UIView new];
+//    selected.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+//    self.selectedBackgroundView = selected;
     
     self.preservesSuperviewLayoutMargins = NO;
     self.separatorInset = UIEdgeInsetsMake(0, 40.f, 0, 0);
@@ -97,8 +94,8 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     self.indentationLevel = 0;
     self.stackLeading.constant = 8.f;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.35f];
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview {
@@ -109,20 +106,20 @@ static void *KVO_UNREAD = &KVO_UNREAD;
     [super willMoveToSuperview:newSuperview];
 }
 
-- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
-    [super setHighlighted:highlighted animated:animated];
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    NSTimeInterval duration = animated ? 0.2 : 0;
-    
-    weakify(self);
-    [UIView animateWithDuration:duration animations:^{
-        strongify(self);
-        
-        self.backgroundColor = highlighted ? [theme.tintColor colorWithAlphaComponent:0.2f] : theme.cellColor;
-        self.countLabel.backgroundColor = theme.unreadBadgeColor;
-    }];
-}
+//- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+//    [super setHighlighted:highlighted animated:animated];
+//    
+//    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+//    NSTimeInterval duration = animated ? 0.2 : 0;
+//    
+//    weakify(self);
+//    [UIView animateWithDuration:duration animations:^{
+//        strongify(self);
+//        
+//        self.backgroundColor = highlighted ? [theme.tintColor colorWithAlphaComponent:0.2f] : theme.cellColor;
+//        self.countLabel.backgroundColor = theme.unreadBadgeColor;
+//    }];
+//}
 
 - (void)dealloc {
     [self removeObservorInfo];

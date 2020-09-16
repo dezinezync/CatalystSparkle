@@ -10,6 +10,8 @@
 
 @interface ArticleVC (Toolbar) <UISearchBarDelegate, UIPopoverPresentationControllerDelegate>
 
+- (void)validateCommand:(UICommand *)command;
+
 - (void)keyboardFrameChanged:(NSNotification *)note;
 
 - (void)setupToolbar:(UITraitCollection *)newCollection;
@@ -26,5 +28,7 @@
 - (void)didTapClose;
 
 - (void)openInBrowser;
+
+- (void)openArticleInNewWindow;
 
 @end

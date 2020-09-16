@@ -32,7 +32,7 @@
     
     [super awakeFromNib];
     
-    self.textField.text = MyFeedsManager.userIDManager.UUIDString;
+    self.textField.text = MyFeedsManager.user.uuid;
     self.textField.delegate = self;
     
     [self.singleTap requireGestureRecognizerToFail:self.doubleTap];
@@ -76,7 +76,7 @@
         
         strongify(self);
         
-        self.oldUUID = MyFeedsManager.userIDManager.UUIDString;
+        self.oldUUID = MyFeedsManager.user.uuid;
         self.oldUserID = MyFeedsManager.userID;
         
         MyFeedsManager.userIDManager.UUID = [[NSUUID alloc] initWithUUIDString:self.textField.text];
@@ -100,7 +100,7 @@
             [avc dismissViewControllerAnimated:YES completion:nil];
             
             strongify(self);
-            self.copyableTextField.text = MyFeedsManager.userIDManager.UUIDString;
+            self.copyableTextField.text = MyFeedsManager.user.uuid;
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
@@ -153,7 +153,7 @@
         return;
     }
     
-    [[UIPasteboard generalPasteboard] setString:MyFeedsManager.userIDManager.UUIDString];
+    [[UIPasteboard generalPasteboard] setString:MyFeedsManager.user.uuid];
     
     [AlertManager showGenericAlertWithTitle:@"Copied" message:@"Your account ID has been copied to the clipboard."];
     

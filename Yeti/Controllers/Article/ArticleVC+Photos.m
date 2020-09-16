@@ -8,9 +8,10 @@
 
 #import "ArticleVC+Photos.h"
 
-#import <DZTextKit/Image.h>
-#import <DZTextKit/Gallery.h>
-#import "ArticlePhoto.h"
+#import "Image.h"
+#import "Gallery.h"
+
+#import "IDMPhotoBrowser.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 
@@ -48,18 +49,31 @@
         return;
     }
     
-    NSUInteger index = NSNotFound, counter = -1;
+    NSUInteger index = NSNotFound,
+               counter = -1;
     
-    NSMutableArray <ArticlePhoto *> *_images = [NSMutableArray new];
+    
+    
+     NSMutableArray <IDMPhoto *> *_images = [NSMutableArray new];
         
-    for (id image in images) {
+    for (id obj in images) {
         
-        if ([image isKindOfClass:Image.class]) {
+        if ([obj isKindOfClass:Image.class]) {
             
-            ArticlePhoto *photo = [ArticlePhoto new];
-            photo.referenceView = image;
-            photo.placeholderImage = [(Image *)image imageView].image;
-            photo.URL = [(Image *)image URL];
+            Image *image = obj;
+            
+            NSURL *url = image.URL;
+            
+            if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark
+                && image.darkModeURL != nil) {
+                
+                url = image.darkModeURL;
+                
+            }
+            
+            IDMPhoto *photo = [IDMPhoto photoWithURL:url];
+            
+            photo.placeholderImage = image.imageView.image;
             
             Content *content = [(Image *)image content];
             
@@ -71,13 +85,13 @@
                     && (content.attributes[@"title"] || content.attributes[@"alt"])) {
                     
                     title = content.attributes[@"alt"] ?: content.attributes[@"title"];
-                    
-                    photo.attributedCaptionSummary = [self captionForText:title];
                 }
+                
+                photo.caption = title;
                 
             }
             else if ([(Image *)image accessibilityValue] != nil) {
-                photo.attributedCaptionSummary = [self captionForText:[(Image *)image accessibilityValue]];
+                photo.caption = image.accessibilityValue;
             }
             
             [_images addObject:photo];
@@ -92,9 +106,9 @@
             
             for (Content *img in [(Gallery *)image images]) {
                 
-                ArticlePhoto *photo = [ArticlePhoto new];
-                photo.referenceView = image;
-                photo.URL = [NSURL URLWithString:img.url];
+                IDMPhoto *photo = [IDMPhoto photoWithURL:[NSURL URLWithString:img.url]];
+                
+//                photo.referenceView = image;
                 
                 NSString *title = nil;
                 
@@ -103,7 +117,7 @@
                     
                     title = img.attributes[@"alt"] ?: img.attributes[@"title"];
                     
-                    photo.attributedCaptionSummary = [self captionForText:title];
+                    photo.caption = title;
                 }
                 
                 [_images addObject:photo];
@@ -123,25 +137,32 @@
         }
     }
     
-    self.photosDS = [NYTPhotoViewerArrayDataSource dataSourceWithPhotos:_images];
+    IDMPhotoBrowser *browser = [[IDMPhotoBrowser alloc] initWithPhotos:_images animatedFromView:sender.view];
     
-    ArticlePhoto *initialPhoto = nil;
-    
-    if (index != NSNotFound && index < _images.count) {
-        initialPhoto = [_images objectAtIndex:index];
+    if (index != NSNotFound) {
+        [browser setInitialPageIndex:index];
     }
     
-    NYTPhotosViewController *photosViewController = [[NYTPhotosViewController alloc] initWithDataSource:self.photosDS initialPhoto:initialPhoto delegate:self];
+    browser.usePopAnimation = YES;
     
-    weakify(self);
-
-    [self presentViewController:photosViewController animated:YES completion:^{
-        
-        strongify(self);
-        
-        [self photosViewController:photosViewController didNavigateToPhoto:_images.firstObject atIndex:0];
-        
-    }];
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:17.f weight:UIImageSymbolWeightMedium];
+    
+    UIImage *leftImage = [UIImage systemImageNamed:@"chevron.left" withConfiguration:config];
+    UIImage *rightImage = [UIImage systemImageNamed:@"chevron.right" withConfiguration:config];
+    UIImage *shareImage = [UIImage systemImageNamed:@"square.and.arrow.up" withConfiguration:config];
+    
+    UIColor *fadedColor = [UIColor colorWithWhite:1.f alpha:0.3f];
+    
+    browser.leftArrowImage = [leftImage imageWithTintColor:fadedColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    browser.rightArrowImage = [rightImage imageWithTintColor:fadedColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    browser.leftArrowSelectedImage = [leftImage imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    browser.rightArrowSelectedImage = [rightImage imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    browser.actionButtonImage = [shareImage imageWithTintColor:fadedColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    browser.actionButtonSelectedImage = [shareImage imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    [self presentViewController:browser animated:YES completion:nil];
     
 }
 
@@ -207,6 +228,7 @@
     
 }
 
+/*
 #pragma mark - <NYTPhotosViewControllerDelegate>
 
 - (NSAttributedString *)captionForText:(NSString *)text {
@@ -238,7 +260,7 @@
                 photo.attributedCaptionSummary = [self captionForText:errorString];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [photosViewController updatePhoto:photo];
+                    [photosViewController reloadPhotosAnimated:NO];
                 });
                 
                 photo.task = nil;
@@ -251,7 +273,7 @@
                 
                 photo.downloadedImage = image;
                 
-                [photosViewController updatePhoto:photo];
+                [photosViewController reloadPhotosAnimated:NO];
                 
             });
             
@@ -296,5 +318,6 @@
     self.photosDS = nil;
     
 }
+ */
 
 @end

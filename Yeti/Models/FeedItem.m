@@ -1,10 +1,10 @@
 #import "FeedItem.h"
 
-#import <DZTextKit/Content.h>
+#import "Content.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSDate+ISO8601.h>
 
-#import <DZTextKit/NSString+HTML.h>
+#import "NSString+HTML.h"
 #import <DZKit/NSString+Extras.h>
 
 @implementation FeedItem
@@ -38,7 +38,6 @@ static NSDateFormatter *_formatter = nil;
     [encoder encodeObject:self.mediaRating forKey:@"mediaRating"];
     [encoder encodeObject:self.itunesImage forKey:@"itunesImage"];
     
-    [encoder encodeObject:self.keywords forKey:propSel(keywords)];
     [encoder encodeObject:self.enclosures forKey:@"enclosures"];
     
     [encoder encodeObject:self.feedID forKey:@"feedID"];
@@ -54,8 +53,10 @@ static NSDateFormatter *_formatter = nil;
         self.articleURL = [decoder decodeObjectOfClass:[NSString class] forKey:@"articleURL"];
         self.author = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSDictionary.class, NSString.class, nil] forKey:@"author"];
         self.blogTitle = [decoder decodeObjectOfClass:[NSString class] forKey:@"blogTitle"];
+        
         self.bookmarked = [([decoder decodeObjectOfClass:[NSNumber class] forKey:@"bookmarked"] ?: @0) boolValue];
-        self.read = [([decoder decodeObjectOfClass:NSNumber.class forKey:@"read"]  ?: @0) boolValue];
+        self.read = [([decoder decodeObjectOfClass:NSNumber.class forKey:@"read"]  ?: @1) boolValue];
+        
         self.content = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Content.class, nil] forKey:@"content"];
         self.coverImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"coverImage"];
         self.guid = [decoder decodeObjectOfClass:[NSString class] forKey:@"guid"];
@@ -67,7 +68,6 @@ static NSDateFormatter *_formatter = nil;
         self.mediaRating = [decoder decodeObjectOfClass:[NSString class] forKey:@"mediaRating"];
         self.itunesImage = [decoder decodeObjectOfClass:[NSString class] forKey:@"itunesImage"];
         
-        self.keywords = [decoder decodeObjectOfClass:[NSArray class] forKey:@"keywords"];
         self.enclosures = [decoder decodeObjectOfClasses:[NSSet setWithObjects:NSArray.class, Enclosure.class, nil] forKey:@"enclosures"];
         
         self.feedID = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"feedID"];
@@ -137,27 +137,6 @@ static NSDateFormatter *_formatter = nil;
         self.timestamp = value;
     }
     
-    else if ([key isEqualToString:@"keywords"]) {
-        
-        if ([value isKindOfClass:NSString.class]) {
-            self.keywords = [[(NSString *)value componentsSeparatedByString:@","] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                return obj && [obj isBlank] == NO;
-            }];
-        }
-        else if ([value isKindOfClass:NSArray.class]) {
-            self.keywords = value;
-        }
-        
-        if (self.keywords != nil && self.keywords.count) {
-            // remove Uncategorized from the list
-            self.keywords = [self.keywords rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                NSString *lower = [obj lowercaseString];
-                return ([lower isEqualToString:@"uncategorized"] || [lower isEqualToString:@"uncategorised"]) == NO;
-            }];
-        }
-        
-    }
-    
     else if ([key isEqualToString:@"enclosures"]) {
 
         if ([value isKindOfClass:[NSArray class]])
@@ -197,7 +176,7 @@ static NSDateFormatter *_formatter = nil;
     if ([key isEqualToString:@"id"]) {
         self.identifier = value;
     }
-    else if ([key isEqualToString:@"mediaRating"] || [key isEqualToString:@"mediaDescription"] || [key isEqualToString:@"modified"]) {}
+    else if ([key isEqualToString:@"mediaRating"] || [key isEqualToString:@"mediaDescription"] || [key isEqualToString:@"modified"]) {} else if ([key isEqualToString:@"keywords"]) {}
     else if ([key isEqualToString:@"url"]) {
         self.articleURL = value;
     }
@@ -291,10 +270,6 @@ static NSDateFormatter *_formatter = nil;
         [dictionary setObject:self.mediaRating forKey:@"mediaRating"];
     }
     
-    if (self.keywords) {
-        [dictionary setObject:self.keywords forKey:propSel(keywords)];
-    }
-    
     if (self.enclosures) {
         NSArray <NSDictionary *> *enclosures = [self.enclosures rz_map:^id(Enclosure *obj, NSUInteger idx, NSArray *array) {
             return obj.dictionaryRepresentation;
@@ -314,6 +289,57 @@ static NSDateFormatter *_formatter = nil;
 
     return dictionary;
 
+}
+
+#pragma mark -
+
+- (NSString *)textFromContent {
+    
+    if (self.content == nil) {
+        return nil;
+    }
+    
+    if (_textFromContent == nil) {
+        
+        NSMutableString *str = [NSMutableString new];
+        
+        for (Content *content in self.content) {
+            
+            NSString *inner = [self textFromContent:content];
+            
+            [str appendFormat:@" %@", inner];
+            
+        }
+        
+        _textFromContent = [str stringByStrippingWhitespace];
+        
+    }
+    
+    return _textFromContent;
+    
+}
+
+- (NSString *)textFromContent:(Content *)content {
+    
+    NSMutableString *str = [NSMutableString new];
+    
+    if (content.content) {
+        [str appendFormat:@" %@", content.content];
+    }
+    else if (content.items && content.items.count) {
+        
+        for (Content *innerC in content.items) {
+            
+            NSString *inner = [self textFromContent:innerC];
+            
+            [str appendFormat:@" %@", inner];
+            
+        }
+        
+    }
+    
+    return str.copy;
+    
 }
 
 #pragma mark - Getters

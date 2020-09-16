@@ -8,11 +8,11 @@
 
 #import "LaunchVC.h"
 #import "TrialVC.h"
-#import "IdentityVC.h"
 
 #import "YetiThemeKit.h"
 
 #import "FeedsManager.h"
+#import "DBManager.h"
 #import <DZKit/AlertManager.h>
 
 #import <AuthenticationServices/AuthenticationServices.h>
@@ -26,9 +26,9 @@
 @property (weak, nonatomic) IBOutlet UIStackView *stackView;
 
 
-@property (weak, nonatomic) ASAuthorizationAppleIDButton *signinButton API_AVAILABLE(ios(13.0));
+@property (weak, nonatomic) ASAuthorizationAppleIDButton *signinButton;
 
-- (void)didTapSignIn:(id)sender API_AVAILABLE(ios(13.0));
+- (void)didTapSignIn:(id)sender;
 
 @end
 
@@ -60,8 +60,7 @@
     
     self.signinButton = button;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.view.backgroundColor = theme.backgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.navigationController.navigationBarHidden = YES;
     
@@ -83,21 +82,13 @@
     
     [attrs setAttributes:@{
         NSFontAttributeName: baseFont ?: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
-        NSForegroundColorAttributeName: theme.titleColor ?: UIColor.blackColor}
+        NSForegroundColorAttributeName: UIColor.labelColor}
                    range:NSMakeRange(0, attrs.string.length)];
     
     [attrs setAttributes:@{NSForegroundColorAttributeName: purple} range:elytra];
     
     self.titleLabel.attributedText = attrs;
-    self.subtitleLabel.textColor = theme.subtitleColor;
-}
-
-- (IBAction)didTapButton:(id)sender {
-    
-    IdentityVC *vc = [[IdentityVC alloc] initWithNibName:NSStringFromClass(IdentityVC.class) bundle:nil];
-    
-    [self showViewController:vc sender:self];
-    
+    self.subtitleLabel.textColor = UIColor.secondaryLabelColor;
 }
 
 - (void)didTapSignIn:(id)sender {
@@ -105,6 +96,13 @@
     if (sender != self.signinButton) {
         return;
     }
+    
+#ifdef DEBUG
+#if !TARGET_OS_MACCATALYST
+    // 4800
+    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
+#endif
+#endif
     
     self.signinButton.enabled = NO;
     
@@ -120,9 +118,63 @@
     
 }
 
+- (void)processUUID:(NSString *)uuid {
+    
+    NSLog(@"Got %@", uuid);
+    
+    [MyFeedsManager getUserInformationFor:uuid success:^(User *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyDBManager setUser:responseObject];
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+        
+        TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+        
+        [self showViewController:vc sender:self];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if ([error.localizedDescription isEqualToString:@"User not found"]) {
+            // create the new user.
+            
+            User *user = [User new];
+            user.uuid = uuid;
+            
+            [MyFeedsManager createUser:uuid success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                
+                NSLog(@"%@", responseObject);
+                
+                NSDictionary *userObj = [responseObject objectForKey:@"user"];
+                NSNumber *userID = [userObj objectForKey:@"id"];
+                
+                user.userID = userID;
+                
+                [MyDBManager setUser:user];
+                
+                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+                
+                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+                
+                [self showViewController:vc sender:self];
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
+                
+            }];
+            
+            return;
+        }
+       
+        [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
+        
+    }];
+    
+}
+
 #pragma mark - <ASAuthorizationControllerDelegate>
 
-- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithError:(NSError *)error API_AVAILABLE(ios(13.0)) {
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithError:(NSError *)error {
     
     self.signinButton.enabled = YES;
     
@@ -136,7 +188,7 @@
     
 }
 
-- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithAuthorization:(ASAuthorization *)authorization  API_AVAILABLE(ios(13.0)) {
+- (void)authorizationController:(ASAuthorizationController *)controller didCompleteWithAuthorization:(ASAuthorization *)authorization {
     
     self.signinButton.enabled = YES;
     
@@ -145,56 +197,10 @@
     ASAuthorizationAppleIDCredential *credential = authorization.credential;
     
     if (credential) {
+        
         NSString * userIdentifier = credential.user;
         
-        NSLog(@"Got %@", userIdentifier);
-        
-        [MyFeedsManager getUserInformationFor:userIdentifier success:^(NSDictionary *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                
-                TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-                
-                [self showViewController:vc sender:self];
-            });
-            
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-            
-            if ([error.localizedDescription isEqualToString:@"User not found"]) {
-                // create the new user.
-                
-                MyFeedsManager.userIDManager.UUIDString = userIdentifier;
-                
-                [MyFeedsManager updateUserInformation:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                    
-                    NSLog(@"%@", responseObject);
-                    
-                    NSDictionary *user = [responseObject objectForKey:@"user"];
-                    NSNumber *userID = [user objectForKey:@"id"];
-                    
-                    MyFeedsManager.userIDManager.userID = userID;
-                    
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-                        
-                        TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-                        
-                        [self showViewController:vc sender:self];
-                    });
-                    
-                } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                   
-                    [AlertManager showGenericAlertWithTitle:@"Creating Account Failed" message:error.localizedDescription];
-                    
-                }];
-                
-                return;
-            }
-           
-            [AlertManager showGenericAlertWithTitle:@"Error Signing In" message:error.localizedDescription];
-            
-        }];
+        [self processUUID:userIdentifier];
         
     }
     else {
@@ -205,7 +211,7 @@
 
 #pragma mark - <ASAuthorizationControllerPresentationContextProviding>
 
-- (ASPresentationAnchor)presentationAnchorForAuthorizationController:(ASAuthorizationController *)controller  API_AVAILABLE(ios(13.0)) {
+- (ASPresentationAnchor)presentationAnchorForAuthorizationController:(ASAuthorizationController *)controller {
     
     return self.view.window;
     

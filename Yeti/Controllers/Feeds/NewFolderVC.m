@@ -7,6 +7,7 @@
 //
 
 #import "NewFolderVC.h"
+#import "Coordinator.h"
 
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/AlertManager.h>
@@ -14,7 +15,7 @@
 #import "FeedsManager.h"
 #import "YTNavigationController.h"
 
-#import <DZTextKit/YetiConstants.h>
+#import "YetiConstants.h"
 
 @interface NewFolderVC () {
     BOOL _isUpdating;
@@ -29,7 +30,7 @@
 
 + (UINavigationController *)instanceInNavController
 {
-    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(UIViewController.class) bundle:nil];
     
     UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
@@ -39,11 +40,10 @@
     return nav;
 }
 
-+ (UINavigationController *)instanceWithFolder:(Folder *)folder feedsVC:(FeedsVC * _Nonnull)feedsVC indexPath:(NSIndexPath *)indexPath
++ (UINavigationController *)instanceWithFolder:(Folder *)folder indexPath:(NSIndexPath *)indexPath
 {
-    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(NewFeedVC.class) bundle:nil];
+    NewFolderVC *vc = [[NewFolderVC alloc] initWithNibName:NSStringFromClass(UIViewController.class) bundle:nil];
     vc.folder = folder;
-    vc.feedsVC = feedsVC;
     vc.folderIndexPath = indexPath;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -59,14 +59,14 @@
     
     self.title = @"New Folder";
     
-    self.input.placeholder = @"Folder Name (3-32 chars)";
-    self.input.keyboardType = UIKeyboardTypeDefault;
-    
-    if (self.folder) {
-        // editing
-        self.title = @"Edit Folder";
-        self.input.text = self.folder.title;
-    }
+//    self.input.placeholder = @"Folder Name (3-32 chars)";
+//    self.input.keyboardType = UIKeyboardTypeDefault;
+//
+//    if (self.folder) {
+//        // editing
+//        self.title = @"Edit Folder";
+//        self.input.text = self.folder.title;
+//    }
     
 #if TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.translucent = NO;
@@ -100,15 +100,13 @@
     }
     
     textField.enabled = NO;
-    self.cancelButton.enabled = NO;
+//    self.cancelButton.enabled = NO;
     
     weakify(self);
     
     self->_isUpdating = YES;
     
-    TOSplitViewController *splitVC = (id)self.presentingViewController;
-    
-    FeedsVC *feedsVC = (id)[[(UINavigationController *)[splitVC primaryViewController] viewControllers] firstObject];
+    SidebarVC *sidebarVC = self.mainCoordinator.sidebarVC;
     
     if (self.folder) {
         // editing the title
@@ -119,16 +117,14 @@
                 
                 self->_isUpdating = NO;
                 
-                [self.feedsVC setupData];
+                [self.mainCoordinator.sidebarVC setupData];
                 
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
-                if (feedsVC != nil) {
-                    [feedsVC setupData];
-                }
+                [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                [self didTapCancel];
+//                [self didTapCancel];
                 
             });
 
@@ -147,7 +143,7 @@
                 [self.notificationGenerator prepare];
                 
                 textField.enabled = YES;
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
             });
             
@@ -161,14 +157,12 @@
                 
                 self->_isUpdating = NO;
                 
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
-                if (feedsVC != nil) {
-                    [feedsVC setupData];
-                }
+                [sidebarVC setupData];
                 
                 [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-                [self didTapCancel];
+//                [self didTapCancel];
                 
             });
             
@@ -185,7 +179,7 @@
                 [self.notificationGenerator prepare];
                 
                 textField.enabled = YES;
-                self.cancelButton.enabled = YES;
+//                self.cancelButton.enabled = YES;
                 
             });
             

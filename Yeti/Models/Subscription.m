@@ -7,9 +7,6 @@
 //
 
 #import "Subscription.h"
-#import <DZKit/DZCloudObject.h>
-#import "FeedsManager.h"
-#import <DZTextKit/YetiConstants.h>
 #import "Keychain.h"
 
 @implementation Subscription
@@ -45,7 +42,8 @@
         self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
         self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
         self.status = [decoder decodeObjectForKey:propSel(status)];
-        self.lifetime = [decoder decodeObjectForKey:propSel(lifetime)];
+        self.lifetime = [decoder decodeBoolForKey:propSel(lifetime)];
+        self.external = [decoder decodeBoolForKey:propSel(external)];
     }
     
     return self;
@@ -66,6 +64,32 @@
             [super setValue:date forKey:key];
         }
         
+        if ([key isEqualToString:@"expiry"] && self.external == NO) {
+            
+            NSInteger era, year, month, day;
+            
+            [NSCalendar.currentCalendar getEra:&era year:&year month:&month day:&day fromDate:date];
+            
+            if (year == 2025 && month == 12 && day == 31) {
+                self.lifetime = YES;
+            }
+            
+        }
+        
+    }
+    else if ([key isEqualToString:@"expiry"]
+             && value != nil
+             && [value isKindOfClass:NSDate.class]
+             && self.external == NO) {
+        
+        NSInteger era, year, month, day;
+        
+        [NSCalendar.currentCalendar getEra:&era year:&year month:&month day:&day fromDate:value];
+        
+        if (year == 2025 && month == 12 && day == 31) {
+            self.lifetime = YES;
+        }
+        
     }
     else if ([key isEqualToString:@"preAppstore"]) {
         self.preAppstore = [value boolValue];
@@ -80,6 +104,38 @@
     if ([key isEqualToString:@"id"]) {
         self.identifer = value;
     }
+    else if ([key isEqualToString:@"stripe"] && value != nil) {
+        
+        if ([value isKindOfClass:NSString.class]) {
+            
+            NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
+            
+            NSArray <NSDictionary *> *items = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+            
+            if (items != nil && items.count) {
+                
+                NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                
+                items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
+                
+                NSDictionary *latest = [items lastObject];
+                
+                NSTimeInterval ending = [[latest valueForKey:@"current_period_end"] doubleValue];
+                
+                NSDate *endDate = [NSDate dateWithTimeIntervalSince1970:ending];
+                
+                NSTimeInterval timeSinceNow = [endDate timeIntervalSinceNow];
+                
+                self.external = YES;
+                self.expiry = endDate;
+                
+                self.expired = (timeSinceNow < 0);
+                
+            }
+            
+        }
+        
+    }
     else {
         
     }
@@ -90,8 +146,9 @@
     [encoder encodeObject:self.environment forKey:propSel(environment)];
     [encoder encodeDouble:@([self.expiry timeIntervalSince1970]).doubleValue forKey:propSel(expiry)];
     [encoder encodeDouble:@([self.created timeIntervalSince1970]).doubleValue forKey:propSel(created)];
-    [encoder encodeBool:self.status forKey:propSel(status)];
+    [encoder encodeBool:self.status.boolValue forKey:propSel(status)];
     [encoder encodeBool:self.lifetime forKey:propSel(lifetime)];
+    [encoder encodeBool:self.external forKey:propSel(external)];
 }
 
 #pragma mark -
@@ -124,8 +181,17 @@
         [dict setValue:self.status forKey:propSel(status)];
     }
     
-    if (self.lifetime) {
-        [dict setValue:@(self.lifetime) forKey:propSel(lifetime)];
+    [dict setValue:@(self.lifetime) forKey:propSel(lifetime)];
+    
+    [dict setValue:@(self.external) forKey:propSel(external)];
+    
+    if (self.expiry) {
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'.'zzz'Z'";
+        formatter.timeZone = [NSTimeZone systemTimeZone];
+        
+        [dict setValue:[formatter stringFromDate:self.expiry] forKey:propSel(expiry)];
     }
     
     return dict;
@@ -145,7 +211,7 @@
         if ([self.error.localizedDescription isEqualToString:@"No subscription found for this account."]) {
             
             // check if they have added their first feed
-            id addedFirst = [Keychain stringFor:YTSubscriptionHasAddedFirstFeed error:nil];
+            id addedFirst = [Keychain stringFor:@"com.dezinezync.elytra.pro.hasAddedFirstFeed" error:nil];
             BOOL addedVal = addedFirst ? [addedFirst boolValue] : NO;
             
             // they have added their first feed but haven't purchased a subscription.

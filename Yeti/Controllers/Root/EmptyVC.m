@@ -13,8 +13,6 @@
     BOOL _showPrimaryOnce;
 }
 
-@property (weak, nonatomic) IBOutlet UILabel *label;
-
 @end
 
 @implementation EmptyVC
@@ -31,28 +29,17 @@
     
     [super viewDidLoad];
     
-    [self didUpdateTheme];
-    
-//    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateTheme) name:ThemeDidUpdate object:nil];
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
+    self.label.backgroundColor = UIColor.systemBackgroundColor;
+    self.label.textColor = UIColor.tertiaryLabelColor;
     
 }
 
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self.navigationController setNavigationBarHidden:YES animated:NO];
-}
-
-- (void)didUpdateTheme {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.view.backgroundColor = theme.backgroundColor;
-    self.label.backgroundColor = theme.backgroundColor;
-    self.label.textColor = theme.captionColor;
 }
 
 - (BOOL)canBecomeFirstResponder {

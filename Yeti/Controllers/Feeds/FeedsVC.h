@@ -30,7 +30,7 @@
     NSUInteger _refreshFeedsCounter;
 }
 
-@property (nonatomic, strong) UITableViewDiffableDataSource *DDS NS_AVAILABLE_IOS(13.0);
+@property (nonatomic, strong) UITableViewDiffableDataSource * _Nonnull DDS;
 
 @property (nonatomic, strong) BookmarksManager *bookmarksManager;
 

@@ -38,16 +38,19 @@
     [super didMoveToSuperview];
     
     if (self.superview != nil) {
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
-        self.tintColor = theme.tintColor;
+        self.tintColor = self.tintColor;
         
-        self.backgroundColor = theme.cellColor;
+        self.backgroundColor = UIColor.systemBackgroundColor;
+        
         for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
-            button.tintColor = theme.tintColor;
+            
+            button.tintColor = self.tintColor;
             
             button.imageView.image = [button.imageView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            
             button.translatesAutoresizingMaskIntoConstraints = NO;
+            
             [button setNeedsDisplay];
             [button setNeedsLayout];
             
@@ -57,41 +60,43 @@
         }
         
         [self configureForShadow];
+        
         self.clipsToBounds = NO;
     }
 }
 
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+- (void)tintColorDidChange {
     
-    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-        [self updateShadowPath];
+    [super tintColorDidChange];
+    
+    if (self.superview != nil && self.previousArticleButton != nil) {
+        
+        for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
+            
+            button.tintColor = self.tintColor;
+            
+            [button setNeedsDisplay];
+            [button setNeedsLayout];
+            
+        }
+        
     }
-    
-    [super traitCollectionDidChange:previousTraitCollection];
     
 }
 
-- (void)updateShadowPath
-{
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+- (void)updateShadowPath {
     
-    if (self.previousArticleButton) {
-        for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
-            button.tintColor = theme.tintColor;
-            [button setNeedsDisplay];
-            [button setNeedsLayout];
-        }
-    }
+    [self tintColorDidChange];
     
     CGRect frame = self.bounds;
     frame.size.width = self.bounds.size.width;
     
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:frame cornerRadius:self.layer.cornerRadius];
     
-    BOOL dark = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+//    BOOL dark = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
     
     self.layer.shadowPath = path.CGPath;
-    self.layer.shadowColor = dark ? [UIColor.blackColor colorWithAlphaComponent:0.35f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;
+    self.layer.shadowColor = UIColor.separatorColor.CGColor; //dark ? [UIColor.blackColor colorWithAlphaComponent:0.35f].CGColor : [UIColor colorWithDisplayP3Red:138/255.f green:145/255.f blue:153/255.f alpha:0.5f].CGColor;
     self.layer.shadowOpacity = 1.f;
     self.layer.shadowRadius = 8.f;
     self.layer.shadowOffset = CGSizeMake(0, 4.f);

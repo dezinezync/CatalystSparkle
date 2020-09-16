@@ -7,7 +7,7 @@
 //
 
 #import "CodeTheme.h"
-#import <DZTextKit/UIColor+HEX.h>
+#import "UIColor+HEX.h"
 
 typedef NSDictionary <NSString *, NSDictionary <NSString *, NSString *> *> ThemeStringDict;
 typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, NSString *> *> MutableStringThemeDict;
@@ -38,6 +38,7 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
 - (instancetype)initWithThemePath:(NSString *)path
 {
     if (self = [super init]) {
+        
         self.themePath = path;
         
         [self setupFont];
@@ -62,8 +63,16 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
             else if ([bgHex isEqualToString:@"black"]) {
                 self.backgroundColor = [UIColor blackColor];
             }
-            else
-                self.backgroundColor = [UIColor colorFromHexString:bgHex];
+            else {
+                
+                if ([bgHex isEqualToString:@"*systemBackgroundColor"]) {
+                    self.backgroundColor = UIColor.systemBackgroundColor;
+                }
+                else {
+                    self.backgroundColor = [UIColor colorFromHexString:bgHex];
+                }
+                
+            }
         }
         
         if (!self.backgroundColor)
@@ -77,7 +86,18 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
 }
 
 - (void)setupFont {
-    UIFont *base = [UIFont fontWithName:@"Menlo" size:16.f];
+    
+    UIFont *base;
+    
+    if (SharedPrefs.useSystemSize) {
+        base = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    }
+    else {
+        base = [UIFont systemFontOfSize:SharedPrefs.fontSize];
+    }
+    
+    base = [UIFont monospacedSystemFontOfSize:base.pointSize weight:UIFontWeightRegular];
+    
     UIFont *required = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleBody] scaledFontForFont:base];
     
     self.codeFont = required;
@@ -176,7 +196,41 @@ typedef NSMutableDictionary <NSString *, NSDictionary <NSString *, id> *> Mutabl
         [props enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull prop, BOOL * _Nonnull stop) {
            
             if ([key isEqualToString:@"color"]) {
-                keyProps[NSForegroundColorAttributeName] = [UIColor colorFromHexString:prop];
+                
+                UIColor *color = nil;
+                
+                if ([[prop substringToIndex:1] isEqualToString:@"*"]) {
+                    
+                    NSString *named = [prop substringFromIndex:1];
+                    CGFloat alpha = 1.f;
+                    
+                    if ([named containsString:@"#"]) {
+                        
+                        NSInteger alphaIndex = [named rangeOfString:@"#"].location;
+                        
+                        NSString *alphaString = [named substringFromIndex:alphaIndex+1];
+                        
+                        named = [named substringToIndex:alphaIndex];
+                        
+                        alpha = alphaString.floatValue;
+                        
+                    }
+                    
+                    color = [UIColor performSelector:NSSelectorFromString(named)];
+                    
+                    if (alpha != 1.f) {
+                        color = [color colorWithAlphaComponent:alpha];
+                    }
+                    
+                    NSLogDebug(@">>>CodeTheme: %@ %@", className, color);
+                    
+                }
+                else {
+                    color = [UIColor colorFromHexString:prop];
+                }
+                
+                keyProps[NSForegroundColorAttributeName] = color;
+
             }
             else if ([key isEqualToString:@"font-style"]) {
                 keyProps[NSFontAttributeName] = [self fontForCSSStyle:prop];
