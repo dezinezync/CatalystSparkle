@@ -8,6 +8,7 @@
 
 #import "LaunchVC.h"
 #import "TrialVC.h"
+#import "Coordinator.h"
 
 #import "YetiThemeKit.h"
 
@@ -126,11 +127,30 @@
         
         [MyDBManager setUser:responseObject];
         
-        [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-        
-        TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
-        
-        [self showViewController:vc sender:self];
+        // existing User
+        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            BOOL expired = [MyFeedsManager.user subscription] != nil && [MyFeedsManager.user.subscription hasExpired] == YES;
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:^{
+                
+                if (expired) {
+                    
+                    [self.mainCoordinator showSubscriptionsInterface];
+                    
+                }
+                
+            }];
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+            
+        }];
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -150,8 +170,6 @@
                 user.userID = userID;
                 
                 [MyDBManager setUser:user];
-                
-                [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
                 
                 TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
                 

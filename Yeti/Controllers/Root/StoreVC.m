@@ -222,11 +222,13 @@
     
     PaddedLabel *tableHeader = (id)self.tableView.tableHeaderView;
     
+    NSString *baseText;
+    
     if (MyFeedsManager.user.subscription != nil) {
         
         if (MyFeedsManager.user.subscription.error != nil) {
             
-            tableHeader.text = MyFeedsManager.user.subscription.error.localizedDescription;
+            baseText = MyFeedsManager.user.subscription.error.localizedDescription;
             
         }
         else {
@@ -237,19 +239,19 @@
             
             if (MyFeedsManager.user.subscription.hasExpired) {
             
-                tableHeader.text = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
                 
             }
             else {
                 
                 if (MyFeedsManager.user.subscription.isLifetime) {
                     
-                    tableHeader.text = @"Your account has a Lifetime subscription. Enjoy!";
+                    baseText = @"Your account has a Lifetime subscription. Enjoy!";
                     
                 }
                 else {
                     
-                    tableHeader.text = formattedString(@"Your subscription will expire on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
+                    baseText = formattedString(@"Your subscription will renew on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
                     
                 }
                 
@@ -259,14 +261,44 @@
         
     }
     else {
-        tableHeader.text = @"Select a subscription type.";
+        baseText = @"Select a subscription type.";
     }
     
     if (MyFeedsManager.user.subscription.isExternal) {
         
-        tableHeader.text = formattedString(@"%@\nYour subscription is managed externally.", tableHeader.text);
+        baseText = formattedString(@"%@\nYour subscription is managed externally.", baseText);
         
     }
+    
+    NSDictionary *topLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
+                                        NSFontAttributeName: tableHeader.font
+    };
+    
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:baseText attributes:topLineAttributes];
+    
+    NSMutableParagraphStyle *para = [NSParagraphStyle defaultParagraphStyle].mutableCopy;
+    para.lineSpacing = 1.5f;
+    
+    NSString *additionalText = @"\n\nYour Subscription Includes:\n- No limit on number of Feeds & Folders\n- Real-Time Push Notifications for supported feeds\n- Feed Recommendations updated hourly\n- Integrated Syncing across all your devices\n- Support Indie Development";
+    
+    NSDictionary *bottomLineAttributes = @{NSForegroundColorAttributeName: tableHeader.textColor,
+                                           NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleBody],
+                                           NSParagraphStyleAttributeName: para
+    };
+    
+    NSDictionary *middleLineAttributes = @{NSForegroundColorAttributeName: UIColor.labelColor,
+                                           NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline],
+                                           NSParagraphStyleAttributeName: para
+    };
+    
+    NSMutableAttributedString *attrs2 = [[NSMutableAttributedString alloc] initWithString:additionalText attributes:bottomLineAttributes];
+    
+    NSRange middleLineRange = [additionalText rangeOfString:@"Your Subscription Includes:"];
+    [attrs2 setAttributes:middleLineAttributes range:middleLineRange];
+    
+    [attrs appendAttributedString:attrs2];
+    
+    tableHeader.attributedText = attrs;
     
     [tableHeader sizeToFit];
     [tableHeader setNeedsUpdateConstraints];

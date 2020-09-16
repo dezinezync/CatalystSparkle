@@ -104,7 +104,10 @@
             
             [Keychain add:kHasShownOnboarding boolean:YES];
             
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+            
         });
         
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
@@ -143,6 +146,8 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             
             [Keychain add:kHasShownOnboarding boolean:YES];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
             
             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
         });
