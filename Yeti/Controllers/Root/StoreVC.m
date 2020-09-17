@@ -73,6 +73,8 @@
     
     _products = [_sortedProducts rz_flatten];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupHeaderText) name:RMStoreReceiptDidValidate object:nil];
+    
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
     
@@ -120,20 +122,28 @@
             )
         ) {
         
-        [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-          
-            [self setupHeaderText];
+        [self getSubscription];
+        
+    }
+    else {
+        
+        NSDate *expiry = MyFeedsManager.user.subscription.expiry;
+        
+        if ([NSCalendar.currentCalendar isDateInToday:expiry]) {
             
-        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-           
-            [AlertManager showGenericAlertWithTitle:@"Subscription Check Failed" message:@"Elytra failed to retrive the latest status of your subscription."];
+            [self getSubscription];
             
-        }];
+        }
         
     }
     
     self.buyButton.enabled = NO;
     
+}
+
+- (void)dealloc {
+    [[RMStore defaultStore] removeStoreObserver:self];
+    [NSNotificationCenter.defaultCenter removeObserver:self name:RMStoreReceiptDidValidate object:nil];
 }
 
 - (void)configureFooterView {
@@ -212,11 +222,6 @@
         [textView invalidateIntrinsicContentSize];
     });
     
-}
-
-- (void)dealloc
-{
-    [[RMStore defaultStore] removeStoreObserver:self];
 }
 
 - (void)setupHeaderText {
@@ -431,7 +436,19 @@
     
     // Receipt verification implementation handles this for us.
     
-    [self setupHeaderText];
+}
+
+- (void)getSubscription {
+    
+    [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+      
+        [self setupHeaderText];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+       
+        [AlertManager showGenericAlertWithTitle:@"Subscription Check Failed" message:@"Elytra failed to retrive the latest status of your subscription."];
+        
+    }];
     
 }
 
