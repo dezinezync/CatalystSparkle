@@ -338,7 +338,7 @@
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.padding = UIEdgeInsetsMake(0, layoutFrame.origin.x, 0, layoutFrame.origin.x);
     label.numberOfLines = 0;
-    label.backgroundColor = theme.cellColor;
+    label.backgroundColor = UIColor.systemBackgroundColor;
     label.opaque = YES;
     
     NSString *title = @"No Subscriptions";
@@ -360,7 +360,7 @@
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
-                   NSForegroundColorAttributeName: theme.titleColor,
+                   NSForegroundColorAttributeName: UIColor.labelColor,
                    NSParagraphStyleAttributeName: para
                    };
     
