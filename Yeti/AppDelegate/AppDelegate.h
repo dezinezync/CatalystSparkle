@@ -37,8 +37,6 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) dispatch_queue_t bgTaskDispatchQueue;
 
-- (void)loadCodeTheme;
-
 @property (nonatomic, strong) MainCoordinator *coordinator;
 
 @property (nonatomic, assign) BOOL bgTaskHandlerRegistered;

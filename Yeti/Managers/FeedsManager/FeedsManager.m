@@ -9,6 +9,8 @@
 #import "FeedsManager+KVS.h"
 #import "FeedItem.h"
 
+#import "AppDelegate.h"
+
 #import "RMStore.h"
 #import "StoreKeychainPersistence.h"
 
@@ -47,13 +49,11 @@ NSArray <NSString *> * _defaultsKeys;
 @implementation FeedsManager
 
 + (void)load {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            @synchronized (MyFeedsManager) {
-                MyFeedsManager = [[FeedsManager alloc] init];
-            }
-        });
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        @synchronized (MyFeedsManager) {
+            MyFeedsManager = [[FeedsManager alloc] init];
+        }
     });
 }
 
@@ -3349,6 +3349,8 @@ NSArray <NSString *> * _defaultsKeys;
     [Keychain removeAllItems];
     
     self.user = nil;
+    
+    [MyAppDelegate.coordinator showLaunchVC];
     
 }
 
