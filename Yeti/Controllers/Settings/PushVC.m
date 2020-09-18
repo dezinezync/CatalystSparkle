@@ -13,7 +13,7 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "UIViewController+Stateful.h"
-#import "YetiThemeKit.h"
+
 #import "PaddedLabel.h"
 
 #define pushEmptyViewTag 947642
@@ -333,8 +333,6 @@
         return nil;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect layoutFrame = [self.view.readableContentGuide layoutFrame];
     
     PaddedLabel *label = [[PaddedLabel alloc] init];
@@ -355,7 +353,7 @@
     UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     
     NSDictionary *attributes = @{NSFontAttributeName: font,
-                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
