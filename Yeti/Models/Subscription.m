@@ -53,6 +53,11 @@
     
     if (([key isEqualToString:@"expiry"] || [key isEqualToString:@"created"]) && [value isKindOfClass:NSString.class]) {
         
+        if ([value containsString:@".000Z"]) {
+            
+            value = [(NSString *)value stringByReplacingOccurrencesOfString:@".000Z" withString:@".GMTZ"];
+        }
+        
         // convert NSString to NSDate
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'.'zzz'Z'";

@@ -546,7 +546,7 @@ NSArray <NSString *> * _defaultsKeys;
 
     weakify(self);
 
-    [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager.session PUT:@"/feed?version=2" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if ([response statusCode] == 300) {
             
@@ -1977,6 +1977,8 @@ NSArray <NSString *> * _defaultsKeys;
                 Subscription *sub = [Subscription instanceFromDictionary:[responseObject valueForKey:@"subscription"]];
                 
                 self.user.subscription = sub;
+            
+            [MyDBManager setUser:self.user];
                 
                 if (successCB) {
                     dispatch_async(dispatch_get_main_queue(), ^{

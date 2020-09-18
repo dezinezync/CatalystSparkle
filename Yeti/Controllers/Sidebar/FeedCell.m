@@ -64,12 +64,21 @@
         content.imageProperties.maximumSize = CGSizeMake(32.f, 32.f);
     }
     
-    content.imageProperties.cornerRadius = 3.f;
-    content.imageProperties.reservedLayoutSize = content.imageProperties.maximumSize;
-    
-    content.image = item.faviconImage ?: [UIImage systemImageNamed:@"square.dashed"];
-    
-    [self setupFavicon];
+    if (self.isAdding == YES) {
+        
+        content.imageProperties.maximumSize = CGSizeZero;
+        
+    }
+    else {
+        
+        content.imageProperties.cornerRadius = 3.f;
+        content.imageProperties.reservedLayoutSize = content.imageProperties.maximumSize;
+        
+        content.image = item.faviconImage ?: [UIImage systemImageNamed:@"square.dashed"];
+        
+        [self setupFavicon];
+        
+    }
 
     self.contentConfiguration = content;
 

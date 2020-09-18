@@ -29,7 +29,7 @@
 @property (nonatomic, strong) UIActivityIndicatorView *loaderView;
 @property (nonatomic, strong) UILabel *errorLabel;
 
-@property (nonatomic, assign) NSInteger selected;
+@property (nonatomic, strong) NSIndexPath * selected;
 @property (nonatomic, copy) NSString *query;
 @property (nonatomic, assign) BOOL loadedLast;
 
@@ -87,8 +87,6 @@
     
     self.title = @"Add Feed";
     
-    self.selected = NSNotFound;
-    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     self.navigationController.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationController.navigationBar.translucent = YES;
@@ -98,6 +96,8 @@
     self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * collectionView, NSIndexPath * indexPath, Feed * item) {
         
         FeedCell *cell = [collectionView dequeueConfiguredReusableCellWithRegistration:self.feedCellRegister forIndexPath:indexPath item:item];
+        
+        cell.adding = self.searchBar.selectedScopeButtonIndex == 0;
         
         NSArray <NSIndexPath *> *selectedIndices = [collectionView indexPathsForSelectedItems];
         
@@ -144,11 +144,11 @@
 
 #pragma mark - Setters
 
-- (void)setSelected:(NSInteger)selected
+- (void)setSelected:(NSIndexPath *)selected
 {
     _selected = selected;
     
-    if (_selected == NSNotFound) {
+    if (_selected == nil) {
         [self.cancelButton setTitle:@"Close"];
     }
     else {
@@ -210,22 +210,22 @@
         
         [collectionView deselectItemAtIndexPath:indexPath animated:YES];
         
-        if (self.selected != NSNotFound) {
+        if (self.selected != nil) {
             
-            FeedCell *cell = (id)[collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.selected inSection:0]];
+            FeedCell *cell = (id)[collectionView cellForItemAtIndexPath:self.selected];
             
             cell.accessories = @[];
             [cell setNeedsUpdateConfiguration];
             
         }
         
-        if (self.selected == indexPath.item) {
-            self.selected = NSNotFound;
+        if (self.selected == indexPath) {
+            self.selected = nil;
         }
         else {
-            self.selected = indexPath.item;
+            self.selected = indexPath;
             
-            FeedCell *cell = (id)[collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.selected inSection:0]];
+            FeedCell *cell = (id)[collectionView cellForItemAtIndexPath:self.selected];
             
             cell.accessories = @[[UICellAccessoryCheckmark new]];
             [cell setNeedsUpdateConfiguration];
@@ -381,6 +381,8 @@
     }
     
     [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    
+    [self.navigationItem.searchController setActive:NO];
     
 }
 
@@ -546,78 +548,79 @@
         [self.searchBar resignFirstResponder];
     }
     
-//    if (self.selected != NSNotFound) {
-//        Feed *feed = [self.DS.data safeObjectAtIndex:self.selected];
-//        
-//        if (feed == nil) {
-//            self.selected = NSNotFound;
-//            return;
-//        }
-//        
-//        NSString *path = feed.url;
-//        
-//        NSURL *URL = [NSURL URLWithString:path];
-//        
-//        weakify(self);
-//        
-//        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//            
-//            strongify(self);
-//            
-//            if ([responseObject isKindOfClass:Feed.class]) {
-//                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
-//                
-//                weakify(self);
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    strongify(self);
-//                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
-//                    [self.notificationGenerator prepare];
-//                });
-//                
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    self.selected = NSNotFound;
-//                    [self didTapClose:nil];
-//                });
-//                
-//                return;
-//            }
-//            
-//            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
-//            
-//            asyncMain(^{
-//                self.cancelButton.enabled = YES;
-//            });
-//            
-//        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-//            
-//            strongify(self);
-//            
-//            if (error.code == 304) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    
-//                    self.selected = NSNotFound;
-//                    [self didTapClose:nil];
-//                    
-//                });
-//                return;
-//            }
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
-//                [self.notificationGenerator prepare];
-//            });
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                self.cancelButton.enabled = YES;
-//            });
-//            
-//            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
-//            
-//        }];
-//        
-//        return;
-//    }
+    if (self.selected != nil) {
+        
+        Feed *feed = [self.DS itemIdentifierForIndexPath:self.selected];
+        
+        if (feed == nil) {
+            self.selected = nil;
+            return;
+        }
+        
+        NSString *path = feed.url;
+        
+        NSURL *URL = [NSURL URLWithString:path];
+        
+        weakify(self);
+        
+        [MyFeedsManager addFeed:URL success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if ([responseObject isKindOfClass:Feed.class]) {
+                ArticlesManager.shared.feeds = [ArticlesManager.shared.feeds arrayByAddingObject:responseObject];
+                
+                weakify(self);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
+                    [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeSuccess];
+                    [self.notificationGenerator prepare];
+                });
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.selected = nil;
+                    [self didTapClose:nil];
+                });
+                
+                return;
+            }
+            
+            NSLog(@"Unhandled response object %@ for status code: %@", responseObject, @(response.statusCode));
+            
+            asyncMain(^{
+                self.cancelButton.enabled = YES;
+            });
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            
+            if (error.code == 304) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    self.selected = nil;
+                    [self didTapClose:nil];
+                    
+                });
+                return;
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                [self.notificationGenerator notificationOccurred:UINotificationFeedbackTypeError];
+                [self.notificationGenerator prepare];
+            });
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.cancelButton.enabled = YES;
+            });
+            
+            [AlertManager showGenericAlertWithTitle:@"An Error Occurred" message:error.localizedDescription];
+            
+        }];
+        
+        return;
+    }
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
@@ -704,7 +707,7 @@
     
     self.query = [query stringByStrippingWhitespace];
     
-    self.selected = NSNotFound;
+    self.selected = nil;
     
     [self setupData:@[]];
     
@@ -858,6 +861,8 @@
         
         if (status == 300) {
             // multiple options
+            responseObject = [NSSet setWithArray:responseObject].allObjects;
+            
             NSArray <Feed *> *feeds = [[responseObject rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
                 
                 return [Feed instanceFromDictionary:obj];
@@ -866,8 +871,7 @@
                 return obj.url && ([obj.url containsString:@"wp-json"] == NO);
             }];
             
-//            self.DS.data = feeds;
-//            self.DS.state = DZDatasourceLoaded;
+            [self setupData:feeds];
             
             weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -892,7 +896,7 @@
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 strongify(self);
                 
-                self.selected = NSNotFound;
+                self.selected = nil;
                 [self didTapClose:nil];
             });
             return;

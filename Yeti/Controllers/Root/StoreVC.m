@@ -127,11 +127,20 @@
     }
     else {
         
-        NSDate *expiry = MyFeedsManager.user.subscription.expiry;
-        
-        if ([NSCalendar.currentCalendar isDateInToday:expiry]) {
+        if ([MyFeedsManager.user.subscription hasExpired]) {
             
             [self getSubscription];
+            
+        }
+        else {
+            
+            NSDate *expiry = MyFeedsManager.user.subscription.expiry;
+            
+            if ([NSCalendar.currentCalendar isDateInToday:expiry]) {
+                
+                [self getSubscription];
+                
+            }
             
         }
         
@@ -237,7 +246,7 @@
             baseText = MyFeedsManager.user.subscription.error.localizedDescription;
             
         }
-        else {
+        else if (MyFeedsManager.user.subscription.expiry != nil) {
             
             NSDateFormatter *formatter = [NSDateFormatter new];
             formatter.dateStyle = NSDateFormatterMediumStyle;
@@ -266,7 +275,8 @@
         }
         
     }
-    else {
+    
+    if (baseText == nil) {
         baseText = @"Select a subscription type.";
     }
     

@@ -137,6 +137,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     [self updateMarkerView];
     
+    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
+    
 }
 
 #pragma mark - Configurations
@@ -536,7 +538,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     else if (self.article.isRead == NO) {
-        self.markerView.tintColor = self.tintColor;
+        self.markerView.tintColor = SharedPrefs.tintColor;
         self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
     }
     else {
