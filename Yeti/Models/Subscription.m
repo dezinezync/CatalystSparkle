@@ -117,13 +117,25 @@
             
             NSArray <NSDictionary *> *items = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
             
-            if (items != nil && items.count) {
+            if (items != nil) {
                 
-                NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                NSDictionary *latest = nil;
                 
-                items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
-                
-                NSDictionary *latest = [items lastObject];
+                if ([items isKindOfClass:NSArray.class]) {
+                    
+                    NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                    
+                    items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
+                    
+                    latest = [items lastObject];
+                    
+                }
+                else if ([items isKindOfClass:NSDictionary.class]) {
+                    latest = (id)items;
+                }
+                else {
+                    return;
+                }
                 
                 NSTimeInterval ending = [[latest valueForKey:@"current_period_end"] doubleValue];
                 
