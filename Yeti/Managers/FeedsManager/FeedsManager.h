@@ -209,6 +209,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getUserInformationFor:(NSString * _Nonnull)uuid success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)startUserFreeTrial:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
+
 #pragma mark - Error formatting
 
 - (NSError * _Nonnull)errorFromResponse:(NSDictionary * _Nonnull)userInfo;

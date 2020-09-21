@@ -10,6 +10,8 @@
 #import "TrialVC.h"
 #import "Coordinator.h"
 
+#import "Keychain.h"
+
 #import "YetiThemeKit.h"
 
 #import "FeedsManager.h"
@@ -126,6 +128,16 @@
     [MyFeedsManager getUserInformationFor:uuid success:^(User *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         [MyDBManager setUser:responseObject];
+        
+        if ([Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
+            
+            TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
+            
+            [self showViewController:vc sender:self];
+            
+            return;
+            
+        }
         
         // existing User
         [MyFeedsManager getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {

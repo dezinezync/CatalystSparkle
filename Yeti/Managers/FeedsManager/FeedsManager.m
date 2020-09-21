@@ -43,6 +43,7 @@ NSArray <NSString *> * _defaultsKeys;
 @property (nonatomic, strong, readwrite) User * _Nullable user;
 
 @property (nonatomic, copy, readwrite) NSString *deviceID;
+@property (nonatomic, strong) NSString *appFullVersion, *appMajorVersion;
 
 @end
 
@@ -2918,6 +2919,26 @@ NSArray <NSString *> * _defaultsKeys;
 
 #pragma mark - Getters
 
+- (NSString *)appFullVersion {
+    
+    if (_appFullVersion == nil) {
+        _appFullVersion = [NSBundle.mainBundle.infoDictionary valueForKey:@"CFBundleShortVersionString"];
+    }
+    
+    return _appFullVersion;
+    
+}
+
+- (NSString *)appMajorVersion {
+    
+    if (_appMajorVersion == nil) {
+        _appMajorVersion = [[self.appFullVersion componentsSeparatedByString:@"."] firstObject];
+    }
+    
+    return _appMajorVersion;
+    
+}
+
 - (Subscription *)subscription {
     return self.user.subscription;
 }
@@ -2930,8 +2951,8 @@ NSArray <NSString *> * _defaultsKeys;
     return _reachability;
 }
 
-- (DZURLSession *)session
-{
+- (DZURLSession *)session {
+    
     if (_session == nil) {
 
         NSURLSessionConfiguration *defaultConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -2940,7 +2961,9 @@ NSArray <NSString *> * _defaultsKeys;
         NSDictionary *const additionalHTTPHeaders = @{
                                                       @"Accept": @"application/json",
                                                       @"Content-Type": @"application/json",
-                                                      @"Accept-Encoding": @"gzip"
+                                                      @"Accept-Encoding": @"gzip",
+                                                      @"X-App-FullVersion": self.appFullVersion,
+                                                      @"X-App-MajorVersion": self.appMajorVersion
                                                       };
 
         [defaultConfig setHTTPAdditionalHeaders:additionalHTTPHeaders];
@@ -3029,7 +3052,9 @@ NSArray <NSString *> * _defaultsKeys;
         [defaultConfig setHTTPAdditionalHeaders:@{
                                                   @"Accept": @"application/json",
                                                   @"Content-Type": @"application/json",
-                                                  @"Accept-Encoding": @"gzip"
+                                                  @"Accept-Encoding": @"gzip",
+                                                  @"X-App-FullVersion": self.appFullVersion,
+                                                  @"X-App-MajorVersion": self.appMajorVersion
                                                   }];
         
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
@@ -3189,6 +3214,18 @@ NSArray <NSString *> * _defaultsKeys;
 //            [MyDBManager setUser:self.user];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            UIViewController *presented = [(NSObject *)[[[[[UIApplication sharedApplication] connectedScenes] allObjects] firstObject] delegate] valueForKeyPath:@"coordinator.splitViewController.presentedViewController"];
+            
+            if (presented != nil && [presented isKindOfClass:UINavigationController.class]) {
+                
+                UINavigationController *nav = (id)presented;
+                
+                if ([nav.viewControllers.firstObject isKindOfClass:NSClassFromString(@"LaunchVC")]) {
+                    return;
+                }
+                
+            }
             
             [AlertManager showGenericAlertWithTitle:@"Error Fetching Subscription" message:error.localizedDescription];
             
@@ -3536,6 +3573,73 @@ NSArray <NSString *> * _defaultsKeys;
             }
         }
     }];
+}
+
+- (void)startUserFreeTrial:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    NSDate *date = NSDate.date;
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    calendar.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    
+    NSDateComponents *comps = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond fromDate:date];
+    
+    comps.day += 14;
+    
+    NSDate *expiry = [calendar dateFromComponents:comps];
+    
+    NSDateFormatter *formatter = [NSDateFormatter new];
+    formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
+    
+    NSString *expiryString = [formatter stringFromDate:expiry];
+    
+    NSDictionary *body = @{@"expiry": expiryString};
+    
+    weakify(self);
+    
+    [self.session PUT:@"/1.7/trial" queryParams:@{} parameters:body success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (successCB) {
+                
+                runOnMainQueueWithoutDeadlocking(^{
+                   
+                    successCB(responseObject, response, task);
+                    
+                });
+                
+            }
+            
+        } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            strongify(self);
+            error = [self errorFromResponse:error.userInfo];
+            
+            if (error) {
+                if (errorCB)
+                    errorCB(error, response, task);
+                else {
+                    NSLog(@"Unhandled network error: %@", error);
+                }
+            }
+            
+        }];
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        strongify(self);
+        error = [self errorFromResponse:error.userInfo];
+        
+        if (error) {
+            if (errorCB)
+                errorCB(error, response, task);
+            else {
+                NSLog(@"Unhandled network error: %@", error);
+            }
+        }
+        
+    }];
+    
 }
 
 #pragma mark - Error Handler

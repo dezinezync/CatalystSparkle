@@ -1,5 +1,15 @@
 # v2.0.2
 
+## Build 34
+
+- Adds a new, simpler flow for starting the Free Trial. 
+
+- Fixed an issue where the App would show a "No Subscription Found" error after resetting or deactivating your account. 
+
+- Fixed an issue where an interrupted on-boarding would prevent you from using the app without purchasing a subscription. This now ensures you are always able to start your free trial if your onboarding was interrupted. 
+
+- If you're currently enrolled in the Free Trial, the subscriptions interface will now correctly indicate that. 
+
 # Build 32
 
 - Fixes a rotation bug on iPads. 

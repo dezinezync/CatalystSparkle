@@ -41,8 +41,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.products = @[@"com.dezinezync.elytra.free",
-                      @"com.dezinezync.elytra.non.1m"];
+    self.products = @[@"com.dezinezync.elytra.monthly"];
 
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     
@@ -93,12 +92,9 @@
     
     [self setButtonsState:NO];
     
-    [[DZActivityIndicatorManager shared] incrementCount];
-    [[RMStore defaultStore] addPayment:@"com.dezinezync.elytra.free" success:^(SKPaymentTransaction *transaction) {
+    [MyFeedsManager startUserFreeTrial:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        self.restoreButton.enabled = YES;
-        
-        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.subscription.expiry, MyFeedsManager.subscription.status.integerValue == 2 ? @"YES" : @"NO");
+        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.user.subscription.expiry, MyFeedsManager.user.subscription.status.integerValue == 2 ? @"YES" : @"NO");
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -110,63 +106,18 @@
             
         });
         
-    } failure:^(SKPaymentTransaction *transaction, NSError *error) {
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [[DZActivityIndicatorManager shared] decrementCount];
-        [AlertManager showGenericAlertWithTitle:@"Payment Transaction Failed" message:error.localizedDescription];
-        
-        [self setButtonsState:YES];
-        
-    }];
-    
-}
-
-- (IBAction)didTapRestore:(id)sender {
-    
-#ifdef DEBUG
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [Keychain add:kHasShownOnboarding boolean:YES];
-        
-        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    });
-    
-    return;
-#endif
-    
-    [self setButtonsState:NO];
-    
-    [[DZActivityIndicatorManager shared] incrementCount];
-    [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray <SKPaymentTransaction *> *transactions) {
-        
-        self.button.enabled = YES;
-        
-        NSLog(@"Expiry: %@, isTrial: %@", MyFeedsManager.subscription.expiry, MyFeedsManager.subscription.status.integerValue == 2 ? @"YES" : @"NO");
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [Keychain add:kHasShownOnboarding boolean:YES];
-            
-            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
-            
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-        });
-        
-    } failure:^(NSError *error) {
-        
-        [[DZActivityIndicatorManager shared] decrementCount];
-        [AlertManager showGenericAlertWithTitle:@"Restore Transactions Failed" message:error.localizedDescription];
-        
-        [self setButtonsState:YES];
+        [AlertManager showGenericAlertWithTitle:@"Error Starting Trial" message:error.localizedDescription];
         
     }];
     
 }
 
 #pragma mark - State
+
 - (void)setButtonsState:(BOOL)enabled {
     self.button.enabled = enabled;
-    self.restoreButton.enabled = enabled;
 }
 
 #pragma mark - Store
