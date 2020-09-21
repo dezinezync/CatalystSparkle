@@ -75,11 +75,23 @@ static NSString * const reuseIdentifier = @"Cell";
 #endif
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     [self dz_smoothlyDeselectCells:self.collectionView];
+    
+    if (self.isOnboarding) {
+        
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+        
+        if (self.navigationController.navigationBarHidden == YES) {
+            
+            [self.navigationController setNavigationBarHidden:NO animated:animated];
+            
+        }
+        
+    }
     
     self.navigationController.toolbarHidden = YES;
     
@@ -201,6 +213,12 @@ static NSString * const reuseIdentifier = @"Cell";
 }
 
 #pragma mark -
+
+- (void)didTapDone {
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+}
 
 - (void)_updateMetrics {
     [self.collectionView layoutIfNeeded];

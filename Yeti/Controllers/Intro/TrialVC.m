@@ -17,6 +17,8 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#import "RecommendationsVC.h"
+
 #import "YetiThemeKit.h"
 #import "Keychain.h"
 
@@ -102,7 +104,13 @@
             
             [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
             
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+            RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+            
+            vc.onboarding = YES;
+            
+            [self.navigationController setNavigationBarHidden:YES animated:YES];
+            
+            [self.navigationController setViewControllers:@[vc] animated:YES];
             
         });
         

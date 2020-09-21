@@ -40,10 +40,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    
-    self.view.layer.cornerRadius = 20.f;
 
-    self.view.layer.cornerCurve = kCACornerCurveContinuous;
     self.getStartedButton.hidden = YES;
     
     ASAuthorizationAppleIDButtonStyle style = self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark ? ASAuthorizationAppleIDButtonStyleWhite : ASAuthorizationAppleIDButtonStyleBlack;
@@ -103,7 +100,7 @@
 #ifdef DEBUG
 #if !TARGET_OS_MACCATALYST
     // 4800
-    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.1145"];
+    return [self processUUID:@"000768.e759fc828ab249ad98ceefc5f80279b3.0006"];
 #endif
 #endif
     
