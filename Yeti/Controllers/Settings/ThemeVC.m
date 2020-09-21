@@ -156,9 +156,8 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
         
         // get selection for current theme or default value
-//        YetiThemeType themeType = SharedPrefs.theme;
-        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
-        NSInteger colorIndex = [NSUserDefaults.standardUserDefaults integerForKey:defaultsKey] ?: [theme tintColorIndex].integerValue;
+
+        NSInteger colorIndex = SharedPrefs.iOSTintColorIndex;
         
         [(AccentCell *)cell didTapButton:buttons[colorIndex]];
         
@@ -214,6 +213,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
     // Configure the cell...
     if (indexPath.section == 0) {
         cell.selectedBackgroundView = nil;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     else {
         cell.textLabel.textColor = UIColor.labelColor;
@@ -246,6 +246,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
 #endif
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -332,7 +333,8 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         NSInteger buttonIndex = [buttons indexOfObject:selectedButton];
         UIColor *selectedColor = colours[buttonIndex];
         
-        [defaults setInteger:buttonIndex forKey:defaultsKey];
+        [SharedPrefs setValue:selectedColor forKey:propSel(tintColor)];
+        [SharedPrefs setValue:@(buttonIndex) forKey:propSel(iOSTintColorIndex)];
         
         for (UIWindow *window in [UIApplication.sharedApplication windows]) {
             window.tintColor = selectedColor;
@@ -341,8 +343,6 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         NSIndexSet * reloadSections = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)];;
         
         [self.tableView reloadSections:reloadSections withRowAnimation:UITableViewRowAnimationNone];
-        
-        [defaults synchronize];
         
         if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {
             [self.settingsDelegate didChangeSettings];

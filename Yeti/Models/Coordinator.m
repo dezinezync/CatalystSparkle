@@ -346,9 +346,13 @@
         
     }
     
+    BOOL isEmptyVC = NO;
+    
     if ([controller isKindOfClass:EmptyVC.class]) {
         
         self.emptyVC = (EmptyVC *)controller;
+        
+        isEmptyVC = YES;
         
     }
     
@@ -367,7 +371,8 @@
         
         // We never push the empty VC on the navigation stack
         // on compact devices
-        if ([controller isKindOfClass:EmptyVC.class]) {
+        if (isEmptyVC) {
+            self.emptyVC = nil;
             return;
         }
         

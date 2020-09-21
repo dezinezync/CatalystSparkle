@@ -382,7 +382,9 @@
     
     [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
-    [self.navigationItem.searchController setActive:NO];
+    if (self.searchBar.selectedScopeButtonIndex == 0) {
+        [self.navigationItem.searchController setActive:NO];
+    }
     
 }
 
@@ -725,7 +727,7 @@
 #pragma mark - <ScrollLoading>
 - (BOOL)isLoadingNext {
     
-    if (self.navigationItem.searchController.presentingViewController != nil) {
+    if (self.navigationController.viewControllers.count > 1) {
         return YES;
     }
     

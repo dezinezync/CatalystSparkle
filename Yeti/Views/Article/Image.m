@@ -159,11 +159,48 @@
             
 //            CGFloat width = self.imageView.bounds.size.width;
             
-            [self.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            [self.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 
                 self.imageView.backgroundColor = UIColor.systemBackgroundColor;
                 
-                [self addContextMenus];
+                if (error == nil) {
+                
+                    [self addContextMenus];
+                    
+                }
+                else if (SharedPrefs.imageProxy == YES) {
+                    
+                    NSURLComponents *components = [NSURLComponents componentsWithString:[url absoluteString]];
+                    
+                    __block NSString *base = nil;
+                    
+                    [components.queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                       
+                        if ([obj.name isEqualToString:@"url"]) {
+                            
+                            base = obj.value;
+                            
+                        }
+                        
+                        *stop = YES;
+                        
+                    }];
+                    
+                    if (base != nil) {
+                        
+                        // try the direct URL
+                        [self.imageView sd_setImageWithURL:[NSURL URLWithString:base] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                            
+                            if (error != nil) {
+                                
+                                return;
+                            }
+                            
+                        }];
+                        
+                    }
+                    
+                }
                 
             }];
             

@@ -75,7 +75,7 @@ PrefsManager * SharedPrefs = nil;
     
     NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
     
-    self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] || 0;
+    self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] ?: 0;
     self.tintColor = [YetiThemeKit.colours objectAtIndex:self.iOSTintColorIndex];
     
 }
@@ -147,6 +147,9 @@ PrefsManager * SharedPrefs = nil;
     }
     else if ([key isEqualToString:propSel(hideBars)]) {
         return kHideBars;
+    }
+    else if ([key isEqualToString:propSel(iOSTintColorIndex)]) {
+        return formattedString(@"theme-%@-color", @"default");
     }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;

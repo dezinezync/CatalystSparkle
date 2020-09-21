@@ -1,3 +1,19 @@
+# v2.0.2
+
+# Build 32
+
+- Fixes a rotation bug on iPads. 
+
+- Fixes a article scaling bug on iPads when toggling the sidebar. 
+
+- Changing the selected tint color now applies correctly throughout the app. 
+
+- Fixed the app not loading the selected tint color on launch. 
+
+- Fixed an issue when searching for a feed by title or keywords would dismiss the modal. 
+
+- Fixed an issue with pagination when searching for feeds in the Add New Feed interface. 
+
 # v2.0.1
 
 # Build 31
