@@ -368,7 +368,6 @@
     
     self.tableView.tableHeaderView = tableHeader;
     
-    [tableHeader.topAnchor constraintEqualToAnchor:self.tableView.safeAreaLayoutGuide.topAnchor].active = YES;
     [tableHeader.leadingAnchor constraintEqualToAnchor:self.tableView.readableContentGuide.leadingAnchor].active = YES;
     [tableHeader.trailingAnchor constraintEqualToAnchor:self.tableView.readableContentGuide.trailingAnchor].active = YES;
     
