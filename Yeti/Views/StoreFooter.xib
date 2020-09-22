@@ -60,7 +60,7 @@
                     </constraints>
                 </stackView>
                 <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ouJ-ng-5dH">
-                    <rect key="frame" x="177.66666666666666" y="56" width="20" height="20"/>
+                    <rect key="frame" x="177.66666666666666" y="108" width="20" height="20"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="4nc-DJ-vlz"/>
                         <constraint firstAttribute="width" constant="20" id="Dwb-jD-vby"/>
@@ -72,9 +72,8 @@
             <constraints>
                 <constraint firstItem="DEc-6P-8tU" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="24" id="AHV-kk-fKd"/>
                 <constraint firstItem="DEc-6P-8tU" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="NkI-uT-o6h"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="ouJ-ng-5dH" secondAttribute="bottom" priority="999" constant="12" id="YiI-Ar-mtf"/>
                 <constraint firstItem="ouJ-ng-5dH" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="hbT-1J-dCQ"/>
-                <constraint firstItem="ouJ-ng-5dH" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="12" id="lbE-pn-nvg"/>
+                <constraint firstItem="ouJ-ng-5dH" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="64" id="lbE-pn-nvg"/>
                 <constraint firstItem="DEc-6P-8tU" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="ugt-hJ-SQr"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="DEc-6P-8tU" secondAttribute="trailing" constant="16" id="zgh-Ny-ZNW"/>
             </constraints>
