@@ -4,6 +4,8 @@
 
 - Wordpress blogs convert emojis to an image with the emoji as the alt text on the image. Elytra will now skip rendering the image and appropriately render the emoji used by the author in the same context as the original blog post. This prevents the paragraph breaking on to the next line to accomodate the custom emoji image Wordpress inserts.  
 
+- Minor fixes to regressions introduced in build 34.
+
 ## Build 34
 
 - Adds a new, simpler flow for starting the Free Trial. 
