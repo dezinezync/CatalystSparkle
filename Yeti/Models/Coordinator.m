@@ -171,6 +171,7 @@
     }
     
     LaunchVC *vc = [[LaunchVC alloc] initWithNibName:NSStringFromClass(LaunchVC.class) bundle:nil];
+    vc.mainCoordinator = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -345,9 +346,13 @@
         
     }
     
+    BOOL isEmptyVC = NO;
+    
     if ([controller isKindOfClass:EmptyVC.class]) {
         
         self.emptyVC = (EmptyVC *)controller;
+        
+        isEmptyVC = YES;
         
     }
     
@@ -366,12 +371,28 @@
         
         // We never push the empty VC on the navigation stack
         // on compact devices
-        if ([controller isKindOfClass:EmptyVC.class]) {
+        if (isEmptyVC) {
+            self.emptyVC = nil;
             return;
         }
         
         UINavigationController *nav = self.splitViewController.viewControllers.firstObject;
         [nav pushViewController:controller animated:YES];
+        
+    }
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        
+        if ([self.splitViewController isCollapsed] == NO
+            && self.splitViewController.displayMode == UISplitViewControllerDisplayModeTwoDisplaceSecondary) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                self.splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeOneBesideSecondary;
+                
+            });
+            
+        }
         
     }
     

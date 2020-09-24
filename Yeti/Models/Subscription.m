@@ -53,6 +53,11 @@
     
     if (([key isEqualToString:@"expiry"] || [key isEqualToString:@"created"]) && [value isKindOfClass:NSString.class]) {
         
+        if ([value containsString:@".000Z"]) {
+            
+            value = [(NSString *)value stringByReplacingOccurrencesOfString:@".000Z" withString:@".GMTZ"];
+        }
+        
         // convert NSString to NSDate
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'.'zzz'Z'";
@@ -112,13 +117,25 @@
             
             NSArray <NSDictionary *> *items = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
             
-            if (items != nil && items.count) {
+            if (items != nil) {
                 
-                NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                NSDictionary *latest = nil;
                 
-                items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
-                
-                NSDictionary *latest = [items lastObject];
+                if ([items isKindOfClass:NSArray.class]) {
+                    
+                    NSSortDescriptor *sortByPeriodEnd = [NSSortDescriptor sortDescriptorWithKey:@"current_period_end" ascending:YES];
+                    
+                    items = [items sortedArrayUsingDescriptors:@[sortByPeriodEnd]];
+                    
+                    latest = [items lastObject];
+                    
+                }
+                else if ([items isKindOfClass:NSDictionary.class]) {
+                    latest = (id)items;
+                }
+                else {
+                    return;
+                }
                 
                 NSTimeInterval ending = [[latest valueForKey:@"current_period_end"] doubleValue];
                 

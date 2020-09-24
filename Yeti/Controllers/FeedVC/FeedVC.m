@@ -370,7 +370,7 @@
         
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
         
-        cell.tintColor = self.view.tintColor;
+        cell.tintColor = SharedPrefs.tintColor;
         
         [cell configure:article feedType:self.type];
         

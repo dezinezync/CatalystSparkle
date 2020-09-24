@@ -12,6 +12,7 @@
 #import "SettingsVC.h"
 
 #import "Coordinator.h"
+#import "ArticlesManager.h"
 
 #import <DZKit/AlertManager.h>
 
@@ -195,13 +196,13 @@
     
     [avc addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         
-        void(^removeFeedFromDS)(NSNumber *feedID) = ^(NSNumber *feedID) {
+        void(^removeFeedFromDS)(Feed * __feed) = ^(Feed * __feed) {
             
-            if (feed.folderID != nil && feed.folderID.integerValue) {
+            if (__feed.folderID != nil && __feed.folderID.integerValue) {
                 // remove it from the folder struct
                 [ArticlesManager.shared.folders enumerateObjectsUsingBlock:^(Folder * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
-                    if ([obj.folderID isEqualToNumber:feed.folderID]) {
+                    if ([obj.folderID isEqualToNumber:__feed.folderID]) {
                         
                         NSArray *feeds = [obj.feeds.allObjects rz_filter:^BOOL(Feed *objx, NSUInteger idxx, NSArray *array) {
                             return ![objx.feedID isEqualToNumber:feed.feedID];
@@ -219,27 +220,44 @@
             NSArray <Feed *> *feeds = ArticlesManager.shared.feeds;
             
             feeds = [feeds rz_filter:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
-                return obj.feedID.integerValue != feedID.integerValue;
+                return obj.feedID.integerValue != __feed.feedID.integerValue;
             }];
             
+            [ArticlesManager.shared willBeginUpdatingStore];
+            
             ArticlesManager.shared.feeds = feeds;
+            
+            [ArticlesManager.shared didFinishUpdatingStore:NO];
+            
             MyFeedsManager.totalUnread = MyFeedsManager.totalUnread - feed.unread.integerValue;
             
+            NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+            [snapshot deleteItemsWithIdentifiers:@[__feed]];
+            
             if (completionHandler) {
+                
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    
                     completionHandler(YES);
+                     
                 });
+                
             }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            });
+            
         };
         
         [MyFeedsManager removeFeed:feed.feedID success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            removeFeedFromDS(feed.feedID);
+            removeFeedFromDS(feed);
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             if (response.statusCode == 304) {
-                removeFeedFromDS(feed.feedID);
+                removeFeedFromDS(feed);
             }
             else {
                 asyncMain(^{

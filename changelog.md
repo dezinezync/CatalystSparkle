@@ -1,69 +1,51 @@
-# v2.0.0
+# v2.0.2
 
-## Build 24
+## Build 38
 
-- Minor fixes everywhere. 
+- Fixes an issue with sorting of Feeds. Feeds which are not inside any folder are now correctly sorted in ascending alphabetical order. Thank you Jason, for pointing this out.  
 
-- New Folder/Edit Folder interface now uses a basic interface which is faster to use IMO. 
+- iPads in Portrait mode now correctly hide the sidebar upon tapping an article. 
 
-Unless we encounter any breaking bugs, this version will be shipped for review. 
+## Build 35
 
-## Build 22
+- Wordpress blogs convert emojis to an image with the emoji as the alt text on the image. Elytra will now skip rendering the image and appropriately render the emoji used by the author in the same context as the original blog post. This prevents the paragraph breaking on to the next line to accomodate the custom emoji image Wordpress inserts.  
 
-- Improved styling for inline code blocks. 
+- Minor fixes to regressions introduced in build 34.
 
-- Fixed the searched word not being highlighted. The highlighting frame got a transparent color set. 
+## Build 34
 
-- Fixed code blocks appearing out of order. A year old bug finally fixed! 
+- Adds a new, simpler flow for starting the Free Trial. 
 
-- Fixed some pre-formatted quotes appearing as single-line code blocks.
+- Fixed an issue where the App would show a "No Subscription Found" error after resetting or deactivating your account. 
 
-- Updated Feed Sorting options to use a menu interface instead of an options controller. 
+- Fixed an issue where an interrupted on-boarding would prevent you from using the app without purchasing a subscription. This now ensures you are always able to start your free trial if your onboarding was interrupted. 
 
-- The Add Feed interface now shows Recommendations for its default state to help improve finding and adding new feeds. 
+- If you're currently enrolled in the Free Trial, the subscriptions interface will now correctly indicate that. 
 
-## Build 21
+# Build 32
 
-- Fixed the app crashing in the background when registering for background refresh with the OS. 
+- Fixes a rotation bug on iPads. 
 
-- Fixed Counters widget showing 0 Bookmarks. 
+- Fixes a article scaling bug on iPads when toggling the sidebar. 
 
-- Fixed launching from the Counters widget not setting up the app as expected. 
+- Changing the selected tint color now applies correctly throughout the app. 
 
-- The Article Helper view (bottom bar) now has the correct tint color. 
+- Fixed the app not loading the selected tint color on launch. 
 
-## Build 20 
+- Fixed an issue when searching for a feed by title or keywords would dismiss the modal. 
 
-- Fixed selecting a tint color on iOS crashing the app. 
+- Fixed an issue with pagination when searching for feeds in the Add New Feed interface. 
 
-- Fixed tint color not applying when launching the app. 
+# v2.0.1
 
-- Fixed I/O View not appearing when importing / exporting OPML files.
+# Build 31
 
-- Fixed background refresh not working or crashing the app. 
+- Various fixes for adding new feeds.
 
-- Fixed Resetting Account not working. 
+- Fixed applying selected tint colors globally. 
 
-## Build 19
+- Deleting a feed (which is inside a folder) no longer collapses the folder. 
 
-- Fixes showing cover images inside the Article Reader. 
+- Fixes a crash on opening the Notifications Interface if you have 0 subscriptions. 
 
-- Fixes opening an article from Widgets on iPads.
-
-- Slightly improved scene restoration. 
-
-- Fixed opening URLs inside the app which could sometimes crash the app entirely. 
-
-- New Code Theme for pre-formatted code blocks. 
-
-## Build 18
-
-- Fixed a crash on launch from Build 16 and 17. 
-
-- Fixed the font-size for the article author and blog name in the article reader. 
-
-## Build 17
-
-- Fixes a crash on launch when number of unread articles is less than 4. This crash was caused when fetching data for the Widgets. 
-
-- Fixes the icon for the "Mark Newer Items" when sorting was done by Newest first. 
+- Fixes a crash on adding a feed from the Share Extension

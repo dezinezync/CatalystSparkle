@@ -24,6 +24,8 @@
 
 @interface SplitVC () <UIGestureRecognizerDelegate>
 
+- (void)setupDisplayModes:(CGSize)size;
+
 @property (nonatomic, weak) TwoFingerPanGestureRecognizer *twoFingerPan;
 
 @end
@@ -56,6 +58,8 @@
         self.minimumSupplementaryColumnWidth = 320.f;
         self.maximumSupplementaryColumnWidth = 375.f;
 #endif
+      
+        self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorDisplace;
         
         self.presentsWithGesture = YES;
         
@@ -70,26 +74,24 @@
     
     [super viewDidLoad];
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-       
-        [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
-        
-    });
+    [self setupDisplayModes:self.view.bounds.size];
     
 #if !TARGET_OS_MACCATALYST
     
-    UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
-    twoFingerPanUp.numberOfTouchesRequired = 2;
-    twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
-    twoFingerPanUp.delegate = self;
+//    UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
+//    twoFingerPanUp.numberOfTouchesRequired = 2;
+//    twoFingerPanUp.direction = UISwipeGestureRecognizerDirectionUp;
+//    twoFingerPanUp.delegate = self;
+//    
+//    UISwipeGestureRecognizer *twoFingerPanDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
+//    twoFingerPanDown.numberOfTouchesRequired = 2;
+//    twoFingerPanDown.direction = UISwipeGestureRecognizerDirectionDown;
+//    twoFingerPanDown.delegate = self;
+//    
+//    [self.view addGestureRecognizer:twoFingerPanUp];
+//    [self.view addGestureRecognizer:twoFingerPanDown];
     
-    UISwipeGestureRecognizer *twoFingerPanDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
-    twoFingerPanDown.numberOfTouchesRequired = 2;
-    twoFingerPanDown.direction = UISwipeGestureRecognizerDirectionDown;
-    twoFingerPanDown.delegate = self;
-    
-    [self.view addGestureRecognizer:twoFingerPanUp];
-    [self.view addGestureRecognizer:twoFingerPanDown];
+    [self setupDisplayModes:self.view.bounds.size];
     
 #endif
     
@@ -119,6 +121,48 @@
         return [self userNotFound];
     }
 }
+
+#if !TARGET_OS_MACCATALYST
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    [self setupDisplayModes:size];
+    
+}
+
+- (void)setupDisplayModes:(CGSize)size {
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        return;
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        if (size.width < 1024.f) {
+            
+            [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorDisplace];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoDisplaceSecondary];
+            
+        }
+        else if (size.width >= 1024.f && size.width < 1180.f) {
+            
+            [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorTile];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoDisplaceSecondary];
+            
+        }
+        else {
+            
+            [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorTile];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
+            
+        }
+        
+    });
+    
+}
+
+#endif
 
 #pragma mark -
 

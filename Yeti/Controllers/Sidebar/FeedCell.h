@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) Feed *feed;
 @property (nonatomic, weak, nullable) UICollectionViewDiffableDataSource *DS;
 @property (nonatomic, assign, getter=isExploring) BOOL exploring;
+@property (nonatomic, assign, getter=isAdding) BOOL adding;
 
 - (void)configure:(nonnull Feed *)feed indexPath:(nonnull NSIndexPath *)indexPath;
 

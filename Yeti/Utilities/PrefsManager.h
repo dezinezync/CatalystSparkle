@@ -45,6 +45,7 @@ extern PrefsManager * SharedPrefs;
 @property (assign) BOOL useToolbar; // kUseToolbar
 @property (assign) BOOL hideBars; //kHideBars
 @property (assign) NSInteger iOSTintColorIndex;
+@property (strong) UIColor *tintColor;
 
 @property (assign) BOOL useSystemSize; // kUseSystemFontSize
 @property (assign) NSInteger fontSize; // kFontSize

@@ -1747,6 +1747,48 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
+    /**
+     * Wordpress blogs add stupid emoji images to the content in the RSS feeds
+     * but they also include the actual emoji in the alt text. We extract the
+     * alt text and use that directly. 
+     */
+    if (content.url && [content.url containsString:@"/images/core/emoji"]) {
+        
+        NSDictionary *attributes = content.attributes;
+        
+        if (attributes[@"alt"] != nil) {
+            
+            if (_last != nil && [_last isMemberOfClass:Paragraph.class]) {
+                
+                Paragraph *para = (id)_last;
+                
+                NSMutableAttributedString *mattrs = para.attributedText.mutableCopy;
+                
+                NSDictionary *textAttributes = @{NSFontAttributeName: para.font};
+                
+                NSAttributedString * attrs = [[NSAttributedString alloc] initWithString:attributes[@"alt"] attributes:textAttributes];
+                
+                [mattrs appendAttributedString:attrs];
+                
+                para.attributedText = mattrs;
+                
+            }
+            else {
+                
+                Content *altContent = [Content new];
+                altContent.type = @"paragraph";
+                altContent.content = attributes[@"alt"];
+                
+                [self addParagraph:altContent caption:NO];
+                
+            }
+            
+        }
+        
+        return;
+        
+    }
+    
     if ([_last isMemberOfClass:Heading.class] || !_last || [_last isMemberOfClass:Paragraph.class])
         [self addLinebreak];
     

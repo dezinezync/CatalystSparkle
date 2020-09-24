@@ -39,7 +39,7 @@
     
     if (self.superview != nil) {
         
-        self.tintColor = self.tintColor;
+        self.tintColor = SharedPrefs.tintColor;
         
         self.backgroundColor = UIColor.systemBackgroundColor;
         
@@ -63,25 +63,6 @@
         
         self.clipsToBounds = NO;
     }
-}
-
-- (void)tintColorDidChange {
-    
-    [super tintColorDidChange];
-    
-    if (self.superview != nil && self.previousArticleButton != nil) {
-        
-        for (UIButton *button in @[self.previousArticleButton, self.nextArticleButton, self.startOfArticle, self.endOfArticle]) {
-            
-            button.tintColor = self.tintColor;
-            
-            [button setNeedsDisplay];
-            [button setNeedsLayout];
-            
-        }
-        
-    }
-    
 }
 
 - (void)updateShadowPath {

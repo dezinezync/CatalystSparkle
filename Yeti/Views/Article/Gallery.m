@@ -75,7 +75,7 @@
         self.collectionView.prefetchingEnabled = YES;
         
         [self.pageControl addTarget:self action:@selector(didChangePage:) forControlEvents:UIControlEventValueChanged];
-        self.pageControl.currentPageIndicatorTintColor = self.tintColor;
+        self.pageControl.currentPageIndicatorTintColor = SharedPrefs.tintColor;
         
 #if DEBUG_LAYOUT == 1
         self.collectionView.backgroundColor = UIColor.systemIndigoColor;

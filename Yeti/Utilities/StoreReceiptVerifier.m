@@ -80,11 +80,15 @@
             successBlock();
         }
         
+        [NSNotificationCenter.defaultCenter postNotificationName:RMStoreReceiptDidValidate object:nil userInfo:@{RMStoreUserInfoTransactionKey: transaction}];
+        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (failureBlock) {
             failureBlock(error);
         }
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:RMStoreReceiptFailedToValidate object:nil userInfo:@{RMStoreUserInfoTransactionKey: transaction}];
         
     }];
     

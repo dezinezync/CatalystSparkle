@@ -10,4 +10,6 @@
 
 @interface RecommendationsVC : UICollectionViewController <UIViewControllerRestoration>
 
+@property (nonatomic, assign, getter=isOnboarding) BOOL onboarding;
+
 @end

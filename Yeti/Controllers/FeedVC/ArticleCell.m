@@ -19,6 +19,7 @@
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+Transform.h>
+#import <SDWebImage/SDWebImageError.h>
 
 #if TARGET_OS_MACCATALYST
 
@@ -136,6 +137,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     [super tintColorDidChange];
     
     [self updateMarkerView];
+    
+    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
     
 }
 
@@ -505,6 +508,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         return;
     }
     
+    NSString *baseURL = [url copy];
+    
     CGFloat maxWidth = self.coverImage.bounds.size.width;
     
     if (SharedPrefs.imageProxy == YES) {
@@ -515,9 +520,25 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     self.coverImage.contentMode = UIViewContentModeCenter|UIViewContentModeScaleAspectFill;
     
-    [self.coverImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+    [self.coverImage sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         
         if (error != nil) {
+            
+            if (SharedPrefs.imageProxy == YES && [[error.userInfo valueForKey:SDWebImageErrorDownloadStatusCodeKey] integerValue] == 404) {
+                // try the direct URL
+                [self.coverImage sd_setImageWithURL:[NSURL URLWithString:baseURL] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                    
+                    if (error != nil) {
+                        
+                        return;
+                    }
+                    
+                    self.coverImage.contentMode = UIViewContentModeScaleAspectFill;
+                    
+                }];
+                
+            }
+            
             return;
         }
         
@@ -536,7 +557,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
     }
     else if (self.article.isRead == NO) {
-        self.markerView.tintColor = self.tintColor;
+        self.markerView.tintColor = SharedPrefs.tintColor;
         self.markerView.image = [UIImage systemImageNamed:@"largecircle.fill.circle"];
     }
     else {

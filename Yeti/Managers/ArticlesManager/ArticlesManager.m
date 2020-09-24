@@ -54,15 +54,25 @@ static ArticlesManager * SharedArticleManager = nil;
 
 - (void)didFinishUpdatingStore {
     
+    [self didFinishUpdatingStore:YES];
+    
+}
+
+- (void)didFinishUpdatingStore:(BOOL)notify {
+    
     if (_updatingStores == NO) {
         return;
     }
     
     _updatingStores = NO;
     
-    self.feedsWithoutFolders = nil;
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
+    if (notify) {
+        
+        self.feedsWithoutFolders = nil;
+        
+        [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
+        
+    }
     
 }
 

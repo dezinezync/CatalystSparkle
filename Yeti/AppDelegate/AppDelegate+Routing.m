@@ -334,16 +334,17 @@
 }
 
 - (NSTimeInterval)popRootToRoot {
+    
     NSTimeInterval delay = 0;
     
-    UISplitViewController *splitVC = (UISplitViewController *)[self.window rootViewController];
+    UISplitViewController *splitVC = self.coordinator.splitViewController;
     
     if ([splitVC presentedViewController] != nil) {
         [[splitVC presentedViewController] dismissViewControllerAnimated:YES completion:nil];
         delay += 0.75;
     }
     
-    UINavigationController *nav = splitVC.viewControllers.firstObject;
+    UINavigationController *nav = self.coordinator.sidebarVC.navigationController;
     
     if ([nav presentedViewController] != nil) {
         [[nav presentedViewController] dismissViewControllerAnimated:YES completion:nil];

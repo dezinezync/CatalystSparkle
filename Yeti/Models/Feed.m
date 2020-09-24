@@ -79,7 +79,13 @@
 - (NSUInteger)hash {
     
     NSUInteger hash = 0;
-    hash += self.feedID.unsignedIntegerValue;
+    
+    if (self.feedID == nil) {
+        hash += self.url.hash;
+    }
+    else {
+        hash += self.feedID.unsignedIntegerValue;
+    }
     
     return hash;
     

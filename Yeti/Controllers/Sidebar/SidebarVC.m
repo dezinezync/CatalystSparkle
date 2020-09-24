@@ -195,12 +195,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     
+    [super viewWillAppear:animated];
+    
 #if !TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
 #endif
-    
-    [super viewWillAppear:animated];
     
 }
 
@@ -237,7 +237,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 #else
     self.navigationItem.leftBarButtonItems = @[self.splitViewController.displayModeButtonItem, self.leftBarButtonItem];
     self.navigationItem.rightBarButtonItems = self.rightBarButtonItems;
-#endif
+
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
     // Search Controller setup
@@ -261,7 +261,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     self.collectionView.refreshControl = refresh;
     
     self.refreshControl = refresh;
-    
+#endif
 }
 
 - (void)setupDatasource {
@@ -341,7 +341,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
             NSDiffableDataSourceSectionSnapshot *onlyFeedsSnapshot = [NSDiffableDataSourceSectionSnapshot new];
             
-            [onlyFeedsSnapshot appendItems:ArticlesManager.shared.feedsWithoutFolders];
+            NSArray <Feed *> *alphaSorted = [ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]];
+            
+            [onlyFeedsSnapshot appendItems:alphaSorted];
             
             [self.DS applySnapshot:onlyFeedsSnapshot toSection:@(NSUIntegerMax - 100) animatingDifferences:NO];
 

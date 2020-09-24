@@ -13,7 +13,7 @@
 #import <DZKit/AlertManager.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "UIViewController+Stateful.h"
-#import "YetiThemeKit.h"
+
 #import "PaddedLabel.h"
 
 #define pushEmptyViewTag 947642
@@ -333,14 +333,12 @@
         return nil;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
     CGRect layoutFrame = [self.view.readableContentGuide layoutFrame];
     
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.padding = UIEdgeInsetsMake(0, layoutFrame.origin.x, 0, layoutFrame.origin.x);
     label.numberOfLines = 0;
-    label.backgroundColor = theme.cellColor;
+    label.backgroundColor = UIColor.systemBackgroundColor;
     label.opaque = YES;
     
     NSString *title = @"No Subscriptions";
@@ -355,14 +353,14 @@
     UIFont *font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     
     NSDictionary *attributes = @{NSFontAttributeName: font,
-                                 NSForegroundColorAttributeName: theme.subtitleColor,
+                                 NSForegroundColorAttributeName: UIColor.secondaryLabelColor,
                                  NSParagraphStyleAttributeName: para
                                  };
     
     NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formatted attributes:attributes];
     
     attributes = @{NSFontAttributeName: [UIFont systemFontOfSize:font.pointSize weight:UIFontWeightSemibold],
-                   NSForegroundColorAttributeName: theme.titleColor,
+                   NSForegroundColorAttributeName: UIColor.labelColor,
                    NSParagraphStyleAttributeName: para
                    };
     
