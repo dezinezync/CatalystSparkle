@@ -341,7 +341,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
             NSDiffableDataSourceSectionSnapshot *onlyFeedsSnapshot = [NSDiffableDataSourceSectionSnapshot new];
             
-            [onlyFeedsSnapshot appendItems:ArticlesManager.shared.feedsWithoutFolders];
+            NSArray <Feed *> *alphaSorted = [ArticlesManager.shared.feedsWithoutFolders sortedArrayUsingDescriptors:@[alphaSort]];
+            
+            [onlyFeedsSnapshot appendItems:alphaSorted];
             
             [self.DS applySnapshot:onlyFeedsSnapshot toSection:@(NSUIntegerMax - 100) animatingDifferences:NO];
 

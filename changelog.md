@@ -1,5 +1,11 @@
 # v2.0.2
 
+## Build 38
+
+- Fixes an issue with sorting of Feeds. Feeds which are not inside any folder are now correctly sorted in ascending alphabetical order. Thank you Jason, for pointing this out.  
+
+- iPads in Portrait mode now correctly hide the sidebar upon tapping an article. 
+
 ## Build 35
 
 - Wordpress blogs convert emojis to an image with the emoji as the alt text on the image. Elytra will now skip rendering the image and appropriately render the emoji used by the author in the same context as the original blog post. This prevents the paragraph breaking on to the next line to accomodate the custom emoji image Wordpress inserts.  

@@ -74,11 +74,7 @@
     
     [super viewDidLoad];
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-       
-        [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
-        
-    });
+    [self setupDisplayModes:self.view.bounds.size];
     
 #if !TARGET_OS_MACCATALYST
     
@@ -141,22 +137,28 @@
         return;
     }
     
-    if (size.width < 1024.f) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        if (size.width < 1024.f) {
+            
+            [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorDisplace];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoDisplaceSecondary];
+            
+        }
+        else if (size.width >= 1024.f && size.width < 1180.f) {
+            
+            [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorTile];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoDisplaceSecondary];
+            
+        }
+        else {
+            
+            [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorTile];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
+            
+        }
         
-        self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorDisplace;
-        self.preferredDisplayMode = UISplitViewControllerDisplayModeOneOverSecondary;
-        
-    }
-    else if (size.width >= 1024.f && size.width < 1180.f) {
-        
-        self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorTile;
-        self.preferredDisplayMode = UISplitViewControllerDisplayModeOneOverSecondary;
-        
-    }
-    else {
-        self.preferredSplitBehavior = UISplitViewControllerSplitBehaviorTile;
-        self.preferredDisplayMode = UISplitViewControllerDisplayModeOneBesideSecondary;
-    }
+    });
     
 }
 

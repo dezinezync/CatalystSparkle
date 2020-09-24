@@ -381,6 +381,21 @@
         
     }
     
+    if (self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        
+        if ([self.splitViewController isCollapsed] == NO
+            && self.splitViewController.displayMode == UISplitViewControllerDisplayModeTwoDisplaceSecondary) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                self.splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeOneBesideSecondary;
+                
+            });
+            
+        }
+        
+    }
+    
 }
 
 #pragma mark - Helpers
