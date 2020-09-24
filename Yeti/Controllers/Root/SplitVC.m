@@ -74,9 +74,9 @@
     
     [super viewDidLoad];
     
-    [self setupDisplayModes:self.view.bounds.size];
-    
 #if !TARGET_OS_MACCATALYST
+    
+    [self setupDisplayModes:self.view.bounds.size];
     
 //    UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
 //    twoFingerPanUp.numberOfTouchesRequired = 2;
@@ -91,7 +91,14 @@
 //    [self.view addGestureRecognizer:twoFingerPanUp];
 //    [self.view addGestureRecognizer:twoFingerPanDown];
     
-    [self setupDisplayModes:self.view.bounds.size];
+#else
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorTile];
+        [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
+        
+    });
     
 #endif
     

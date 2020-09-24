@@ -564,7 +564,7 @@
     if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
       
         pvc.sourceView = self.view;
-        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 132.f, 22.f, self.view.bounds.size.width, 1);
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 60.f, 22.f, self.view.bounds.size.width, 1);
         
     }
     else {

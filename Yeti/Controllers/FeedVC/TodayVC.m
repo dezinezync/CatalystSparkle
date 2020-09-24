@@ -38,11 +38,12 @@
     self.title = @"Today";
     self.pagingManager = self.todayManager;
     
+#if !TARGET_OS_MACCATALYST
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     self.refreshControl = refreshControl;
-    
+#endif
 }
 
 #pragma mark - Subclassed

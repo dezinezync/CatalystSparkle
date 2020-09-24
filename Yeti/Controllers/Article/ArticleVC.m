@@ -2138,6 +2138,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+#if TARGET_OS_MACCATALYST
+    return;
+#endif
+    
     NSString *videoID = [[content url] lastPathComponent];
     
     if ([videoID containsString:@"watch?v="] == YES) {

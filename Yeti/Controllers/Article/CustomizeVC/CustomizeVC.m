@@ -15,6 +15,12 @@
 #import "YetiThemeKit.h"
 #import "PrefsManager.h"
 
+#if TARGET_OS_MACCATALYST
+
+#import "DZStepper.h"
+
+#endif
+
 #define CUSTOMIZE_SECTION_TEXT @0
 #define CUSTOMIZE_SECTION_PARA @1
 #define CUSTOMIZE_SECTION_THEME @2
@@ -170,7 +176,15 @@
                             NSInteger value = SharedPrefs.fontSize;
                             cell.valueLabel.text = [NSString stringWithFormat:@"%@pt", @(value)];
                             
-                            UIStepper *stepper = [[UIStepper alloc] init];
+                            UIStepper *stepper;
+                            
+#if TARGET_OS_MACCATALYST
+                            stepper = (id)[[DZStepper alloc] initWithFrame:CGRectZero];
+                            stepper.stepValue = 1;
+#else
+                            stepper = [[UIStepper alloc] init];
+#endif
+                            
                             stepper.minimumValue = 9;
                             stepper.maximumValue = 23;
                             stepper.value = value;
@@ -247,7 +261,14 @@
                             
                             cell.valueLabel.text = [NSString stringWithFormat:@"%@x", [formatter stringFromNumber:@(value)]];
                             
-                            UIStepper *stepper = [[UIStepper alloc] init];
+                            UIStepper *stepper;
+                            
+#if TARGET_OS_MACCATALYST
+                            stepper = (id)[[DZStepper alloc] initWithFrame:CGRectZero];
+                            stepper.stepValue = 1;
+#else
+                            stepper = [[UIStepper alloc] init];
+#endif
                             stepper.minimumValue = 1.f;
                             stepper.maximumValue = 3.f;
                             stepper.value = value;
