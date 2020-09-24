@@ -522,6 +522,17 @@
         return NO;
         
     }
+    else if ([NSStringFromSelector(aSelector) isEqualToString:@"didTapSearch"]) {
+        
+        if (self.mainCoordinator.articleVC != nil) {
+            
+            return [self.mainCoordinator.articleVC respondsToSelector:aSelector];
+            
+        }
+        
+        return NO;
+        
+    }
     
     return [super respondsToSelector:aSelector];
     
@@ -536,6 +547,13 @@
         }
         
     }
+    else if ([NSStringFromSelector(selector) isEqualToString:@"didTapSearch"]) {
+        
+        if (self.mainCoordinator.articleVC != nil && [self.mainCoordinator.articleVC respondsToSelector:selector] == YES) {
+            return [self.mainCoordinator.articleVC methodSignatureForSelector:selector];
+        }
+        
+    }
     
     return [super methodSignatureForSelector:selector];
 }
@@ -544,6 +562,10 @@
     
     if (anInvocation.selector == NSSelectorFromString(@"didBeginRefreshing:") && self.mainCoordinator.feedVC != nil) {
         [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
+        return;
+    }
+    else if (anInvocation.selector == NSSelectorFromString(@"didTapSearch") && self.mainCoordinator.articleVC != nil) {
+        [anInvocation invokeWithTarget:self.mainCoordinator.articleVC];
         return;
     }
     

@@ -2137,9 +2137,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
-//#if TARGET_OS_MACCATALYST
-//    return;
-//#endif
+#if TARGET_OS_MACCATALYST
+    return [self _addYoutube:content];
+#endif
     
     NSString *videoID = [[content url] lastPathComponent];
     
@@ -2158,11 +2158,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     playerController.updatesNowPlayingInfoCenter = NO;
     playerController.showsTimecodes = YES;
     playerController.allowsPictureInPicturePlayback = YES;
-    
-#if TARGET_OS_MACCATALYST
-    playerController.showsPlaybackControls = NO;
-#endif
-    
+        
     [self addChildViewController:playerController];
     
     UIView *playerView = playerController.view;
