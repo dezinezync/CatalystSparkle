@@ -19,7 +19,6 @@
 
 #import "RecommendationsVC.h"
 
-#import "YetiThemeKit.h"
 #import "Keychain.h"
 
 @interface TrialVC ()

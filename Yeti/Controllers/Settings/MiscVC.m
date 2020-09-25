@@ -7,7 +7,6 @@
 //
 
 #import "MiscVC.h"
-#import "YetiThemeKit.h"
 #import "SettingsCell.h"
 #import "YetiConstants.h"
 #import "PreviewLinesVC.h"

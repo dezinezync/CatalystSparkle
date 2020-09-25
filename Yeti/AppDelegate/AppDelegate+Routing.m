@@ -10,7 +10,6 @@
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
 #import "YetiConstants.h"
-#import "YetiThemeKit.h"
 
 #import "FeedVC.h"
 #import "ArticleVC.h"

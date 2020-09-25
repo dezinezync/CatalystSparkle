@@ -9,7 +9,6 @@
 #import "ImageLoadingVC.h"
 #import "LayoutConstants.h"
 #import "YetiConstants.h"
-#import "YetiThemeKit.h"
 #import "PrefsManager.h"
 #import "SettingsCell.h"
 

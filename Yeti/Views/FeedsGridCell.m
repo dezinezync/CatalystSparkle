@@ -7,7 +7,6 @@
 //
 
 #import "FeedsGridCell.h"
-#import "YetiThemeKit.h"
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <DZKit/NSString+Extras.h>
@@ -60,10 +59,9 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
     
     self.feed = feed;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.backgroundColor = theme.cellColor;
-    self.titleLabel.textColor = theme.titleColor;
-    self.selectedBackgroundView.backgroundColor = [theme.tintColor colorWithAlphaComponent:0.2f];
+    self.backgroundColor = UIColor.systemBackgroundColor;
+    self.titleLabel.textColor = UIColor.labelColor;
+    self.selectedBackgroundView.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
     
 }
 

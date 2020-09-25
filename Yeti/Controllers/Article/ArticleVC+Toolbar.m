@@ -13,8 +13,6 @@
 
 #import "AppDelegate.h"
 
-#import "YetiThemeKit.h"
-
 #import "Paragraph.h"
 #import "FeedsManager.h"
 

@@ -11,7 +11,6 @@
 #import "AppDelegate+Store.h"
 
 #import <JLRoutes/JLRoutes.h>
-#import "YetiThemeKit.h"
 
 #import "YetiConstants.h"
 #import "CodeParser.h"
@@ -304,12 +303,6 @@ AppDelegate *MyAppDelegate = nil;
         
         return;
     }
-    // the following is handled within YetiTheme model
-//    for (UIWindow *window in UIApplication.sharedApplication.windows) {
-//        window.tintColor = YTThemeKit.theme.tintColor;
-//    }
-
-   [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
     
 }
 

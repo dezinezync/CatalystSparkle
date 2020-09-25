@@ -26,7 +26,6 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 #import <DZKit/DZMessagingController.h>
 
-#import "YetiThemeKit.h"
 #import "DBManager+CloudCore.h"
 
 #import <sys/utsname.h>
@@ -512,9 +511,7 @@ NSString* deviceName() {
                 
                 webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
                 
-                Theme *theme = YTThemeKit.theme;
-                
-                NSString *tint = [UIColor hexFromUIColor:theme.tintColor];
+                NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
                 NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
                 
                 webVC.evalJSOnLoad = js;

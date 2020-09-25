@@ -10,7 +10,6 @@
 #import "RMStore.h"
 #import "StoreKeychainPersistence.h"
 
-#import "YetiThemeKit.h"
 #import "StoreFooter.h"
 #import "FeedsManager.h"
 #import "YetiConstants.h"

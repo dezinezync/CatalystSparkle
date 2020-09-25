@@ -14,7 +14,6 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "PaddedLabel.h"
-#import "YetiThemeKit.h"
 
 #import <DZKit/NSString+Extras.h>
 #import "CheckWifi.h"
@@ -240,7 +239,6 @@
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(didChangeTheme) name:kDidUpdateTheme object:nil];
     
     [notificationCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     
@@ -801,15 +799,6 @@
         }
         
     });
-    
-}
-
-- (void)didChangeTheme {
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.view.backgroundColor = theme.cellColor;
-    self.tableView.backgroundColor = theme.cellColor;
     
 }
 

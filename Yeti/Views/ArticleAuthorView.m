@@ -8,7 +8,6 @@
 
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
-#import "YetiThemeKit.h"
 #import "YetiConstants.h"
 
 @interface ArticleAuthorView () {

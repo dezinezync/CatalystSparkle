@@ -12,8 +12,6 @@
 
 #import "Keychain.h"
 
-#import "YetiThemeKit.h"
-
 #import "FeedsManager.h"
 #import "DBManager.h"
 #import <DZKit/AlertManager.h>

@@ -9,7 +9,6 @@
 #import "MoveFoldersVC.h"
 
 #import <DZKit/AlertManager.h>
-#import "YetiThemeKit.h"
 #import "YTNavigationController.h"
 
 static NSString *const kMoveFolderCell = @"movefoldercell";
@@ -17,9 +16,6 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
 @interface MoveFoldersVC () {
     BOOL _hasCalledDelegate;
 }
-
-//@property (nonatomic, strong) DZSectionedDatasource *DS;
-//@property (nonatomic, weak) DZBasicDatasource *DS2;
 
 @property (nonatomic, strong) UITableViewDiffableDataSource *DS;
 
@@ -146,10 +142,6 @@ static NSString *const kMoveFolderCell = @"movefoldercell";
         }
     }
 }
-
-//- (UIStatusBarStyle)preferredStatusBarStyle {
-//    return [[YTThemeKit theme] isDark] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault;
-//}
 
 #pragma mark - Table view data source
 
