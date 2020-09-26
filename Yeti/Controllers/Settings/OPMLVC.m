@@ -15,6 +15,8 @@
 #import "ImportVC.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 #import <DZNetworking/DZUploadSession.h>
 #import <DZKit/AlertManager.h>
 
@@ -52,7 +54,7 @@
     
     // Do any additional setup after loading the view from its nib.
     
-    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.detailsTitleLabel.textColor = UIColor.labelColor;
     self.detailsSubtitleLabel.textColor = UIColor.secondaryLabelColor;
@@ -77,19 +79,13 @@
     if (!_hasSetup) {
         self.state = OPMLStateDefault;
         _hasSetup = YES;
+        
+        self.importButton.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
+        self.exportButton.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
     }
     else if (self.state == OPMLStateExport) {
         [self didTapCancel:nil];
     }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
-    
-    self.importButton.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.2f];
-    self.exportButton.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.2f];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -228,11 +224,25 @@
     // get the UTI for an extension
     NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
     
-    NSArray <NSString *> *documentTypes = @[(__bridge NSString *)kUTTypeXML, typeForExt];
+    UTType *xmlTypeIdentifier = [UTType typeWithIdentifier:(__bridge NSString *)kUTTypeXML];
+    UTType *opmlTypeIdentifier = [UTType typeWithIdentifier:typeForExt];
+    
+    NSMutableArray <UTType *> *documentTypes = @[].mutableCopy;
+    
+    if (xmlTypeIdentifier) {
+        [documentTypes addObject:xmlTypeIdentifier];
+    }
+    
+    if (opmlTypeIdentifier) {
+        [documentTypes addObject:opmlTypeIdentifier];
+    }
+    
     /**
      * Proposed new method crashes on Beta 6
      */
-    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
+//    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
+    
+    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:documentTypes asCopy:YES];
     
     importVC.delegate = self;
     

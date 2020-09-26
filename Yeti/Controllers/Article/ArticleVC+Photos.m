@@ -18,6 +18,8 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+MultiFormat.h>
 
+#import "NSString+ImageProxy.h"
+
 @implementation ArticleVC (Photos)
 
 - (void)didTapOnImage:(UITapGestureRecognizer *)sender {
@@ -52,9 +54,7 @@
     NSUInteger index = NSNotFound,
                counter = -1;
     
-    
-    
-     NSMutableArray <IDMPhoto *> *_images = [NSMutableArray new];
+    NSMutableArray <IDMPhoto *> *_images = [NSMutableArray new];
         
     for (id obj in images) {
         
@@ -68,6 +68,13 @@
                 && image.darkModeURL != nil) {
                 
                 url = image.darkModeURL;
+                
+            }
+            
+            if ([url.absoluteString containsString:@"images.weserv.nl"]) {
+                
+                // convert to non-proxy URL
+                url = [url.absoluteString urlFromProxyURI];
                 
             }
             

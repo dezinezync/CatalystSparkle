@@ -230,7 +230,6 @@
 		F09CEA952508B2E6007941AD /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F09CEA942508B2E6007941AD /* FeedHeaderView.m */; };
 		F09CEAB02508B2F4007941AD /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09CEAAF2508B2F4007941AD /* FeedHeaderView.xib */; };
 		F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */; };
-		F09E96462055342000E61681 /* highlight.pack.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96422055342000E61681 /* highlight.pack.js */; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
@@ -1083,7 +1082,6 @@
 		F09CEAAF2508B2F4007941AD /* FeedHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedHeaderView.xib; sourceTree = "<group>"; };
 		F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SceneDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SceneDelegate+Catalyst.m"; sourceTree = "<group>"; };
-		F09E96422055342000E61681 /* highlight.pack.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = highlight.pack.js; sourceTree = "<group>"; };
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
 		F09E96452055342000E61681 /* light.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = light.css; sourceTree = "<group>"; };
@@ -2193,7 +2191,6 @@
 		F09E96412055340C00E61681 /* HLJS */ = {
 			isa = PBXGroup;
 			children = (
-				F09E96422055342000E61681 /* highlight.pack.js */,
 				F09E96432055342000E61681 /* hljs.js */,
 				F09FD732250915AF004BD60E /* auto.css */,
 				F09E96452055342000E61681 /* light.css */,
@@ -2955,7 +2952,6 @@
 				F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */,
 				F01E6E1324AC6C2500D1BD6E /* red.png in Resources */,
 				F0A5AEAE20C19DA200CFA1D2 /* IBMPlexSans-Bold.ttf in Resources */,
-				F09E96462055342000E61681 /* highlight.pack.js in Resources */,
 				F0A5AEBC20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
 				F01E6E1524AC6C2500D1BD6E /* gold-dark@3x.png in Resources */,
@@ -3454,7 +3450,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3493,7 +3489,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3554,7 +3550,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3615,7 +3611,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3650,7 +3646,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
@@ -3708,7 +3704,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3754,7 +3750,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3778,7 +3774,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3803,7 +3799,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3824,7 +3820,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3848,7 +3844,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = notificationContext/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3877,7 +3873,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = notificationContext/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3909,7 +3905,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3947,7 +3943,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

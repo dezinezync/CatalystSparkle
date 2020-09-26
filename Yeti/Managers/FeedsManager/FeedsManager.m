@@ -2752,7 +2752,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
-        if (totalUnread == NSUIntegerMax) {
+        if (totalUnread >= NSUIntegerMax) {
             self->_totalUnread = 0;
         }
         else {
@@ -2773,7 +2773,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
-        if (totalToday == NSUIntegerMax) {
+        if (totalToday >= NSUIntegerMax) {
             self->_totalToday = 0;
         }
         else {
@@ -2918,6 +2918,12 @@ NSArray <NSString *> * _defaultsKeys;
 }
 
 #pragma mark - Getters
+
+- (NSUInteger)totalToday {
+    
+    return _totalToday || 0;
+    
+}
 
 - (NSString *)appFullVersion {
     

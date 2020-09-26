@@ -14,7 +14,6 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "PaddedLabel.h"
-#import "YetiThemeKit.h"
 
 #import <DZKit/NSString+Extras.h>
 #import "CheckWifi.h"
@@ -54,6 +53,9 @@
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
+/// Special handling for specific feeds
+@property (assign) BOOL isiOSIconGallery;
+
 @end
 
 #define ArticlesSection @0
@@ -92,6 +94,10 @@
         
         self.feed = feed;
         
+        if (feed.url != nil && [feed.url containsString:@"iosicongallery"]) {
+            self.isiOSIconGallery = YES;
+        }
+        
     }
     
     return self;
@@ -102,7 +108,7 @@
     
     [super viewDidLoad];
     
-    self.sortingOption = SharedPrefs.sortingOption;
+    self.sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     if (self.type == FeedVCTypeNatural && self.feed) {
         self.title = self.feed.displayTitle;
@@ -240,7 +246,6 @@
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(didChangeTheme) name:kDidUpdateTheme object:nil];
     
     [notificationCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     
@@ -371,6 +376,14 @@
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
         
         cell.tintColor = SharedPrefs.tintColor;
+        
+        if (self.isiOSIconGallery) {
+            
+            cell.coverImage.layer.cornerRadius = cell.coverImage.bounds.size.width * (180.f / 1024.f);
+            cell.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
+            cell.coverImage.layer.masksToBounds = YES;
+            
+        }
         
         [cell configure:article feedType:self.type];
         
@@ -801,15 +814,6 @@
         }
         
     });
-    
-}
-
-- (void)didChangeTheme {
-    
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
-    self.view.backgroundColor = theme.cellColor;
-    self.tableView.backgroundColor = theme.cellColor;
     
 }
 

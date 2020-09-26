@@ -109,9 +109,9 @@
         
         NSString *name = [[self lastPathComponent] stringByReplacingOccurrencesOfString:extension withString:@""];
         
-            maxWidth = maxWidth/scale;
+//            maxWidth = maxWidth * scale;
         
-        maxWidth += 200.f;
+        maxWidth += 80.f;
             
             copy = formattedString(@"%@&w=%@&dpr=%@&output=%@&q=%@&filename=%@@%@x.%@&we", copy, @(maxWidth), @(UIScreen.mainScreen.scale), extension, @(quality), name, @(scale), extension);
 //        }
@@ -121,6 +121,38 @@
     }
     
     return copy;
+    
+}
+
+- (NSURL *)urlFromProxyURI {
+    
+    if ([self containsString:@"images.weserv.nl"] == NO) {
+        
+        return [NSURL URLWithString:self];
+        
+    }
+    
+    NSURLComponents *components = [NSURLComponents componentsWithString:self];
+    
+    NSArray <NSURLQueryItem *> * queryItems = [components queryItems];
+    
+    __block NSString * urlComponent = nil;
+    
+    [queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if ([obj.name isEqualToString:@"url"] && obj.value != nil) {
+            
+            urlComponent = obj.value;
+            
+        }
+        
+    }];
+    
+    if (urlComponent == nil) {
+        return nil;
+    }
+    
+    return [NSURL URLWithString:urlComponent];
     
 }
 

@@ -7,7 +7,6 @@
 //
 
 #import "RecommendationsVC.h"
-#import "YetiThemeKit.h"
 #import "FeedsManager.h"
 
 #import "FeedsGridCell.h"

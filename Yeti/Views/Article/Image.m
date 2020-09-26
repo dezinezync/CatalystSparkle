@@ -15,6 +15,8 @@
 #import "UIImage+Sizing.h"
 #import "YetiConstants.h"
 
+#import "NSString+ImageProxy.h"
+
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @interface Image () <UIContextMenuInteractionDelegate>
@@ -170,26 +172,12 @@
                 }
                 else if (SharedPrefs.imageProxy == YES) {
                     
-                    NSURLComponents *components = [NSURLComponents componentsWithString:[url absoluteString]];
-                    
-                    __block NSString *base = nil;
-                    
-                    [components.queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                       
-                        if ([obj.name isEqualToString:@"url"]) {
-                            
-                            base = obj.value;
-                            
-                        }
-                        
-                        *stop = YES;
-                        
-                    }];
+                    NSURL * base = [[url absoluteString] urlFromProxyURI];
                     
                     if (base != nil) {
                         
                         // try the direct URL
-                        [self.imageView sd_setImageWithURL:[NSURL URLWithString:base] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                        [self.imageView sd_setImageWithURL:base placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                             
                             if (error != nil) {
                                 

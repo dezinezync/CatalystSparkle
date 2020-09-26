@@ -7,7 +7,7 @@
 //
 
 #import "ImportVC.h"
-#import "YetiThemeKit.h"
+
 #import "NSString+GTMNSStringHTMLAdditions.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
@@ -126,10 +126,9 @@ NSString *const kImportCell = @"importCell";
 }
 
 - (void)setupTable {
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    
+        
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.backgroundColor = theme.tableColor;
+    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
     self.tableView.userInteractionEnabled = NO;
     self.tableView.cellLayoutMarginsFollowReadableWidth = YES;
     

@@ -1,51 +1,31 @@
-# v2.0.2
+# v2.0.3
 
-## Build 38
+## Build 41
 
-- Fixes an issue with sorting of Feeds. Feeds which are not inside any folder are now correctly sorted in ascending alphabetical order. Thank you Jason, for pointing this out.  
+- Fixed an issue where selecting the "Only load on Wi-Fi" image bandwidth setting did not persist correctly. 
 
-- iPads in Portrait mode now correctly hide the sidebar upon tapping an article. 
+- Fixed an issue where selecting the "Low Res" image resolution settingdid not persist correctly.  
 
-## Build 35
+- Fixed a bug where toggling dark mode (or already present) did not correctly set the colors for the filters' input. 
 
-- Wordpress blogs convert emojis to an image with the emoji as the alt text on the image. Elytra will now skip rendering the image and appropriately render the emoji used by the author in the same context as the original blog post. This prevents the paragraph breaking on to the next line to accomodate the custom emoji image Wordpress inserts.  
+## Build 40 
 
-- Minor fixes to regressions introduced in build 34.
+- Fixed an issue where the Image Viewer would not display the image at full resolution once it is loaded. 
 
-## Build 34
+- Fixed an issue where the OPML Interface would launch with the base tint on the button backgrounds and then update to your preferred tint. 
 
-- Adds a new, simpler flow for starting the Free Trial. 
+- Fixed an issue where semantic colours would not load correctly on iOS 14.0.1 for your selected tint colour. 
 
-- Fixed an issue where the App would show a "No Subscription Found" error after resetting or deactivating your account. 
+- Fixed a crash that would occur when bootstrapping the local cache database. 
 
-- Fixed an issue where an interrupted on-boarding would prevent you from using the app without purchasing a subscription. This now ensures you are always able to start your free trial if your onboarding was interrupted. 
+- Fixed a crash that would occur when saving restoration data. 
 
-- If you're currently enrolled in the Free Trial, the subscriptions interface will now correctly indicate that. 
+- Fixed an issue where images in articles would be scaled incorrectly when using the image proxy. 
 
-# Build 32
+## Build 39
 
-- Fixes a rotation bug on iPads. 
+- Improved Swift & SwiftUI syntax highlighting in code blocks. 
 
-- Fixes a article scaling bug on iPads when toggling the sidebar. 
+- Fixed a bug where tapping on the Attributions item in the Settings interface would crash the app. 
 
-- Changing the selected tint color now applies correctly throughout the app. 
-
-- Fixed the app not loading the selected tint color on launch. 
-
-- Fixed an issue when searching for a feed by title or keywords would dismiss the modal. 
-
-- Fixed an issue with pagination when searching for feeds in the Add New Feed interface. 
-
-# v2.0.1
-
-# Build 31
-
-- Various fixes for adding new feeds.
-
-- Fixed applying selected tint colors globally. 
-
-- Deleting a feed (which is inside a folder) no longer collapses the folder. 
-
-- Fixes a crash on opening the Notifications Interface if you have 0 subscriptions. 
-
-- Fixes a crash on adding a feed from the Share Extension
+- Fixed a crash that would occur when decoding certain HTML encodings. (16-bit decoding is hard, y'all!)

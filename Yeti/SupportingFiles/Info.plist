@@ -200,6 +200,14 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
+			<string>com.dezinezync.yeti.rssscheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>rss</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
 			<string>com.dezinezync.yeti.feedscheme</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
@@ -217,7 +225,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>38</string>
+	<string>41</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>

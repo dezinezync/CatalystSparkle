@@ -13,8 +13,6 @@
 
 #import "AppDelegate.h"
 
-#import "YetiThemeKit.h"
-
 #import "Paragraph.h"
 #import "FeedsManager.h"
 
@@ -28,14 +26,6 @@
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
 @implementation ArticleVC (Toolbar)
-
-//- (void)validateCommand:(UICommand *)command {
-//
-//    if ([command.title isEqualToString:@"Find in Article"]) {
-//        command
-//    }
-//
-//}
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     

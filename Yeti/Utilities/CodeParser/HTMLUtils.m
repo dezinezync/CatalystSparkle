@@ -299,10 +299,16 @@ HTMLUtils *MyHTMLUtils;
 
 - (NSString *)_decode:(NSString *)entity
 {
-    if ([entity hasPrefix:@"&#x"] || [entity hasPrefix:@"&#X"]) {
-        return [NSString stringWithFormat:@"%c" , [self decode:[entity substringFromIndex:[entity characterAtIndex:3]] numeric:16]];
+    if (([entity hasPrefix:@"&#x"] || [entity hasPrefix:@"&#X"]) && entity.length > 3) {
+        
+        entity = [[entity substringFromIndex:3] substringToIndex:entity.length - 4];
+        
+        return [NSString stringWithFormat:@"%c" , [self decode:entity numeric:16]];
     }
-    else if ([entity hasPrefix:@"&#"]) {
+    else if ([entity hasPrefix:@"&#"] && entity.length > 2) {
+        
+        entity = [[entity substringFromIndex:2] substringToIndex:entity.length - 3];
+        
         return [NSString stringWithFormat:@"%c" , [self decode:[entity substringFromIndex:[entity characterAtIndex:2]] numeric:10]];
     }
     else

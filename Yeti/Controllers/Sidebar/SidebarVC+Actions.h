@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SidebarVC (Actions) <MoveFoldersDelegate>
+@interface SidebarVC (Actions) <MoveFoldersDelegate, UITextFieldDelegate>
 
 - (void)didTapAdd:(UIBarButtonItem * _Nullable)add;
 

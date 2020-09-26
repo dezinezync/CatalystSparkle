@@ -7,7 +7,6 @@
 //
 
 #import "OPMLDeckController.h"
-#import "YetiThemeKit.h"
 
 @interface OPMLDeckController ()
 
@@ -20,7 +19,7 @@
     OPMLVC *vc1 = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
     
     if (self = [super initWithRootViewController:vc1]) {
-        self.view.backgroundColor = [[YTThemeKit theme] backgroundColor];
+        self.view.backgroundColor = UIColor.systemBackgroundColor;
     }
     
     return self;

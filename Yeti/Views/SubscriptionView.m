@@ -9,7 +9,6 @@
 #import "SubscriptionView.h"
 #import <Store/Store.h>
 #import "DZWebViewController.h"
-#import "YetiThemeKit.h"
 #import "UIColor+HEX.h"
 
 @interface SubscriptionView () <UITextViewDelegate>

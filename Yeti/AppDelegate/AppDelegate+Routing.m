@@ -10,7 +10,6 @@
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
 #import "YetiConstants.h"
-#import "YetiThemeKit.h"
 
 #import "FeedVC.h"
 #import "ArticleVC.h"
@@ -765,7 +764,7 @@
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
         
-        SceneDelegate *delegate = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate;
+        SceneDelegate *delegate = (SceneDelegate *)(UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate);
         
         sfvc.preferredControlTintColor = delegate.window.tintColor;
         

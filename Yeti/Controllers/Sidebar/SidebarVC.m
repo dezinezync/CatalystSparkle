@@ -615,7 +615,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 //#endif
         
         UIProgressView *progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        progressView.progressTintColor = self.view.window.tintColor;
+        progressView.progressTintColor = SharedPrefs.tintColor;
         progressView.trackTintColor = UIColor.separatorColor;
         progressView.frame = CGRectMake(0, 0, MAX(frame.size.width, 280.f), 6.f);
         progressView.layer.cornerRadius = 2.f;
@@ -1200,10 +1200,14 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     NSMutableArray <NSNumber *> *openFolders = [NSMutableArray arrayWithCapacity:ArticlesManager.shared.folders.count];
     
-    for (Folder *folder in ArticlesManager.shared.folders) {
+    if (ArticlesManager.shared.folders != nil) {
         
-        if ([sectionSnapshot isExpanded:folder]) {
-            [openFolders addObject:folder.folderID];
+        for (Folder *folder in ArticlesManager.shared.folders) {
+            
+            if ([sectionSnapshot isExpanded:folder]) {
+                [openFolders addObject:folder.folderID];
+            }
+            
         }
         
     }

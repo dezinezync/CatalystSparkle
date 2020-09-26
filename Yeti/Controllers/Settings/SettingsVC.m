@@ -26,7 +26,6 @@
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 #import <DZKit/DZMessagingController.h>
 
-#import "YetiThemeKit.h"
 #import "DBManager+CloudCore.h"
 
 #import <sys/utsname.h>
@@ -79,8 +78,16 @@ NSString* deviceName() {
     self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
     
 #else
-    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
-    self.view.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
     
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
@@ -607,7 +614,7 @@ NSString* deviceName() {
     {
         _footerView = [[UIView alloc] init];
         
-        _footerView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+        _footerView.backgroundColor = self.tableView.backgroundColor;
         
         _footerView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 112.f + 16.f);
         
@@ -615,7 +622,7 @@ NSString* deviceName() {
         dz.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         dz.tag = 30000;
         dz.tintColor = self.view.tintColor;
-        dz.backgroundColor = UIColor.systemGroupedBackgroundColor;
+        dz.backgroundColor = self.tableView.backgroundColor;
         dz.contentMode = UIViewContentModeRedraw;
         
         [_footerView addSubview:dz];
@@ -627,7 +634,7 @@ NSString* deviceName() {
         _byLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleFootnote];
         _byLabel.transform = CGAffineTransformMakeTranslation(0, 30.f);
         _byLabel.autoresizingMask = dz.autoresizingMask;
-        _byLabel.backgroundColor = UIColor.systemGroupedBackgroundColor;
+        _byLabel.backgroundColor = self.tableView.backgroundColor;
         
         [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
             
