@@ -1769,7 +1769,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
             || ([content.url containsString:@"deal"] && [content.url containsString:@"Daily-Deals-"] == NO)
             || ([content.url containsString:@"amaz"]
-            || [content.url containsString:@"i2.wp.com"]
             || [[content.url lastPathComponent] containsString:@".php"]
             || [[content.url lastPathComponent] containsString:@".js"])
         )) {
@@ -2175,6 +2174,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
+#if TARGET_OS_MACCATALYST
+    return [self _addYoutube:content];
+#endif
+    
     NSString *videoID = [[content url] lastPathComponent];
     
     if ([videoID containsString:@"watch?v="] == YES) {
@@ -2190,7 +2193,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
     playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
     playerController.updatesNowPlayingInfoCenter = NO;
-    
+    playerController.showsTimecodes = YES;
+    playerController.allowsPictureInPicturePlayback = YES;
+        
     [self addChildViewController:playerController];
     
     UIView *playerView = playerController.view;
@@ -2358,8 +2363,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
-    playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:(content.url ?: content.content)]];
     playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    playerController.updatesNowPlayingInfoCenter = NO;
+    playerController.showsTimecodes = YES;
+    playerController.allowsPictureInPicturePlayback = YES;
+    
+#if TARGET_OS_MACCATALYST
+    playerController.showsPlaybackControls = NO;
+#endif
+    
+    playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:(content.url ?: content.content)]];
     
     [self addChildViewController:playerController];
     
