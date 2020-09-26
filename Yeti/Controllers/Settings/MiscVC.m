@@ -54,6 +54,17 @@ typedef NS_ENUM(NSInteger, AppIconName) {
     
     [self.tableView registerClass:SettingsBaseCell.class forCellReuseIdentifier:kMiscSettingsCell];
     [self.tableView registerClass:SettingsCell.class forCellReuseIdentifier:kSettingsCell];
+    
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

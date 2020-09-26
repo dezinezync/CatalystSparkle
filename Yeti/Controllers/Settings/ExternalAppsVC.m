@@ -31,7 +31,16 @@
     
     [self.tableView registerClass:ExternalAppsCell.class forCellReuseIdentifier:kExternalAppsCell];
     
-    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
     
     UIApplication *app = [UIApplication sharedApplication];
     

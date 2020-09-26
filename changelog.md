@@ -1,5 +1,13 @@
 # v2.0.3
 
+## Build 41
+
+- Fixed an issue where selecting the "Only load on Wi-Fi" image bandwidth setting did not persist correctly. 
+
+- Fixed an issue where selecting the "Low Res" image resolution settingdid not persist correctly.  
+
+- Fixed a bug where toggling dark mode (or already present) did not correctly set the colors for the filters' input. 
+
 ## Build 40 
 
 - Fixed an issue where the Image Viewer would not display the image at full resolution once it is loaded. 

@@ -35,7 +35,18 @@ NSString *const kFiltersCell = @"filterCell";
     self.title = @"Filters";
     
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
+    
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
     [self.tableView registerClass:[SettingsBaseCell class] forCellReuseIdentifier:kFiltersCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(FilterInputCell.class) bundle:nil] forCellReuseIdentifier:kFilterInputCell];
@@ -91,6 +102,8 @@ NSString *const kFiltersCell = @"filterCell";
         }
         
         FilterInputCell *cell = [tableView dequeueReusableCellWithIdentifier:kFilterInputCell forIndexPath:indexPath];
+        
+        cell.backgroundColor = UIColor.systemBackgroundColor;
         
         strongify(self);
         

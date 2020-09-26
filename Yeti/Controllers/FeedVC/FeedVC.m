@@ -108,7 +108,7 @@
     
     [super viewDidLoad];
     
-    self.sortingOption = SharedPrefs.sortingOption;
+    self.sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     if (self.type == FeedVCTypeNatural && self.feed) {
         self.title = self.feed.displayTitle;

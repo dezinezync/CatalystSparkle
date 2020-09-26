@@ -62,7 +62,17 @@
     [self.tableView registerClass:AccountsCell.class forCellReuseIdentifier:kAccountsCell];
     [self.tableView registerClass:DeactivateCell.class forCellReuseIdentifier:kDeactivateCell];
     
-    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
+    
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 

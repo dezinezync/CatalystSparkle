@@ -54,7 +54,7 @@
     
     // Do any additional setup after loading the view from its nib.
     
-    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.detailsTitleLabel.textColor = UIColor.labelColor;
     self.detailsSubtitleLabel.textColor = UIColor.secondaryLabelColor;

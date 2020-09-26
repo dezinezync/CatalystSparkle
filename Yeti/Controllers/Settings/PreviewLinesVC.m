@@ -29,6 +29,18 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:reuseIdentifer];
     
     self.tableView.tableFooterView = [UIView new];
+    
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
+    
 }
 
 #pragma mark - Table view data source

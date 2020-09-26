@@ -55,7 +55,17 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     self.tableView.estimatedSectionFooterHeight = 80.f;
     self.tableView.sectionFooterHeight = UITableViewAutomaticDimension;
     
-    self.tableView.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -277,7 +287,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
         if (self.selected == 0)
             [SharedPrefs setValue:ImageLoadingLowRes forKey:propSel(imageLoading)];
         else if (self.selected == 1)
-            [SharedPrefs setValue:ImageLoadingMediumRes forKey:propSel(imageBandwidth)];
+            [SharedPrefs setValue:ImageLoadingMediumRes forKey:propSel(imageLoading)];
         else
             [SharedPrefs setValue:ImageLoadingHighRes forKey:propSel(imageLoading)];
 
