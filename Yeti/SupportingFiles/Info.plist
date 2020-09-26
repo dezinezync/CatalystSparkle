@@ -200,6 +200,14 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
+			<string>com.dezinezync.yeti.rssscheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>rss</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
 			<string>com.dezinezync.yeti.feedscheme</string>
 			<key>CFBundleURLSchemes</key>
 			<array>

@@ -97,6 +97,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
 
+/// These are special handlers for rendering specific blog articles.
+@property (assign) BOOL isiOSIconGallery;
+
 @end
 
 @implementation ArticleVC
@@ -799,51 +802,73 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
-- (BOOL)imageURLAppearsInContent:(NSString *)url {
+- (BOOL)_imageURL:(NSString *)url appearsInContent:(Content *)content {
     
-    Content *appearing = [self.item.content rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
-       
-        if (([objx.type isEqualToString:@"image"] || [objx.type isEqualToString:@"img"])) {
+    if (([content.type isEqualToString:@"image"] || [content.type isEqualToString:@"img"])) {
+        
+        if ([content.url isEqualToString:url]) {
             
-            if ([objx.url isEqualToString:url]) {
+            return YES;
+            
+        }
+        
+        if (content.srcset != nil) {
+            
+            NSArray *values = [content.srcset allValues];
+            
+            values = [values rz_map:^id(id obj, NSUInteger id, NSArray *array) {
+               
+                if ([obj isKindOfClass:NSDictionary.class]) {
+                    
+                    return [(NSDictionary *)obj allValues];
+                    
+                }
+                
+                return obj;
+                
+            }];
+            
+            values = [values rz_flatten];
+            
+            if ([values indexOfObject:url] != NSNotFound) {
                 
                 return YES;
                 
             }
             
-            if (objx.srcset != nil) {
-                
-                NSArray *values = [objx.srcset allValues];
-                
-                values = [values rz_map:^id(id objxx, NSUInteger idxxx, NSArray *arrayxx) {
-                   
-                    if ([objxx isKindOfClass:NSDictionary.class]) {
-                        
-                        return [(NSDictionary *)objxx allValues];
-                        
-                    }
-                    
-                    return objxx;
-                    
-                }];
-                
-                values = [values rz_flatten];
-                
-                if ([values indexOfObject:url] != NSNotFound) {
-                    
-                    return YES;
-                    
-                }
-                
-            }
-        
         }
+    }
+    else if (content.items != nil) {
         
-        return NO;
+        Content *appearing = [content.items rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
+           
+            return [self _imageURL:url appearsInContent:objx];
+            
+        }];
+        
+        return appearing != nil;
+        
+    }
+    
+    return NO;
+    
+}
+
+- (BOOL)imageURLAppearsInContent:(NSString *)url {
+    
+    __block BOOL included = NO;
+    
+    [self.item.content enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        included = [self _imageURL:url appearsInContent:obj];
+        
+        if (included == YES) {
+            *stop = YES;
+        }
         
     }];
     
-    return appearing != nil;
+    return included;
     
 }
 
@@ -856,6 +881,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     weakify(self);
     
     self.item = responseObject;
+    
+    if (self.item.articleURL != nil && [[self.item.articleURL lowercaseString] containsString:@"iosicongallery"]) {
+        self.isiOSIconGallery = YES;
+    }
     
     if (self.item.isRead == NO) {
         [self didTapRead:nil];
@@ -1738,7 +1767,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // 9mac ads and some tracking scripts
     if (content.url && (
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
-            || ([content.url containsString:@"deal"])
+            || ([content.url containsString:@"deal"] && [content.url containsString:@"Daily-Deals-"] == NO)
             || ([content.url containsString:@"amaz"]
             || [content.url containsString:@"i2.wp.com"]
             || [[content.url lastPathComponent] containsString:@".php"]
@@ -1820,6 +1849,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // make the imageView tappable
     if (link != nil && [link isBlank] == NO) {
         imageView.link = [NSURL URLWithString:link];
+    }
+    
+    if (self.isiOSIconGallery) {
+        
+        imageView.layer.cornerRadius = frame.size.width * (180.f / 1024.f);
+        imageView.layer.cornerCurve = kCACornerCurveContinuous;
+        imageView.layer.masksToBounds = YES;
+        
     }
     
     _last = imageView;

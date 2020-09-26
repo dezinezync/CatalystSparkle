@@ -94,8 +94,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)_showArticleVC:(ArticleVC *)vc;
 
-- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
-
 @end
 
 NS_ASSUME_NONNULL_END

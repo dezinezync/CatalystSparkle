@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param sizePreference the size preference as determined by the user. 
 - (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality firstFrameForGIF:(BOOL)firstFrameForGIF useImageProxy:(BOOL) useImageProxy sizePreference:(ImageLoadingOption)sizePreference;
 
+- (NSURL * _Nullable)urlFromProxyURI;
+
 @end
 
 NS_ASSUME_NONNULL_END

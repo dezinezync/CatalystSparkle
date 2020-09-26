@@ -27,14 +27,6 @@
 
 @implementation ArticleVC (Toolbar)
 
-//- (void)validateCommand:(UICommand *)command {
-//
-//    if ([command.title isEqualToString:@"Find in Article"]) {
-//        command
-//    }
-//
-//}
-
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],

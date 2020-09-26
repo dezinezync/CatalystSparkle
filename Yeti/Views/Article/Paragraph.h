@@ -77,6 +77,6 @@
 
 #pragma mark
 
-@property (nonatomic, weak) id<TextSharing> textSharingDelegate;
+@property (nonatomic, weak) id<TextSharing> _Nullable textSharingDelegate;
 
 @end

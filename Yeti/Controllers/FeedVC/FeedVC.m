@@ -53,6 +53,9 @@
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
+/// Special handling for specific feeds
+@property (assign) BOOL isiOSIconGallery;
+
 @end
 
 #define ArticlesSection @0
@@ -90,6 +93,10 @@
         NSLogDebug(@"Feed:%@", feed.feedID);
         
         self.feed = feed;
+        
+        if (feed.url != nil && [feed.url containsString:@"iosicongallery"]) {
+            self.isiOSIconGallery = YES;
+        }
         
     }
     
@@ -369,6 +376,14 @@
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
         
         cell.tintColor = SharedPrefs.tintColor;
+        
+        if (self.isiOSIconGallery) {
+            
+            cell.coverImage.layer.cornerRadius = cell.coverImage.bounds.size.width * (180.f / 1024.f);
+            cell.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
+            cell.coverImage.layer.masksToBounds = YES;
+            
+        }
         
         [cell configure:article feedType:self.type];
         

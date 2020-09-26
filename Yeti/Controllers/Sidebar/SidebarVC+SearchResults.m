@@ -43,7 +43,7 @@
         
     }
     else {
-        filtered = feeds;
+        filtered = (id)feeds;
     }
     
     NSDiffableDataSourceSnapshot *snapshot = [[NSDiffableDataSourceSnapshot alloc] init];

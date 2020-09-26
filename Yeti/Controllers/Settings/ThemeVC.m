@@ -324,9 +324,9 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         NSArray <UIButton *> *buttons = [[(AccentCell *)object stackView] arrangedSubviews];
         NSArray <UIColor *> *colours = [YetiThemeKit colours];
         
-        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-
-        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
+//        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+//
+//        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
         
         UIButton *selectedButton = [object valueForKeyPath:keyPath];
         

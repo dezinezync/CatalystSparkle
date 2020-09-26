@@ -42,16 +42,16 @@
     scrollDown.title = @"Scroll Down";
     scrollDown.discoverabilityTitle = scrollDown.title;
     
-    UIKeyCommand *scrollUpAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageUp" modifierFlags:nil action:@selector(scrollUp)];
+    UIKeyCommand *scrollUpAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageUp" modifierFlags:0 action:@selector(scrollUp)];
     scrollUpAddtional.title = @"Scroll Up";
     
-    UIKeyCommand *scrollDownAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageDown" modifierFlags:nil action:@selector(scrollDown)];
+    UIKeyCommand *scrollDownAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageDown" modifierFlags:0 action:@selector(scrollDown)];
     scrollDownAddtional.title = @"Scroll Up";
     
-    UIKeyCommand *scrollToTop = [UIKeyCommand keyCommandWithInput:@"UIKeyInputHome" modifierFlags:nil action:@selector(scrollToTop)];
+    UIKeyCommand *scrollToTop = [UIKeyCommand keyCommandWithInput:@"UIKeyInputHome" modifierFlags:0 action:@selector(scrollToTop)];
     scrollToTop.title = @"Scroll to Top";
     
-    UIKeyCommand *scrollToEnd = [UIKeyCommand keyCommandWithInput:@"UIKeyInputEnd" modifierFlags:nil action:@selector(scrollToEnd)];
+    UIKeyCommand *scrollToEnd = [UIKeyCommand keyCommandWithInput:@"UIKeyInputEnd" modifierFlags:0 action:@selector(scrollToEnd)];
     scrollToTop.title = @"Scroll to End";
     
     UIKeyCommand *previousArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapPreviousArticle:)];
