@@ -7,6 +7,7 @@
 //
 
 import Foundation
+
 import WidgetKit
 
 @objc public class WidgetManager: NSObject {
@@ -24,4 +25,3 @@ import WidgetKit
     }
     
 }
-

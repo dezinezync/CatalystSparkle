@@ -74,9 +74,9 @@
     
     [super viewDidLoad];
     
-    [self setupDisplayModes:self.view.bounds.size];
-    
 #if !TARGET_OS_MACCATALYST
+    
+    [self setupDisplayModes:self.view.bounds.size];
     
 //    UISwipeGestureRecognizer *twoFingerPanUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(didPanWithTwoFingers:)];
 //    twoFingerPanUp.numberOfTouchesRequired = 2;
@@ -91,7 +91,14 @@
 //    [self.view addGestureRecognizer:twoFingerPanUp];
 //    [self.view addGestureRecognizer:twoFingerPanDown];
     
-    [self setupDisplayModes:self.view.bounds.size];
+#else
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorTile];
+        [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoBesideSecondary];
+        
+    });
     
 #endif
     
@@ -515,6 +522,17 @@
         return NO;
         
     }
+    else if ([NSStringFromSelector(aSelector) isEqualToString:@"didTapSearch"]) {
+        
+        if (self.mainCoordinator.articleVC != nil) {
+            
+            return [self.mainCoordinator.articleVC respondsToSelector:aSelector];
+            
+        }
+        
+        return NO;
+        
+    }
     
     return [super respondsToSelector:aSelector];
     
@@ -529,6 +547,13 @@
         }
         
     }
+    else if ([NSStringFromSelector(selector) isEqualToString:@"didTapSearch"]) {
+        
+        if (self.mainCoordinator.articleVC != nil && [self.mainCoordinator.articleVC respondsToSelector:selector] == YES) {
+            return [self.mainCoordinator.articleVC methodSignatureForSelector:selector];
+        }
+        
+    }
     
     return [super methodSignatureForSelector:selector];
 }
@@ -537,6 +562,10 @@
     
     if (anInvocation.selector == NSSelectorFromString(@"didBeginRefreshing:") && self.mainCoordinator.feedVC != nil) {
         [anInvocation invokeWithTarget:self.mainCoordinator.feedVC];
+        return;
+    }
+    else if (anInvocation.selector == NSSelectorFromString(@"didTapSearch") && self.mainCoordinator.articleVC != nil) {
+        [anInvocation invokeWithTarget:self.mainCoordinator.articleVC];
         return;
     }
     
