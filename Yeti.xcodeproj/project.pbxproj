@@ -156,7 +156,7 @@
 		F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F05B93312091BA50009BBDDB /* MoveFoldersVC.m */; };
 		F05C7A9F20D8E1F3007D6B5C /* TableHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C7A9E20D8E1F3007D6B5C /* TableHeader.m */; };
 		F05C7AA320D8E203007D6B5C /* TableHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F05C7AA220D8E203007D6B5C /* TableHeader.xib */; };
-		F061508B24F62D18007F50A5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F061508A24F62D18007F50A5 /* WidgetKit.framework */; platformFilter = ios; };
+		F061508B24F62D18007F50A5 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F061508A24F62D18007F50A5 /* WidgetKit.framework */; };
 		F064A5322157638500A385AD /* LaunchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F064A5302157638500A385AD /* LaunchVC.m */; };
 		F064A5332157638500A385AD /* LaunchVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A5312157638500A385AD /* LaunchVC.xib */; };
 		F064A5382157678900A385AD /* IdentityVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F064A5362157678900A385AD /* IdentityVC.xib */; };
@@ -184,6 +184,7 @@
 		F0710D292062D3090097CCD5 /* NewVCAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D282062D3090097CCD5 /* NewVCAnimator.m */; };
 		F0710D2C2062DAB70097CCD5 /* PaddedTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */; };
 		F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */ = {isa = PBXBuildFile; fileRef = F075752724CED198001F7D15 /* SidebarVC+Actions.m */; };
+		F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = F0783CAE248F6A5800C7A280 /* AppKitGlue.m */; };
 		F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */ = {isa = PBXBuildFile; fileRef = F07889C025035E65007F3C55 /* UITableView+Sugar.m */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
@@ -326,7 +327,7 @@
 		F0D98F5824EE4C8500B1F9F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */; };
 		F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
 		F0D98F5B24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
-		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
 		F0DB58FB23F575400008D871 /* CustomizationHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DB58FA23F575400008D871 /* CustomizationHeader.xib */; };
@@ -348,7 +349,6 @@
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
-		F0F0AD56251C8D4F0026A83F /* DZStepper.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F0AD55251C8D4F0026A83F /* DZStepper.m */; };
 		F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0F10A88244C8020009FC108 /* DateTools.bundle */; };
 		F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A89244C8020009FC108 /* DTTimePeriod.m */; };
 		F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A8C244C8020009FC108 /* NSDate+DateTools.m */; };
@@ -1003,6 +1003,7 @@
 		F0710D2B2062DAB70097CCD5 /* PaddedTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PaddedTextField.m; sourceTree = "<group>"; };
 		F075752624CED198001F7D15 /* SidebarVC+Actions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+Actions.h"; sourceTree = "<group>"; };
 		F075752724CED198001F7D15 /* SidebarVC+Actions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+Actions.m"; sourceTree = "<group>"; };
+		F0783C88248F685C00C7A280 /* elytramac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = elytramac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0783C8A248F685C00C7A280 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0783CAD248F6A5800C7A280 /* AppKitGlue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitGlue.h; sourceTree = "<group>"; };
 		F0783CAE248F6A5800C7A280 /* AppKitGlue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppKitGlue.m; sourceTree = "<group>"; };
@@ -1254,8 +1255,6 @@
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
-		F0F0AD54251C8D4F0026A83F /* DZStepper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DZStepper.h; sourceTree = "<group>"; };
-		F0F0AD55251C8D4F0026A83F /* DZStepper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DZStepper.m; sourceTree = "<group>"; };
 		F0F10A88244C8020009FC108 /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0F10A89244C8020009FC108 /* DTTimePeriod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriod.m; sourceTree = "<group>"; };
 		F0F10A8A244C8020009FC108 /* DTError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTError.h; sourceTree = "<group>"; };
@@ -1318,6 +1317,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F070C2F91FBABC3600912CCF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0783C85248F685C00C7A280 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1673,6 +1679,7 @@
 				F070C2FC1FBABC3600912CCF /* YetiUITests.xctest */,
 				F035A21520617EC3005A88EE /* YetiShare.appex */,
 				F0B7C842240B7272008D8F4F /* notificationContext.appex */,
+				F0783C88248F685C00C7A280 /* elytramac.bundle */,
 				F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */,
 			);
 			name = Products;
@@ -1953,7 +1960,6 @@
 		F070C3351FBAC37A00912CCF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				F0F0AD2F251C8D250026A83F /* Mac */,
 				F00F644C24EC1D8900E5727C /* Article */,
 				F070C3491FBADF8D00912CCF /* FeedsCell.h */,
 				F070C34A1FBADF8D00912CCF /* FeedsCell.m */,
@@ -2432,15 +2438,6 @@
 			path = Sidebar;
 			sourceTree = "<group>";
 		};
-		F0F0AD2F251C8D250026A83F /* Mac */ = {
-			isa = PBXGroup;
-			children = (
-				F0F0AD54251C8D4F0026A83F /* DZStepper.h */,
-				F0F0AD55251C8D4F0026A83F /* DZStepper.m */,
-			);
-			path = Mac;
-			sourceTree = "<group>";
-		};
 		F0F10A87244C8020009FC108 /* DateTools */ = {
 			isa = PBXGroup;
 			children = (
@@ -2550,6 +2547,23 @@
 			productReference = F070C2FC1FBABC3600912CCF /* YetiUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		F0783C87248F685C00C7A280 /* elytramac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0783CA9248F685C00C7A280 /* Build configuration list for PBXNativeTarget "elytramac" */;
+			buildPhases = (
+				F0783C84248F685C00C7A280 /* Sources */,
+				F0783C85248F685C00C7A280 /* Frameworks */,
+				F0783C86248F685C00C7A280 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = elytramac;
+			productName = elytramac;
+			productReference = F0783C88248F685C00C7A280 /* elytramac.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 		F0B7C841240B7272008D8F4F /* notificationContext */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F0B7C860240B7272008D8F4F /* Build configuration list for PBXNativeTarget "notificationContext" */;
@@ -2628,6 +2642,9 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = F070C2D81FBABC3500912CCF;
 					};
+					F0783C87248F685C00C7A280 = {
+						CreatedOnToolsVersion = 11.5;
+					};
 					F0B7C841240B7272008D8F4F = {
 						CreatedOnToolsVersion = 11.3;
 						ProvisioningStyle = Automatic;
@@ -2687,6 +2704,7 @@
 				F070C2FB1FBABC3600912CCF /* YetiUITests */,
 				F035A21420617EC3005A88EE /* YetiShare */,
 				F0B7C841240B7272008D8F4F /* notificationContext */,
+				F0783C87248F685C00C7A280 /* elytramac */,
 				F0D98F4D24EE4C8500B1F9F0 /* UnreadsWidgetExtension */,
 			);
 		};
@@ -3077,6 +3095,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F0783C86248F685C00C7A280 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0B7C840240B7272008D8F4F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3251,7 +3276,6 @@
 				F00F644324EC1BC700E5727C /* Feed.m in Sources */,
 				F0CDA0D12475191600DC1217 /* BookmarksVC.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
-				F0F0AD56251C8D4F0026A83F /* DZStepper.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
 				F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */,
@@ -3333,6 +3357,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F0783C84248F685C00C7A280 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0B7C83E240B7272008D8F4F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3398,6 +3430,7 @@
 		};
 		F0D98F5D24EE4C8500B1F9F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = F0D98F4D24EE4C8500B1F9F0 /* UnreadsWidgetExtension */;
 			targetProxy = F0D98F5C24EE4C8500B1F9F0 /* PBXContainerItemProxy */;
 		};
@@ -3450,7 +3483,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3469,7 +3502,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3489,7 +3522,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3505,7 +3538,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.elytraShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3550,7 +3583,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3611,7 +3644,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3646,7 +3679,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
@@ -3671,7 +3704,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3704,7 +3737,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3728,7 +3761,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3750,7 +3783,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3774,7 +3807,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3799,7 +3832,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3820,7 +3853,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3836,6 +3869,51 @@
 			};
 			name = Release;
 		};
+		F0783C8B248F685C00C7A280 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 42;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = elytramac/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytramac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		F0783C8C248F685C00C7A280 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 42;
+				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				INFOPLIST_FILE = elytramac/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytramac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		F0B7C852240B7272008D8F4F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3844,7 +3922,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = notificationContext/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3853,13 +3931,13 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.notificationContext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -3873,7 +3951,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = notificationContext/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3882,12 +3960,12 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.notificationContext;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
@@ -3905,7 +3983,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3914,7 +3992,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
@@ -3943,7 +4021,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -3952,7 +4030,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.0.3;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dezinezync.elytra.UnreadsWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -4012,6 +4090,15 @@
 			buildConfigurations = (
 				F070C30C1FBABC3600912CCF /* Debug */,
 				F070C30D1FBABC3600912CCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0783CA9248F685C00C7A280 /* Build configuration list for PBXNativeTarget "elytramac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0783C8B248F685C00C7A280 /* Debug */,
+				F0783C8C248F685C00C7A280 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
