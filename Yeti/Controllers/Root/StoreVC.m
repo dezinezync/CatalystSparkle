@@ -261,7 +261,7 @@
                 baseText = formattedString(@"Your subscription expired on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
                 
             }
-            else if (MyFeedsManager.user.subscription.status.integerValue == 2) {
+            else if (MyFeedsManager.user.subscription.isLifetime == NO &&  MyFeedsManager.user.subscription.status.integerValue == 2) {
                 
                 baseText = formattedString(@"Your free trial will end on %@", [formatter stringFromDate:MyFeedsManager.user.subscription.expiry]);
                 
