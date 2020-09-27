@@ -4041,7 +4041,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				STRIP_STYLE = all;
+				STRIP_STYLE = "non-global";
 				STRIP_SWIFT_SYMBOLS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = elytramac/ElytraMacBridgingHeader.h;
 				SWIFT_VERSION = 5.0;
@@ -4072,7 +4072,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				STRIP_STYLE = all;
+				STRIP_STYLE = "non-global";
 				STRIP_SWIFT_SYMBOLS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = elytramac/ElytraMacBridgingHeader.h;
 				SWIFT_VERSION = 5.0;
