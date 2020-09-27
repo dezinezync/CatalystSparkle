@@ -268,6 +268,8 @@
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ArticleCoverImagesPreferenceUpdated object:nil];
     
+    [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ImageBandWidthPreferenceUpdated object:nil];
+    
 }
 
 - (void)setupTableHeaderView {

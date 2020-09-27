@@ -39,6 +39,44 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
+- (instancetype)init {
+    
+    if (self = [super init]) {
+        
+        NSArray <NSString *> *fontNames = [NSFontManager sharedFontManager].availableFonts;
+        
+        __block BOOL hasNYBold = NO;
+        __block BOOL hasNYBoldItalic = NO;
+        
+        [fontNames enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            if (hasNYBold == NO && [obj isEqualToString:@"NewYorkLarge-Bold"]) {
+                hasNYBold = YES;
+            }
+            else if (hasNYBoldItalic == NO && [obj isEqualToString:@"NewYorkLarge-BoldItalic"]) {
+                hasNYBoldItalic = YES;
+            }
+            
+        }];
+        
+        if (hasNYBold && hasNYBoldItalic) {
+            
+            // has NY Bold Font installed.
+            [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"hasNYBoldInstalled"];
+            
+        }
+        else {
+            
+            [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"hasNYBoldInstalled"];
+            
+        }
+        
+    }
+    
+    return self;
+    
+}
+
 - (void)openURL:(NSURL *)url inBackground:(BOOL)background {
     
     if (background) {

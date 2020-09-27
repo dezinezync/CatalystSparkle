@@ -322,7 +322,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     Feed *feed = [MyFeedsManager feedForID:self.article.feedID];
     
-    if (feed == nil) {
+    if (feed == nil || [self showImage] == NO) {
         
         self.titleLabel.attributedText = attrs;
         

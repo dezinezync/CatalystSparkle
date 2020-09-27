@@ -46,6 +46,7 @@ YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingLowRes;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingMediumRes;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingHighRes;
 
+YETI_EXPORT NSNotificationName _Nonnull const ImageBandWidthPreferenceUpdated;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingNever;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingOnlyWireless;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingAlways;
@@ -79,6 +80,7 @@ YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSerif;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSans;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPSpectral;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPOpenDyslexic;
+YETI_EXPORT ArticleLayoutFont const ALPNewYork;
 
 typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType _Nonnull const YTSubscriptionMonthly;

@@ -237,6 +237,8 @@
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F09FD74C250915AF004BD60E /* auto.css in Resources */ = {isa = PBXBuildFile; fileRef = F09FD732250915AF004BD60E /* auto.css */; };
+		F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */; };
+		F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */; };
 		F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */; };
 		F0A0501C21F07BFF00A46524 /* AddFeedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A0501B21F07BFF00A46524 /* AddFeedVC.m */; };
 		F0A4797E20637D2100A20195 /* AddFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A4797D20637D2100A20195 /* AddFeedCell.m */; };
@@ -1127,6 +1129,8 @@
 		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
 		F09E96452055342000E61681 /* light.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = light.css; sourceTree = "<group>"; };
 		F09FD732250915AF004BD60E /* auto.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = auto.css; sourceTree = "<group>"; };
+		F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticlePreferenceViewController.swift; sourceTree = "<group>"; };
+		F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ArticlePreferenceViewController.xib; sourceTree = "<group>"; };
 		F0A0500B21F0728A00A46524 /* NewFeedDeckController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFeedDeckController.h; sourceTree = "<group>"; };
 		F0A0500C21F0728A00A46524 /* NewFeedDeckController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFeedDeckController.m; sourceTree = "<group>"; };
 		F0A0501A21F07BFF00A46524 /* AddFeedVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddFeedVC.h; sourceTree = "<group>"; };
@@ -1691,6 +1695,8 @@
 				F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */,
 				F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */,
 				F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */,
+				F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */,
+				F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */,
 			);
 			path = PreferencesController;
 			sourceTree = "<group>";
@@ -3215,6 +3221,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */,
 				F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */,
 				F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */,
 			);
@@ -3486,6 +3493,7 @@
 				F0BC8BE925205C2100FADCBB /* PreferencesWindowController.swift in Sources */,
 				F0BC8BE625205C2100FADCBB /* ToolbarItemStyleViewController.swift in Sources */,
 				F0BC8BEA25205C2100FADCBB /* util.swift in Sources */,
+				F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */,
 				F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */,
 				F0BC8BEC25205C2100FADCBB /* PreferencesTabViewController.swift in Sources */,
 				F0BC8BE425205C2100FADCBB /* Preferences.swift in Sources */,

@@ -12,24 +12,20 @@ import Cocoa
 extension Preferences.PaneIdentifier {
     static let general = Self("general")
     static let images = Self("images")
-    static let advanced = Self("advanced")
+    static let article = Self("article")
 }
 
 @objc final class PreferencesController : NSViewController {
     
-    var preferencesStyle: Preferences.Style {
-        return .toolbarItems
-    }
-
     lazy var preferences: [PreferencePane] = [
         GeneralPreferenceViewController(),
-        ImagesPreferenceViewController()
-//        AdvancedPreferenceViewController()
+        ImagesPreferenceViewController(),
+        ArticlePreferenceViewController()
     ]
 
     @objc lazy var preferencesWindowController = PreferencesWindowController(
         preferencePanes: preferences,
-        style: preferencesStyle,
+        style: .toolbarItems,
         animated: true,
         hidesToolbarForSingleItem: true
     )

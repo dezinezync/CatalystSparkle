@@ -139,7 +139,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    self.scrollView.contentInset = UIEdgeInsetsMake(-1.f, 0, 44.f, 0);
+    self.scrollView.contentInset = UIEdgeInsetsMake(12.f, 0, 44.f, 0);
     
 #else
     

@@ -61,6 +61,7 @@
     [self.view addSubview:self.photosVC.view];
     
     self.photosVC.view.translatesAutoresizingMaskIntoConstraints = NO;
+    self.photosVC.displayDoneButton = NO;
     
     [self.photosVC.view.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
     [self.photosVC.view.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;

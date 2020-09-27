@@ -13,6 +13,7 @@
 #import "Content.h"
 
 #import "YetiThemeKit.h"
+#import "ThemeVC.h"
 
 PrefsManager * SharedPrefs = nil;
 
@@ -265,9 +266,14 @@ PrefsManager * SharedPrefs = nil;
     
     [defaults addObserver:self forKeyPath:kShowArticleCoverImages options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:OpenBrowserInReaderMode options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:kDefaultsImageBandwidth options:NSKeyValueObservingOptionNew context:NULL];
     
     [defaults addObserver:self forKeyPath:MacKeyOpensBrowserInBackground options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:MacKeyRefreshFeeds options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:@"paraTitleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:@"articleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
+    
 #endif
     
 }
@@ -300,13 +306,23 @@ PrefsManager * SharedPrefs = nil;
             [self setValue:value forKey:propSel(refreshFeedsInterval)];
             
         }
+        else if ([keyPath isEqualToString:kDefaultsImageBandwidth]) {
+            
+            [self setValue:value forKey:propSel(imageBandwidth)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ImageBandWidthPreferenceUpdated object:nil];
+            
+        }
         
         else if ([keyPath isEqualToString:kLineSpacing]
             || [keyPath isEqualToString:propSel(fontSize)]
             || [keyPath isEqualToString:kParagraphTitleFont]
             || [keyPath isEqualToString:kDefaultsArticleFont]
             || [keyPath isEqualToString:propSel(lineSpacing)]
-            || [keyPath isEqualToString:propSel(paraTitleFont)]) {
+            || [keyPath isEqualToString:propSel(paraTitleFont)]
+            || [keyPath isEqualToString:propSel(articleFont)]
+            || [keyPath isEqualToString:@"paraTitleFontReadable"]
+            || [keyPath isEqualToString:@"articleFontReadable"]) {
             
             if ([keyPath isEqualToString:propSel(fontSize)]) {
                 
@@ -324,12 +340,44 @@ PrefsManager * SharedPrefs = nil;
             }
             else if ([keyPath isEqualToString:propSel(lineSpacing)]) {
                 
-                [self setValue:[change valueForKey:NSKeyValueChangeNewKey] forKey:propSel(lineSpacing)];
+                [self setValue:value forKey:propSel(lineSpacing)];
                 
             }
+            
             else if ([keyPath isEqualToString:propSel(paraTitleFont)]) {
                 
-                [self setValue:[change valueForKey:NSKeyValueChangeNewKey] forKey:propSel(paraTitleFont)];
+                NSString *readable = ThemeVC.fontNamesMap[value];
+                
+                [self setValue:value forKey:propSel(paraTitleFont)];
+                
+                [NSUserDefaults.standardUserDefaults setObject:readable forKey:@"paraTitleFontReadable"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+                
+            }
+            else if ([keyPath isEqualToString:propSel(articleFont)] || [keyPath isEqualToString:kDefaultsArticleFont]) {
+                
+                NSString *readable = ThemeVC.fontNamesMap[value];
+                
+                [self setValue:value forKey:propSel(articleFont)];
+                
+                [NSUserDefaults.standardUserDefaults setObject:readable forKey:@"articleFontReadable"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+                
+            }
+            else if ([keyPath isEqualToString:@"paraTitleFontReadable"]) {
+                
+                NSUInteger readableIndex = [ThemeVC.fontNamesMap.allValues indexOfObject:value];
+                NSString *source = ThemeVC.fontNamesMap.allKeys[readableIndex];
+                
+                [self setValue:source forKey:propSel(paraTitleFont)];
+                
+            }
+            else if ([keyPath isEqualToString:@"articleFontReadable"]) {
+                
+                NSUInteger readableIndex = [ThemeVC.fontNamesMap.allValues indexOfObject:value];
+                NSString *source = ThemeVC.fontNamesMap.allKeys[readableIndex];
+                
+                [self setValue:source forKey:propSel(articleFont)];
                 
             }
             

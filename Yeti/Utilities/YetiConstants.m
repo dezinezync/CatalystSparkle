@@ -40,6 +40,8 @@ ImageLoadingOption const ImageLoadingLowRes = @"Low Res";
 ImageLoadingOption const ImageLoadingMediumRes = @"Medium Res";
 ImageLoadingOption const ImageLoadingHighRes = @"High Res";
 
+NSNotificationName const ImageBandWidthPreferenceUpdated = @"ImageBandWidthPreferenceUpdated";
+
 ImageLoadingOption const ImageLoadingNever = @"Never load images";
 ImageLoadingOption const ImageLoadingOnlyWireless = @"Only load on Wi-Fi";
 ImageLoadingOption const ImageLoadingAlways = @"Always load images";
@@ -75,6 +77,7 @@ ArticleLayoutFont const ALPPlexSerif = @"articlelayout.IBMPlexSerif";
 ArticleLayoutFont const ALPPlexSans = @"articlelayout.IBMPlexSans";
 ArticleLayoutFont const ALPSpectral = @"articlelayout.Spectral";
 ArticleLayoutFont const ALPOpenDyslexic = @"articlelayout.OpenDyslexic";
+ArticleLayoutFont const ALPNewYork = @"articlelayout.NewYorkLarge";
 
 #pragma mark - Subscription
 
@@ -98,7 +101,7 @@ NSNotificationName YTUserPurchasedSubscription = @"com.dezinezync.elytra.pro.pur
  * 2. Update the value of the LaunchCount key
  */
 NSString * const YTLaunchCountOldKey = @"";
-NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-6-2";
+NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-2.1.0";
 NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";
 
 NSString * const YTSubscriptionNotification = @"com.dezinezync.elytra.subscription";
