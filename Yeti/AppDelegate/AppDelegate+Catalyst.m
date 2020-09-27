@@ -12,6 +12,8 @@
 
 #if TARGET_OS_MACCATALYST
 
+#import "AppKitGlue.h"
+
 #import "FeedsVC+Actions.h"
 #import "ArticleVC+Toolbar.h"
 
@@ -26,8 +28,25 @@
 
 @implementation AppDelegate (Catalyst)
 
-
 - (void)ct_setupAppKitBundle {
+   
+#if TARGET_OS_MACCATALYST
+    NSString *pluginPath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:@"elytramac.bundle"];
+        
+    NSBundle *macBundle = [NSBundle bundleWithPath:pluginPath];
+    
+    self.appKitBundle = macBundle;
+    
+    __unused BOOL unused = [self.appKitBundle load];
+    
+    Class appKitGlueClass = [self.appKitBundle classNamed:@"AppKitGlue"];
+
+    __unused AppKitGlue *instance = [appKitGlueClass shared];
+    
+    self.sharedGlue = instance;
+    self.sharedGlue.appUserDefaults = [NSUserDefaults standardUserDefaults];
+    self.sharedGlue.feedsManager = MyFeedsManager;
+#endif
     
 }
 

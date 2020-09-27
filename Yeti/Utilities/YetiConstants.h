@@ -37,6 +37,7 @@ YETI_EXPORT NSString * _Nonnull const kDefaultsImageLoading;
 YETI_EXPORT NSString * _Nonnull const kDefaultsImageBandwidth;
 YETI_EXPORT NSString * _Nonnull const kSubscriptionType;
 
+YETI_EXPORT NSNotificationName _Nonnull const ArticleCoverImagesPreferenceUpdated;
 YETI_EXPORT NSString * _Nonnull const kShowArticleCoverImages;
 
 typedef NSString * ImageLoadingOption NS_STRING_ENUM;
@@ -138,6 +139,15 @@ extern NSString * _Nonnull const IAPMonthlyAuto;
 extern NSString * _Nonnull const IAPYearlyAuto;
 
 YETI_EXPORT NSString * _Nonnull const kShowMarkReadPrompt;
+
+extern NSString * _Nonnull const OpenBrowserInReaderMode;
+
+#if TARGET_OS_MACCATALYST
+
+extern NSString * _Nonnull const MacKeyRefreshFeeds;
+extern NSString * _Nonnull const MacKeyOpensBrowserInBackground;
+
+#endif
 
 extern BOOL canSupportOLED (void);
 

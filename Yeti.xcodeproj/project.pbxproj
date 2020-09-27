@@ -10,6 +10,7 @@
 		F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F001A8272505E8F0006175B9 /* SceneDelegate.m */; };
 		F004560B24DE81DB0094A6A3 /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560A24DE81DB0094A6A3 /* FeedCell.m */; };
 		F004561024DE85B60094A6A3 /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560F24DE85B60094A6A3 /* FolderCell.m */; };
+		F00685FE251F780E00239C80 /* elytramac.bundle in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0783C88248F685C00C7A280 /* elytramac.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1623F432CA002BCF41 /* CustomizeVC.m */; };
 		F00B0C1C23F4390B002BCF41 /* CustomizeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F00B0C1A23F4390B002BCF41 /* CustomizeCell.m */; };
 		F00B0C1D23F4390B002BCF41 /* CustomizeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00B0C1B23F4390B002BCF41 /* CustomizeCell.xib */; };
@@ -114,6 +115,7 @@
 		F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F03BC4E320C9015A007B574F /* EmptyView.xib */; };
 		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
 		F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */ = {isa = PBXBuildFile; fileRef = F03C4EBC2510CE8A008561DB /* NewFolderController.m */; };
+		F03C6040251F702200F442C7 /* DZStepper.m in Sources */ = {isa = PBXBuildFile; fileRef = F03C6025251F702200F442C7 /* DZStepper.m */; };
 		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0448D00244463B7003B6AA7 /* CoreServices.framework */; };
@@ -299,6 +301,22 @@
 		F0B7C84A240B7272008D8F4F /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B7C849240B7272008D8F4F /* NotificationViewController.m */; };
 		F0B7C84D240B7272008D8F4F /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B7C84B240B7272008D8F4F /* MainInterface.storyboard */; };
 		F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0B7C842240B7272008D8F4F /* notificationContext.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F0BC8BE125205C2100FADCBB /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD425205C2100FADCBB /* Localization.swift */; };
+		F0BC8BE225205C2100FADCBB /* PreferencesStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD525205C2100FADCBB /* PreferencesStyle.swift */; };
+		F0BC8BE325205C2100FADCBB /* PreferencePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD625205C2100FADCBB /* PreferencePane.swift */; };
+		F0BC8BE425205C2100FADCBB /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD725205C2100FADCBB /* Preferences.swift */; };
+		F0BC8BE525205C2100FADCBB /* SegmentedControlStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD825205C2100FADCBB /* SegmentedControlStyleViewController.swift */; };
+		F0BC8BE625205C2100FADCBB /* ToolbarItemStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD925205C2100FADCBB /* ToolbarItemStyleViewController.swift */; };
+		F0BC8BE725205C2100FADCBB /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDA25205C2100FADCBB /* Container.swift */; };
+		F0BC8BE825205C2100FADCBB /* PreferencesStyleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDB25205C2100FADCBB /* PreferencesStyleController.swift */; };
+		F0BC8BE925205C2100FADCBB /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDC25205C2100FADCBB /* PreferencesWindowController.swift */; };
+		F0BC8BEA25205C2100FADCBB /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDD25205C2100FADCBB /* util.swift */; };
+		F0BC8BEB25205C2100FADCBB /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDE25205C2100FADCBB /* Section.swift */; };
+		F0BC8BEC25205C2100FADCBB /* PreferencesTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDF25205C2100FADCBB /* PreferencesTabViewController.swift */; };
+		F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BF725205C4400FADCBB /* PreferencesController.swift */; };
+		F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */; };
+		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
+		F0BC8C072520636200FADCBB /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
 		F0BFD6FA24580543009A863C /* DZKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0B482792455F64900EE5AA2 /* DZKit.framework */; };
 		F0C6E049234AFCF8001EED23 /* StoreReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */; };
 		F0C9F7D6215250980078FB8F /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C9F7D5215250980078FB8F /* FeedCell.m */; };
@@ -337,6 +355,8 @@
 		F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
 		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
 		F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
+		F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */; };
+		F0E0D51625208C3700A9E654 /* ImagesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */; };
 		F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0DBB122AE0F46006A2D93 /* WebKit.framework */; };
 		F0E0E6EE2457FF2300DFFD17 /* JLRoutes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6EB2457FF1D00DFFD17 /* JLRoutes.framework */; };
 		F0E0E6EF2457FF2400DFFD17 /* JLRoutes.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0E6EB2457FF1D00DFFD17 /* JLRoutes.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -367,6 +387,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F00685F2251F778B00239C80 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F0783C87248F685C00C7A280;
+			remoteInfo = elytramac;
+		};
+		F00685FF251F780E00239C80 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F0783C87248F685C00C7A280;
+			remoteInfo = elytramac;
+		};
 		F035A21E20617EC3005A88EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F070C2D11FBABC3500912CCF /* Project object */;
@@ -672,6 +706,7 @@
 			files = (
 				F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */,
 				F035A22020617EC3005A88EE /* YetiShare.appex in Embed App Extensions */,
+				F00685FE251F780E00239C80 /* elytramac.bundle in Embed App Extensions */,
 				F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -713,6 +748,7 @@
 		F004560A24DE81DB0094A6A3 /* FeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedCell.m; sourceTree = "<group>"; };
 		F004560E24DE85B60094A6A3 /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
 		F004560F24DE85B60094A6A3 /* FolderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FolderCell.m; sourceTree = "<group>"; };
+		F0068735251F808700239C80 /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/PreferencePanes.framework; sourceTree = DEVELOPER_DIR; };
 		F00710C6229FA1F0002943B2 /* BarPositioning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarPositioning.h; sourceTree = "<group>"; };
 		F00B0C1523F432CA002BCF41 /* CustomizeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomizeVC.h; sourceTree = "<group>"; };
 		F00B0C1623F432CA002BCF41 /* CustomizeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomizeVC.m; sourceTree = "<group>"; };
@@ -886,6 +922,10 @@
 		F03BC4E820C9016A007B574F /* EmptyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyView.m; sourceTree = "<group>"; };
 		F03C4EBB2510CE8A008561DB /* NewFolderController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewFolderController.h; sourceTree = "<group>"; };
 		F03C4EBC2510CE8A008561DB /* NewFolderController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewFolderController.m; sourceTree = "<group>"; };
+		F03C6025251F702200F442C7 /* DZStepper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DZStepper.m; sourceTree = "<group>"; };
+		F03C6026251F702200F442C7 /* DZStepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZStepper.h; sourceTree = "<group>"; };
+		F03C60C6251F720D00F442C7 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
+		F03C60CF251F72F700F442C7 /* ElytraMacBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElytraMacBridgingHeader.h; sourceTree = "<group>"; };
 		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
 		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
@@ -1171,6 +1211,21 @@
 		F0B7C849240B7272008D8F4F /* NotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
 		F0B7C84C240B7272008D8F4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		F0B7C84E240B7272008D8F4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F0BC8BD425205C2100FADCBB /* Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
+		F0BC8BD525205C2100FADCBB /* PreferencesStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesStyle.swift; sourceTree = "<group>"; };
+		F0BC8BD625205C2100FADCBB /* PreferencePane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencePane.swift; sourceTree = "<group>"; };
+		F0BC8BD725205C2100FADCBB /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		F0BC8BD825205C2100FADCBB /* SegmentedControlStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedControlStyleViewController.swift; sourceTree = "<group>"; };
+		F0BC8BD925205C2100FADCBB /* ToolbarItemStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarItemStyleViewController.swift; sourceTree = "<group>"; };
+		F0BC8BDA25205C2100FADCBB /* Container.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
+		F0BC8BDB25205C2100FADCBB /* PreferencesStyleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesStyleController.swift; sourceTree = "<group>"; };
+		F0BC8BDC25205C2100FADCBB /* PreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
+		F0BC8BDD25205C2100FADCBB /* util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; };
+		F0BC8BDE25205C2100FADCBB /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
+		F0BC8BDF25205C2100FADCBB /* PreferencesTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesTabViewController.swift; sourceTree = "<group>"; };
+		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
+		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
+		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
 		F0C4F8C4234C69B900D57C18 /* DZNetworking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZNetworking.xcodeproj; path = Vendors/DZNetworking/DZNetworking.xcodeproj; sourceTree = "<group>"; };
 		F0C6E047234AFCF8001EED23 /* StoreReceiptVerifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StoreReceiptVerifier.h; sourceTree = "<group>"; };
 		F0C6E048234AFCF8001EED23 /* StoreReceiptVerifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StoreReceiptVerifier.m; sourceTree = "<group>"; };
@@ -1236,6 +1291,8 @@
 		F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsGridCell.h; sourceTree = "<group>"; };
 		F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsGridCell.m; sourceTree = "<group>"; };
 		F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsGridCell.xib; sourceTree = "<group>"; };
+		F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesPreferenceViewController.xib; sourceTree = "<group>"; };
+		F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0E0DBB122AE0F46006A2D93 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		F0E0E6E22457FF1D00DFFD17 /* JLRoutes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JLRoutes.xcodeproj; path = Vendors/JLRoutes/JLRoutes.xcodeproj; sourceTree = "<group>"; };
 		F0E5F4E724CEC854007E6D1E /* PhotosController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosController.m; sourceTree = "<group>"; };
@@ -1609,6 +1666,35 @@
 			path = CodeParser;
 			sourceTree = "<group>";
 		};
+		F03C6024251F702200F442C7 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				F03C6025251F702200F442C7 /* DZStepper.m */,
+				F03C6026251F702200F442C7 /* DZStepper.h */,
+			);
+			path = Mac;
+			sourceTree = "<group>";
+		};
+		F03C6088251F70D000F442C7 /* Vendors */ = {
+			isa = PBXGroup;
+			children = (
+				F0BC8BD225205C2100FADCBB /* Preferences */,
+			);
+			name = Vendors;
+			sourceTree = "<group>";
+		};
+		F03C609B251F719700F442C7 /* PreferencesController */ = {
+			isa = PBXGroup;
+			children = (
+				F0BC8BF725205C4400FADCBB /* PreferencesController.swift */,
+				F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */,
+				F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */,
+				F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */,
+				F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */,
+			);
+			path = PreferencesController;
+			sourceTree = "<group>";
+		};
 		F047F4D220C25FAC00626968 /* Spectral */ = {
 			isa = PBXGroup;
 			children = (
@@ -1961,6 +2047,7 @@
 			isa = PBXGroup;
 			children = (
 				F00F644C24EC1D8900E5727C /* Article */,
+				F03C6024251F702200F442C7 /* Mac */,
 				F070C3491FBADF8D00912CCF /* FeedsCell.h */,
 				F070C34A1FBADF8D00912CCF /* FeedsCell.m */,
 				F070C34B1FBADF8D00912CCF /* FeedsCell.xib */,
@@ -2031,6 +2118,9 @@
 				F0783C8A248F685C00C7A280 /* Info.plist */,
 				F0783CAD248F6A5800C7A280 /* AppKitGlue.h */,
 				F0783CAE248F6A5800C7A280 /* AppKitGlue.m */,
+				F03C609B251F719700F442C7 /* PreferencesController */,
+				F03C6088251F70D000F442C7 /* Vendors */,
+				F03C60CF251F72F700F442C7 /* ElytraMacBridgingHeader.h */,
 			);
 			path = elytramac;
 			sourceTree = "<group>";
@@ -2080,6 +2170,8 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0068735251F808700239C80 /* PreferencePanes.framework */,
+				F03C60C6251F720D00F442C7 /* SwiftUI.framework */,
 				F061508A24F62D18007F50A5 /* WidgetKit.framework */,
 				F0448D00244463B7003B6AA7 /* CoreServices.framework */,
 				F0E0DBB122AE0F46006A2D93 /* WebKit.framework */,
@@ -2332,6 +2424,26 @@
 			path = notificationContext;
 			sourceTree = "<group>";
 		};
+		F0BC8BD225205C2100FADCBB /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				F0BC8BD425205C2100FADCBB /* Localization.swift */,
+				F0BC8BD525205C2100FADCBB /* PreferencesStyle.swift */,
+				F0BC8BD625205C2100FADCBB /* PreferencePane.swift */,
+				F0BC8BD725205C2100FADCBB /* Preferences.swift */,
+				F0BC8BD825205C2100FADCBB /* SegmentedControlStyleViewController.swift */,
+				F0BC8BD925205C2100FADCBB /* ToolbarItemStyleViewController.swift */,
+				F0BC8BDA25205C2100FADCBB /* Container.swift */,
+				F0BC8BDB25205C2100FADCBB /* PreferencesStyleController.swift */,
+				F0BC8BDC25205C2100FADCBB /* PreferencesWindowController.swift */,
+				F0BC8BDD25205C2100FADCBB /* util.swift */,
+				F0BC8BDE25205C2100FADCBB /* Section.swift */,
+				F0BC8BDF25205C2100FADCBB /* PreferencesTabViewController.swift */,
+			);
+			name = Preferences;
+			path = Vendors/Preferences/Sources/Preferences;
+			sourceTree = "<group>";
+		};
 		F0C4F8C5234C69B900D57C18 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2495,6 +2607,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F00685F3251F778B00239C80 /* PBXTargetDependency */,
 				F083435B24F7EC8400B11D26 /* PBXTargetDependency */,
 				F0FC5BE924F7D33700F49224 /* PBXTargetDependency */,
 				F0B0EA3624EC1F3200D675B4 /* PBXTargetDependency */,
@@ -2505,6 +2618,7 @@
 				F035A21F20617EC3005A88EE /* PBXTargetDependency */,
 				F0B7C850240B7272008D8F4F /* PBXTargetDependency */,
 				F0D98F5D24EE4C8500B1F9F0 /* PBXTargetDependency */,
+				F0068600251F780E00239C80 /* PBXTargetDependency */,
 			);
 			name = Elytra;
 			productName = Yeti;
@@ -2560,6 +2674,8 @@
 			dependencies = (
 			);
 			name = elytramac;
+			packageProductDependencies = (
+			);
 			productName = elytramac;
 			productReference = F0783C88248F685C00C7A280 /* elytramac.bundle */;
 			productType = "com.apple.product-type.bundle";
@@ -3099,6 +3215,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */,
+				F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3276,6 +3394,7 @@
 				F00F644324EC1BC700E5727C /* Feed.m in Sources */,
 				F0CDA0D12475191600DC1217 /* BookmarksVC.m in Sources */,
 				F0E86491234793870089F9EF /* ArticleVC+Photos.m in Sources */,
+				F03C6040251F702200F442C7 /* DZStepper.m in Sources */,
 				F03AC035205533D900FB111A /* CodeParser.m in Sources */,
 				F032A760244D7F470024AC63 /* TypeFactory.m in Sources */,
 				F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */,
@@ -3361,7 +3480,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0E0D51625208C3700A9E654 /* ImagesPreferenceViewController.swift in Sources */,
+				F0BC8BE225205C2100FADCBB /* PreferencesStyle.swift in Sources */,
+				F0BC8C072520636200FADCBB /* Keychain.m in Sources */,
+				F0BC8BE925205C2100FADCBB /* PreferencesWindowController.swift in Sources */,
+				F0BC8BE625205C2100FADCBB /* ToolbarItemStyleViewController.swift in Sources */,
+				F0BC8BEA25205C2100FADCBB /* util.swift in Sources */,
 				F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */,
+				F0BC8BEC25205C2100FADCBB /* PreferencesTabViewController.swift in Sources */,
+				F0BC8BE425205C2100FADCBB /* Preferences.swift in Sources */,
+				F0BC8BE325205C2100FADCBB /* PreferencePane.swift in Sources */,
+				F0BC8BEB25205C2100FADCBB /* Section.swift in Sources */,
+				F0BC8BE825205C2100FADCBB /* PreferencesStyleController.swift in Sources */,
+				F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */,
+				F0BC8BE125205C2100FADCBB /* Localization.swift in Sources */,
+				F0BC8BE725205C2100FADCBB /* Container.swift in Sources */,
+				F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */,
+				F0BC8BE525205C2100FADCBB /* SegmentedControlStyleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3386,6 +3521,17 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F00685F3251F778B00239C80 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = maccatalyst;
+			target = F0783C87248F685C00C7A280 /* elytramac */;
+			targetProxy = F00685F2251F778B00239C80 /* PBXContainerItemProxy */;
+		};
+		F0068600251F780E00239C80 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F0783C87248F685C00C7A280 /* elytramac */;
+			targetProxy = F00685FF251F780E00239C80 /* PBXContainerItemProxy */;
+		};
 		F035A21F20617EC3005A88EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -3689,6 +3835,7 @@
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
 					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
+					"$(PROJECT_DIR)/Yeti/Vendors",
 				);
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3746,6 +3893,7 @@
 					"$(PROJECT_DIR)/Yeti/Vendors/**",
 					"$(PROJECT_DIR)/Yeti/Vendors/WebPImageSerialization",
 					"$(PROJECT_DIR)/Yeti/Vendors/YapDatabase/YapDatabase/**",
+					"$(PROJECT_DIR)/Yeti/Vendors",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yeti/SupportingFiles/Prefix.pch;
@@ -3877,9 +4025,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Yeti/Vendors",
+				);
 				INFOPLIST_FILE = elytramac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 2.0.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -3888,6 +4041,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = all;
+				STRIP_SWIFT_SYMBOLS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = elytramac/ElytraMacBridgingHeader.h;
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -3900,9 +4057,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Yeti/Vendors",
+				);
 				INFOPLIST_FILE = elytramac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 2.0.0;
 				MTL_FAST_MATH = YES;
@@ -3910,6 +4072,10 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = all;
+				STRIP_SWIFT_SYMBOLS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = elytramac/ElytraMacBridgingHeader.h;
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

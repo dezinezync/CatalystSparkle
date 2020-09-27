@@ -270,12 +270,15 @@ AppDelegate *MyAppDelegate = nil;
              kPreviewLines: @0,
              kShowTags: @YES,
              kUseToolbar: @NO,
-             kHideBars: @NO
+             kHideBars: @NO,
+                                   OpenBrowserInReaderMode: @NO
     }.mutableCopy;
     
 #if TARGET_OS_MACCATALYST
     dict[kUseSystemFontSize] = @NO;
     dict[kFontSize] = @(14.f);
+    dict[MacKeyRefreshFeeds] = @"Manually";
+    dict[MacKeyOpensBrowserInBackground] = @NO;
 #endif
     
     return dict;

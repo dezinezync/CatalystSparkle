@@ -116,6 +116,7 @@
     
     [self setupNavigationBar];
     [self setupTableView];
+    [self setupNotifications];
     
 }
 
@@ -252,9 +253,7 @@
     if (ArticlesManager.shared.feeds != nil && ArticlesManager.shared.feeds.count > 0) {}
     else {
         
-        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
-        
-        [center addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
+        [notificationCenter addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
         
     }
     
@@ -266,6 +265,8 @@
         [self didUpdateBookmarks];
         
     }];
+    
+    [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ArticleCoverImagesPreferenceUpdated object:nil];
     
 }
 
@@ -807,9 +808,32 @@
 
         if ([[self.tableView indexPathsForVisibleRows] count] > 0) {
             
-            NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+            // reload visible cells
+            NSArray <NSIndexPath *> *visibleIndices = [self.tableView indexPathsForVisibleRows];
             
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            if (visibleIndices.count > 0) {
+                
+                NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+                
+                NSMutableArray <FeedItem *> *identifiers = [NSMutableArray arrayWithCapacity:visibleIndices.count];
+                
+                for (NSIndexPath *indexPath in visibleIndices) {
+                    
+                    FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
+                    
+                    if (item != nil) {
+                        
+                        [identifiers addObject:item];
+                        
+                    }
+                    
+                }
+                
+                [snapshot reloadItemsWithIdentifiers:identifiers];
+                
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                
+            }
             
         }
         

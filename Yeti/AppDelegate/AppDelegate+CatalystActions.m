@@ -13,6 +13,12 @@
 #import "FeedVC+Actions.h"
 #import "ArticleVC+Toolbar.h"
 
+@interface AppKitGlue : NSObject
+
+- (void)showPreferencesController;
+
+@end
+
 @implementation AppDelegate (CatalystActions)
 
 - (void)createNewFeed {
@@ -49,9 +55,17 @@
 
 - (void)openSettings:(id)sender {
     
+#if TARGET_OS_MACCATALYST
+    
+    [self.sharedGlue performSelectorOnMainThread:NSSelectorFromString(@"showPreferencesController") withObject:nil waitUntilDone:NO];
+    
+#else
+    
     SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
     
     [sceneDelegate.coordinator showSettingsVC];
+    
+#endif
     
 }
 

@@ -2870,7 +2870,13 @@ NSArray <NSString *> * _defaultsKeys;
     
     @synchronized (self) {
         
+#if TARGET_OS_MACCATALYST
+#ifndef DEBUG
         [self setupSubscriptionNotification];
+#endif
+#endif
+        
+        [defaults setValue:user.uuid forKey:@"accountID"];
         
         if (self.subscription == nil || self.subscription.expiry == nil) {
             

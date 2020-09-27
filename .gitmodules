@@ -31,3 +31,6 @@
 [submodule "Yeti/Vendors/IDMPhotoBrowser"]
 	path = Yeti/Vendors/IDMPhotoBrowser
 	url = git@github.com:dezinezync/IDMPhotoBrowser.git
+[submodule "elytramac/Vendors/Preferences"]
+	path = elytramac/Vendors/Preferences
+	url = git@github.com:dezinezync/Preferences.git

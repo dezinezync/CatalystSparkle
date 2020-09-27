@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17503.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17503.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferenceViewController" customModule="elytramac" customModuleProvider="target">
+            <connections>
+                <outlet property="accountID" destination="6IN-Ac-Alj" id="llo-pD-3Nx"/>
+                <outlet property="deactivateButton" destination="lWF-FL-HXt" id="Ajf-on-Mot"/>
+                <outlet property="view" destination="c22-O7-iKe" id="ZQe-UH-LCX"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="510" height="287"/>
+            <subviews>
+                <gridView xPlacement="center" yPlacement="center" rowAlignment="none" rowSpacing="8" columnSpacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="lkV-Y2-eOl">
+                    <rect key="frame" x="30" y="20" width="450" height="247"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="450" id="5HG-su-XZq"/>
+                        <constraint firstItem="0at-6J-tiq" firstAttribute="top" secondItem="c2E-pX-Fuo" secondAttribute="bottom" constant="17" id="ELD-jB-RfU"/>
+                        <constraint firstItem="C5b-Tx-rlm" firstAttribute="top" secondItem="rtd-pr-fG2" secondAttribute="bottom" constant="17" id="hie-al-pDj"/>
+                        <constraint firstItem="c2E-pX-Fuo" firstAttribute="top" secondItem="lWF-FL-HXt" secondAttribute="bottom" constant="13" id="ts8-OC-iwv"/>
+                    </constraints>
+                    <rows>
+                        <gridRow id="ukr-az-gqc"/>
+                        <gridRow id="T12-jp-iyg"/>
+                        <gridRow yPlacement="top" id="gSl-iE-cwq"/>
+                        <gridRow yPlacement="center" height="20" id="Vxw-AW-fH6"/>
+                        <gridRow id="3rI-5v-nj2"/>
+                        <gridRow id="vzh-lB-BGH"/>
+                        <gridRow yPlacement="top" id="Vkn-wS-gZk"/>
+                        <gridRow id="sNM-K3-nEa"/>
+                    </rows>
+                    <columns>
+                        <gridColumn xPlacement="trailing" id="GGj-JC-w4E"/>
+                        <gridColumn xPlacement="leading" id="cs9-fm-l2F"/>
+                    </columns>
+                    <gridCells>
+                        <gridCell row="ukr-az-gqc" column="GGj-JC-w4E" id="sRb-hw-f4U">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-jC-8Jo">
+                                <rect key="frame" x="36" y="231" width="54" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Account" id="uKy-ok-dDi">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="ukr-az-gqc" column="cs9-fm-l2F" id="jPa-TM-cRP">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="6IN-Ac-Alj">
+                                <rect key="frame" x="96" y="232" width="62" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="Account ID" id="Ki9-go-W1v">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="value" keyPath="values.accountID" id="B9i-wm-0AZ"/>
+                                </connections>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="T12-jp-iyg" column="GGj-JC-w4E" id="EPo-Ph-Qej"/>
+                        <gridCell row="T12-jp-iyg" column="cs9-fm-l2F" id="pDh-6N-nHw">
+                            <button key="contentView" horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lWF-FL-HXt">
+                                <rect key="frame" x="91" y="191" width="153" height="32"/>
+                                <buttonCell key="cell" type="push" title="Deactivate Account" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="swj-QQ-ESd">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="didTapDeactivate:" target="-2" id="EyY-Wr-jfx"/>
+                                </connections>
+                            </button>
+                        </gridCell>
+                        <gridCell row="gSl-iE-cwq" column="GGj-JC-w4E" id="IXl-mV-waK"/>
+                        <gridCell row="gSl-iE-cwq" column="cs9-fm-l2F" id="yFx-k0-cPt">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="c2E-pX-Fuo">
+                                <rect key="frame" x="96" y="143" width="356" height="42"/>
+                                <textFieldCell key="cell" selectable="YES" id="D9h-tf-tnk">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <string key="title">If you deactivate your account and wish to activate it again, please email me on support@elytra.app with the above UUID. You can use the context menu/right click to copy the ID.</string>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="Vxw-AW-fH6" column="GGj-JC-w4E" headOfMergedCell="YUZ-t2-HaZ" xPlacement="fill" id="YUZ-t2-HaZ">
+                            <box key="contentView" verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="0at-6J-tiq">
+                                <rect key="frame" x="0.0" y="122" width="450" height="6"/>
+                            </box>
+                        </gridCell>
+                        <gridCell row="Vxw-AW-fH6" column="cs9-fm-l2F" headOfMergedCell="YUZ-t2-HaZ" id="Nj4-9X-TOs"/>
+                        <gridCell row="3rI-5v-nj2" column="GGj-JC-w4E" id="H7l-rR-qvn">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pCC-xo-gKS">
+                                <rect key="frame" x="-2" y="89" width="92" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Refresh feeds:" id="zw7-G3-qks">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="3rI-5v-nj2" column="cs9-fm-l2F" id="dEO-dF-qf0">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BDh-nf-E6Y">
+                                <rect key="frame" x="95" y="83" width="144" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="Manually" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9No-oo-wh3" id="vXa-BC-46b">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="0N3-Pi-LrK">
+                                        <items>
+                                            <menuItem title="Manually" state="on" id="9No-oo-wh3">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Every 30 minutes" id="ZKY-kz-3X8">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Every Hour" id="hJb-Np-qyX">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="selectedValue" keyPath="values.macKeyRefreshFeeds" id="NS4-vo-GLK">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="vzh-lB-BGH" column="GGj-JC-w4E" id="G8A-0S-xHB">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OIF-KF-O5m">
+                                <rect key="frame" x="32" y="63" width="58" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Browser:" id="7aF-tg-6Qj">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="vzh-lB-BGH" column="cs9-fm-l2F" id="oqN-sN-jXV">
+                            <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zrp-jv-5Hq">
+                                <rect key="frame" x="96" y="62" width="284" height="18"/>
+                                <buttonCell key="cell" type="check" title="Open web pages in background in browser" bezelStyle="regularSquare" imagePosition="left" inset="2" id="x5i-CI-gSv">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="value" keyPath="values.macKeyOpensBrowserInBackground" id="HEg-Gl-YV6"/>
+                                </connections>
+                            </button>
+                        </gridCell>
+                        <gridCell row="Vkn-wS-gZk" column="GGj-JC-w4E" id="jrh-3C-izu"/>
+                        <gridCell row="Vkn-wS-gZk" column="cs9-fm-l2F" id="52E-jw-bp4">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="rtd-pr-fG2">
+                                <rect key="frame" x="96" y="41" width="200" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="Press the shift key to do the opposite" id="Z13-dJ-JBv">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="sNM-K3-nEa" column="GGj-JC-w4E" id="Fvb-uF-QFE"/>
+                        <gridCell row="sNM-K3-nEa" column="cs9-fm-l2F" id="J9b-36-SOD">
+                            <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C5b-Tx-rlm">
+                                <rect key="frame" x="96" y="7" width="212" height="18"/>
+                                <buttonCell key="cell" type="check" title="Open web pages Reader Mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="eID-Lh-drw">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="value" keyPath="values.opensBrowserInReaderMode" id="lRN-wR-Rfk"/>
+                                </connections>
+                            </button>
+                        </gridCell>
+                    </gridCells>
+                </gridView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="c22-O7-iKe" secondAttribute="leading" priority="750" constant="30" id="F1e-Dt-RW9"/>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" id="N7H-hp-bhb"/>
+                <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="lkV-Y2-eOl" secondAttribute="trailing" priority="750" constant="30" id="Ses-fe-Clv"/>
+                <constraint firstAttribute="bottom" secondItem="lkV-Y2-eOl" secondAttribute="bottom" priority="750" constant="20" id="bsa-Ju-YOT"/>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="rdL-1S-HXy"/>
+            </constraints>
+            <point key="canvasLocation" x="112" y="310.5"/>
+        </customView>
+        <userDefaultsController representsSharedInstance="YES" id="qiY-HW-yGh"/>
+    </objects>
+</document>

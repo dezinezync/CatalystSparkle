@@ -7,8 +7,24 @@
 //
 
 #import "AppKitGlue.h"
+#import "elytramac-Swift.h"
+
+typedef void (^successBlock)(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task);
+typedef void (^errorBlock)(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task);
+
+@interface FeedsManager : NSObject
+
+- (void)deactivateAccountWithSuccess:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
+@end
 
 static AppKitGlue * SharedAppKitGlue = nil;
+
+@interface AppKitGlue ()
+
+@property (strong) PreferencesController *preferencesController;
+
+@end
 
 @implementation AppKitGlue
 
@@ -23,83 +39,14 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
-- (CGColorRef)CTColorForName:(NSString *)name {
-    
-    SEL sel = NSSelectorFromString(name);
-    
-    if ([NSColor respondsToSelector:sel] == YES) {
-        
-        NSColor *color = [NSColor performSelector:sel];
-        
-        if (color != nil) {
-            
-            CGColorRef cgColor = color.CGColor;
-            
-            return cgColor;
-            
-//            CGFloat red, green, blue, alpha;
-//
-//            [color getRed:&red green:&green blue:&blue alpha:&alpha];
-//
-//            return @[@(red), @(green), @(blue), @(alpha)];
-            
-        }
-        
-        return nil;
-        
-    }
-    
-    return nil;
-    
-}
-
-- (void)ct_showAlertWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitle:(NSString *)otherButtonTitle completionHandler:(void (^ _Nullable)(NSString * _Nonnull))completionHandler {
-    
-    NSAlert *alert = [[NSAlert alloc] init];
-    
-    [alert setMessageText:(title ?: @"")];
-    
-    if (message) {
-        [alert setInformativeText:message];
-    }
-    
-    if (cancelButtonTitle != nil) {
-        
-        NSButton *button = [alert addButtonWithTitle:@"Cancel"];
-        button.tag = 0;
-        
-        if (otherButtonTitle != nil) {
-        
-            button = [alert addButtonWithTitle:@"Ok"];
-            button.tag = 1;
-            
-        }
-        
-    }
-    else {
-        NSButton *button = [alert addButtonWithTitle:@"Ok"];
-        button.tag = 0;
-    }
-    
-    NSModalResponse responseTag = [alert runModal];
-    
-    if (completionHandler) {
-        
-        NSButton *button = [alert buttons][responseTag];
-        
-        completionHandler(button.title);
-        
-    }
-    
-}
-
 - (void)openURL:(NSURL *)url inBackground:(BOOL)background {
     
     if (background) {
       
-        NSArray* urls = [NSArray arrayWithObject:url];
-      
-        [[NSWorkspace sharedWorkspace] openURLs:urls withAppBundleIdentifier:nil options:NSWorkspaceLaunchWithoutActivation additionalEventParamDescriptor:nil launchIdentifiers:nil];
+        NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration configuration];
+        config.activates = NO;
+        
+        [[NSWorkspace sharedWorkspace] openURL:url configuration:config completionHandler:nil];
     }
     else {
       [[NSWorkspace sharedWorkspace] openURL:url];
@@ -146,6 +93,34 @@ static AppKitGlue * SharedAppKitGlue = nil;
     CGImageRef ref =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
     
     return ref;
+    
+}
+
+- (void)showPreferencesController {
+    
+    if (self.preferencesController == nil) {
+        self.preferencesController = [PreferencesController new];
+    }
+    
+    [self.preferencesController preferencesMenuItemActionHandler:nil];
+    
+}
+
+- (void)deactivateAccount:(void (^)(BOOL success, NSError *error))completionBlock {
+    
+    [(FeedsManager *)self.feedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (completionBlock) {
+            completionBlock(YES, nil);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (completionBlock) {
+            completionBlock(NO, error);
+        }
+        
+    }];
     
 }
 

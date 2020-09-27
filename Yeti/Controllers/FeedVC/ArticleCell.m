@@ -145,6 +145,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
 #pragma mark - Configurations
 
 - (BOOL)showImage {
+    
     if ([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingNever])
         return NO;
     
@@ -162,7 +163,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         return;
     }
     
-    if ([self showImage] == NO) {
+    if ([self showImage] == NO || SharedPrefs.articleCoverImages == NO) {
         
         self.coverImage.hidden = YES;
         

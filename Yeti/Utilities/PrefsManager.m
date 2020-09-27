@@ -151,6 +151,15 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(iOSTintColorIndex)]) {
         return formattedString(@"theme-%@-color", @"default");
     }
+    else if ([key isEqualToString:propSel(browserOpenInBackground)]) {
+        return MacKeyOpensBrowserInBackground;
+    }
+    else if ([key isEqualToString:propSel(browserUsesReaderMode)]) {
+        return OpenBrowserInReaderMode;
+    }
+    else if ([key isEqualToString:propSel(refreshFeedsInterval)]) {
+        return MacKeyRefreshFeeds;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -219,6 +228,27 @@ PrefsManager * SharedPrefs = nil;
     
 }
 
+#pragma mark - Getter
+
+- (NSTimeInterval)refreshFeedsTimeInterval {
+    
+    NSString *str = self.refreshFeedsInterval;
+    NSTimeInterval value;
+    
+    if ([str isEqualToString:@"Every 30 minutes"]) {
+        value = (30 * 60);
+    }
+    else if ([str isEqualToString:@"Every hour"]) {
+        value = (60 * 60);
+    }
+    else {
+        value = -1;
+    }
+    
+    return value;
+    
+}
+
 #pragma mark - Notifications
 
 - (void)setupNotifications {
@@ -233,6 +263,11 @@ PrefsManager * SharedPrefs = nil;
     [defaults addObserver:self forKeyPath:propSel(lineSpacing) options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:propSel(paraTitleFont) options:NSKeyValueObservingOptionNew context:NULL];
     
+    [defaults addObserver:self forKeyPath:kShowArticleCoverImages options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:OpenBrowserInReaderMode options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:MacKeyOpensBrowserInBackground options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:MacKeyRefreshFeeds options:NSKeyValueObservingOptionNew context:NULL];
 #endif
     
 }
@@ -241,7 +276,32 @@ PrefsManager * SharedPrefs = nil;
     
     if (object == self.defaults) {
         
-        if ([keyPath isEqualToString:kLineSpacing]
+        id value = [change valueForKey:NSKeyValueChangeNewKey];
+        
+        if ([keyPath isEqualToString:kShowArticleCoverImages]) {
+            
+            [self setValue:value forKey:propSel(articleCoverImages)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ArticleCoverImagesPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:OpenBrowserInReaderMode]) {
+            
+            [self setValue:value forKey:propSel(browserUsesReaderMode)];
+            
+        }
+        else if ([keyPath isEqualToString:MacKeyOpensBrowserInBackground]) {
+            
+            [self setValue:value forKey:propSel(browserOpenInBackground)];
+            
+        }
+        else if ([keyPath isEqualToString:MacKeyRefreshFeeds]) {
+            
+            [self setValue:value forKey:propSel(refreshFeedsInterval)];
+            
+        }
+        
+        else if ([keyPath isEqualToString:kLineSpacing]
             || [keyPath isEqualToString:propSel(fontSize)]
             || [keyPath isEqualToString:kParagraphTitleFont]
             || [keyPath isEqualToString:kDefaultsArticleFont]
@@ -249,8 +309,6 @@ PrefsManager * SharedPrefs = nil;
             || [keyPath isEqualToString:propSel(paraTitleFont)]) {
             
             if ([keyPath isEqualToString:propSel(fontSize)]) {
-                
-                id value = [change valueForKey:NSKeyValueChangeNewKey];
                 
                 if ([value boolValue] == NO || [value floatValue] == 0.f) {
                     [self setValue:@(YES) forKey:propSel(useSystemSize)];
@@ -281,9 +339,9 @@ PrefsManager * SharedPrefs = nil;
                 [NSNotificationCenter.defaultCenter postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
             });
             
-            return;
-            
         }
+        
+        return;
         
     }
     

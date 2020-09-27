@@ -31,6 +31,7 @@ NSString * const kDefaultsNotifications = @"notifications";
 NSString * const kDefaultsImageLoading = @"imageLoading";
 NSString * const kDefaultsImageBandwidth = @"imageBandwidth";
 
+NSNotificationName const ArticleCoverImagesPreferenceUpdated = @"ArticleCoverImagesPreferenceUpdated";
 NSString * const kShowArticleCoverImages = @"showArticleCoverImages";
 
 #pragma mark - Image Loading
@@ -141,6 +142,16 @@ NSString * _Nonnull const kParagraphTitleFont = @"com.dezinezync.elytra.paragrap
 NSString * _Nonnull const kLineSpacing = @"com.dezinezync.elytra.lineSpacing";
 
 NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userUpdatedPreferredFontMetrics";
+
+NSString * _Nonnull const OpenBrowserInReaderMode = @"opensBrowserInReaderMode";
+
+#if TARGET_OS_MACCATALYST
+
+NSString * _Nonnull const MacKeyRefreshFeeds = @"macKeyRefreshFeeds";
+NSString * _Nonnull const MacKeyOpensBrowserInBackground = @"macKeyOpensBrowserInBackground";
+
+#endif
+
 
 #pragma mark -
 

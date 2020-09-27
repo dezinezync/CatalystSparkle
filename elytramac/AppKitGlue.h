@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#if TARGET_OS_OSX
+#import "Keychain.h"
 
 #import <AppKit/AppKit.h>
 
@@ -18,15 +17,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype _Nonnull)shared;
 
-- (CGColorRef _Nullable)CTColorForName:(NSString * _Nonnull)name;
+@property (nonatomic, weak) NSUserDefaults *appUserDefaults;
 
-- (void)ct_showAlertWithTitle:(NSString * _Nonnull)title message:(NSString * _Nullable)message cancelButtonTitle:(NSString * _Nullable)cancelButtonTitle otherButtonTitle:(NSString * _Nullable)otherButtonTitle completionHandler:(void(^ _Nullable)(NSString *buttonTitle))completionHandler;
+@property (nonatomic, weak) id feedsManager;
 
 - (void)openURL:(NSURL * _Nonnull)url inBackground:(BOOL)inBackground;
 
 - (CGImageRef _Nullable)imageForFileType:(NSString * _Nonnull)fileType;
 
+- (void)showPreferencesController;
+
+- (void)deactivateAccount:(void(^)(BOOL success, NSError *error))completionBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END
-#endif
