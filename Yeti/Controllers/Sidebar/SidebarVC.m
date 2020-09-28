@@ -52,6 +52,8 @@
 
 @property (nonatomic, strong) UISearchController *supplementarySearchController;
 
+@property (nonatomic, weak) NSTimer *refreshTimer;
+
 #endif
 
 @end
@@ -185,6 +187,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 #if TARGET_OS_MACCATALYST
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0, 0);
+    
+    [self scheduleTimerIfValid];
+    
 #endif
 
     [self setupNavigationBar];
@@ -572,6 +577,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:ShowUnreadCountsPreferenceChanged object:nil];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeTimerPreference) name:MacRefreshFeedsIntervalUpdated object:nil];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(badgePreferenceChanged) name:BadgeAppIconPreferenceUpdated object:nil];
+    
 }
 
 #pragma mark - Getters
@@ -943,6 +952,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         MyFeedsManager.unreadLastUpdate = NSDate.date;
         
+        [self badgePreferenceChanged];
+        
         NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
         
         if (snapshot == nil) {
@@ -1310,6 +1321,71 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }
     
     [activity addUserInfoEntriesFromDictionary:@{@"sidebar": sidebar}];
+    
+}
+
+#if TARGET_OS_MACCATALYST
+#pragma mark - Timer
+
+- (void)didChangeTimerPreference {
+    
+    if (self.refreshTimer != nil) {
+        
+        [self.refreshTimer invalidate];
+        
+        self.refreshTimer = nil;
+        
+    }
+    
+    [self scheduleTimerIfValid];
+    
+}
+
+- (void)scheduleTimerIfValid {
+    
+    if (self.refreshTimer != nil) {
+        // a timer was already setup.
+        return;
+    }
+    
+    if (SharedPrefs.refreshFeedsTimeInterval == -1) {
+        return;
+    }
+    
+    NSTimeInterval timeInterval = SharedPrefs.refreshFeedsTimeInterval;
+    
+    NSTimer *timer = [NSTimer timerWithTimeInterval:timeInterval repeats:YES block:^(NSTimer * _Nonnull timer) {
+        
+        NSLog(@"Timer called at %@, refreshing counters and feeds", timer.fireDate);
+        
+        [self beginRefreshingAll:nil];
+        
+    }];
+    
+    NSLog(@"Scheduling timer with time interval: %@", @(timeInterval));
+    
+    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSDefaultRunLoopMode];
+    
+    self.refreshTimer = timer;
+    
+}
+
+#endif
+
+#pragma mark -
+
+- (void)badgePreferenceChanged {
+    
+    if (SharedPrefs.badgeAppIcon == NO) {
+        
+        UIApplication.sharedApplication.applicationIconBadgeNumber = 0;
+        
+    }
+    else {
+        
+        UIApplication.sharedApplication.applicationIconBadgeNumber = MyFeedsManager.totalUnread;
+        
+    }
     
 }
 

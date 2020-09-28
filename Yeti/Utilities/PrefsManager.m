@@ -83,6 +83,8 @@ PrefsManager * SharedPrefs = nil;
     self.browserUsesReaderMode = [self.defaults boolForKey:OpenBrowserInReaderMode];
     self.refreshFeedsInterval = [self.defaults valueForKey:MacKeyRefreshFeeds];
     
+    self.badgeAppIcon = [self.defaults boolForKey:badgeAppIconPreference];
+    
 }
 
 - (NSString *)mappingForKey:(NSString *)key {
@@ -165,6 +167,9 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(refreshFeedsInterval)]) {
         return MacKeyRefreshFeeds;
     }
+    else if ([key isEqualToString:propSel(badgeAppIcon)]) {
+        return badgeAppIconPreference;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -241,15 +246,23 @@ PrefsManager * SharedPrefs = nil;
     NSTimeInterval value;
     
     if ([str isEqualToString:@"Every 30 minutes"]) {
+#ifdef DEBUG
+        value = (1 * 60);
+#else
         value = (30 * 60);
+#endif
     }
-    else if ([str isEqualToString:@"Every hour"]) {
+    else if ([str isEqualToString:@"Every Hour"]) {
+#ifdef DEBUG
+        value = (5 * 60);
+#else
         value = (60 * 60);
+#endif
     }
     else {
         value = -1;
     }
-    
+
     return value;
     
 }
@@ -258,9 +271,9 @@ PrefsManager * SharedPrefs = nil;
 
 - (void)setupNotifications {
     
-#if TARGET_OS_MACCATALYST
-    
     NSUserDefaults *defaults = self.defaults;
+    
+#if TARGET_OS_MACCATALYST
     
     [defaults addObserver:self forKeyPath:propSel(fontSize) options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:kDefaultsArticleFont options:NSKeyValueObservingOptionNew context:NULL];
@@ -284,6 +297,8 @@ PrefsManager * SharedPrefs = nil;
     [defaults addObserver:self forKeyPath:@"MacSummaryPreviewLines" options:NSKeyValueObservingOptionNew context:NULL];
     
 #endif
+    
+    [defaults addObserver:self forKeyPath:badgeAppIconPreference options:NSKeyValueObservingOptionNew context:NULL];
     
 }
 
@@ -314,6 +329,8 @@ PrefsManager * SharedPrefs = nil;
             
             [self setValue:value forKey:propSel(refreshFeedsInterval)];
             
+            [NSNotificationCenter.defaultCenter postNotificationName:MacRefreshFeedsIntervalUpdated object:nil];
+            
         }
         else if ([keyPath isEqualToString:kDefaultsImageBandwidth]) {
             
@@ -341,6 +358,13 @@ PrefsManager * SharedPrefs = nil;
             [self setValue:value forKey:keypath(previewLines)];
             
             [NSNotificationCenter.defaultCenter postNotificationName:PreviewLinesPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:badgeAppIconPreference]) {
+            
+            [self setValue:value forKey:keypath(badgeAppIcon)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:BadgeAppIconPreferenceUpdated object:nil];
             
         }
         

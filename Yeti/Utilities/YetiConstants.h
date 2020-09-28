@@ -147,10 +147,15 @@ extern NSString * _Nonnull const OpenBrowserInReaderMode;
 
 #if TARGET_OS_MACCATALYST
 
+extern NSNotificationName _Nonnull const MacRefreshFeedsIntervalUpdated;
 extern NSString * _Nonnull const MacKeyRefreshFeeds;
+
 extern NSString * _Nonnull const MacKeyOpensBrowserInBackground;
 
 #endif
+
+extern NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated;
+extern NSString * _Nonnull const badgeAppIconPreference;
 
 extern BOOL canSupportOLED (void);
 

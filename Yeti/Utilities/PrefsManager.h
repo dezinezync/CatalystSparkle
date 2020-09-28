@@ -54,6 +54,8 @@ extern PrefsManager * SharedPrefs;
 
 @property (assign) BOOL browserUsesReaderMode;
 
+@property (assign) BOOL badgeAppIcon;
+
 #if TARGET_OS_MACCATALYST
 
 @property (assign) BOOL browserOpenInBackground;

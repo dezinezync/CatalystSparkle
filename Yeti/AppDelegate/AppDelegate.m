@@ -99,6 +99,31 @@ AppDelegate *MyAppDelegate = nil;
         
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
         
+#if TARGET_OS_MACCATALYST
+        
+        if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications] == NO) {
+            
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                
+                if (error) {
+                    NSLog(@"Error authorizing for push notifications: %@",error);
+                    return;
+                }
+                
+                if (granted) {
+                    
+                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [UIApplication.sharedApplication registerForRemoteNotifications];
+                    });
+                    
+                }
+            }];
+            
+        }
+#endif
+        
         [self setupStoreManager];
         
         if ([Keychain boolFor:kIsSubscribingToPushNotifications error:nil]) {

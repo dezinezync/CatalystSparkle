@@ -152,11 +152,15 @@ NSString * _Nonnull const OpenBrowserInReaderMode = @"opensBrowserInReaderMode";
 
 #if TARGET_OS_MACCATALYST
 
+NSNotificationName const MacRefreshFeedsIntervalUpdated = @"macRefreshFeedsIntervalUpdated";
 NSString * _Nonnull const MacKeyRefreshFeeds = @"macKeyRefreshFeeds";
+
 NSString * _Nonnull const MacKeyOpensBrowserInBackground = @"macKeyOpensBrowserInBackground";
 
 #endif
 
+NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated = @"badgeAppIconPreferenceUpdated";
+NSString * _Nonnull const badgeAppIconPreference = @"badgeAppIconPreference";
 
 #pragma mark -
 

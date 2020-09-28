@@ -263,6 +263,10 @@
 
 - (void)scheduleBackgroundRefresh {
     
+#if TARGET_OS_MACCATALYST
+    return;
+#endif
+    
     // Note from NetNewsWire code
     // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
     // task scheduler can hang indefinitely.
