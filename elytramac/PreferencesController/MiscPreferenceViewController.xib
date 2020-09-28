@@ -41,7 +41,7 @@
                     <gridCells>
                         <gridCell row="3IY-4O-236" column="GGj-JC-w4E" id="TlX-Ql-ANf">
                             <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FRW-wq-hm9">
-                                <rect key="frame" x="3" y="196" width="45" height="16"/>
+                                <rect key="frame" x="18" y="196" width="45" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Feeds:" id="dz6-mG-uAo">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -51,7 +51,7 @@
                         </gridCell>
                         <gridCell row="3IY-4O-236" column="cs9-fm-l2F" id="qb7-CM-ISz">
                             <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w4m-4G-wq8">
-                                <rect key="frame" x="54" y="195" width="162" height="18"/>
+                                <rect key="frame" x="69" y="195" width="162" height="18"/>
                                 <buttonCell key="cell" type="check" title="Show unread counters" bezelStyle="regularSquare" imagePosition="left" inset="2" id="GuE-aX-Lbf">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -64,7 +64,7 @@
                         <gridCell row="uhg-cZ-aHf" column="GGj-JC-w4E" id="zHp-BW-Zlq"/>
                         <gridCell row="uhg-cZ-aHf" column="cs9-fm-l2F" id="cGL-4B-GxJ">
                             <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="feQ-SQ-E5a">
-                                <rect key="frame" x="54" y="160" width="398" height="28"/>
+                                <rect key="frame" x="69" y="160" width="383" height="28"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="28" id="XR5-8r-9Ix"/>
                                 </constraints>
@@ -78,7 +78,7 @@
                         <gridCell row="JBc-xc-6nz" column="GGj-JC-w4E" id="k5Y-5a-8Qi"/>
                         <gridCell row="JBc-xc-6nz" column="cs9-fm-l2F" id="a5n-bz-Wwp">
                             <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Epa-Ba-1Ny">
-                                <rect key="frame" x="54" y="131" width="125" height="18"/>
+                                <rect key="frame" x="69" y="131" width="125" height="18"/>
                                 <buttonCell key="cell" type="check" title="Hide Bookmarks" bezelStyle="regularSquare" imagePosition="left" inset="2" id="okf-4v-bPZ">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -91,7 +91,7 @@
                         <gridCell row="ShQ-XS-eYl" column="GGj-JC-w4E" id="lY7-R6-osf"/>
                         <gridCell row="ShQ-XS-eYl" column="cs9-fm-l2F" id="mkz-vt-8VM">
                             <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="BTu-Ui-Dph">
-                                <rect key="frame" x="54" y="103" width="323" height="14"/>
+                                <rect key="frame" x="69" y="103" width="323" height="14"/>
                                 <textFieldCell key="cell" selectable="YES" title="You can optionally hide the Bookmarks Tab from the Sidebar." id="Bfs-yn-8VD">
                                     <font key="font" metaFont="message" size="11"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -107,8 +107,8 @@
                         <gridCell row="vTA-j6-wyj" column="cs9-fm-l2F" headOfMergedCell="lWs-Ou-naD" id="6rH-Sa-Ggo"/>
                         <gridCell row="vzh-lB-BGH" column="GGj-JC-w4E" id="G8A-0S-xHB">
                             <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OIF-KF-O5m">
-                                <rect key="frame" x="11" y="46" width="37" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Lists:" id="7aF-tg-6Qj">
+                                <rect key="frame" x="-2" y="46" width="65" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Summary:" id="7aF-tg-6Qj">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -117,7 +117,7 @@
                         </gridCell>
                         <gridCell row="vzh-lB-BGH" column="cs9-fm-l2F" id="oqN-sN-jXV">
                             <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nai-kl-1gv">
-                                <rect key="frame" x="53" y="40" width="48" height="25"/>
+                                <rect key="frame" x="68" y="40" width="48" height="25"/>
                                 <popUpButtonCell key="cell" type="push" title="0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="7PW-Mt-7mU" id="vJB-QA-Dl9">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -149,7 +149,7 @@
                         <gridCell row="Vkn-wS-gZk" column="GGj-JC-w4E" id="jrh-3C-izu"/>
                         <gridCell row="Vkn-wS-gZk" column="cs9-fm-l2F" id="52E-jw-bp4">
                             <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="rtd-pr-fG2">
-                                <rect key="frame" x="54" y="22" width="356" height="14"/>
+                                <rect key="frame" x="69" y="22" width="356" height="14"/>
                                 <textFieldCell key="cell" selectable="YES" title="Number of summary lines to show when viewing the list of Articles." id="Z13-dJ-JBv">
                                     <font key="font" metaFont="message" size="11"/>
                                     <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>

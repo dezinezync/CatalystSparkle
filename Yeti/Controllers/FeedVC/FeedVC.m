@@ -53,6 +53,8 @@
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
+@property (nonatomic, strong) UISearchController *searchController;
+
 /// Special handling for specific feeds
 @property (assign) BOOL isiOSIconGallery;
 
@@ -227,15 +229,7 @@
         
     }
     
-    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    searchController.searchResultsUpdater = self;
-    searchController.searchBar.placeholder = @"Search Articles";
-    searchController.automaticallyShowsCancelButton = YES;
-    searchController.automaticallyShowsScopeBar = YES;
-    searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
-    searchController.obscuresBackgroundDuringPresentation = NO;
-    
-    self.navigationItem.searchController = searchController;
+    self.navigationItem.searchController = self.searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = YES;
     
 #endif
@@ -603,6 +597,26 @@
 
 
 #pragma mark - State
+
+- (UISearchController *)searchController {
+    
+    if (_searchController == nil) {
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search Articles";
+        searchController.automaticallyShowsCancelButton = YES;
+        searchController.automaticallyShowsScopeBar = YES;
+        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
+        searchController.obscuresBackgroundDuringPresentation = NO;
+        
+        _searchController = searchController;
+        
+    }
+    
+    return _searchController;
+    
+}
 
 - (StateType)controllerState {
     return self->_controllerState;

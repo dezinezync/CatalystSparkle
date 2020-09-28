@@ -21,10 +21,8 @@
 #import "FolderCell.h"
 
 #import "Keychain.h"
-//#import "Elytra-Bridging-Header.h"
 #import "Elytra-Swift.h"
-//#import "WidgetCenter-Swift.h"
-
+#import "SidebarSearchView.h"
 
 @interface SidebarVC () {
     
@@ -50,6 +48,12 @@
 @property (nonatomic, weak) UIProgressView *syncProgressView;
 @property (nonatomic, strong) UIStackView *progressStackView;
 
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, strong) UISearchController *supplementarySearchController;
+
+#endif
+
 @end
 
 @implementation SidebarVC
@@ -74,6 +78,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         config.showsSeparators = NO;
         
         if (section == 0) {
+            
+            config.headerMode = UICollectionLayoutListHeaderModeSupplementary;
             
             return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
             
@@ -242,16 +248,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     // Search Controller setup
     {
-        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-        searchController.searchResultsUpdater = self;
-        searchController.delegate = self;
-        searchController.obscuresBackgroundDuringPresentation = NO;
-        searchController.searchBar.placeholder = @"Search Feeds";
-        searchController.searchBar.accessibilityHint = @"Search your feeds";
-        
-        searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
-        
-        self.navigationItem.searchController = searchController;
+        self.navigationItem.searchController = [self searchControllerForSidebar];
     }
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
@@ -286,6 +283,34 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return [collectionView dequeueConfiguredReusableCellWithRegistration:self.feedRegister forIndexPath:indexPath item:item];
         
     }];
+    
+    UICollectionViewSupplementaryRegistration * searchHeaderRegistration = [UICollectionViewSupplementaryRegistration registrationWithSupplementaryClass:SidebarSearchView.class elementKind:UICollectionElementKindSectionHeader configurationHandler:^(__kindof UICollectionReusableView * _Nonnull supplementaryView, NSString * _Nonnull elementKind, NSIndexPath * _Nonnull indexPath) {
+        
+        supplementaryView.backgroundColor = UIColor.clearColor;
+        supplementaryView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        UISearchController *searchController = self.supplementarySearchController;
+        
+        UISearchBar *searchBar = searchController.searchBar;
+        searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
+        searchBar.backgroundImage = [UIImage new];
+        
+        [supplementaryView addSubview:searchBar];
+        
+        [searchBar.centerXAnchor constraintEqualToAnchor:supplementaryView.centerXAnchor].active = YES;
+        [searchBar.topAnchor constraintEqualToAnchor:supplementaryView.topAnchor].active = YES;
+        
+        [searchBar setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+        
+        [supplementaryView.heightAnchor constraintEqualToAnchor:searchBar.heightAnchor].active = YES;
+        
+    }];
+        
+    self.DS.supplementaryViewProvider = ^UICollectionReusableView * _Nullable(UICollectionView * _Nonnull collectionView, NSString * _Nonnull kind, NSIndexPath * _Nonnull indexPath) {
+      
+        return [collectionView dequeueConfiguredReusableSupplementaryViewWithRegistration:searchHeaderRegistration forIndexPath:indexPath];
+        
+    };
     
 }
 
@@ -550,6 +575,31 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 }
 
 #pragma mark - Getters
+
+- (UISearchController *)supplementarySearchController {
+    
+    if (_supplementarySearchController == nil) {
+        _supplementarySearchController = [self searchControllerForSidebar];
+    }
+    
+    return _supplementarySearchController;
+    
+}
+
+- (UISearchController *)searchControllerForSidebar {
+    
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    searchController.searchResultsUpdater = self;
+    searchController.delegate = self;
+    searchController.obscuresBackgroundDuringPresentation = NO;
+    searchController.searchBar.placeholder = @"Search Feeds";
+    searchController.searchBar.accessibilityHint = @"Search your feeds";
+    
+    searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
+    
+    return searchController;
+    
+}
 
 - (UICollectionViewDiffableDataSource *)datasource {
     

@@ -49,12 +49,6 @@
 #import "Tweet.h"
 #import "TweetImage.h"
 
-#if TARGET_OS_MACCATALYST
-
-#import <AppKit/NSWorkspace.h>
-
-#endif
-
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -73,6 +67,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL _deferredProcessing;
     
     BOOL _isRestoring;
+    
+#if TARGET_OS_MACCATALYST
+    BOOL _shiftPressedBeforeClickingURL;
+#endif
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -269,7 +267,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.helperView != nil) {
         self.helperView.tintColor = self.view.tintColor;
     }
-    
+
     [self becomeFirstResponder];
     
 }
@@ -2918,12 +2916,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if ([link containsString:@"/feed"]) {
         
         // handle internally
-        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", link);
+        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", [link encodeURIComponents]);
         
     }
     else {
-        formatted = formattedURL(@"yeti://external?link=%@", link);
+        formatted = formattedURL(@"yeti://external?link=%@", [link encodeURIComponents]);
     }
+    
+#if TARGET_OS_MACCATALYST
+    
+    if (_shiftPressedBeforeClickingURL) {
+        
+        formatted = formattedURL(@"%@&shift=1", formatted.absoluteString);
+        
+    }
+    
+#endif
     
     runOnMainQueueWithoutDeadlocking(^{
         
@@ -2958,6 +2966,45 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSUInteger index = [layoutManager characterIndexForPoint:point inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:&fractionalDistance];
     
     return index;
+    
+}
+
+#pragma mark - Presses
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+    
+    UIPress *press = presses.anyObject;
+    
+    if (press.key.keyCode == UIKeyboardHIDUsageKeyboardEscape) {
+        
+        if (press.responder != nil && [press.responder isKindOfClass:NSClassFromString(@"UISearchBarTextField")]) {
+            
+            [self didTapSearchDone];
+            
+        }
+        
+    }
+    else if (press.key.modifierFlags == UIKeyModifierShift && _shiftPressedBeforeClickingURL == NO) {
+        
+        self->_shiftPressedBeforeClickingURL = YES;
+        
+        /*
+         * Reset this value back to NO so the next event can be reliably detected.
+         */
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            self->_shiftPressedBeforeClickingURL = NO;
+            
+        });
+        
+    }
+    else {
+        
+        NSLog(@"Presses: %@\n Events:%@", presses, event);
+        
+        [super pressesBegan:presses withEvent:event];
+        
+    }
     
 }
 

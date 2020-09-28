@@ -146,6 +146,7 @@
 		F04E92C321B5489900AD1FB2 /* NSString+Components.m in Sources */ = {isa = PBXBuildFile; fileRef = F04E92BE21B5429300AD1FB2 /* NSString+Components.m */; };
 		F050E0B22154C16600225C6A /* StoreFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = F050E0B02154C16500225C6A /* StoreFooter.m */; };
 		F050E0B32154C16600225C6A /* StoreFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = F050E0B12154C16600225C6A /* StoreFooter.xib */; };
+		F050F30D2521FB980032328F /* SidebarSearchView.m in Sources */ = {isa = PBXBuildFile; fileRef = F050F30C2521FB980032328F /* SidebarSearchView.m */; };
 		F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */; };
 		F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0519D4D20849EE400EB3FE0 /* FilterInputCell.m */; };
 		F0519D5020849EE400EB3FE0 /* FilterInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0519D4E20849EE400EB3FE0 /* FilterInputCell.xib */; };
@@ -966,6 +967,8 @@
 		F050E0A92154C16500225C6A /* StoreFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreFooter.h; sourceTree = "<group>"; };
 		F050E0B02154C16500225C6A /* StoreFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreFooter.m; sourceTree = "<group>"; };
 		F050E0B12154C16600225C6A /* StoreFooter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StoreFooter.xib; sourceTree = "<group>"; };
+		F050F30B2521FB980032328F /* SidebarSearchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarSearchView.h; sourceTree = "<group>"; };
+		F050F30C2521FB980032328F /* SidebarSearchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SidebarSearchView.m; sourceTree = "<group>"; };
 		F0519D4920848D4D00EB3FE0 /* FiltersVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FiltersVC.h; sourceTree = "<group>"; };
 		F0519D4A20848D4D00EB3FE0 /* FiltersVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FiltersVC.m; sourceTree = "<group>"; };
 		F0519D4C20849EE400EB3FE0 /* FilterInputCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterInputCell.h; sourceTree = "<group>"; };
@@ -2558,6 +2561,8 @@
 				F004560F24DE85B60094A6A3 /* FolderCell.m */,
 				F012909D24EA5908007F8363 /* CustomFeedCell.h */,
 				F012909E24EA5908007F8363 /* CustomFeedCell.m */,
+				F050F30B2521FB980032328F /* SidebarSearchView.h */,
+				F050F30C2521FB980032328F /* SidebarSearchView.m */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -3315,6 +3320,7 @@
 				F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */,
 				F0519D4B20848D4D00EB3FE0 /* FiltersVC.m in Sources */,
 				F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */,
+				F050F30D2521FB980032328F /* SidebarSearchView.m in Sources */,
 				F05B93322091BA50009BBDDB /* MoveFoldersVC.m in Sources */,
 				F085785521D1EAE200CC2B95 /* PreviewLinesVC.m in Sources */,
 				F0F10A9B244C8020009FC108 /* DTTimePeriodGroup.m in Sources */,

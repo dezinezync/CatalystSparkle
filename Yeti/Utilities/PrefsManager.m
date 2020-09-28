@@ -79,6 +79,10 @@ PrefsManager * SharedPrefs = nil;
     self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] ?: 0;
     self.tintColor = [YetiThemeKit.colours objectAtIndex:self.iOSTintColorIndex];
     
+    self.browserOpenInBackground = [self.defaults boolForKey:MacKeyOpensBrowserInBackground];
+    self.browserUsesReaderMode = [self.defaults boolForKey:OpenBrowserInReaderMode];
+    self.refreshFeedsInterval = [self.defaults valueForKey:MacKeyRefreshFeeds];
+    
 }
 
 - (NSString *)mappingForKey:(NSString *)key {

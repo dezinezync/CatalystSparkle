@@ -20,6 +20,8 @@
 #import <DZKit/UIAlertController+Extended.h>
 #import <DZKit/NSString+Extras.h>
 
+#import "AppKitGlue.h"
+
 @implementation AppDelegate (Routing)
 
 - (void)popToRoot {
@@ -184,11 +186,38 @@
         
         NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
         
-//#if TARGET_OS_OSX
-//        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
-//        return YES;
-//#endif
+#if TARGET_OS_MACCATALYST
         
+        BOOL openInBackground = SharedPrefs.browserOpenInBackground;
+        
+        /*
+         * Clicking shift when opening article will
+         * reverse the action.
+         */
+        BOOL shiftClicked = NO;
+        
+        id shiftClickedVal = [parameters valueForKey:@"shift"];
+        
+        if (shiftClickedVal != nil) {
+            
+            shiftClicked = [shiftClickedVal boolValue];
+            
+            if (shiftClicked) {
+                openInBackground = !openInBackground;
+            }
+            
+        }
+        
+        NSURL *url = [NSURL URLWithString:link];
+        
+        if (url == nil) {
+            return YES;
+        }
+        
+        [self.sharedGlue openURL:url inBackground:openInBackground];
+        
+        return YES;
+#endif
         // check and optionally handle twitter URLs
         if ([link containsString:@"twitter.com"]) {
             NSError *error = nil;
@@ -802,7 +831,7 @@
         return;
 
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
-    
+
 }
 
 @end
