@@ -274,6 +274,11 @@ PrefsManager * SharedPrefs = nil;
     [defaults addObserver:self forKeyPath:@"paraTitleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:@"articleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
     
+    [defaults addObserver:self forKeyPath:@"MacHideBookmarksTab" options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:@"MacShowUnreadCounters" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:@"MacSummaryPreviewLines" options:NSKeyValueObservingOptionNew context:NULL];
+    
 #endif
     
 }
@@ -311,6 +316,27 @@ PrefsManager * SharedPrefs = nil;
             [self setValue:value forKey:propSel(imageBandwidth)];
             
             [NSNotificationCenter.defaultCenter postNotificationName:ImageBandWidthPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"MacHideBookmarksTab"]) {
+            
+            [self setValue:value forKey:keypath(hideBookmarks)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ShowBookmarksTabPreferenceChanged object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"MacShowUnreadCounters"]) {
+            
+            [self setValue:value forKey:keypath(showUnreadCounts)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"MacSummaryPreviewLines"]) {
+            
+            [self setValue:value forKey:keypath(previewLines)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:PreviewLinesPreferenceUpdated object:nil];
             
         }
         

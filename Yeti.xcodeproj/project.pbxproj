@@ -80,6 +80,8 @@
 		F01E6E2524AC6C2500D1BD6E /* red-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6E0D24AC6C2500D1BD6E /* red-dark.png */; };
 		F01E6E2624AC6C2500D1BD6E /* red-dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6E0E24AC6C2500D1BD6E /* red-dark@2x.png */; };
 		F01E6E2724AC6C2500D1BD6E /* red-dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F01E6E0F24AC6C2500D1BD6E /* red-dark@3x.png */; };
+		F01F87582521AA1600518CF1 /* MiscPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F01F873D2521AA1600518CF1 /* MiscPreferenceViewController.xib */; };
+		F01F87592521AA1600518CF1 /* MiscPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01F87572521AA1600518CF1 /* MiscPreferenceViewController.swift */; };
 		F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */ = {isa = PBXBuildFile; fileRef = F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */; };
 		F022B0D820DC2D9500030185 /* AccentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F022B0D620DC2D9500030185 /* AccentCell.m */; };
 		F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F022B0D720DC2D9500030185 /* AccentCell.xib */; };
@@ -858,6 +860,8 @@
 		F01E6E0D24AC6C2500D1BD6E /* red-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red-dark.png"; sourceTree = "<group>"; };
 		F01E6E0E24AC6C2500D1BD6E /* red-dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red-dark@2x.png"; sourceTree = "<group>"; };
 		F01E6E0F24AC6C2500D1BD6E /* red-dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "red-dark@3x.png"; sourceTree = "<group>"; };
+		F01F873D2521AA1600518CF1 /* MiscPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MiscPreferenceViewController.xib; sourceTree = "<group>"; };
+		F01F87572521AA1600518CF1 /* MiscPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiscPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0213E792085E525000DDD4A /* AppDelegate+Push.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Push.h"; sourceTree = "<group>"; };
 		F0213E7A2085E525000DDD4A /* AppDelegate+Push.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Push.m"; sourceTree = "<group>"; };
 		F022B0D520DC2D9500030185 /* AccentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccentCell.h; sourceTree = "<group>"; };
@@ -1697,6 +1701,8 @@
 				F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */,
 				F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */,
 				F0A031BA2520F7B900076718 /* ArticlePreferenceViewController.xib */,
+				F01F87572521AA1600518CF1 /* MiscPreferenceViewController.swift */,
+				F01F873D2521AA1600518CF1 /* MiscPreferenceViewController.xib */,
 			);
 			path = PreferencesController;
 			sourceTree = "<group>";
@@ -3223,6 +3229,7 @@
 			files = (
 				F0A031BC2520F7B900076718 /* ArticlePreferenceViewController.xib in Resources */,
 				F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */,
+				F01F87582521AA1600518CF1 /* MiscPreferenceViewController.xib in Resources */,
 				F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3487,6 +3494,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F01F87592521AA1600518CF1 /* MiscPreferenceViewController.swift in Sources */,
 				F0E0D51625208C3700A9E654 /* ImagesPreferenceViewController.swift in Sources */,
 				F0BC8BE225205C2100FADCBB /* PreferencesStyle.swift in Sources */,
 				F0BC8C072520636200FADCBB /* Keychain.m in Sources */,

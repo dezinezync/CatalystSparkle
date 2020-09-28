@@ -18,7 +18,3 @@ final class ImagesPreferenceViewController: NSViewController, PreferencePane {
 	}
     
 }
-
-extension ImagesPreferenceViewController {
-    
-}

@@ -109,6 +109,7 @@ YETI_EXPORT NSString * _Nonnull const kUseToolbar;
 YETI_EXPORT NSString * _Nonnull const kHideBars;
 
 YETI_EXPORT NSString * _Nonnull const kPreviewLines;
+YETI_EXPORT NSNotificationName const PreviewLinesPreferenceUpdated;
 
 YETI_EXPORT NSString * _Nonnull const kUseSystemFontSize;
 YETI_EXPORT NSString * _Nonnull const kFontSize;

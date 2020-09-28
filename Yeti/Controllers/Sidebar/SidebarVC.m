@@ -543,6 +543,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:ShowBookmarksTabPreferenceChanged object:nil];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:ShowUnreadCountsPreferenceChanged object:nil];
+    
 }
 
 #pragma mark - Getters
@@ -895,6 +899,27 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
             [self setupData];
 
+        }
+        else {
+            
+            NSArray <NSIndexPath *> *visible = [self.collectionView indexPathsForVisibleItems];
+            
+            NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity:visible.count];
+            
+            for (NSIndexPath *indexPath in visible) {
+                
+                id item = [self.DS itemIdentifierForIndexPath:indexPath];
+                
+                if (item != nil) {
+                    [identifiers addObject:item];
+                }
+                
+            }
+            
+            [snapshot reloadItemsWithIdentifiers:identifiers];
+            
+            [self.DS applySnapshot:snapshot animatingDifferences:NO];
+            
         }
 
         if ([self.refreshControl isRefreshing]) {

@@ -18,7 +18,3 @@ final class ArticlePreferenceViewController: NSViewController, PreferencePane {
 	}
     
 }
-
-extension ImagesPreferenceViewController {
-    
-}

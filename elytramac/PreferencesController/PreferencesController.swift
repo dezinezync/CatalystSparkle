@@ -13,6 +13,7 @@ extension Preferences.PaneIdentifier {
     static let general = Self("general")
     static let images = Self("images")
     static let article = Self("article")
+    static let misc = Self("misc")
 }
 
 @objc final class PreferencesController : NSViewController {
@@ -20,7 +21,8 @@ extension Preferences.PaneIdentifier {
     lazy var preferences: [PreferencePane] = [
         GeneralPreferenceViewController(),
         ImagesPreferenceViewController(),
-        ArticlePreferenceViewController()
+        ArticlePreferenceViewController(),
+        MiscPreferenceViewController()
     ]
 
     @objc lazy var preferencesWindowController = PreferencesWindowController(
