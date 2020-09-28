@@ -79,10 +79,11 @@ PrefsManager * SharedPrefs = nil;
     self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] ?: 0;
     self.tintColor = [YetiThemeKit.colours objectAtIndex:self.iOSTintColorIndex];
     
+#if TARGET_OS_MACCATALYST
     self.browserOpenInBackground = [self.defaults boolForKey:MacKeyOpensBrowserInBackground];
     self.browserUsesReaderMode = [self.defaults boolForKey:OpenBrowserInReaderMode];
     self.refreshFeedsInterval = [self.defaults valueForKey:MacKeyRefreshFeeds];
-    
+#endif
     self.badgeAppIcon = [self.defaults boolForKey:badgeAppIconPreference];
     
 }
@@ -158,6 +159,7 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(iOSTintColorIndex)]) {
         return formattedString(@"theme-%@-color", @"default");
     }
+#if TARGET_OS_MACCATALYST
     else if ([key isEqualToString:propSel(browserOpenInBackground)]) {
         return MacKeyOpensBrowserInBackground;
     }
@@ -167,6 +169,7 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(refreshFeedsInterval)]) {
         return MacKeyRefreshFeeds;
     }
+#endif
     else if ([key isEqualToString:propSel(badgeAppIcon)]) {
         return badgeAppIconPreference;
     }
@@ -240,6 +243,8 @@ PrefsManager * SharedPrefs = nil;
 
 #pragma mark - Getter
 
+#if TARGET_OS_MACCATALYST
+
 - (NSTimeInterval)refreshFeedsTimeInterval {
     
     NSString *str = self.refreshFeedsInterval;
@@ -266,6 +271,8 @@ PrefsManager * SharedPrefs = nil;
     return value;
     
 }
+
+#endif
 
 #pragma mark - Notifications
 
@@ -320,6 +327,7 @@ PrefsManager * SharedPrefs = nil;
             [self setValue:value forKey:propSel(browserUsesReaderMode)];
             
         }
+#if TARGET_OS_MACCATALYST
         else if ([keyPath isEqualToString:MacKeyOpensBrowserInBackground]) {
             
             [self setValue:value forKey:propSel(browserOpenInBackground)];
@@ -332,6 +340,7 @@ PrefsManager * SharedPrefs = nil;
             [NSNotificationCenter.defaultCenter postNotificationName:MacRefreshFeedsIntervalUpdated object:nil];
             
         }
+#endif
         else if ([keyPath isEqualToString:kDefaultsImageBandwidth]) {
             
             [self setValue:value forKey:propSel(imageBandwidth)];

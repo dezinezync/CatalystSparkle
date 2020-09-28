@@ -80,9 +80,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         config.showsSeparators = NO;
         
         if (section == 0) {
-            
+#if TARGET_OS_MACCATALYST
             config.headerMode = UICollectionLayoutListHeaderModeSupplementary;
-            
+#endif
             return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
             
         }
@@ -289,6 +289,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }];
     
+#if TARGET_OS_MACCATALYST
+    
     UICollectionViewSupplementaryRegistration * searchHeaderRegistration = [UICollectionViewSupplementaryRegistration registrationWithSupplementaryClass:SidebarSearchView.class elementKind:UICollectionElementKindSectionHeader configurationHandler:^(__kindof UICollectionReusableView * _Nonnull supplementaryView, NSString * _Nonnull elementKind, NSIndexPath * _Nonnull indexPath) {
         
         supplementaryView.backgroundColor = UIColor.clearColor;
@@ -316,6 +318,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return [collectionView dequeueConfiguredReusableSupplementaryViewWithRegistration:searchHeaderRegistration forIndexPath:indexPath];
         
     };
+#endif
     
 }
 
@@ -577,13 +580,19 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:ShowUnreadCountsPreferenceChanged object:nil];
     
+#if TARGET_OS_MACCATALYST
+    
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeTimerPreference) name:MacRefreshFeedsIntervalUpdated object:nil];
+    
+#endif
     
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(badgePreferenceChanged) name:BadgeAppIconPreferenceUpdated object:nil];
     
 }
 
 #pragma mark - Getters
+
+#if TARGET_OS_MACCATALYST
 
 - (UISearchController *)supplementarySearchController {
     
@@ -594,6 +603,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     return _supplementarySearchController;
     
 }
+
+#endif
 
 - (UISearchController *)searchControllerForSidebar {
     

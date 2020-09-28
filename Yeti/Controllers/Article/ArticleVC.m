@@ -2984,6 +2984,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         }
         
     }
+#if TARGET_OS_MACCATALYST
     else if (press.key.modifierFlags == UIKeyModifierShift && _shiftPressedBeforeClickingURL == NO) {
         
         self->_shiftPressedBeforeClickingURL = YES;
@@ -2998,6 +2999,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         });
         
     }
+#endif
     else {
         
         NSLog(@"Presses: %@\n Events:%@", presses, event);
