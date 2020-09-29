@@ -2172,15 +2172,34 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
-#if TARGET_OS_MACCATALYST
-    return [self _addYoutube:content];
-#endif
-    
     NSString *videoID = [[content url] lastPathComponent];
     
     if ([videoID containsString:@"watch?v="] == YES) {
         videoID = [videoID stringByReplacingOccurrencesOfString:@"watch?v=" withString:@""];
     }
+    
+//#if TARGET_OS_MACCATALYST
+//
+//    if (videoID) {
+//
+//        content.url = formattedString(@"https://www.youtube.com/embed/%@", videoID);
+//
+//    }
+//
+//
+//
+////    [self.ytExtractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
+////
+////        [self _addYoutube:content];
+////
+////    } error:^(NSError * _Nonnull error) {
+////
+////        [self _addYoutube:content];
+////
+////    }];
+//
+//    return [self _addYoutube:content];
+//#endif
     
     NSLogDebug(@"Extracting YT info for: %@", videoID);
     
@@ -2193,6 +2212,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     playerController.updatesNowPlayingInfoCenter = NO;
     playerController.showsTimecodes = YES;
     playerController.allowsPictureInPicturePlayback = YES;
+    playerController.showsPlaybackControls = NO;
         
     [self addChildViewController:playerController];
     
@@ -2212,6 +2232,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.ytExtractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
         
         if (videoInfo) {
+            
             YTPlayer *player = [YTPlayer playerWithURL:videoInfo.url];
             playerController.player = player;
             
@@ -2252,6 +2273,35 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 }
 
             }
+            
+#if TARGET_OS_MACCATALYST
+                
+            UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:80.f weight:UIImageSymbolWeightMedium];
+            UIImage *playImage = [UIImage systemImageNamed:@"play.circle.fill" withConfiguration:config];
+            
+            UIButton *button = [UIButton new];
+            button.tintColor = [UIColor.whiteColor colorWithAlphaComponent:0.75f];
+            [button setImage:playImage forState:UIControlStateNormal];
+            
+            [button addTarget:player action:@selector(play) forControlEvents:UIControlEventTouchUpInside];
+            
+            button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
+            button.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
+            
+            button.translatesAutoresizingMaskIntoConstraints = NO;
+            [button.widthAnchor constraintEqualToConstant:100.f].active = YES;
+            [button.heightAnchor constraintEqualToConstant:100.f].active = YES;
+            
+            [playerController.contentOverlayView addSubview:button];
+            
+            [button.centerXAnchor constraintEqualToAnchor:playerController.contentOverlayView.centerXAnchor].active = YES;
+            [button.centerYAnchor constraintEqualToAnchor:playerController.contentOverlayView.centerYAnchor].active = YES;
+            
+            // content menus
+            
+            [player addContextMenus];
+                
+#endif
             
         }
         else {

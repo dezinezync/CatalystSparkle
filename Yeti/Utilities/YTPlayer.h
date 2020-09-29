@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) AVPlayerViewController *playerViewController;
 
+- (void)addContextMenus;
+
 @end
 
 NS_ASSUME_NONNULL_END
