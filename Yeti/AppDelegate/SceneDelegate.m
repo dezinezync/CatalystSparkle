@@ -11,6 +11,7 @@
 
 #import "YetiThemeKit.h"
 #import "AppDelegate.h"
+#import "StoreVC.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
@@ -87,6 +88,23 @@
             }
             
             windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 400.f);
+            
+            window.rootViewController = vc;
+            
+        }
+        else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
+            
+            window = [[UIWindow alloc] initWithWindowScene:windowScene];
+            window.canResizeToFitContent = NO;
+            
+            CGSize fixedSize = CGSizeMake(375.f, 480.f);
+            
+            windowScene.sizeRestrictions.maximumSize = fixedSize;
+            windowScene.sizeRestrictions.minimumSize = fixedSize;
+            
+            scene.title = @"Your Subscription";
+            
+            StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
             
             window.rootViewController = vc;
             

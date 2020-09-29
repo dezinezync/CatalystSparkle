@@ -183,6 +183,24 @@
 
 - (void)showSubscriptionsInterface {
     
+#if TARGET_OS_MACCATALYST
+    
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"subscriptionInterface"];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+        
+        if (error != nil) {
+            
+            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
+            
+        }
+        
+    }];
+    
+    return;
+    
+#endif
+    
     StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];

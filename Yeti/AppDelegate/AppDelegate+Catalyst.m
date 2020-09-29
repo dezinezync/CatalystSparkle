@@ -82,7 +82,6 @@
     
     [builder replaceMenuForIdentifier:UIMenuNewScene withMenu:newFeedMenu];
     
-
     FeedVC *feedVC = coordinator.feedVC;
     
     UIKeyCommand *toggleSidebar = [UIKeyCommand commandWithTitle:@"Toggle Sidebar" image:nil action:@selector(toggleSidebar:) input:@"s" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate  propertyList:nil];
@@ -183,6 +182,12 @@
     UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle, shareArticle, searchArticle]];
     
     [builder insertSiblingMenu:articlesMenu beforeMenuForIdentifier:UIMenuWindow];
+    
+    UICommand *subsWindow = [UICommand commandWithTitle:@"View Subscription" image:nil action:@selector(showSubscriptionsInterface) propertyList:nil];
+    
+    UIMenu *subsMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SubsMenu" options:UIMenuOptionsDisplayInline children:@[subsWindow]];
+    
+    [builder insertChildMenu:subsMenu atStartOfMenuForIdentifier:UIMenuWindow];
     
 }
 

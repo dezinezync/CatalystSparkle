@@ -533,6 +533,11 @@
         return NO;
         
     }
+    else if ([NSStringFromSelector(aSelector) isEqualToString:@"showSubscriptionsInterface"]) {
+        
+        return YES;
+        
+    }
     
     return [super respondsToSelector:aSelector];
     
@@ -554,6 +559,11 @@
         }
         
     }
+    else if ([NSStringFromSelector(selector) isEqualToString:@"showSubscriptionsInterface"]) {
+        
+        return [self.mainCoordinator methodSignatureForSelector:selector];
+        
+    }
     
     return [super methodSignatureForSelector:selector];
 }
@@ -566,6 +576,10 @@
     }
     else if (anInvocation.selector == NSSelectorFromString(@"didTapSearch") && self.mainCoordinator.articleVC != nil) {
         [anInvocation invokeWithTarget:self.mainCoordinator.articleVC];
+        return;
+    }
+    else if (anInvocation.selector == NSSelectorFromString(@"showSubscriptionsInterface")) {
+        [anInvocation invokeWithTarget:self.mainCoordinator];
         return;
     }
     
