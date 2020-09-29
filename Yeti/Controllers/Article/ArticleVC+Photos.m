@@ -204,13 +204,15 @@
         
     }
     
+    dict[@"size"] = NSStringFromCGSize(image.imageView.image.size);
+    
     if (dict.keyEnumerator.allObjects.count == 0) {
         return;
     }
     
     [viewImageActivity addUserInfoEntriesFromDictionary:dict];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:0 errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             

@@ -62,14 +62,27 @@
             
             window.rootViewController = photosVC;
             
-            windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 338.f);
+            CGSize size = CGSizeFromString([activity.userInfo valueForKey:@"size"]);
+            
+            windowScene.sizeRestrictions.minimumSize = size;
+            windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+            windowScene.titlebar.toolbar = nil;
             
         }
         
         else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
             
             window = [[UIWindow alloc] initWithWindowScene:windowScene];
-            window.canResizeToFitContent = YES;
+            
+//            CGRect frame = window.frame;
+//            frame.size = CGSizeMake(480.f, 600.f);
+//            
+//            window.frame = frame;
+//            
+//            window.canResizeToFitContent = YES;
+            
+            windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
+            windowScene.titlebar.toolbar = nil;
             
             FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
             
@@ -86,8 +99,6 @@
             else {
                 scene.title = feed.displayTitle;
             }
-            
-            windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 400.f);
             
             window.rootViewController = vc;
             
@@ -113,14 +124,16 @@
         if (window != nil && window.rootViewController != nil) {
                 
             self.window = window;
+            self.window.tintColor = SharedPrefs.tintColor;
             
             [window makeKeyAndVisible];
-            
-            return;
+        
         }
         else {
             window = nil;
         }
+        
+        return;
         
     }
     
@@ -129,6 +142,7 @@
     self.coordinator = MyAppDelegate.coordinator;
     
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+    self.window.tintColor = SharedPrefs.tintColor;
     
 #if !TARGET_OS_MACCATALYST
     UIColor *selectedColor = [[YetiThemeKit colours] objectAtIndex:SharedPrefs.iOSTintColorIndex];

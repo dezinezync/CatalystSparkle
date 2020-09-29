@@ -138,7 +138,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     [self updateMarkerView];
     
-    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
+    self.selectedBackgroundView.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.3f];
     
 }
 

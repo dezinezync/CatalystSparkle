@@ -15,6 +15,8 @@
 #import "YetiThemeKit.h"
 #import "ThemeVC.h"
 
+static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorContext;
+
 PrefsManager * SharedPrefs = nil;
 
 @interface PrefsManager ()
@@ -83,6 +85,10 @@ PrefsManager * SharedPrefs = nil;
     self.browserOpenInBackground = [self.defaults boolForKey:MacKeyOpensBrowserInBackground];
     self.browserUsesReaderMode = [self.defaults boolForKey:OpenBrowserInReaderMode];
     self.refreshFeedsInterval = [self.defaults valueForKey:MacKeyRefreshFeeds];
+    
+    [self ct_updateTintColor:self.defaults];
+    [self updateAppearances];
+    
 #endif
     self.badgeAppIcon = [self.defaults boolForKey:badgeAppIconPreference];
     
@@ -303,6 +309,8 @@ PrefsManager * SharedPrefs = nil;
     
     [defaults addObserver:self forKeyPath:@"MacSummaryPreviewLines" options:NSKeyValueObservingOptionNew context:NULL];
     
+    [defaults addObserver:self forKeyPath:@"AppleHighlightColor" options:NSKeyValueObservingOptionNew context:DefaultsAppleHighlightColorContext];
+    
 #endif
     
     [defaults addObserver:self forKeyPath:badgeAppIconPreference options:NSKeyValueObservingOptionNew context:NULL];
@@ -376,7 +384,13 @@ PrefsManager * SharedPrefs = nil;
             [NSNotificationCenter.defaultCenter postNotificationName:BadgeAppIconPreferenceUpdated object:nil];
             
         }
-        
+        else if ([keyPath isEqualToString:@"AppleHighlightColor"] && context == DefaultsAppleHighlightColorContext) {
+            
+            [self ct_updateTintColor:object];
+            
+            [self updateAppearances];
+            
+        }
         else if ([keyPath isEqualToString:kLineSpacing]
             || [keyPath isEqualToString:propSel(fontSize)]
             || [keyPath isEqualToString:kParagraphTitleFont]
@@ -457,6 +471,58 @@ PrefsManager * SharedPrefs = nil;
     }
     
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    
+}
+
+#pragma mark -
+
+- (void)updateAppearances {
+    
+    for (UIWindowScene *scene in UIApplication.sharedApplication.connectedScenes) {
+        
+        for (UIWindow *window in scene.windows) {
+            
+            window.tintColor = self.tintColor;
+            
+        }
+        
+    }
+    
+}
+
+- (void)ct_updateTintColor:(NSUserDefaults *)defaults {
+    
+    NSString *systemHighlightColor = [defaults objectForKey:@"AppleHighlightColor"];
+    
+    if (systemHighlightColor == nil) {
+        
+        self.tintColor = [UIColor systemBlueColor];
+        
+        return;
+        
+    }
+    
+    NSArray *components = [systemHighlightColor componentsSeparatedByString:@" "];
+    NSString *colorName = [components lastObject];
+    
+    SEL systemColorSelector = NSSelectorFromString([NSString stringWithFormat:@"system%@Color", colorName]);
+    
+    if ([UIColor respondsToSelector:systemColorSelector] == YES) {
+        
+        UIColor * systemTintColor = [UIColor performSelector:systemColorSelector];
+        
+        if (systemTintColor != nil) {
+            
+            self.tintColor = systemTintColor;
+            
+        }
+        
+    }
+    else if ([colorName isEqualToString:@"Graphite"]) {
+        
+        self.tintColor = UIColor.systemGrayColor;
+        
+    }
     
 }
 
