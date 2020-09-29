@@ -2759,6 +2759,12 @@ NSArray <NSString *> * _defaultsKeys;
             self->_totalUnread = MAX(totalUnread, 0);
         }
         
+        if (SharedPrefs.badgeAppIcon) {
+            
+            UIApplication.sharedApplication.applicationIconBadgeNumber = self.totalUnread;
+            
+        }
+        
         [NSNotificationCenter.defaultCenter postNotificationName:UnreadCountDidUpdate object:self userInfo:nil];
         
     });

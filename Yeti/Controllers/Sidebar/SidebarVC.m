@@ -963,8 +963,6 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         MyFeedsManager.unreadLastUpdate = NSDate.date;
         
-        [self badgePreferenceChanged];
-        
         NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
         
         if (snapshot == nil) {

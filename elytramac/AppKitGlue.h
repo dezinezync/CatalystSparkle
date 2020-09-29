@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Keychain.h"
 
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_MAC
 
 #import <AppKit/AppKit.h>
 
