@@ -159,11 +159,11 @@
         self.ioView.hidden = NO;
         
         if (state == OPMLStateImport) {
-            self.ioTitleLabel.text = @"Importing OPML";
+            self.ioTitleLabel.text = @"Importing Subscriptions";
             self.ioSubtitleLabel.text = @"Uploading your file";
         }
         else {
-            self.ioTitleLabel.text = @"Exporting OPML";
+            self.ioTitleLabel.text = @"Exporting Subscriptions";
             self.ioSubtitleLabel.text = @"Preparing your file";
             
             self.ioDoneButton.enabled = NO;
@@ -202,7 +202,7 @@
             [MyFeedsManager setValue:[Subscription new] forKey:@"subscription"];
         }
         
-        NSString * const error = @"An active subscription is required to import OPML files in to Elytra.";
+        NSString * const error = @"An active subscription is required to import Subscriptions files in to Elytra.";
         
         MyFeedsManager.subscription.error = [NSError errorWithDomain:@"Yeti" code:402 userInfo:@{NSLocalizedDescriptionKey: error}];
         
@@ -440,7 +440,7 @@
     id obj = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&error];
     
     if (error != nil) {
-        [AlertManager showGenericAlertWithTitle:@"Error Parsing OPML" message:error.localizedDescription fromVC:self];
+        [AlertManager showGenericAlertWithTitle:@"Error Parsing Subscriptions File" message:error.localizedDescription fromVC:self];
         return;
     }
     
