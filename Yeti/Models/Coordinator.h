@@ -67,6 +67,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSettingsVC;
 
+/*
+ * 0: None, 1: Import, 2: Export
+ */
+- (void)showOPMLInterfaceFrom:(id _Nullable)sender direct:(NSInteger)type;
+
 #pragma mark - Helpers
 
 - (UIImage *)imageForSortingOption:(YetiSortOption)option;

@@ -36,6 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)closeArticle;
 - (void)shareArticle;
 
+- (void)didClickImportSubscriptions;
+- (void)didClickExportSubscriptions;
+
 @end
 
 NS_ASSUME_NONNULL_END

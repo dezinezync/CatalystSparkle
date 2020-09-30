@@ -251,4 +251,16 @@
     
 }
 
+- (void)didClickImportSubscriptions {
+    
+    [self.coordinator showOPMLInterfaceFrom:nil direct:1];
+    
+}
+
+- (void)didClickExportSubscriptions {
+    
+    [self.coordinator showOPMLInterfaceFrom:nil direct:2];
+    
+}
+
 @end

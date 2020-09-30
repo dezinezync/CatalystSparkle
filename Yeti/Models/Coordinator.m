@@ -21,6 +21,7 @@
 #import "NewFolderController.h"
 #import "SettingsVC.h"
 #import <DZKit/AlertManager.h>
+#import "OPMLVC.h"
 
 @interface MainCoordinator ()
 
@@ -301,6 +302,44 @@
 #else
     [self.splitViewController presentViewController:navVC animated:YES completion:nil];
 #endif
+    
+}
+
+- (void)showOPMLInterfaceFrom:(id)sender direct:(NSInteger)type {
+    
+    OPMLVC *vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+    
+    if (sender != nil) {
+        
+        [sender presentViewController:nav animated:YES completion:^{
+            
+            if (type == OPMLStateExport) {
+                [vc didTapExport:nil];
+            }
+            else if (type == OPMLStateImport) {
+                [vc didTapImport:nil];
+            }
+            
+        }];
+        
+    }
+    else {
+        
+        [self.splitViewController presentViewController:nav animated:YES completion:^{
+            
+            if (type == OPMLStateExport) {
+                [vc didTapExport:nil];
+            }
+            else if (type == OPMLStateImport) {
+                [vc didTapImport:nil];
+            }
+            
+        }];
+        
+    }
     
 }
 

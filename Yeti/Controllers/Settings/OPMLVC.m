@@ -122,6 +122,8 @@
     }
     else if (state == OPMLStateDefault) {
         
+        BOOL ioHidden = self.ioView.isHidden;
+        
         for (UIButton *button in @[self.importButton, self.exportButton]) {
             button.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         }
@@ -137,7 +139,17 @@
             
             self.detailsView.alpha = 1.f;
             
-        } completion:nil];
+            if (ioHidden == NO) {
+                self.ioView.alpha = 0.f;
+            }
+            
+        } completion:^(BOOL finished) {
+            
+            if (ioHidden == NO) {
+                self.ioView.hidden = YES;
+            }
+            
+        }];
     }
     else {
         // Import/Export State
@@ -296,6 +308,10 @@
         self.ioDoneButton.enabled = YES;
     }
     
+    if (self.state == OPMLStateExport) {
+        self.ioSubtitleLabel.text = @"File export was cancelled.";
+    }
+    
     self.state = OPMLStateDefault;
     
 }
@@ -336,10 +352,13 @@
             strongify(self);
             
             self.ioProgressView.progress = 1.f;
+            self.ioSubtitleLabel.text = @"File exported successfully.";
             
             self->_navigationControllerFrame = self.navigationController.view.frame;
             
             UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[fileURL]];
+            
+            exportVC.delegate = (id <UIDocumentPickerDelegate>)self;
             
             [self presentViewController:exportVC animated:YES completion:nil];
             

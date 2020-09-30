@@ -80,7 +80,15 @@
     
     UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh]];
     
+    UICommand *importSubscriptions = [UICommand commandWithTitle:@"Import Subscriptions" image:nil action:@selector(didClickImportSubscriptions) propertyList:nil];
+    
+    UIKeyCommand *exportSubscriptions = [UIKeyCommand commandWithTitle:@"Export Subscriptions" image:nil action:@selector(didClickExportSubscriptions) input:@"e" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate propertyList:nil];
+    
+    UIMenu *subscriptionsMenu = [UIMenu menuWithTitle:@"Subscriptions" image:nil identifier:@"SubscriptionsMenuIdentifier" options:UIMenuOptionsDisplayInline children:@[importSubscriptions, exportSubscriptions]];
+    
     [builder replaceMenuForIdentifier:UIMenuNewScene withMenu:newFeedMenu];
+    
+    [builder insertSiblingMenu:subscriptionsMenu afterMenuForIdentifier:@"NewFeedInlineMenuItem"];
     
     FeedVC *feedVC = coordinator.feedVC;
     
