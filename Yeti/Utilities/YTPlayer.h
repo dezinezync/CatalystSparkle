@@ -8,13 +8,17 @@
 
 #import <AVKit/AVKit.h>
 
+#if TARGET_OS_MACCATALYST
+
+#import "UISlider+MacCatalyst.h"
+
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YTPlayer : AVPlayer
 
 @property (nonatomic, weak) AVPlayerViewController *playerViewController;
-
-- (void)addContextMenus;
 
 @end
 

@@ -137,8 +137,9 @@
         
     }
     
+#if !TARGET_OS_MACCATALYST
     [self setupBackgroundRefresh];
-    
+#endif
     self.coordinator = MyAppDelegate.coordinator;
     
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];

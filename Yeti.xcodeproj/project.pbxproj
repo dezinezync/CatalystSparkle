@@ -118,6 +118,8 @@
 		F03BC4E920C9016A007B574F /* EmptyView.m in Sources */ = {isa = PBXBuildFile; fileRef = F03BC4E820C9016A007B574F /* EmptyView.m */; };
 		F03C4EBD2510CE8A008561DB /* NewFolderController.m in Sources */ = {isa = PBXBuildFile; fileRef = F03C4EBC2510CE8A008561DB /* NewFolderController.m */; };
 		F03C6040251F702200F442C7 /* DZStepper.m in Sources */ = {isa = PBXBuildFile; fileRef = F03C6025251F702200F442C7 /* DZStepper.m */; };
+		F042ACB7252445F000AA440A /* UISlider+MacCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F042ACB6252445F000AA440A /* UISlider+MacCatalyst.m */; platformFilter = maccatalyst; };
+		F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = F042ACF325244A0500AA440A /* NSObject+SimpleSwizzle.m */; };
 		F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F04416E520E618F8008AB1D3 /* CollectionHeader.m */; };
 		F04416E920E618F8008AB1D3 /* CollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = F04416E620E618F8008AB1D3 /* CollectionHeader.xib */; };
 		F0448D0C244463B7003B6AA7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0448D00244463B7003B6AA7 /* CoreServices.framework */; };
@@ -235,7 +237,7 @@
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
 		F09CEA952508B2E6007941AD /* FeedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = F09CEA942508B2E6007941AD /* FeedHeaderView.m */; };
 		F09CEAB02508B2F4007941AD /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09CEAAF2508B2F4007941AD /* FeedHeaderView.xib */; };
-		F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */; };
+		F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
 		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
@@ -926,6 +928,10 @@
 		F03C6026251F702200F442C7 /* DZStepper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DZStepper.h; sourceTree = "<group>"; };
 		F03C60C6251F720D00F442C7 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		F03C60CF251F72F700F442C7 /* ElytraMacBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElytraMacBridgingHeader.h; sourceTree = "<group>"; };
+		F042ACB5252445F000AA440A /* UISlider+MacCatalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UISlider+MacCatalyst.h"; sourceTree = "<group>"; };
+		F042ACB6252445F000AA440A /* UISlider+MacCatalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UISlider+MacCatalyst.m"; sourceTree = "<group>"; };
+		F042ACF225244A0500AA440A /* NSObject+SimpleSwizzle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SimpleSwizzle.h"; sourceTree = "<group>"; };
+		F042ACF325244A0500AA440A /* NSObject+SimpleSwizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SimpleSwizzle.m"; sourceTree = "<group>"; };
 		F04416E420E618F8008AB1D3 /* CollectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionHeader.h; sourceTree = "<group>"; };
 		F04416E520E618F8008AB1D3 /* CollectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionHeader.m; sourceTree = "<group>"; };
 		F04416E620E618F8008AB1D3 /* CollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionHeader.xib; sourceTree = "<group>"; };
@@ -1911,6 +1917,10 @@
 				F0533CB3240D463C00BB69CF /* UIRefreshControl+Manual.m */,
 				F07889BF25035E65007F3C55 /* UITableView+Sugar.h */,
 				F07889C025035E65007F3C55 /* UITableView+Sugar.m */,
+				F042ACB5252445F000AA440A /* UISlider+MacCatalyst.h */,
+				F042ACB6252445F000AA440A /* UISlider+MacCatalyst.m */,
+				F042ACF225244A0500AA440A /* NSObject+SimpleSwizzle.h */,
+				F042ACF325244A0500AA440A /* NSObject+SimpleSwizzle.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -3399,6 +3409,7 @@
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */,
+				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
 				F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */,
 				F093327924EC15DC0066FA41 /* FeedOperation.m in Sources */,
 				F064A5322157638500A385AD /* LaunchVC.m in Sources */,
@@ -3432,6 +3443,7 @@
 				F0533CB4240D463C00BB69CF /* UIRefreshControl+Manual.m in Sources */,
 				F032A75A244D7D680024AC63 /* YetiThemeKit.m in Sources */,
 				F0CCD2192098923A00920AE4 /* SplitVC.m in Sources */,
+				F042ACB7252445F000AA440A /* UISlider+MacCatalyst.m in Sources */,
 				F04CFAC62154B57B00AA7B5E /* StoreVC.m in Sources */,
 				F0E86494234796B80089F9EF /* ArticlePhoto.m in Sources */,
 				F093321B24EC14D40066FA41 /* ArticlesManager.m in Sources */,
