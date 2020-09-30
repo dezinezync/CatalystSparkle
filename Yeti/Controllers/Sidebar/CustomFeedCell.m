@@ -68,6 +68,8 @@
     
     UIListContentConfiguration *content = (id)[self contentConfiguration];
     
+    UIBackgroundConfiguration *background = [[UIBackgroundConfiguration listSidebarCellConfiguration] updatedConfigurationForState:state];
+    
     if (state.isSelected) {
         
         content.textProperties.color = UIColor.labelColor;
@@ -82,6 +84,7 @@
     }
     
     self.contentConfiguration = content;
+    self.backgroundConfiguration = background;
     
 }
 

@@ -38,6 +38,8 @@
     
     NSUserActivity *_restorationActivity;
     
+    BOOL _initialSnapshotSetup;
+    
 }
 
 @property (nonatomic, strong, readwrite) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
@@ -324,6 +326,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)setupData {
     
+    // since we only allow single selection in this collection, we get the first item.
+    // can be nil.
+    NSIndexPath *selected = [self.collectionView.indexPathsForSelectedItems firstObject];
+    
     NSDiffableDataSourceSectionSnapshot *snapshot = [NSDiffableDataSourceSectionSnapshot new];
     
     CustomFeed *unread = [[CustomFeed alloc] initWithTitle:@"Unread" imageName:@"largecircle.fill.circle" tintColor:UIColor.systemBlueColor feedType:FeedVCTypeUnread];
@@ -381,6 +387,28 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self.DS applySnapshot:onlyFeedsSnapshot toSection:@(NSUIntegerMax - 100) animatingDifferences:NO];
 
         }
+        
+    }
+    
+#if TARGET_OS_MACCATALYST
+    
+    if (self->_initialSnapshotSetup == NO) {
+        
+        selected = [self.DS indexPathForItemIdentifier:unread];
+        
+        self->_initialSnapshotSetup = YES;
+        
+    }
+    
+#endif
+    
+    if (selected != nil) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            [self.collectionView selectItemAtIndexPath:selected animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+            
+        });
         
     }
     
@@ -972,6 +1000,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         }
         else {
             
+            NSIndexPath *selected = [[self.collectionView indexPathsForSelectedItems] firstObject];
+            
             NSArray <NSIndexPath *> *visible = [self.collectionView indexPathsForVisibleItems];
             
             NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity:visible.count];
@@ -989,6 +1019,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [snapshot reloadItemsWithIdentifiers:identifiers];
             
             [self.DS applySnapshot:snapshot animatingDifferences:NO];
+            
+            if (selected != nil) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [self.collectionView selectItemAtIndexPath:selected animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+                    
+                });
+                
+            }
             
         }
 
