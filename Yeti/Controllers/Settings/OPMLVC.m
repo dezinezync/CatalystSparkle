@@ -79,9 +79,10 @@
     if (!_hasSetup) {
         self.state = OPMLStateDefault;
         _hasSetup = YES;
-        
+#if !TARGET_OS_MACCATALYST
         self.importButton.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
         self.exportButton.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
+#endif
     }
     else if (self.state == OPMLStateExport) {
         [self didTapCancel:nil];
@@ -124,9 +125,11 @@
         
         BOOL ioHidden = self.ioView.isHidden;
         
+#if !TARGET_OS_MACCATALYST
         for (UIButton *button in @[self.importButton, self.exportButton]) {
             button.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         }
+#endif
         
         self.detailsView.alpha = 0.f;
         self.detailsView.hidden = NO;
