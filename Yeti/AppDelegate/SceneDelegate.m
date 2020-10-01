@@ -13,6 +13,9 @@
 #import "AppDelegate.h"
 #import "StoreVC.h"
 
+#import "DZWebViewController.h"
+#import "UIColor+HEX.h"
+
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
 @interface UIViewController (ElytraStateRestoration)
@@ -46,9 +49,9 @@
     }
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
-    
-    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
 
+    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
+#if TARGET_OS_MACCATALYST
     if (activity != nil) {
         
         UIWindow *window = nil;
@@ -74,22 +77,15 @@
             
             window = [[UIWindow alloc] initWithWindowScene:windowScene];
             
-//            CGRect frame = window.frame;
-//            frame.size = CGSizeMake(480.f, 600.f);
-//            
-//            window.frame = frame;
-//            
-//            window.canResizeToFitContent = YES;
-            
             windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
             windowScene.titlebar.toolbar = nil;
             
             FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
             
             ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
-#if TARGET_OS_MACCATALYST
+
             vc.externalWindow = YES;
-#endif
+
             
             Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
             
@@ -120,6 +116,30 @@
             window.rootViewController = vc;
             
         }
+        else if ([activity.activityType isEqualToString:@"attributionsScene"]) {
+            
+            window = [[UIWindow alloc] initWithWindowScene:windowScene];
+            window.canResizeToFitContent = NO;
+            
+            CGSize fixedSize = CGSizeMake(375.f, 480.f);
+            
+            windowScene.sizeRestrictions.minimumSize = fixedSize;
+            
+            scene.title = @"Attributions";
+            
+            DZWebViewController *webVC = [[DZWebViewController alloc] init];
+            webVC.title = @"Attributions";
+            
+            webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
+            
+            NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
+            NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
+            
+            webVC.evalJSOnLoad = js;
+            
+            window.rootViewController = webVC;
+            
+        }
         
         if (window != nil && window.rootViewController != nil) {
                 
@@ -136,6 +156,7 @@
         return;
         
     }
+#endif
     
 #if !TARGET_OS_MACCATALYST
     [self setupBackgroundRefresh];

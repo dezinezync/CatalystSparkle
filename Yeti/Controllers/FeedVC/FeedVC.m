@@ -399,6 +399,8 @@
         return;
     }
     
+    NSIndexPath *selected = self.tableView.indexPathForSelectedRow;
+    
     BOOL isAppending = self.DS.snapshot.numberOfItems > 0;
     
     __weak NSArray *articles = self.pagingManager.items;
@@ -417,6 +419,16 @@
         
         if (isAppending == YES) {
             [self.tableView setScrollEnabled:YES];
+        }
+        
+        if (selected) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
+                
+            });
+            
         }
         
     }

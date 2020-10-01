@@ -343,6 +343,26 @@
     
 }
 
+- (void)showAttributions {
+    
+#if TARGET_OS_MACCATALYST
+    
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"attributionsScene"];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:0 errorHandler:^(NSError * _Nonnull error) {
+        
+        if (error != nil) {
+            
+            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
+            
+        }
+        
+    }];
+    
+#endif
+    
+}
+
 #pragma mark - Helpers
 
 - (void)_showSupplementaryController:(UIViewController *)controller {

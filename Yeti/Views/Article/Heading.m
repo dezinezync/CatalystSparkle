@@ -125,7 +125,7 @@
     
     CGFloat fontSize = 16 * scale;
     
-    UIFont * bodyFont = [UIFont boldSystemFontOfSize:fontSize];
+    UIFont * bodyFont = [UIFont systemFontOfSize:fontSize weight:UIFontWeightBold];
     
     if (![fontPref isEqualToString:ALPSystem]) {
         

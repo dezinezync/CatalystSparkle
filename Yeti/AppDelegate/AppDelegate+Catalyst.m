@@ -193,7 +193,9 @@
     
     UICommand *subsWindow = [UICommand commandWithTitle:@"View Subscription" image:nil action:@selector(showSubscriptionsInterface) propertyList:nil];
     
-    UIMenu *subsMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SubsMenu" options:UIMenuOptionsDisplayInline children:@[subsWindow]];
+    UICommand *attrsWindow = [UICommand commandWithTitle:@"Attributions" image:nil action:@selector(showAttributionsInterface) propertyList:nil];
+    
+    UIMenu *subsMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SubsMenu" options:UIMenuOptionsDisplayInline children:@[subsWindow, attrsWindow]];
     
     [builder insertChildMenu:subsMenu atStartOfMenuForIdentifier:UIMenuWindow];
     

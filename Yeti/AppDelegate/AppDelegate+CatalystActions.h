@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didClickImportSubscriptions;
 - (void)didClickExportSubscriptions;
 
+- (void)showAttributionsInterface;
+
 @end
 
 NS_ASSUME_NONNULL_END

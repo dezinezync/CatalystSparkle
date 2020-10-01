@@ -9,6 +9,22 @@
 import WidgetKit
 import SwiftUI
 
+extension Text {
+    
+    func platformTitleFont () -> Text {
+        
+        #if canImport(AppKit) || targetEnvironment(macCatalyst)
+        return self.font(.headline).fontWeight(.bold)
+        #elseif canImport(UIKit)
+        return self.font(.subheadline).fontWeight(.semibold)
+        #else
+        return self;
+        #endif
+        
+    }
+    
+}
+
 struct UnreadsProvider: IntentTimelineProvider {
    
     func loadData (name: String) -> SimpleEntries? {
@@ -159,7 +175,7 @@ struct ArticleView : View {
                     VStack(alignment: .leading, spacing: 2) {
                         
                         Text(entry.title)
-                            .font(Font.subheadline.weight(.medium))
+                            .platformTitleFont()
                             .foregroundColor(.primary)
                             .alignmentGuide(HorizontalAlignment.leading) { _ in 0 }
                             .lineLimit(2)

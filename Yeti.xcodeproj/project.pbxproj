@@ -239,7 +239,6 @@
 		F09CEAB02508B2F4007941AD /* FeedHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09CEAAF2508B2F4007941AD /* FeedHeaderView.xib */; };
 		F09D3D5F250649110037E3B4 /* SceneDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */; platformFilter = maccatalyst; };
 		F09E96472055342000E61681 /* hljs.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96432055342000E61681 /* hljs.js */; };
-		F09E96482055342000E61681 /* styleHTML.js in Resources */ = {isa = PBXBuildFile; fileRef = F09E96442055342000E61681 /* styleHTML.js */; };
 		F09E96492055342000E61681 /* light.css in Resources */ = {isa = PBXBuildFile; fileRef = F09E96452055342000E61681 /* light.css */; };
 		F09FD74C250915AF004BD60E /* auto.css in Resources */ = {isa = PBXBuildFile; fileRef = F09FD732250915AF004BD60E /* auto.css */; };
 		F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */; };
@@ -1132,7 +1131,6 @@
 		F09D3D5D250649110037E3B4 /* SceneDelegate+Catalyst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SceneDelegate+Catalyst.h"; sourceTree = "<group>"; };
 		F09D3D5E250649110037E3B4 /* SceneDelegate+Catalyst.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SceneDelegate+Catalyst.m"; sourceTree = "<group>"; };
 		F09E96432055342000E61681 /* hljs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hljs.js; sourceTree = "<group>"; };
-		F09E96442055342000E61681 /* styleHTML.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = styleHTML.js; sourceTree = "<group>"; };
 		F09E96452055342000E61681 /* light.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = light.css; sourceTree = "<group>"; };
 		F09FD732250915AF004BD60E /* auto.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = auto.css; sourceTree = "<group>"; };
 		F0A031A02520F7B900076718 /* ArticlePreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticlePreferenceViewController.swift; sourceTree = "<group>"; };
@@ -2310,7 +2308,6 @@
 				F09E96432055342000E61681 /* hljs.js */,
 				F09FD732250915AF004BD60E /* auto.css */,
 				F09E96452055342000E61681 /* light.css */,
-				F09E96442055342000E61681 /* styleHTML.js */,
 				F0469DF120A0514100163C4E /* dark.css */,
 				F0469DF320A0528000163C4E /* black.css */,
 				F0EEC85F21ECB2420046BB12 /* reader.css */,
@@ -3122,7 +3119,6 @@
 				F0A5AE7020C197EF00CFA1D2 /* Merriweather-Italic.ttf in Resources */,
 				F0D01CC32118681C003A01DD /* dark@3x.png in Resources */,
 				F0A5AEB820C19DA200CFA1D2 /* IBMPlexSans-SemiBold.ttf in Resources */,
-				F09E96482055342000E61681 /* styleHTML.js in Resources */,
 				F0D01CC52118681C003A01DD /* dark.png in Resources */,
 				F09CEAB02508B2F4007941AD /* FeedHeaderView.xib in Resources */,
 				F01E6E1C24AC6C2500D1BD6E /* gold@3x.png in Resources */,

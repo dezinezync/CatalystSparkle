@@ -92,6 +92,14 @@ PrefsManager * SharedPrefs = nil;
 #endif
     self.badgeAppIcon = [self.defaults boolForKey:badgeAppIconPreference];
     
+    if (self.paraTitleFont == nil) {
+        self.paraTitleFont = ALPSystem;
+    }
+    
+    if (self.articleFont == nil) {
+        self.articleFont = ALPSystem;
+    }
+    
 }
 
 - (NSString *)mappingForKey:(NSString *)key {

@@ -67,6 +67,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSettingsVC;
 
+- (void)showAttributions;
+
 /*
  * 0: None, 1: Import, 2: Export
  */

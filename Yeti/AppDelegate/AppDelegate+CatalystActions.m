@@ -71,9 +71,7 @@
 
 - (void)setSortingOptionTo:(YetiSortOption)sortOption {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    FeedVC *feedVC = sceneDelegate.coordinator.feedVC;
+    FeedVC *feedVC = self.coordinator.feedVC;
     
     if (feedVC == nil) {
         return;
@@ -115,9 +113,7 @@
         return;
     }
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    SidebarVC *vc = sceneDelegate.coordinator.sidebarVC;
+    SidebarVC *vc = self.coordinator.sidebarVC;
     
     [vc.collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
     
@@ -151,9 +147,7 @@
 
 - (void)switchToNextArticle {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -165,9 +159,7 @@
 
 - (void)switchToPreviousArticle {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -179,9 +171,7 @@
 
 - (void)markArticleRead {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -195,9 +185,7 @@
 
 - (void)markArticleBookmark {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -211,9 +199,7 @@
 
 - (void)openArticleInBrowser {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -225,9 +211,7 @@
 
 - (void)closeArticle {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -239,9 +223,7 @@
 
 - (void)shareArticle {
     
-    SceneDelegate *sceneDelegate = (id)[UIApplication.sharedApplication.connectedScenes.allObjects.firstObject delegate];
-    
-    ArticleVC *vc = sceneDelegate.coordinator.articleVC;
+    ArticleVC *vc = self.coordinator.articleVC;
     
     if (vc == nil) {
         return;
@@ -260,6 +242,12 @@
 - (void)didClickExportSubscriptions {
     
     [self.coordinator showOPMLInterfaceFrom:nil direct:2];
+    
+}
+
+- (void)showAttributionsInterface {
+    
+    [self.coordinator showAttributions];
     
 }
 

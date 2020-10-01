@@ -2883,48 +2883,8 @@ NSArray <NSString *> * _defaultsKeys;
 #endif
         
         [defaults setValue:user.uuid forKey:@"accountID"];
+        [defaults synchronize];
         
-        if (self.subscription == nil || self.subscription.expiry == nil) {
-            
-            [defaults setValue:@"No Subscription" forKey:@"subscriptionString"];
-            [defaults synchronize];
-            
-        }
-        else {
-            
-            if (self->_subscription
-                && [[(StoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
-                
-                self->_subscription.lifetime = YES;
-                
-                [defaults setValue:@"Life Time Subscription" forKey:@"subscriptionString"];
-                
-            }
-            
-            NSString *expiry = [NSDateFormatter localizedStringFromDate:self->_subscription.expiry dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterShortStyle];
-            
-            if (self->_subscription && [self->_subscription hasExpired] && [self->_subscription preAppstore] == NO) {
-                
-                NSString *expiryString = [NSString stringWithFormat:@"Expired on %@", expiry];
-                
-                [defaults setValue:expiryString forKey:@"subscriptionString"];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[NSNotificationCenter defaultCenter] postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:self->_subscription];
-                });
-            }
-            else {
-                
-                NSString *expiryString = [NSString stringWithFormat:@"Valid up to %@", expiry];
-                
-                [defaults setValue:expiryString forKey:@"subscriptionString"];
-                
-            }
-            
-            [defaults synchronize];
-            
-        }
-
     }
     
 }
@@ -3311,8 +3271,12 @@ NSArray <NSString *> * _defaultsKeys;
         if (isTrial) {
             text = @"Your Trail period ends tomorrow. Subscribe today to keep reading your RSS Feeds.";
         }
-        else {
-            text = @"Your Elytra Subscription expires tomorrow. Subscribe today to keep reading your RSS Feeds.";
+//        else {
+//            text = @"Your Elytra Subscription expires tomorrow. Subscribe today to keep reading your RSS Feeds.";
+//        }
+        
+        if (text == nil) {
+            return;
         }
         
         NSDateComponents *triggerDate = [[NSCalendar currentCalendar]
