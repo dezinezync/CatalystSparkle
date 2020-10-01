@@ -1152,17 +1152,30 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     @"favicon": favicon
                 }];
                 
+                /*
+                 * Convert all image URLs to the image proxy urls. This ensures
+                 * we always download correctly sized and scaled images so as to
+                 * not use excessive memory in Widgets.
+                 */
                 if (imageURL != nil) {
-                    
-                    listItem[@"imageURL"] = imageURL;
-                    
-                    [covers addObject:imageURL];
-                    
+                    listItem[@"imageURL"] = [imageURL pathForImageProxy:NO maxWidth:80.f quality:0.8f forWidget:YES];
                 }
                 
                 if ([favicon isBlank] == NO) {
-                    [favicons addObject:favicon];
+                    listItem[@"favicon"] = [favicon pathForImageProxy:NO maxWidth:48.f quality:0.8f forWidget:YES];
                 }
+                
+//                if (imageURL != nil) {
+//
+//                    listItem[@"imageURL"] = imageURL;
+//
+//                    [covers addObject:imageURL];
+//
+//                }
+                
+//                if ([favicon isBlank] == NO) {
+//                    [favicons addObject:favicon];
+//                }
                 
                 [list addObject:listItem];
                 
@@ -1171,69 +1184,69 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             // fetch all images and covert to base64. Widgets currenly have an issue
             // where the View does not reload once an image is set. Will also remove the
             // the SDWebImageSwiftUI dep.
-            dispatch_group_t group = dispatch_group_create();
-            
-            [favicons enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-
-                dispatch_group_enter(group);
-                
-                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                    
-                    if (data != nil) {
-                        
-                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
-                        
-                        if (base64EncodedData != nil) {
-                            
-                            for (NSMutableDictionary *item in list) {
-                                
-                                if (item[@"favicon"] == obj) {
-                                    item[@"favicon"] = base64EncodedData;
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                    dispatch_group_leave(group);
-                    
-                }];
-                
-            }];
-            
-            [covers enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-                
-                dispatch_group_enter(group);
-               
-                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                    
-                    if (data != nil) {
-                        
-                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
-                        
-                        if (base64EncodedData != nil) {
-                            
-                            for (NSMutableDictionary *item in list) {
-                                
-                                if (item[@"imageURL"] == obj) {
-                                    item[@"image"] = base64EncodedData;
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                    dispatch_group_leave(group);
-                    
-                }];
-                
-            }];
-            
-            dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+//            dispatch_group_t group = dispatch_group_create();
+//
+//            [favicons enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+//
+//                dispatch_group_enter(group);
+//
+//                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+//
+//                    if (data != nil) {
+//
+//                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
+//
+//                        if (base64EncodedData != nil) {
+//
+//                            for (NSMutableDictionary *item in list) {
+//
+//                                if (item[@"favicon"] == obj) {
+//                                    item[@"favicon"] = base64EncodedData;
+//                                }
+//
+//                            }
+//
+//                        }
+//
+//                    }
+//
+//                    dispatch_group_leave(group);
+//
+//                }];
+//
+//            }];
+//
+//            [covers enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+//
+//                dispatch_group_enter(group);
+//
+//                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+//
+//                    if (data != nil) {
+//
+//                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
+//
+//                        if (base64EncodedData != nil) {
+//
+//                            for (NSMutableDictionary *item in list) {
+//
+//                                if (item[@"imageURL"] == obj) {
+//                                    item[@"image"] = base64EncodedData;
+//                                }
+//
+//                            }
+//
+//                        }
+//
+//                    }
+//
+//                    dispatch_group_leave(group);
+//
+//                }];
+//
+//            }];
+//
+//            dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
             
             NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
             

@@ -278,7 +278,7 @@
          
         if (SharedPrefs.imageProxy) {
             
-            path = [path pathForImageProxy:YES maxWidth:128.f quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:SharedPrefs.imageLoading];
+            path = [path pathForImageProxy:YES maxWidth:128.f quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:SharedPrefs.imageLoading forWidget:NO];
             
         }
         

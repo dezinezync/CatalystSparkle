@@ -1179,7 +1179,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         baseFontSize = 26.f;
     }
 
-    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont systemFontOfSize:baseFontSize weight:UIFontWeightBold] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
+    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
 
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
     

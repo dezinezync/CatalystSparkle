@@ -14,7 +14,13 @@
                        maxWidth:(CGFloat)maxWidth
                         quality:(CGFloat)quality {
     
-    return [self pathForImageProxy:usedSRCSet maxWidth:maxWidth quality:quality firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+    return [self pathForImageProxy:usedSRCSet maxWidth:maxWidth quality:quality firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes forWidget:NO];
+    
+}
+
+- (NSString *)pathForImageProxy:(BOOL)usedSRCSet maxWidth:(CGFloat)maxWidth quality:(CGFloat)quality forWidget:(BOOL)forWidget {
+    
+    return [self pathForImageProxy:usedSRCSet maxWidth:maxWidth quality:quality firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes forWidget:forWidget];
     
 }
 
@@ -23,7 +29,8 @@
                         quality:(CGFloat)quality
                firstFrameForGIF:(BOOL)firstFrameForGIF
                   useImageProxy:(BOOL) useImageProxy
-                   sizePreference:(ImageLoadingOption)sizePreference {
+                 sizePreference:(ImageLoadingOption)sizePreference
+                      forWidget:(BOOL)forWidget {
     
     NSString *copy = [self copy];
     
@@ -43,7 +50,7 @@
     
     NSURLComponents *components = [NSURLComponents componentsWithString:copy];
     
-    if (components.host != nil && [knownProxies containsObject:components.host]) {
+    if (forWidget == NO && components.host != nil && [knownProxies containsObject:components.host]) {
         // these are known proxies.
         // but we also need to know if the width element is present
         NSRange widthPointer = [components.query rangeOfString:@"w="];
