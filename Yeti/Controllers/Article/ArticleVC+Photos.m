@@ -38,7 +38,7 @@
     
 #endif
     
-    if (image.link != nil) {
+    if ([image respondsToSelector:@selector(link)] && image.link != nil) {
         
         [self openLinkExternally:image.link.absoluteString];
         return;
@@ -132,7 +132,11 @@
                 counter++;
                 
                 if (sender.view == image && index == NSNotFound) {
-                    index = counter;
+                    
+                    // we have established it is this gallery.
+                    
+                    index = counter + [[(Gallery *)[sender view] pageControl] currentPage];
+                    
                 }
                 
             }
@@ -181,7 +185,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary new];
     
-    if (image.imageView.image != nil) {
+    if ([image valueForKeyPath:@"imageView.image"] != nil) {
         dict[@"image"] = [image.imageView.image sd_imageData];
     }
     

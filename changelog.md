@@ -1,5 +1,13 @@
 # v2.1.0
 
+## Build 47
+
+- Updated images for GIF loading and playback controls.
+
+- Tapping a gallery image now opens it in full view.
+
+- Images in Widgets should now load reliably. I've discarded the older method of loading images in favour of a more standard approach as recommended by Apple Engineering. 
+
 ## Build 45
 
 ### Fixes

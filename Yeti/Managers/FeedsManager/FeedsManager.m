@@ -45,6 +45,8 @@ NSArray <NSString *> * _defaultsKeys;
 @property (nonatomic, copy, readwrite) NSString *deviceID;
 @property (nonatomic, strong) NSString *appFullVersion, *appMajorVersion;
 
+@property (nonatomic, strong) NSTimer *widgetCountersUpdateTimer;
+
 @end
 
 @implementation FeedsManager
@@ -3866,19 +3868,31 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)updateSharedUnreadCounters {
     
-    NSMutableDictionary *dict = @{}.mutableCopy;
+    if (self.widgetCountersUpdateTimer != nil) {
+        
+        [self.widgetCountersUpdateTimer invalidate];
+        
+        self.widgetCountersUpdateTimer = nil;
+        
+    }
     
-    dict[@"unread"] = @(self.totalUnread ?: 0);
-    
-    dict[@"today"] = @(self.totalToday ?: 0);
-    
-    dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
-    
-    dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
-    
-    [self writeToSharedFile:@"counters.json" data:dict];
-    
-    [WidgetManager reloadTimelineWithName:@"CountersWidget"];
+    self.widgetCountersUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:10 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        
+        NSMutableDictionary *dict = @{}.mutableCopy;
+        
+        dict[@"unread"] = @(self.totalUnread ?: 0);
+        
+        dict[@"today"] = @(self.totalToday ?: 0);
+        
+        dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
+        
+        dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
+        
+        [self writeToSharedFile:@"counters.json" data:dict];
+        
+        [WidgetManager reloadTimelineWithName:@"CountersWidget"];
+        
+    }];
     
 }
 

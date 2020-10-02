@@ -1982,6 +1982,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
     gallery.maxScreenHeight = self.view.bounds.size.height - (self.view.safeAreaInsets.top + self.additionalSafeAreaInsets.bottom) - 12.f - 38.f;
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+    gallery.userInteractionEnabled = YES;
+    
+    [gallery addGestureRecognizer:tap];
+    
     [self.stackView addArrangedSubview:gallery];
     // set images after adding it to the superview since -[Gallery setImages:] triggers layout.
     gallery.images = content.images;

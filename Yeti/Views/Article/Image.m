@@ -255,17 +255,28 @@
 #endif
     
     gifButton.layer.cornerRadius = 3.f;
+    
+#if !TARGET_OS_MACCATALYST
     [gifButton setTitle:@"  Tap to load" forState:UIControlStateNormal];
     [gifButton setTitle:@"  Loading..." forState:UIControlStateDisabled];
+#endif
+    
+#if TARGET_OS_MACCATALYST
+    [gifButton setTitle:@"Tap to load" forState:UIControlStateNormal];
+#endif
+    
     gifButton.titleLabel.font = [UIFont systemFontOfSize:13.f];
     
-    [gifButton setImage:[[UIImage imageNamed:@"gif"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [gifButton setImage:[UIImage systemImageNamed:@"circle.dashed.inset.fill"] forState:UIControlStateNormal];
     [gifButton sizeToFit];
     
+#if !TARGET_OS_MACCATALYST
     [gifButton.widthAnchor constraintEqualToConstant:gifButton.bounds.size.width + 16.f].active = YES;
     [gifButton.heightAnchor constraintEqualToConstant:gifButton.bounds.size.height + 8.f].active = YES;
+#endif
     
     [self addSubview:gifButton];
+    
     [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
     
     if (UIApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
@@ -293,10 +304,12 @@
     
     UIButton *startStopButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     startStopButton.translatesAutoresizingMaskIntoConstraints = NO;
+#if !TARGET_OS_MACCATALYST
     startStopButton.backgroundColor = UIColor.secondarySystemFillColor;
     startStopButton.layer.cornerRadius = 3.f;
+#endif
     
-    [startStopButton setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [startStopButton setImage:[UIImage systemImageNamed:@"pause.rectangle.fill"] forState:UIControlStateNormal];
     [startStopButton sizeToFit];
     
     [startStopButton.widthAnchor constraintEqualToConstant:startStopButton.bounds.size.width + 16.f].active = YES;
@@ -328,6 +341,10 @@
     if ([sender isKindOfClass:UIButton.class]) {
         [sender setEnabled:NO];
     }
+    
+#if TARGET_OS_MACCATALYST
+    [sender setTitle:@"Loading..." forState:UIControlStateNormal];
+#endif
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
        
@@ -372,11 +389,11 @@
         
         if (self.isAnimating) {
             [self.imageView stopAnimating];
-            [sender setImage:[[UIImage imageNamed:@"gif_play"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+            [sender setImage:[UIImage systemImageNamed:@"play.rectangle.fill"] forState:UIControlStateNormal];
         }
         else {
             [self.imageView startAnimating];
-            [sender setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+            [sender setImage:[UIImage systemImageNamed:@"pause.rectangle.fill"] forState:UIControlStateNormal];
         }
         
     });

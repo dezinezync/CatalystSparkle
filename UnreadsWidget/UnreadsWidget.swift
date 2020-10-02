@@ -28,6 +28,46 @@ extension Text {
     
 }
 
+typealias LoadImagesCompletionBlock = () -> Void
+
+private func loadImagesDataFromPackage (package: SimpleEntries, completion: LoadImagesCompletionBlock? = nil) {
+    
+    let imageRequestGroup = DispatchGroup()
+    
+    for entry: SimpleEntry in package.entries {
+        
+        if (entry.favicon != nil && entry.favicon != "") {
+            
+            imageRequestGroup.enter()
+            
+            SDWebImageManager.shared.loadImage(with: URL(string: entry.favicon!), options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
+                
+                imageRequestGroup.leave()
+                
+            }
+            
+        }
+        
+        if (entry.imageURL != nil) {
+            
+            imageRequestGroup.enter()
+            
+            SDWebImageManager.shared.loadImage(with: URL(string: entry.imageURL!), options: .highPriority, progress: nil) { (image: UIImage?, _: Data?, error: Error?, _: SDImageCacheType, _: Bool, _: URL?) in
+                
+                imageRequestGroup.leave()
+                
+            }
+            
+        }
+        
+    }
+    
+    imageRequestGroup.notify(queue: .main) {
+        completion!()
+    }
+    
+}
+
 struct UnreadsProvider: IntentTimelineProvider {
    
     func loadData (name: String) -> SimpleEntries? {
@@ -64,7 +104,11 @@ struct UnreadsProvider: IntentTimelineProvider {
     
         if let jsonData = loadData(name: "articles.json") {
             
-            return completion(jsonData)
+            loadImagesDataFromPackage(package: jsonData) {
+                
+                completion(jsonData)
+                
+            }
             
         }
         
@@ -78,9 +122,13 @@ struct UnreadsProvider: IntentTimelineProvider {
             
             entries.append(jsonData)
             
-            let timeline = Timeline(entries: entries, policy: .never)
-            
-            completion(timeline)
+            loadImagesDataFromPackage(package: jsonData) {
+                
+                let timeline = Timeline(entries: entries, policy: .never)
+                
+                completion(timeline)
+                
+            }
             
         }
 
@@ -313,11 +361,11 @@ struct UnreadsWidget_Previews: PreviewProvider {
 
     static var previews: some View {
         
-        let entry1 = SimpleEntry(date: Date(), title: "Apple releases second macOS Big Sur public beta", author: "Michael Potuck", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/07/macOS-Big-Sur-changes-and-features.jpg?quality=82&strip=all&w=1600", image: nil, identifier: 15930957, blogID: 19, favicon: nil)
+        let entry1 = SimpleEntry(date: Date(), title: "Apple releases second macOS Big Sur public beta", author: "Michael Potuck", blog: "9to5Mac", imageURL: "https://9to5mac.com/wp-content/uploads/sites/6/2020/07/macOS-Big-Sur-changes-and-features.jpg?quality=82&strip=all&w=1600", image: nil, identifier: 15930957, blogID: 19, favicon: "https://images.weserv.nl/?url=https://9to5mac.com/apple-touch-icon-180x180.png&w=128&dpr=3&output=&q=0.800000011920929@3x.&we")
         
         let entry3 = SimpleEntry(date: Date(), title: "How This iPhone Got FIXED!", author: "", blog: "Linus Tech Tips", imageURL: "https://images.weserv.nl/?url=https://i2.ytimg.com/vi/u1MNgP3LFM4/hqdefault.jpg&w=160&dpr=3&output=jpg&q=0.800000011920929&filename=hqdefault.@3x.jpg&we", image: nil, identifier: 15930980, blogID: 336, favicon: "https://images.weserv.nl/?url=https://yt3.ggpht.com/a/AATXAJzGUJdH8PJ5d34Uk6CYZmAMWtam2Cpk6tU_Qw=s900-c-k-c0xffffffff-no-rj-mo&w=128&dpr=3&output=&q=0.800000011920929&filename=AATXAJzGUJdH8PJ5d34Uk6CYZmAMWtam2Cpk6tU_Qw=s900-c-k-c0xffffffff-no-rj-mo@3x.&we")
         
-        let entry2 = SimpleEntry(date: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, image: nil, identifier: 15916691, blogID: 5959, favicon: nil)
+        let entry2 = SimpleEntry(date: Date(), title: "Apple hits $2 trillion – a record-breaking market cap milestone", author: "Tom Rolfe", blog: "TapSmart", imageURL: nil, image: nil, identifier: 15916691, blogID: 5959, favicon: "https://images.weserv.nl/?url=https://tapsmart-wpengine.netdna-ssl.com/wp-content/uploads/fbrfg/apple-touch-icon-180x180.png&w=128&dpr=3&output=&q=0.800000011920929@3x.&we")
         
         let json = SimpleEntries(date: Date(), entries: [entry1, entry2, entry3])
         
