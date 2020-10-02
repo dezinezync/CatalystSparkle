@@ -52,7 +52,7 @@
 
     NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
 #if TARGET_OS_MACCATALYST
-    if (activity != nil) {
+    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == NO) {
         
         UIWindow *window = nil;
         
