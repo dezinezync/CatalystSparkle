@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC+ContextMenus.h"
+#import "FeedVC+DragAndDrop.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
 
@@ -345,6 +345,10 @@
             header.subscribeButton.hidden = YES;
         }
     }
+    else {
+        header.backButton.hidden = YES;
+        header.subscribeButton.hidden = YES;
+    }
     
 #endif
     
@@ -383,6 +387,9 @@
         self->_shouldShowHeader = YES;
         
     }
+    
+    self.tableView.dragInteractionEnabled = YES;
+    self.tableView.dragDelegate = self;
     
 }
 

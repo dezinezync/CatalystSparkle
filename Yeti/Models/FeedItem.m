@@ -6,6 +6,7 @@
 
 #import "NSString+HTML.h"
 #import <DZKit/NSString+Extras.h>
+#import <CoreServices/CoreServices.h>
 
 @implementation FeedItem
 
@@ -239,7 +240,15 @@ static NSDateFormatter *_formatter = nil;
     }
 
     if (self.modified) {
-        [dictionary setObject:self.modified forKey:@"modified"];
+        
+        NSString *strDate = (NSString *)[self modified];
+        
+        if ([self.modified isKindOfClass:NSDate.class]) {
+            strDate = [[self.class formatter] stringFromDate:(NSDate *)strDate];
+        }
+        
+        [dictionary setObject:strDate forKey:@"modified"];
+        
     }
 
     [dictionary setObject:[NSNumber numberWithBool:self.read] forKey:@"read"];
@@ -247,7 +256,8 @@ static NSDateFormatter *_formatter = nil;
     if (self.timestamp) {
         
         NSString *strDate = (NSString *)[self timestamp];
-        if ([self.timestamp isMemberOfClass:NSDate.class]) {
+        
+        if ([self.timestamp isKindOfClass:NSDate.class]) {
             strDate = [[self.class formatter] stringFromDate:(NSDate *)strDate];
         }
         
@@ -430,6 +440,14 @@ static NSDateFormatter *_formatter = nil;
     }
     
     _coverImage = coverImage;
+}
+
+- (NSItemProvider *)itemProvider {
+    
+    NSString *articleURL = self.articleURL;
+    
+    return [[NSItemProvider alloc] initWithObject:articleURL];
+    
 }
 
 @end

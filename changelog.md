@@ -1,5 +1,11 @@
 # v2.1.0
 
+## Build 49
+
+- Added support for dragging and dropping articles into the Unread or Bookmark rows in the Sidebar to perform respective actions. 
+
+- Added support for dragging feeds to external applications. This action will drag with the RSS Feed URL.
+
 ## Build 47
 
 - Updated images for GIF loading and playback controls.

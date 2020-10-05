@@ -211,6 +211,8 @@
 		F088CF60248E6D080010EBC0 /* DZNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; };
 		F088CF61248E6D080010EBC0 /* DZNetworking.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F0C4F8CC234C69B900D57C18 /* DZNetworking.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F088CF6E248E72020010EBC0 /* AppDelegate+Catalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = F088CF6D248E72020010EBC0 /* AppDelegate+Catalyst.m */; platformFilter = maccatalyst; };
+		F089FFA2252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F089FFA1252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m */; };
+		F089FFC5252B365C004D4EB9 /* FeedVC+DragAndDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = F089FFC4252B365C004D4EB9 /* FeedVC+DragAndDrop.m */; };
 		F08C5DFF2386567F0055946F /* DZAppdelegate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; };
 		F08C5E002386567F0055946F /* DZAppdelegate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5DFC238656620055946F /* DZAppdelegate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F08C5E62238660B00055946F /* DZThemeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F08C5E5D238660A90055946F /* DZThemeKit.framework */; };
@@ -1055,6 +1057,10 @@
 		F08993BC2108791D00A9978E /* FeedsVC+DragDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedsVC+DragDrop.h"; sourceTree = "<group>"; };
 		F08993BD2108791D00A9978E /* FeedsVC+DragDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedsVC+DragDrop.m"; sourceTree = "<group>"; };
 		F08993C1210883E200A9978E /* FolderDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderDrop.h; sourceTree = "<group>"; };
+		F089FFA0252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+DragAndDrop.h"; sourceTree = "<group>"; };
+		F089FFA1252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+DragAndDrop.m"; sourceTree = "<group>"; };
+		F089FFC3252B365C004D4EB9 /* FeedVC+DragAndDrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedVC+DragAndDrop.h"; sourceTree = "<group>"; };
+		F089FFC4252B365C004D4EB9 /* FeedVC+DragAndDrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FeedVC+DragAndDrop.m"; sourceTree = "<group>"; };
 		F08C5DF0238656620055946F /* DZAppDelegate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZAppDelegate.xcodeproj; path = Vendors/DZAppDelegate/DZAppDelegate.xcodeproj; sourceTree = "<group>"; };
 		F08C5E56238660A90055946F /* DZThemeKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DZThemeKit.xcodeproj; path = Vendors/DZThemeKit/DZThemeKit.xcodeproj; sourceTree = "<group>"; };
 		F0919F641FD7C1A70098F48A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -2182,6 +2188,8 @@
 				F0521A062473AB8400DFB69C /* FeedVC+SearchController.m */,
 				F0CDA0C924750BCC00DC1217 /* FeedVC+ContextMenus.h */,
 				F0CDA0CA24750BCC00DC1217 /* FeedVC+ContextMenus.m */,
+				F089FFC3252B365C004D4EB9 /* FeedVC+DragAndDrop.h */,
+				F089FFC4252B365C004D4EB9 /* FeedVC+DragAndDrop.m */,
 				F0A495B224711CE500E9BA13 /* ArticleCell.h */,
 				F0A495B324711CE500E9BA13 /* ArticleCell.m */,
 				F0A495B424711CE500E9BA13 /* ArticleCell.xib */,
@@ -2520,6 +2528,8 @@
 				F075752724CED198001F7D15 /* SidebarVC+Actions.m */,
 				F0F44E4424CEFDA20044CA01 /* SidebarVC+SearchResults.h */,
 				F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */,
+				F089FFA0252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.h */,
+				F089FFA1252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m */,
 				F004560924DE81DB0094A6A3 /* FeedCell.h */,
 				F004560A24DE81DB0094A6A3 /* FeedCell.m */,
 				F004560E24DE85B60094A6A3 /* FolderCell.h */,
@@ -3250,6 +3260,7 @@
 				F00F646D24EC1DE700E5727C /* Blockquote.m in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
 				F0B5BFA62060D57F0092DA31 /* AppDelegate+Routing.m in Sources */,
+				F089FFC5252B365C004D4EB9 /* FeedVC+DragAndDrop.m in Sources */,
 				F00F647024EC1DE700E5727C /* GalleryCell.m in Sources */,
 				F0CDA0D724752C6C00DC1217 /* AuthorVC.m in Sources */,
 				F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */,
@@ -3372,6 +3383,7 @@
 				F04416E720E618F8008AB1D3 /* CollectionHeader.m in Sources */,
 				F00F646C24EC1DE700E5727C /* TweetImage.m in Sources */,
 				F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */,
+				F089FFA2252AFAD1004D4EB9 /* SidebarVC+DragAndDrop.m in Sources */,
 				F00F643E24EC1BC700E5727C /* Author.m in Sources */,
 				F0D071EF205E75D700A042CD /* AccountVC.m in Sources */,
 				F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */,

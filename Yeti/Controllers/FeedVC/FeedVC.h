@@ -62,6 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (FeedItem * _Nullable)itemForIndexPath:(NSIndexPath * _Nonnull)indexPath;
 
+- (void)reloadVisibleCells;
+
 #pragma mark - State
 
 - (NSString * _Nonnull)emptyViewSubtitle;

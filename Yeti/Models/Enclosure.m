@@ -95,7 +95,14 @@
     }
 
     if (self.url) {
-        [dictionary setObject:self.url forKey:@"url"];
+        
+        if ([self.url isKindOfClass:NSURL.class]) {
+            [dictionary setObject:self.url.absoluteString forKey:@"url"];
+        }
+        else {
+            [dictionary setObject:self.url forKey:@"url"];
+        }
+        
     }
     
     if (self.cmtime) {

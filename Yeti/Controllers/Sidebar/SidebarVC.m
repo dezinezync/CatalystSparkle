@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "SidebarVC+SearchResults.h"
+#import "SidebarVC+DragAndDrop.h"
 #import "CustomFeed.h"
 
 #import <DZKit/NSString+Extras.h>
@@ -274,6 +274,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return;
     }
     
+    self.collectionView.dragInteractionEnabled = YES;
+    self.collectionView.dragDelegate = self;
+    self.collectionView.dropDelegate = self;
+    
     self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, id _Nonnull item) {
         
         if ([item isKindOfClass:CustomFeed.class]) {
@@ -303,15 +307,22 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         UISearchBar *searchBar = searchController.searchBar;
         searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
         searchBar.backgroundImage = [UIImage new];
+//        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
         [supplementaryView addSubview:searchBar];
         
-        [searchBar.centerXAnchor constraintEqualToAnchor:supplementaryView.centerXAnchor].active = YES;
+        [searchBar.leadingAnchor constraintEqualToAnchor:supplementaryView.leadingAnchor].active = YES;
+        [searchBar.trailingAnchor constraintEqualToAnchor:supplementaryView.trailingAnchor].active = YES;
+//        [searchBar.centerXAnchor constraintEqualToAnchor:supplementaryView.centerXAnchor].active = YES;
         [searchBar.topAnchor constraintEqualToAnchor:supplementaryView.topAnchor].active = YES;
         
+        [searchBar setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisHorizontal];
         [searchBar setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
         
         [supplementaryView.heightAnchor constraintEqualToAnchor:searchBar.heightAnchor].active = YES;
+        
+        [supplementaryView invalidateIntrinsicContentSize];
+        [supplementaryView setNeedsLayout];
         
     }];
         
