@@ -23,6 +23,8 @@
 #import "BookmarksManager.h"
 #import "BarPositioning.h"
 
+#import "FeedHeaderView.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading >

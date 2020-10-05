@@ -368,9 +368,16 @@
         MyFeedsManager.totalUnread = MyFeedsManager.totalUnread + [[(Feed *)responseObject unread] integerValue];
         
         dispatch_async(dispatch_get_main_queue(), ^{
+            
             strongify(self);
             
+#if TARGET_OS_MACCATALYST
+            FeedHeaderView *header = (id)[self.tableView tableHeaderView];
+            header.subscribeButton.hidden = YES;
+#else
             self.navigationItem.rightBarButtonItem = nil;
+#endif
+            
         });
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
@@ -574,6 +581,12 @@
         [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
         
     }];
+    
+}
+
+- (void)didTapBack {
+    
+    [self.navigationController popToRootViewControllerAnimated:YES];
     
 }
 

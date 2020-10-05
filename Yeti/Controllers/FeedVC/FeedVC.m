@@ -9,7 +9,6 @@
 #import "FeedVC+ContextMenus.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
-#import "FeedHeaderView.h"
 
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
@@ -329,6 +328,25 @@
     }
     
     [header.descriptionLabel sizeToFit];
+    
+#if TARGET_OS_MACCATALYST
+    
+    [header.backButton addTarget:self action:@selector(didTapBack) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (self.isExploring) {
+        // check if the user is subscribed to this feed
+        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
+        
+        if (!existing) {
+            // allow subscription
+            [header.subscribeButton addTarget:self action:@selector(subscribeToFeed:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        else {
+            header.subscribeButton.hidden = YES;
+        }
+    }
+    
+#endif
     
     [header.mainStackView setNeedsUpdateConstraints];
     [header setNeedsUpdateConstraints];
@@ -819,16 +837,7 @@
 
 - (void)updatedFeedsNotification:(id)sender {
     
-    [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-
-        NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
-        [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:NO];
-
-    });
+    [self didChangeContentCategory];
     
 }
 
@@ -838,36 +847,42 @@
 
         if ([[self.tableView indexPathsForVisibleRows] count] > 0) {
             
-            // reload visible cells
-            NSArray <NSIndexPath *> *visibleIndices = [self.tableView indexPathsForVisibleRows];
+            [self reloadVisibleCells];
             
-            if (visibleIndices.count > 0) {
+        }
+        
+    });
+    
+}
+
+- (void)reloadVisibleCells {
+    
+    // reload visible cells
+    NSArray <NSIndexPath *> *visibleIndices = [self.tableView indexPathsForVisibleRows];
+    
+    if (visibleIndices.count > 0) {
+        
+        NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+        
+        NSMutableArray <FeedItem *> *identifiers = [NSMutableArray arrayWithCapacity:visibleIndices.count];
+        
+        for (NSIndexPath *indexPath in visibleIndices) {
+            
+            FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
+            
+            if (item != nil) {
                 
-                NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
-                
-                NSMutableArray <FeedItem *> *identifiers = [NSMutableArray arrayWithCapacity:visibleIndices.count];
-                
-                for (NSIndexPath *indexPath in visibleIndices) {
-                    
-                    FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
-                    
-                    if (item != nil) {
-                        
-                        [identifiers addObject:item];
-                        
-                    }
-                    
-                }
-                
-                [snapshot reloadItemsWithIdentifiers:identifiers];
-                
-                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                [identifiers addObject:item];
                 
             }
             
         }
         
-    });
+        [snapshot reloadItemsWithIdentifiers:identifiers];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+        
+    }
     
 }
 

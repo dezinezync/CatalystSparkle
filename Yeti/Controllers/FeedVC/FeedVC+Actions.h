@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)markAllOlderRead:(NSIndexPath *)indexPath;
 
+- (void)didTapBack;
+
 @end
 
 NS_ASSUME_NONNULL_END
