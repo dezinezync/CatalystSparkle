@@ -44,7 +44,13 @@
         return copy;
     }
     
-    maxWidth = maxWidth ?: [UIScreen mainScreen].bounds.size.width;
+    __block UIWindow *mainWindow;
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        mainWindow = [[(UIWindowScene *)(UIApplication.sharedApplication.connectedScenes.anyObject) windows] firstObject];
+    });
+    
+    maxWidth = maxWidth ?: mainWindow.bounds.size.width;
     
     NSSet *const knownProxies = [NSSet setWithObjects:@"9to5mac.com", nil];
     

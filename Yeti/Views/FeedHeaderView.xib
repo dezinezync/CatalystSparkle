@@ -19,29 +19,29 @@
                     <rect key="frame" x="12" y="8" width="390" height="102"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="jWl-Xq-BfZ">
-                            <rect key="frame" x="0.0" y="0.0" width="390" height="24"/>
+                            <rect key="frame" x="0.0" y="0.0" width="390" height="63"/>
                             <subviews>
                                 <button hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bfF-O2-5vb">
-                                    <rect key="frame" x="-7" y="-3" width="64" height="32"/>
+                                    <rect key="frame" x="-11" y="17" width="14" height="32"/>
                                     <state key="normal" title="Back"/>
-                                    <variation key="userInterfaceIdiom=mac" hidden="NO"/>
+                                    <variation key="userInterfaceIdiom=mac" hidden="YES"/>
                                 </button>
                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" image="square.dashed" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="1CN-e7-md8">
-                                    <rect key="frame" x="58" y="1.5" width="24" height="21.5"/>
+                                    <rect key="frame" x="0.0" y="21.5" width="24" height="21.5"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="24" id="Gyn-LJ-xyR"/>
                                         <constraint firstAttribute="width" constant="24" id="Kbx-K9-eek"/>
                                     </constraints>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0AZ-Tr-Vh7">
-                                    <rect key="frame" x="90" y="2" width="300" height="20"/>
+                                    <rect key="frame" x="32" y="22" width="358" height="20"/>
                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
                         </stackView>
                         <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="249" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="751" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Ceu-NA-LLA">
-                            <rect key="frame" x="0.0" y="32" width="390" height="31"/>
+                            <rect key="frame" x="0.0" y="71" width="390" height="31"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ng8-jX-6PU">
                                     <rect key="frame" x="0.0" y="-4" width="24" height="38.5"/>
@@ -65,9 +65,9 @@
                             </constraints>
                         </stackView>
                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4xo-lp-FMG">
-                            <rect key="frame" x="-7" y="78" width="404" height="31"/>
+                            <rect key="frame" x="-7" y="107" width="404" height="12"/>
                             <state key="normal" title="Subscribe"/>
-                            <variation key="userInterfaceIdiom=mac" hidden="NO"/>
+                            <variation key="userInterfaceIdiom=mac" hidden="YES"/>
                         </button>
                     </subviews>
                 </stackView>

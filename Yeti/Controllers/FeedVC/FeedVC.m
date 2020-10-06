@@ -331,6 +331,10 @@
     
 #if TARGET_OS_MACCATALYST
     
+    if (self.navigationController.viewControllers.count > 1) {
+        header.backButton.hidden = NO;
+    }
+    
     [header.backButton addTarget:self action:@selector(didTapBack) forControlEvents:UIControlEventTouchUpInside];
     
     if (self.isExploring) {
@@ -338,6 +342,9 @@
         Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
         
         if (!existing) {
+            
+            header.subscribeButton.hidden = NO;
+            
             // allow subscription
             [header.subscribeButton addTarget:self action:@selector(subscribeToFeed:) forControlEvents:UIControlEventTouchUpInside];
         }

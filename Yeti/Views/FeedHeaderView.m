@@ -58,7 +58,7 @@
     
     CGSize stackViewSize = [self.mainStackView systemLayoutSizeFittingSize:UILayoutFittingExpandedSize];
     
-    size.height = stackViewSize.height + 16.f;
+    size.height = stackViewSize.height + 8.f;
     
     return size;
     
