@@ -14,4 +14,16 @@
 
 - (void)didTapNextArticle:(id)sender;
 
+- (void)scrollDown;
+
+- (void)scrollUp;
+
+- (void)scrollToTop;
+
+- (void)scrollToEnd;
+
+- (void)navLeft;
+
+- (void)navRight;
+
 @end

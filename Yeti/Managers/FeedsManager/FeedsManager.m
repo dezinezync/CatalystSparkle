@@ -3529,11 +3529,9 @@ NSArray <NSString *> * _defaultsKeys;
         
         NSDictionary *userObj = [responseObject objectForKey:@"user"];
         
-//        BOOL appleID = [[user valueForKey:@"appleid"] boolValue];
-        
         NSNumber * userID = [userObj valueForKey:@"id"];
-        
-        User *user = [User new];
+         
+        User *user = [User instanceFromDictionary:userObj];
         user.userID = userID;
         user.uuid = uuid;
         

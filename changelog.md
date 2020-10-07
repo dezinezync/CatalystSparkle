@@ -1,5 +1,13 @@
 # v2.1.0
 
+## Build 50
+
+- During first launch, if your account already has a subscription, the trial interface is no longer shown. You are directly taken to the app. 
+
+- Twitter apps selection now works again when tapping tweets.
+
+- Matched the keyboard navigation to the macOS App. 
+
 ## Build 49
 
 - Added support for dragging and dropping articles into the Unread or Bookmark rows in the Sidebar to perform respective actions. 

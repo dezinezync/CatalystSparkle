@@ -3002,9 +3002,45 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
 #endif
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardDownArrow) {
+        
+        if (press.key.modifierFlags == UIKeyModifierShift) {
+            [self scrollToEnd];
+        }
+        else {
+            [self scrollDown];
+        }
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardUpArrow) {
+        
+        if (press.key.modifierFlags == UIKeyModifierShift) {
+            [self scrollToTop];
+        }
+        else {
+            [self scrollUp];
+        }
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardLeftArrow) {
+        [self navLeft];
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardRightArrow) {
+        [self navRight];
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardJ && self.providerDelegate != nil) {
+        
+        [self didTapPreviousArticle:nil];
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardK && self.providerDelegate != nil) {
+        
+        [self didTapNextArticle:nil];
+        
+    }
     else {
         
-        NSLog(@"Presses: %@\n Events:%@", presses, event);
+        NSLogDebug(@"Presses: %@\n Events:%@", presses, event);
         
         [super pressesBegan:presses withEvent:event];
         

@@ -50,6 +50,8 @@
 @property (nonatomic, weak) UIProgressView *syncProgressView;
 @property (nonatomic, strong) UIStackView *progressStackView;
 
+@property (nonatomic, strong) NSTimer *unreadWidgetsTimer;
+
 #if TARGET_OS_MACCATALYST
 
 @property (nonatomic, strong) UISearchController *supplementarySearchController;
@@ -440,6 +442,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         }
         
         [MyFeedsManager updateSharedUnreadCounters];
+        [self updateSharedUnreadsData];
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
        
@@ -472,8 +475,6 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
        
         UICollectionViewListCell *cell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        
-        [MyFeedsManager updateSharedUnreadCounters];
         
         if (cell != nil) {
             
@@ -1077,6 +1078,32 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 }
 
 - (void)updateSharedUnreadsData {
+    
+    NSTimeInterval interval = 0;
+    
+    if (self.unreadWidgetsTimer != nil) {
+        
+        interval = 60;
+        
+        [self.unreadWidgetsTimer invalidate];
+        
+        self.unreadWidgetsTimer = nil;
+        
+    }
+    
+    weakify(self);
+    
+    self.unreadWidgetsTimer = [NSTimer scheduledTimerWithTimeInterval:interval repeats:NO block:^(NSTimer * _Nonnull timer) {
+        
+        strongify(self);
+        
+        [self _updateSharedUnreadsData];
+        
+    }];
+    
+}
+
+- (void)_updateSharedUnreadsData {
     
     [MyFeedsManager getUnreadForPage:1 limit:6 sorting:YTSortUnreadDesc success:^(NSArray <FeedItem *> * items, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
