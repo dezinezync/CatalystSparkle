@@ -741,11 +741,11 @@
     NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
     NSURL *URL;
     
-    if ([twitterScheme isEqualToString:@"tweetbot"]) {
-         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
+    if (twitterScheme == nil || [twitterScheme isEqualToString:@"twitter"]) {
+         URL = formattedURL(@"%@://user?screen_name=%@", @"twitter", username);
     }
-    else if ([twitterScheme isEqualToString:@"twitter"]) {
-         URL = formattedURL(@"%@://user?screen_name=%@", twitterScheme, username);
+    else if ([twitterScheme isEqualToString:@"tweetbot"]) {
+         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
     }
     else if ([twitterScheme isEqualToString:@"twitterrific"]) {
          URL = formattedURL(@"%@://current/profile?screen_name=%@", twitterScheme, username);
@@ -758,14 +758,15 @@
 }
 
 - (void)twitterOpenStatus:(NSString *)status {
+    
     NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
     NSURL *URL;
     
-    if ([twitterScheme isEqualToString:@"tweetbot"]) {
+    if (twitterScheme == nil || [twitterScheme isEqualToString:@"twitter"]) {
+        URL = formattedURL(@"%@://status?id=%@", twitterScheme ?: @"twitter", status);
+   }
+    else if ([twitterScheme isEqualToString:@"tweetbot"]) {
         URL = formattedURL(@"%@://dummyname/status/%@", twitterScheme, status);
-    }
-    else if ([twitterScheme isEqualToString:@"twitter"]) {
-        URL = formattedURL(@"%@://status?id=%@", twitterScheme, status);
     }
     else if ([twitterScheme isEqualToString:@"twitterrific"]) {
         URL = formattedURL(@"%@://current/tweet?id=%@", twitterScheme, status);

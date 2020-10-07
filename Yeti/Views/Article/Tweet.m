@@ -18,6 +18,13 @@
 
 #import <LinkPresentation/LinkPresentation.h>
 
+@interface UIGestureRecognizerTarget : NSObject
+
+@property (nonatomic, weak) id target;
+@property (nonatomic, assign) SEL action;
+
+@end
+
 @implementation TweetPara
 
 - (BOOL)avoidsLazyLoading {
@@ -87,6 +94,7 @@
 @property (weak, nonatomic) Content *content;
 
 @property (weak, nonatomic) LPLinkView *linkView API_AVAILABLE(ios(13.0));
+@property (nonatomic, copy) NSURL *linkURL;
 
 @end
 
@@ -157,24 +165,45 @@
             NSLog(@"Metadata: %@", metadata);
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSString *url = metadata.URL.absoluteString;
+                NSString *statusID = [url lastPathComponent];
+                
+                url = [NSString stringWithFormat:@"yeti://twitter/status/%@", statusID];
+                self.linkURL = [NSURL URLWithString:url];
                
                 LPLinkView *view = [[LPLinkView alloc] initWithMetadata:metadata];
                 view.translatesAutoresizingMaskIntoConstraints = NO;
                 view.frame = CGRectMake(0, 0, self.bounds.size.width, 0.f);
-                
-                NSString *url = metadata.URL.absoluteString;
-                url = [url stringByReplacingOccurrencesOfString:@"twitter.com" withString:@"twitter"];
-                url = [url stringByReplacingOccurrencesOfString:@"https://" withString:@"yeti://"];
-                
-                metadata.URL = [NSURL URLWithString:url];
-                metadata.originalURL = metadata.URL;
+                view.showsLargeContentViewer = YES;
                 
                 [view sizeToFit];
                 [view layoutSubviews];
-                
+             
                 [self addSubview:view];
                 
                 self.linkView = view;
+                
+                // Disable built-in tap gestures
+                NSArray <UITapGestureRecognizer *> *tapGestureRecognizers = [view valueForKey:@"tapGestureRecognizers"];
+                
+                for (UITapGestureRecognizer *tap in tapGestureRecognizers) {
+                    
+                    NSArray <UIGestureRecognizerTarget *> *targets = [tap valueForKey:@"targets"];
+                    
+                    for (UIGestureRecognizerTarget *target in targets) {
+                        
+                        [tap removeTarget:target.target action:target.action];
+                        
+                    }
+                    
+                    [tap addTarget:self action:@selector(didTapLinkPreview)];
+                    
+                }
+                
+                // add our own
+//                UITapGestureRecognizer *ourTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapLinkPreview)];
+//                [view addGestureRecognizer:ourTap];
                 
                 [NSLayoutConstraint activateConstraints:@[[view.centerXAnchor constraintEqualToAnchor:self.centerXAnchor],
                                                           [view.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
@@ -218,6 +247,12 @@
     }
     
     [self.collectionView reloadData];
+    
+}
+
+- (void)didTapLinkPreview {
+    
+    [UIApplication.sharedApplication openURL:self.linkURL options:@{} completionHandler:nil];
     
 }
 
