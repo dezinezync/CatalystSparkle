@@ -1083,7 +1083,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (self.unreadWidgetsTimer != nil) {
         
-        interval = 60;
+        interval = 15;
         
         [self.unreadWidgetsTimer invalidate];
         

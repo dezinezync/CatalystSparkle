@@ -181,7 +181,7 @@
                     if (base != nil) {
                         
                         // try the direct URL
-                        [self.imageView sd_setImageWithURL:base placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                        [self.imageView sd_setImageWithURL:base placeholderImage:nil options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                             
                             if (error != nil) {
                                 

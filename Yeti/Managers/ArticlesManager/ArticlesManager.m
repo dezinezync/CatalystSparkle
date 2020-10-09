@@ -42,6 +42,18 @@ static ArticlesManager * SharedArticleManager = nil;
     
 }
 
+- (instancetype)init {
+    
+    if (self = [super init]) {
+        _feeds = @[];
+        _folders = @[];
+        _feedsWithoutFolders = @[];
+    }
+    
+    return self;
+    
+}
+
 - (void)willBeginUpdatingStore {
     
     if (_updatingStores == YES) {
@@ -201,7 +213,9 @@ static ArticlesManager * SharedArticleManager = nil;
     
     // calling this invalidates the pointers we store in folders.
     // calling the folders setter will remap the feeds.
-    self.folders = [ArticlesManager.shared folders];
+    if (self.folders.count > 0) {
+        self.folders = [ArticlesManager.shared folders];
+    }
     
     if (ArticlesManager.shared.feeds && _updatingStores == NO) {
         [NSNotificationCenter.defaultCenter postNotificationName:FeedsDidUpdate object:self userInfo:nil];
@@ -293,6 +307,71 @@ static ArticlesManager * SharedArticleManager = nil;
     ArticlesManager.shared = shared;
     
     return shared;
+    
+}
+
+- (void)continueActivity:(NSUserActivity *)activity {
+    
+    NSDictionary *manager = [activity.userInfo valueForKey:@"articlesManager"];
+    
+    if (manager == nil) {
+        return;
+    }
+    
+    NSArray <Folder *> *folders = [([manager objectForKey:@"folders"] ?: @[]) rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+       
+        return [Folder instanceFromDictionary:obj];
+        
+    }];
+    
+    NSArray <Feed *> *feeds = [([manager objectForKey:@"feeds"] ?: @[]) rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+       
+        return [Feed instanceFromDictionary:obj];
+        
+    }];
+    
+    NSArray <Feed *> *feedsWithoutFolders = [([manager objectForKey:@"feedsWithoutFolders"] ?: @[]) rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
+       
+        return [Feed instanceFromDictionary:obj];
+        
+    }];
+    
+    self.feeds = feeds;
+    self.folders = folders;
+    self.feedsWithoutFolders = feedsWithoutFolders;
+    
+}
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity {
+    
+    NSMutableDictionary *dict = [NSMutableDictionary new];
+    
+    NSArray <NSDictionary *> *folders = [self.folders rz_map:^id(Folder *obj, NSUInteger idx, NSArray *array) {
+       
+        NSMutableDictionary *dict = obj.dictionaryRepresentation.mutableCopy;
+        [dict removeObjectForKey:@"feeds"];
+        
+        return dict.copy;
+        
+    }];
+    
+    NSArray <NSDictionary *> *feeds = [self.feeds rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
+        
+        return obj.dictionaryRepresentation;
+        
+    }];
+    
+    NSArray <NSDictionary *> *feedsWithoutFolders = [self.feedsWithoutFolders rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
+        
+        return obj.dictionaryRepresentation;
+        
+    }];
+    
+    [dict setObject:folders forKey:@"folders"];
+    [dict setObject:feeds forKey:@"feeds"];
+    [dict setObject:feedsWithoutFolders forKey:@"feedsWithoutFolders"];
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"articlesManager":dict}];
     
 }
 

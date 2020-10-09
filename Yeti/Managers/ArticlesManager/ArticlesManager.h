@@ -40,6 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didFinishUpdatingStore:(BOOL)notify;
 
+- (void)continueActivity:(NSUserActivity *)activity;
+
+- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
 @end
 
 NS_ASSUME_NONNULL_END

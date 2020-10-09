@@ -1487,6 +1487,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
+        CGFloat halfPixel = 1.f;
+
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, halfPixel)];
+
+        line.userInteractionEnabled = NO;
+        line.backgroundColor = UIColor.separatorColor;
+        line.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [line.heightAnchor constraintEqualToConstant:halfPixel].active = YES;
+        
+        [self.stackView addArrangedSubview:line];
+        
+        _last = line;
+        
     }
     else if ([content.type isEqualToString:@"script"]) {
         // wont be handled at the moment

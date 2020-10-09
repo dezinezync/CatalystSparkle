@@ -1,5 +1,13 @@
 # v2.1.0
 
+## Build 51
+
+- The article viewer will now draw horizontal rules. 
+
+- The app now saves restoration data properly so launching the app from a saved state is now faster.
+
+- Fixes an issue where images in the article viewer would fail to load (network issues, invalid URL or for whatever other reason) and would show a large placeholder image. 
+
 ## Build 50
 
 - During first launch, if your account already has a subscription, the trial interface is no longer shown. You are directly taken to the app. 
