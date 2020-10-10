@@ -73,6 +73,10 @@ NSString *const kNotificationsKey = @"notifications";
     
     NSURL *databaseURL = [baseURL URLByAppendingPathComponent:databaseName isDirectory:NO];
     
+    /**
+     * Using the container for the DB causes crashes in background mode. AVOID!
+     
+     
     // https://stackoverflow.com/a/29704581/1387258
     if (containerURL != nil) {
         
@@ -107,6 +111,7 @@ NSString *const kNotificationsKey = @"notifications";
         }
         
     }
+    */
     
     return databaseURL.filePathURL.path;
 }

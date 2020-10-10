@@ -1,5 +1,9 @@
 # v2.1.0
 
+## Build 52
+
+- Use standard path for DB. Using shared container crashes the app in the background. 
+
 ## Build 51
 
 - The article viewer will now draw horizontal rules. 
