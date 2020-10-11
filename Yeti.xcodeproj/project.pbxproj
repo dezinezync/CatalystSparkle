@@ -353,8 +353,7 @@
 		F0D98F5224EE4C8500B1F9F0 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */; };
 		F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */; };
 		F0D98F5824EE4C8500B1F9F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */; };
-		F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
-		F0D98F5B24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */; };
+		F0D98F5A24EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */; };
 		F0D9AC9424EEC0B30023E11F /* UnreadsWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0D98F4E24EE4C8500B1F9F0 /* UnreadsWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F0DA1E3C23374EF9008FF4B1 /* MetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DA1E3B23374EF9008FF4B1 /* MetaData.m */; };
 		F0DB58F923F575250008D871 /* CustomizationHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DB58F823F575250008D871 /* CustomizationHeader.m */; };
@@ -380,6 +379,7 @@
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
 		F0F049632532EB6A001CF7E1 /* NSString+CJK.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F049622532EB6A001CF7E1 /* NSString+CJK.m */; };
+		F0F049FC2532F0D4001CF7E1 /* UnreadsIntent.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */; };
 		F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0F10A88244C8020009FC108 /* DateTools.bundle */; };
 		F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A89244C8020009FC108 /* DTTimePeriod.m */; };
 		F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A8C244C8020009FC108 /* NSDate+DateTools.m */; };
@@ -1262,7 +1262,7 @@
 		F0D98F4F24EE4C8500B1F9F0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		F0D98F5124EE4C8500B1F9F0 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadsWidget.swift; sourceTree = "<group>"; };
-		F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = UnreadsWidget.intentdefinition; sourceTree = "<group>"; };
+		F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = UnreadsIntent.intentdefinition; sourceTree = "<group>"; };
 		F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F0D98F5924EE4C8500B1F9F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F0D98F5F24EE4C8500B1F9F0 /* UnreadsWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UnreadsWidgetExtension.entitlements; sourceTree = "<group>"; };
@@ -2499,7 +2499,7 @@
 				F0D98F5424EE4C8500B1F9F0 /* UnreadsWidget.swift */,
 				F048E4C224EEB2D6009A46F4 /* CountersWidget.swift */,
 				F0D98F5924EE4C8500B1F9F0 /* Info.plist */,
-				F0D98F5624EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition */,
+				F0D98F5624EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition */,
 				F0D98F5724EE4C8500B1F9F0 /* Assets.xcassets */,
 			);
 			path = UnreadsWidget;
@@ -3261,6 +3261,7 @@
 				F044B3C92338A6E900DD8E90 /* BookmarksMigrationVC.m in Sources */,
 				F012909F24EA5908007F8363 /* CustomFeedCell.m in Sources */,
 				F00F648024EC1E9F00E5727C /* UIColor+HEX.m in Sources */,
+				F0F049FC2532F0D4001CF7E1 /* UnreadsIntent.intentdefinition in Sources */,
 				F055AC1D1FD2AEF4004B9C29 /* ArticleVC+Toolbar.m in Sources */,
 				F00F646D24EC1DE700E5727C /* Blockquote.m in Sources */,
 				F07DCA4420C51B550068ED51 /* ArticleVC+Keyboard.m in Sources */,
@@ -3308,7 +3309,6 @@
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
 				F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */,
 				F0519D4F20849EE400EB3FE0 /* FilterInputCell.m in Sources */,
-				F0D98F5B24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */,
 				F03AC036205533D900FB111A /* HTMLUtils.m in Sources */,
 				F08011E42167345300F0CE81 /* OPMLDeckController.m in Sources */,
 				F0DDA0EC20E5F71400C5D97E /* RecommendationsVC.m in Sources */,
@@ -3501,7 +3501,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0D98F5524EE4C8500B1F9F0 /* UnreadsWidget.swift in Sources */,
-				F0D98F5A24EE4C8500B1F9F0 /* UnreadsWidget.intentdefinition in Sources */,
+				F0D98F5A24EE4C8500B1F9F0 /* UnreadsIntent.intentdefinition in Sources */,
 				F048E4C324EEB2D6009A46F4 /* CountersWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

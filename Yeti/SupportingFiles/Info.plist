@@ -250,7 +250,8 @@
 	<string>Save images you select from articles to your photos.  </string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>ConfigurationIntent</string>
+		<string>UnreadsIntent</string>
+		<string>UnreadsIntentsIntent</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>

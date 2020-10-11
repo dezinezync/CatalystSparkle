@@ -6,6 +6,8 @@
 
 - Fixes an issue with the Unreads widget not updating in a timely manner. 
 
+- Unreads Widget intents now work as expected. Added additional option for loading cover images. 
+
 ## Build 52
 
 - Use standard path for DB. Using shared container crashes the app in the background. 

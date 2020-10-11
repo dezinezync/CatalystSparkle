@@ -70,9 +70,9 @@ private func loadImagesDataFromPackage (package: SimpleEntries, completion: Load
 
 struct UnreadsProvider: IntentTimelineProvider {
    
-    func loadData (name: String) -> SimpleEntries? {
+    func loadData (name: String, configuration: UnreadsIntent) -> SimpleEntries? {
         
-        let json: SimpleEntries
+        var json: SimpleEntries
         
         if let baseURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.elytra") {
                 
@@ -85,6 +85,26 @@ struct UnreadsProvider: IntentTimelineProvider {
                     let decoder = JSONDecoder();
                     
                     json = try decoder.decode(SimpleEntries.self, from: data)
+                    
+                    var entries: [SimpleEntry] = json.entries
+                    
+                    for index in 0..<entries.count {
+                        
+                        if (configuration.showFavicons?.boolValue == false) {
+                                
+                            entries[index].favicon = nil
+                            
+                        }
+                        
+                        if (configuration.showCovers?.boolValue == false) {
+                                
+                            entries[index].imageURL = nil
+                            
+                        }
+                        
+                    }
+                    
+                    json.entries = entries
                     
                     return json
                 }
@@ -100,9 +120,33 @@ struct UnreadsProvider: IntentTimelineProvider {
         
     }
     
-    public func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntries) -> Void) {
+    public func getSnapshot(for configuration: UnreadsIntent, in context: Context, completion: @escaping (SimpleEntries) -> Void) {
     
-        if let jsonData = loadData(name: "articles.json") {
+        if let jsonData : SimpleEntries = loadData(name: "articles.json", configuration: configuration) {
+            
+            if (configuration.showFavicons?.boolValue == false) {
+                    
+                for var item in jsonData.entries {
+                    
+                    if (item.favicon != nil) {
+                        item.favicon = nil
+                    }
+                    
+                }
+                
+            }
+            
+            if (configuration.showCovers?.boolValue == false) {
+                    
+                for var item in jsonData.entries {
+                    
+                    if (item.imageURL != nil) {
+                        item.imageURL = nil
+                    }
+                    
+                }
+                
+            }
             
             loadImagesDataFromPackage(package: jsonData) {
                 
@@ -114,9 +158,9 @@ struct UnreadsProvider: IntentTimelineProvider {
         
     }
     
-    public func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<SimpleEntries>) -> Void) {
+    public func getTimeline(for configuration: UnreadsIntent, in context: Context, completion: @escaping (Timeline<SimpleEntries>) -> Void) {
         
-        if let jsonData = loadData(name: "articles.json") {
+        if let jsonData = loadData(name: "articles.json", configuration: configuration) {
         
             var entries: [SimpleEntries] = []
             
@@ -136,7 +180,7 @@ struct UnreadsProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> SimpleEntries {
         
-        if let jsonData = loadData(name: "articles.json") {
+        if let jsonData = loadData(name: "articles.json", configuration: UnreadsIntent()) {
             
             return jsonData;
             
@@ -156,11 +200,11 @@ struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
     public let title: String
     public let author: String
     public let blog: String
-    public let imageURL: String?
-    public let image: String?
+    public var imageURL: String?
+    public var image: String?
     public let identifier: Int
     public let blogID: Int
-    public let favicon: String?
+    public var favicon: String?
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(identifier)
@@ -174,7 +218,7 @@ struct SimpleEntry: TimelineEntry, Hashable, Identifiable, Decodable {
 
 struct SimpleEntries: TimelineEntry, Decodable {
     public let date: Date
-    public let entries: [SimpleEntry]
+    public var entries: [SimpleEntry]
 }
 
 struct PlaceholderView : View {
@@ -342,7 +386,7 @@ struct UnreadsWidget: Widget {
         
         IntentConfiguration(
             kind: kind,
-            intent: ConfigurationIntent.self,
+            intent: UnreadsIntent.self,
             provider: UnreadsProvider()) { entries in
                 UnreadsWidgetEntryView(entries: entries)
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
