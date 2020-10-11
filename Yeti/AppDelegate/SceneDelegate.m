@@ -62,14 +62,14 @@
         
     }
     
-#endif
-    
     if (MyAppDelegate.mainScene != nil) {
         
         [[UIApplication sharedApplication] requestSceneSessionDestruction:session options:nil errorHandler:nil];
         
         return;
     }
+    
+#endif
     
 #if !TARGET_OS_MACCATALYST
     [self setupBackgroundRefresh];
@@ -107,7 +107,11 @@
     }
     
 #if TARGET_OS_MACCATALYST
+    
     [self ct_setupToolbar:(UIWindowScene *)scene];
+    
+    MyAppDelegate.mainScene = (id)scene;
+    
 #endif
         
     [self.window makeKeyAndVisible];
@@ -117,8 +121,6 @@
         [self scene:scene openURLContexts:connectionOptions.URLContexts];
         
     }
-    
-    MyAppDelegate.mainScene = scene;
     
 }
 
