@@ -379,6 +379,7 @@
 		F0EEC86021ECB2420046BB12 /* reader.css in Resources */ = {isa = PBXBuildFile; fileRef = F0EEC85F21ECB2420046BB12 /* reader.css */; };
 		F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */; };
 		F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */; };
+		F0F049632532EB6A001CF7E1 /* NSString+CJK.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F049622532EB6A001CF7E1 /* NSString+CJK.m */; };
 		F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F0F10A88244C8020009FC108 /* DateTools.bundle */; };
 		F0F10A99244C8020009FC108 /* DTTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A89244C8020009FC108 /* DTTimePeriod.m */; };
 		F0F10A9A244C8020009FC108 /* NSDate+DateTools.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A8C244C8020009FC108 /* NSDate+DateTools.m */; };
@@ -1299,6 +1300,8 @@
 		F0EFA638205FDC5A00815ED7 /* ArticleHelperView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArticleHelperView.h; sourceTree = "<group>"; };
 		F0EFA639205FDC5A00815ED7 /* ArticleHelperView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticleHelperView.m; sourceTree = "<group>"; };
 		F0EFA63B205FDC7100815ED7 /* ArticleHelperView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ArticleHelperView.xib; sourceTree = "<group>"; };
+		F0F0494B2532EB6A001CF7E1 /* NSString+CJK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CJK.h"; sourceTree = "<group>"; };
+		F0F049622532EB6A001CF7E1 /* NSString+CJK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CJK.m"; sourceTree = "<group>"; };
 		F0F10A88244C8020009FC108 /* DateTools.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DateTools.bundle; sourceTree = "<group>"; };
 		F0F10A89244C8020009FC108 /* DTTimePeriod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTTimePeriod.m; sourceTree = "<group>"; };
 		F0F10A8A244C8020009FC108 /* DTError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTError.h; sourceTree = "<group>"; };
@@ -1900,6 +1903,8 @@
 				F042ACB6252445F000AA440A /* UISlider+MacCatalyst.m */,
 				F042ACF225244A0500AA440A /* NSObject+SimpleSwizzle.h */,
 				F042ACF325244A0500AA440A /* NSObject+SimpleSwizzle.m */,
+				F0F0494B2532EB6A001CF7E1 /* NSString+CJK.h */,
+				F0F049622532EB6A001CF7E1 /* NSString+CJK.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -3336,6 +3341,7 @@
 				F0F10A9C244C8020009FC108 /* DTConstants.m in Sources */,
 				F00B0FA020F487090012EB03 /* EmptyCell.m in Sources */,
 				F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */,
+				F0F049632532EB6A001CF7E1 /* NSString+CJK.m in Sources */,
 				F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */,
 				F0ED9814234C50F6007449AF /* StoreKeychainPersistence.m in Sources */,
 				F092C5D4246C30D8007FDE8A /* FeedVC+ArticleProvider.m in Sources */,
