@@ -186,17 +186,7 @@
     
 #if TARGET_OS_MACCATALYST
     
-    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"subscriptionInterface"];
-    
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
-        
-        if (error != nil) {
-            
-            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
-            
-        }
-        
-    }];
+    [self openSceneNamed:@"subscriptionInterface"];
     
     return;
     
@@ -218,11 +208,19 @@
 
 - (void)showNewFeedVC {
     
+#if TARGET_OS_MACCATALYST
+    
+    [self openSceneNamed:@"newFeedScene"];
+    
+#else
+    
     UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     nav.viewControllers.firstObject.mainCoordinator = self;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    
+#endif
     
 }
 
@@ -343,11 +341,17 @@
     
 }
 
-- (void)showAttributions {
-    
 #if TARGET_OS_MACCATALYST
+
+- (void)showAttributions {
+
+    [self openSceneNamed:@"attributionsScene"];
     
-    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"attributionsScene"];
+}
+
+- (void)openSceneNamed:(NSString *)sceneName {
+    
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:sceneName];
     
     [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:0 errorHandler:^(NSError * _Nonnull error) {
         
@@ -359,9 +363,9 @@
         
     }];
     
-#endif
-    
 }
+    
+#endif
 
 #pragma mark - Helpers
 

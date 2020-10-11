@@ -53,6 +53,8 @@ extern AppDelegate * MyAppDelegate;
 
 @property (nonatomic, strong) AppKitGlue *sharedGlue;
 
+@property (nonatomic, weak) UIWindowScene *mainScene;
+
 #endif
 
 @end

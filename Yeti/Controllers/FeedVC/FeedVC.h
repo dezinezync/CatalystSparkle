@@ -82,6 +82,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Determines if the user is simply exploring this feed from recommendations or somewhere else.
 @property (nonatomic, assign, getter=isExploring) BOOL exploring;
 
+@property (atomic, assign) BOOL isFromAddFeed;
+
 - (BOOL)showsSortingButton;
 
 @property (nonatomic, assign) YetiSortOption sortingOption;

@@ -186,26 +186,24 @@
 
 - (void)setupNavigationBar {
     
-#if TARGET_OS_MACCATALYST
-        
-    if (self.isExploring == NO) {
+    BOOL isMac = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac;
+    
+    if (isMac && self.isExploring == NO && self.isFromAddFeed == NO) {
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    return;
-    
-#else
-    
-    self.navigationItem.leftItemsSupplementBackButton = YES;
-    
-    self.extendedLayoutIncludesOpaqueBars = YES;
-    
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    if (isMac == NO) {
+        self.navigationItem.leftItemsSupplementBackButton = YES;
+        
+        self.extendedLayoutIncludesOpaqueBars = YES;
+        
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        self.navigationController.navigationBar.prefersLargeTitles = YES;
+    }
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
-    if (self.isExploring) {
+    if (self.isExploring == YES || self.isFromAddFeed == YES) {
         // check if the user is subscribed to this feed
         Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
         if (!existing) {
@@ -230,8 +228,6 @@
     
     self.navigationItem.searchController = self.searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = YES;
-    
-#endif
     
 }
 
