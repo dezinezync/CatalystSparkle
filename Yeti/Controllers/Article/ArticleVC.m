@@ -24,6 +24,7 @@
 #import "NSDate+DateTools.h"
 #import "NSString+HTML.h"
 #import "NSString+Levenshtein.h"
+#import "NSString+CJK.h"
 #import "CodeParser.h"
 
 #import "TypeFactory.h"
@@ -1620,7 +1621,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
         
         if (newAttrs) {
-            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+            
+            // For CJK paragraphs, we strictly ignore any rangeAdditions we make.
+            // Not doing so breaks the formatting as intended by the author making
+            // the text one big paragraph and difficult to read. 
+            if (rangeAdded == YES && [newAttrs.string containsCJKCharacters] == YES) {
+                rangeAdded = NO;
+            }
+            
+            NSString *accessoryStr = formattedString(@"%@", rangeAdded ? @" " : @"\n\n");
+            
+            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:accessoryStr];
             
             [attrs appendAttributedString:accessory];
             [attrs appendAttributedString:newAttrs];

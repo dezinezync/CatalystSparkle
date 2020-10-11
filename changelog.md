@@ -1,5 +1,11 @@
 # v2.1.0
 
+## Build 53
+
+- Improves formatting for CJK Text. CJK text should no longer appear as one big blob of text. It may still happen if the source provides it that way. 
+
+- Fixes an issue with the Unreads widget not updating in a timely manner. 
+
 ## Build 52
 
 - Use standard path for DB. Using shared container crashes the app in the background. 
