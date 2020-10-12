@@ -149,7 +149,7 @@
         if (size.width < 1024.f) {
             
             [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorDisplace];
-            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoDisplaceSecondary];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoOverSecondary];
             
         }
         else if (size.width >= 1024.f && size.width < 1180.f) {

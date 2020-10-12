@@ -1,5 +1,9 @@
 # v2.1.0
 
+## Build 55
+
+- Potentially corrected rotation behaviour for iPads. 
+
 ## Build 54
 
 - Fixed an issue where the unread/today counts would change when reading an article from a feed you're not subscribed to.
