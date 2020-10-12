@@ -74,12 +74,14 @@
         
         content.textProperties.color = UIColor.labelColor;
         content.secondaryTextProperties.color = self.tintColor;
+        background.backgroundColor = UIColor.systemFillColor;
         
     }
     else {
         
         content.textProperties.color = UIColor.labelColor;
         content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
+        background.backgroundColor = UIColor.clearColor;
         
     }
     

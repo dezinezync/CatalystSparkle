@@ -209,7 +209,7 @@
         if (!existing) {
             // allow subscription
             UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
-            subscribe.accessibilityValue = @"Subscribe to this feed";
+            subscribe.accessibilityValue = [NSString stringWithFormat:@"Subscribe to %@", self.feed.displayTitle];
             self.navigationItem.rightBarButtonItem = subscribe;
         }
     }
@@ -413,6 +413,9 @@
         }
         
         [cell configure:article feedType:self.type];
+        
+        cell.accessibilityLabel = [NSString stringWithFormat:@"Article %@", @(indexPath.row + 1)];
+        cell.accessibilityValue = article.articleTitle;
         
         return cell;
         

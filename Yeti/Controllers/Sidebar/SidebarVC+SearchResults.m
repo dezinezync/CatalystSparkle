@@ -20,12 +20,14 @@
         if (!ArticlesManager.shared.folders || !ArticlesManager.shared.folders.count)
             return;
     }
+    
+    NSSortDescriptor *alphaSorting = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
         
     NSString *text = searchController.searchBar.text;
     
     NSMutableArray *filtered = [NSMutableArray new];
     
-    NSArray <Feed *> * feeds = ArticlesManager.shared.feeds;
+    NSArray <Feed *> * feeds = [ArticlesManager.shared.feeds sortedArrayUsingDescriptors:@[alphaSorting]];
     
     if (text != nil && [text isBlank] == NO) {
         

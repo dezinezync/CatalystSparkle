@@ -8,6 +8,16 @@
 
 - If you have a URL copied, the app will automatically detect it when attempting to add a new feed. 
 
+- The sidebar items are now correctly highlighted. They no longer use the tint colour when selected. 
+
+- Search in the sidebar now uses Alpha sorting like the rest of the view. 
+
+- Multiple improvements throughout the app for Voice Control (VC) and Voice Over (VO) a11y options.   
+    - The app now correctly shows titles for icon only buttons when VC is activated. 
+    - The app now correctly updates states for icon only buttons when VC is activated. 
+    - Simplified Article labels for VC to make it easier to select articles. They will now be presented as "Article 1", "Article 2" and so on... Previously, the article title's was used which could be difficult to command with long titles. 
+    - VO will now read the article index followed by its title. 
+
 ## Build 53
 
 - Improves formatting for CJK Text. CJK text should no longer appear as one big blob of text. It may still happen if the source provides it that way. 

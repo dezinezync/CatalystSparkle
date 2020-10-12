@@ -34,13 +34,13 @@
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
-    read.accessibilityValue = @"Mark article unread";
-    read.accessibilityLabel = @"Read state";
+    read.accessibilityValue = self.item.isRead ? @"Mark article unread" : @"Mark article read";
+    read.accessibilityLabel = self.item.isRead ? @"Mark Unread" : @"Mark Read";
     
     UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:bookmarkImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
     
     bookmark.accessibilityValue = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
-    bookmark.accessibilityLabel = @"Bookmarked";
+    bookmark.accessibilityLabel = self.item.isBookmarked ? @"Unbookmark" : @"Bookmark";
     
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:searchImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
@@ -102,14 +102,17 @@
     
     share.accessibilityValue = @"Share article";
     share.accessibilityLabel = @"Share";
+    share.title = share.accessibilityLabel;
     
     UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:browserImage style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
     browser.accessibilityValue = @"Open the article in the browser";
     browser.accessibilityLabel = @"Browser";
+    browser.title = browser.accessibilityLabel;
     
     UIBarButtonItem *customize = [[UIBarButtonItem alloc] initWithImage:customizeImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapCustomize:)];
-    browser.accessibilityValue = @"Customize the Article Reader Interface";
-    browser.accessibilityLabel = @"Customize";
+    customize.accessibilityValue = @"Customize the Article Reader Interface";
+    customize.accessibilityLabel = @"Customize";
+    customize.title = customize.accessibilityLabel;
     
     if (self.isExploring) {
         return @[share, browser];
