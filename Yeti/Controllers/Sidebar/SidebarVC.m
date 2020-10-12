@@ -19,6 +19,7 @@
 #import "CustomFeedCell.h"
 #import "FeedCell.h"
 #import "FolderCell.h"
+#import "UnreadVC.h"
 
 #import "Keychain.h"
 #import "Elytra-Swift.h"
@@ -544,6 +545,22 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             if ([self.refreshControl isRefreshing]) {
                 [self.refreshControl endRefreshing];
+            }
+            
+            NSArray <NSIndexPath *> *selectedIndexPaths = self.collectionView.indexPathsForSelectedItems;
+            
+            if (selectedIndexPaths.count > 0 && MyFeedsManager.totalUnread > 0) {
+                
+                // if it's the unreads or today tab, refresh those as well
+                if (selectedIndexPaths[0].section == 0 && selectedIndexPaths[0].item != 2 && self.mainCoordinator.feedVC != nil) {
+                    
+                    UnreadVC *vc = (id)(self.mainCoordinator.feedVC);
+                    
+                    [vc.refreshControl beginRefreshing];
+                    [vc didBeginRefreshing:vc.refreshControl];
+                    
+                }
+                
             }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

@@ -136,8 +136,46 @@
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
-    // https://stackoverflow.com/a/28527114/1387258
-    [self.navigationItem.searchController setActive:YES];
+    
+    UIPasteboardDetectionPattern pattern = UIPasteboardDetectionPatternProbableWebURL;
+    
+    [UIPasteboard.generalPasteboard detectPatternsForPatterns:[NSSet setWithObject:pattern] completionHandler:^(NSSet<UIPasteboardDetectionPattern> * _Nullable patterns, NSError * _Nullable error) {
+       
+        if (error != nil) {
+            
+            NSLogDebug(@"Error occurred detecting pasterboard pattern: %@", error.localizedDescription);
+            return;
+            
+        }
+        
+        if (patterns.count == 0) {
+            // https://stackoverflow.com/a/28527114/1387258
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationItem.searchController setActive:YES];
+            });
+            return;
+        }
+        
+        NSURL *url = [UIPasteboard.generalPasteboard URL];
+        
+        if (url == nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationItem.searchController setActive:YES];
+            });
+            return;
+        }
+        
+    // https://blog.elytra.app/feed
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+            
+            searchBar.searchTextField.text = url.absoluteString;
+            [self searchBarTextDidEndEditing:searchBar];
+            
+        });
+        
+    }];
     
 }
 

@@ -1,5 +1,13 @@
 # v2.1.0
 
+## Build 54
+
+- Fixed an issue where the unread/today counts would change when reading an article from a feed you're not subscribed to.
+
+- Fixed an issue where the selected feed would remain selected after opening recommendations. 
+
+- If you have a URL copied, the app will automatically detect it when attempting to add a new feed. 
+
 ## Build 53
 
 - Improves formatting for CJK Text. CJK text should no longer appear as one big blob of text. It may still happen if the source provides it that way. 
