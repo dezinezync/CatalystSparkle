@@ -307,26 +307,24 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         UISearchController *searchController = self.supplementarySearchController;
         
+        if (searchController.searchBar.superview != nil) {
+            [searchController.searchBar removeFromSuperview];
+        }
+        
         UISearchBar *searchBar = searchController.searchBar;
         searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
         searchBar.backgroundImage = [UIImage new];
-//        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
         [supplementaryView addSubview:searchBar];
         
-        [searchBar.leadingAnchor constraintEqualToAnchor:supplementaryView.leadingAnchor].active = YES;
-        [searchBar.trailingAnchor constraintEqualToAnchor:supplementaryView.trailingAnchor].active = YES;
-//        [searchBar.centerXAnchor constraintEqualToAnchor:supplementaryView.centerXAnchor].active = YES;
-        [searchBar.topAnchor constraintEqualToAnchor:supplementaryView.topAnchor].active = YES;
-        
-        [searchBar setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisHorizontal];
-        [searchBar setContentCompressionResistancePriority:1000 forAxis:UILayoutConstraintAxisVertical];
+        [searchBar sizeToFit];
         
         [supplementaryView.heightAnchor constraintEqualToAnchor:searchBar.heightAnchor].active = YES;
         
-        [supplementaryView invalidateIntrinsicContentSize];
-        [supplementaryView setNeedsLayout];
-        
+        [supplementaryView.leadingAnchor constraintEqualToAnchor:self.collectionView.safeAreaLayoutGuide.leadingAnchor].active = YES;
+        [supplementaryView.trailingAnchor constraintEqualToAnchor:self.collectionView.safeAreaLayoutGuide.trailingAnchor].active = YES;
+
     }];
         
     self.DS.supplementaryViewProvider = ^UICollectionReusableView * _Nullable(UICollectionView * _Nonnull collectionView, NSString * _Nonnull kind, NSIndexPath * _Nonnull indexPath) {
@@ -336,6 +334,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     };
 #endif
     
+}
+
+- (BOOL)definesPresentationContext {
+    return YES;
 }
 
 - (void)setupData {
