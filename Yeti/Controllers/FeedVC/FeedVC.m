@@ -6,15 +6,13 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "FeedVC+ContextMenus.h"
+#import "FeedVC+DragAndDrop.h"
 #import "ArticlesManager.h"
 #import "FeedItem.h"
-#import "FeedHeaderView.h"
 
 #import <DZKit/UIViewController+AnimatedDeselect.h>
 
 #import "PaddedLabel.h"
-#import "YetiThemeKit.h"
 
 #import <DZKit/NSString+Extras.h>
 #import "CheckWifi.h"
@@ -54,6 +52,11 @@
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
+@property (nonatomic, strong) UISearchController *searchController;
+
+/// Special handling for specific feeds
+@property (assign) BOOL isiOSIconGallery;
+
 @end
 
 #define ArticlesSection @0
@@ -92,6 +95,10 @@
         
         self.feed = feed;
         
+        if (feed.url != nil && [feed.url containsString:@"iosicongallery"]) {
+            self.isiOSIconGallery = YES;
+        }
+        
     }
     
     return self;
@@ -102,7 +109,7 @@
     
     [super viewDidLoad];
     
-    self.sortingOption = SharedPrefs.sortingOption;
+    self.sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     if (self.type == FeedVCTypeNatural && self.feed) {
         self.title = self.feed.displayTitle;
@@ -110,6 +117,7 @@
     
     [self setupNavigationBar];
     [self setupTableView];
+    [self setupNotifications];
     
 }
 
@@ -178,32 +186,30 @@
 
 - (void)setupNavigationBar {
     
-#if TARGET_OS_MACCATALYST
-        
-    if (self.isExploring == NO) {
+    BOOL isMac = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac;
+    
+    if (isMac && self.isExploring == NO && self.isFromAddFeed == NO) {
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    return;
-    
-#else
-    
-    self.navigationItem.leftItemsSupplementBackButton = YES;
-    
-    self.extendedLayoutIncludesOpaqueBars = YES;
-    
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    if (isMac == NO) {
+        self.navigationItem.leftItemsSupplementBackButton = YES;
+        
+        self.extendedLayoutIncludesOpaqueBars = YES;
+        
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        self.navigationController.navigationBar.prefersLargeTitles = YES;
+    }
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
-    if (self.isExploring) {
+    if (self.isExploring == YES || self.isFromAddFeed == YES) {
         // check if the user is subscribed to this feed
         Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
         if (!existing) {
             // allow subscription
             UIBarButtonItem *subscribe = [[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleDone target:self action:@selector(subscribeToFeed:)];
-            subscribe.accessibilityValue = @"Subscribe to this feed";
+            subscribe.accessibilityValue = [NSString stringWithFormat:@"Subscribe to %@", self.feed.displayTitle];
             self.navigationItem.rightBarButtonItem = subscribe;
         }
     }
@@ -220,18 +226,8 @@
         
     }
     
-    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    searchController.searchResultsUpdater = self;
-    searchController.searchBar.placeholder = @"Search Articles";
-    searchController.automaticallyShowsCancelButton = YES;
-    searchController.automaticallyShowsScopeBar = YES;
-    searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
-    searchController.obscuresBackgroundDuringPresentation = NO;
-    
-    self.navigationItem.searchController = searchController;
+    self.navigationItem.searchController = self.searchController;
     self.navigationItem.hidesSearchBarWhenScrolling = YES;
-    
-#endif
     
 }
 
@@ -240,16 +236,13 @@
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:UIContentSizeCategoryDidChangeNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(didChangeTheme) name:kDidUpdateTheme object:nil];
     
     [notificationCenter addObserver:self selector:@selector(didUpdateUnread) name:FeedDidUpReadCount object:MyFeedsManager];
     
     if (ArticlesManager.shared.feeds != nil && ArticlesManager.shared.feeds.count > 0) {}
     else {
         
-        NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
-        
-        [center addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
+        [notificationCenter addObserver:self selector:@selector(updatedFeedsNotification:) name:FeedsDidUpdate object:ArticlesManager.shared];
         
     }
     
@@ -261,6 +254,12 @@
         [self didUpdateBookmarks];
         
     }];
+    
+    [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ArticleCoverImagesPreferenceUpdated object:nil];
+    
+    [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:PreviewLinesPreferenceUpdated object:nil];
+    
+    [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ImageBandWidthPreferenceUpdated object:nil];
     
 }
 
@@ -274,7 +273,7 @@
          
         if (SharedPrefs.imageProxy) {
             
-            path = [path pathForImageProxy:YES maxWidth:128.f quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:SharedPrefs.imageLoading];
+            path = [path pathForImageProxy:YES maxWidth:128.f quality:1.f firstFrameForGIF:NO useImageProxy:YES sizePreference:SharedPrefs.imageLoading forWidget:NO];
             
         }
         
@@ -326,6 +325,36 @@
     
     [header.descriptionLabel sizeToFit];
     
+#if TARGET_OS_MACCATALYST
+    
+    if (self.navigationController.viewControllers.count > 1) {
+        header.backButton.hidden = NO;
+    }
+    
+    [header.backButton addTarget:self action:@selector(didTapBack) forControlEvents:UIControlEventTouchUpInside];
+    
+    if (self.isExploring) {
+        // check if the user is subscribed to this feed
+        Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
+        
+        if (!existing) {
+            
+            header.subscribeButton.hidden = NO;
+            
+            // allow subscription
+            [header.subscribeButton addTarget:self action:@selector(subscribeToFeed:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        else {
+            header.subscribeButton.hidden = YES;
+        }
+    }
+    else {
+        header.backButton.hidden = YES;
+        header.subscribeButton.hidden = YES;
+    }
+    
+#endif
+    
     [header.mainStackView setNeedsUpdateConstraints];
     [header setNeedsUpdateConstraints];
     [header setNeedsLayout];
@@ -362,6 +391,9 @@
         
     }
     
+    self.tableView.dragInteractionEnabled = YES;
+    self.tableView.dragDelegate = self;
+    
 }
 
 - (void)setupDatasource {
@@ -372,7 +404,18 @@
         
         cell.tintColor = SharedPrefs.tintColor;
         
+        if (self.isiOSIconGallery) {
+            
+            cell.coverImage.layer.cornerRadius = cell.coverImage.bounds.size.width * (180.f / 1024.f);
+            cell.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
+            cell.coverImage.layer.masksToBounds = YES;
+            
+        }
+        
         [cell configure:article feedType:self.type];
+        
+        cell.accessibilityLabel = [NSString stringWithFormat:@"Article %@", @(indexPath.row + 1)];
+        cell.accessibilityValue = article.articleTitle;
         
         return cell;
         
@@ -386,6 +429,8 @@
         [self performSelectorOnMainThread:@selector(setupData) withObject:nil waitUntilDone:NO];
         return;
     }
+    
+    NSIndexPath *selected = self.tableView.indexPathForSelectedRow;
     
     BOOL isAppending = self.DS.snapshot.numberOfItems > 0;
     
@@ -405,6 +450,16 @@
         
         if (isAppending == YES) {
             [self.tableView setScrollEnabled:YES];
+        }
+        
+        if (selected) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
+                
+            });
+            
         }
         
     }
@@ -585,6 +640,26 @@
 
 
 #pragma mark - State
+
+- (UISearchController *)searchController {
+    
+    if (_searchController == nil) {
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search Articles";
+        searchController.automaticallyShowsCancelButton = YES;
+        searchController.automaticallyShowsScopeBar = YES;
+        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
+        searchController.obscuresBackgroundDuringPresentation = NO;
+        
+        _searchController = searchController;
+        
+    }
+    
+    return _searchController;
+    
+}
 
 - (StateType)controllerState {
     return self->_controllerState;
@@ -775,16 +850,7 @@
 
 - (void)updatedFeedsNotification:(id)sender {
     
-    [NSNotificationCenter.defaultCenter removeObserver:self name:FeedsDidUpdate object:ArticlesManager.shared];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-
-        NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
-        [snapshot reloadItemsWithIdentifiers:snapshot.itemIdentifiers];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:NO];
-
-    });
+    [self didChangeContentCategory];
     
 }
 
@@ -794,9 +860,7 @@
 
         if ([[self.tableView indexPathsForVisibleRows] count] > 0) {
             
-            NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
-            
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
+            [self reloadVisibleCells];
             
         }
         
@@ -804,12 +868,34 @@
     
 }
 
-- (void)didChangeTheme {
+- (void)reloadVisibleCells {
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    // reload visible cells
+    NSArray <NSIndexPath *> *visibleIndices = [self.tableView indexPathsForVisibleRows];
     
-    self.view.backgroundColor = theme.cellColor;
-    self.tableView.backgroundColor = theme.cellColor;
+    if (visibleIndices.count > 0) {
+        
+        NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+        
+        NSMutableArray <FeedItem *> *identifiers = [NSMutableArray arrayWithCapacity:visibleIndices.count];
+        
+        for (NSIndexPath *indexPath in visibleIndices) {
+            
+            FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
+            
+            if (item != nil) {
+                
+                [identifiers addObject:item];
+                
+            }
+            
+        }
+        
+        [snapshot reloadItemsWithIdentifiers:identifiers];
+        
+        [self.DS applySnapshot:snapshot animatingDifferences:YES];
+        
+    }
     
 }
 

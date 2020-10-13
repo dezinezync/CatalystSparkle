@@ -15,6 +15,8 @@
 #import "ImportVC.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 #import <DZNetworking/DZUploadSession.h>
 #import <DZKit/AlertManager.h>
 
@@ -52,7 +54,7 @@
     
     // Do any additional setup after loading the view from its nib.
     
-    self.tableView.backgroundColor = UIColor.systemBackgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     self.detailsTitleLabel.textColor = UIColor.labelColor;
     self.detailsSubtitleLabel.textColor = UIColor.secondaryLabelColor;
@@ -77,19 +79,14 @@
     if (!_hasSetup) {
         self.state = OPMLStateDefault;
         _hasSetup = YES;
+#if !TARGET_OS_MACCATALYST
+        self.importButton.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
+        self.exportButton.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.2f];
+#endif
     }
     else if (self.state == OPMLStateExport) {
         [self didTapCancel:nil];
     }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
-    
-    self.importButton.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.2f];
-    self.exportButton.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.2f];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -126,9 +123,13 @@
     }
     else if (state == OPMLStateDefault) {
         
+        BOOL ioHidden = self.ioView.isHidden;
+        
+#if !TARGET_OS_MACCATALYST
         for (UIButton *button in @[self.importButton, self.exportButton]) {
             button.backgroundColor = [self.view.tintColor colorWithAlphaComponent:0.3f];
         }
+#endif
         
         self.detailsView.alpha = 0.f;
         self.detailsView.hidden = NO;
@@ -141,7 +142,17 @@
             
             self.detailsView.alpha = 1.f;
             
-        } completion:nil];
+            if (ioHidden == NO) {
+                self.ioView.alpha = 0.f;
+            }
+            
+        } completion:^(BOOL finished) {
+            
+            if (ioHidden == NO) {
+                self.ioView.hidden = YES;
+            }
+            
+        }];
     }
     else {
         // Import/Export State
@@ -151,11 +162,11 @@
         self.ioView.hidden = NO;
         
         if (state == OPMLStateImport) {
-            self.ioTitleLabel.text = @"Importing OPML";
+            self.ioTitleLabel.text = @"Importing Subscriptions";
             self.ioSubtitleLabel.text = @"Uploading your file";
         }
         else {
-            self.ioTitleLabel.text = @"Exporting OPML";
+            self.ioTitleLabel.text = @"Exporting Subscriptions";
             self.ioSubtitleLabel.text = @"Preparing your file";
             
             self.ioDoneButton.enabled = NO;
@@ -194,7 +205,7 @@
             [MyFeedsManager setValue:[Subscription new] forKey:@"subscription"];
         }
         
-        NSString * const error = @"An active subscription is required to import OPML files in to Elytra.";
+        NSString * const error = @"An active subscription is required to import Subscriptions files in to Elytra.";
         
         MyFeedsManager.subscription.error = [NSError errorWithDomain:@"Yeti" code:402 userInfo:@{NSLocalizedDescriptionKey: error}];
         
@@ -228,11 +239,25 @@
     // get the UTI for an extension
     NSString *typeForExt = (__bridge NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("opml"), NULL);
     
-    NSArray <NSString *> *documentTypes = @[(__bridge NSString *)kUTTypeXML, typeForExt];
+    UTType *xmlTypeIdentifier = [UTType typeWithIdentifier:(__bridge NSString *)kUTTypeXML];
+    UTType *opmlTypeIdentifier = [UTType typeWithIdentifier:typeForExt];
+    
+    NSMutableArray <UTType *> *documentTypes = @[].mutableCopy;
+    
+    if (xmlTypeIdentifier) {
+        [documentTypes addObject:xmlTypeIdentifier];
+    }
+    
+    if (opmlTypeIdentifier) {
+        [documentTypes addObject:opmlTypeIdentifier];
+    }
+    
     /**
      * Proposed new method crashes on Beta 6
      */
-    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
+//    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport];
+    
+    UIDocumentPickerViewController *importVC = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:documentTypes asCopy:YES];
     
     importVC.delegate = self;
     
@@ -286,6 +311,10 @@
         self.ioDoneButton.enabled = YES;
     }
     
+    if (self.state == OPMLStateExport) {
+        self.ioSubtitleLabel.text = @"File export was cancelled.";
+    }
+    
     self.state = OPMLStateDefault;
     
 }
@@ -326,10 +355,13 @@
             strongify(self);
             
             self.ioProgressView.progress = 1.f;
+            self.ioSubtitleLabel.text = @"File exported successfully.";
             
             self->_navigationControllerFrame = self.navigationController.view.frame;
             
             UIDocumentPickerViewController *exportVC = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[fileURL]];
+            
+            exportVC.delegate = (id <UIDocumentPickerDelegate>)self;
             
             [self presentViewController:exportVC animated:YES completion:nil];
             
@@ -411,7 +443,7 @@
     id obj = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&error];
     
     if (error != nil) {
-        [AlertManager showGenericAlertWithTitle:@"Error Parsing OPML" message:error.localizedDescription fromVC:self];
+        [AlertManager showGenericAlertWithTitle:@"Error Parsing Subscriptions File" message:error.localizedDescription fromVC:self];
         return;
     }
     

@@ -21,13 +21,14 @@
     UIBarButtonItem *allRead = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"text.badge.checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapAllRead:)];
     allRead.accessibilityValue = @"Mark all articles as read";
     allRead.accessibilityHint = @"Mark all current articles as read.";
+    allRead.title = @"Mark Read";
     allRead.width = 32.f;
     
     UIBarButtonItem *allReadBackDated = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"checkmark"] style:UIBarButtonItemStylePlain target:self action:@selector(didLongPressOnAllRead:)];
     allReadBackDated.accessibilityValue = @"Mark all articles as read";
     allReadBackDated.accessibilityHint = @"Mark all articles as well as backdated articles as read.";
     allReadBackDated.width = 32.f;
-    
+    allReadBackDated.title = @"Mark All Read";
     
     // sorting button
     YetiSortOption option = SharedPrefs.sortingOption;
@@ -113,6 +114,8 @@
     
     UIBarButtonItem *sorting = [[UIBarButtonItem alloc] initWithImage:sortingImage menu:menu];
     sorting.width = 32.f;
+    sorting.title = @"Sorting Options";
+    sorting.accessibilityLabel = @"Sorting Options";
     
     BOOL isPushFromHub = (self.feed.hubSubscribed && self.feed.hub);
     BOOL isPushFromRPC = self.feed.rpcCount > 0;

@@ -15,7 +15,13 @@
 #import "UIImage+Sizing.h"
 #import "YetiConstants.h"
 
+#import "NSString+ImageProxy.h"
+
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
+
+#if TARGET_OS_MACCATALYST
+#import "SceneDelegate.h"
+#endif
 
 @interface Image () <UIContextMenuInteractionDelegate>
 
@@ -170,26 +176,12 @@
                 }
                 else if (SharedPrefs.imageProxy == YES) {
                     
-                    NSURLComponents *components = [NSURLComponents componentsWithString:[url absoluteString]];
-                    
-                    __block NSString *base = nil;
-                    
-                    [components.queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                       
-                        if ([obj.name isEqualToString:@"url"]) {
-                            
-                            base = obj.value;
-                            
-                        }
-                        
-                        *stop = YES;
-                        
-                    }];
+                    NSURL * base = [[url absoluteString] urlFromProxyURI];
                     
                     if (base != nil) {
                         
                         // try the direct URL
-                        [self.imageView sd_setImageWithURL:[NSURL URLWithString:base] placeholderImage:[UIImage systemImageNamed:@"rectangle.on.rectangle.angled"] options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                        [self.imageView sd_setImageWithURL:base placeholderImage:nil options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                             
                             if (error != nil) {
                                 
@@ -263,17 +255,28 @@
 #endif
     
     gifButton.layer.cornerRadius = 3.f;
+    
+#if !TARGET_OS_MACCATALYST
     [gifButton setTitle:@"  Tap to load" forState:UIControlStateNormal];
     [gifButton setTitle:@"  Loading..." forState:UIControlStateDisabled];
+#endif
+    
+#if TARGET_OS_MACCATALYST
+    [gifButton setTitle:@"Tap to load" forState:UIControlStateNormal];
+#endif
+    
     gifButton.titleLabel.font = [UIFont systemFontOfSize:13.f];
     
-    [gifButton setImage:[[UIImage imageNamed:@"gif"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [gifButton setImage:[UIImage systemImageNamed:@"circle.dashed.inset.fill"] forState:UIControlStateNormal];
     [gifButton sizeToFit];
     
+#if !TARGET_OS_MACCATALYST
     [gifButton.widthAnchor constraintEqualToConstant:gifButton.bounds.size.width + 16.f].active = YES;
     [gifButton.heightAnchor constraintEqualToConstant:gifButton.bounds.size.height + 8.f].active = YES;
+#endif
     
     [self addSubview:gifButton];
+    
     [gifButton.centerYAnchor constraintEqualToAnchor:self.centerYAnchor constant:0.f].active = YES;
     
     if (UIApplication.keyWindow.traitCollection.layoutDirection == UITraitEnvironmentLayoutDirectionRightToLeft) {
@@ -301,10 +304,12 @@
     
     UIButton *startStopButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     startStopButton.translatesAutoresizingMaskIntoConstraints = NO;
+#if !TARGET_OS_MACCATALYST
     startStopButton.backgroundColor = UIColor.secondarySystemFillColor;
     startStopButton.layer.cornerRadius = 3.f;
+#endif
     
-    [startStopButton setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+    [startStopButton setImage:[UIImage systemImageNamed:@"pause.rectangle.fill"] forState:UIControlStateNormal];
     [startStopButton sizeToFit];
     
     [startStopButton.widthAnchor constraintEqualToConstant:startStopButton.bounds.size.width + 16.f].active = YES;
@@ -336,6 +341,10 @@
     if ([sender isKindOfClass:UIButton.class]) {
         [sender setEnabled:NO];
     }
+    
+#if TARGET_OS_MACCATALYST
+    [sender setTitle:@"Loading..." forState:UIControlStateNormal];
+#endif
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
        
@@ -380,11 +389,11 @@
         
         if (self.isAnimating) {
             [self.imageView stopAnimating];
-            [sender setImage:[[UIImage imageNamed:@"gif_play"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+            [sender setImage:[UIImage systemImageNamed:@"play.rectangle.fill"] forState:UIControlStateNormal];
         }
         else {
             [self.imageView startAnimating];
-            [sender setImage:[[UIImage imageNamed:@"gif_pause"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] forState:UIControlStateNormal];
+            [sender setImage:[UIImage systemImageNamed:@"pause.rectangle.fill"] forState:UIControlStateNormal];
         }
         
     });
@@ -475,9 +484,13 @@
     
     [actions addObject:[UIAction actionWithTitle:@"Save Image" image:[UIImage systemImageNamed:@"square.and.arrow.down"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
         
+#if TARGET_OS_MACCATALYST
+        [self saveImageToDisk];
+#else
         dispatch_async(dispatch_get_main_queue(), ^{
             UIImageWriteToSavedPhotosAlbum(self.imageView.image, nil, nil, nil);
         });
+#endif
         
     }]];
     
@@ -488,6 +501,84 @@
     return menu;
     
 }
+
+#if TARGET_OS_MACCATALYST
+#pragma mark - Mac Image Export
+
+- (void)saveImageToDisk {
+    
+    UIImage *image = self.imageView.image;
+    
+    if (image == nil) {
+        return;
+    }
+    
+    NSURL *url = self.URL;
+    
+    if ([url.absoluteString containsString:@"weserv.nl"]) {
+        url = [self.URL.absoluteString urlFromProxyURI];
+    }
+    
+    NSString *filename = [url lastPathComponent];
+    NSString *fileExtension = [[url pathExtension] lowercaseString];
+    
+    NSLog(@"Preparing image to store to disk: %@, of type: %@", filename, fileExtension);
+    
+    NSData *data = nil;
+    
+    if ([fileExtension isEqualToString:@"png"]) {
+        
+        data = UIImagePNGRepresentation(image);
+        
+    }
+    else {
+        
+        data = UIImageJPEGRepresentation(image, 1.f);
+        
+    }
+    
+    if (data == nil || data.length == 0) {
+        NSLog(@"No image data formed for image type: %@", fileExtension);
+        return;
+    }
+    
+    NSURL *tempURL = [[NSFileManager.defaultManager temporaryDirectory] URLByAppendingPathComponent:filename];
+    
+    [data writeToURL:tempURL atomically:YES];
+    
+    UIDocumentPickerViewController *controller = [[UIDocumentPickerViewController alloc] initForExportingURLs:@[tempURL]];
+    controller.delegate = (id<UIDocumentPickerDelegate>)self;
+    
+    SceneDelegate *delegate = (SceneDelegate *)(UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate);
+    
+    [delegate.coordinator.splitViewController presentViewController:controller animated:YES completion:nil];
+    
+}
+
+#pragma mark - <UIDocumentPickerViewController>
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    
+    NSURL *url = self.URL;
+    
+    if ([url.absoluteString containsString:@"weserv.nl"]) {
+        url = [self.URL.absoluteString urlFromProxyURI];
+    }
+    
+    NSString *filename = [url lastPathComponent];
+    NSURL *tempURL = [[NSFileManager.defaultManager temporaryDirectory] URLByAppendingPathComponent:filename];
+    
+    NSError *error = nil;
+    
+    if ([NSFileManager.defaultManager removeItemAtURL:tempURL error:&error] == NO) {
+        
+        NSLog(@"Error: Failed to remove temp image file: %@", error.localizedDescription);
+        
+    }
+    
+}
+
+#endif
 
 #pragma mark - <UIContextMenuInteractionDelegate>
 

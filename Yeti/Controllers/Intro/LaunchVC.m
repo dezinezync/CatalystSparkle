@@ -12,8 +12,6 @@
 
 #import "Keychain.h"
 
-#import "YetiThemeKit.h"
-
 #import "FeedsManager.h"
 #import "DBManager.h"
 #import <DZKit/AlertManager.h>
@@ -126,11 +124,25 @@
         
         [MyDBManager setUser:responseObject];
         
-        if ([Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
+        if ((MyFeedsManager.user.subscription == nil
+            || MyFeedsManager.user.subscription.expiry == nil)
+            && [Keychain boolFor:kHasShownOnboarding error:nil] == NO) {
             
             TrialVC *vc = [[TrialVC alloc] initWithNibName:NSStringFromClass(TrialVC.class) bundle:nil];
             
             [self showViewController:vc sender:self];
+            
+            return;
+            
+        }
+        
+        if (MyFeedsManager.user.subscription != nil && MyFeedsManager.user.subscription.hasExpired == NO) {
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:UserDidUpdate object:nil];
+            
+            [Keychain add:kHasShownOnboarding boolean:YES];
+            
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
             
             return;
             

@@ -23,6 +23,8 @@
 #import "BookmarksManager.h"
 #import "BarPositioning.h"
 
+#import "FeedHeaderView.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading >
@@ -60,6 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (FeedItem * _Nullable)itemForIndexPath:(NSIndexPath * _Nonnull)indexPath;
 
+- (void)reloadVisibleCells;
+
 #pragma mark - State
 
 - (NSString * _Nonnull)emptyViewSubtitle;
@@ -78,6 +82,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Determines if the user is simply exploring this feed from recommendations or somewhere else.
 @property (nonatomic, assign, getter=isExploring) BOOL exploring;
 
+@property (atomic, assign) BOOL isFromAddFeed;
+
 - (BOOL)showsSortingButton;
 
 @property (nonatomic, assign) YetiSortOption sortingOption;
@@ -93,8 +99,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSURLSessionTask * _Nullable searchOperation;
 
 - (void)_showArticleVC:(ArticleVC *)vc;
-
-- (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
 
 @end
 

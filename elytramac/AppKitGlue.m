@@ -7,8 +7,24 @@
 //
 
 #import "AppKitGlue.h"
+#import "elytramac-Swift.h"
+
+typedef void (^successBlock)(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task);
+typedef void (^errorBlock)(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task);
+
+@interface FeedsManager : NSObject
+
+- (void)deactivateAccountWithSuccess:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+
+@end
 
 static AppKitGlue * SharedAppKitGlue = nil;
+
+@interface AppKitGlue ()
+
+@property (strong) PreferencesController *preferencesController;
+
+@end
 
 @implementation AppKitGlue
 
@@ -23,73 +39,41 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
 }
 
-- (CGColorRef)CTColorForName:(NSString *)name {
+- (instancetype)init {
     
-    SEL sel = NSSelectorFromString(name);
-    
-    if ([NSColor respondsToSelector:sel] == YES) {
+    if (self = [super init]) {
         
-        NSColor *color = [NSColor performSelector:sel];
+        NSArray <NSString *> *fontNames = [NSFontManager sharedFontManager].availableFonts;
         
-        if (color != nil) {
+        __block BOOL hasNYBold = NO;
+        __block BOOL hasNYBoldItalic = NO;
+        
+        [fontNames enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           
+            if (hasNYBold == NO && [obj isEqualToString:@"NewYorkLarge-Bold"]) {
+                hasNYBold = YES;
+            }
+            else if (hasNYBoldItalic == NO && [obj isEqualToString:@"NewYorkLarge-BoldItalic"]) {
+                hasNYBoldItalic = YES;
+            }
             
-            CGColorRef cgColor = color.CGColor;
+        }];
+        
+        if (hasNYBold && hasNYBoldItalic) {
             
-            return cgColor;
-            
-//            CGFloat red, green, blue, alpha;
-//
-//            [color getRed:&red green:&green blue:&blue alpha:&alpha];
-//
-//            return @[@(red), @(green), @(blue), @(alpha)];
+            // has NY Bold Font installed.
+            [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"hasNYBoldInstalled"];
             
         }
-        
-        return nil;
-        
-    }
-    
-    return nil;
-    
-}
-
-- (void)ct_showAlertWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitle:(NSString *)otherButtonTitle completionHandler:(void (^ _Nullable)(NSString * _Nonnull))completionHandler {
-    
-    NSAlert *alert = [[NSAlert alloc] init];
-    
-    [alert setMessageText:(title ?: @"")];
-    
-    if (message) {
-        [alert setInformativeText:message];
-    }
-    
-    if (cancelButtonTitle != nil) {
-        
-        NSButton *button = [alert addButtonWithTitle:@"Cancel"];
-        button.tag = 0;
-        
-        if (otherButtonTitle != nil) {
-        
-            button = [alert addButtonWithTitle:@"Ok"];
-            button.tag = 1;
+        else {
+            
+            [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"hasNYBoldInstalled"];
             
         }
         
     }
-    else {
-        NSButton *button = [alert addButtonWithTitle:@"Ok"];
-        button.tag = 0;
-    }
     
-    NSModalResponse responseTag = [alert runModal];
-    
-    if (completionHandler) {
-        
-        NSButton *button = [alert buttons][responseTag];
-        
-        completionHandler(button.title);
-        
-    }
+    return self;
     
 }
 
@@ -97,9 +81,10 @@ static AppKitGlue * SharedAppKitGlue = nil;
     
     if (background) {
       
-        NSArray* urls = [NSArray arrayWithObject:url];
-      
-        [[NSWorkspace sharedWorkspace] openURLs:urls withAppBundleIdentifier:nil options:NSWorkspaceLaunchWithoutActivation additionalEventParamDescriptor:nil launchIdentifiers:nil];
+        NSWorkspaceOpenConfiguration *config = [NSWorkspaceOpenConfiguration configuration];
+        config.activates = NO;
+        
+        [[NSWorkspace sharedWorkspace] openURL:url configuration:config completionHandler:nil];
     }
     else {
       [[NSWorkspace sharedWorkspace] openURL:url];
@@ -146,6 +131,34 @@ static AppKitGlue * SharedAppKitGlue = nil;
     CGImageRef ref =  CGImageSourceCreateImageAtIndex(source, 0, NULL);
     
     return ref;
+    
+}
+
+- (void)showPreferencesController {
+    
+    if (self.preferencesController == nil) {
+        self.preferencesController = [PreferencesController new];
+    }
+    
+    [self.preferencesController preferencesMenuItemActionHandler:nil];
+    
+}
+
+- (void)deactivateAccount:(void (^)(BOOL success, NSError *error))completionBlock {
+    
+    [(FeedsManager *)self.feedsManager deactivateAccountWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (completionBlock) {
+            completionBlock(YES, nil);
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (completionBlock) {
+            completionBlock(NO, error);
+        }
+        
+    }];
     
 }
 

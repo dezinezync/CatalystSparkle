@@ -13,8 +13,6 @@
 
 #import "AppDelegate.h"
 
-#import "YetiThemeKit.h"
-
 #import "Paragraph.h"
 #import "FeedsManager.h"
 
@@ -29,14 +27,6 @@
 
 @implementation ArticleVC (Toolbar)
 
-//- (void)validateCommand:(UICommand *)command {
-//
-//    if ([command.title isEqualToString:@"Find in Article"]) {
-//        command
-//    }
-//
-//}
-
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
@@ -44,13 +34,13 @@
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
 
     UIBarButtonItem *read = [[UIBarButtonItem alloc] initWithImage:readImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapRead:)];
-    read.accessibilityValue = @"Mark article unread";
-    read.accessibilityLabel = @"Read state";
+    read.accessibilityValue = self.item.isRead ? @"Mark article unread" : @"Mark article read";
+    read.accessibilityLabel = self.item.isRead ? @"Mark Unread" : @"Mark Read";
     
     UIBarButtonItem *bookmark = [[UIBarButtonItem alloc] initWithImage:bookmarkImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapBookmark:)];
     
     bookmark.accessibilityValue = self.item.isBookmarked ? @"Remove from bookmarks" : @"Bookmark article";
-    bookmark.accessibilityLabel = @"Bookmarked";
+    bookmark.accessibilityLabel = self.item.isBookmarked ? @"Unbookmark" : @"Bookmark";
     
     UIBarButtonItem *search = [[UIBarButtonItem alloc] initWithImage:searchImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapSearch)];
     
@@ -112,14 +102,17 @@
     
     share.accessibilityValue = @"Share article";
     share.accessibilityLabel = @"Share";
+    share.title = share.accessibilityLabel;
     
     UIBarButtonItem *browser = [[UIBarButtonItem alloc] initWithImage:browserImage style:UIBarButtonItemStylePlain target:self action:@selector(openInBrowser)];
     browser.accessibilityValue = @"Open the article in the browser";
     browser.accessibilityLabel = @"Browser";
+    browser.title = browser.accessibilityLabel;
     
     UIBarButtonItem *customize = [[UIBarButtonItem alloc] initWithImage:customizeImage style:UIBarButtonItemStylePlain target:self action:@selector(didTapCustomize:)];
-    browser.accessibilityValue = @"Customize the Article Reader Interface";
-    browser.accessibilityLabel = @"Customize";
+    customize.accessibilityValue = @"Customize the Article Reader Interface";
+    customize.accessibilityLabel = @"Customize";
+    customize.title = customize.accessibilityLabel;
     
     if (self.isExploring) {
         return @[share, browser];
@@ -564,7 +557,7 @@
     if (sender && [sender isKindOfClass:NSToolbarItem.class]) {
       
         pvc.sourceView = self.view;
-        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 132.f, 22.f, self.view.bounds.size.width, 1);
+        pvc.sourceRect = CGRectMake(self.view.bounds.size.width - 60.f, 22.f, self.view.bounds.size.width, 1);
         
     }
     else {

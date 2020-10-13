@@ -13,6 +13,9 @@
 #import "Content.h"
 
 #import "YetiThemeKit.h"
+#import "ThemeVC.h"
+
+static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorContext;
 
 PrefsManager * SharedPrefs = nil;
 
@@ -77,6 +80,25 @@ PrefsManager * SharedPrefs = nil;
     
     self.iOSTintColorIndex = [self.defaults integerForKey:defaultsKey] ?: 0;
     self.tintColor = [YetiThemeKit.colours objectAtIndex:self.iOSTintColorIndex];
+    
+#if TARGET_OS_MACCATALYST
+    self.browserOpenInBackground = [self.defaults boolForKey:MacKeyOpensBrowserInBackground];
+    self.browserUsesReaderMode = [self.defaults boolForKey:OpenBrowserInReaderMode];
+    self.refreshFeedsInterval = [self.defaults valueForKey:MacKeyRefreshFeeds];
+    
+    [self ct_updateTintColor:self.defaults];
+    [self updateAppearances];
+    
+#endif
+    self.badgeAppIcon = [self.defaults boolForKey:badgeAppIconPreference];
+    
+    if (self.paraTitleFont == nil) {
+        self.paraTitleFont = ALPSystem;
+    }
+    
+    if (self.articleFont == nil) {
+        self.articleFont = ALPSystem;
+    }
     
 }
 
@@ -151,6 +173,20 @@ PrefsManager * SharedPrefs = nil;
     else if ([key isEqualToString:propSel(iOSTintColorIndex)]) {
         return formattedString(@"theme-%@-color", @"default");
     }
+#if TARGET_OS_MACCATALYST
+    else if ([key isEqualToString:propSel(browserOpenInBackground)]) {
+        return MacKeyOpensBrowserInBackground;
+    }
+    else if ([key isEqualToString:propSel(browserUsesReaderMode)]) {
+        return OpenBrowserInReaderMode;
+    }
+    else if ([key isEqualToString:propSel(refreshFeedsInterval)]) {
+        return MacKeyRefreshFeeds;
+    }
+#endif
+    else if ([key isEqualToString:propSel(badgeAppIcon)]) {
+        return badgeAppIconPreference;
+    }
 //    else if ([key isEqualToString:propSel(<#string#>)]) {
 //        return <#mapping#>;
 //    }
@@ -219,13 +255,46 @@ PrefsManager * SharedPrefs = nil;
     
 }
 
+#pragma mark - Getter
+
+#if TARGET_OS_MACCATALYST
+
+- (NSTimeInterval)refreshFeedsTimeInterval {
+    
+    NSString *str = self.refreshFeedsInterval;
+    NSTimeInterval value;
+    
+    if ([str isEqualToString:@"Every 30 minutes"]) {
+#ifdef DEBUG
+        value = (1 * 60);
+#else
+        value = (30 * 60);
+#endif
+    }
+    else if ([str isEqualToString:@"Every Hour"]) {
+#ifdef DEBUG
+        value = (5 * 60);
+#else
+        value = (60 * 60);
+#endif
+    }
+    else {
+        value = -1;
+    }
+
+    return value;
+    
+}
+
+#endif
+
 #pragma mark - Notifications
 
 - (void)setupNotifications {
     
-#if TARGET_OS_MACCATALYST
-    
     NSUserDefaults *defaults = self.defaults;
+    
+#if TARGET_OS_MACCATALYST
     
     [defaults addObserver:self forKeyPath:propSel(fontSize) options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:kDefaultsArticleFont options:NSKeyValueObservingOptionNew context:NULL];
@@ -233,7 +302,26 @@ PrefsManager * SharedPrefs = nil;
     [defaults addObserver:self forKeyPath:propSel(lineSpacing) options:NSKeyValueObservingOptionNew context:NULL];
     [defaults addObserver:self forKeyPath:propSel(paraTitleFont) options:NSKeyValueObservingOptionNew context:NULL];
     
+    [defaults addObserver:self forKeyPath:kShowArticleCoverImages options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:OpenBrowserInReaderMode options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:kDefaultsImageBandwidth options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:MacKeyOpensBrowserInBackground options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:MacKeyRefreshFeeds options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:@"paraTitleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:@"articleFontReadable" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:@"MacHideBookmarksTab" options:NSKeyValueObservingOptionNew context:NULL];
+    [defaults addObserver:self forKeyPath:@"MacShowUnreadCounters" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:@"MacSummaryPreviewLines" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [defaults addObserver:self forKeyPath:@"AppleHighlightColor" options:NSKeyValueObservingOptionNew context:DefaultsAppleHighlightColorContext];
+    
 #endif
+    
+    [defaults addObserver:self forKeyPath:badgeAppIconPreference options:NSKeyValueObservingOptionNew context:NULL];
     
 }
 
@@ -241,16 +329,87 @@ PrefsManager * SharedPrefs = nil;
     
     if (object == self.defaults) {
         
-        if ([keyPath isEqualToString:kLineSpacing]
+        id value = [change valueForKey:NSKeyValueChangeNewKey];
+        
+        if ([keyPath isEqualToString:kShowArticleCoverImages]) {
+            
+            [self setValue:value forKey:propSel(articleCoverImages)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ArticleCoverImagesPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:OpenBrowserInReaderMode]) {
+            
+            [self setValue:value forKey:propSel(browserUsesReaderMode)];
+            
+        }
+#if TARGET_OS_MACCATALYST
+        else if ([keyPath isEqualToString:MacKeyOpensBrowserInBackground]) {
+            
+            [self setValue:value forKey:propSel(browserOpenInBackground)];
+            
+        }
+        else if ([keyPath isEqualToString:MacKeyRefreshFeeds]) {
+            
+            [self setValue:value forKey:propSel(refreshFeedsInterval)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:MacRefreshFeedsIntervalUpdated object:nil];
+            
+        }
+#endif
+        else if ([keyPath isEqualToString:kDefaultsImageBandwidth]) {
+            
+            [self setValue:value forKey:propSel(imageBandwidth)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ImageBandWidthPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"MacHideBookmarksTab"]) {
+            
+            [self setValue:value forKey:keypath(hideBookmarks)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ShowBookmarksTabPreferenceChanged object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"MacShowUnreadCounters"]) {
+            
+            [self setValue:value forKey:keypath(showUnreadCounts)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:ShowUnreadCountsPreferenceChanged object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"MacSummaryPreviewLines"]) {
+            
+            [self setValue:value forKey:keypath(previewLines)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:PreviewLinesPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:badgeAppIconPreference]) {
+            
+            [self setValue:value forKey:keypath(badgeAppIcon)];
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:BadgeAppIconPreferenceUpdated object:nil];
+            
+        }
+        else if ([keyPath isEqualToString:@"AppleHighlightColor"] && context == DefaultsAppleHighlightColorContext) {
+            
+            [self ct_updateTintColor:object];
+            
+            [self updateAppearances];
+            
+        }
+        else if ([keyPath isEqualToString:kLineSpacing]
             || [keyPath isEqualToString:propSel(fontSize)]
             || [keyPath isEqualToString:kParagraphTitleFont]
             || [keyPath isEqualToString:kDefaultsArticleFont]
             || [keyPath isEqualToString:propSel(lineSpacing)]
-            || [keyPath isEqualToString:propSel(paraTitleFont)]) {
+            || [keyPath isEqualToString:propSel(paraTitleFont)]
+            || [keyPath isEqualToString:propSel(articleFont)]
+            || [keyPath isEqualToString:@"paraTitleFontReadable"]
+            || [keyPath isEqualToString:@"articleFontReadable"]) {
             
             if ([keyPath isEqualToString:propSel(fontSize)]) {
-                
-                id value = [change valueForKey:NSKeyValueChangeNewKey];
                 
                 if ([value boolValue] == NO || [value floatValue] == 0.f) {
                     [self setValue:@(YES) forKey:propSel(useSystemSize)];
@@ -266,12 +425,44 @@ PrefsManager * SharedPrefs = nil;
             }
             else if ([keyPath isEqualToString:propSel(lineSpacing)]) {
                 
-                [self setValue:[change valueForKey:NSKeyValueChangeNewKey] forKey:propSel(lineSpacing)];
+                [self setValue:value forKey:propSel(lineSpacing)];
                 
             }
+            
             else if ([keyPath isEqualToString:propSel(paraTitleFont)]) {
                 
-                [self setValue:[change valueForKey:NSKeyValueChangeNewKey] forKey:propSel(paraTitleFont)];
+                NSString *readable = ThemeVC.fontNamesMap[value];
+                
+                [self setValue:value forKey:propSel(paraTitleFont)];
+                
+                [NSUserDefaults.standardUserDefaults setObject:readable forKey:@"paraTitleFontReadable"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+                
+            }
+            else if ([keyPath isEqualToString:propSel(articleFont)] || [keyPath isEqualToString:kDefaultsArticleFont]) {
+                
+                NSString *readable = ThemeVC.fontNamesMap[value];
+                
+                [self setValue:value forKey:propSel(articleFont)];
+                
+                [NSUserDefaults.standardUserDefaults setObject:readable forKey:@"articleFontReadable"];
+                [NSUserDefaults.standardUserDefaults synchronize];
+                
+            }
+            else if ([keyPath isEqualToString:@"paraTitleFontReadable"]) {
+                
+                NSUInteger readableIndex = [ThemeVC.fontNamesMap.allValues indexOfObject:value];
+                NSString *source = ThemeVC.fontNamesMap.allKeys[readableIndex];
+                
+                [self setValue:source forKey:propSel(paraTitleFont)];
+                
+            }
+            else if ([keyPath isEqualToString:@"articleFontReadable"]) {
+                
+                NSUInteger readableIndex = [ThemeVC.fontNamesMap.allValues indexOfObject:value];
+                NSString *source = ThemeVC.fontNamesMap.allKeys[readableIndex];
+                
+                [self setValue:source forKey:propSel(articleFont)];
                 
             }
             
@@ -281,13 +472,65 @@ PrefsManager * SharedPrefs = nil;
                 [NSNotificationCenter.defaultCenter postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
             });
             
-            return;
+        }
+        
+        return;
+        
+    }
+    
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    
+}
+
+#pragma mark -
+
+- (void)updateAppearances {
+    
+    for (UIWindowScene *scene in UIApplication.sharedApplication.connectedScenes) {
+        
+        for (UIWindow *window in scene.windows) {
+            
+            window.tintColor = self.tintColor;
             
         }
         
     }
     
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
+
+- (void)ct_updateTintColor:(NSUserDefaults *)defaults {
+    
+    NSString *systemHighlightColor = [defaults objectForKey:@"AppleHighlightColor"];
+    
+    if (systemHighlightColor == nil) {
+        
+        self.tintColor = [UIColor systemBlueColor];
+        
+        return;
+        
+    }
+    
+    NSArray *components = [systemHighlightColor componentsSeparatedByString:@" "];
+    NSString *colorName = [components lastObject];
+    
+    SEL systemColorSelector = NSSelectorFromString([NSString stringWithFormat:@"system%@Color", colorName]);
+    
+    if ([UIColor respondsToSelector:systemColorSelector] == YES) {
+        
+        UIColor * systemTintColor = [UIColor performSelector:systemColorSelector];
+        
+        if (systemTintColor != nil) {
+            
+            self.tintColor = systemTintColor;
+            
+        }
+        
+    }
+    else if ([colorName isEqualToString:@"Graphite"]) {
+        
+        self.tintColor = UIColor.systemGrayColor;
+        
+    }
     
 }
 

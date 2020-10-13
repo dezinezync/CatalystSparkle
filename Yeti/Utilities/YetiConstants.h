@@ -37,6 +37,7 @@ YETI_EXPORT NSString * _Nonnull const kDefaultsImageLoading;
 YETI_EXPORT NSString * _Nonnull const kDefaultsImageBandwidth;
 YETI_EXPORT NSString * _Nonnull const kSubscriptionType;
 
+YETI_EXPORT NSNotificationName _Nonnull const ArticleCoverImagesPreferenceUpdated;
 YETI_EXPORT NSString * _Nonnull const kShowArticleCoverImages;
 
 typedef NSString * ImageLoadingOption NS_STRING_ENUM;
@@ -45,6 +46,7 @@ YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingLowRes;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingMediumRes;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingHighRes;
 
+YETI_EXPORT NSNotificationName _Nonnull const ImageBandWidthPreferenceUpdated;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingNever;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingOnlyWireless;
 YETI_EXPORT ImageLoadingOption _Nonnull const ImageLoadingAlways;
@@ -78,6 +80,7 @@ YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSerif;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSans;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPSpectral;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPOpenDyslexic;
+YETI_EXPORT ArticleLayoutFont const ALPNewYork;
 
 typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType _Nonnull const YTSubscriptionMonthly;
@@ -106,6 +109,7 @@ YETI_EXPORT NSString * _Nonnull const kUseToolbar;
 YETI_EXPORT NSString * _Nonnull const kHideBars;
 
 YETI_EXPORT NSString * _Nonnull const kPreviewLines;
+YETI_EXPORT NSNotificationName const PreviewLinesPreferenceUpdated;
 
 YETI_EXPORT NSString * _Nonnull const kUseSystemFontSize;
 YETI_EXPORT NSString * _Nonnull const kFontSize;
@@ -138,6 +142,20 @@ extern NSString * _Nonnull const IAPMonthlyAuto;
 extern NSString * _Nonnull const IAPYearlyAuto;
 
 YETI_EXPORT NSString * _Nonnull const kShowMarkReadPrompt;
+
+extern NSString * _Nonnull const OpenBrowserInReaderMode;
+
+#if TARGET_OS_MACCATALYST
+
+extern NSNotificationName _Nonnull const MacRefreshFeedsIntervalUpdated;
+extern NSString * _Nonnull const MacKeyRefreshFeeds;
+
+extern NSString * _Nonnull const MacKeyOpensBrowserInBackground;
+
+#endif
+
+extern NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated;
+extern NSString * _Nonnull const badgeAppIconPreference;
 
 extern BOOL canSupportOLED (void);
 

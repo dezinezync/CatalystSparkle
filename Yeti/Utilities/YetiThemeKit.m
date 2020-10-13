@@ -96,15 +96,15 @@ NSArray <NSString *> * _themeNames;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             _colours = @[
-                         [UIColor colorFromHexString:@"007AFF"],
-                         [UIColor colorFromHexString:@"ED4A5A"],
-                         [UIColor colorFromHexString:@"DD6F2A"],
-                         [UIColor colorFromHexString:@"F2BB4B"],
-                         [UIColor colorFromHexString:@"78B856"],
-                         [UIColor colorFromHexString:@"45A1E8"],
-                         [UIColor colorFromHexString:@"E45C9C"],
-                         [UIColor colorFromHexString:@"8FA0AB"],
-                         [UIColor colorFromHexString:@"6C86F7"]
+                         [UIColor systemBlueColor],
+                         [UIColor systemRedColor],
+                         [UIColor systemOrangeColor],
+                         [UIColor systemYellowColor],
+                         [UIColor systemGreenColor],
+                         [UIColor systemTealColor],
+                         [UIColor systemPinkColor],
+                         [UIColor systemGrayColor],
+                         [UIColor systemIndigoColor]
             ];
         });
     }

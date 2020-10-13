@@ -9,7 +9,6 @@
 #import "IdentityVC.h"
 #import "FeedsManager.h"
 #import "TrialVC.h"
-#import "YetiThemeKit.h"
 
 #import "UIImage+Color.h"
 #import "Keychain.h"
@@ -47,8 +46,7 @@
     
     self.view.layer.cornerCurve = kCACornerCurveContinuous;
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-    self.view.backgroundColor = theme.backgroundColor;
+    self.view.backgroundColor = UIColor.systemBackgroundColor;
     
     [self.singleTap requireGestureRecognizerToFail:self.doubleTap];
     
@@ -63,11 +61,11 @@
     
     self.titleLabel.font = baseFont;
     
-    [attrs setAttributes:@{NSFontAttributeName: baseFont, NSForegroundColorAttributeName: theme.titleColor} range:NSMakeRange(0, attrs.string.length)];
+    [attrs setAttributes:@{NSFontAttributeName: baseFont, NSForegroundColorAttributeName: UIColor.labelColor} range:NSMakeRange(0, attrs.string.length)];
     
     self.titleLabel.attributedText = attrs;
-    self.subtitleLabel.textColor = theme.subtitleColor;
-    self.captionLabel.textColor = theme.captionColor;
+    self.subtitleLabel.textColor = UIColor.secondaryLabelColor;
+    self.captionLabel.textColor = UIColor.secondaryLabelColor;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

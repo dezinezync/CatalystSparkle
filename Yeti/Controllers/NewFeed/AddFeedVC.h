@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (atomic, assign) StateType controllerState;
 
+@property (atomic, assign) BOOL isFromAddFeed;
+
 @property (nonatomic, strong) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
 @end

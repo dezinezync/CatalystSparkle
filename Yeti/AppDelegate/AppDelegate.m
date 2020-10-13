@@ -11,7 +11,6 @@
 #import "AppDelegate+Store.h"
 
 #import <JLRoutes/JLRoutes.h>
-#import "YetiThemeKit.h"
 
 #import "YetiConstants.h"
 #import "CodeParser.h"
@@ -99,6 +98,31 @@ AppDelegate *MyAppDelegate = nil;
 //        weakify(self);
         
         [UNUserNotificationCenter currentNotificationCenter].delegate = (id <UNUserNotificationCenterDelegate>)self;
+        
+#if TARGET_OS_MACCATALYST
+        
+        if ([[UIApplication sharedApplication] isRegisteredForRemoteNotifications] == NO) {
+            
+            [[UNUserNotificationCenter currentNotificationCenter] requestAuthorizationWithOptions:UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                
+                if (error) {
+                    NSLog(@"Error authorizing for push notifications: %@",error);
+                    return;
+                }
+                
+                if (granted) {
+                    
+                    [Keychain add:kIsSubscribingToPushNotifications boolean:YES];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [UIApplication.sharedApplication registerForRemoteNotifications];
+                    });
+                    
+                }
+            }];
+            
+        }
+#endif
         
         [self setupStoreManager];
         
@@ -271,12 +295,15 @@ AppDelegate *MyAppDelegate = nil;
              kPreviewLines: @0,
              kShowTags: @YES,
              kUseToolbar: @NO,
-             kHideBars: @NO
+             kHideBars: @NO,
+                                   OpenBrowserInReaderMode: @NO
     }.mutableCopy;
     
 #if TARGET_OS_MACCATALYST
     dict[kUseSystemFontSize] = @NO;
     dict[kFontSize] = @(14.f);
+    dict[MacKeyRefreshFeeds] = @"Manually";
+    dict[MacKeyOpensBrowserInBackground] = @NO;
 #endif
     
     return dict;
@@ -304,12 +331,6 @@ AppDelegate *MyAppDelegate = nil;
         
         return;
     }
-    // the following is handled within YetiTheme model
-//    for (UIWindow *window in UIApplication.sharedApplication.windows) {
-//        window.tintColor = YTThemeKit.theme.tintColor;
-//    }
-
-   [[NSNotificationCenter defaultCenter] postNotificationName:kDidUpdateTheme object:nil];
     
 }
 

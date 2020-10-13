@@ -18,6 +18,8 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+MultiFormat.h>
 
+#import "NSString+ImageProxy.h"
+
 @implementation ArticleVC (Photos)
 
 - (void)didTapOnImage:(UITapGestureRecognizer *)sender {
@@ -36,7 +38,7 @@
     
 #endif
     
-    if (image.link != nil) {
+    if ([image respondsToSelector:@selector(link)] && image.link != nil) {
         
         [self openLinkExternally:image.link.absoluteString];
         return;
@@ -52,9 +54,7 @@
     NSUInteger index = NSNotFound,
                counter = -1;
     
-    
-    
-     NSMutableArray <IDMPhoto *> *_images = [NSMutableArray new];
+    NSMutableArray <IDMPhoto *> *_images = [NSMutableArray new];
         
     for (id obj in images) {
         
@@ -68,6 +68,13 @@
                 && image.darkModeURL != nil) {
                 
                 url = image.darkModeURL;
+                
+            }
+            
+            if ([url.absoluteString containsString:@"images.weserv.nl"]) {
+                
+                // convert to non-proxy URL
+                url = [url.absoluteString urlFromProxyURI];
                 
             }
             
@@ -125,7 +132,11 @@
                 counter++;
                 
                 if (sender.view == image && index == NSNotFound) {
-                    index = counter;
+                    
+                    // we have established it is this gallery.
+                    
+                    index = counter + [[(Gallery *)[sender view] pageControl] currentPage];
+                    
                 }
                 
             }
@@ -174,7 +185,7 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary new];
     
-    if (image.imageView.image != nil) {
+    if ([image valueForKeyPath:@"imageView.image"] != nil) {
         dict[@"image"] = [image.imageView.image sd_imageData];
     }
     
@@ -197,13 +208,15 @@
         
     }
     
+    dict[@"size"] = NSStringFromCGSize(image.imageView.image.size);
+    
     if (dict.keyEnumerator.allObjects.count == 0) {
         return;
     }
     
     [viewImageActivity addUserInfoEntriesFromDictionary:dict];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:0 errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             

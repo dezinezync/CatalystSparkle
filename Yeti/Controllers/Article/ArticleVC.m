@@ -24,6 +24,7 @@
 #import "NSDate+DateTools.h"
 #import "NSString+HTML.h"
 #import "NSString+Levenshtein.h"
+#import "NSString+CJK.h"
 #import "CodeParser.h"
 
 #import "TypeFactory.h"
@@ -49,12 +50,6 @@
 #import "Tweet.h"
 #import "TweetImage.h"
 
-#if TARGET_OS_MACCATALYST
-
-#import <AppKit/NSWorkspace.h>
-
-#endif
-
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -73,6 +68,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL _deferredProcessing;
     
     BOOL _isRestoring;
+    
+#if TARGET_OS_MACCATALYST
+    BOOL _shiftPressedBeforeClickingURL;
+#endif
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -96,6 +95,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 @property (weak, nonatomic) IBOutlet UIStackView *errorStackView;
 
 @property (nonatomic, strong) YTExtractor *ytExtractor;
+
+/// These are special handlers for rendering specific blog articles.
+@property (assign) BOOL isiOSIconGallery;
 
 @end
 
@@ -136,7 +138,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    self.scrollView.contentInset = UIEdgeInsetsMake(-1.f, 0, 44.f, 0);
+    self.scrollView.contentInset = UIEdgeInsetsMake(12.f, 0, 44.f, 0);
     
 #else
     
@@ -266,7 +268,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.helperView != nil) {
         self.helperView.tintColor = self.view.tintColor;
     }
-    
+
     [self becomeFirstResponder];
     
 }
@@ -799,51 +801,73 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }];
 }
 
-- (BOOL)imageURLAppearsInContent:(NSString *)url {
+- (BOOL)_imageURL:(NSString *)url appearsInContent:(Content *)content {
     
-    Content *appearing = [self.item.content rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
-       
-        if (([objx.type isEqualToString:@"image"] || [objx.type isEqualToString:@"img"])) {
+    if (([content.type isEqualToString:@"image"] || [content.type isEqualToString:@"img"])) {
+        
+        if ([content.url isEqualToString:url]) {
             
-            if ([objx.url isEqualToString:url]) {
+            return YES;
+            
+        }
+        
+        if (content.srcset != nil) {
+            
+            NSArray *values = [content.srcset allValues];
+            
+            values = [values rz_map:^id(id obj, NSUInteger id, NSArray *array) {
+               
+                if ([obj isKindOfClass:NSDictionary.class]) {
+                    
+                    return [(NSDictionary *)obj allValues];
+                    
+                }
+                
+                return obj;
+                
+            }];
+            
+            values = [values rz_flatten];
+            
+            if ([values indexOfObject:url] != NSNotFound) {
                 
                 return YES;
                 
             }
             
-            if (objx.srcset != nil) {
-                
-                NSArray *values = [objx.srcset allValues];
-                
-                values = [values rz_map:^id(id objxx, NSUInteger idxxx, NSArray *arrayxx) {
-                   
-                    if ([objxx isKindOfClass:NSDictionary.class]) {
-                        
-                        return [(NSDictionary *)objxx allValues];
-                        
-                    }
-                    
-                    return objxx;
-                    
-                }];
-                
-                values = [values rz_flatten];
-                
-                if ([values indexOfObject:url] != NSNotFound) {
-                    
-                    return YES;
-                    
-                }
-                
-            }
-        
         }
+    }
+    else if (content.items != nil) {
         
-        return NO;
+        Content *appearing = [content.items rz_find:^BOOL(Content * objx, NSUInteger idxx, NSArray *arrayx) {
+           
+            return [self _imageURL:url appearsInContent:objx];
+            
+        }];
+        
+        return appearing != nil;
+        
+    }
+    
+    return NO;
+    
+}
+
+- (BOOL)imageURLAppearsInContent:(NSString *)url {
+    
+    __block BOOL included = NO;
+    
+    [self.item.content enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+       
+        included = [self _imageURL:url appearsInContent:obj];
+        
+        if (included == YES) {
+            *stop = YES;
+        }
         
     }];
     
-    return appearing != nil;
+    return included;
     
 }
 
@@ -856,6 +880,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     weakify(self);
     
     self.item = responseObject;
+    
+    if (self.item.articleURL != nil && [[self.item.articleURL lowercaseString] containsString:@"iosicongallery"]) {
+        self.isiOSIconGallery = YES;
+    }
     
     if (self.item.isRead == NO) {
         [self didTapRead:nil];
@@ -1460,6 +1488,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
+        CGFloat halfPixel = 1.f;
+
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, halfPixel)];
+
+        line.userInteractionEnabled = NO;
+        line.backgroundColor = UIColor.separatorColor;
+        line.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [line.heightAnchor constraintEqualToConstant:halfPixel].active = YES;
+        
+        [self.stackView addArrangedSubview:line];
+        
+        _last = line;
+        
     }
     else if ([content.type isEqualToString:@"script"]) {
         // wont be handled at the moment
@@ -1579,7 +1621,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
         
         if (newAttrs) {
-            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+            
+            // For CJK paragraphs, we strictly ignore any rangeAdditions we make.
+            // Not doing so breaks the formatting as intended by the author making
+            // the text one big paragraph and difficult to read. 
+            if (rangeAdded == YES && [newAttrs.string containsCJKCharacters] == YES) {
+                rangeAdded = NO;
+            }
+            
+            NSString *accessoryStr = formattedString(@"%@", rangeAdded ? @" " : @"\n\n");
+            
+            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:accessoryStr];
             
             [attrs appendAttributedString:accessory];
             [attrs appendAttributedString:newAttrs];
@@ -1738,9 +1790,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // 9mac ads and some tracking scripts
     if (content.url && (
             ([content.url containsString:@"ads"] && [content.url containsString:@"assoc"])
-            || ([content.url containsString:@"deal"])
+            || ([content.url containsString:@"deal"] && [content.url containsString:@"Daily-Deals-"] == NO)
             || ([content.url containsString:@"amaz"]
-            || [content.url containsString:@"i2.wp.com"]
             || [[content.url lastPathComponent] containsString:@".php"]
             || [[content.url lastPathComponent] containsString:@".js"])
         )) {
@@ -1764,7 +1815,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 NSMutableAttributedString *mattrs = para.attributedText.mutableCopy;
                 
-                NSDictionary *textAttributes = @{NSFontAttributeName: para.font};
+                NSDictionary *textAttributes = @{NSFontAttributeName: para.font ?: [UIFont preferredFontForTextStyle:UIFontTextStyleBody]};
                 
                 NSAttributedString * attrs = [[NSAttributedString alloc] initWithString:attributes[@"alt"] attributes:textAttributes];
                 
@@ -1820,6 +1871,14 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     // make the imageView tappable
     if (link != nil && [link isBlank] == NO) {
         imageView.link = [NSURL URLWithString:link];
+    }
+    
+    if (self.isiOSIconGallery) {
+        
+        imageView.layer.cornerRadius = frame.size.width * (180.f / 1024.f);
+        imageView.layer.cornerCurve = kCACornerCurveContinuous;
+        imageView.layer.masksToBounds = YES;
+        
     }
     
     _last = imageView;
@@ -1947,6 +2006,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     Gallery *gallery = [[Gallery alloc] initWithNib];
     gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
     gallery.maxScreenHeight = self.view.bounds.size.height - (self.view.safeAreaInsets.top + self.additionalSafeAreaInsets.bottom) - 12.f - 38.f;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+    gallery.userInteractionEnabled = YES;
+    
+    [gallery addGestureRecognizer:tap];
     
     [self.stackView addArrangedSubview:gallery];
     // set images after adding it to the superview since -[Gallery setImages:] triggers layout.
@@ -2153,7 +2217,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
     playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
     playerController.updatesNowPlayingInfoCenter = NO;
-    
+    playerController.showsTimecodes = YES;
+    playerController.allowsPictureInPicturePlayback = YES;
+        
     [self addChildViewController:playerController];
     
     UIView *playerView = playerController.view;
@@ -2172,6 +2238,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.ytExtractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
         
         if (videoInfo) {
+            
             YTPlayer *player = [YTPlayer playerWithURL:videoInfo.url];
             playerController.player = player;
             
@@ -2321,8 +2388,16 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     AVPlayerViewController *playerController = [[AVPlayerViewController alloc] init];
-    playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:(content.url ?: content.content)]];
     playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    playerController.updatesNowPlayingInfoCenter = NO;
+    playerController.showsTimecodes = YES;
+    playerController.allowsPictureInPicturePlayback = YES;
+    
+#if TARGET_OS_MACCATALYST
+    playerController.showsPlaybackControls = NO;
+#endif
+    
+    playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:(content.url ?: content.content)]];
     
     [self addChildViewController:playerController];
     
@@ -2868,12 +2943,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if ([link containsString:@"/feed"]) {
         
         // handle internally
-        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", link);
+        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", [link encodeURIComponents]);
         
     }
     else {
-        formatted = formattedURL(@"yeti://external?link=%@", link);
+        formatted = formattedURL(@"yeti://external?link=%@", [link encodeURIComponents]);
     }
+    
+#if TARGET_OS_MACCATALYST
+    
+    if (_shiftPressedBeforeClickingURL) {
+        
+        formatted = formattedURL(@"%@&shift=1", formatted.absoluteString);
+        
+    }
+    
+#endif
     
     runOnMainQueueWithoutDeadlocking(^{
         
@@ -2908,6 +2993,83 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSUInteger index = [layoutManager characterIndexForPoint:point inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:&fractionalDistance];
     
     return index;
+    
+}
+
+#pragma mark - Presses
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+    
+    UIPress *press = presses.anyObject;
+    
+    if (press.key.keyCode == UIKeyboardHIDUsageKeyboardEscape) {
+        
+        if (press.responder != nil && [press.responder isKindOfClass:NSClassFromString(@"UISearchBarTextField")]) {
+            
+            [self didTapSearchDone];
+            
+        }
+        
+    }
+#if TARGET_OS_MACCATALYST
+    else if (press.key.modifierFlags == UIKeyModifierShift && _shiftPressedBeforeClickingURL == NO) {
+        
+        self->_shiftPressedBeforeClickingURL = YES;
+        
+        /*
+         * Reset this value back to NO so the next event can be reliably detected.
+         */
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            self->_shiftPressedBeforeClickingURL = NO;
+            
+        });
+        
+    }
+#endif
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardDownArrow) {
+        
+        if (press.key.modifierFlags == UIKeyModifierShift) {
+            [self scrollToEnd];
+        }
+        else {
+            [self scrollDown];
+        }
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardUpArrow) {
+        
+        if (press.key.modifierFlags == UIKeyModifierShift) {
+            [self scrollToTop];
+        }
+        else {
+            [self scrollUp];
+        }
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardLeftArrow) {
+        [self navLeft];
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardRightArrow) {
+        [self navRight];
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardJ && self.providerDelegate != nil) {
+        
+        [self didTapPreviousArticle:nil];
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardK && self.providerDelegate != nil) {
+        
+        [self didTapNextArticle:nil];
+        
+    }
+    else {
+        
+        NSLogDebug(@"Presses: %@\n Events:%@", presses, event);
+        
+        [super pressesBegan:presses withEvent:event];
+        
+    }
     
 }
 

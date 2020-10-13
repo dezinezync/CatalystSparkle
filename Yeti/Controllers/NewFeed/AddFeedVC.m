@@ -8,7 +8,6 @@
 
 #import "AddFeedVC.h"
 #import "FeedsSearchResults.h"
-#import "YetiThemeKit.h"
 #import "FeedsManager.h"
 #import "AddFeedCell.h"
 #import "FeedVC.h"
@@ -137,8 +136,46 @@
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
-    // https://stackoverflow.com/a/28527114/1387258
-    [self.navigationItem.searchController setActive:YES];
+    
+    UIPasteboardDetectionPattern pattern = UIPasteboardDetectionPatternProbableWebURL;
+    
+    [UIPasteboard.generalPasteboard detectPatternsForPatterns:[NSSet setWithObject:pattern] completionHandler:^(NSSet<UIPasteboardDetectionPattern> * _Nullable patterns, NSError * _Nullable error) {
+       
+        if (error != nil) {
+            
+            NSLogDebug(@"Error occurred detecting pasterboard pattern: %@", error.localizedDescription);
+            return;
+            
+        }
+        
+        if (patterns.count == 0) {
+            // https://stackoverflow.com/a/28527114/1387258
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationItem.searchController setActive:YES];
+            });
+            return;
+        }
+        
+        NSURL *url = [UIPasteboard.generalPasteboard URL];
+        
+        if (url == nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationItem.searchController setActive:YES];
+            });
+            return;
+        }
+        
+    // https://blog.elytra.app/feed
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+            
+            searchBar.searchTextField.text = url.absoluteString;
+            [self searchBarTextDidEndEditing:searchBar];
+            
+        });
+        
+    }];
     
 }
 
@@ -242,7 +279,8 @@
     Feed * feed = [self.DS itemIdentifierForIndexPath:indexPath];
     
     FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
-    vc.exploring = YES;
+    vc.exploring = !self.isFromAddFeed;
+    vc.isFromAddFeed = self.isFromAddFeed;
     [self.navigationController pushViewController:vc animated:YES];
     
 }
@@ -279,6 +317,7 @@
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Close" style:UIBarButtonItemStylePlain target:self action:@selector(didTapClose:)];
     
     self.navigationItem.rightBarButtonItem = cancelButton;
+    
     self.cancelButton = self.navigationItem.rightBarButtonItem;
     
     [self setupRecommendationsView];
@@ -290,6 +329,7 @@
     RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
     
     vc.view.frame = self.view.bounds;
+    vc.isFromAddFeed = self.isFromAddFeed;
     
     [self.view addSubview:vc.view];
     [self addChildViewController:vc];
@@ -624,7 +664,17 @@
         return;
     }
     
+#if TARGET_OS_MACCATALYST
+    
+    UIScene *scene = self.view.window.windowScene;
+    
+    [UIApplication.sharedApplication requestSceneSessionDestruction:scene.session options:nil errorHandler:nil];
+    
+#else
+    
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+#endif
     
 }
 

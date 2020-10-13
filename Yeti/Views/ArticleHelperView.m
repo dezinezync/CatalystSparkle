@@ -27,6 +27,11 @@
         self.startOfArticle.accessibilityValue = @"Scroll to beginning of the article";
         self.endOfArticle.accessibilityValue = @"Scroll to end of the article";
         
+        self.previousArticleButton.accessibilityLabel = @"Previous Article";
+        self.nextArticleButton.accessibilityLabel = @"Next Article";
+        self.startOfArticle.accessibilityLabel = @"Scroll to top";
+        self.endOfArticle.accessibilityLabel = @"Scroll to end";
+        
         self.layer.cornerRadius = 22.f;
     }
     

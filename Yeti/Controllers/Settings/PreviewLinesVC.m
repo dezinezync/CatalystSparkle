@@ -8,7 +8,6 @@
 
 #import "PreviewLinesVC.h"
 #import "YetiConstants.h"
-#import "YetiThemeKit.h"
 #import "PrefsManager.h"
 
 #define reuseIdentifer @"previewLinesCell"
@@ -30,6 +29,18 @@
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:reuseIdentifer];
     
     self.tableView.tableFooterView = [UIView new];
+    
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
+    
 }
 
 #pragma mark - Table view data source
@@ -64,18 +75,16 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
-    YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
+    cell.textLabel.textColor = UIColor.labelColor;
+    cell.detailTextLabel.textColor = UIColor.secondaryLabelColor;
     
-    cell.textLabel.textColor = theme.titleColor;
-    cell.detailTextLabel.textColor = theme.captionColor;
-    
-    cell.backgroundColor = theme.backgroundColor;
+    cell.backgroundColor = UIColor.systemBackgroundColor;
     
     if (cell.selectedBackgroundView == nil) {
         cell.selectedBackgroundView = [UIView new];
     }
     
-    cell.selectedBackgroundView.backgroundColor = [[theme tintColor] colorWithAlphaComponent:0.3f];
+    cell.selectedBackgroundView.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.3f];
     
     if (cell.accessoryView != nil) {
         cell.accessoryView = nil;

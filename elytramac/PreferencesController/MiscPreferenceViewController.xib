@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="MiscPrefereceViewController">
+            <connections>
+                <outlet property="twitterAppsMenu" destination="E18-j4-1QY" id="YyJ-jI-V5M"/>
+                <outlet property="twitterAppsPopup" destination="e1i-VK-LBR" id="rcT-ki-ZhH"/>
+                <outlet property="view" destination="c22-O7-iKe" id="ZQe-UH-LCX"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="510" height="255"/>
+            <subviews>
+                <gridView xPlacement="center" yPlacement="center" rowAlignment="none" rowSpacing="8" columnSpacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="lkV-Y2-eOl">
+                    <rect key="frame" x="30" y="20" width="450" height="257"/>
+                    <constraints>
+                        <constraint firstItem="rtd-pr-fG2" firstAttribute="top" secondItem="Nai-kl-1gv" secondAttribute="bottom" constant="8" symbolic="YES" id="1My-g8-Pfx"/>
+                        <constraint firstAttribute="width" constant="450" id="5HG-su-XZq"/>
+                        <constraint firstItem="sPp-zA-2Yl" firstAttribute="top" secondItem="BTu-Ui-Dph" secondAttribute="bottom" constant="21" id="Kib-fR-Kex"/>
+                        <constraint firstItem="Nai-kl-1gv" firstAttribute="top" secondItem="sPp-zA-2Yl" secondAttribute="bottom" constant="18" id="Siq-6R-FMK"/>
+                        <constraint firstItem="feQ-SQ-E5a" firstAttribute="top" secondItem="w4m-4G-wq8" secondAttribute="bottom" constant="8" symbolic="YES" id="bwx-Nc-wZs"/>
+                        <constraint firstItem="Epa-Ba-1Ny" firstAttribute="top" secondItem="feQ-SQ-E5a" secondAttribute="bottom" constant="12" id="skX-jh-qyC"/>
+                    </constraints>
+                    <rows>
+                        <gridRow id="3IY-4O-236"/>
+                        <gridRow id="uhg-cZ-aHf"/>
+                        <gridRow id="JBc-xc-6nz"/>
+                        <gridRow id="ShQ-XS-eYl"/>
+                        <gridRow yPlacement="center" height="20" id="vTA-j6-wyj"/>
+                        <gridRow id="vzh-lB-BGH"/>
+                        <gridRow yPlacement="top" id="Vkn-wS-gZk"/>
+                        <gridRow id="LB3-wU-JJy"/>
+                        <gridRow id="aI0-B0-9ZW"/>
+                        <gridRow id="mes-Bw-N40"/>
+                    </rows>
+                    <columns>
+                        <gridColumn xPlacement="trailing" id="GGj-JC-w4E"/>
+                        <gridColumn xPlacement="leading" id="cs9-fm-l2F"/>
+                    </columns>
+                    <gridCells>
+                        <gridCell row="3IY-4O-236" column="GGj-JC-w4E" id="TlX-Ql-ANf">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FRW-wq-hm9">
+                                <rect key="frame" x="18" y="241" width="45" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Feeds:" id="dz6-mG-uAo">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="3IY-4O-236" column="cs9-fm-l2F" id="qb7-CM-ISz">
+                            <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w4m-4G-wq8">
+                                <rect key="frame" x="69" y="240" width="162" height="18"/>
+                                <buttonCell key="cell" type="check" title="Show unread counters" bezelStyle="regularSquare" imagePosition="left" inset="2" id="GuE-aX-Lbf">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="value" keyPath="values.MacShowUnreadCounters" id="tVQ-UJ-zKk"/>
+                                </connections>
+                            </button>
+                        </gridCell>
+                        <gridCell row="uhg-cZ-aHf" column="GGj-JC-w4E" id="zHp-BW-Zlq"/>
+                        <gridCell row="uhg-cZ-aHf" column="cs9-fm-l2F" id="cGL-4B-GxJ">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="feQ-SQ-E5a">
+                                <rect key="frame" x="69" y="205" width="383" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="28" id="XR5-8r-9Ix"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" title="Set whether you want to see the number of unread articles in each section." id="IJw-2Q-h76">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="JBc-xc-6nz" column="GGj-JC-w4E" id="k5Y-5a-8Qi"/>
+                        <gridCell row="JBc-xc-6nz" column="cs9-fm-l2F" id="a5n-bz-Wwp">
+                            <button key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Epa-Ba-1Ny">
+                                <rect key="frame" x="69" y="176" width="125" height="18"/>
+                                <buttonCell key="cell" type="check" title="Hide Bookmarks" bezelStyle="regularSquare" imagePosition="left" inset="2" id="okf-4v-bPZ">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="value" keyPath="values.MacHideBookmarksTab" id="6ik-NI-DC6"/>
+                                </connections>
+                            </button>
+                        </gridCell>
+                        <gridCell row="ShQ-XS-eYl" column="GGj-JC-w4E" id="lY7-R6-osf"/>
+                        <gridCell row="ShQ-XS-eYl" column="cs9-fm-l2F" id="mkz-vt-8VM">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="BTu-Ui-Dph">
+                                <rect key="frame" x="69" y="148" width="323" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="You can optionally hide the Bookmarks Tab from the Sidebar." id="Bfs-yn-8VD">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="vTA-j6-wyj" column="GGj-JC-w4E" headOfMergedCell="lWs-Ou-naD" xPlacement="fill" id="lWs-Ou-naD">
+                            <box key="contentView" horizontalHuggingPriority="247" verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sPp-zA-2Yl">
+                                <rect key="frame" x="0.0" y="125" width="450" height="4"/>
+                            </box>
+                        </gridCell>
+                        <gridCell row="vTA-j6-wyj" column="cs9-fm-l2F" headOfMergedCell="lWs-Ou-naD" id="6rH-Sa-Ggo"/>
+                        <gridCell row="vzh-lB-BGH" column="GGj-JC-w4E" id="G8A-0S-xHB">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OIF-KF-O5m">
+                                <rect key="frame" x="-2" y="91" width="65" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Summary:" id="7aF-tg-6Qj">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="vzh-lB-BGH" column="cs9-fm-l2F" id="oqN-sN-jXV">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nai-kl-1gv">
+                                <rect key="frame" x="68" y="85" width="48" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="0" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="7PW-Mt-7mU" id="vJB-QA-Dl9">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="Ro2-lH-xEw">
+                                        <items>
+                                            <menuItem title="0" state="on" id="7PW-Mt-7mU">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1" id="iRu-wP-h7p">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="2" id="niF-WV-dIY">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="3" id="5U1-iY-9OE">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="4" id="2Rk-sl-lEh">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="selectedValue" keyPath="values.MacSummaryPreviewLines" id="OkU-Sx-CQS"/>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="Vkn-wS-gZk" column="GGj-JC-w4E" id="jrh-3C-izu"/>
+                        <gridCell row="Vkn-wS-gZk" column="cs9-fm-l2F" id="52E-jw-bp4">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="rtd-pr-fG2">
+                                <rect key="frame" x="69" y="67" width="356" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="Number of summary lines to show when viewing the list of Articles." id="Z13-dJ-JBv">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="LB3-wU-JJy" column="GGj-JC-w4E" headOfMergedCell="Mrh-i4-kIM" xPlacement="fill" id="Mrh-i4-kIM">
+                            <box key="contentView" horizontalHuggingPriority="247" verticalHuggingPriority="750" ambiguous="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="hFi-t6-uo0">
+                                <rect key="frame" x="0.0" y="56" width="450" height="5"/>
+                            </box>
+                        </gridCell>
+                        <gridCell row="LB3-wU-JJy" column="cs9-fm-l2F" headOfMergedCell="Mrh-i4-kIM" id="ndk-FH-dO9"/>
+                        <gridCell row="aI0-B0-9ZW" column="GGj-JC-w4E" id="rQy-j2-iSm">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c12-6H-wE6">
+                                <rect key="frame" x="24" y="32" width="39" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Apps:" id="Sur-OI-QaO">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="aI0-B0-9ZW" column="cs9-fm-l2F" id="ITG-eD-8bj">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e1i-VK-LBR">
+                                <rect key="frame" x="68" y="26" width="39" height="25"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Zx-mW-zXH">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="E18-j4-1QY"/>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="-2" name="selectedValue" keyPath="twitterApp" id="kDP-A1-QN3"/>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="mes-Bw-N40" column="GGj-JC-w4E" id="1VS-ja-vZJ"/>
+                        <gridCell row="mes-Bw-N40" column="cs9-fm-l2F" id="FCg-Xb-4YF">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X2j-4m-LZ3">
+                                <rect key="frame" x="69" y="4" width="347" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="Your preferred Twitter app. Clicking on a tweet will open this app." id="zWB-ku-Zaf">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                    </gridCells>
+                </gridView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="c22-O7-iKe" secondAttribute="leading" priority="750" constant="30" id="F1e-Dt-RW9"/>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" id="N7H-hp-bhb"/>
+                <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="lkV-Y2-eOl" secondAttribute="trailing" priority="750" constant="30" id="Ses-fe-Clv"/>
+                <constraint firstAttribute="bottom" secondItem="lkV-Y2-eOl" secondAttribute="bottom" priority="750" constant="20" id="bsa-Ju-YOT"/>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="rdL-1S-HXy"/>
+            </constraints>
+            <point key="canvasLocation" x="112" y="255"/>
+        </customView>
+        <userDefaultsController representsSharedInstance="YES" id="qiY-HW-yGh"/>
+    </objects>
+</document>

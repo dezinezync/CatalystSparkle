@@ -1,51 +1,81 @@
-# v2.0.2
+# v2.1.0
 
-## Build 38
+## Build 57
 
-- Fixes an issue with sorting of Feeds. Feeds which are not inside any folder are now correctly sorted in ascending alphabetical order. Thank you Jason, for pointing this out.  
+- Fixed an issue with the Today Count always reporting as 1. 
 
-- iPads in Portrait mode now correctly hide the sidebar upon tapping an article. 
+- Fixed a rare crash that would occur in TF builds if your account had an expired subscription. 
 
-## Build 35
+## Build 55
 
-- Wordpress blogs convert emojis to an image with the emoji as the alt text on the image. Elytra will now skip rendering the image and appropriately render the emoji used by the author in the same context as the original blog post. This prevents the paragraph breaking on to the next line to accomodate the custom emoji image Wordpress inserts.  
+- Potentially corrected rotation behaviour for iPads. 
 
-- Minor fixes to regressions introduced in build 34.
+## Build 54
 
-## Build 34
+- Fixed an issue where the unread/today counts would change when reading an article from a feed you're not subscribed to.
 
-- Adds a new, simpler flow for starting the Free Trial. 
+- Fixed an issue where the selected feed would remain selected after opening recommendations. 
 
-- Fixed an issue where the App would show a "No Subscription Found" error after resetting or deactivating your account. 
+- If you have a URL copied, the app will automatically detect it when attempting to add a new feed. 
 
-- Fixed an issue where an interrupted on-boarding would prevent you from using the app without purchasing a subscription. This now ensures you are always able to start your free trial if your onboarding was interrupted. 
+- The sidebar items are now correctly highlighted. They no longer use the tint colour when selected. 
 
-- If you're currently enrolled in the Free Trial, the subscriptions interface will now correctly indicate that. 
+- Search in the sidebar now uses Alpha sorting like the rest of the view. 
 
-# Build 32
+- Multiple improvements throughout the app for Voice Control (VC) and Voice Over (VO) a11y options.   
+    - The app now correctly shows titles for icon only buttons when VC is activated. 
+    - The app now correctly updates states for icon only buttons when VC is activated. 
+    - Simplified Article labels for VC to make it easier to select articles. They will now be presented as "Article 1", "Article 2" and so on... Previously, the article title's was used which could be difficult to command with long titles. 
+    - VO will now read the article index followed by its title. 
 
-- Fixes a rotation bug on iPads. 
+## Build 53
 
-- Fixes a article scaling bug on iPads when toggling the sidebar. 
+- Improves formatting for CJK Text. CJK text should no longer appear as one big blob of text. It may still happen if the source provides it that way. 
 
-- Changing the selected tint color now applies correctly throughout the app. 
+- Fixes an issue with the Unreads widget not updating in a timely manner. 
 
-- Fixed the app not loading the selected tint color on launch. 
+- Unreads Widget intents now work as expected. Added additional option for loading cover images. 
 
-- Fixed an issue when searching for a feed by title or keywords would dismiss the modal. 
+## Build 52
 
-- Fixed an issue with pagination when searching for feeds in the Add New Feed interface. 
+- Use standard path for DB. Using shared container crashes the app in the background. 
 
-# v2.0.1
+## Build 51
 
-# Build 31
+- The article viewer will now draw horizontal rules. 
 
-- Various fixes for adding new feeds.
+- The app now saves restoration data properly so launching the app from a saved state is now faster.
 
-- Fixed applying selected tint colors globally. 
+- Fixes an issue where images in the article viewer would fail to load (network issues, invalid URL or for whatever other reason) and would show a large placeholder image. 
 
-- Deleting a feed (which is inside a folder) no longer collapses the folder. 
+## Build 50
 
-- Fixes a crash on opening the Notifications Interface if you have 0 subscriptions. 
+- During first launch, if your account already has a subscription, the trial interface is no longer shown. You are directly taken to the app. 
 
-- Fixes a crash on adding a feed from the Share Extension
+- Twitter apps selection now works again when tapping tweets.
+
+- Matched the keyboard navigation to the macOS App. 
+
+## Build 49
+
+- Added support for dragging and dropping articles into the Unread or Bookmark rows in the Sidebar to perform respective actions. 
+
+- Added support for dragging feeds to external applications. This action will drag with the RSS Feed URL.
+
+## Build 47
+
+- Updated images for GIF loading and playback controls.
+
+- Tapping a gallery image now opens it in full view.
+
+- Images in Widgets should now load reliably. I've discarded the older method of loading images in favour of a more standard approach as recommended by Apple Engineering. 
+
+## Build 45
+
+### Fixes
+
+- Fixed the app using a semi-bold font for headings on iOS 14.0.1 and higher. 
+
+- Image Loading options now correctly apply to favicons inside the Articles List Interface. 
+
+- Title Font preference now correctly applies to headings inside the article as well. 

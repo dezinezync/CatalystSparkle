@@ -8,7 +8,6 @@
 
 #import "ArticleAuthorView.h"
 #import "TypeFactory.h"
-#import "YetiThemeKit.h"
 #import "YetiConstants.h"
 
 @interface ArticleAuthorView () {
@@ -56,6 +55,8 @@
         [self.mercurialButton setImage:image forState:UIControlStateNormal];
         
         self.mercurialButton.translatesAutoresizingMaskIntoConstraints = NO;
+        self.mercurialButton.accessibilityLabel = @"Load Full Text";
+        self.mercurialButton.accessibilityValue = @"Load Full Text";
         
         if (@available(iOS 13.4, *)) {
             self.mercurialButton.pointerInteractionEnabled = YES;
@@ -97,6 +98,15 @@
     [self.mercurialButton setImage:image forState:UIControlStateNormal];
     
     self.mercurialButton.tintColor = mercurialed ? self.tintColor : UIColor.systemGrayColor;
+    
+    if (mercurialed) {
+        self.mercurialButton.accessibilityLabel = @"Full Text Loaded";
+        self.mercurialButton.accessibilityValue = @"Full Text Loaded";
+    }
+    else {
+        self.mercurialButton.accessibilityLabel = @"Load Full Text";
+        self.mercurialButton.accessibilityValue = @"Load Full Text";
+    }
     
     [self.mercurialButton setNeedsDisplay];
     

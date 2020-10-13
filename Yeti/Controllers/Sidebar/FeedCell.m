@@ -178,21 +178,25 @@
 - (void)updateConfigurationUsingState:(UICellConfigurationState *)state {
     
     UIListContentConfiguration *content = (id)[self contentConfiguration];
+    UIBackgroundConfiguration *background = [[UIBackgroundConfiguration listSidebarCellConfiguration] updatedConfigurationForState:state];
     
     if (state.isSelected) {
         
         content.textProperties.color = UIColor.labelColor;
         content.secondaryTextProperties.color = self.tintColor;
+        background.backgroundColor = UIColor.systemFillColor;
         
     }
     else {
         
         content.textProperties.color = UIColor.labelColor;
         content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
+        background.backgroundColor = UIColor.clearColor;
         
     }
     
     self.contentConfiguration = content;
+    self.backgroundConfiguration = background;
     
 }
 

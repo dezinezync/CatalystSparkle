@@ -24,29 +24,33 @@
     
     content.prefersSideBySideTextAndSecondaryText = YES;
     
-    if (indexPath.item == 0) {
+    if (SharedPrefs.showUnreadCounts) {
         
-        if (MyFeedsManager.totalUnread > 0) {
-            content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
-        }
-        
-    }
-    
-    if (indexPath.item == 1) {
-        
-        if (MyFeedsManager.totalToday > 0) {
-            content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
-        }
-        
-    }
-    
-    if (indexPath.item == 2) {
-        
-        BookmarksManager *manager = self.mainCoordinator.bookmarksManager;
-        
-        if (manager.bookmarksCount > 0) {
+        if (indexPath.item == 0) {
             
-            content.secondaryText = [@(manager.bookmarksCount) stringValue];
+            if (MyFeedsManager.totalUnread > 0) {
+                content.secondaryText = [@(MyFeedsManager.totalUnread) stringValue];
+            }
+            
+        }
+        
+        if (indexPath.item == 1) {
+            
+            if (MyFeedsManager.totalToday > 0) {
+                content.secondaryText = [@(MyFeedsManager.totalToday) stringValue];
+            }
+            
+        }
+        
+        if (indexPath.item == 2) {
+            
+            BookmarksManager *manager = self.mainCoordinator.bookmarksManager;
+            
+            if (manager.bookmarksCount > 0) {
+                
+                content.secondaryText = [@(manager.bookmarksCount) stringValue];
+                
+            }
             
         }
         
@@ -64,20 +68,25 @@
     
     UIListContentConfiguration *content = (id)[self contentConfiguration];
     
+    UIBackgroundConfiguration *background = [[UIBackgroundConfiguration listSidebarCellConfiguration] updatedConfigurationForState:state];
+    
     if (state.isSelected) {
         
         content.textProperties.color = UIColor.labelColor;
         content.secondaryTextProperties.color = self.tintColor;
+        background.backgroundColor = UIColor.systemFillColor;
         
     }
     else {
         
         content.textProperties.color = UIColor.labelColor;
         content.secondaryTextProperties.color = UIColor.secondaryLabelColor;
+        background.backgroundColor = UIColor.clearColor;
         
     }
     
     self.contentConfiguration = content;
+    self.backgroundConfiguration = background;
     
 }
 

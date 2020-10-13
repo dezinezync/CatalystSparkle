@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SidebarVC : UICollectionViewController <BarPositioning> {
     // Used by the move folders delegate
     BOOL _presentingKnown;
+    
+    CGFloat _macSearchBarWidth;
 }
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;

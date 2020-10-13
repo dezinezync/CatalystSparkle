@@ -45,6 +45,8 @@ NSArray <NSString *> * _defaultsKeys;
 @property (nonatomic, copy, readwrite) NSString *deviceID;
 @property (nonatomic, strong) NSString *appFullVersion, *appMajorVersion;
 
+@property (nonatomic, strong) NSTimer *widgetCountersUpdateTimer;
+
 @end
 
 @implementation FeedsManager
@@ -2752,11 +2754,17 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
-        if (totalUnread == NSUIntegerMax) {
+        if (totalUnread >= NSUIntegerMax) {
             self->_totalUnread = 0;
         }
         else {
             self->_totalUnread = MAX(totalUnread, 0);
+        }
+        
+        if (SharedPrefs.badgeAppIcon) {
+            
+            UIApplication.sharedApplication.applicationIconBadgeNumber = self.totalUnread;
+            
         }
         
         [NSNotificationCenter.defaultCenter postNotificationName:UnreadCountDidUpdate object:self userInfo:nil];
@@ -2773,7 +2781,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
-        if (totalToday == NSUIntegerMax) {
+        if (totalToday >= NSUIntegerMax) {
             self->_totalToday = 0;
         }
         else {
@@ -2870,54 +2878,26 @@ NSArray <NSString *> * _defaultsKeys;
     
     @synchronized (self) {
         
+#if TARGET_OS_MACCATALYST
+#ifndef DEBUG
         [self setupSubscriptionNotification];
+#endif
+#endif
         
-        if (self.subscription == nil || self.subscription.expiry == nil) {
-            
-            [defaults setValue:@"No Subscription" forKey:@"subscriptionString"];
-            [defaults synchronize];
-            
-        }
-        else {
-            
-            if (self->_subscription
-                && [[(StoreKeychainPersistence *)[RMStore.defaultStore transactionPersistor] purchasedProductIdentifiers] containsObject:IAPLifetime]) {
-                
-                self->_subscription.lifetime = YES;
-                
-                [defaults setValue:@"Life Time Subscription" forKey:@"subscriptionString"];
-                
-            }
-            
-            NSString *expiry = [NSDateFormatter localizedStringFromDate:self->_subscription.expiry dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterShortStyle];
-            
-            if (self->_subscription && [self->_subscription hasExpired] && [self->_subscription preAppstore] == NO) {
-                
-                NSString *expiryString = [NSString stringWithFormat:@"Expired on %@", expiry];
-                
-                [defaults setValue:expiryString forKey:@"subscriptionString"];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[NSNotificationCenter defaultCenter] postNotificationName:YTSubscriptionHasExpiredOrIsInvalid object:self->_subscription];
-                });
-            }
-            else {
-                
-                NSString *expiryString = [NSString stringWithFormat:@"Valid up to %@", expiry];
-                
-                [defaults setValue:expiryString forKey:@"subscriptionString"];
-                
-            }
-            
-            [defaults synchronize];
-            
-        }
-
+        [defaults setValue:user.uuid forKey:@"accountID"];
+        [defaults synchronize];
+        
     }
     
 }
 
 #pragma mark - Getters
+
+- (NSUInteger)totalToday {
+    
+    return _totalToday ?: 0;
+    
+}
 
 - (NSString *)appFullVersion {
     
@@ -3195,7 +3175,8 @@ NSArray <NSString *> * _defaultsKeys;
         
     });
     
-    if (self.user.subscription == nil || self.user.subscription.expiry == nil) {
+    if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
+        || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
          
@@ -3232,19 +3213,19 @@ NSArray <NSString *> * _defaultsKeys;
         }];
         
     }
-    else {
-        
-        if ([self.user.subscription hasExpired] == YES) {
-            
-            self.user.subscription = nil;
-            
-            [MyDBManager setUser:self.user];
-            
-            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
-            
-        }
-        
-    }
+//    else {
+//
+//        if ([self.user.subscription hasExpired] == YES) {
+//
+//            self.user.subscription = nil;
+//
+//            [MyDBManager setUser:self.user];
+//
+//            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
+//
+//        }
+//
+//    }
     
 }
 
@@ -3293,8 +3274,12 @@ NSArray <NSString *> * _defaultsKeys;
         if (isTrial) {
             text = @"Your Trail period ends tomorrow. Subscribe today to keep reading your RSS Feeds.";
         }
-        else {
-            text = @"Your Elytra Subscription expires tomorrow. Subscribe today to keep reading your RSS Feeds.";
+//        else {
+//            text = @"Your Elytra Subscription expires tomorrow. Subscribe today to keep reading your RSS Feeds.";
+//        }
+        
+        if (text == nil) {
+            return;
         }
         
         NSDateComponents *triggerDate = [[NSCalendar currentCalendar]
@@ -3545,11 +3530,9 @@ NSArray <NSString *> * _defaultsKeys;
         
         NSDictionary *userObj = [responseObject objectForKey:@"user"];
         
-//        BOOL appleID = [[user valueForKey:@"appleid"] boolValue];
-        
         NSNumber * userID = [userObj valueForKey:@"id"];
-        
-        User *user = [User new];
+         
+        User *user = [User instanceFromDictionary:userObj];
         user.userID = userID;
         user.uuid = uuid;
         
@@ -3884,19 +3867,31 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)updateSharedUnreadCounters {
     
-    NSMutableDictionary *dict = @{}.mutableCopy;
+    if (self.widgetCountersUpdateTimer != nil) {
+        
+        [self.widgetCountersUpdateTimer invalidate];
+        
+        self.widgetCountersUpdateTimer = nil;
+        
+    }
     
-    dict[@"unread"] = @(self.totalUnread ?: 0);
-    
-    dict[@"today"] = @(self.totalToday ?: 0);
-    
-    dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
-    
-    dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
-    
-    [self writeToSharedFile:@"counters.json" data:dict];
-    
-    [WidgetManager reloadTimelineWithName:@"CountersWidget"];
+    self.widgetCountersUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:10 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        
+        NSMutableDictionary *dict = @{}.mutableCopy;
+        
+        dict[@"unread"] = @(self.totalUnread ?: 0);
+        
+        dict[@"today"] = @(self.totalToday ?: 0);
+        
+        dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
+        
+        dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
+        
+        [self writeToSharedFile:@"counters.json" data:dict];
+        
+        [WidgetManager reloadTimelineWithName:@"CountersWidget"];
+        
+    }];
     
 }
 

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17503.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17503.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ArticlePrefereceViewController">
+            <connections>
+                <outlet property="view" destination="c22-O7-iKe" id="ZQe-UH-LCX"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="510" height="330"/>
+            <subviews>
+                <gridView xPlacement="center" yPlacement="center" rowAlignment="none" rowSpacing="8" columnSpacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="lkV-Y2-eOl">
+                    <rect key="frame" x="30" y="20" width="450" height="290"/>
+                    <constraints>
+                        <constraint firstItem="atK-Yd-jjj" firstAttribute="top" secondItem="c2E-pX-Fuo" secondAttribute="bottom" constant="8" symbolic="YES" id="2mh-ow-3W7"/>
+                        <constraint firstAttribute="width" constant="450" id="5HG-su-XZq"/>
+                        <constraint firstAttribute="bottom" secondItem="viJ-PJ-JhR" secondAttribute="bottom" constant="57" id="CGv-vp-X8i"/>
+                        <constraint firstItem="Ocu-et-vym" firstAttribute="top" secondItem="atK-Yd-jjj" secondAttribute="bottom" constant="12" id="M8v-JZ-EnA"/>
+                        <constraint firstItem="que-S8-zao" firstAttribute="top" secondItem="1Q7-xA-lrj" secondAttribute="bottom" constant="17" id="OOq-yE-4cL"/>
+                        <constraint firstItem="Jw1-Dl-tWO" firstAttribute="top" secondItem="Vt6-jC-8Jo" secondAttribute="bottom" constant="38" id="PfF-r4-QoE"/>
+                        <constraint firstItem="c2E-pX-Fuo" firstAttribute="top" secondItem="joC-01-wWC" secondAttribute="bottom" constant="12" id="fBP-8y-iI9"/>
+                        <constraint firstItem="0at-6J-tiq" firstAttribute="top" secondItem="Jw1-Dl-tWO" secondAttribute="bottom" constant="49" id="pWW-gB-DFX"/>
+                    </constraints>
+                    <rows>
+                        <gridRow id="ukr-az-gqc"/>
+                        <gridRow yPlacement="top" id="gSl-iE-cwq"/>
+                        <gridRow id="cUh-G0-ge8"/>
+                        <gridRow id="v65-gn-eJw"/>
+                        <gridRow yPlacement="center" height="20" id="Vxw-AW-fH6"/>
+                        <gridRow id="3rI-5v-nj2"/>
+                        <gridRow id="ShQ-XS-eYl"/>
+                        <gridRow id="ozI-td-Krm"/>
+                        <gridRow id="wcY-5F-oj0"/>
+                    </rows>
+                    <columns>
+                        <gridColumn xPlacement="trailing" id="GGj-JC-w4E"/>
+                        <gridColumn xPlacement="leading" id="cs9-fm-l2F"/>
+                    </columns>
+                    <gridCells>
+                        <gridCell row="ukr-az-gqc" column="GGj-JC-w4E" id="sRb-hw-f4U">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-jC-8Jo">
+                                <rect key="frame" x="-2" y="268" width="101" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Paragraph Font:" id="uKy-ok-dDi">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="ukr-az-gqc" column="cs9-fm-l2F" id="jPa-TM-cRP">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="joC-01-wWC">
+                                <rect key="frame" x="104" y="262" width="131" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="System" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="DqP-Jt-Da4" id="3zA-ur-6jc">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="uDz-dn-b9S">
+                                        <items>
+                                            <menuItem title="System" state="on" id="DqP-Jt-Da4">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Georgia" id="b7w-l9-r5Y">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Helvetica Neue" id="vCf-IF-9rK">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Merriweather" id="spZ-Dg-mUL">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Plex Serif" id="fGb-iU-eL4">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Plex Sans" id="zSJ-k1-G3m">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Spectral" id="ivA-Fh-11u">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="OpenDyslexic" id="KCb-SR-bMA">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="selectedValue" keyPath="values.articleFontReadable" id="k7e-H3-FRh">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="gSl-iE-cwq" column="GGj-JC-w4E" id="IXl-mV-waK"/>
+                        <gridCell row="gSl-iE-cwq" column="cs9-fm-l2F" id="yFx-k0-cPt">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="c2E-pX-Fuo">
+                                <rect key="frame" x="105" y="240" width="314" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="The font to use for drawing the paragraph text in an article." id="D9h-tf-tnk">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="cUh-G0-ge8" column="GGj-JC-w4E" id="fgk-Rg-FTp">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jw1-Dl-tWO">
+                                <rect key="frame" x="10" y="214" width="89" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Heading Font:" id="UzV-iG-vcf">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="cUh-G0-ge8" column="cs9-fm-l2F" id="8vd-Su-tov">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="atK-Yd-jjj">
+                                <rect key="frame" x="104" y="208" width="131" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="System" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ed8-4Z-Krh" id="iVk-mC-ELy">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="nNp-4U-CTU">
+                                        <items>
+                                            <menuItem title="System" state="on" id="ed8-4Z-Krh">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Georgia" id="Fqf-xb-sHP">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Helvetica Neue" id="eQd-Kd-aNc">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Merriweather" id="Slf-57-kpg">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Plex Serif" id="xfS-g3-w8Z">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Plex Sans" id="sy9-7N-bL6">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Spectral" id="UTN-T7-KSv">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="OpenDyslexic" id="Bvr-Mq-CyP">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="New York" id="ANW-uS-ODf">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <connections>
+                                                    <binding destination="qiY-HW-yGh" name="hidden" keyPath="values.hasNYBoldInstalled" id="aWN-bj-jps">
+                                                        <dictionary key="options">
+                                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                                        </dictionary>
+                                                    </binding>
+                                                </connections>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="selectedValue" keyPath="values.paraTitleFontReadable" id="odc-5m-tIo">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="v65-gn-eJw" column="GGj-JC-w4E" id="XRg-Ia-KXs"/>
+                        <gridCell row="v65-gn-eJw" column="cs9-fm-l2F" id="RW5-GL-BAb">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ocu-et-vym">
+                                <rect key="frame" x="105" y="186" width="280" height="14"/>
+                                <textFieldCell key="cell" selectable="YES" title="The font to use for drawing the headers in an article." id="yX3-21-IUF">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="Vxw-AW-fH6" column="GGj-JC-w4E" headOfMergedCell="YUZ-t2-HaZ" xPlacement="fill" id="YUZ-t2-HaZ">
+                            <box key="contentView" verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="0at-6J-tiq">
+                                <rect key="frame" x="0.0" y="161" width="450" height="6"/>
+                            </box>
+                        </gridCell>
+                        <gridCell row="Vxw-AW-fH6" column="cs9-fm-l2F" headOfMergedCell="YUZ-t2-HaZ" id="Nj4-9X-TOs"/>
+                        <gridCell row="3rI-5v-nj2" column="GGj-JC-w4E" id="H7l-rR-qvn">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pCC-xo-gKS">
+                                <rect key="frame" x="14" y="128" width="85" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Line spacing:" id="zw7-G3-qks">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="3rI-5v-nj2" column="cs9-fm-l2F" id="dEO-dF-qf0">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pPi-ts-VuG">
+                                <rect key="frame" x="104" y="122" width="57" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="1.5" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="p8P-fA-KTN" id="deC-Xj-URN">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="64p-WW-J6l">
+                                        <items>
+                                            <menuItem title="1.2" id="RmJ-5u-6Gm">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1.3" id="MOf-bY-2af">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1.4" id="Ar9-6A-Wf8">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1.5" state="on" id="p8P-fA-KTN">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1.6" id="odc-7R-OLD">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1.7" id="yNb-N6-T2M">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1.8" id="tZG-XH-Gif">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="selectedValue" keyPath="values.lineSpacing" id="iL1-TQ-nMA">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="ShQ-XS-eYl" column="GGj-JC-w4E" id="lY7-R6-osf"/>
+                        <gridCell row="ShQ-XS-eYl" column="cs9-fm-l2F" id="mkz-vt-8VM">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="BTu-Ui-Dph">
+                                <rect key="frame" x="105" y="87" width="347" height="28"/>
+                                <textFieldCell key="cell" selectable="YES" title="The space between two lines of text. A lower values renders a compact layout, a higher value renders comfortable layout." id="Bfs-yn-8VD">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="ozI-td-Krm" column="GGj-JC-w4E" id="YIJ-44-Pa0">
+                            <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="viJ-PJ-JhR">
+                                <rect key="frame" x="35" y="57" width="64" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Font Size:" id="x9p-qa-DyK">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                        <gridCell row="ozI-td-Krm" column="cs9-fm-l2F" id="gkq-KN-1Ll">
+                            <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Q7-xA-lrj">
+                                <rect key="frame" x="104" y="51" width="84" height="25"/>
+                                <popUpButtonCell key="cell" type="push" title="System" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="uJm-uV-idW" id="Trz-HN-46f">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="maz-Di-Ytl">
+                                        <items>
+                                            <menuItem title="System" id="uJm-uV-idW">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="13" id="ECK-vb-K0I">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="14" id="Yb9-uf-R2M">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="15" state="on" id="cOZ-JR-6mF">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="16" id="Eus-nq-dOT">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="17" id="zmY-4j-2g1">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="18" id="8Ls-Hc-MYC">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="19" id="hHs-ov-fRy">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="20" id="R2s-qd-jzR">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <binding destination="qiY-HW-yGh" name="selectedValue" keyPath="values.fontSize" id="g6f-1U-QKJ">
+                                        <dictionary key="options">
+                                            <bool key="NSValidatesImmediately" value="YES"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButton>
+                        </gridCell>
+                        <gridCell row="wcY-5F-oj0" column="GGj-JC-w4E" id="hjS-wY-K5u"/>
+                        <gridCell row="wcY-5F-oj0" column="cs9-fm-l2F" id="c0p-RE-84B">
+                            <textField key="contentView" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="que-S8-zao">
+                                <rect key="frame" x="105" y="9" width="347" height="29"/>
+                                <textFieldCell key="cell" selectable="YES" title="The base font size. Pargraphs are rendered at this size. Other elements derive their sizes proportional to this. " id="i1r-xe-dyv">
+                                    <font key="font" metaFont="message" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </gridCell>
+                    </gridCells>
+                </gridView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="c22-O7-iKe" secondAttribute="leading" priority="750" constant="30" id="F1e-Dt-RW9"/>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="20" id="N7H-hp-bhb"/>
+                <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="lkV-Y2-eOl" secondAttribute="trailing" priority="750" constant="30" id="Ses-fe-Clv"/>
+                <constraint firstAttribute="bottom" secondItem="lkV-Y2-eOl" secondAttribute="bottom" priority="750" constant="20" id="bsa-Ju-YOT"/>
+                <constraint firstItem="lkV-Y2-eOl" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="rdL-1S-HXy"/>
+            </constraints>
+            <point key="canvasLocation" x="83" y="319.5"/>
+        </customView>
+        <userDefaultsController representsSharedInstance="YES" id="qiY-HW-yGh"/>
+    </objects>
+</document>

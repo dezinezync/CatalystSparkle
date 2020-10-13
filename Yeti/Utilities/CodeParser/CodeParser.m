@@ -66,7 +66,7 @@ CodeParser *MyCodeParser;
     _theme = [[CodeTheme alloc] initWithThemePath:themePath];
 }
 
-static NSString *const hljs = @"window.hljs";
+static NSString *const HL_JS = @"window.hljs";
 
 - (NSAttributedString *)parse:(NSString *)code language:(NSString *)language
 {
@@ -75,9 +75,10 @@ static NSString *const hljs = @"window.hljs";
     
     if (!language || !language.length)
         return [self parse:code];
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-escape-sequence"
-    NSString *command = formattedString(@"%@.fixMarkup(%@.highlightAuto(\"%@\").value);", hljs, hljs, code);
+    NSString *command = formattedString(@"%@.highlightAuto(\"%@\").value;", HL_JS, code);
 #pragma clang diagnostic pop
     JSContext *context = [[JSContext alloc] init];
     [context setExceptionHandler:^(JSContext *aContext, JSValue * aVal) {
@@ -104,10 +105,11 @@ static NSString *const hljs = @"window.hljs";
 {
     
     code = [self neatifyCode:code];
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-escape-sequence"
     
-    NSString *command = formattedString(@"%@.fixMarkup(%@.highlightAuto(\`%@\`).value);", hljs, hljs, code);
+    NSString *command = formattedString(@"%@.highlightAuto(\`%@\`).value;", HL_JS, code);
     
 #pragma clang diagnostic pop
     
@@ -141,6 +143,8 @@ static NSString *const hljs = @"window.hljs";
     
     code = [code stringByReplacingOccurrencesOfString:@"\n\n" withString:@"\n"];
     code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    code = [code stringByReplacingOccurrencesOfString:@"`" withString:@"\\`"];
     
     return code;
 }

@@ -11,6 +11,11 @@
 
 #import "YetiThemeKit.h"
 #import "AppDelegate.h"
+#import "StoreVC.h"
+
+#import "DZWebViewController.h"
+#import "UIColor+HEX.h"
+#import "AddFeedVC.h"
 
 #define backgroundRefreshIdentifier @"com.yeti.refresh"
 
@@ -45,72 +50,35 @@
     }
     
     UIWindowScene *windowScene = (UIWindowScene *)scene;
-    
-    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
 
-    if (activity != nil) {
-        
-        UIWindow *window = nil;
-        
-        if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
-            
-            window = [[UIWindow alloc] initWithWindowScene:windowScene];
-            window.canResizeToFitContent = YES;
-            
-            PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
-            
-            window.rootViewController = photosVC;
-            
-            windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 338.f);
-            
-        }
-        
-        else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
-            
-            window = [[UIWindow alloc] initWithWindowScene:windowScene];
-            window.canResizeToFitContent = YES;
-            
-            FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
-            
-            ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+    NSUserActivity *activity = connectionOptions.userActivities.allObjects.firstObject ?: session.stateRestorationActivity;
+    
 #if TARGET_OS_MACCATALYST
-            vc.externalWindow = YES;
-#endif
-            
-            Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
-            
-            if (item.articleTitle) {
-                scene.title = formattedString(@"%@ - %@", item.articleTitle, feed.displayTitle);
-            }
-            else {
-                scene.title = feed.displayTitle;
-            }
-            
-            windowScene.sizeRestrictions.minimumSize = CGSizeMake(600.f, 400.f);
-            
-            window.rootViewController = vc;
-            
-        }
+    if (activity != nil && [activity.activityType isEqualToString:@"restoration"] == NO) {
         
-        if (window != nil && window.rootViewController != nil) {
-                
-            self.window = window;
-            
-            [window makeKeyAndVisible];
-            
-            return;
-        }
-        else {
-            window = nil;
-        }
+        [self handleSceneActivity:activity scene:windowScene];
+        
+        return;
         
     }
     
+    if (MyAppDelegate.mainScene != nil) {
+        
+        [[UIApplication sharedApplication] requestSceneSessionDestruction:session options:nil errorHandler:nil];
+        
+        return;
+    }
+    
+#endif
+    
+#if !TARGET_OS_MACCATALYST
     [self setupBackgroundRefresh];
+#endif
     
     self.coordinator = MyAppDelegate.coordinator;
     
     self.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+    self.window.tintColor = SharedPrefs.tintColor;
     
 #if !TARGET_OS_MACCATALYST
     UIColor *selectedColor = [[YetiThemeKit colours] objectAtIndex:SharedPrefs.iOSTintColorIndex];
@@ -119,6 +87,14 @@
          window.tintColor = selectedColor;
      };
 #endif
+    
+    if (activity != nil && [activity.activityType isEqualToString:@"restoration"]) {
+        
+        [MyFeedsManager continueActivity:activity];
+        
+        [ArticlesManager.shared continueActivity:activity];
+        
+    }
     
     [self setupRootViewController];
     
@@ -131,7 +107,11 @@
     }
     
 #if TARGET_OS_MACCATALYST
+    
     [self ct_setupToolbar:(UIWindowScene *)scene];
+    
+    MyAppDelegate.mainScene = (id)scene;
+    
 #endif
         
     [self.window makeKeyAndVisible];
@@ -234,6 +214,7 @@
         if (restorationActivity != nil) {
 
             [MyFeedsManager saveRestorationActivity:restorationActivity];
+            [ArticlesManager.shared saveRestorationActivity:restorationActivity];
 
         }
 
@@ -262,6 +243,10 @@
 #pragma mark - Background Refresh
 
 - (void)scheduleBackgroundRefresh {
+    
+#if TARGET_OS_MACCATALYST
+    return;
+#endif
     
     // Note from NetNewsWire code
     // We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
@@ -368,5 +353,133 @@
     }
     
 }
+
+#if TARGET_OS_MACCATALYST
+
+- (void)handleSceneActivity:(NSUserActivity *)activity scene:(UIWindowScene *)windowScene {
+    
+    UIWindow *window = nil;
+    
+    if ([activity.activityType isEqualToString:@"viewImage"] == YES) {
+        
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = YES;
+        
+        PhotosController *photosVC = [[PhotosController alloc] initWithUserInfo:activity.userInfo];
+        
+        window.rootViewController = photosVC;
+        
+        CGSize size = CGSizeFromString([activity.userInfo valueForKey:@"size"]);
+        
+        windowScene.sizeRestrictions.minimumSize = size;
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+        windowScene.titlebar.toolbar = nil;
+        
+    }
+    
+    else if ([activity.activityType isEqualToString:@"openArticle"] == YES) {
+        
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        
+        windowScene.sizeRestrictions.minimumSize = CGSizeMake(480.f, 600.f);
+        windowScene.titlebar.toolbar = nil;
+        
+        FeedItem *item = [FeedItem instanceFromDictionary:activity.userInfo];
+        
+        ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
+
+        vc.externalWindow = YES;
+
+        
+        Feed *feed = [ArticlesManager.shared feedForID:item.feedID];
+        
+        if (item.articleTitle) {
+            windowScene.title = formattedString(@"%@ - %@", item.articleTitle, feed.displayTitle);
+        }
+        else {
+            windowScene.title = feed.displayTitle;
+        }
+        
+        window.rootViewController = vc;
+        
+    }
+    else if ([activity.activityType isEqualToString:@"subscriptionInterface"]) {
+        
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+        
+        CGSize fixedSize = CGSizeMake(375.f, 480.f);
+        
+        windowScene.sizeRestrictions.maximumSize = fixedSize;
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+        
+        windowScene.title = @"Your Subscription";
+        
+        StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
+        
+        window.rootViewController = vc;
+        
+    }
+    else if ([activity.activityType isEqualToString:@"attributionsScene"]) {
+        
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+        
+        CGSize fixedSize = CGSizeMake(375.f, 480.f);
+        
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+        
+        windowScene.title = @"Attributions";
+        
+        DZWebViewController *webVC = [[DZWebViewController alloc] init];
+        webVC.title = @"Attributions";
+        
+        webVC.URL = [[NSBundle bundleForClass:self.class] URLForResource:@"attributions" withExtension:@"html"];
+        
+        NSString *tint = [UIColor hexFromUIColor:SharedPrefs.tintColor];
+        NSString *js = formattedString(@"anchorStyle(\"%@\")", tint);
+        
+        webVC.evalJSOnLoad = js;
+        
+        window.rootViewController = webVC;
+        
+    }
+    else if ([activity.activityType isEqualToString:@"newFeedScene"]) {
+        
+        window = [[UIWindow alloc] initWithWindowScene:windowScene];
+        window.canResizeToFitContent = NO;
+        
+        CGSize fixedSize = CGSizeMake(480.f, 600.f);
+        
+        windowScene.sizeRestrictions.minimumSize = fixedSize;
+        windowScene.sizeRestrictions.maximumSize = fixedSize;
+        
+        windowScene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
+        windowScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnified;
+        
+        window.rootViewController = [AddFeedVC instanceInNavController];
+        
+        AddFeedVC *addFeedVC = [[(UINavigationController *)window.rootViewController viewControllers] firstObject];
+        
+        addFeedVC.mainCoordinator = self.coordinator;
+        addFeedVC.isFromAddFeed = YES;
+        
+    }
+    
+    if (window != nil && window.rootViewController != nil) {
+            
+        self.window = window;
+        self.window.tintColor = SharedPrefs.tintColor;
+        
+        [window makeKeyAndVisible];
+    
+    }
+    else {
+        window = nil;
+    }
+    
+}
+
+#endif
 
 @end

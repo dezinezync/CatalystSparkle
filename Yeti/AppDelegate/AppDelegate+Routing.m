@@ -10,7 +10,6 @@
 #import <JLRoutes/JLRoutes.h>
 #import "FeedsManager.h"
 #import "YetiConstants.h"
-#import "YetiThemeKit.h"
 
 #import "FeedVC.h"
 #import "ArticleVC.h"
@@ -20,6 +19,8 @@
 
 #import <DZKit/UIAlertController+Extended.h>
 #import <DZKit/NSString+Extras.h>
+
+#import "AppKitGlue.h"
 
 @implementation AppDelegate (Routing)
 
@@ -185,11 +186,38 @@
         
         NSString *link = [[(NSURL *)[parameters valueForKey:JLRouteURLKey] absoluteString] stringByReplacingOccurrencesOfString:@"yeti://external?link=" withString:@""];
         
-//#if TARGET_OS_OSX
-//        [self.sharedGlue openURL:[NSURL URLWithString:link] inBackground:YES];
-//        return YES;
-//#endif
+#if TARGET_OS_MACCATALYST
         
+        BOOL openInBackground = SharedPrefs.browserOpenInBackground;
+        
+        /*
+         * Clicking shift when opening article will
+         * reverse the action.
+         */
+        BOOL shiftClicked = NO;
+        
+        id shiftClickedVal = [parameters valueForKey:@"shift"];
+        
+        if (shiftClickedVal != nil) {
+            
+            shiftClicked = [shiftClickedVal boolValue];
+            
+            if (shiftClicked) {
+                openInBackground = !openInBackground;
+            }
+            
+        }
+        
+        NSURL *url = [NSURL URLWithString:link];
+        
+        if (url == nil) {
+            return YES;
+        }
+        
+        [self.sharedGlue openURL:url inBackground:openInBackground];
+        
+        return YES;
+#endif
         // check and optionally handle twitter URLs
         if ([link containsString:@"twitter.com"]) {
             NSError *error = nil;
@@ -713,11 +741,11 @@
     NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
     NSURL *URL;
     
-    if ([twitterScheme isEqualToString:@"tweetbot"]) {
-         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
+    if (twitterScheme == nil || [twitterScheme isEqualToString:@"twitter"]) {
+         URL = formattedURL(@"%@://user?screen_name=%@", @"twitter", username);
     }
-    else if ([twitterScheme isEqualToString:@"twitter"]) {
-         URL = formattedURL(@"%@://user?screen_name=%@", twitterScheme, username);
+    else if ([twitterScheme isEqualToString:@"tweetbot"]) {
+         URL = formattedURL(@"%@://dummyname/user_profile/%@", twitterScheme, username);
     }
     else if ([twitterScheme isEqualToString:@"twitterrific"]) {
          URL = formattedURL(@"%@://current/profile?screen_name=%@", twitterScheme, username);
@@ -730,14 +758,15 @@
 }
 
 - (void)twitterOpenStatus:(NSString *)status {
+    
     NSString *twitterScheme = [[NSUserDefaults.standardUserDefaults valueForKey:ExternalTwitterAppScheme] lowercaseString];
     NSURL *URL;
     
-    if ([twitterScheme isEqualToString:@"tweetbot"]) {
+    if (twitterScheme == nil || [twitterScheme isEqualToString:@"twitter"]) {
+        URL = formattedURL(@"%@://status?id=%@", twitterScheme ?: @"twitter", status);
+   }
+    else if ([twitterScheme isEqualToString:@"tweetbot"]) {
         URL = formattedURL(@"%@://dummyname/status/%@", twitterScheme, status);
-    }
-    else if ([twitterScheme isEqualToString:@"twitter"]) {
-        URL = formattedURL(@"%@://status?id=%@", twitterScheme, status);
     }
     else if ([twitterScheme isEqualToString:@"twitterrific"]) {
         URL = formattedURL(@"%@://current/tweet?id=%@", twitterScheme, status);
@@ -765,7 +794,7 @@
         
         SFSafariViewController *sfvc = [[SFSafariViewController alloc] initWithURL:URL];
         
-        SceneDelegate *delegate = UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate;
+        SceneDelegate *delegate = (SceneDelegate *)(UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate);
         
         sfvc.preferredControlTintColor = delegate.window.tintColor;
         
@@ -803,7 +832,7 @@
         return;
 
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
-    
+
 }
 
 @end

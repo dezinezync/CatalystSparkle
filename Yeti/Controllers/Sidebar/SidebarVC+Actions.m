@@ -36,6 +36,16 @@
 
 - (void)didTapRecommendations:(UIBarButtonItem *)sender {
     
+    NSArray <NSIndexPath *> *selectedIndexPaths = self.collectionView.indexPathsForSelectedItems;
+    
+    if (selectedIndexPaths.count > 0) {
+        
+        for (NSIndexPath *indexPath in selectedIndexPaths) {
+            [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+        }
+        
+    }
+    
     [self.mainCoordinator showRecommendations];
     
 }

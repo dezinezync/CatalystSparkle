@@ -45,14 +45,15 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
     
     if (_fontNamesMap == nil) {
         _fontNamesMap = @{
-        ALPSystem         : @"System (San Fransico)",
+        ALPSystem         : @"System",
         ALPSerif          : @"Georgia",
         ALPHelvetica      : @"Helvetica Neue",
         ALPMerriweather   : @"Merriweather",
         ALPPlexSerif      : @"Plex Serif",
         ALPPlexSans       : @"Plex Sans",
         ALPSpectral       : @"Spectral",
-        ALPOpenDyslexic   : @"OpenDyslexic"
+        ALPOpenDyslexic   : @"OpenDyslexic",
+        ALPNewYork        : @"New York"
         };
     }
     
@@ -77,6 +78,18 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
     
     [self.tableView registerClass:[SettingsBaseCell class] forCellReuseIdentifier:kBasicCell];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass(AccentCell.class) bundle:nil] forCellReuseIdentifier:kAccentCell];
+    
+    self.tableView.backgroundColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+        
+        if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            return UIColor.secondarySystemGroupedBackgroundColor;
+        }
+        else {
+            return UIColor.systemGroupedBackgroundColor;
+        }
+        
+    }];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -153,15 +166,13 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         
         NSArray <UIButton *> *buttons = [[(AccentCell *)cell stackView] arrangedSubviews];
         
-        YetiTheme *theme = (YetiTheme *)[YTThemeKit theme];
-        
         // get selection for current theme or default value
 
         NSInteger colorIndex = SharedPrefs.iOSTintColorIndex;
         
         [(AccentCell *)cell didTapButton:buttons[colorIndex]];
         
-        cell.backgroundColor = theme.cellColor;
+        cell.backgroundColor = UIColor.systemBackgroundColor;
         
         [cell addObserver:self forKeyPath:NSStringFromSelector(@selector(selectedButton)) options:NSKeyValueObservingOptionNew context:&KVO_SELECTED_BUTTON];
         
@@ -324,9 +335,9 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         NSArray <UIButton *> *buttons = [[(AccentCell *)object stackView] arrangedSubviews];
         NSArray <UIColor *> *colours = [YetiThemeKit colours];
         
-        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-
-        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
+//        NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+//
+//        NSString *defaultsKey = formattedString(@"theme-%@-color", @"default");
         
         UIButton *selectedButton = [object valueForKeyPath:keyPath];
         

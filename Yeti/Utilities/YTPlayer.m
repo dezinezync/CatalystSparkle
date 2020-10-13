@@ -8,6 +8,10 @@
 
 #import "YTPlayer.h"
 
+@interface YTPlayer () <UIContextMenuInteractionDelegate>
+
+@end
+
 @implementation YTPlayer
 
 - (void)setRate:(float)rate {
@@ -19,6 +23,7 @@
         if ([self.playerViewController.contentOverlayView subviews].count > 0) {
             
             for (UIView *subview in self.playerViewController.contentOverlayView.subviews) {
+                
                 if ([subview isKindOfClass:UIImageView.class]) {
                 
                     [UIView animateWithDuration:0.25 animations:^{
@@ -34,6 +39,12 @@
                     }];
                     
                 }
+                else if ([subview isKindOfClass:UIButton.class]) {
+                    
+                    [subview removeFromSuperview];
+                    
+                }
+                
             }
             
         }

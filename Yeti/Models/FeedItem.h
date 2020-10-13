@@ -47,4 +47,6 @@
 
 - (NSComparisonResult)compare:(FeedItem *)item;
 
+- (NSItemProvider * _Nullable)itemProvider;
+
 @end

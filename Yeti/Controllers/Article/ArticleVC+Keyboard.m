@@ -18,9 +18,13 @@
 
 - (NSArray <UIKeyCommand *> *)keyCommands {
     
-    UIKeyCommand *close = [UIKeyCommand keyCommandWithInput:@"w" modifierFlags:UIKeyModifierCommand action:@selector(didTapClose)];
+    UIKeyCommand *close = [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapClose)];
     close.title = @"Close";
     close.discoverabilityTitle = close.title;
+    
+    UIKeyCommand *openInBrowser = [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierCommand action:@selector(openInBrowser)];
+    openInBrowser.title = @"Open in Browser";
+    openInBrowser.discoverabilityTitle = openInBrowser.title;
     
     UIKeyCommand *bookmark = [UIKeyCommand keyCommandWithInput:@"b" modifierFlags:UIKeyModifierCommand action:@selector(didTapBookmark:)];
     bookmark.title = self.item.isBookmarked ? @"Unbookmark" : @"Bookmark";
@@ -42,23 +46,25 @@
     scrollDown.title = @"Scroll Down";
     scrollDown.discoverabilityTitle = scrollDown.title;
     
-    UIKeyCommand *scrollUpAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageUp" modifierFlags:nil action:@selector(scrollUp)];
+#if TARGET_OS_MACCATALYST
+    UIKeyCommand *scrollUpAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageUp" modifierFlags:0 action:@selector(scrollUp)];
     scrollUpAddtional.title = @"Scroll Up";
     
-    UIKeyCommand *scrollDownAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageDown" modifierFlags:nil action:@selector(scrollDown)];
-    scrollDownAddtional.title = @"Scroll Up";
+    UIKeyCommand *scrollDownAddtional = [UIKeyCommand keyCommandWithInput:@"UIKeyInputPageDown" modifierFlags:0 action:@selector(scrollDown)];
+    scrollDownAddtional.title = @"Scroll Down";
     
-    UIKeyCommand *scrollToTop = [UIKeyCommand keyCommandWithInput:@"UIKeyInputHome" modifierFlags:nil action:@selector(scrollToTop)];
+    UIKeyCommand *scrollToTop = [UIKeyCommand keyCommandWithInput:@"UIKeyInputHome" modifierFlags:0 action:@selector(scrollToTop)];
     scrollToTop.title = @"Scroll to Top";
     
-    UIKeyCommand *scrollToEnd = [UIKeyCommand keyCommandWithInput:@"UIKeyInputEnd" modifierFlags:nil action:@selector(scrollToEnd)];
+    UIKeyCommand *scrollToEnd = [UIKeyCommand keyCommandWithInput:@"UIKeyInputEnd" modifierFlags:0 action:@selector(scrollToEnd)];
     scrollToTop.title = @"Scroll to End";
+#endif
     
-    UIKeyCommand *previousArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapPreviousArticle:)];
+    UIKeyCommand *previousArticle = [UIKeyCommand keyCommandWithInput:@"j" modifierFlags:0 action:@selector(didTapPreviousArticle:)];
     previousArticle.title = @"Previous Article";
     previousArticle.discoverabilityTitle = previousArticle.title;
     
-    UIKeyCommand *nextArticle = [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand action:@selector(didTapNextArticle:)];
+    UIKeyCommand *nextArticle = [UIKeyCommand keyCommandWithInput:@"k" modifierFlags:0 action:@selector(didTapNextArticle:)];
     nextArticle.title = @"Next Article";
     nextArticle.discoverabilityTitle = nextArticle.title;
     
@@ -74,15 +80,11 @@
     esc.title = @"Dismiss Search";
     esc.discoverabilityTitle = esc.title;
     
-    NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc, scrollUpAddtional, scrollDownAddtional, scrollToTop, scrollToEnd];
+    NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc, previousArticle, nextArticle, openInBrowser];
     
-    if ([self.providerDelegate hasNextArticleForArticle:self.item]) {
-        commands = [commands arrayByAddingObject:nextArticle];
-    }
-    
-    if ([self.providerDelegate hasPreviousArticleForArticle:self.item]) {
-        commands = [commands arrayByAddingObject:previousArticle];
-    }
+#if TARGET_OS_MACCATALYST
+    commands = [commands arrayByAddingObjectsFromArray:@[scrollUpAddtional, scrollDownAddtional, scrollToTop, scrollToEnd]];
+#endif
     
     return commands;
     
@@ -267,8 +269,8 @@
         
     }];
     
-    Gallery *gallery = (Gallery *)[visibleViews rz_reduce:^id(UIView *prev, UIView *current, NSUInteger idx, NSArray *array) {
-        return prev || [current isKindOfClass:Gallery.class] ? current : nil;
+    Gallery *gallery = (Gallery *)[visibleViews rz_find:^BOOL(UIView *obj, NSUInteger idx, NSArray *array) {
+        return [obj isKindOfClass:Gallery.class];
     }];
     
     if (![gallery isKindOfClass:Gallery.class]) {

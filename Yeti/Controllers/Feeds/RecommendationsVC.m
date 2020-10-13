@@ -7,7 +7,6 @@
 //
 
 #import "RecommendationsVC.h"
-#import "YetiThemeKit.h"
 #import "FeedsManager.h"
 
 #import "FeedsGridCell.h"
@@ -359,7 +358,8 @@ static NSString * const reuseIdentifier = @"Cell";
         
         FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
         vc.mainCoordinator = self.mainCoordinator;
-        vc.exploring = YES;
+        vc.exploring = !self.isFromAddFeed;
+        vc.isFromAddFeed = self.isFromAddFeed;
         
         [self.navigationController pushViewController:vc animated:YES];
         

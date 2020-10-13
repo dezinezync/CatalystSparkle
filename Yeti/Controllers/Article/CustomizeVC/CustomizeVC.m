@@ -12,8 +12,13 @@
 #import "Customization.h"
 #import "CustomizationHeader.h"
 
-#import "YetiThemeKit.h"
 #import "PrefsManager.h"
+
+#if TARGET_OS_MACCATALYST
+
+#import "DZStepper.h"
+
+#endif
 
 #define CUSTOMIZE_SECTION_TEXT @0
 #define CUSTOMIZE_SECTION_PARA @1
@@ -39,8 +44,6 @@
     [super viewDidLoad];
     
     [self setupTableView];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdateTheme) name:kDidUpdateTheme object:nil];
 
 }
 
@@ -170,7 +173,15 @@
                             NSInteger value = SharedPrefs.fontSize;
                             cell.valueLabel.text = [NSString stringWithFormat:@"%@pt", @(value)];
                             
-                            UIStepper *stepper = [[UIStepper alloc] init];
+                            UIStepper *stepper;
+                            
+#if TARGET_OS_MACCATALYST
+                            stepper = (id)[[DZStepper alloc] initWithFrame:CGRectZero];
+                            stepper.stepValue = 1;
+#else
+                            stepper = [[UIStepper alloc] init];
+#endif
+                            
                             stepper.minimumValue = 9;
                             stepper.maximumValue = 23;
                             stepper.value = value;
@@ -247,7 +258,14 @@
                             
                             cell.valueLabel.text = [NSString stringWithFormat:@"%@x", [formatter stringFromNumber:@(value)]];
                             
-                            UIStepper *stepper = [[UIStepper alloc] init];
+                            UIStepper *stepper;
+                            
+#if TARGET_OS_MACCATALYST
+                            stepper = (id)[[DZStepper alloc] initWithFrame:CGRectZero];
+                            stepper.stepValue = 1;
+#else
+                            stepper = [[UIStepper alloc] init];
+#endif
                             stepper.minimumValue = 1.f;
                             stepper.maximumValue = 3.f;
                             stepper.value = value;
@@ -308,46 +326,7 @@
     
     [snapshot appendItemsWithIdentifiers:@[paraTitleFont, lineSpacing] intoSectionWithIdentifier:CUSTOMIZE_SECTION_PARA];
     
-//    Customization *theme = [[Customization alloc] initWithName:propSel(theme) displayName:@"Theme"];
-//
-//    [snapshot appendItemsWithIdentifiers:@[theme] intoSectionWithIdentifier:CUSTOMIZE_SECTION_THEME];
-    
     [self.DDS applySnapshot:snapshot animatingDifferences:NO];
-    
-}
-
-- (void)didUpdateTheme {
-    
-    NSDiffableDataSourceSnapshot *snapshot = self.DDS.snapshot;
-    
-    NSArray <NSIndexPath *> *visible = [self.tableView indexPathsForVisibleRows];
-    
-    NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity:visible.count];
-    
-    for (NSIndexPath *indexPath in visible) {
-        
-        id obj = [self.DDS itemIdentifierForIndexPath:indexPath];
-        
-        [identifiers addObject:obj];
-        
-    }
-    
-    [snapshot reloadItemsWithIdentifiers:identifiers];
-    
-    [self.DDS applySnapshot:snapshot animatingDifferences:YES];
-    
-    NSInteger idx=0;
-    
-    for (UIView *subview in self.tableView.subviews) {
-        
-        if ([subview isKindOfClass:CustomizationHeader.class] == NO) {
-            continue;
-        }
-        
-        [self configureHeader:(id)subview section:idx];
-        idx++;
-        
-    }
     
 }
 
@@ -378,17 +357,15 @@
             break;
     }
     
-    YetiTheme *theme = (id)[YTThemeKit theme];
-    
     UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleHeadline];
     
-    header.imageView.tintColor = theme.subtitleColor;
+    header.imageView.tintColor = UIColor.secondaryLabelColor;
     header.imageView.image = [[[UIImage systemImageNamed:symbolName withConfiguration:config] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] imageWithTintColor:header.imageView.tintColor];
     
     header.label.text = label;
-    header.label.textColor = theme.titleColor;
+    header.label.textColor = UIColor.labelColor;
     
-    header.backgroundColor = theme.articleBackgroundColor;
+    header.backgroundColor = UIColor.systemBackgroundColor;
     
     [header sizeToFit];
     
