@@ -51,6 +51,20 @@ extern PrefsManager * SharedPrefs;
 @property (assign) NSInteger fontSize; // kFontSize
 @property (copy) ArticleLayoutFont paraTitleFont; // kParagraphTitleFont
 @property (assign) CGFloat lineSpacing; // kLineSpacing
+
+@property (assign) BOOL browserUsesReaderMode;
+
+@property (assign) BOOL badgeAppIcon;
+
+#if TARGET_OS_MACCATALYST
+
+@property (assign) BOOL browserOpenInBackground;
+
+@property (copy) NSString * refreshFeedsInterval;
+
+- (NSTimeInterval)refreshFeedsTimeInterval;
+
+#endif
  
 @end
 

@@ -49,7 +49,9 @@
     self.detailTextLabel.hidden = YES;
     self.detailTextLabel.textColor = UIColor.labelColor;
     
+#if !TARGET_OS_MACCATALYST
     [self.button setBackgroundImage:[UIImage imageWithColor:[UIColor.whiteColor colorWithAlphaComponent:0.5f]] forState:UIControlStateDisabled];
+#endif
     
     NSMutableAttributedString *attrs = self.titleLabel.attributedText.mutableCopy;
     

@@ -116,21 +116,25 @@
     }
     
     _level = level;
+    
     NSArray <NSNumber *> * const scales = @[@(2.2f), @(1.8f), @(1.6f), @(1.4f), @(1.2f), @(1.f)];
+    
     CGFloat scale = [scales[level - 1] floatValue];
     
-    ArticleLayoutFont fontPref = SharedPrefs.articleFont;
+    ArticleLayoutFont fontPref = SharedPrefs.paraTitleFont;
+    
     CGFloat fontSize = 16 * scale;
     
-    UIFont * bodyFont = [UIFont boldSystemFontOfSize:fontSize];
+    UIFont * bodyFont = [UIFont systemFontOfSize:fontSize weight:UIFontWeightBold];
     
     if (![fontPref isEqualToString:ALPSystem]) {
-        bodyFont = [UIFont fontWithName:[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] size:fontSize];
-        UIFontDescriptor *boldDescriptor = [UIFontDescriptor fontDescriptorWithFontAttributes:@{
-            UIFontDescriptorFamilyAttribute: bodyFont.familyName,
-            UIFontDescriptorFaceAttribute : @"Bold"}];
         
-        bodyFont = [UIFont fontWithDescriptor:boldDescriptor size:fontSize];
+        NSString *bodyFontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
+        
+        bodyFontName = [bodyFontName stringByAppendingString:@"-Bold"];
+        
+        bodyFont = [UIFont fontWithName:bodyFontName size:fontSize];
+
     }
     UIFont * baseFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:bodyFont];
     

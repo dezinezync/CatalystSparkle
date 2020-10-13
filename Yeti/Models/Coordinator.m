@@ -21,6 +21,7 @@
 #import "NewFolderController.h"
 #import "SettingsVC.h"
 #import <DZKit/AlertManager.h>
+#import "OPMLVC.h"
 
 @interface MainCoordinator ()
 
@@ -183,6 +184,14 @@
 
 - (void)showSubscriptionsInterface {
     
+#if TARGET_OS_MACCATALYST
+    
+    [self openSceneNamed:@"subscriptionInterface"];
+    
+    return;
+    
+#endif
+    
     StoreVC *vc = [[StoreVC alloc] initWithStyle:UITableViewStyleGrouped];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -199,11 +208,19 @@
 
 - (void)showNewFeedVC {
     
+#if TARGET_OS_MACCATALYST
+    
+    [self openSceneNamed:@"newFeedScene"];
+    
+#else
+    
     UINavigationController *nav = [AddFeedVC instanceInNavController];
     
     nav.viewControllers.firstObject.mainCoordinator = self;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];
+    
+#endif
     
 }
 
@@ -285,6 +302,70 @@
 #endif
     
 }
+
+- (void)showOPMLInterfaceFrom:(id)sender direct:(NSInteger)type {
+    
+    OPMLVC *vc = [[OPMLVC alloc] initWithNibName:NSStringFromClass(OPMLVC.class) bundle:nil];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalTransitionStyle = UIModalPresentationAutomatic;
+    
+    if (sender != nil) {
+        
+        [sender presentViewController:nav animated:YES completion:^{
+            
+            if (type == OPMLStateExport) {
+                [vc didTapExport:nil];
+            }
+            else if (type == OPMLStateImport) {
+                [vc didTapImport:nil];
+            }
+            
+        }];
+        
+    }
+    else {
+        
+        [self.splitViewController presentViewController:nav animated:YES completion:^{
+            
+            if (type == OPMLStateExport) {
+                [vc didTapExport:nil];
+            }
+            else if (type == OPMLStateImport) {
+                [vc didTapImport:nil];
+            }
+            
+        }];
+        
+    }
+    
+}
+
+#if TARGET_OS_MACCATALYST
+
+- (void)showAttributions {
+
+    [self openSceneNamed:@"attributionsScene"];
+    
+}
+
+- (void)openSceneNamed:(NSString *)sceneName {
+    
+    NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:sceneName];
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:0 errorHandler:^(NSError * _Nonnull error) {
+        
+        if (error != nil) {
+            
+            NSLog(@"Error occurred requesting new window session. %@", error.localizedDescription);
+            
+        }
+        
+    }];
+    
+}
+    
+#endif
 
 #pragma mark - Helpers
 

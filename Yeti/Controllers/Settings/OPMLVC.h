@@ -30,4 +30,8 @@ typedef NS_ENUM(NSInteger, OPMLState) {
 @property (weak, nonatomic) IBOutlet UILabel *detailsTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailsSubtitleLabel;
 
+- (void)didTapExport:(UIButton * _Nullable)sender;
+
+- (void)didTapImport:(UIButton * _Nullable)sender;
+
 @end

@@ -48,7 +48,6 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     }
     
 #if TARGET_OS_MACCATALYST
-    [self ct_hookAndUpdateTintColor];
     [self ct_updateSemanticAppKitColors];
 #endif
     
@@ -73,59 +72,7 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
     
 }
 
-- (void)ct_hookAndUpdateTintColor {
-    
 #if TARGET_OS_MACCATALYST
-    
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    
-    [defaults addObserver:self forKeyPath:@"AppleHighlightColor" options:NSKeyValueObservingOptionNew context:DefaultsAppleHighlightColorContext];
-    
-    _observingHighlightColor = YES;
-    
-    [self ct_updateTintColor:defaults];
-    
-#endif
-    
-}
-
-#if TARGET_OS_MACCATALYST
-
-- (void)ct_updateTintColor:(NSUserDefaults *)defaults {
-    
-    NSString *systemHighlightColor = [defaults objectForKey:@"AppleHighlightColor"];
-    
-    if (systemHighlightColor == nil) {
-        
-        self.tintColor = [UIColor systemBlueColor];
-        
-        return;
-        
-    }
-    
-    NSArray *components = [systemHighlightColor componentsSeparatedByString:@" "];
-    NSString *colorName = [components lastObject];
-    
-    SEL systemColorSelector = NSSelectorFromString([NSString stringWithFormat:@"system%@Color", colorName]);
-    
-    if ([UIColor respondsToSelector:systemColorSelector] == YES) {
-        
-        UIColor * systemTintColor = [UIColor performSelector:systemColorSelector];
-        
-        if (systemTintColor != nil) {
-            
-            self.tintColor = systemTintColor;
-            
-        }
-        
-    }
-    else if ([colorName isEqualToString:@"Graphite"]) {
-        
-        self.tintColor = UIColor.systemGrayColor;
-        
-    }
-    
-}
 
 - (void)ct_updateSemanticAppKitColors {
     
@@ -157,21 +104,6 @@ static void * DefaultsAppleHighlightColorContext = &DefaultsAppleHighlightColorC
 }
 
 #pragma mark -
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    
-    if ([keyPath isEqualToString:@"AppleHighlightColor"] && context == DefaultsAppleHighlightColorContext) {
-        
-        [self ct_updateTintColor:object];
-        
-        [self updateAppearances];
-        
-    }
-    else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-    
-}
 
 - (void)dealloc {
     

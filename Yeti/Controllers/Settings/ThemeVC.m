@@ -45,14 +45,15 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
     
     if (_fontNamesMap == nil) {
         _fontNamesMap = @{
-        ALPSystem         : @"System (San Fransico)",
+        ALPSystem         : @"System",
         ALPSerif          : @"Georgia",
         ALPHelvetica      : @"Helvetica Neue",
         ALPMerriweather   : @"Merriweather",
         ALPPlexSerif      : @"Plex Serif",
         ALPPlexSans       : @"Plex Sans",
         ALPSpectral       : @"Spectral",
-        ALPOpenDyslexic   : @"OpenDyslexic"
+        ALPOpenDyslexic   : @"OpenDyslexic",
+        ALPNewYork        : @"New York"
         };
     }
     

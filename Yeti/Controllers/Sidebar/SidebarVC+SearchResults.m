@@ -14,18 +14,33 @@
 
 @implementation SidebarVC (SearchResults)
 
+- (void)willPresentSearchController:(UISearchController *)searchController {
+    
+    _macSearchBarWidth = searchController.searchBar.bounds.size.width;
+    
+}
+
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     
     if (!ArticlesManager.shared.feeds || !ArticlesManager.shared.feeds.count) {
         if (!ArticlesManager.shared.folders || !ArticlesManager.shared.folders.count)
             return;
     }
+    
+#if TARGET_OS_MACCATALYST
+    CGRect frame = searchController.searchBar.frame;
+    frame.size.width = _macSearchBarWidth;
+    
+    searchController.searchBar.frame = frame;
+#endif
+    
+    NSSortDescriptor *alphaSorting = [NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
         
     NSString *text = searchController.searchBar.text;
     
     NSMutableArray *filtered = [NSMutableArray new];
     
-    NSArray <Feed *> * feeds = ArticlesManager.shared.feeds;
+    NSArray <Feed *> * feeds = [ArticlesManager.shared.feeds sortedArrayUsingDescriptors:@[alphaSorting]];
     
     if (text != nil && [text isBlank] == NO) {
         

@@ -257,7 +257,7 @@ NSString* deviceName() {
                 }
                     break;
                 case 2:
-                    cell.textLabel.text = @"Import/Export OPML";
+                    cell.textLabel.text = @"Import/Export Subscriptions";
                     break;
                 case 3:
                     cell.textLabel.text = @"Miscellaneous";

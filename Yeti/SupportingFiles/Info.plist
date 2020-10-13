@@ -200,23 +200,17 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.dezinezync.yeti.rssscheme</string>
+			<string>RSS Feed</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>feed</string>
+				<string>feeds</string>
 				<string>rss</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.dezinezync.yeti.feedscheme</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>feed</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.dezinezync.yeti.appscheme</string>
+			<string>App Scheme</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>yeti</string>
@@ -225,7 +219,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>42</string>
+	<string>56</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -256,7 +250,8 @@
 	<string>Save images you select from articles to your photos.  </string>
 	<key>NSUserActivityTypes</key>
 	<array>
-		<string>ConfigurationIntent</string>
+		<string>UnreadsIntent</string>
+		<string>UnreadsIntentsIntent</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>

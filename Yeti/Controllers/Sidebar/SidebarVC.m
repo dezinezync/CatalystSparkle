@@ -6,7 +6,7 @@
 //  Copyright © 2020 Dezine Zync Studios. All rights reserved.
 //
 
-#import "SidebarVC+SearchResults.h"
+#import "SidebarVC+DragAndDrop.h"
 #import "CustomFeed.h"
 
 #import <DZKit/NSString+Extras.h>
@@ -19,12 +19,11 @@
 #import "CustomFeedCell.h"
 #import "FeedCell.h"
 #import "FolderCell.h"
+#import "UnreadVC.h"
 
 #import "Keychain.h"
-//#import "Elytra-Bridging-Header.h"
 #import "Elytra-Swift.h"
-//#import "WidgetCenter-Swift.h"
-
+#import "SidebarSearchView.h"
 
 @interface SidebarVC () {
     
@@ -40,6 +39,8 @@
     
     NSUserActivity *_restorationActivity;
     
+    BOOL _initialSnapshotSetup;
+    
 }
 
 @property (nonatomic, strong, readwrite) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
@@ -49,6 +50,16 @@
 @property (nonatomic, weak) UILabel *progressLabel;
 @property (nonatomic, weak) UIProgressView *syncProgressView;
 @property (nonatomic, strong) UIStackView *progressStackView;
+
+@property (nonatomic, strong) NSTimer *unreadWidgetsTimer;
+
+#if TARGET_OS_MACCATALYST
+
+@property (nonatomic, strong) UISearchController *supplementarySearchController;
+
+@property (nonatomic, weak) NSTimer *refreshTimer;
+
+#endif
 
 @end
 
@@ -74,7 +85,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         config.showsSeparators = NO;
         
         if (section == 0) {
-            
+#if TARGET_OS_MACCATALYST
+            config.headerMode = UICollectionLayoutListHeaderModeSupplementary;
+#endif
             return [NSCollectionLayoutSection sectionWithListConfiguration:config layoutEnvironment:environment];
             
         }
@@ -179,6 +192,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 #if TARGET_OS_MACCATALYST
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(12.f, 0, 0, 0);
+    
+    [self scheduleTimerIfValid];
+    
 #endif
 
     [self setupNavigationBar];
@@ -242,16 +258,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     // Search Controller setup
     {
-        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-        searchController.searchResultsUpdater = self;
-        searchController.delegate = self;
-        searchController.obscuresBackgroundDuringPresentation = NO;
-        searchController.searchBar.placeholder = @"Search Feeds";
-        searchController.searchBar.accessibilityHint = @"Search your feeds";
-        
-        searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
-        
-        self.navigationItem.searchController = searchController;
+        self.navigationItem.searchController = [self searchControllerForSidebar];
     }
     
     UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
@@ -270,6 +277,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         return;
     }
     
+    self.collectionView.dragInteractionEnabled = YES;
+    self.collectionView.dragDelegate = self;
+    self.collectionView.dropDelegate = self;
+    
     self.DS = [[UICollectionViewDiffableDataSource alloc] initWithCollectionView:self.collectionView cellProvider:^UICollectionViewCell * _Nullable(UICollectionView * _Nonnull collectionView, NSIndexPath * _Nonnull indexPath, id _Nonnull item) {
         
         if ([item isKindOfClass:CustomFeed.class]) {
@@ -287,9 +298,53 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }];
     
+#if TARGET_OS_MACCATALYST
+    
+    UICollectionViewSupplementaryRegistration * searchHeaderRegistration = [UICollectionViewSupplementaryRegistration registrationWithSupplementaryClass:SidebarSearchView.class elementKind:UICollectionElementKindSectionHeader configurationHandler:^(__kindof UICollectionReusableView * _Nonnull supplementaryView, NSString * _Nonnull elementKind, NSIndexPath * _Nonnull indexPath) {
+        
+        supplementaryView.backgroundColor = UIColor.clearColor;
+        supplementaryView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        UISearchController *searchController = self.supplementarySearchController;
+        
+        if (searchController.searchBar.superview != nil) {
+            [searchController.searchBar removeFromSuperview];
+        }
+        
+        UISearchBar *searchBar = searchController.searchBar;
+        searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44.f);
+        searchBar.backgroundImage = [UIImage new];
+        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        
+        [supplementaryView addSubview:searchBar];
+        
+        [searchBar sizeToFit];
+        
+        [supplementaryView.heightAnchor constraintEqualToAnchor:searchBar.heightAnchor].active = YES;
+        
+        [supplementaryView.leadingAnchor constraintEqualToAnchor:self.collectionView.safeAreaLayoutGuide.leadingAnchor].active = YES;
+        [supplementaryView.trailingAnchor constraintEqualToAnchor:self.collectionView.safeAreaLayoutGuide.trailingAnchor].active = YES;
+
+    }];
+        
+    self.DS.supplementaryViewProvider = ^UICollectionReusableView * _Nullable(UICollectionView * _Nonnull collectionView, NSString * _Nonnull kind, NSIndexPath * _Nonnull indexPath) {
+      
+        return [collectionView dequeueConfiguredReusableSupplementaryViewWithRegistration:searchHeaderRegistration forIndexPath:indexPath];
+        
+    };
+#endif
+    
+}
+
+- (BOOL)definesPresentationContext {
+    return YES;
 }
 
 - (void)setupData {
+    
+    // since we only allow single selection in this collection, we get the first item.
+    // can be nil.
+    NSIndexPath *selected = [self.collectionView.indexPathsForSelectedItems firstObject];
     
     NSDiffableDataSourceSectionSnapshot *snapshot = [NSDiffableDataSourceSectionSnapshot new];
     
@@ -351,6 +406,28 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }
     
+#if TARGET_OS_MACCATALYST
+    
+    if (self->_initialSnapshotSetup == NO) {
+        
+        selected = [self.DS indexPathForItemIdentifier:unread];
+        
+        self->_initialSnapshotSetup = YES;
+        
+    }
+    
+#endif
+    
+    if (selected != nil) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            [self.collectionView selectItemAtIndexPath:selected animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+            
+        });
+        
+    }
+    
 }
 
 - (void)setupNotifications {
@@ -368,6 +445,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         }
         
         [MyFeedsManager updateSharedUnreadCounters];
+        [self updateSharedUnreadsData];
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:0 inSection:0];
        
@@ -400,8 +478,6 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:1 inSection:0];
        
         UICollectionViewListCell *cell = (UICollectionViewListCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
-        
-        [MyFeedsManager updateSharedUnreadCounters];
         
         if (cell != nil) {
             
@@ -471,6 +547,22 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             if ([self.refreshControl isRefreshing]) {
                 [self.refreshControl endRefreshing];
+            }
+            
+            NSArray <NSIndexPath *> *selectedIndexPaths = self.collectionView.indexPathsForSelectedItems;
+            
+            if (selectedIndexPaths.count > 0 && MyFeedsManager.totalUnread > 0) {
+                
+                // if it's the unreads or today tab, refresh those as well
+                if (selectedIndexPaths[0].section == 0 && selectedIndexPaths[0].item != 2 && self.mainCoordinator.feedVC != nil) {
+                    
+                    UnreadVC *vc = (id)(self.mainCoordinator.feedVC);
+                    
+                    [vc.refreshControl beginRefreshing];
+                    [vc didBeginRefreshing:vc.refreshControl];
+                    
+                }
+                
             }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -543,9 +635,50 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
     }];
     
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:ShowBookmarksTabPreferenceChanged object:nil];
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(setupData) name:ShowUnreadCountsPreferenceChanged object:nil];
+    
+#if TARGET_OS_MACCATALYST
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didChangeTimerPreference) name:MacRefreshFeedsIntervalUpdated object:nil];
+    
+#endif
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(badgePreferenceChanged) name:BadgeAppIconPreferenceUpdated object:nil];
+    
 }
 
 #pragma mark - Getters
+
+#if TARGET_OS_MACCATALYST
+
+- (UISearchController *)supplementarySearchController {
+    
+    if (_supplementarySearchController == nil) {
+        _supplementarySearchController = [self searchControllerForSidebar];
+    }
+    
+    return _supplementarySearchController;
+    
+}
+
+#endif
+
+- (UISearchController *)searchControllerForSidebar {
+    
+    UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    searchController.searchResultsUpdater = self;
+    searchController.delegate = self;
+    searchController.obscuresBackgroundDuringPresentation = NO;
+    searchController.searchBar.placeholder = @"Search Feeds";
+    searchController.searchBar.accessibilityHint = @"Search your feeds";
+    
+    searchController.searchBar.layer.borderColor = [UIColor clearColor].CGColor;
+    
+    return searchController;
+    
+}
 
 - (UICollectionViewDiffableDataSource *)datasource {
     
@@ -896,6 +1029,39 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self setupData];
 
         }
+        else {
+            
+            NSIndexPath *selected = [[self.collectionView indexPathsForSelectedItems] firstObject];
+            
+            NSArray <NSIndexPath *> *visible = [self.collectionView indexPathsForVisibleItems];
+            
+            NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity:visible.count];
+            
+            for (NSIndexPath *indexPath in visible) {
+                
+                id item = [self.DS itemIdentifierForIndexPath:indexPath];
+                
+                if (item != nil) {
+                    [identifiers addObject:item];
+                }
+                
+            }
+            
+            [snapshot reloadItemsWithIdentifiers:identifiers];
+            
+            [self.DS applySnapshot:snapshot animatingDifferences:NO];
+            
+            if (selected != nil) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   
+                    [self.collectionView selectItemAtIndexPath:selected animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+                    
+                });
+                
+            }
+            
+        }
 
         if ([self.refreshControl isRefreshing]) {
             [self.refreshControl endRefreshing];
@@ -932,15 +1098,37 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)updateSharedUnreadsData {
     
+    NSTimeInterval interval = 0;
+    
+    if (self.unreadWidgetsTimer != nil) {
+        
+        interval = 5;
+        
+        [self.unreadWidgetsTimer invalidate];
+        
+        self.unreadWidgetsTimer = nil;
+        
+    }
+    
+    weakify(self);
+    
+    self.unreadWidgetsTimer = [NSTimer scheduledTimerWithTimeInterval:interval repeats:NO block:^(NSTimer * _Nonnull timer) {
+        
+        strongify(self);
+        
+        [self _updateSharedUnreadsData];
+        
+    }];
+    
+}
+
+- (void)_updateSharedUnreadsData {
+    
     [MyFeedsManager getUnreadForPage:1 limit:6 sorting:YTSortUnreadDesc success:^(NSArray <FeedItem *> * items, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
            
             NSMutableArray <NSMutableDictionary *> *list = [NSMutableArray arrayWithCapacity:items.count];
-            
-            NSMutableSet <NSString *> * favicons = [NSMutableSet setWithCapacity:6];
-            
-            NSMutableSet <NSString *> *covers = [NSMutableSet setWithCapacity:6];
             
             NSArray *usableItems = nil;
             
@@ -1017,88 +1205,22 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     @"favicon": favicon
                 }];
                 
+                /*
+                 * Convert all image URLs to the image proxy urls. This ensures
+                 * we always download correctly sized and scaled images so as to
+                 * not use excessive memory in Widgets.
+                 */
                 if (imageURL != nil) {
-                    
-                    listItem[@"imageURL"] = imageURL;
-                    
-                    [covers addObject:imageURL];
-                    
+                    listItem[@"imageURL"] = [imageURL pathForImageProxy:NO maxWidth:80.f quality:0.8f forWidget:YES];
                 }
                 
                 if ([favicon isBlank] == NO) {
-                    [favicons addObject:favicon];
+                    listItem[@"favicon"] = [favicon pathForImageProxy:NO maxWidth:48.f quality:0.8f forWidget:YES];
                 }
                 
                 [list addObject:listItem];
                 
             }
-            
-            // fetch all images and covert to base64. Widgets currenly have an issue
-            // where the View does not reload once an image is set. Will also remove the
-            // the SDWebImageSwiftUI dep.
-            dispatch_group_t group = dispatch_group_create();
-            
-            [favicons enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-
-                dispatch_group_enter(group);
-                
-                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                    
-                    if (data != nil) {
-                        
-                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
-                        
-                        if (base64EncodedData != nil) {
-                            
-                            for (NSMutableDictionary *item in list) {
-                                
-                                if (item[@"favicon"] == obj) {
-                                    item[@"favicon"] = base64EncodedData;
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                    dispatch_group_leave(group);
-                    
-                }];
-                
-            }];
-            
-            [covers enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
-                
-                dispatch_group_enter(group);
-               
-                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:obj] options:kNilOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                    
-                    if (data != nil) {
-                        
-                        NSString *base64EncodedData = [data base64EncodedStringWithOptions:kNilOptions];
-                        
-                        if (base64EncodedData != nil) {
-                            
-                            for (NSMutableDictionary *item in list) {
-                                
-                                if (item[@"imageURL"] == obj) {
-                                    item[@"image"] = base64EncodedData;
-                                }
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                    dispatch_group_leave(group);
-                    
-                }];
-                
-            }];
-            
-            dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
             
             NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
             
@@ -1235,6 +1357,71 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     }
     
     [activity addUserInfoEntriesFromDictionary:@{@"sidebar": sidebar}];
+    
+}
+
+#if TARGET_OS_MACCATALYST
+#pragma mark - Timer
+
+- (void)didChangeTimerPreference {
+    
+    if (self.refreshTimer != nil) {
+        
+        [self.refreshTimer invalidate];
+        
+        self.refreshTimer = nil;
+        
+    }
+    
+    [self scheduleTimerIfValid];
+    
+}
+
+- (void)scheduleTimerIfValid {
+    
+    if (self.refreshTimer != nil) {
+        // a timer was already setup.
+        return;
+    }
+    
+    if (SharedPrefs.refreshFeedsTimeInterval == -1) {
+        return;
+    }
+    
+    NSTimeInterval timeInterval = SharedPrefs.refreshFeedsTimeInterval;
+    
+    NSTimer *timer = [NSTimer timerWithTimeInterval:timeInterval repeats:YES block:^(NSTimer * _Nonnull timer) {
+        
+        NSLog(@"Timer called at %@, refreshing counters and feeds", timer.fireDate);
+        
+        [self beginRefreshingAll:nil];
+        
+    }];
+    
+    NSLog(@"Scheduling timer with time interval: %@", @(timeInterval));
+    
+    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSDefaultRunLoopMode];
+    
+    self.refreshTimer = timer;
+    
+}
+
+#endif
+
+#pragma mark -
+
+- (void)badgePreferenceChanged {
+    
+    if (SharedPrefs.badgeAppIcon == NO) {
+        
+        UIApplication.sharedApplication.applicationIconBadgeNumber = 0;
+        
+    }
+    else {
+        
+        UIApplication.sharedApplication.applicationIconBadgeNumber = MyFeedsManager.totalUnread;
+        
+    }
     
 }
 

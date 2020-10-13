@@ -138,13 +138,14 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     [self updateMarkerView];
     
-    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
+    self.selectedBackgroundView.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.3f];
     
 }
 
 #pragma mark - Configurations
 
 - (BOOL)showImage {
+    
     if ([SharedPrefs.imageBandwidth isEqualToString:ImageLoadingNever])
         return NO;
     
@@ -162,7 +163,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         return;
     }
     
-    if ([self showImage] == NO) {
+    if ([self showImage] == NO || SharedPrefs.articleCoverImages == NO) {
         
         self.coverImage.hidden = YES;
         
@@ -321,7 +322,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     Feed *feed = [MyFeedsManager feedForID:self.article.feedID];
     
-    if (feed == nil) {
+    if (feed == nil || [self showImage] == NO) {
         
         self.titleLabel.attributedText = attrs;
         
@@ -371,7 +372,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     if (SharedPrefs.imageProxy) {
         
-        url = [url pathForImageProxy:NO maxWidth:attachment.bounds.size.width quality:0.9f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+        url = [url pathForImageProxy:NO maxWidth:attachment.bounds.size.width quality:0.9f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes forWidget:NO];
         
     }
     
@@ -514,7 +515,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     if (SharedPrefs.imageProxy == YES) {
         
-        url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.9f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes];
+        url = [url pathForImageProxy:NO maxWidth:maxWidth quality:0.9f firstFrameForGIF:NO useImageProxy:YES sizePreference:ImageLoadingMediumRes forWidget:NO];
         
     }
     

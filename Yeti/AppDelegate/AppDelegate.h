@@ -13,6 +13,8 @@
 #import "Coordinator.h"
 #import "SceneDelegate.h"
 
+@class AppKitGlue;
+
 @class RMStoreKeychainPersistence;
 
 @class AppDelegate;
@@ -48,6 +50,10 @@ extern AppDelegate * MyAppDelegate;
 @property (nonatomic, weak) id <UIMenuBuilder> mainMenuBuilder;
 
 @property (nonatomic, weak) NSToolbarItem *shareArticleItem;
+
+@property (nonatomic, strong) AppKitGlue *sharedGlue;
+
+@property (nonatomic, weak) UIWindowScene *mainScene;
 
 #endif
 

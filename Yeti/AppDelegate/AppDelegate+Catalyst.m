@@ -12,6 +12,8 @@
 
 #if TARGET_OS_MACCATALYST
 
+#import "AppKitGlue.h"
+
 #import "FeedsVC+Actions.h"
 #import "ArticleVC+Toolbar.h"
 
@@ -26,8 +28,25 @@
 
 @implementation AppDelegate (Catalyst)
 
-
 - (void)ct_setupAppKitBundle {
+   
+#if TARGET_OS_MACCATALYST
+    NSString *pluginPath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:@"elytramac.bundle"];
+        
+    NSBundle *macBundle = [NSBundle bundleWithPath:pluginPath];
+    
+    self.appKitBundle = macBundle;
+    
+    __unused BOOL unused = [self.appKitBundle load];
+    
+    Class appKitGlueClass = [self.appKitBundle classNamed:@"AppKitGlue"];
+
+    __unused AppKitGlue *instance = [appKitGlueClass shared];
+    
+    self.sharedGlue = instance;
+    self.sharedGlue.appUserDefaults = [NSUserDefaults standardUserDefaults];
+    self.sharedGlue.feedsManager = MyFeedsManager;
+#endif
     
 }
 
@@ -61,9 +80,16 @@
     
     UIMenu *newFeedMenu = [UIMenu menuWithTitle:@"New Items" image:nil identifier:@"NewFeedInlineMenuItem" options:UIMenuOptionsDisplayInline children:@[newFeed, newFolder, refresh]];
     
+    UICommand *importSubscriptions = [UICommand commandWithTitle:@"Import Subscriptions" image:nil action:@selector(didClickImportSubscriptions) propertyList:nil];
+    
+    UIKeyCommand *exportSubscriptions = [UIKeyCommand commandWithTitle:@"Export Subscriptions" image:nil action:@selector(didClickExportSubscriptions) input:@"e" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate propertyList:nil];
+    
+    UIMenu *subscriptionsMenu = [UIMenu menuWithTitle:@"Subscriptions" image:nil identifier:@"SubscriptionsMenuIdentifier" options:UIMenuOptionsDisplayInline children:@[importSubscriptions, exportSubscriptions]];
+    
     [builder replaceMenuForIdentifier:UIMenuNewScene withMenu:newFeedMenu];
     
-
+    [builder insertSiblingMenu:subscriptionsMenu afterMenuForIdentifier:@"NewFeedInlineMenuItem"];
+    
     FeedVC *feedVC = coordinator.feedVC;
     
     UIKeyCommand *toggleSidebar = [UIKeyCommand commandWithTitle:@"Toggle Sidebar" image:nil action:@selector(toggleSidebar:) input:@"s" modifierFlags:UIKeyModifierCommand|UIKeyModifierAlternate  propertyList:nil];
@@ -164,6 +190,14 @@
     UIMenu *articlesMenu = [UIMenu menuWithTitle:@"Article" children:@[markRead, markBookmark, openInBrowser, closeArticle, shareArticle, searchArticle]];
     
     [builder insertSiblingMenu:articlesMenu beforeMenuForIdentifier:UIMenuWindow];
+    
+    UICommand *subsWindow = [UICommand commandWithTitle:@"View Subscription" image:nil action:@selector(showSubscriptionsInterface) propertyList:nil];
+    
+//    UICommand *attrsWindow = [UICommand commandWithTitle:@"Attributions" image:nil action:@selector(showAttributionsInterface) propertyList:nil];
+    
+    UIMenu *subsMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SubsMenu" options:UIMenuOptionsDisplayInline children:@[subsWindow]];
+    
+    [builder insertSiblingMenu:subsMenu afterMenuForIdentifier:UIMenuAbout];
     
 }
 

@@ -24,6 +24,7 @@
 #import "NSDate+DateTools.h"
 #import "NSString+HTML.h"
 #import "NSString+Levenshtein.h"
+#import "NSString+CJK.h"
 #import "CodeParser.h"
 
 #import "TypeFactory.h"
@@ -49,12 +50,6 @@
 #import "Tweet.h"
 #import "TweetImage.h"
 
-#if TARGET_OS_MACCATALYST
-
-#import <AppKit/NSWorkspace.h>
-
-#endif
-
 static void *KVO_PlayerRate = &KVO_PlayerRate;
 
 typedef NS_ENUM(NSInteger, ArticleState) {
@@ -73,6 +68,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL _deferredProcessing;
     
     BOOL _isRestoring;
+    
+#if TARGET_OS_MACCATALYST
+    BOOL _shiftPressedBeforeClickingURL;
+#endif
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -139,7 +138,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.navigationController.navigationBar.hidden = YES;
     }
     
-    self.scrollView.contentInset = UIEdgeInsetsMake(-1.f, 0, 44.f, 0);
+    self.scrollView.contentInset = UIEdgeInsetsMake(12.f, 0, 44.f, 0);
     
 #else
     
@@ -269,7 +268,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.helperView != nil) {
         self.helperView.tintColor = self.view.tintColor;
     }
-    
+
     [self becomeFirstResponder];
     
 }
@@ -1489,6 +1488,20 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"hr"]) {
         
+        CGFloat halfPixel = 1.f;
+
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, halfPixel)];
+
+        line.userInteractionEnabled = NO;
+        line.backgroundColor = UIColor.separatorColor;
+        line.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        [line.heightAnchor constraintEqualToConstant:halfPixel].active = YES;
+        
+        [self.stackView addArrangedSubview:line];
+        
+        _last = line;
+        
     }
     else if ([content.type isEqualToString:@"script"]) {
         // wont be handled at the moment
@@ -1608,7 +1621,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         NSAttributedString *newAttrs = [last processText:content.content ranges:content.ranges attributes:content.attributes];
         
         if (newAttrs) {
-            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:formattedString(@"%@", rangeAdded ? @" " : @"\n\n")];
+            
+            // For CJK paragraphs, we strictly ignore any rangeAdditions we make.
+            // Not doing so breaks the formatting as intended by the author making
+            // the text one big paragraph and difficult to read. 
+            if (rangeAdded == YES && [newAttrs.string containsCJKCharacters] == YES) {
+                rangeAdded = NO;
+            }
+            
+            NSString *accessoryStr = formattedString(@"%@", rangeAdded ? @" " : @"\n\n");
+            
+            NSAttributedString *accessory = [[NSAttributedString alloc] initWithString:accessoryStr];
             
             [attrs appendAttributedString:accessory];
             [attrs appendAttributedString:newAttrs];
@@ -1792,7 +1815,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 NSMutableAttributedString *mattrs = para.attributedText.mutableCopy;
                 
-                NSDictionary *textAttributes = @{NSFontAttributeName: para.font};
+                NSDictionary *textAttributes = @{NSFontAttributeName: para.font ?: [UIFont preferredFontForTextStyle:UIFontTextStyleBody]};
                 
                 NSAttributedString * attrs = [[NSAttributedString alloc] initWithString:attributes[@"alt"] attributes:textAttributes];
                 
@@ -1984,6 +2007,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
     gallery.maxScreenHeight = self.view.bounds.size.height - (self.view.safeAreaInsets.top + self.additionalSafeAreaInsets.bottom) - 12.f - 38.f;
     
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
+    gallery.userInteractionEnabled = YES;
+    
+    [gallery addGestureRecognizer:tap];
+    
     [self.stackView addArrangedSubview:gallery];
     // set images after adding it to the superview since -[Gallery setImages:] triggers layout.
     gallery.images = content.images;
@@ -2174,10 +2202,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (![self showImage])
         return;
     
-#if TARGET_OS_MACCATALYST
-    return [self _addYoutube:content];
-#endif
-    
     NSString *videoID = [[content url] lastPathComponent];
     
     if ([videoID containsString:@"watch?v="] == YES) {
@@ -2214,6 +2238,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [self.ytExtractor extract:videoID success:^(VideoInfo * _Nonnull videoInfo) {
         
         if (videoInfo) {
+            
             YTPlayer *player = [YTPlayer playerWithURL:videoInfo.url];
             playerController.player = player;
             
@@ -2918,12 +2943,22 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if ([link containsString:@"/feed"]) {
         
         // handle internally
-        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", link);
+        formatted = formattedURL(@"yeti://addFeedConfirm?URL=%@", [link encodeURIComponents]);
         
     }
     else {
-        formatted = formattedURL(@"yeti://external?link=%@", link);
+        formatted = formattedURL(@"yeti://external?link=%@", [link encodeURIComponents]);
     }
+    
+#if TARGET_OS_MACCATALYST
+    
+    if (_shiftPressedBeforeClickingURL) {
+        
+        formatted = formattedURL(@"%@&shift=1", formatted.absoluteString);
+        
+    }
+    
+#endif
     
     runOnMainQueueWithoutDeadlocking(^{
         
@@ -2958,6 +2993,83 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     NSUInteger index = [layoutManager characterIndexForPoint:point inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:&fractionalDistance];
     
     return index;
+    
+}
+
+#pragma mark - Presses
+
+- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event {
+    
+    UIPress *press = presses.anyObject;
+    
+    if (press.key.keyCode == UIKeyboardHIDUsageKeyboardEscape) {
+        
+        if (press.responder != nil && [press.responder isKindOfClass:NSClassFromString(@"UISearchBarTextField")]) {
+            
+            [self didTapSearchDone];
+            
+        }
+        
+    }
+#if TARGET_OS_MACCATALYST
+    else if (press.key.modifierFlags == UIKeyModifierShift && _shiftPressedBeforeClickingURL == NO) {
+        
+        self->_shiftPressedBeforeClickingURL = YES;
+        
+        /*
+         * Reset this value back to NO so the next event can be reliably detected.
+         */
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            self->_shiftPressedBeforeClickingURL = NO;
+            
+        });
+        
+    }
+#endif
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardDownArrow) {
+        
+        if (press.key.modifierFlags == UIKeyModifierShift) {
+            [self scrollToEnd];
+        }
+        else {
+            [self scrollDown];
+        }
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardUpArrow) {
+        
+        if (press.key.modifierFlags == UIKeyModifierShift) {
+            [self scrollToTop];
+        }
+        else {
+            [self scrollUp];
+        }
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardLeftArrow) {
+        [self navLeft];
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardRightArrow) {
+        [self navRight];
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardJ && self.providerDelegate != nil) {
+        
+        [self didTapPreviousArticle:nil];
+        
+    }
+    else if (press.key.keyCode == UIKeyboardHIDUsageKeyboardK && self.providerDelegate != nil) {
+        
+        [self didTapNextArticle:nil];
+        
+    }
+    else {
+        
+        NSLogDebug(@"Presses: %@\n Events:%@", presses, event);
+        
+        [super pressesBegan:presses withEvent:event];
+        
+    }
     
 }
 

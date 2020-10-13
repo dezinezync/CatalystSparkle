@@ -31,6 +31,7 @@ NSString * const kDefaultsNotifications = @"notifications";
 NSString * const kDefaultsImageLoading = @"imageLoading";
 NSString * const kDefaultsImageBandwidth = @"imageBandwidth";
 
+NSNotificationName const ArticleCoverImagesPreferenceUpdated = @"ArticleCoverImagesPreferenceUpdated";
 NSString * const kShowArticleCoverImages = @"showArticleCoverImages";
 
 #pragma mark - Image Loading
@@ -38,6 +39,8 @@ NSString * const kShowArticleCoverImages = @"showArticleCoverImages";
 ImageLoadingOption const ImageLoadingLowRes = @"Low Res";
 ImageLoadingOption const ImageLoadingMediumRes = @"Medium Res";
 ImageLoadingOption const ImageLoadingHighRes = @"High Res";
+
+NSNotificationName const ImageBandWidthPreferenceUpdated = @"ImageBandWidthPreferenceUpdated";
 
 ImageLoadingOption const ImageLoadingNever = @"Never load images";
 ImageLoadingOption const ImageLoadingOnlyWireless = @"Only load on Wi-Fi";
@@ -74,6 +77,7 @@ ArticleLayoutFont const ALPPlexSerif = @"articlelayout.IBMPlexSerif";
 ArticleLayoutFont const ALPPlexSans = @"articlelayout.IBMPlexSans";
 ArticleLayoutFont const ALPSpectral = @"articlelayout.Spectral";
 ArticleLayoutFont const ALPOpenDyslexic = @"articlelayout.OpenDyslexic";
+ArticleLayoutFont const ALPNewYork = @"articlelayout.NewYorkLarge";
 
 #pragma mark - Subscription
 
@@ -97,7 +101,7 @@ NSNotificationName YTUserPurchasedSubscription = @"com.dezinezync.elytra.pro.pur
  * 2. Update the value of the LaunchCount key
  */
 NSString * const YTLaunchCountOldKey = @"";
-NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-1-6-2";
+NSString * const YTLaunchCount = @"com.dezinezync.elytra.launchCount-2.1.0";
 NSString * const YTRequestedReview = @"com.dezinezync.elytra.requestedReview";
 
 NSString * const YTSubscriptionNotification = @"com.dezinezync.elytra.subscription";
@@ -117,6 +121,7 @@ YetiSortOption const YTSortUnreadAsc = @"3";  // 3
 
 NSString * const kShowMarkReadPrompt = @"com.dezinezync.elytra.showMarkReadPrompt";
 NSString * const kHideBookmarksTab = @"com.dezinezync.elytra.hideBookmarksTab";
+
 NSNotificationName const ShowBookmarksTabPreferenceChanged = @"com.dezinezync.elytra.note.showBookmarksTab";
 NSString * const kOpenUnreadOnLaunch = @"com.dezinezync.elytra.openUnreadOnLaunch";
 NSString * const kShowTags = @"com.dezinezync.elytra.showTags";
@@ -134,6 +139,7 @@ NSString * const IAPMonthlyAuto = @"com.dezinezync.elytra.monthly";
 NSString * const IAPYearlyAuto = @"com.dezinezync.elytra.yearly";
 
 NSString * const kPreviewLines = @"com.dezinezync.elytra.summaryPreviewLines";
+NSNotificationName const PreviewLinesPreferenceUpdated = @"previewLinesPreferenceUpdated";
 
 NSString * _Nonnull const kUseSystemFontSize = @"com.dezinezync.elytra.useSystemFontSize";
 NSString * _Nonnull const kFontSize = @"com.dezinezync.elytra.fontSize";
@@ -141,6 +147,20 @@ NSString * _Nonnull const kParagraphTitleFont = @"com.dezinezync.elytra.paragrap
 NSString * _Nonnull const kLineSpacing = @"com.dezinezync.elytra.lineSpacing";
 
 NSNotificationName UserUpdatedPreferredFontMetrics = @"com.dezinezync.note.userUpdatedPreferredFontMetrics";
+
+NSString * _Nonnull const OpenBrowserInReaderMode = @"opensBrowserInReaderMode";
+
+#if TARGET_OS_MACCATALYST
+
+NSNotificationName const MacRefreshFeedsIntervalUpdated = @"macRefreshFeedsIntervalUpdated";
+NSString * _Nonnull const MacKeyRefreshFeeds = @"macKeyRefreshFeeds";
+
+NSString * _Nonnull const MacKeyOpensBrowserInBackground = @"macKeyOpensBrowserInBackground";
+
+#endif
+
+NSNotificationName _Nonnull const BadgeAppIconPreferenceUpdated = @"badgeAppIconPreferenceUpdated";
+NSString * _Nonnull const badgeAppIconPreference = @"badgeAppIconPreference";
 
 #pragma mark -
 

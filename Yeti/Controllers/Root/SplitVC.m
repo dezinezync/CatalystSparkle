@@ -149,7 +149,7 @@
         if (size.width < 1024.f) {
             
             [self setPreferredSplitBehavior:UISplitViewControllerSplitBehaviorDisplace];
-            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoDisplaceSecondary];
+            [self setPreferredDisplayMode:UISplitViewControllerDisplayModeTwoOverSecondary];
             
         }
         else if (size.width >= 1024.f && size.width < 1180.f) {
@@ -369,6 +369,13 @@
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:@"restoration"];
     activity.persistentIdentifier = NSUUID.UUID.UUIDString;
     
+    CGFloat sidebarWidth = self.primaryColumnWidth;
+    CGFloat supplementaryWidth = self.supplementaryColumnWidth;
+    
+    NSArray <NSNumber *> *widths = @[@(sidebarWidth), @(supplementaryWidth)];
+    
+    [activity addUserInfoEntriesFromDictionary:@{@"splitWidths": widths}];
+    
     NSArray *controllers = [self.viewControllers rz_map:^id(UIViewController *obj, NSUInteger idx, NSArray *array) {
         
         if ([obj isKindOfClass:UINavigationController.class] == NO) {
@@ -411,6 +418,23 @@
     
     if (restorationIdentifiers == nil || restorationIdentifiers.count == 0) {
         return;
+    }
+    
+    NSArray <NSNumber *> *widths = [activity.userInfo valueForKey:@"splitWidths"];
+    
+    if (widths != nil && widths.count) {
+        
+        CGFloat sidebar = widths[0].doubleValue;
+        CGFloat supplementary = widths[1].doubleValue;
+        
+        if (sidebar > 0.f) {
+            self.preferredPrimaryColumnWidth = sidebar;
+        }
+        
+        if (supplementary > 0.f) {
+            self.preferredSupplementaryColumnWidth = supplementary;
+        }
+        
     }
     
     NSLogDebug(@"Continuing activity: %@", restorationIdentifiers);
@@ -533,6 +557,11 @@
         return NO;
         
     }
+    else if ([NSStringFromSelector(aSelector) isEqualToString:@"showSubscriptionsInterface"]) {
+        
+        return YES;
+        
+    }
     
     return [super respondsToSelector:aSelector];
     
@@ -554,6 +583,11 @@
         }
         
     }
+    else if ([NSStringFromSelector(selector) isEqualToString:@"showSubscriptionsInterface"]) {
+        
+        return [self.mainCoordinator methodSignatureForSelector:selector];
+        
+    }
     
     return [super methodSignatureForSelector:selector];
 }
@@ -566,6 +600,10 @@
     }
     else if (anInvocation.selector == NSSelectorFromString(@"didTapSearch") && self.mainCoordinator.articleVC != nil) {
         [anInvocation invokeWithTarget:self.mainCoordinator.articleVC];
+        return;
+    }
+    else if (anInvocation.selector == NSSelectorFromString(@"showSubscriptionsInterface")) {
+        [anInvocation invokeWithTarget:self.mainCoordinator];
         return;
     }
     

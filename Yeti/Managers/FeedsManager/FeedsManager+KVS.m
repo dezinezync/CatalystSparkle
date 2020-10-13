@@ -67,7 +67,7 @@
             
             item.read = read;
             
-            if ([NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
+            if (feeds.count > 0 && [NSCalendar.currentCalendar isDateInToday:item.timestamp]) {
                 
                 // adjust value for Today as well
                 if (read == YES) {
@@ -84,16 +84,16 @@
             
         }
         
-        if (read == YES) {
-            self.totalUnread = self.totalUnread - items.count;
-        }
-        else {
-            self.totalUnread = self.totalUnread + items.count;
-        }
-        
         // only post the notification if it's affecting a feed or folder
         // this avoids reducing or incrementing the count for unsubscribed feeds
         if (feeds.count > 0) {
+            
+            if (read == YES) {
+                self.totalUnread = self.totalUnread - items.count;
+            }
+            else {
+                self.totalUnread = self.totalUnread + items.count;
+            }
             
             for (Feed *feed in feeds) {
                 
