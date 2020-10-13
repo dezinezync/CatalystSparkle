@@ -1,5 +1,11 @@
 # v2.1.0
 
+## Build 57
+
+- Fixed an issue with the Today Count always reporting as 1. 
+
+- Fixed a rare crash that would occur in TF builds if your account had an expired subscription. 
+
 ## Build 55
 
 - Potentially corrected rotation behaviour for iPads. 

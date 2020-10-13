@@ -2895,7 +2895,7 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (NSUInteger)totalToday {
     
-    return _totalToday || 0;
+    return _totalToday ?: 0;
     
 }
 
