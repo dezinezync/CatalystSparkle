@@ -3175,7 +3175,8 @@ NSArray <NSString *> * _defaultsKeys;
         
     });
     
-    if (self.user.subscription == nil || self.user.subscription.expiry == nil) {
+    if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
+        || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
         
         [self getSubscriptionWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
          
@@ -3212,19 +3213,19 @@ NSArray <NSString *> * _defaultsKeys;
         }];
         
     }
-    else {
-        
-        if ([self.user.subscription hasExpired] == YES) {
-            
-            self.user.subscription = nil;
-            
-            [MyDBManager setUser:self.user];
-            
-            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
-            
-        }
-        
-    }
+//    else {
+//
+//        if ([self.user.subscription hasExpired] == YES) {
+//
+//            self.user.subscription = nil;
+//
+//            [MyDBManager setUser:self.user];
+//
+//            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
+//
+//        }
+//
+//    }
     
 }
 

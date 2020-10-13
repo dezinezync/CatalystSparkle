@@ -1815,7 +1815,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 
                 NSMutableAttributedString *mattrs = para.attributedText.mutableCopy;
                 
-                NSDictionary *textAttributes = @{NSFontAttributeName: para.font};
+                NSDictionary *textAttributes = @{NSFontAttributeName: para.font ?: [UIFont preferredFontForTextStyle:UIFontTextStyleBody]};
                 
                 NSAttributedString * attrs = [[NSAttributedString alloc] initWithString:attributes[@"alt"] attributes:textAttributes];
                 
