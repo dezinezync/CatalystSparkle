@@ -86,14 +86,23 @@
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    
+    BOOL isSame = (previousTraitCollection.horizontalSizeClass == self.traitCollection.horizontalSizeClass)
+                  || previousTraitCollection.verticalSizeClass == self.traitCollection.verticalSizeClass;
+    
     [super traitCollectionDidChange:previousTraitCollection];
     
-    weakify(self);
+    if (isSame == NO) {
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        strongify(self);
-        [self setImages:self.images];
-    });
+        weakify(self);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            strongify(self);
+            [self setImages:self.images];
+        });
+        
+    }
+    
 }
 
 #pragma mark -
@@ -174,12 +183,16 @@
         _unbounded = YES;
     }
     
-    self.pageControl.numberOfPages = images.count;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.pageControl.numberOfPages = images.count;
+        
+        [self.collectionView setNeedsUpdateConstraints];
+        [self.collectionView layoutIfNeeded];
+    });
     
-    [self.collectionView setNeedsUpdateConstraints];
-    [self.collectionView layoutIfNeeded];
-    
-    [self.collectionView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.collectionView reloadData];
+    });
 }
 
 - (void)setupHeight {

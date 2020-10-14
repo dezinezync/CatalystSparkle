@@ -165,8 +165,6 @@
         
         read = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Unread" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
             
-            [MyFeedsManager article:item markAsRead:NO];
-            
             [self userMarkedArticle:item read:NO];
             
             completionHandler(YES);
@@ -179,8 +177,6 @@
     else {
         
         read = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleNormal title:@"Read" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
-            
-            [MyFeedsManager article:item markAsRead:YES];
             
             [self userMarkedArticle:item read:YES];
             

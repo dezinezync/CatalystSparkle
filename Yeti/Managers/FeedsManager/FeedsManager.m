@@ -3764,6 +3764,12 @@ NSArray <NSString *> * _defaultsKeys;
                 
                 __block NSUInteger count = bookmarked.count;
                 
+                if (count == 0) {
+                    
+                    return [self bookmarksUpdateFromServerCompleted];
+                    
+                }
+                
                 [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     // this article needs to be downloaded and cached
@@ -3795,7 +3801,13 @@ NSArray <NSString *> * _defaultsKeys;
                 }];
                 
             }
+            else {
+                [self bookmarksUpdateFromServerCompleted];
+            }
             
+        }
+        else {
+            [self bookmarksUpdateFromServerCompleted];
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

@@ -1,5 +1,15 @@
 # v2.1.0
 
+## Build 59
+
+- Fixed a rare bug that would prevent the bookmarks counter from updating when adding or removing bookmarks. 
+
+- Removing a bookmark while in the bookmarks feed now removes the article after a small delay. 
+
+## Build 58
+
+- Fixed a rare crashing bug that would occur when initating a Refresh in the Feeds Interface. (Thank you for Lee.)
+
 ## Build 57
 
 - Fixed an issue with the Today Count always reporting as 1. 

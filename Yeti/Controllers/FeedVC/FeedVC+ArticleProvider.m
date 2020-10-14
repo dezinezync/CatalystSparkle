@@ -116,6 +116,9 @@
         }
         
         if (articleInDS != nil) {
+            
+            [MyFeedsManager article:articleInDS markAsRead:read];
+            
             articleInDS.read = read;
             // if the article exists in the datasource,
             // we can expect a cell for it and therefore
@@ -139,7 +142,9 @@
                 [cell updateMarkerView];
                 
             }
+            
         }
+        
     });
 }
 
@@ -172,74 +177,88 @@
         
         if (articleInDS != nil) {
             
-            if (bookmarked == YES) {
+            [MyFeedsManager article:articleInDS markAsBookmarked:bookmarked success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
-                [self.bookmarksManager addBookmark:articleInDS completion:^(BOOL success) {
+                if (bookmarked == YES) {
                     
-                    if (success) {
+                    [self.bookmarksManager addBookmark:articleInDS completion:^(BOOL success) {
                         
-                        articleInDS.bookmarked = bookmarked;
-                        // if the article exists in the datasource,
-                        // we can expect a cell for it and therefore
-                        // reload it.
-                        NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
-                        
-                        BOOL isVisible = NO;
-                        for (NSIndexPath *ip in visible) {
-                            if (ip.item == index) {
-                                isVisible = YES;
-                                indexPath = ip;
-                                break;
+                        if (success) {
+                            
+                            articleInDS.bookmarked = bookmarked;
+                            // if the article exists in the datasource,
+                            // we can expect a cell for it and therefore
+                            // reload it.
+                            NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
+                            
+                            BOOL isVisible = NO;
+                            for (NSIndexPath *ip in visible) {
+                                if (ip.item == index) {
+                                    isVisible = YES;
+                                    indexPath = ip;
+                                    break;
+                                }
                             }
+                            
+                            if (isVisible) {
+                                
+                                ArticleCell *cell = (ArticleCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                                
+                                [cell updateMarkerView];
+                                
+                            }
+                            
                         }
                         
-                        if (isVisible) {
+                    }];
+                    
+                }
+                else {
+                    
+                    if (self.type == FeedVCTypeBookmarks) {
+                        
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                             
-                            ArticleCell *cell = (ArticleCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                            [self setupData];
                             
-                            [cell updateMarkerView];
-                            
-                        }
+                        });
                         
                     }
                     
-                }];
-                
-            }
-            else {
-                
-                [self.bookmarksManager removeBookmark:articleInDS completion:^(BOOL success) {
-                    
-                    if (success) {
+                    [self.bookmarksManager removeBookmark:articleInDS completion:^(BOOL success) {
                         
-                        articleInDS.bookmarked = bookmarked;
-                        // if the article exists in the datasource,
-                        // we can expect a cell for it and therefore
-                        // reload it.
-                        NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
-                        
-                        BOOL isVisible = NO;
-                        for (NSIndexPath *ip in visible) {
-                            if (ip.item == index) {
-                                isVisible = YES;
-                                indexPath = ip;
-                                break;
+                        if (success) {
+                            
+                            articleInDS.bookmarked = bookmarked;
+                            // if the article exists in the datasource,
+                            // we can expect a cell for it and therefore
+                            // reload it.
+                            NSArray <NSIndexPath *> * visible = self.tableView.indexPathsForVisibleRows;
+                            
+                            BOOL isVisible = NO;
+                            for (NSIndexPath *ip in visible) {
+                                if (ip.item == index) {
+                                    isVisible = YES;
+                                    indexPath = ip;
+                                    break;
+                                }
                             }
+                            
+                            if (isVisible) {
+                                
+                                ArticleCell *cell = (ArticleCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+                                
+                                [cell updateMarkerView];
+                                
+                            }
+                            
                         }
                         
-                        if (isVisible) {
-                            
-                            ArticleCell *cell = (ArticleCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-                            
-                            [cell updateMarkerView];
-                            
-                        }
-                        
-                    }
+                    }];
                     
-                }];
+                }
                 
-            }
+            } error:nil];
             
         }
         

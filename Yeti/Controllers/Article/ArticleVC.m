@@ -803,9 +803,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (BOOL)_imageURL:(NSString *)url appearsInContent:(Content *)content {
     
+    if ([url containsString:@"?"]) {
+        
+        url = [url substringToIndex:[url rangeOfString:@"?" options:NSBackwardsSearch].location];
+        
+    }
+    
     if (([content.type isEqualToString:@"image"] || [content.type isEqualToString:@"img"])) {
         
-        if ([content.url isEqualToString:url]) {
+        NSString *comparing = content.url.copy;
+        
+        if ([comparing containsString:@"?"]) {
+            
+            comparing = [comparing substringToIndex:[comparing rangeOfString:@"?" options:NSBackwardsSearch].location];
+            
+        }
+        
+        if ([comparing isEqualToString:url]) {
             
             return YES;
             
@@ -848,6 +862,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return appearing != nil;
         
     }
+    else if (content.images != nil) {
+        
+        Content *appearing = [content.images rz_find:^BOOL(Content *objx, NSUInteger idxx, NSArray *arrayx) {
+           
+            return [self _imageURL:url appearsInContent:objx];
+            
+        }];
+        
+        return appearing != nil;
+        
+    }
     
     return NO;
     
@@ -859,7 +884,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.item.content enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
-        included = [self _imageURL:url appearsInContent:obj];
+        included = [self _imageURL:url.copy appearsInContent:obj];
         
         if (included == YES) {
             *stop = YES;
@@ -1419,7 +1444,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"aside"]) {
         
-            [self addAside:content];
+        [self addAside:content];
         
     }
     else if ([content.type isEqualToString:@"youtube"]) {
@@ -1429,6 +1454,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     else if ([content.type isEqualToString:@"gallery"]) {
+        
+        content.images = [content.images rz_filter:^BOOL(Content *obj, NSUInteger idx, NSArray *array) {
+           
+            return obj.url != nil && [obj.url containsString:@".gravatar.com/"] == NO;
+            
+        }];
         
         [self addGallery:content];
         
@@ -2005,6 +2036,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Gallery *gallery = [[Gallery alloc] initWithNib];
     gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
+    
     gallery.maxScreenHeight = self.view.bounds.size.height - (self.view.safeAreaInsets.top + self.additionalSafeAreaInsets.bottom) - 12.f - 38.f;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
