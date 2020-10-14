@@ -220,11 +220,13 @@ static NSString * const reuseIdentifier = @"Cell";
 }
 
 - (void)_updateMetrics {
+    
     [self.collectionView layoutIfNeeded];
     
     CGFloat columns = 3.f;
     
-    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    if (self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular ||
+        (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone && self.collectionView.bounds.size.width > 780.f)) {
         columns = 4.f;
     }
     

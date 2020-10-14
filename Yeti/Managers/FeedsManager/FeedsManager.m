@@ -2498,6 +2498,22 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSNumber *feedID = [params valueForKey:@"feedID"];
     
+    if (feedID == nil || feedID.integerValue == 0) {
+        
+        if (errorCB) {
+            
+            NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:405 userInfo:@{NSLocalizedDescriptionKey: @"Invalid or no Feed ID was provided."}];
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                errorCB(error, nil, nil);
+            });
+            
+        }
+        
+        return;
+        
+    }
+    
     NSString *path = [NSString stringWithFormat:@"/1.7/feeds/%@", feedID];
     
     __block DZURLSession *session = self.session;
