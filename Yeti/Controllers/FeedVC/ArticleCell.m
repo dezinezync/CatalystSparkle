@@ -332,9 +332,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     NSString *url = [feed faviconURI];
     
     if (url != nil && [url isBlank] == NO) {
-        NSString *key = formattedString(@"png-24-%@", url);
-            
-        [self _configureTitleFavicon:key attachment:attachment url:url];
+        
+        [self _configureTitleFavicon:nil attachment:attachment url:url];
+        
     }
     
     // positive offsets push it up, negative push it down
@@ -358,7 +358,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
 }
 
-- (void)_configureTitleFavicon:(NSString *)key
+- (void)_configureTitleFavicon:(NSString *)keyx
                     attachment:(NSTextAttachment *)attachment
                            url:(NSString *)url {
     
@@ -369,6 +369,10 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         self.faviconTask = nil;
         
     }
+    
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithFont:self.titleLabel.font];
+    
+    attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled" withConfiguration:config];
     
     if (SharedPrefs.imageProxy) {
         
@@ -389,7 +393,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
             
             runOnMainQueueWithoutDeadlocking(^{
                 
-                attachment.bounds = CGRectZero;
+//                attachment.bounds = CGRectZero;
                 
                 [self.titleLabel setNeedsDisplay];
                 
@@ -417,14 +421,15 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         }
         
         runOnMainQueueWithoutDeadlocking(^{
-            if (image == nil) {
-                attachment.bounds = CGRectZero;
-            }
-            else {
+            
+            if (image != nil) {
+                
                 attachment.image = image;
+                
             }
             
             [self.titleLabel setNeedsDisplay];
+            
         });
         
     }];
