@@ -158,7 +158,7 @@ AppDelegate *MyAppDelegate = nil;
 //            });
 //        #endif
         
-//            [self yt_log_fontnames];
+            [self yt_log_fontnames];
         
         //    NSString *data = [[@"highlightRowAtIndexPath:animated:scrollPosition:" dataUsingEncoding:NSUTF8StringEncoding] base64EncodedStringWithOptions:kNilOptions];
         //    NSLogDebug(@"EX:%@", data);

@@ -301,6 +301,10 @@
 		<string>OpenDyslexic-Italic.ttf</string>
 		<string>OpenDyslexic-Bold.ttf</string>
 		<string>OpenDyslexic-BoldItalic.ttf</string>
+		<string>Atkinson-Regular.ttf</string>
+		<string>Atkinson-Italic.ttf</string>
+		<string>Atkinson-Bold.ttf</string>
+		<string>Atkinson-BoldItalic.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

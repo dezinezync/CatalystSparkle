@@ -147,6 +147,21 @@
     
     [self _showDetailController:articleVC];
     
+    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac
+        && self.splitViewController.view.bounds.size.width < 1024.f) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [UIView animateWithDuration:0.125 animations:^{
+                
+                [self.splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModeSecondaryOnly];
+            
+            }];
+            
+        });
+        
+    }
+    
 }
 
 - (void)showRecommendations {

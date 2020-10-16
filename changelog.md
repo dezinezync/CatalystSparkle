@@ -1,5 +1,11 @@
 # v2.1.0
 
+## Build 61
+
+- Added the Atkinson Hyperlegible Font for Paragraph text and Titles. 
+
+- For iPads in Portrait mode, selecting an article will now dimiss the overlay view. 
+
 ## Build 59
 
 - Fixed a rare bug that would prevent the bookmarks counter from updating when adding or removing bookmarks. 

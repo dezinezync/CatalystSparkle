@@ -78,6 +78,7 @@ ArticleLayoutFont const ALPPlexSans = @"articlelayout.IBMPlexSans";
 ArticleLayoutFont const ALPSpectral = @"articlelayout.Spectral";
 ArticleLayoutFont const ALPOpenDyslexic = @"articlelayout.OpenDyslexic";
 ArticleLayoutFont const ALPNewYork = @"articlelayout.NewYorkLarge";
+ArticleLayoutFont const ALPAtkinson = @"articlelayout.Atkinson Hyperlegible";
 
 #pragma mark - Subscription
 

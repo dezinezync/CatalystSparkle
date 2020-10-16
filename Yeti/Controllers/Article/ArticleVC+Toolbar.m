@@ -581,7 +581,7 @@
     
     [openArticleActivity addUserInfoEntriesFromDictionary:dict];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:kNilOptions errorHandler:^(NSError * _Nonnull error) {
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:nil errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             

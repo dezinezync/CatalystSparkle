@@ -315,6 +315,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     [super viewSafeAreaInsetsDidChange];
 }
 
+- (BOOL)definesPresentationContext {
+    
+    return YES;
+    
+}
+
 - (void)dealloc {
     
     [UIMenuSystem.mainSystem setNeedsRebuild];
@@ -1204,8 +1210,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
+    NSString *fontName = [fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
+    
+    if ([fontName containsString:@"Atkinson"]) {
+        fontName = [[fontName stringByReplacingOccurrencesOfString:@" " withString:@""] stringByAppendingString:@"-Bold"];
+    }
+    else {
+        fontName = [fontName.capitalizedString stringByAppendingString:@"-Bold"];
+    }
 
-    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
+    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:fontName size:baseFontSize];
 
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
     

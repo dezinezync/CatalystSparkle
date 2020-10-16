@@ -131,6 +131,8 @@
         
         NSString *bodyFontName = [[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString];
         
+        bodyFontName = [bodyFontName stringByReplacingOccurrencesOfString:@" " withString:@""];
+        
         bodyFontName = [bodyFontName stringByAppendingString:@"-Bold"];
         
         bodyFont = [UIFont fontWithName:bodyFontName size:fontSize];

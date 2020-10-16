@@ -34,7 +34,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
 + (NSArray <ArticleLayoutFont> *)fonts {
     
     if (_fonts == nil) {
-        _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral, ALPOpenDyslexic];
+        _fonts = @[ALPSystem, ALPSerif, ALPHelvetica, ALPMerriweather, ALPPlexSerif, ALPPlexSans, ALPSpectral, ALPOpenDyslexic, ALPAtkinson];
     }
     
     return _fonts;
@@ -53,7 +53,8 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         ALPPlexSans       : @"Plex Sans",
         ALPSpectral       : @"Spectral",
         ALPOpenDyslexic   : @"OpenDyslexic",
-        ALPNewYork        : @"New York"
+        ALPNewYork        : @"New York",
+        ALPAtkinson       : @"Atkison"
         };
     }
     
@@ -188,7 +189,9 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         cell.textLabel.text = fontName;
         
         if (![fontName containsString:@"System"]) {
+            
             fontName = [self.class.fonts[indexPath.row] stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
+            
             UIFont *cellFont = [UIFont fontWithName:fontName size:17.f];
             
             cellFont = [[UIFontMetrics metricsForTextStyle:UIFontTextStyleBody] scaledFontForFont:cellFont];
@@ -206,7 +209,9 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
             || ([fontPref isEqualToString:ALPPlexSerif]    && indexPath.row == 4)
             || ([fontPref isEqualToString:ALPPlexSans]     && indexPath.row == 5)
             || ([fontPref isEqualToString:ALPSpectral]     && indexPath.row == 6)
-            || ([fontPref isEqualToString:ALPOpenDyslexic] && indexPath.row == 7)) {
+            || ([fontPref isEqualToString:ALPOpenDyslexic] && indexPath.row == 7)
+            || ([fontPref isEqualToString:ALPAtkinson]      && indexPath.row == 8)
+        ) {
             
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
@@ -307,7 +312,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         
         _selectedFontIndexPath = indexPath;
         
-        [NSNotificationCenter.defaultCenter postNotificationName:UIContentSizeCategoryDidChangeNotification object:nil];
+        [NSNotificationCenter.defaultCenter postNotificationName:UserUpdatedPreferredFontMetrics object:nil];
 //    }
     
     if (reloadSections != nil) {
