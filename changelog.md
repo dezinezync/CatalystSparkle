@@ -1,5 +1,9 @@
 # v2.1.0
 
+## Build 62
+
+- Toolbar is correctly hidden for the Feeds Interface when "Use Toolbars" preference is set. 
+
 ## Build 61
 
 - Added the Atkinson Hyperlegible Font for Paragraph text and Titles. 

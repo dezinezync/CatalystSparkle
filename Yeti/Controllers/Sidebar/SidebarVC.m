@@ -216,6 +216,18 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 #if !TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    
+    if (SharedPrefs.useToolbar) {
+        
+        if (MyDBManager.isSyncing) {
+            [self.navigationController setToolbarHidden:NO animated:YES];
+        }
+        else {
+            [self.navigationController setToolbarHidden:YES animated:YES];
+        }
+        
+    }
+    
 #endif
     
 }
