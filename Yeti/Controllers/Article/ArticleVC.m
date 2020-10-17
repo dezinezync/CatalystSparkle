@@ -1368,7 +1368,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
 #endif
     
-    if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
+    if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]
+        || ([content.type isEqualToString:@"anchor"] && content.items.count)
+        ) {
         
         if ([content.items count]) {
             
@@ -1388,6 +1390,37 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             NSUInteger idx = 0;
             
             for (Content *subcontent in [content items]) { @autoreleasepool {
+                
+                if ([content.type isEqualToString:@"anchor"]
+                    && content.url != nil
+                    && [subcontent.type isEqualToString:@"paragraph"]
+                    && subcontent.content != nil
+                    && subcontent.content.length) {
+                    
+                    // add the URL as a range to the entire paragraph.
+                    Range *range = [Range new];
+                    range.range = NSMakeRange(0, subcontent.content.length);
+                    range.element = @"anchor";
+                    range.url = content.url;
+                    
+                    if (subcontent.ranges == nil) {
+                        subcontent.ranges = @[];
+                    }
+                    else {
+                        // check if this range already exists
+                        NSUInteger indexOfRange = [subcontent.ranges indexOfObject:range];
+                        
+                        if (indexOfRange != NSNotFound) {
+                            range = nil;
+                        }
+                        
+                    }
+                    
+                    if (range != nil) {
+                        subcontent.ranges = [subcontent.ranges arrayByAddingObject:range];
+                    }
+                    
+                }
                 
                 [self processContent:subcontent index:idx imagesFromEnclosures:imagesFromEnclosures];
                 
