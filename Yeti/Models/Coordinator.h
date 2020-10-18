@@ -67,7 +67,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSettingsVC;
 
+#if TARGET_OS_MACCATALYST
+
 - (void)showAttributions;
+
+#endif
 
 /*
  * 0: None, 1: Import, 2: Export
