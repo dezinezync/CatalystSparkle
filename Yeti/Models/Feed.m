@@ -349,7 +349,7 @@
 
 - (NSString *)faviconURI {
     
-    NSArray * const IMAGE_EXTENSIONS = @[@"png", @"jpg", @"jpeg", @"svg", @"bmp", @"ico", @"webp"];
+    NSArray * const IMAGE_EXTENSIONS = @[@"png", @"jpg", @"jpeg", @"svg", @"bmp", @"ico", @"webp", @"gif"];
     
     if (_faviconURI == nil) {
         NSString *url = nil;
@@ -408,6 +408,12 @@
             
             // opengraph can only contain images (samwize)
             NSString *pathExtension = url.pathExtension;
+            
+            if ([pathExtension containsString:@"?"]) {
+                
+                pathExtension = [pathExtension substringToIndex:[pathExtension rangeOfString:@"?"].location];
+                
+            }
             
             // the path extension can be blank for gravatar urls
             if ([pathExtension isBlank] == NO && [IMAGE_EXTENSIONS containsObject:pathExtension] == NO) {

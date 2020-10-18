@@ -265,6 +265,10 @@ AppDelegate *MyAppDelegate = nil;
 // logs all fonts loaded by the app
 - (void)yt_log_fontnames {
     
+#ifndef DEBUG
+    return;
+#endif
+    
     for (NSString* family in [UIFont familyNames])
     {
         NSLog(@"- %@", family);

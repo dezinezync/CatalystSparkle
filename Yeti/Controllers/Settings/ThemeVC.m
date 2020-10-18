@@ -54,7 +54,7 @@ static NSDictionary <ArticleLayoutFont, NSString *> * _fontNamesMap = nil;
         ALPSpectral       : @"Spectral",
         ALPOpenDyslexic   : @"OpenDyslexic",
         ALPNewYork        : @"New York",
-        ALPAtkinson       : @"Atkison"
+        ALPAtkinson       : @"Atkinson"
         };
     }
     

@@ -115,7 +115,7 @@
             articleInDS = [self.DS.snapshot.itemIdentifiers objectAtIndex:index];
         }
         
-        if (articleInDS != nil) {
+        if (articleInDS != nil && articleInDS.isRead != read) {
             
             [MyFeedsManager article:articleInDS markAsRead:read];
             
@@ -175,7 +175,7 @@
             articleInDS = [self.DS.snapshot.itemIdentifiers objectAtIndex:index];
         }
         
-        if (articleInDS != nil) {
+        if (articleInDS != nil && articleInDS.isBookmarked != bookmarked) {
             
             [MyFeedsManager article:articleInDS markAsBookmarked:bookmarked success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
@@ -186,6 +186,9 @@
                         if (success) {
                             
                             articleInDS.bookmarked = bookmarked;
+                            
+                            [MyDBManager addArticle:articleInDS];
+                            
                             // if the article exists in the datasource,
                             // we can expect a cell for it and therefore
                             // reload it.
@@ -230,6 +233,9 @@
                         if (success) {
                             
                             articleInDS.bookmarked = bookmarked;
+                            
+                            [MyDBManager addArticle:articleInDS];
+                            
                             // if the article exists in the datasource,
                             // we can expect a cell for it and therefore
                             // reload it.
