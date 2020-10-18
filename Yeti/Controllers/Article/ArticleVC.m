@@ -110,10 +110,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (instancetype)initWithItem:(FeedItem *)item
 {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {
+        
         self.item = item;
         
         self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), item.identifier);
         self.restorationClass = self.class;
+        
     }
     
     return self;
@@ -142,13 +144,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #else
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
-    
+
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         || self.splitViewController.view.bounds.size.height < 814.f) {
-        
+
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
             self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 12.f, 0);
@@ -157,11 +159,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
             self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
         }
-        
+
     }
     else if (self.splitViewController.view.bounds.size.height > 814.f
              && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        
+
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
             self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 12.f, 0);
@@ -169,8 +171,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         else {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
         }
-        
+
     }
+    
 #endif
 
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
@@ -236,6 +239,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #else
     
+    [self setupToolbar:self.traitCollection];
+    
     if (SharedPrefs.hideBars == YES) {
         
         self.navigationController.interactivePopGestureRecognizer.delegate = nil;
@@ -246,7 +251,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     
 #endif
     

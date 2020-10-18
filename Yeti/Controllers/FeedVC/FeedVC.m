@@ -127,7 +127,7 @@
     
 #if !TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
 
 #endif 
     
@@ -198,7 +198,6 @@
         self.extendedLayoutIncludesOpaqueBars = YES;
         
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-        self.navigationController.navigationBar.prefersLargeTitles = YES;
     }
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;

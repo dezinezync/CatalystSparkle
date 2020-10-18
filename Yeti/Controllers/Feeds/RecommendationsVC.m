@@ -55,7 +55,7 @@ static NSString * const reuseIdentifier = @"Cell";
     
     self.title = @"Recommended";
     
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
     
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = NO;
