@@ -2575,7 +2575,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
     
-    if ([self.item.articleURL containsString:feed.extra.url] == NO) {
+    // if the GUID doesn't contain the OG URL, we'll error out anyways
+    BOOL isFeedProxyed = [self.item.articleURL containsString:@"feedburner"] || [self.item.articleURL containsString:@"feedproxy.google"];
+    
+    NSString *compareTo = isFeedProxyed ? self.item.guid : self.item.articleURL;
+    
+    if ([compareTo containsString:feed.extra.url] == NO) {
         
         if (completionHandler) {
             completionHandler(NO);
