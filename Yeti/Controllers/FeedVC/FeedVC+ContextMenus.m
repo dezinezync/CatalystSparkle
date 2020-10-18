@@ -306,6 +306,8 @@
     
     AuthorVC *vc = [[AuthorVC alloc] initWithFeed:self.feed author:author];
     
+    vc.mainCoordinator = self.mainCoordinator;
+    
     [self.navigationController pushViewController:vc animated:YES];
     
 }

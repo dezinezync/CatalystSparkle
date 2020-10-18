@@ -20,12 +20,6 @@
     
     scene.titlebar.toolbar = toolbar;
     
-    scene.titlebar.toolbarStyle = UITitlebarToolbarStyleAutomatic;
-    
-    scene.titlebar.separatorStyle = UITitlebarSeparatorStyleAutomatic;
-    
-    scene.titlebar.titleVisibility = UITitlebarTitleVisibilityHidden;
-    
     self.toolbar = toolbar;
     
 }
@@ -307,12 +301,11 @@
     
     if (title) {
         item.paletteLabel = title;
+        item.toolTip = title;
     }
     
-    item.paletteLabel = title;
 //    item.title = title;
     item.label = @"";
-    item.toolTip = title;
     
     return item;
     

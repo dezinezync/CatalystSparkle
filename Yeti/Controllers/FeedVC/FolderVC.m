@@ -65,6 +65,8 @@
         self.restorationIdentifier = [NSString stringWithFormat:@"FeedVC-Folder-%@", folder.folderID];
         self.restorationClass = [self class];
         
+        _folder.unreadCountTitleObservor = self;
+        
     }
     
 }
@@ -117,12 +119,21 @@
             self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
                 if ([self.refreshControl isRefreshing]) {
                     [self.refreshControl endRefreshing];
                 }
                 
-                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
-                    [self loadNextPage];
+                if (self.pagingManager.page == 1) {
+                    
+                    [self updateTitleView];
+                    
+                    if (self.pagingManager.hasNextPage == YES) {
+                    
+                        [self loadNextPage];
+                    
+                    }
+                
                 }
             });
         
@@ -186,6 +197,26 @@
 - (NSURLSessionTask *)searchOperationTask:(NSString *)text {
     
     return [MyFeedsManager search:text folderID:self.folder.folderID success:self.searchOperationSuccess error:self.searchOperationError];
+    
+}
+
+- (void)unreadCountChangedFor:(id)item to:(NSNumber *)count {
+    
+    if ([item isKindOfClass:Folder.class] && [(Folder *)item isEqualToFolder:self.folder]) {
+        
+        [self updateTitleView];
+        
+    }
+    
+}
+
+- (NSString *)subtitle {
+    
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+    
+    NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.folder.unreadCount];
+    
+    return [totalArticles stringByAppendingString:unread];
     
 }
 

@@ -191,16 +191,30 @@ NSArray <NSString *> * _defaultsKeys;
         [self updateSharedUnreadCounters];
         
         if (feedCounters != nil) {
+            
+            // No unread
+            if (feedCounters.allKeys.count == 0) {
+                // set all feeds to 0
                 
-            [feedCounters enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull key, NSNumber *  _Nonnull obj, BOOL * _Nonnull stop) {
-               
-                Feed *feed = [ArticlesManager.shared feedForID:@(key.integerValue)];
-                
-                if (feed != nil) {
-                    feed.unread = obj;
+                for (Feed *feed in ArticlesManager.shared.feeds) {
+                    
+                    feed.unread = @(0);
+                    
                 }
                 
-            }];
+            }
+            else {
+                
+                [feedCounters enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull key, NSNumber *  _Nonnull obj, BOOL * _Nonnull stop) {
+                   
+                    Feed *feed = [ArticlesManager.shared feedForID:@(key.integerValue)];
+                    
+                    if (feed != nil) {
+                        feed.unread = obj;
+                    }
+                    
+                }];
+            }
             
         }
 

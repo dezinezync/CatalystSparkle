@@ -157,6 +157,12 @@
         
     }
     
+    if (self.unreadCountTitleObservor != nil) {
+        
+        [self.unreadCountTitleObservor unreadCountChangedFor:self to:self.unread];
+        
+    }
+    
     if (self.folder != nil) {
         
         [self.folder updateUnreadCount];

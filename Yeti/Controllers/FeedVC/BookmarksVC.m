@@ -49,6 +49,8 @@
             self->_reloadData = YES;
         }
         
+        [self updateTitleView];
+        
     }];
     
 }
@@ -68,6 +70,8 @@
         self->_reloadData = NO;
         
         [self setupData];
+        
+        [self updateTitleView];
         
     }
     
@@ -134,6 +138,16 @@
         NSLog(@"Exception updating bookmarks articles: %@", exc);
         self.controllerState = StateErrored;
     }
+    
+}
+
+#pragma mark - Subclassed
+
+- (NSString *)subtitle {
+    
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Bookmark%@", @(self.bookmarksManager.bookmarksCount), self.bookmarksManager.bookmarksCount == 1 ? @"" : @"s"];
+    
+    return totalArticles;
     
 }
 

@@ -299,6 +299,16 @@
 
 #ifndef SHARE_EXTENSION
 
+- (NSURL *)URL {
+    
+    if (self.url) {
+        return [NSURL URLWithString:self.url];
+    }
+    
+    return nil;
+    
+}
+
 - (NSURL *)urlCompliantWithUsersPreferenceForWidth:(CGFloat)width {
     
     return [self urlCompliantWithUsersPreferenceForWidth:width darkModeOnly:NO];

@@ -11,6 +11,7 @@
 }
 
 @property (nonatomic, weak) id<UnreadCountObservor> unreadCountObservor;
+@property (nonatomic, weak) id<UnreadCountObservor> unreadCountTitleObservor;
 
 @property (nonatomic, copy) NSString *etag;
 @property (nonatomic, copy) NSNumber *feedID;
