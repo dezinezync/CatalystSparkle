@@ -86,7 +86,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     self.selectedBackgroundView = [UIView new];
     
 #if TARGET_OS_MACCATALYST
-    self.selectedBackgroundView.backgroundColor = UIColor.secondarySystemBackgroundColor;
+    self.selectedBackgroundView.backgroundColor = UIColor.systemFillColor;
+    self.selectedBackgroundView.layer.cornerRadius = 6.f;
+    self.selectedBackgroundView.layer.masksToBounds = YES;
 #else
     self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
 #endif
@@ -100,6 +102,18 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     [super prepareForReuse];
     
     [self resetUI];
+    
+}
+
+- (void)layoutSubviews {
+    
+    [super layoutSubviews];
+    
+    if (self.selectedBackgroundView.superview != nil && self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+        
+        self.selectedBackgroundView.frame = CGRectInset(self.bounds, 12.f, 6.f);
+        
+    }
     
 }
 
@@ -138,7 +152,11 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     [self updateMarkerView];
     
-    self.selectedBackgroundView.backgroundColor = [SharedPrefs.tintColor colorWithAlphaComponent:0.3f];
+#if TARGET_OS_MACCATALYST
+    self.selectedBackgroundView.backgroundColor = UIColor.systemFillColor;
+#else
+    self.selectedBackgroundView.backgroundColor = [self.tintColor colorWithAlphaComponent:0.3f];
+#endif
     
 }
 

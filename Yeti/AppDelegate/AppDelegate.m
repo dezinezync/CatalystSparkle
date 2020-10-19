@@ -180,10 +180,15 @@ AppDelegate *MyAppDelegate = nil;
         
         });
 #endif
-
-        NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
         
-        [Keychain add:YTLaunchCount integer:(count + 1)];
+        NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+        NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+        
+        NSString *countKey = [NSString stringWithFormat:@"launchCount-%@", appVersion];
+
+        NSInteger count = [Keychain integerFor:countKey error:nil];
+        
+        [Keychain add:countKey integer:(count + 1)];
         
         retval = YES;
         

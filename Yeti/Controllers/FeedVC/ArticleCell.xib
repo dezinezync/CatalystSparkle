@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="mac" appearance="light" renderMode="macOS"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17124"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17504.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -19,16 +19,16 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1" verticalCompressionResistancePriority="999" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="MoK-YL-muJ">
-                        <rect key="frame" x="12" y="20" width="351" height="138"/>
+                        <rect key="frame" x="18" y="12" width="339" height="154"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="2" verticalCompressionResistancePriority="998" alignment="top" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="X3G-qr-c4j">
-                                <rect key="frame" x="0.0" y="0.0" width="351" height="110"/>
+                                <rect key="frame" x="0.0" y="0.0" width="339" height="130"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="240" verticalCompressionResistancePriority="760" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="mDw-uV-AN2">
-                                        <rect key="frame" x="0.0" y="0.0" width="249" height="90.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="237" height="92"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="3" verticalCompressionResistancePriority="997" text="This should be a multiline title even when cover image is hidden" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLS-mj-0xd">
-                                                <rect key="frame" x="0.0" y="0.0" width="249" height="64.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="237" height="65"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" priority="999" constant="217" id="I0P-vB-8Jr"/>
                                                 </constraints>
@@ -42,7 +42,7 @@
                                                 </variation>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fkf-40-JG6">
-                                                <rect key="frame" x="0.0" y="72.5" width="249" height="18"/>
+                                                <rect key="frame" x="0.0" y="73" width="237" height="19"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                                 <nil key="highlightedColor"/>
@@ -50,7 +50,7 @@
                                         </subviews>
                                     </stackView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1y9-pP-N2x">
-                                        <rect key="frame" x="261" y="0.0" width="90" height="90"/>
+                                        <rect key="frame" x="249" y="0.0" width="90" height="90"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="1y9-pP-N2x" secondAttribute="height" multiplier="1:1" priority="999" id="JBy-bs-AGt"/>
                                             <constraint firstAttribute="width" priority="999" constant="90" id="fep-3G-ysx"/>
@@ -59,10 +59,10 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="OFU-pE-ICK">
-                                <rect key="frame" x="0.0" y="118" width="351" height="20"/>
+                                <rect key="frame" x="0.0" y="138" width="339" height="16"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="253" verticalHuggingPriority="253" horizontalCompressionResistancePriority="747" verticalCompressionResistancePriority="747" translatesAutoresizingMaskIntoConstraints="NO" id="Oc2-mZ-DAY">
-                                        <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
+                                        <rect key="frame" x="0.0" y="2" width="12" height="12"/>
                                         <constraints>
                                             <constraint firstAttribute="height" priority="999" constant="20" id="1YZ-pF-y2j">
                                                 <variation key="userInterfaceIdiom=mac" constant="12"/>
@@ -73,13 +73,13 @@
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="749" text="Label" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tGe-PO-ucb">
-                                        <rect key="frame" x="32" y="0.0" width="109" height="20"/>
+                                        <rect key="frame" x="24" y="0.0" width="105" height="16"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                         <color key="textColor" systemColor="tertiaryLabelColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bzw-h8-aBq">
-                                        <rect key="frame" x="153" y="2" width="198" height="16"/>
+                                        <rect key="frame" x="141" y="0.0" width="198" height="16"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                                         <color key="textColor" systemColor="tertiaryLabelColor"/>
                                         <nil key="highlightedColor"/>
@@ -96,8 +96,12 @@
                     <constraint firstItem="MoK-YL-muJ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="20" symbolic="YES" id="Ahd-mt-BOr">
                         <variation key="userInterfaceIdiom=mac" constant="12"/>
                     </constraint>
-                    <constraint firstItem="MoK-YL-muJ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="I7p-sc-Ghk"/>
-                    <constraint firstAttribute="trailing" secondItem="MoK-YL-muJ" secondAttribute="trailing" constant="12" id="Who-2L-Pen"/>
+                    <constraint firstItem="MoK-YL-muJ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="I7p-sc-Ghk">
+                        <variation key="userInterfaceIdiom=mac" constant="18"/>
+                    </constraint>
+                    <constraint firstAttribute="trailing" secondItem="MoK-YL-muJ" secondAttribute="trailing" constant="12" id="Who-2L-Pen">
+                        <variation key="userInterfaceIdiom=mac" constant="18"/>
+                    </constraint>
                     <constraint firstAttribute="bottom" secondItem="MoK-YL-muJ" secondAttribute="bottom" constant="20" symbolic="YES" id="tlU-rt-KRh">
                         <variation key="userInterfaceIdiom=mac" constant="12"/>
                     </constraint>

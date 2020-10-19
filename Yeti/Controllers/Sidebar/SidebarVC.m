@@ -25,6 +25,9 @@
 #import "Elytra-Swift.h"
 #import "SidebarSearchView.h"
 
+#import <StoreKit/SKStoreReviewController.h>
+#import "AppDelegate.h"
+
 @interface SidebarVC () {
     
     // Sync
@@ -245,6 +248,25 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     if (_requiresUpdatingUnreadSharedData) {
         
         [self updateSharedUnreadsData];
+        
+    }
+    
+    if (MyFeedsManager.shouldRequestReview == YES) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [SKStoreReviewController requestReviewInScene:MyAppDelegate.mainScene];
+            
+            MyFeedsManager.shouldRequestReview = NO;
+            
+            NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+            NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+            
+            NSString *countKey = [NSString stringWithFormat:@"requestedReview-%@", appVersion];
+            
+            [Keychain add:countKey boolean:YES];
+            
+        });
         
     }
     

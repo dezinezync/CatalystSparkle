@@ -377,6 +377,10 @@
     self.tableView.estimatedRowHeight =  150.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+        self.tableView.contentInset = UIEdgeInsetsMake(10.f, 0, 10.f, 0);
+    }
+    
     self.tableView.separatorInset = UIEdgeInsetsZero;
     
     [ArticleCell registerOnTableView:self.tableView];

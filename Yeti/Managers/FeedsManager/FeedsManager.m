@@ -3700,11 +3700,21 @@ NSArray <NSString *> * _defaultsKeys;
 #pragma mark - Misc
 
 - (void)checkConstraintsForRequestingReview {
+    
+    if (self.shouldRequestReview == YES) {
+        return;
+    }
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    
+    NSString *countKey = [NSString stringWithFormat:@"launchCount-%@", appVersion];
+    NSString *requestedReviewKey = [NSString stringWithFormat:@"requestedReview-%@", appVersion];
 
-    NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
+    NSInteger count = [Keychain integerFor:countKey error:nil];
     // trigger on 7th launch
     if (count > 6) {
-        BOOL requestedVal = [Keychain boolFor:YTRequestedReview error:nil];
+        BOOL requestedVal = [Keychain boolFor:requestedReviewKey error:nil];
         if (requestedVal == NO) {
             self.shouldRequestReview = YES;
         }
