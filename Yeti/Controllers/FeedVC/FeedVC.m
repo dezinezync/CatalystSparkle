@@ -675,6 +675,12 @@
 
 - (NSString *)subtitle {
     
+    if (self.isExploring) {
+        
+        return [NSString stringWithFormat:@"%@ Article%@", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+        
+    }
+    
     NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.feed.unread];
