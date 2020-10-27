@@ -74,6 +74,13 @@ platform :ios do
 
     end
 
+    # Lanes: bump_major, bump_minor, bump_patch
+    %w{major minor patch}.each do |part|
+      lane "bump_#{part}".to_sym do
+        increment_version_number(bump_type: part)
+      end
+    end
+
     after_all do |lane|
         say "done"
         commit_version_bump(
