@@ -1,0 +1,15 @@
+{
+    "Simulator Target Bundle": "com.dezinezync.elytra",
+    "aps": {
+        "alert": {
+            "body": "Version 2.1 brings a lot of stability and Quality of Life improvements to Elytra...",
+            "title": "Elytra 2.1.0 is now available",
+            "thread-id": "18",
+        },
+        "category": "NOTE_CATEGORY_ARTICLE"
+    },
+    "articleID": "11490398",
+    "feedID": "18",
+    "favicon": "https://cdn.elytra.app/public/images/2.0/touch-icons/180x180.png",
+    "coverImage": "https://blog.elytra.app/wp-content/uploads/2020/10/Bitmap.png"
+}

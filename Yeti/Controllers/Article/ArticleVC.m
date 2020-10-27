@@ -932,7 +932,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     // iOS 13 shouldn't need it and handle it well.
 #if !TARGET_OS_MACCATALYST
-    if (self.item.content.count > 20) {
+    if (self.item.content.count > 30) {
         self->_deferredProcessing = YES;
     }
 #endif
@@ -1135,6 +1135,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             
             if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
                 [self.providerDelegate userMarkedArticle:self.item read:YES];
+            }
+            else {
+                [MyFeedsManager article:self.item markAsRead:YES];
             }
         }
         

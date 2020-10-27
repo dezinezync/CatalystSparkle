@@ -297,11 +297,13 @@ static NSParagraphStyle * _paragraphStyle = nil;
             }
             else if ([range.element isEqualToString:@"code"]) {
                 
-                __block UIFont *monoFont = [TypeFactory.shared codeFont];
+                __block UIFont *monoFont;
                 __block UIColor *textcolor;
 //                __block UIColor *background;
                 
                 runOnMainQueueWithoutDeadlocking(^{
+                    
+                    monoFont = [TypeFactory.shared codeFont];
                    
                     if ([self isKindOfClass:NSClassFromString(@"Heading")]) {
                         textcolor = UIColor.labelColor;
