@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) EmptyVC *emptyVC;
 
+@property (nonatomic, weak, nullable) NSObject *innerWindow;
+
 #pragma mark - Methods
 
 - (void)start;
@@ -67,7 +69,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSettingsVC;
 
+#if TARGET_OS_MACCATALYST
+
 - (void)showAttributions;
+
+#endif
 
 /*
  * 0: None, 1: Import, 2: Export
@@ -77,6 +83,14 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Helpers
 
 - (UIImage *)imageForSortingOption:(YetiSortOption)option;
+
+@end
+
+#define DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(expression) _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") expression _Pragma("clang diagnostic pop")
+
+@interface UIWindow (MacCatalystExtension)
+
+- (nullable NSObject *)innerWindow;
 
 @end
 

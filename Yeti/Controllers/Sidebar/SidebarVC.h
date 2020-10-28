@@ -19,6 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _presentingKnown;
     
     CGFloat _macSearchBarWidth;
+    
+    // Set to true when updating folder structs is necessary.
+    // only used for the mac idiom.
+    BOOL _needsUpdateOfStructs;
 }
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;

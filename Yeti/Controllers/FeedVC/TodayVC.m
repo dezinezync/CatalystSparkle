@@ -44,9 +44,28 @@
     
     self.refreshControl = refreshControl;
 #endif
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateTitleView) name:TodayCountDidUpdate object:nil];
+    
+}
+
+- (void)dealloc {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    
 }
 
 #pragma mark - Subclassed
+
+- (NSString *)subtitle {
+    
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.todayManager.total), self.todayManager.total == 1 ? @"" : @"s"];
+    
+    NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalToday)];
+    
+    return [totalArticles stringByAppendingString:unread];
+    
+}
 
 - (PagingManager *)todayManager {
     
@@ -94,6 +113,8 @@
             
             if (self->_todayManager.page == 1) {
                 MyFeedsManager.unreadLastUpdate = NSDate.date;
+                
+                [self updateTitleView];
             }
             
             [self setupData];

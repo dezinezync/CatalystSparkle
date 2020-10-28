@@ -184,6 +184,12 @@
         
     }
     
+    if (self.unreadCountTitleObservor != nil) {
+        
+        [self.unreadCountTitleObservor unreadCountChangedFor:self to:self.unreadCount];
+        
+    }
+    
 }
 
 #pragma mark -

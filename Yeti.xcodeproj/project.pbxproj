@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		F001A8422505E8F0006175B9 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F001A8272505E8F0006175B9 /* SceneDelegate.m */; };
+		F003C20C2539685E00312913 /* Atkinson-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C2082539685D00312913 /* Atkinson-Bold.ttf */; };
+		F003C20D2539685E00312913 /* Atkinson-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C2092539685D00312913 /* Atkinson-Italic.ttf */; };
+		F003C20E2539685E00312913 /* Atkinson-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20A2539685E00312913 /* Atkinson-Regular.ttf */; };
+		F003C20F2539685E00312913 /* Atkinson-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */; };
 		F004560B24DE81DB0094A6A3 /* FeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560A24DE81DB0094A6A3 /* FeedCell.m */; };
 		F004561024DE85B60094A6A3 /* FolderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F004560F24DE85B60094A6A3 /* FolderCell.m */; };
 		F00685FE251F780E00239C80 /* elytramac.bundle in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0783C88248F685C00C7A280 /* elytramac.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -291,6 +295,7 @@
 		F0AF314020D287E600E074D6 /* IntroViewDefault.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF313F20D287E600E074D6 /* IntroViewDefault.xib */; };
 		F0AF314420D287F400E074D6 /* IntroViewDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AF314320D287F400E074D6 /* IntroViewDefault.m */; };
 		F0AF314720D28EFD00E074D6 /* IntroViewUUID.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0AF314620D28EFD00E074D6 /* IntroViewUUID.xib */; };
+		F0B0347425484D8E00B7884B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F0B0347325484D8E00B7884B /* SDWebImage */; };
 		F0B0EA3424EC1EDD00D675B4 /* NSString+ImageProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B0EA3324EC1EDD00D675B4 /* NSString+ImageProxy.m */; };
 		F0B0EA3724EC1FBB00D675B4 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = F01285C123436D8D00B8C277 /* Keychain.m */; };
 		F0B0EA3A24EC205500D675B4 /* CheckWifi.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B0EA3824EC205500D675B4 /* CheckWifi.m */; };
@@ -719,6 +724,10 @@
 /* Begin PBXFileReference section */
 		F001A8272505E8F0006175B9 /* SceneDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		F001A8412505E8F0006175B9 /* SceneDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		F003C2082539685D00312913 /* Atkinson-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Bold.ttf"; sourceTree = "<group>"; };
+		F003C2092539685D00312913 /* Atkinson-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Italic.ttf"; sourceTree = "<group>"; };
+		F003C20A2539685E00312913 /* Atkinson-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-Regular.ttf"; sourceTree = "<group>"; };
+		F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Atkinson-BoldItalic.ttf"; sourceTree = "<group>"; };
 		F004560924DE81DB0094A6A3 /* FeedCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedCell.h; sourceTree = "<group>"; };
 		F004560A24DE81DB0094A6A3 /* FeedCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedCell.m; sourceTree = "<group>"; };
 		F004560E24DE85B60094A6A3 /* FolderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FolderCell.h; sourceTree = "<group>"; };
@@ -1381,6 +1390,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0B0347425484D8E00B7884B /* SDWebImage in Frameworks */,
 				F0B7C846240B7272008D8F4F /* UserNotificationsUI.framework in Frameworks */,
 				F0B7C844240B7272008D8F4F /* UserNotifications.framework in Frameworks */,
 			);
@@ -1400,6 +1410,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F003C1EC2539680C00312913 /* Atkinson */ = {
+			isa = PBXGroup;
+			children = (
+				F003C2082539685D00312913 /* Atkinson-Bold.ttf */,
+				F003C20B2539685E00312913 /* Atkinson-BoldItalic.ttf */,
+				F003C2092539685D00312913 /* Atkinson-Italic.ttf */,
+				F003C20A2539685E00312913 /* Atkinson-Regular.ttf */,
+			);
+			path = Atkinson;
+			sourceTree = "<group>";
+		};
 		F00B0C1823F438F5002BCF41 /* CustomizeVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -2308,6 +2329,7 @@
 		F0A5AE5920C197BF00CFA1D2 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				F003C1EC2539680C00312913 /* Atkinson */,
 				F07CD37D22B266E9005BCDE7 /* OpenDyslexic */,
 				F047F4D220C25FAC00626968 /* Spectral */,
 				F0A5AE7520C19CAA00CFA1D2 /* PlexSerif */,
@@ -2691,6 +2713,9 @@
 			dependencies = (
 			);
 			name = notificationContext;
+			packageProductDependencies = (
+				F0B0347325484D8E00B7884B /* SDWebImage */,
+			);
 			productName = notificationContext;
 			productReference = F0B7C842240B7272008D8F4F /* notificationContext.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -3063,6 +3088,7 @@
 				F0A495B624711CE500E9BA13 /* ArticleCell.xib in Resources */,
 				F0123C59224D217300EDFF92 /* ArticleAuthorView.xib in Resources */,
 				F01E6E1324AC6C2500D1BD6E /* red.png in Resources */,
+				F003C20D2539685E00312913 /* Atkinson-Italic.ttf in Resources */,
 				F0A5AEAE20C19DA200CFA1D2 /* IBMPlexSans-Bold.ttf in Resources */,
 				F0A5AEBC20C19DA200CFA1D2 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */,
 				F070C2E91FBABC3600912CCF /* LaunchScreen.storyboard in Resources */,
@@ -3075,6 +3101,7 @@
 				F0A5AEC220C19DA200CFA1D2 /* IBMPlexSans-MediumItalic.ttf in Resources */,
 				F047F4FC20C25FB900626968 /* Spectral-LightItalic.ttf in Resources */,
 				F0FA473520CBAE500035B1F5 /* subscriptions.html in Resources */,
+				F003C20C2539685E00312913 /* Atkinson-Bold.ttf in Resources */,
 				F01E6E1924AC6C2500D1BD6E /* platinum@3x.png in Resources */,
 				F0A5AE9820C19CB400CFA1D2 /* IBMPlexSerif-Italic.ttf in Resources */,
 				F0A5AEAC20C19DA200CFA1D2 /* IBMPlexSans-BoldItalic.ttf in Resources */,
@@ -3106,6 +3133,7 @@
 				F070C34D1FBADF8D00912CCF /* FeedsCell.xib in Resources */,
 				F01E6E2024AC6C2500D1BD6E /* platinum-dark.png in Resources */,
 				F01E6E1124AC6C2500D1BD6E /* red@3x.png in Resources */,
+				F003C20F2539685E00312913 /* Atkinson-BoldItalic.ttf in Resources */,
 				F01E6E1824AC6C2500D1BD6E /* platinum~ipad@2x.png in Resources */,
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */,
@@ -3155,6 +3183,7 @@
 				F0542E3A211DBFD700D66878 /* black~ipad@2x.png in Resources */,
 				F022B0DA20DC2D9500030185 /* AccentCell.xib in Resources */,
 				F032A772244D89AF0024AC63 /* reader.json in Resources */,
+				F003C20E2539685E00312913 /* Atkinson-Regular.ttf in Resources */,
 				F03BC4E420C9015A007B574F /* EmptyView.xib in Resources */,
 				F0D030A3205FBEF400D46B34 /* attributions.html in Resources */,
 				F01E6E1224AC6C2500D1BD6E /* red@2x.png in Resources */,
@@ -3610,7 +3639,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3649,7 +3678,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3710,7 +3739,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3771,7 +3800,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -3806,7 +3835,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
@@ -3865,7 +3894,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				ENABLE_BITCODE = NO;
@@ -3912,7 +3941,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3936,7 +3965,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3961,7 +3990,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3982,7 +4011,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = YetiUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4004,7 +4033,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4036,7 +4065,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4069,8 +4098,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = notificationContext/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4098,8 +4128,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = notificationContext/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4130,7 +4161,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -4168,7 +4199,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 56;
+				CURRENT_PROJECT_VERSION = 68;
 				DEVELOPMENT_TEAM = XMJKJH96ZT;
 				INFOPLIST_FILE = UnreadsWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -4301,6 +4332,11 @@
 			productName = SDWebImageSwiftUI;
 		};
 		F02A4893252653C7001063E9 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+		F0B0347325484D8E00B7884B /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F02A4892252653C7001063E9 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;

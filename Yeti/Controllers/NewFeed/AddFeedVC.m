@@ -23,7 +23,9 @@
 
 #import "FeedCell.h"
 
-@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, ScrollLoading>
+@interface AddFeedVC () <UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, ScrollLoading> {
+    BOOL _closing;
+}
 
 @property (nonatomic, strong) UIActivityIndicatorView *loaderView;
 @property (nonatomic, strong) UILabel *errorLabel;
@@ -129,6 +131,10 @@
     
     [super viewWillAppear:animated];
     
+    if (_closing) {
+        _closing = NO;
+    }
+    
     self.navigationController.navigationBar.prefersLargeTitles = NO;
     
 }
@@ -136,6 +142,43 @@
 - (void)viewDidAppear:(BOOL)animated {
     
     [super viewDidAppear:animated];
+    
+#if TARGET_OS_MACCATALYST
+    
+    if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
+        
+        NSURL * url = UIPasteboard.generalPasteboard.URL;
+        
+        if (url == nil) {
+            
+            NSString *text = UIPasteboard.generalPasteboard.string;
+            
+            if (text != nil) {
+                
+                url = [NSURL URLWithString:text];
+                
+            }
+            
+        }
+        
+        if (url != nil) {
+            
+            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+            
+            searchBar.searchTextField.text = url.absoluteString;
+            [self searchBarTextDidEndEditing:searchBar];
+            
+        }
+        
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationItem.searchController setActive:YES];
+    });
+    
+    return;
+    
+#endif
     
     UIPasteboardDetectionPattern pattern = UIPasteboardDetectionPatternProbableWebURL;
     
@@ -176,6 +219,14 @@
         });
         
     }];
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    _closing = YES;
+    
+    [super viewWillDisappear:animated];
     
 }
 
@@ -690,6 +741,34 @@
 
 #pragma mark - <UISearchBarDelegate>
 
+- (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    
+    if ([text isEqualToString:@"\n"]) {
+        
+        NSString *query = searchBar.text;
+        
+        if (query == nil || [query isBlank]) {
+            return NO;
+        }
+        
+        if (query.length < 3) {
+            return NO;
+        }
+        
+        if (self.searchBar.selectedScopeButtonIndex == 0) {
+            
+            [self searchByURL:searchBar.text];
+            
+        }
+        
+        return NO;
+        
+    }
+    
+    return YES;
+    
+}
+
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     
     self.searchBar.placeholder = @[@"Website or Feed URL", @"Website Name", @"Keywords"][selectedScope];
@@ -735,13 +814,6 @@
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
     
-    if (searchBar.selectedScopeButtonIndex == 0) {
-     
-        [self searchByURL:searchBar.text];
-        
-        return;
-    }
-    
     NSString *query = self.searchBar.text;
     
     if (query == nil || [query isBlank]) {
@@ -752,8 +824,7 @@
         return;
     }
     
-    if (self.searchBar.selectedScopeButtonIndex == 0) {
-        // add the feed normally
+    if (searchBar.selectedScopeButtonIndex == 0) {
         return;
     }
     

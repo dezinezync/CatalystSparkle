@@ -107,8 +107,16 @@
                     [self.collectionView.refreshControl endRefreshing];
                 }
                 
-                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
-                    [self loadNextPage];
+                if (self.pagingManager.page == 1) {
+                    
+                    [self updateTitleView];
+                    
+                    if (self.pagingManager.hasNextPage == YES) {
+                    
+                        [self loadNextPage];
+                        
+                    }
+                    
                 }
             });
 

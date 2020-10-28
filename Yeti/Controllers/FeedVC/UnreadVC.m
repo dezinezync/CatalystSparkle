@@ -43,10 +43,31 @@
     [refreshControl addTarget:self action:@selector(didBeginRefreshing:) forControlEvents:UIControlEventValueChanged];
     
     self.refreshControl = refreshControl;
+#else
+    [self updateTitleView];
 #endif
+    
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(updateTitleView) name:UnreadCountDidUpdate object:nil];
+    
+}
+
+- (void)dealloc {
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    
 }
 
 #pragma mark - Subclassed
+
+- (NSString *)subtitle {
+    
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.unreadsManager.total), self.unreadsManager.total == 1 ? @"" : @"s"];
+    
+    NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalUnread)];
+    
+    return [totalArticles stringByAppendingString:unread];
+    
+}
 
 - (PagingManager *)unreadsManager {
     
@@ -87,14 +108,12 @@
                 return;
             }
             
-#if TARGET_OS_MACCATALYST
-            UIWindow *window = [self.view window];
-//            NSWindow *nsWindow = [window nsWindow];
-            CGRect frame = window.frame;
-#endif
-            
             if (self->_unreadsManager.page == 1) {
+                
                 MyFeedsManager.unreadLastUpdate = NSDate.date;
+                
+                [self updateTitleView];
+                
             }
             
             [self setupData];

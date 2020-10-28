@@ -112,6 +112,9 @@
     
     MyAppDelegate.mainScene = (id)scene;
     
+    MyAppDelegate.mainScene.titlebar.titleVisibility = UITitlebarTitleVisibilityVisible;
+    MyAppDelegate.mainScene.titlebar.toolbarStyle = UITitlebarToolbarStyleUnifiedCompact;
+    
 #endif
         
     [self.window makeKeyAndVisible];

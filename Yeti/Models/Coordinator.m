@@ -9,6 +9,8 @@
 #import "Coordinator.h"
 #import <objc/runtime.h>
 
+#import "AppDelegate.h"
+
 #import "UnreadVC.h"
 #import "TodayVC.h"
 #import "BookmarksVC.h"
@@ -67,9 +69,10 @@
         
         if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
             
-            UnreadVC *vc = [[UnreadVC alloc] init];
+            CustomFeed *feed = [CustomFeed new];
+            feed.feedType = FeedVCTypeUnread;
             
-            [self _showSupplementaryController:vc];
+            [self showCustomVC:feed];
             
         }
         
@@ -146,6 +149,21 @@
     articleVC.mainCoordinator = self;
     
     [self _showDetailController:articleVC];
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac
+        && self.splitViewController.view.bounds.size.width < 1024.f) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [UIView animateWithDuration:0.125 animations:^{
+                
+                [self.splitViewController setPreferredDisplayMode:UISplitViewControllerDisplayModeSecondaryOnly];
+            
+            }];
+            
+        });
+        
+    }
     
 }
 
@@ -375,6 +393,16 @@
         return;
     }
     
+#if TARGET_OS_MACCATALYST
+    if (self.innerWindow == nil) {
+        
+        id nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+        
+        self.innerWindow = nsWindow;
+        
+    }
+#endif
+    
     if ([controller isKindOfClass:FeedVC.class]) {
         
         self.feedVC = (FeedVC *)controller;
@@ -523,6 +551,37 @@ static void *UIViewControllerMainCoordinatorKey;
 - (void)start {
     
     
+    
+}
+
+@end
+
+@implementation UIWindow (MacCatalystExtension)
+
+- (nullable NSObject *)innerWindow {
+    
+    id delegate = [[NSClassFromString(@"NSApplication") sharedApplication] delegate];
+    
+    const SEL hostWinSEL = NSSelectorFromString([NSString stringWithFormat:@"_%@Window%@Window:", @"host", @"ForUI"]);
+    
+    @try {
+        // There's also hostWindowForUIWindow 🤷‍♂️
+        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR(id nsWindow = [delegate performSelector:hostWinSEL withObject:self];)
+            
+        // macOS 11.0 changed this to return an UINSWindowProxy
+        SEL attachedWin = NSSelectorFromString([NSString stringWithFormat:@"%@%@", @"attached", @"Window"]);
+        
+        if ([nsWindow respondsToSelector:attachedWin]) {
+            nsWindow = [nsWindow valueForKey:NSStringFromSelector(attachedWin)];
+        }
+        
+        return nsWindow;
+    }
+    @catch (...) {
+        NSLog(@"Failed to get NSWindow for %@.", self);
+    }
+    
+    return nil;
     
 }
 

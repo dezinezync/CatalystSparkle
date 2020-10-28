@@ -49,8 +49,7 @@
     completionHandler(UNNotificationPresentationOptionList|UNNotificationPresentationOptionSound);
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler
-{
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
     
     if ([response.notification.request.content.categoryIdentifier isEqualToString:@"NOTE_CATEGORY_ARTICLE"]) {
         // open the article
@@ -103,6 +102,9 @@
         [UIApplication.sharedApplication openURL:url options:@{} completionHandler:^(BOOL success) {
             completionHandler();
         }];
+    }
+    else {
+        completionHandler();
     }
     
 //    else if ([[response actionIdentifier] isEqualToString:UNNotificationDefaultActionIdentifier]) {

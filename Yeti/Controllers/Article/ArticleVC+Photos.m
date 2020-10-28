@@ -14,6 +14,7 @@
 #import "IDMPhotoBrowser.h"
 
 #import <DZKit/NSArray+RZArrayCandy.h>
+#import <DZKit/NSArray+Safe.h>
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIImage+MultiFormat.h>
@@ -185,30 +186,59 @@
     
     NSMutableDictionary *dict = [NSMutableDictionary new];
     
-    if ([image valueForKeyPath:@"imageView.image"] != nil) {
-        dict[@"image"] = [image.imageView.image sd_imageData];
-    }
-    
-    if (image.URL != nil) {
-        dict[@"URL"] = image.URL;
-    }
-    
-    if (image.darkModeURL != nil) {
-        dict[@"darkURL"] = image.darkModeURL;
-    }
-    
-    if (image.content != nil && image.content.alt != nil) {
+    if ([image isKindOfClass:Gallery.class]) {
         
-        dict[@"alt"] = image.content.alt;
+        Gallery *gallery = (Gallery *)image;
+        NSInteger selected = gallery.pageControl.currentPage;
+        
+        Content *selectedImage = [gallery.images safeObjectAtIndex:selected];
+        
+        image = (id)[gallery.collectionView.visibleCells lastObject];
+        
+        if ([image valueForKeyPath:@"imageView.image"] != nil) {
+            dict[@"image"] = [image valueForKeyPath:@"imageView.image.sd_imageData"];
+        }
+        
+        dict[@"URL"] = [NSURL URLWithString:selectedImage.url];
+        
+        if (selectedImage.alt) {
+            dict[@"alt"] = image.content.alt;
+        }
+        else if (selectedImage.attributes[@"alt"]) {
+            dict[@"alt"] = selectedImage.attributes[@"alt"];
+        }
+        
+        dict[@"size"] = NSStringFromCGSize(image.imageView.image.size);
         
     }
-    else if (image.content != nil && image.content.attributes[@"alt"] != nil) {
-     
-        dict[@"alt"] = image.content.attributes[@"alt"];
+    else {
+        
+        if ([image valueForKeyPath:@"imageView.image"] != nil) {
+            dict[@"image"] = [image.imageView.image sd_imageData];
+        }
+        
+        if (image.URL != nil) {
+            dict[@"URL"] = image.URL;
+        }
+        
+        if (image.darkModeURL != nil) {
+            dict[@"darkURL"] = image.darkModeURL;
+        }
+        
+        if (image.content != nil && image.content.alt != nil) {
+            
+            dict[@"alt"] = image.content.alt;
+            
+        }
+        else if (image.content != nil && image.content.attributes[@"alt"] != nil) {
+         
+            dict[@"alt"] = image.content.attributes[@"alt"];
+            
+        }
+        
+        dict[@"size"] = NSStringFromCGSize(image.imageView.image.size);
         
     }
-    
-    dict[@"size"] = NSStringFromCGSize(image.imageView.image.size);
     
     if (dict.keyEnumerator.allObjects.count == 0) {
         return;

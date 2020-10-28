@@ -1228,7 +1228,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (void)addArticle:(FeedItem *)article {
     
-    if (!article || !article.identifier || !article.feedID || !article.content) {
+    if (!article || !article.identifier || !article.feedID) {
         NSLog(@"Error adding article to db. Missing information.\n%@", article);
         return;
     }

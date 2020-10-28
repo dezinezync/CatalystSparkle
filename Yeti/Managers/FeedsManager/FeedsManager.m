@@ -191,16 +191,30 @@ NSArray <NSString *> * _defaultsKeys;
         [self updateSharedUnreadCounters];
         
         if (feedCounters != nil) {
+            
+            // No unread
+            if (feedCounters.allKeys.count == 0) {
+                // set all feeds to 0
                 
-            [feedCounters enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull key, NSNumber *  _Nonnull obj, BOOL * _Nonnull stop) {
-               
-                Feed *feed = [ArticlesManager.shared feedForID:@(key.integerValue)];
-                
-                if (feed != nil) {
-                    feed.unread = obj;
+                for (Feed *feed in ArticlesManager.shared.feeds) {
+                    
+                    feed.unread = @(0);
+                    
                 }
                 
-            }];
+            }
+            else {
+                
+                [feedCounters enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull key, NSNumber *  _Nonnull obj, BOOL * _Nonnull stop) {
+                   
+                    Feed *feed = [ArticlesManager.shared feedForID:@(key.integerValue)];
+                    
+                    if (feed != nil) {
+                        feed.unread = obj;
+                    }
+                    
+                }];
+            }
             
         }
 
@@ -2498,6 +2512,22 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSNumber *feedID = [params valueForKey:@"feedID"];
     
+    if (feedID == nil || feedID.integerValue == 0) {
+        
+        if (errorCB) {
+            
+            NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:405 userInfo:@{NSLocalizedDescriptionKey: @"Invalid or no Feed ID was provided."}];
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                errorCB(error, nil, nil);
+            });
+            
+        }
+        
+        return;
+        
+    }
+    
     NSString *path = [NSString stringWithFormat:@"/1.7/feeds/%@", feedID];
     
     __block DZURLSession *session = self.session;
@@ -3670,11 +3700,21 @@ NSArray <NSString *> * _defaultsKeys;
 #pragma mark - Misc
 
 - (void)checkConstraintsForRequestingReview {
+    
+    if (self.shouldRequestReview == YES) {
+        return;
+    }
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    
+    NSString *countKey = [NSString stringWithFormat:@"launchCount-%@", appVersion];
+    NSString *requestedReviewKey = [NSString stringWithFormat:@"requestedReview-%@", appVersion];
 
-    NSInteger count = [Keychain integerFor:YTLaunchCount error:nil];
+    NSInteger count = [Keychain integerFor:countKey error:nil];
     // trigger on 7th launch
     if (count > 6) {
-        BOOL requestedVal = [Keychain boolFor:YTRequestedReview error:nil];
+        BOOL requestedVal = [Keychain boolFor:requestedReviewKey error:nil];
         if (requestedVal == NO) {
             self.shouldRequestReview = YES;
         }
@@ -3748,6 +3788,12 @@ NSArray <NSString *> * _defaultsKeys;
                 
                 __block NSUInteger count = bookmarked.count;
                 
+                if (count == 0) {
+                    
+                    return [self bookmarksUpdateFromServerCompleted];
+                    
+                }
+                
                 [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     // this article needs to be downloaded and cached
@@ -3779,7 +3825,13 @@ NSArray <NSString *> * _defaultsKeys;
                 }];
                 
             }
+            else {
+                [self bookmarksUpdateFromServerCompleted];
+            }
             
+        }
+        else {
+            [self bookmarksUpdateFromServerCompleted];
         }
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {

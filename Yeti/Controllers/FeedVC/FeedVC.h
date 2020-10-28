@@ -27,7 +27,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FeedVC : UITableViewController < ControllerState, ScrollLoading >
+@interface FeedVC : UITableViewController < ControllerState, ScrollLoading, UnreadCountObservor >
 
 @property (nonatomic, weak) Feed * _Nullable feed;
 
@@ -63,6 +63,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (FeedItem * _Nullable)itemForIndexPath:(NSIndexPath * _Nonnull)indexPath;
 
 - (void)reloadVisibleCells;
+
+#pragma mark - Titles
+
+- (NSString *)subtitle;
+
+- (void)updateTitleView;
 
 #pragma mark - State
 

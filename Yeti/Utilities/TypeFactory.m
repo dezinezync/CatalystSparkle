@@ -79,8 +79,7 @@ static TypeFactory * sharedTypeFactory;
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     
-    [notificationCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
-    [notificationCenter removeObserver:self name:UIAccessibilityBoldTextStatusDidChangeNotification object:nil];
+    [notificationCenter removeObserver:self];
     
 }
 

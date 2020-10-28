@@ -81,6 +81,7 @@ YETI_EXPORT ArticleLayoutFont _Nonnull const ALPPlexSans;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPSpectral;
 YETI_EXPORT ArticleLayoutFont _Nonnull const ALPOpenDyslexic;
 YETI_EXPORT ArticleLayoutFont const ALPNewYork;
+YETI_EXPORT ArticleLayoutFont _Nonnull const ALPAtkinson;
 
 typedef NSString * YetiSubscriptionType NS_STRING_ENUM;
 YETI_EXPORT YetiSubscriptionType _Nonnull const YTSubscriptionMonthly;

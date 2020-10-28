@@ -127,7 +127,7 @@
     
 #if !TARGET_OS_MACCATALYST
         
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
 
 #endif 
     
@@ -198,7 +198,6 @@
         self.extendedLayoutIncludesOpaqueBars = YES;
         
         self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
-        self.navigationController.navigationBar.prefersLargeTitles = YES;
     }
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
@@ -377,6 +376,10 @@
     self.tableView.tableFooterView = [UIView new];
     self.tableView.estimatedRowHeight =  150.f;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+        self.tableView.contentInset = UIEdgeInsetsMake(10.f, 0, 10.f, 0);
+    }
     
     self.tableView.separatorInset = UIEdgeInsetsZero;
     
@@ -595,9 +598,16 @@
                     [self.tableView.refreshControl endRefreshing];
                 }
                 
-                if (self.pagingManager.page == 1 && self.pagingManager.hasNextPage == YES) {
-                    [self loadNextPage];
+                if (self.pagingManager.page == 1) {
+                    
+                    [self updateTitleView];
+                    
+                    if (self.pagingManager.hasNextPage == YES) {
+                        [self loadNextPage];
+                    }
+                    
                 }
+            
             });
             
             [self setupData];
@@ -640,6 +650,48 @@
 
 
 #pragma mark - State
+
+- (void)updateTitleView {
+    
+    if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac) {
+        return;
+    }
+    
+    if (NSThread.isMainThread == NO) {
+        
+        return [self performSelectorOnMainThread:@selector(updateTitleView) withObject:nil waitUntilDone:NO];
+        
+    }
+    
+    if (self.mainCoordinator.innerWindow != nil) {
+        
+        [self.mainCoordinator.innerWindow performSelector:@selector(setTitle:) withObject:self.title];
+        
+        NSString *subtitle = [self subtitle];
+        
+        SEL selector = NSSelectorFromString(@"setSubtitle:");
+        
+        DZS_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self.mainCoordinator.innerWindow performSelector:selector withObject:subtitle];)
+        
+    }
+    
+}
+
+- (NSString *)subtitle {
+    
+    if (self.isExploring) {
+        
+        return [NSString stringWithFormat:@"%@ Article%@", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+        
+    }
+    
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+    
+    NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.feed.unread];
+    
+    return [totalArticles stringByAppendingString:unread];
+    
+}
 
 - (UISearchController *)searchController {
     
@@ -983,8 +1035,12 @@
     _feed = feed;
     
     if (_feed != nil) {
+        
         self.restorationIdentifier = [NSString stringWithFormat:@"FeedVC-Feed-%@", feed.feedID];
         self.restorationClass = [self class];
+        
+        feed.unreadCountTitleObservor = self;
+        
     }
     
 }
@@ -1107,6 +1163,18 @@
         [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
         
     });
+    
+}
+
+#pragma mark -
+
+- (void)unreadCountChangedFor:(id)item to:(NSNumber *)count {
+    
+    if ([item isKindOfClass:Feed.class] && [(Feed *)item isEqualToFeed:self.feed]) {
+        
+        [self updateTitleView];
+        
+    }
     
 }
 

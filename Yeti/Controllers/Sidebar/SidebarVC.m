@@ -25,6 +25,9 @@
 #import "Elytra-Swift.h"
 #import "SidebarSearchView.h"
 
+#import <StoreKit/SKStoreReviewController.h>
+#import "AppDelegate.h"
+
 @interface SidebarVC () {
     
     // Sync
@@ -216,6 +219,18 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 #if !TARGET_OS_MACCATALYST
     self.navigationController.navigationBar.prefersLargeTitles = YES;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAlways;
+    
+    if (SharedPrefs.useToolbar) {
+        
+        if (MyDBManager.isSyncing) {
+            [self.navigationController setToolbarHidden:NO animated:YES];
+        }
+        else {
+            [self.navigationController setToolbarHidden:YES animated:YES];
+        }
+        
+    }
+    
 #endif
     
 }
@@ -233,6 +248,25 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     if (_requiresUpdatingUnreadSharedData) {
         
         [self updateSharedUnreadsData];
+        
+    }
+    
+    if (MyFeedsManager.shouldRequestReview == YES) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [SKStoreReviewController requestReviewInScene:MyAppDelegate.mainScene];
+            
+            MyFeedsManager.shouldRequestReview = NO;
+            
+            NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+            NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+            
+            NSString *countKey = [NSString stringWithFormat:@"requestedReview-%@", appVersion];
+            
+            [Keychain add:countKey boolean:YES];
+            
+        });
         
     }
     
@@ -346,6 +380,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     // can be nil.
     NSIndexPath *selected = [self.collectionView.indexPathsForSelectedItems firstObject];
     
+    NSDiffableDataSourceSectionSnapshot * sectionSnapshot = nil;
+    
+    if (self.DS.snapshot != nil && self.DS.snapshot.numberOfSections > 1) {
+        
+        NSNumber * sectionIdentifier = [[self.DS.snapshot sectionIdentifiers] objectAtIndex:1];
+        
+        sectionSnapshot = [self.DS snapshotForSection:sectionIdentifier];
+        
+    }
+    
     NSDiffableDataSourceSectionSnapshot *snapshot = [NSDiffableDataSourceSectionSnapshot new];
     
     CustomFeed *unread = [[CustomFeed alloc] initWithTitle:@"Unread" imageName:@"largecircle.fill.circle" tintColor:UIColor.systemBlueColor feedType:FeedVCTypeUnread];
@@ -385,6 +429,16 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 NSArray <Feed *> *feeds = [folder.feeds.allObjects sortedArrayUsingDescriptors:@[alphaSort]];
                 
                 [foldersSnapshot appendItems:feeds intoParentItem:folder];
+                
+                if (sectionSnapshot != nil && sectionSnapshot.items.count) {
+                    
+                    if ([sectionSnapshot containsItem:folder] && [sectionSnapshot isExpanded:folder]) {
+                    
+                        [foldersSnapshot expandItems:@[folder]];
+                        
+                    }
+                    
+                }
                 
             }
 
@@ -558,8 +612,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     
                     UnreadVC *vc = (id)(self.mainCoordinator.feedVC);
                     
-                    [vc.refreshControl beginRefreshing];
-                    [vc didBeginRefreshing:vc.refreshControl];
+                    if ([vc respondsToSelector:@selector(didBeginRefreshing:)]) {
+                        
+                        [vc.refreshControl beginRefreshing];
+                        [vc didBeginRefreshing:vc.refreshControl];
+                        
+                    }
                     
                 }
                 
@@ -939,8 +997,12 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         _initialSyncCompleted = YES;
     }
     
-    if ((ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0)
-        && _refreshing == NO
+    if (
+        ((
+         (ArticlesManager.shared.feeds.count == 0 || ArticlesManager.shared.folders.count == 0)
+            && _refreshing == NO)
+         || (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac && _needsUpdateOfStructs)
+        )
         && _refreshFeedsCounter < 3) {
         
         _refreshFeedsCounter++;
@@ -948,6 +1010,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         weakify(self);
         
         [MyFeedsManager getFeedsWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            
+            if (self->_needsUpdateOfStructs) {
+                self->_needsUpdateOfStructs = NO;
+            }
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 

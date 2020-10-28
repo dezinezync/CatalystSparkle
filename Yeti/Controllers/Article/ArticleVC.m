@@ -110,10 +110,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (instancetype)initWithItem:(FeedItem *)item
 {
     if (self = [super initWithNibName:NSStringFromClass(ArticleVC.class) bundle:nil]) {
+        
         self.item = item;
         
         self.restorationIdentifier = formattedString(@"%@-%@", NSStringFromClass(self.class), item.identifier);
         self.restorationClass = self.class;
+        
     }
     
     return self;
@@ -142,13 +144,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #else
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(0.f, 0.f, 44.f, 0.f);
-    
+
     if (self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular
         || self.splitViewController.view.bounds.size.height < 814.f) {
-        
+
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0.f, 0.f, 0.f);
             self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 12.f, 0);
@@ -157,11 +159,11 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, 88.f, 0);
             self.scrollView.contentInset = UIEdgeInsetsMake(LayoutPadding * 2, 0, 0, 0);
         }
-        
+
     }
     else if (self.splitViewController.view.bounds.size.height > 814.f
              && self.splitViewController.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        
+
         if (PrefsManager.sharedInstance.useToolbar) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 0.f, 0.f);
             self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 12.f, 0);
@@ -169,8 +171,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         else {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(16.f, 0.f, 52.f, 0.f);
         }
-        
+
     }
+    
 #endif
 
     self.scrollView.restorationIdentifier = self.restorationIdentifier;
@@ -236,6 +239,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
 #else
     
+    [self setupToolbar:self.traitCollection];
+    
     if (SharedPrefs.hideBars == YES) {
         
         self.navigationController.interactivePopGestureRecognizer.delegate = nil;
@@ -246,7 +251,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     
-    self.navigationController.navigationBar.prefersLargeTitles = NO;
+    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     
 #endif
     
@@ -313,6 +318,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     
     [super viewSafeAreaInsetsDidChange];
+}
+
+- (BOOL)definesPresentationContext {
+    
+    return YES;
+    
 }
 
 - (void)dealloc {
@@ -803,9 +814,23 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 
 - (BOOL)_imageURL:(NSString *)url appearsInContent:(Content *)content {
     
+    if ([url containsString:@"?"]) {
+        
+        url = [url substringToIndex:[url rangeOfString:@"?" options:NSBackwardsSearch].location];
+        
+    }
+    
     if (([content.type isEqualToString:@"image"] || [content.type isEqualToString:@"img"])) {
         
-        if ([content.url isEqualToString:url]) {
+        NSString *comparing = content.url.copy;
+        
+        if ([comparing containsString:@"?"]) {
+            
+            comparing = [comparing substringToIndex:[comparing rangeOfString:@"?" options:NSBackwardsSearch].location];
+            
+        }
+        
+        if ([comparing isEqualToString:url]) {
             
             return YES;
             
@@ -848,6 +873,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return appearing != nil;
         
     }
+    else if (content.images != nil) {
+        
+        Content *appearing = [content.images rz_find:^BOOL(Content *objx, NSUInteger idxx, NSArray *arrayx) {
+           
+            return [self _imageURL:url appearsInContent:objx];
+            
+        }];
+        
+        return appearing != nil;
+        
+    }
     
     return NO;
     
@@ -859,7 +895,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [self.item.content enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
        
-        included = [self _imageURL:url appearsInContent:obj];
+        included = [self _imageURL:url.copy appearsInContent:obj];
         
         if (included == YES) {
             *stop = YES;
@@ -885,9 +921,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         self.isiOSIconGallery = YES;
     }
     
-    if (self.item.isRead == NO) {
-        [self didTapRead:nil];
-    }
+//    if (self.item.isRead == NO) {
+//        [self didTapRead:nil];
+//    }
     
     BOOL isYoutubeVideo = [self.item.articleURL containsString:@"youtube.com/watch"];
     
@@ -896,7 +932,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     // iOS 13 shouldn't need it and handle it well.
 #if !TARGET_OS_MACCATALYST
-    if (self.item.content.count > 20) {
+    if (self.item.content.count > 30) {
         self->_deferredProcessing = YES;
     }
 #endif
@@ -1100,6 +1136,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             if (self.providerDelegate && [self.providerDelegate respondsToSelector:@selector(userMarkedArticle:read:)]) {
                 [self.providerDelegate userMarkedArticle:self.item read:YES];
             }
+            else {
+                [MyFeedsManager article:self.item markAsRead:YES];
+            }
         }
         
         [self.stackView layoutIfNeeded];
@@ -1179,8 +1218,17 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (self.item.articleTitle.length > 24) {
         baseFontSize = 26.f;
     }
+    
+    NSString *fontName = [fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""];
+    
+    if ([fontName containsString:@"Atkinson"]) {
+        fontName = [[fontName stringByReplacingOccurrencesOfString:@" " withString:@""] stringByAppendingString:@"-Bold"];
+    }
+    else {
+        fontName = [fontName.capitalizedString stringByAppendingString:@"-Bold"];
+    }
 
-    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:[[[fontPref stringByReplacingOccurrencesOfString:@"articlelayout." withString:@""] capitalizedString] stringByAppendingString:@"-Bold"] size:baseFontSize];
+    UIFont *baseFont = [fontPref isEqualToString:ALPSystem] ? [UIFont boldSystemFontOfSize:baseFontSize] : [UIFont fontWithName:fontName size:baseFontSize];
 
     UIFont * titleFont = [[[UIFontMetrics alloc] initForTextStyle:UIFontTextStyleHeadline] scaledFontForFont:baseFont];
     
@@ -1328,7 +1376,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
 #endif
     
-    if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]) {
+    if ([content.type isEqualToString:@"container"] || [content.type isEqualToString:@"div"]
+        || ([content.type isEqualToString:@"anchor"] && content.items.count)
+        ) {
         
         if ([content.items count]) {
             
@@ -1348,6 +1398,37 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             NSUInteger idx = 0;
             
             for (Content *subcontent in [content items]) { @autoreleasepool {
+                
+                if ([content.type isEqualToString:@"anchor"]
+                    && content.url != nil
+                    && [subcontent.type isEqualToString:@"paragraph"]
+                    && subcontent.content != nil
+                    && subcontent.content.length) {
+                    
+                    // add the URL as a range to the entire paragraph.
+                    Range *range = [Range new];
+                    range.range = NSMakeRange(0, subcontent.content.length);
+                    range.element = @"anchor";
+                    range.url = content.url;
+                    
+                    if (subcontent.ranges == nil) {
+                        subcontent.ranges = @[];
+                    }
+                    else {
+                        // check if this range already exists
+                        NSUInteger indexOfRange = [subcontent.ranges indexOfObject:range];
+                        
+                        if (indexOfRange != NSNotFound) {
+                            range = nil;
+                        }
+                        
+                    }
+                    
+                    if (range != nil) {
+                        subcontent.ranges = [subcontent.ranges arrayByAddingObject:range];
+                    }
+                    
+                }
                 
                 [self processContent:subcontent index:idx imagesFromEnclosures:imagesFromEnclosures];
                 
@@ -1419,7 +1500,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     }
     else if ([content.type isEqualToString:@"aside"]) {
         
-            [self addAside:content];
+        [self addAside:content];
         
     }
     else if ([content.type isEqualToString:@"youtube"]) {
@@ -1429,6 +1510,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         
     }
     else if ([content.type isEqualToString:@"gallery"]) {
+        
+        content.images = [content.images rz_filter:^BOOL(Content *obj, NSUInteger idx, NSArray *array) {
+           
+            return obj.url != nil && [obj.url containsString:@".gravatar.com/"] == NO;
+            
+        }];
         
         [self addGallery:content];
         
@@ -2005,6 +2092,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Gallery *gallery = [[Gallery alloc] initWithNib];
     gallery.frame = CGRectMake(0, 0, self.view.bounds.size.width, 200.f);
+    
     gallery.maxScreenHeight = self.view.bounds.size.height - (self.view.safeAreaInsets.top + self.additionalSafeAreaInsets.bottom) - 12.f - 38.f;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImage:)];
@@ -2490,7 +2578,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
     
-    if ([self.item.articleURL containsString:feed.extra.url] == NO) {
+    // if the GUID doesn't contain the OG URL, we'll error out anyways
+    BOOL isFeedProxyed = [self.item.articleURL containsString:@"feedburner"] || [self.item.articleURL containsString:@"feedproxy.google"];
+    
+    NSString *compareTo = isFeedProxyed ? self.item.guid : self.item.articleURL;
+    
+    if ([compareTo containsString:feed.extra.url] == NO) {
         
         if (completionHandler) {
             completionHandler(NO);
@@ -2504,7 +2597,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [self setupArticle:responseObject];
+        self.item.mercury = responseObject.mercury;
+        self.item.read = responseObject.read;
+        self.item.bookmarked = responseObject.bookmarked;
+        
+        if (responseObject.content && responseObject.content.count) {
+            
+            self.item.content = responseObject.content;
+            
+        }
+        
+        if (responseObject.coverImage) {
+            self.item.coverImage = responseObject.coverImage;
+        }
+        
+        if (responseObject.enclosures && responseObject.enclosures.count) {
+            self.item.enclosures = responseObject.enclosures;
+        }
+        
+        // persist to disk with updated state
+        [MyDBManager addArticle:self.item];
+        
+        [self setupArticle:self.item];
         
         if (completionHandler) {
             completionHandler(YES);
