@@ -371,7 +371,7 @@ static NSDateFormatter *_formatter = nil;
     hash += self.feedID.hash;
 //    hash += self.isRead ? 1 : 0;
 //    hash += self.isBookmarked ? 1 : 0;
-    hash += self.mercury ? 1 : 0;
+//    hash += self.mercury ? 1 : 0;
     
     return hash;
     
