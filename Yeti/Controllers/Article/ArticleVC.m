@@ -2597,7 +2597,28 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
-        [self setupArticle:responseObject];
+        self.item.mercury = responseObject.mercury;
+        self.item.read = responseObject.read;
+        self.item.bookmarked = responseObject.bookmarked;
+        
+        if (responseObject.content && responseObject.content.count) {
+            
+            self.item.content = responseObject.content;
+            
+        }
+        
+        if (responseObject.coverImage) {
+            self.item.coverImage = responseObject.coverImage;
+        }
+        
+        if (responseObject.enclosures && responseObject.enclosures.count) {
+            self.item.enclosures = responseObject.enclosures;
+        }
+        
+        // persist to disk with updated state
+        [MyDBManager addArticle:self.item];
+        
+        [self setupArticle:self.item];
         
         if (completionHandler) {
             completionHandler(YES);
