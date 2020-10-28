@@ -16,6 +16,8 @@
     
     NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"elytra-main-toolbar"];
     
+    toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    
     toolbar.delegate = self;
     
     scene.titlebar.toolbar = toolbar;
