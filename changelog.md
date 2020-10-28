@@ -1,5 +1,11 @@
 # v2.1.0
 
+## Build 67 
+
+- Fixed an issue where opening an article from push notifications did not mark it as read. 
+
+- Fixed an issue with the notification detail not showing the favicon or cover image (if the article provides a cover).
+
 ## Build 63
 
 - Fixed loading of GIF favicons
