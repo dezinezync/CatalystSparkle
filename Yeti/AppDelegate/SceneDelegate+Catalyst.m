@@ -10,6 +10,35 @@
 
 #if TARGET_OS_MACCATALYST
 
+@interface UIImage (CatalystToolbarSymbol)
+
+- (UIImage *)symbolForNSToolbar:(UIImageSymbolConfiguration *)additionalConfig;
+
+@end
+
+@implementation UIImage (CatalystToolbarSymbol)
+
+- (UIImage *)symbolForNSToolbar:(UIImageSymbolConfiguration *)additionalConfig {
+
+    if (self.symbolConfiguration == nil) {
+        return nil;
+    }
+
+    UIImage *symbol = [self imageByApplyingSymbolConfiguration:additionalConfig];
+
+    UIGraphicsImageRendererFormat * format = [UIGraphicsImageRendererFormat new];
+    format.preferredRange = UIGraphicsImageRendererFormatRangeStandard;
+
+    return [[[[UIGraphicsImageRenderer alloc] initWithSize:symbol.size format:format] imageWithActions:^(UIGraphicsImageRendererContext * _Nonnull rendererContext) {
+        
+        [symbol drawAtPoint:CGPointZero];
+        
+    }] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+
+}
+
+@end
+
 @implementation SceneDelegate (Catalyst)
 
 - (void)ct_setupToolbar:(UIWindowScene *)scene {
@@ -23,6 +52,16 @@
     scene.titlebar.toolbar = toolbar;
     
     self.toolbar = toolbar;
+    
+}
+
+- (UIImageSymbolConfiguration *)toolbarSymbolConfiguration {
+    
+    if (_toolbarSymbolConfiguration == nil) {
+        _toolbarSymbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:13.f weight:UIImageSymbolWeightMedium];
+    }
+    
+    return _toolbarSymbolConfiguration;
     
 }
 
@@ -78,8 +117,6 @@
     NSToolbarItem *item = nil;
     
     if ([itemIdentifier isEqualToString:kNewItemToolbarIdentifier]) {
-        
-        image = [UIImage systemImageNamed:@"plus"];
         
         title = @"New";
         
@@ -177,26 +214,6 @@
         button = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:nil action:@selector(openInBrowser)];
         
         item = [self toolbarItemWithItemIdentifier:kOpenInBrowserToolbarIdentifier title:title button:button];
-        
-    }
-    else if ([itemIdentifier isEqualToString:kFeedTitleViewToolbarIdentifier]) {
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120.f, 24.f)];
-        label.textColor = UIColor.blackColor;
-        label.font = [UIFont systemFontOfSize:13.f weight:UIFontWeightSemibold];
-        label.text = @"Feed Title";
-        label.numberOfLines = 0;
-        label.backgroundColor = UIColor.redColor;
-
-        label.translatesAutoresizingMaskIntoConstraints = YES;
-        [label setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisHorizontal];
-        [label setContentCompressionResistancePriority:999 forAxis:UILayoutConstraintAxisVertical];
-        [label.widthAnchor constraintEqualToConstant:120.f].active = YES;
-        [label.heightAnchor constraintEqualToConstant:24.f].active = YES;
-        
-        UIBarButtonItem *viewBarItem = [[UIBarButtonItem alloc] initWithCustomView:label];
-        
-        item = [self toolbarItemWithItemIdentifier:kFeedTitleViewToolbarIdentifier title:@"Feed Title" button:viewBarItem];
         
     }
     else if ([itemIdentifier isEqualToString:kSortingMenuToolbarIdentifier]) {
@@ -304,9 +321,9 @@
     if (title) {
         item.paletteLabel = title;
         item.toolTip = title;
+//        item.title = title;
     }
-    
-//    item.title = title;
+
     item.label = @"";
     
     return item;
