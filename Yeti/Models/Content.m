@@ -321,15 +321,15 @@
     
     BOOL usedSRCSet = NO;
     
-    NSString *sizePreference = SharedPrefs.imageLoading;
+    NSString *sizePreference = SharedPrefs.imageBandwidth;
     
     if (self.srcset && [self.srcset allKeys].count > 1) {
         
         NSArray <NSString *> * sizes = [self.srcset allKeys];
         
-        __block BOOL canUseDark = NO;
+        __block BOOL canUseDark = darkModeOnly;
         
-        if (darkModeOnly == YES && [sizes indexOfObject:@"dark"] != NSNotFound) {
+        if (canUseDark == NO && [sizes indexOfObject:@"dark"] != NSNotFound) {
             
             runOnMainQueueWithoutDeadlocking(^{
                 
@@ -450,6 +450,14 @@
                     return [obj1 compare:obj2 options:NSNumericSearch];
                 }];
                 
+                if (available.count == 0) {
+                    
+                    if ([sizes containsObject:@"2x"]) {
+                        available = @[@"2x"];
+                    }
+                    
+                }
+                
                 if (available.count) {
                     url = [source valueForKey:available.lastObject];
                     usedSRCSet = YES;
@@ -463,6 +471,17 @@
                 }] sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
                     return [obj1 compare:obj2 options:NSNumericSearch];
                 }];
+                
+                if (available.count == 0) {
+                    
+                    if ([sizes containsObject:@"3x"]) {
+                        available = @[@"3x"];
+                    }
+                    else if ([sizes containsObject:@"2x"]) {
+                        available = @[@"2x"];
+                    }
+                    
+                }
                 
                 if (available.count) {
                     url = [source valueForKey:available.lastObject];

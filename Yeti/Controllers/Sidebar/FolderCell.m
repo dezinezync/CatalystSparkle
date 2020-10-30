@@ -26,7 +26,7 @@
     
     UIListContentConfiguration *content = [UIListContentConfiguration sidebarSubtitleCellConfiguration];
     
-    content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+    content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     content.text = item.title;
     
     if (SharedPrefs.showUnreadCounts == YES) {

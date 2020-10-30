@@ -200,12 +200,25 @@
         }
         
         NSURL *url = [UIPasteboard.generalPasteboard URL];
+        NSString *textURL;
         
         if (url == nil) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.navigationItem.searchController setActive:YES];
-            });
-            return;
+            
+            textURL = [UIPasteboard.generalPasteboard string];
+            
+            if (textURL != nil) {
+                
+                url = [NSURL URLWithString:textURL];
+                
+            }
+            
+            if (url == nil && textURL == nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.navigationItem.searchController setActive:YES];
+                });
+                return;
+            }
+            
         }
         
     // https://blog.elytra.app/feed
@@ -213,7 +226,7 @@
             
             UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
             
-            searchBar.searchTextField.text = url.absoluteString;
+            searchBar.searchTextField.text = url.absoluteString ?: textURL;
             [self searchBarTextDidEndEditing:searchBar];
             
         });
