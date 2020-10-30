@@ -82,7 +82,10 @@
         [self setupCoverImage:path];
     }
     else {
-        self.coverImage.hidden = YES;
+        self.coverHeight.constant = 0.1f;
+
+        [self.coverImage layoutIfNeeded];
+//        self.coverImage.hidden = YES;
     }
     
     [self.titleLabel sizeToFit];
