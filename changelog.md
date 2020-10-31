@@ -1,6 +1,6 @@
 # v2.1.2
 
-## Build 69
+## Build 70
 
 - Fixed an issue with loading and displaying dark mode images in the Article reader. 
 
@@ -12,4 +12,8 @@
 
 - Fixed the font size of the Folder items ( it now matches the size used by the Mail.app )
 
-- Fixed an issue when expanding a notification, the notification would not resize if there is no cover image to display. 
+- Fixed an issue when expanding a notification, the notification would not resize if there is no cover image to display.
+
+- Fixed a crash that would occur when trying to add a feed which listed multiple options.
+
+- Fixed a rare crash that would occur in the background saving restore data if you had any folders opened.  

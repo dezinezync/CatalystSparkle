@@ -182,21 +182,13 @@
     
     UIPasteboardDetectionPattern pattern = UIPasteboardDetectionPatternProbableWebURL;
     
-    [UIPasteboard.generalPasteboard detectPatternsForPatterns:[NSSet setWithObject:pattern] completionHandler:^(NSSet<UIPasteboardDetectionPattern> * _Nullable patterns, NSError * _Nullable error) {
+    [UIPasteboard.generalPasteboard detectPatternsForPatterns:[NSSet setWithObjects:pattern, UIPasteboardDetectionPatternProbableWebSearch, nil] completionHandler:^(NSSet<UIPasteboardDetectionPattern> * _Nullable patterns, NSError * _Nullable error) {
        
         if (error != nil) {
             
             NSLogDebug(@"Error occurred detecting pasterboard pattern: %@", error.localizedDescription);
             return;
             
-        }
-        
-        if (patterns.count == 0) {
-            // https://stackoverflow.com/a/28527114/1387258
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.navigationItem.searchController setActive:YES];
-            });
-            return;
         }
         
         NSURL *url = [UIPasteboard.generalPasteboard URL];
@@ -212,7 +204,7 @@
                 
             }
             
-            if (url == nil && textURL == nil) {
+            if (url == nil) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.navigationItem.searchController setActive:YES];
                 });
@@ -229,6 +221,10 @@
             searchBar.searchTextField.text = url.absoluteString ?: textURL;
             [self searchBarTextDidEndEditing:searchBar];
             
+        });
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.navigationItem.searchController setActive:YES];
         });
         
     }];
@@ -481,7 +477,10 @@
     [snapshot appendSectionsWithIdentifiers:@[@0]];
     
     if (feeds != nil) {
-        [snapshot appendItemsWithIdentifiers:feeds intoSectionWithIdentifier:@0];
+        
+        NSSet *set = [NSSet setWithArray:feeds];
+        
+        [snapshot appendItemsWithIdentifiers:set.allObjects intoSectionWithIdentifier:@0];
     }
     
     [self.DS applySnapshot:snapshot animatingDifferences:YES];

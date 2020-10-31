@@ -1392,7 +1392,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
         
         for (Folder *folder in ArticlesManager.shared.folders) {
             
-            if ([sectionSnapshot isExpanded:folder]) {
+            if ([sectionSnapshot containsItem:folder] && [sectionSnapshot isExpanded:folder]) {
                 [openFolders addObject:folder.folderID];
             }
             
