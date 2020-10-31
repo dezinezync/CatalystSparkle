@@ -143,91 +143,7 @@
     
     [super viewDidAppear:animated];
     
-#if TARGET_OS_MACCATALYST
-    
-    if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
-        
-        NSURL * url = UIPasteboard.generalPasteboard.URL;
-        
-        if (url == nil) {
-            
-            NSString *text = UIPasteboard.generalPasteboard.string;
-            
-            if (text != nil) {
-                
-                url = [NSURL URLWithString:text];
-                
-            }
-            
-        }
-        
-        if (url != nil) {
-            
-            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
-            
-            searchBar.searchTextField.text = url.absoluteString;
-            [self searchBarTextDidEndEditing:searchBar];
-            
-        }
-        
-    }
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.navigationItem.searchController setActive:YES];
-    });
-    
-    return;
-    
-#endif
-    
-    UIPasteboardDetectionPattern pattern = UIPasteboardDetectionPatternProbableWebURL;
-    
-    [UIPasteboard.generalPasteboard detectPatternsForPatterns:[NSSet setWithObjects:pattern, UIPasteboardDetectionPatternProbableWebSearch, nil] completionHandler:^(NSSet<UIPasteboardDetectionPattern> * _Nullable patterns, NSError * _Nullable error) {
-       
-        if (error != nil) {
-            
-            NSLogDebug(@"Error occurred detecting pasterboard pattern: %@", error.localizedDescription);
-            return;
-            
-        }
-        
-        NSURL *url = [UIPasteboard.generalPasteboard URL];
-        NSString *textURL;
-        
-        if (url == nil) {
-            
-            textURL = [UIPasteboard.generalPasteboard string];
-            
-            if (textURL != nil) {
-                
-                url = [NSURL URLWithString:textURL];
-                
-            }
-            
-            if (url == nil) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.navigationItem.searchController setActive:YES];
-                });
-                return;
-            }
-            
-        }
-        
-    // https://blog.elytra.app/feed
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
-            
-            searchBar.searchTextField.text = url.absoluteString ?: textURL;
-            [self searchBarTextDidEndEditing:searchBar];
-            
-        });
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.navigationItem.searchController setActive:YES];
-        });
-        
-    }];
+    [self checkPasteboard];
     
 }
 
@@ -236,6 +152,14 @@
     _closing = YES;
     
     [super viewWillDisappear:animated];
+    
+}
+
+- (void)dealloc {
+    
+    [self.recommendationsView removeFromSuperview];
+    [self.recommendationsVC willMoveToParentViewController:nil];
+    [self.recommendationsVC removeFromParentViewController];
     
 }
 
@@ -633,6 +557,41 @@
 }
 
 #pragma mark - Actions
+
+- (void)checkPasteboard {
+    
+    if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
+        
+        NSURL * url = UIPasteboard.generalPasteboard.URL;
+        
+        if (url == nil) {
+            
+            NSString *text = UIPasteboard.generalPasteboard.string;
+            
+            if (text != nil) {
+                
+                url = [NSURL URLWithString:text];
+                
+            }
+            
+        }
+        
+        if (url != nil) {
+            
+            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+            
+            searchBar.searchTextField.text = url.absoluteString;
+            [self searchBarTextDidEndEditing:searchBar];
+            
+        }
+        
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.navigationItem.searchController setActive:YES];
+    });
+    
+}
 
 - (void)didTapClose:(UIBarButtonItem *)sender {
     
