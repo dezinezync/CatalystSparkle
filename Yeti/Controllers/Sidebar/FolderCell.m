@@ -24,7 +24,7 @@
         return;
     }
     
-    UIListContentConfiguration *content = [UIListContentConfiguration sidebarSubtitleCellConfiguration];
+    UIListContentConfiguration *content = [UIListContentConfiguration sidebarHeaderConfiguration];
     
     content.textProperties.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     content.text = item.title;
@@ -74,10 +74,16 @@
     
     UIListContentConfiguration *updatedContent = (id)[self contentConfiguration];
     
+#if !TARGET_OS_MACCATALYST
+    UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
+    backgroundConfig.backgroundColor = UIColor.systemBackgroundColor;
+    self.backgroundConfiguration = backgroundConfig;
+#endif
+    
     if (state.isExpanded == YES) {
         
         updatedContent.image = [UIImage systemImageNamed:@"folder"];
-        
+    
     }
     else {
         

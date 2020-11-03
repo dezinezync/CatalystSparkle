@@ -572,6 +572,17 @@
                 
                 url = [NSURL URLWithString:text];
                 
+                // if the URL is still nil at this point, it may
+                // need URL Encoding.
+                // Example: https://elpais.com/arcio/rss/tags/Perú/?website=el-pais
+                if (url == nil) {
+                    
+                    text = [text stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
+                    
+                    url = [NSURL URLWithString:text];
+                    
+                }
+                
             }
             
         }

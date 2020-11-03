@@ -23,6 +23,8 @@
         return;
     }
     
+    BOOL shouldIndent = self.isExploring == NO && indexPath.section != 2;
+    
     UIListContentConfiguration *content = self.isExploring ? [UIListContentConfiguration subtitleCellConfiguration] : [UIListContentConfiguration sidebarCellConfiguration];
     
     content.text = item.displayTitle;
@@ -82,7 +84,7 @@
 
     self.contentConfiguration = content;
 
-    if (self.isExploring == NO && indexPath.section != 2) {
+    if (shouldIndent == YES) {
 
         self.indentationLevel = 1;
 

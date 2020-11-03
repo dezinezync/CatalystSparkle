@@ -367,7 +367,14 @@
     
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
+    if (self->_shiftPressedBeforeClickingURL) {
+        
+        URL = formattedURL(@"%@&shift=1", URL.absoluteString);
+        
+    }
+    
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+    
 }
 
 - (void)didTapSearch

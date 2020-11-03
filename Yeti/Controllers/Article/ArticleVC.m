@@ -68,10 +68,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL _deferredProcessing;
     
     BOOL _isRestoring;
-    
-#if TARGET_OS_MACCATALYST
-    BOOL _shiftPressedBeforeClickingURL;
-#endif
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;

@@ -230,7 +230,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (void)setUser:(User *)user {
     
-    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
         if (user == nil) {
             [transaction removeObjectForKey:@"user" inCollection:@"user"];

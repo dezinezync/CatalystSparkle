@@ -208,6 +208,10 @@
             
         }
         
+        if ([link containsString:@"&shift=1"]) {
+            link = [link stringByReplacingOccurrencesOfString:@"&shift=1" withString:@""];
+        }
+        
         NSURL *url = [NSURL URLWithString:link];
         
         if (url == nil) {
@@ -782,6 +786,10 @@
     
     if (uri == nil || [uri isBlank])
         return;
+    
+    if ([uri.lastPathComponent isEqualToString:@"shift=1"]) {
+        
+    }
     
     NSString *browserScheme = [([NSUserDefaults.standardUserDefaults valueForKey:ExternalBrowserAppScheme] ?: @"safari") lowercaseString];
     NSURL *URL;
