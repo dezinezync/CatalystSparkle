@@ -367,12 +367,13 @@
     
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
+#if TARGET_OS_MACCATALYST
     if (self->_shiftPressedBeforeClickingURL) {
         
         URL = formattedURL(@"%@&shift=1", URL.absoluteString);
         
     }
-    
+#endif
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
     
 }
