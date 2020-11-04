@@ -1,19 +1,9 @@
-# v2.1.2
+# v2.1.3
 
-## Build 70
+## Build 72
 
-- Fixed an issue with loading and displaying dark mode images in the Article reader. 
+- Fixed an issue where if an Image provides multiple options, sometimes an invalid URL would be selected and therefore the image would not load at all. 
 
-- Fixed an issue where the standard @1x image was always selected even though a higher resolution image option was available. 
+- Fixed an issue where if you've selected the "Unread" sorting option or are in the unreads feed and refresh the timeline, an incorrect article would be selected. 
 
-- Fixed image loading options now correctly selecting the source image based on your image bandwidth selection. 
-
-- Fixed an issue where URLs with special characters would not get added from the pasteboard when opening the New Feed Interface. 
-
-- Fixed the font size of the Folder items ( it now matches the size used by the Mail.app )
-
-- Fixed an issue when expanding a notification, the notification would not resize if there is no cover image to display.
-
-- Fixed a crash that would occur when trying to add a feed which listed multiple options.
-
-- Fixed a rare crash that would occur in the background saving restore data if you had any folders opened.  
+- Improved the performance of "Force Re-Sync".

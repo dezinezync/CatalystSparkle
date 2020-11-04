@@ -434,6 +434,11 @@
     }
     
     NSIndexPath *selected = self.tableView.indexPathForSelectedRow;
+    id selectedItem = nil;
+    
+    if (selected != nil) {
+        selectedItem = [self.DS itemIdentifierForIndexPath:selected];
+    }
     
     BOOL isAppending = self.DS.snapshot.numberOfItems > 0;
     
@@ -455,11 +460,16 @@
             [self.tableView setScrollEnabled:YES];
         }
         
-        if (selected) {
+        if (selectedItem != nil) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 
-                [self.tableView selectRowAtIndexPath:selected animated:NO scrollPosition:UITableViewScrollPositionNone];
+                // find the item in the new set
+                NSIndexPath * selectedIndexPath = [self.DS indexPathForItemIdentifier:selectedItem];
+                
+                if (selectedIndexPath != nil) {
+                    [self.tableView selectRowAtIndexPath:selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+                }
                 
             });
             
