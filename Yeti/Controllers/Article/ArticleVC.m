@@ -225,8 +225,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+
     [super viewWillAppear:animated];
-    
+
 #if TARGET_OS_MACCATALYST
     
     if (self.isExternalWindow == NO) {
@@ -301,7 +302,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-//    [self.navigationController popViewControllerAnimated:NO];
+
+    SDImageCache *imageCache = [SDImageCache sharedImageCache];
+    [imageCache clearMemory];
+    
 }
 
 - (void)viewSafeAreaInsetsDidChange
@@ -1932,7 +1936,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         frame.size = content.size;
     }
     
-    CGFloat scale = content.size.height / content.size.width;
+    CGFloat scale = (content.size.height + 24.f) / content.size.width;
     
     if (((NSRange)[content.url rangeOfString:@"feeds.feedburner.com"]).location != NSNotFound) {
         // example: http://feeds.feedburner.com/~ff/abduzeedo?d=yIl2AUoC8zA

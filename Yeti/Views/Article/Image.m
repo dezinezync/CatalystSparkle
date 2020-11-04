@@ -163,40 +163,42 @@
             
             [self _setupImage];
             
-//            CGFloat width = self.imageView.bounds.size.width;
-            
-            [self.imageView sd_setImageWithURL:url placeholderImage:nil options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                
-                self.imageView.backgroundColor = UIColor.systemBackgroundColor;
-                
-                if (error == nil) {
-                
-                    [self addContextMenus];
-                    
-                }
-                else if (SharedPrefs.imageProxy == YES) {
-                    
-                    NSURL * base = [[url absoluteString] urlFromProxyURI];
-                    
-                    if (base != nil) {
-                        
-                        // try the direct URL
-                        [self.imageView sd_setImageWithURL:base placeholderImage:nil options:SDWebImageScaleDownLargeImages|SDWebImageRetryFailed completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                            
-                            if (error != nil) {
-                                
-                                return;
-                            }
-                            
-                        }];
-                        
-                    }
-                    
-                }
-                
-            }];
-            
         });
+        
+        SDWebImageDownloaderOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache;
+        
+        // SDWebImageScaleDownLargeImages|SDWebImageRetryFailed
+        
+        [self.imageView sd_setImageWithURL:url placeholderImage:nil options:imageDownloadOptions completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            
+            self.imageView.backgroundColor = UIColor.systemBackgroundColor;
+            
+            if (error == nil) {
+            
+                [self addContextMenus];
+                
+            }
+            else if (SharedPrefs.imageProxy == YES) {
+                
+                NSURL * base = [[url absoluteString] urlFromProxyURI];
+                
+                if (base != nil) {
+                    
+                    // try the direct URL
+                    [self.imageView sd_setImageWithURL:base placeholderImage:nil options:imageDownloadOptions completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                        
+                        if (error != nil) {
+                            
+                            return;
+                        }
+                        
+                    }];
+                    
+                }
+                
+            }
+            
+        }];
         
     }
 }

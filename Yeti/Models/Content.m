@@ -497,6 +497,22 @@
         
     }
     
+    NSURL *checking = [NSURL URLWithString:url];
+    
+    if (checking.host == nil && self.url != nil) {
+        
+        // relative path
+        // check if main url has host
+        NSURL *mainChecking = [NSURL URLWithString:self.url];
+        
+        if (mainChecking.host != nil) {
+            
+            url = formattedString(@"%@%@", mainChecking.host, url);
+            
+        }
+        
+    }
+    
     url = [url pathForImageProxy:usedSRCSet maxWidth:( width ) quality:0.9f];
     
     return [NSURL URLWithString:url];
