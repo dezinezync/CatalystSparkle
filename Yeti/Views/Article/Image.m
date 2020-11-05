@@ -165,9 +165,7 @@
             
         });
         
-        SDWebImageDownloaderOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache;
-        
-        // SDWebImageScaleDownLargeImages|SDWebImageRetryFailed
+        SDWebImageOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache|SDWebImageRetryFailed;
         
         [self.imageView sd_setImageWithURL:url placeholderImage:nil options:imageDownloadOptions completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
             

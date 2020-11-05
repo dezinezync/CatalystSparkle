@@ -144,8 +144,10 @@
         weakify(self);
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            SDWebImageOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache|SDWebImageRetryFailed;
 
-            __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+            __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:imageDownloadOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
                 
                 strongify(self);
                 
@@ -164,10 +166,13 @@
                 if (image != nil) {
 
                     feed.faviconImage = image;
-                    
-                    [self updateCellFaviconImageFor:feed];
 
                 }
+                else {
+                    feed.faviconImage = [UIImage systemImageNamed:@"square.dashed"];
+                }
+                
+                [self updateCellFaviconImageFor:feed];
 
             }];
 

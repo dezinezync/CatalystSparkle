@@ -1,5 +1,11 @@
 # v2.1.3
 
+## Build 73
+
+- Micro.blog articles in the list now correctly show the favicon when one is available. 
+
+- Fixed a bug where Micro.blog articles in the list would become blank after scrolling out of frame. 
+
 ## Build 72
 
 - Fixed an issue where if an Image provides multiple options, sometimes an invalid URL would be selected and therefore the image would not load at all. 
