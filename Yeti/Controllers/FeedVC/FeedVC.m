@@ -764,6 +764,12 @@
         }
         
     }
+    else if (controllerState != StateErrored) {
+        // we have data, so the state doesn't matter
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self removeEmptyView];
+        });
+    }
     
 }
 
