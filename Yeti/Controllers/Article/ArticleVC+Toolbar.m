@@ -591,7 +591,9 @@
     
     UISceneActivationRequestOptions * options = [UISceneActivationRequestOptions new];
     options.requestingScene = self.view.window.windowScene;
+#if TARGET_OS_MACCATALYST
     options.collectionJoinBehavior = UISceneCollectionJoinBehaviorDisallowed;
+#endif
     
     [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:options errorHandler:^(NSError * _Nonnull error) {
         
