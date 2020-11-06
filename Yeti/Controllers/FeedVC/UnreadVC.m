@@ -61,7 +61,7 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.unreadsManager.total), self.unreadsManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(MAX(self.unreadsManager.total, MyFeedsManager.totalUnread)), self.unreadsManager.total == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalUnread)];
     
@@ -164,11 +164,16 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
+    // mac catalyst doesn't have a refresh control
+#if !TARGET_OS_MACCATALYST
     if (sender != nil) {
+#endif
         self.unreadsManager = nil;
         self.pagingManager = self.unreadsManager;
         [self loadNextPage];
+#if !TARGET_OS_MACCATALYST
     }
+#endif
     
 }
 

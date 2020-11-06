@@ -589,7 +589,11 @@
     
     [openArticleActivity addUserInfoEntriesFromDictionary:dict];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:nil errorHandler:^(NSError * _Nonnull error) {
+    UISceneActivationRequestOptions * options = [UISceneActivationRequestOptions new];
+    options.requestingScene = self.view.window.windowScene;
+    options.collectionJoinBehavior = UISceneCollectionJoinBehaviorDisallowed;
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:options errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             

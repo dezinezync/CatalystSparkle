@@ -246,7 +246,11 @@
     
     [viewImageActivity addUserInfoEntriesFromDictionary:dict];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:0 errorHandler:^(NSError * _Nonnull error) {
+    UISceneActivationRequestOptions * options = [UISceneActivationRequestOptions new];
+    options.requestingScene = self.view.window.windowScene;
+    options.collectionJoinBehavior = UISceneCollectionJoinBehaviorDisallowed;
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:viewImageActivity options:options errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             

@@ -165,11 +165,16 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
+    // mac catalyst doesn't have a refresh control
+#if !TARGET_OS_MACCATALYST
     if (sender != nil) {
+#endif
         self.todayManager = nil;
         self.pagingManager = self.todayManager;
         [self loadNextPage];
+#if !TARGET_OS_MACCATALYST
     }
+#endif
     
 }
 

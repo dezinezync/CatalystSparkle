@@ -115,6 +115,18 @@
 
 }
 
+- (void)_setupDefaultIcon {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        if (self.feed.faviconImage == nil) {
+            self.feed.faviconImage = [UIImage systemImageNamed:@"square.dashed"];
+        }
+        
+    });
+    
+}
+
 - (void)setupFavicon {
     
     NSIndexPath *indexPath = [self.DS indexPathForItemIdentifier:self.feed];
@@ -152,15 +164,15 @@
                 strongify(self);
                 
                 if (self.feed == nil) {
-                    return;
+                    [self _setupDefaultIcon];;
                 }
                 
                 if (self.DS == nil) {
-                    return;
+                    [self _setupDefaultIcon];;
                 }
                 
                 if (feed.faviconImage != nil) {
-                    return;
+                    [self _setupDefaultIcon];;
                 }
 
                 if (image != nil) {
@@ -169,7 +181,7 @@
 
                 }
                 else {
-                    feed.faviconImage = [UIImage systemImageNamed:@"square.dashed"];
+                    [self _setupDefaultIcon];
                 }
                 
                 [self updateCellFaviconImageFor:feed];
