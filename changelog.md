@@ -1,5 +1,11 @@
 # v2.1.3
 
+## Build 74 
+
+- Fixed an issue where if the Unread or Today interfaces are open, and you refresh the main interface the Articles timeline would not update. 
+
+- Fixed an issue where default placeholders for favicons would not appear. 
+
 ## Build 73
 
 - Micro.blog articles in the list now correctly show the favicon when one is available. 

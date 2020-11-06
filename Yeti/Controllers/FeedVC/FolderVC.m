@@ -133,6 +133,12 @@
                         [self loadNextPage];
                     
                     }
+                    
+#if TARGET_OS_MACCATALYST
+            if (self->_isRefreshing) {
+                self->_isRefreshing = NO;
+            }
+#endif
                 
                 }
             });

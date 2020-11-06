@@ -604,8 +604,9 @@
             }
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.tableView.refreshControl isRefreshing]) {
-                    [self.tableView.refreshControl endRefreshing];
+               
+                if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
+                    [self.refreshControl endRefreshing];
                 }
                 
                 if (self.pagingManager.page == 1) {
@@ -623,6 +624,12 @@
             [self setupData];
             
             self.controllerState = StateLoaded;
+            
+#if TARGET_OS_MACCATALYST
+            if (self->_isRefreshing) {
+                self->_isRefreshing = NO;
+            }
+#endif
 
         };
     }
@@ -982,6 +989,14 @@
     if (self.controllerState == StateLoading) {
         return;
     }
+    
+#if TARGET_OS_MACCATALYST
+    if (self->_isRefreshing) {
+        return;
+    }
+    
+    self->_isRefreshing = YES;
+#endif
     
     self.controllerState = StateLoading;
     

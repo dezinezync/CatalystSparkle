@@ -121,13 +121,19 @@
             self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.tableView.refreshControl isRefreshing]) {
-                    [self.tableView.refreshControl endRefreshing];
+                if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
+                    [self.refreshControl endRefreshing];
                 }
                 
                 if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
                     [self loadNextPage];
                 }
+                
+#if TARGET_OS_MACCATALYST
+            if (self->_isRefreshing) {
+                self->_isRefreshing = NO;
+            }
+#endif
             });
             
         };
@@ -167,13 +173,13 @@
     // mac catalyst doesn't have a refresh control
 #if !TARGET_OS_MACCATALYST
     if (sender != nil) {
+#else
+    if (self->_isRefreshing == NO) {
 #endif
         self.unreadsManager = nil;
         self.pagingManager = self.unreadsManager;
         [self loadNextPage];
-#if !TARGET_OS_MACCATALYST
     }
-#endif
     
 }
 
