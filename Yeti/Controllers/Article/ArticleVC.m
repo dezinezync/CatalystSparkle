@@ -189,7 +189,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    if (!(self.item != nil && self.item.content != nil && self.item.isBookmarked == YES)) {
+    if (!(self.item != nil && self.item.content != nil
+          && (self.item.isBookmarked == YES || self.item.textFromContent != nil) )) {
         
         // this ensures that bookmarked articles render the title.
         // when this runs, the title has already been added to the view
@@ -1277,9 +1278,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [authorView sizeToFit];
     
-    CGSize fittingSize = [authorView systemLayoutSizeFittingSize:CGSizeMake(self.view.bounds.size.width, CGFLOAT_MAX) withHorizontalFittingPriority:1000 verticalFittingPriority:1000];
+    CGSize fittingSize = [authorView systemLayoutSizeFittingSize:CGSizeMake(self.view.bounds.size.width, CGFLOAT_MAX) withHorizontalFittingPriority:999 verticalFittingPriority:999];
     
-    frame.size = fittingSize;
+    if (fittingSize.height != CGFLOAT_MAX && fittingSize.height > frame.size.height) {
+        frame.size = fittingSize;
+    }
+    
     authorView.frame = frame;
 #endif
     authorView.mercurialed = self.item.mercury;
