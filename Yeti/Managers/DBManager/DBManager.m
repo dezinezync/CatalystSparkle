@@ -311,6 +311,22 @@ NSString *const kNotificationsKey = @"notifications";
     
 }
 
+- (void)updateFeed:(Feed *)feed {
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    NSString *key = feed.feedID.stringValue;
+    
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+       
+        [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION];
+        
+    }];
+    
+}
+
 - (FeedOperation *)_renameFeed:(Feed *)feed title:(NSString *)title {
     
     if (feed == nil) {

@@ -1902,9 +1902,34 @@ NSArray <NSString *> * _defaultsKeys;
     }];
 }
 
-- (void)unsubscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
-{
-    [self.session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+- (void)unsubscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB {
+    
+    [self.session DELETE:@"/user/subscriptions" parameters:@{@"userID": [self userID], @"feedID": feed.feedID} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        feed.subscribed = NO;
+        
+        [MyDBManager updateFeed:feed];
+        
+        [ArticlesManager.shared.feeds enumerateObjectsUsingBlock:^(Feed * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            
+            if (obj.feedID.unsignedIntegerValue == feed.feedID.unsignedIntegerValue) {
+                
+                obj.subscribed = NO;
+                
+                *stop = YES;
+            }
+            
+        }];
+        
+        if (successCB) {
+            
+            runOnMainQueueWithoutDeadlocking(^{
+                successCB(responseObject, response, task);
+            });
+            
+        }
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         error = [self errorFromResponse:error.userInfo];
         
