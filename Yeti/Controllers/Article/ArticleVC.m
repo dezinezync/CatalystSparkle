@@ -68,10 +68,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     BOOL _deferredProcessing;
     
     BOOL _isRestoring;
-    
-#if TARGET_OS_MACCATALYST
-    BOOL _shiftPressedBeforeClickingURL;
-#endif
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -193,7 +189,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    if (!(self.item != nil && self.item.content != nil && self.item.isBookmarked == YES)) {
+    if (!(self.item != nil && self.item.content != nil
+          && (self.item.isBookmarked == YES || self.item.textFromContent != nil) )) {
         
         // this ensures that bookmarked articles render the title.
         // when this runs, the title has already been added to the view
@@ -229,8 +226,9 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+
     [super viewWillAppear:animated];
-    
+
 #if TARGET_OS_MACCATALYST
     
     if (self.isExternalWindow == NO) {
@@ -305,7 +303,10 @@ typedef NS_ENUM(NSInteger, ArticleState) {
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-//    [self.navigationController popViewControllerAnimated:NO];
+
+    SDImageCache *imageCache = [SDImageCache sharedImageCache];
+    [imageCache clearMemory];
+    
 }
 
 - (void)viewSafeAreaInsetsDidChange
@@ -767,7 +768,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
             }
             else {
                 // only do this when not restoring state.
-                self.item.content = nil;
+                // and for non-microblog posts
+                if ([(self.item.articleTitle ?: @"") isBlank] == NO) {
+                
+                    self.item.content = nil;
+                    
+                }
             }
         }
     }
@@ -1272,9 +1278,12 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     [authorView sizeToFit];
     
-    CGSize fittingSize = [authorView systemLayoutSizeFittingSize:CGSizeMake(self.view.bounds.size.width, CGFLOAT_MAX) withHorizontalFittingPriority:1000 verticalFittingPriority:1000];
+    CGSize fittingSize = [authorView systemLayoutSizeFittingSize:CGSizeMake(self.view.bounds.size.width, CGFLOAT_MAX) withHorizontalFittingPriority:999 verticalFittingPriority:999];
     
-    frame.size = fittingSize;
+    if (fittingSize.height != CGFLOAT_MAX && fittingSize.height > frame.size.height) {
+        frame.size = fittingSize;
+    }
+    
     authorView.frame = frame;
 #endif
     authorView.mercurialed = self.item.mercury;
@@ -1936,7 +1945,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         frame.size = content.size;
     }
     
-    CGFloat scale = content.size.height / content.size.width;
+    CGFloat scale = (content.size.height + 24.f) / content.size.width;
     
     if (((NSRange)[content.url rangeOfString:@"feeds.feedburner.com"]).location != NSNotFound) {
         // example: http://feeds.feedburner.com/~ff/abduzeedo?d=yIl2AUoC8zA

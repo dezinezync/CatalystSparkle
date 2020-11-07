@@ -367,7 +367,15 @@
     
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
+#if TARGET_OS_MACCATALYST
+    if (self->_shiftPressedBeforeClickingURL) {
+        
+        URL = formattedURL(@"%@&shift=1", URL.absoluteString);
+        
+    }
+#endif
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
+    
 }
 
 - (void)didTapSearch
@@ -581,7 +589,13 @@
     
     [openArticleActivity addUserInfoEntriesFromDictionary:dict];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:nil errorHandler:^(NSError * _Nonnull error) {
+    UISceneActivationRequestOptions * options = [UISceneActivationRequestOptions new];
+    options.requestingScene = self.view.window.windowScene;
+#if TARGET_OS_MACCATALYST
+    options.collectionJoinBehavior = UISceneCollectionJoinBehaviorDisallowed;
+#endif
+    
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:openArticleActivity options:options errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             

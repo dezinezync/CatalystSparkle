@@ -10,6 +10,7 @@
 
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <DZKit/NSString+Extras.h>
+#import "NSString+ImageProxy.h"
 
 NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
 
@@ -40,15 +41,40 @@ NSString * const kFeedsGridCell = @"com.yeti.cell.feedsGrid";
     self.titleLabel.text = feed.displayTitle;
     self.imageView.layer.cornerRadius = 8.f;
     self.imageView.clipsToBounds = YES;
+    self.imageView.contentMode = UIViewContentModeScaleAspectFill;
     
     NSString *url = [feed faviconURI];
     
     if (url && [url isKindOfClass:NSString.class] && [url isBlank] == NO) {
+        
         @try {
+            
+            CGFloat scale = UIScreen.mainScreen.scale;
+            CGFloat maxDim = MAX(self.imageView.bounds.size.width, self.imageView.bounds.size.height);
+            
+            CGFloat maxWidth = maxDim * scale;
+            
+            if (SharedPrefs.imageProxy) {
+                url = [url pathForImageProxy:NO maxWidth:maxWidth quality:1.f];
+            }
+            
             weakify(self);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 strongify(self);
-                [self.imageView sd_setImageWithURL:formattedURL(@"%@", url)];
+                
+                [self.imageView sd_setImageWithURL:formattedURL(@"%@", url) completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                        
+                    if (image != nil) {
+                            
+                        // horizontal images
+                        if (image.size.width > image.size.height) {
+                            self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+                        }
+                        
+                    }
+                    
+                }];
+                
             });
         }
         @catch (NSException *exc) {

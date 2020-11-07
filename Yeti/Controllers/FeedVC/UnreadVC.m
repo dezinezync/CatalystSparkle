@@ -61,7 +61,7 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.unreadsManager.total), self.unreadsManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(MAX(self.unreadsManager.total, MyFeedsManager.totalUnread)), self.unreadsManager.total == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", @(MyFeedsManager.totalUnread)];
     
@@ -121,13 +121,19 @@
             self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.tableView.refreshControl isRefreshing]) {
-                    [self.tableView.refreshControl endRefreshing];
+                if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
+                    [self.refreshControl endRefreshing];
                 }
                 
                 if (self.unreadsManager.page == 1 && self.unreadsManager.hasNextPage == YES) {
                     [self loadNextPage];
                 }
+                
+#if TARGET_OS_MACCATALYST
+            if (self->_isRefreshing) {
+                self->_isRefreshing = NO;
+            }
+#endif
             });
             
         };
@@ -164,7 +170,12 @@
 
 - (void)didBeginRefreshing:(UIRefreshControl *)sender {
     
+    // mac catalyst doesn't have a refresh control
+#if !TARGET_OS_MACCATALYST
     if (sender != nil) {
+#else
+    if (self->_isRefreshing == NO) {
+#endif
         self.unreadsManager = nil;
         self.pagingManager = self.unreadsManager;
         [self loadNextPage];

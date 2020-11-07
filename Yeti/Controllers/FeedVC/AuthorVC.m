@@ -103,8 +103,8 @@
             self.controllerState = StateLoaded;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                if ([self.collectionView.refreshControl isRefreshing]) {
-                    [self.collectionView.refreshControl endRefreshing];
+                if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
+                    [self.refreshControl endRefreshing];
                 }
                 
                 if (self.pagingManager.page == 1) {
@@ -116,6 +116,12 @@
                         [self loadNextPage];
                         
                     }
+                    
+#if TARGET_OS_MACCATALYST
+            if (self->_isRefreshing) {
+                self->_isRefreshing = NO;
+            }
+#endif
                     
                 }
             });

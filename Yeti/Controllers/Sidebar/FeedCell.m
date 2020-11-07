@@ -23,6 +23,8 @@
         return;
     }
     
+    BOOL shouldIndent = self.isExploring == NO && indexPath.section != 2;
+    
     UIListContentConfiguration *content = self.isExploring ? [UIListContentConfiguration subtitleCellConfiguration] : [UIListContentConfiguration sidebarCellConfiguration];
     
     content.text = item.displayTitle;
@@ -82,7 +84,7 @@
 
     self.contentConfiguration = content;
 
-    if (self.isExploring == NO && indexPath.section != 2) {
+    if (shouldIndent == YES) {
 
         self.indentationLevel = 1;
 
@@ -111,6 +113,18 @@
 
     [super prepareForReuse];
 
+}
+
+- (void)_setupDefaultIcon {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        
+        if (self.feed.faviconImage == nil) {
+            self.feed.faviconImage = [UIImage systemImageNamed:@"square.dashed"];
+        }
+        
+    });
+    
 }
 
 - (void)setupFavicon {
@@ -142,30 +156,35 @@
         weakify(self);
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            SDWebImageOptions imageDownloadOptions = SDWebImageDownloaderUseNSURLCache|SDWebImageRetryFailed;
 
-            __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:SDWebImageScaleDownLargeImages progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+            __unused SDWebImageCombinedOperation *op = [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:url] options:imageDownloadOptions progress:nil completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
                 
                 strongify(self);
                 
                 if (self.feed == nil) {
-                    return;
+                    [self _setupDefaultIcon];;
                 }
                 
                 if (self.DS == nil) {
-                    return;
+                    [self _setupDefaultIcon];;
                 }
                 
                 if (feed.faviconImage != nil) {
-                    return;
+                    [self _setupDefaultIcon];;
                 }
 
                 if (image != nil) {
 
                     feed.faviconImage = image;
-                    
-                    [self updateCellFaviconImageFor:feed];
 
                 }
+                else {
+                    [self _setupDefaultIcon];
+                }
+                
+                [self updateCellFaviconImageFor:feed];
 
             }];
 

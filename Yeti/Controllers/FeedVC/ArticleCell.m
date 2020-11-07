@@ -192,6 +192,40 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     Feed *feed = [ArticlesManager.shared feedForID:self.article.feedID];
     
+    BOOL isMicroBlogPost = NO;
+    
+    if ([([article articleTitle] ?: @"") isBlank] && ((article.content != nil && article.content.count) || article.textFromContent != nil)) {
+        
+        // find the first paragraph
+        Content *content = article.textFromContent ?: [article.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
+            
+            if (prev && [prev.type isEqualToString:@"paragraph"]) {
+                return prev;
+            }
+            
+            return current;
+            
+        }];
+        
+        if (content) {
+            
+            isMicroBlogPost = YES;
+            
+            NSString * titleContent = [article textFromContent];
+            
+            self.titleLabel.text = titleContent;
+            self.titleLabel.numberOfLines = MAX(3, SharedPrefs.previewLines);
+            self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+            
+        }
+        
+    }
+    
+    if (isMicroBlogPost == NO) {
+        self.titleLabel.text = self.article.articleTitle;
+        self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+    }
+    
     [self configureTitle:feedType];
     
     NSString *coverImageURL = article.coverImage;
@@ -216,39 +250,6 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     [self configureSummary];
     
     [self configureAuthorWithFeedType:feedType feed:feed];
-    
-    BOOL isMicroBlogPost = NO;
-    
-    if ([([article articleTitle] ?: @"") isBlank] && article.content && article.content.count) {
-        
-        // find the first paragraph
-        Content *content = [article.content rz_reduce:^id(Content *prev, Content *current, NSUInteger idx, NSArray *array) {
-            
-            if (prev && [prev.type isEqualToString:@"paragraph"]) {
-                return prev;
-            }
-            
-            return current;
-            
-        }];
-        
-        if (content) {
-            
-            isMicroBlogPost = YES;
-            
-            NSString * titleContent = [self.article textFromContent];
-            
-            self.titleLabel.text = titleContent;
-            self.titleLabel.numberOfLines = MAX(3, SharedPrefs.previewLines);
-            self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-            
-        }
-        
-    }
-    
-    if (isMicroBlogPost == NO) {
-        self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
-    }
     
     self.titleLabel.accessibilityValue = [self.titleLabel.text stringByReplacingOccurrencesOfString:@" | " withString:@" by "];
     
@@ -315,14 +316,14 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     
     if (feedType == FeedVCTypeNatural || feedType == FeedVCTypeAuthor) {
 
-        self.titleLabel.text = self.article.articleTitle;
+//        self.titleLabel.text = self.article.articleTitle;
         return;
 
     }
     
     if ([self showImage] == NO) {
         
-        self.titleLabel.text = self.article.articleTitle;
+//        self.titleLabel.text = self.article.articleTitle;
         return;
         
     }
@@ -334,7 +335,7 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
                                  NSForegroundColorAttributeName: self.titleLabel.textColor,
                                  };
     
-    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formattedString(@"  %@", self.article.articleTitle) attributes:attributes];
+    NSMutableAttributedString *attrs = [[NSMutableAttributedString alloc] initWithString:formattedString(@"  %@", self.titleLabel.text) attributes:attributes];
     
     NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
     
@@ -353,6 +354,9 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
         
         [self _configureTitleFavicon:nil attachment:attachment url:url];
         
+    }
+    else {
+        attachment.image = [UIImage systemImageNamed:@"square.dashed"];
     }
     
     // positive offsets push it up, negative push it down
@@ -391,6 +395,8 @@ NSString *const kArticleCell = @"com.yeti.cell.article";
     UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithFont:self.titleLabel.font];
     
     attachment.image = [UIImage systemImageNamed:@"rectangle.on.rectangle.angled" withConfiguration:config];
+    
+    [self.titleLabel setNeedsDisplay];
     
     if (SharedPrefs.imageProxy) {
         

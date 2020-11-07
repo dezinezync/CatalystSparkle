@@ -27,7 +27,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FeedVC : UITableViewController < ControllerState, ScrollLoading, UnreadCountObservor >
+@interface FeedVC : UITableViewController < ControllerState, ScrollLoading, UnreadCountObservor > {
+#if TARGET_OS_MACCATALYST
+@public
+    BOOL _isRefreshing;
+#endif
+}
 
 @property (nonatomic, weak) Feed * _Nullable feed;
 

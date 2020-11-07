@@ -64,10 +64,27 @@
     
     UITraitCollection *traitCollection = UIApplication.sharedApplication.windows.firstObject.traitCollection;
     
+    BOOL showUnread = SharedPrefs.openUnread;
+    BOOL showEmpty = NO;
+    
     if (traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone
         && traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
         
         if (traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomMac) {
+            
+            showUnread = showUnread || YES;
+            
+        }
+        
+        showEmpty = YES;
+        
+    }
+
+    self.sidebarVC = sidebar;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        if (showUnread) {
             
             CustomFeed *feed = [CustomFeed new];
             feed.feedType = FeedVCTypeUnread;
@@ -76,13 +93,15 @@
             
         }
         
-        EmptyVC *emptyVC = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
-     
-        [self.splitViewController setViewController:emptyVC forColumn:UISplitViewControllerColumnSecondary];
+        if (showEmpty) {
+            
+            EmptyVC *emptyVC = [[EmptyVC alloc] initWithNibName:NSStringFromClass(EmptyVC.class) bundle:nil];
+         
+            [self.splitViewController setViewController:emptyVC forColumn:UISplitViewControllerColumnSecondary];
+            
+        }
         
-    }
-
-    self.sidebarVC = sidebar;
+    });
     
 }
 
@@ -369,9 +388,13 @@
 
 - (void)openSceneNamed:(NSString *)sceneName {
     
+    UISceneActivationRequestOptions * options = [UISceneActivationRequestOptions new];
+    options.requestingScene = self.splitViewController.view.window.windowScene;
+    options.collectionJoinBehavior = UISceneCollectionJoinBehaviorDisallowed;
+    
     NSUserActivity *activity = [[NSUserActivity alloc] initWithActivityType:sceneName];
     
-    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:0 errorHandler:^(NSError * _Nonnull error) {
+    [UIApplication.sharedApplication requestSceneSessionActivation:nil userActivity:activity options:options errorHandler:^(NSError * _Nonnull error) {
         
         if (error != nil) {
             
@@ -397,6 +420,27 @@
     if (self.innerWindow == nil) {
         
         id nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+        
+        if (nsWindow == nil) {
+            // try again in 1s
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+                id __nsWindow = [[[[MyAppDelegate mainScene] windows] firstObject] innerWindow];
+                
+                if (__nsWindow != nil) {
+                    
+                    self.innerWindow = __nsWindow;
+                    
+                    if (self.feedVC != nil) {
+                        [self.feedVC updateTitleView];
+                    }
+                    
+                }
+                
+            });
+            
+        }
         
         self.innerWindow = nsWindow;
         
@@ -578,7 +622,7 @@ static void *UIViewControllerMainCoordinatorKey;
         return nsWindow;
     }
     @catch (...) {
-        NSLog(@"Failed to get NSWindow for %@.", self);
+        NSLogDebug(@"Failed to get NSWindow for %@.", self);
     }
     
     return nil;

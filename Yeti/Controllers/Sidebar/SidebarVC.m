@@ -603,23 +603,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [self.refreshControl endRefreshing];
             }
             
-            NSArray <NSIndexPath *> *selectedIndexPaths = self.collectionView.indexPathsForSelectedItems;
-            
-            if (selectedIndexPaths.count > 0 && MyFeedsManager.totalUnread > 0) {
+            if (self.mainCoordinator.feedVC != nil
+                && ([self.mainCoordinator.feedVC isKindOfClass:UnreadVC.class] || [self.mainCoordinator.feedVC isKindOfClass:NSClassFromString(@"TodayVC")])) {
                 
-                // if it's the unreads or today tab, refresh those as well
-                if (selectedIndexPaths[0].section == 0 && selectedIndexPaths[0].item != 2 && self.mainCoordinator.feedVC != nil) {
-                    
-                    UnreadVC *vc = (id)(self.mainCoordinator.feedVC);
-                    
-                    if ([vc respondsToSelector:@selector(didBeginRefreshing:)]) {
-                        
-                        [vc.refreshControl beginRefreshing];
-                        [vc didBeginRefreshing:vc.refreshControl];
-                        
-                    }
-                    
-                }
+                UnreadVC *instance = (id)self.mainCoordinator.feedVC;
+                UIRefreshControl *refreshControl = instance.refreshControl;
+                
+                [instance didBeginRefreshing:refreshControl];
                 
             }
             

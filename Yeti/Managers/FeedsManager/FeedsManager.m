@@ -954,6 +954,7 @@ NSArray <NSString *> * _defaultsKeys;
                 // will be available
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.totalUnread = 0;
+                    self.totalToday = 0;
 //                    ArticlesManager.shared.unread = @[];
                 });
                 
@@ -2778,49 +2779,52 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)setTotalUnread:(NSUInteger)totalUnread {
     
-    weakify(self);
+    if (NSThread.isMainThread == NO) {
+     
+        [self performSelectorOnMainThread:@selector(setTotalUnread:) withObject:@(totalUnread) waitUntilDone:NO];
+        
+        return;
+        
+    }
     
-    runOnMainQueueWithoutDeadlocking(^{
+    if (totalUnread >= 999999999) {
+        self->_totalUnread = 0;
+    }
+    else {
+        self->_totalUnread = MAX(totalUnread, 0);
+    }
+    
+    if (SharedPrefs.badgeAppIcon) {
         
-        strongify(self);
+        UIApplication.sharedApplication.applicationIconBadgeNumber = self.totalUnread;
         
-        if (totalUnread >= NSUIntegerMax) {
-            self->_totalUnread = 0;
-        }
-        else {
-            self->_totalUnread = MAX(totalUnread, 0);
-        }
-        
-        if (SharedPrefs.badgeAppIcon) {
-            
-            UIApplication.sharedApplication.applicationIconBadgeNumber = self.totalUnread;
-            
-        }
-        
-        [NSNotificationCenter.defaultCenter postNotificationName:UnreadCountDidUpdate object:self userInfo:nil];
-        
-    });
+    }
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:UnreadCountDidUpdate object:self userInfo:nil];
     
 }
 
 - (void)setTotalToday:(NSUInteger)totalToday {
     
-    weakify(self);
+    if (NSThread.isMainThread == NO) {
+        
+        [self performSelectorOnMainThread:@selector(setTotalUnread:) withObject:@(totalToday) waitUntilDone:NO];
+        return;
+        
+    }
     
-    runOnMainQueueWithoutDeadlocking(^{
-        
-        strongify(self);
-        
-        if (totalToday >= NSUIntegerMax) {
-            self->_totalToday = 0;
-        }
-        else {
-            self->_totalToday = MAX(totalToday, 0);
-        }
-        
-        [NSNotificationCenter.defaultCenter postNotificationName:TodayCountDidUpdate object:self userInfo:nil];
-        
-    });
+    if (totalToday > self.totalUnread) {
+        totalToday = self.totalUnread;
+    }
+    
+    if (totalToday >= 999999999) {
+        self->_totalToday = 0;
+    }
+    else {
+        self->_totalToday = MAX(totalToday, 0);
+    }
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:TodayCountDidUpdate object:self userInfo:nil];
     
 }
 

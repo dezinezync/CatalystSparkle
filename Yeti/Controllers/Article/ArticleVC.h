@@ -32,6 +32,10 @@
     CGRect _keyboardRect;
     
     UIBarButtonItem *_nextButtonItem, *_prevButtonItem;
+    
+#if TARGET_OS_MACCATALYST
+    BOOL _shiftPressedBeforeClickingURL;
+#endif
 }
 
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;

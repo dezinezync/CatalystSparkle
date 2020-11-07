@@ -1,19 +1,25 @@
-# v2.1.2
+# v2.1.3
 
-## Build 70
+RC Build for iOS 14.2. 
 
-- Fixed an issue with loading and displaying dark mode images in the Article reader. 
+## Build 74 
 
-- Fixed an issue where the standard @1x image was always selected even though a higher resolution image option was available. 
+- Fixed an issue where if the Unread or Today interfaces are open, and you refresh the main interface the Articles timeline would not update. 
 
-- Fixed image loading options now correctly selecting the source image based on your image bandwidth selection. 
+- Fixed an issue where default placeholders for favicons would not appear.
 
-- Fixed an issue where URLs with special characters would not get added from the pasteboard when opening the New Feed Interface. 
+- Fixed an issue with title and timestamps not appearing for  micro.blog posts. 
 
-- Fixed the font size of the Folder items ( it now matches the size used by the Mail.app )
+## Build 73
 
-- Fixed an issue when expanding a notification, the notification would not resize if there is no cover image to display.
+- Micro.blog articles in the list now correctly show the favicon when one is available. 
 
-- Fixed a crash that would occur when trying to add a feed which listed multiple options.
+- Fixed a bug where Micro.blog articles in the list would become blank after scrolling out of frame. 
 
-- Fixed a rare crash that would occur in the background saving restore data if you had any folders opened.  
+## Build 72
+
+- Fixed an issue where if an Image provides multiple options, sometimes an invalid URL would be selected and therefore the image would not load at all. 
+
+- Fixed an issue where if you've selected the "Unread" sorting option or are in the unreads feed and refresh the timeline, an incorrect article would be selected. 
+
+- Improved the performance of "Force Re-Sync".
