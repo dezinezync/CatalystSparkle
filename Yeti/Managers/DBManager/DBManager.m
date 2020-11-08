@@ -964,6 +964,12 @@ NSString *const kNotificationsKey = @"notifications";
     
     [_syncQueue addOperationWithBlock:^{
        
+        [MyFeedsManager updateBookmarksFromServer];
+        
+    }];
+    
+    [_syncQueue addOperationWithBlock:^{
+       
         [MyFeedsManager getSync:token success:^(ChangeSet *changeSet, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
             if (changeSet == nil) {

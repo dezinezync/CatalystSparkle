@@ -3227,12 +3227,13 @@ NSArray <NSString *> * _defaultsKeys;
     
     // user ID can be nil at this point
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        strongify(self);
-        
-        [self updateBookmarksFromServer];
-        
-    });
+    // this is called from the sync block now.
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        strongify(self);
+//
+//        [self updateBookmarksFromServer];
+//
+//    });
     
     if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
         || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
@@ -3869,6 +3870,7 @@ NSArray <NSString *> * _defaultsKeys;
         NSLog(@"%@", error.localizedDescription);
         
     }];
+    
 }
 
 - (void)bookmarksUpdateFromServerCompleted {
