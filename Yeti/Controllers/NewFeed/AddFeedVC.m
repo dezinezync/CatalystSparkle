@@ -409,9 +409,9 @@
     
     [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
-    if (self.searchBar.selectedScopeButtonIndex == 0) {
-        [self.navigationItem.searchController setActive:NO];
-    }
+//    if (self.searchBar.selectedScopeButtonIndex == 0) {
+//        [self.navigationItem.searchController setActive:NO];
+//    }
     
 }
 
@@ -790,6 +790,12 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     
+    [self updateRecommendationState:searchText];
+    
+}
+
+- (void)updateRecommendationState:(NSString *)searchText {
+    
     self.recommendationsView.hidden = ([searchText isBlank] == NO);
     
 }
@@ -919,6 +925,8 @@
     if (text == nil || [text isBlank]) {
         return;
     }
+    
+    [self updateRecommendationState:text];
     
     self.searchBar.userInteractionEnabled = NO;
     self.cancelButton.enabled = NO;
