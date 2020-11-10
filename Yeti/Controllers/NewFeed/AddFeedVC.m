@@ -733,13 +733,18 @@
             return NO;
         }
         
-        if (query.length < 3) {
+        if (query.length < 2) {
             return NO;
         }
         
         if (self.searchBar.selectedScopeButtonIndex == 0) {
             
             [self searchByURL:searchBar.text];
+            
+        }
+        else {
+            
+            [self searchBarTextDidEndEditing:searchBar];
             
         }
         
@@ -808,11 +813,19 @@
         return;
     }
     
-    if (query.length < 3) {
+    if (query.length < 2) {
         return;
     }
     
     if (searchBar.selectedScopeButtonIndex == 0) {
+        return;
+    }
+    
+    if (self.isLoadingNext) {
+        return;
+    }
+    
+    if ([self.query isEqualToString:[query stringByStrippingWhitespace]]) {
         return;
     }
     
@@ -822,12 +835,16 @@
     
     [self setupData:@[]];
     
+    self.controllerState = StateLoading;
+    
     self.pagingManager = nil;
     
     [self loadNextPage];
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    
+    searchBar.text = nil;
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
