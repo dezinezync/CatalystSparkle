@@ -560,6 +560,8 @@
 
 - (void)checkPasteboard {
     
+    UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+    
     if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
         
         NSURL * url = UIPasteboard.generalPasteboard.URL;
@@ -589,8 +591,6 @@
         
         if (url != nil) {
             
-            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
-            
             searchBar.searchTextField.text = url.absoluteString;
             [self searchBarTextDidEndEditing:searchBar];
             
@@ -599,7 +599,11 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
         [self.navigationItem.searchController setActive:YES];
+        
+        [self updateRecommendationState:searchBar.text];
+        
     });
     
 }
@@ -821,11 +825,14 @@
         return;
     }
     
-    if (self.isLoadingNext) {
+    if ([self.query isEqualToString:[query stringByStrippingWhitespace]]) {
         return;
     }
+    else {
+        self.controllerState = StateDefault;
+    }
     
-    if ([self.query isEqualToString:[query stringByStrippingWhitespace]]) {
+    if (self.isLoadingNext) {
         return;
     }
     
@@ -834,8 +841,6 @@
     self.selected = nil;
     
     [self setupData:@[]];
-    
-    self.controllerState = StateLoading;
     
     self.pagingManager = nil;
     
