@@ -202,6 +202,19 @@
 		F07889C125035E65007F3C55 /* UITableView+Sugar.m in Sources */ = {isa = PBXBuildFile; fileRef = F07889C025035E65007F3C55 /* UITableView+Sugar.m */; };
 		F078B638206637B40048DBEA /* EmptyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F078B636206637B40048DBEA /* EmptyVC.m */; };
 		F078B639206637B40048DBEA /* EmptyVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F078B637206637B40048DBEA /* EmptyVC.xib */; };
+		F079F410255BA32800121637 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F403255BA32800121637 /* Utilities.swift */; };
+		F079F411255BA32800121637 /* Pane.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F404255BA32800121637 /* Pane.swift */; };
+		F079F412255BA32800121637 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F405255BA32800121637 /* Localization.swift */; };
+		F079F413255BA32800121637 /* PreferencesStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F406255BA32800121637 /* PreferencesStyle.swift */; };
+		F079F414255BA32800121637 /* PreferencePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F407255BA32800121637 /* PreferencePane.swift */; };
+		F079F415255BA32800121637 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F408255BA32800121637 /* Preferences.swift */; };
+		F079F416255BA32800121637 /* SegmentedControlStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F409255BA32800121637 /* SegmentedControlStyleViewController.swift */; };
+		F079F417255BA32800121637 /* ToolbarItemStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40A255BA32800121637 /* ToolbarItemStyleViewController.swift */; };
+		F079F418255BA32800121637 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40B255BA32800121637 /* Container.swift */; };
+		F079F419255BA32800121637 /* PreferencesStyleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40C255BA32800121637 /* PreferencesStyleController.swift */; };
+		F079F41A255BA32800121637 /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40D255BA32800121637 /* PreferencesWindowController.swift */; };
+		F079F41C255BA32800121637 /* PreferencesTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40F255BA32800121637 /* PreferencesTabViewController.swift */; };
+		F079F461255BB06A00121637 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079F40E255BA32800121637 /* Section.swift */; };
 		F07A31322297FC9D00822969 /* UIView+Anchoring.m in Sources */ = {isa = PBXBuildFile; fileRef = F07A31312297FC9D00822969 /* UIView+Anchoring.m */; };
 		F07CA625249BA03500EA4212 /* AppDelegate+CatalystActions.m in Sources */ = {isa = PBXBuildFile; fileRef = F07CA624249BA03500EA4212 /* AppDelegate+CatalystActions.m */; platformFilter = maccatalyst; };
 		F07CD39522B266E9005BCDE7 /* OpenDyslexic-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F07CD37F22B266E9005BCDE7 /* OpenDyslexic-Italic.ttf */; };
@@ -315,18 +328,6 @@
 		F0B7C84A240B7272008D8F4F /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B7C849240B7272008D8F4F /* NotificationViewController.m */; };
 		F0B7C84D240B7272008D8F4F /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F0B7C84B240B7272008D8F4F /* MainInterface.storyboard */; };
 		F0B7C851240B7272008D8F4F /* notificationContext.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F0B7C842240B7272008D8F4F /* notificationContext.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		F0BC8BE125205C2100FADCBB /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD425205C2100FADCBB /* Localization.swift */; };
-		F0BC8BE225205C2100FADCBB /* PreferencesStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD525205C2100FADCBB /* PreferencesStyle.swift */; };
-		F0BC8BE325205C2100FADCBB /* PreferencePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD625205C2100FADCBB /* PreferencePane.swift */; };
-		F0BC8BE425205C2100FADCBB /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD725205C2100FADCBB /* Preferences.swift */; };
-		F0BC8BE525205C2100FADCBB /* SegmentedControlStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD825205C2100FADCBB /* SegmentedControlStyleViewController.swift */; };
-		F0BC8BE625205C2100FADCBB /* ToolbarItemStyleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BD925205C2100FADCBB /* ToolbarItemStyleViewController.swift */; };
-		F0BC8BE725205C2100FADCBB /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDA25205C2100FADCBB /* Container.swift */; };
-		F0BC8BE825205C2100FADCBB /* PreferencesStyleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDB25205C2100FADCBB /* PreferencesStyleController.swift */; };
-		F0BC8BE925205C2100FADCBB /* PreferencesWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDC25205C2100FADCBB /* PreferencesWindowController.swift */; };
-		F0BC8BEA25205C2100FADCBB /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDD25205C2100FADCBB /* util.swift */; };
-		F0BC8BEB25205C2100FADCBB /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDE25205C2100FADCBB /* Section.swift */; };
-		F0BC8BEC25205C2100FADCBB /* PreferencesTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BDF25205C2100FADCBB /* PreferencesTabViewController.swift */; };
 		F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BF725205C4400FADCBB /* PreferencesController.swift */; };
 		F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */; };
 		F0BC8C0125205CF100FADCBB /* GeneralPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */; };
@@ -1045,6 +1046,20 @@
 		F078B635206637B40048DBEA /* EmptyVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyVC.h; sourceTree = "<group>"; };
 		F078B636206637B40048DBEA /* EmptyVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyVC.m; sourceTree = "<group>"; };
 		F078B637206637B40048DBEA /* EmptyVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyVC.xib; sourceTree = "<group>"; };
+		F079F403255BA32800121637 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		F079F404255BA32800121637 /* Pane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pane.swift; sourceTree = "<group>"; };
+		F079F405255BA32800121637 /* Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
+		F079F406255BA32800121637 /* PreferencesStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesStyle.swift; sourceTree = "<group>"; };
+		F079F407255BA32800121637 /* PreferencePane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencePane.swift; sourceTree = "<group>"; };
+		F079F408255BA32800121637 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		F079F409255BA32800121637 /* SegmentedControlStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedControlStyleViewController.swift; sourceTree = "<group>"; };
+		F079F40A255BA32800121637 /* ToolbarItemStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarItemStyleViewController.swift; sourceTree = "<group>"; };
+		F079F40B255BA32800121637 /* Container.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
+		F079F40C255BA32800121637 /* PreferencesStyleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesStyleController.swift; sourceTree = "<group>"; };
+		F079F40D255BA32800121637 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
+		F079F40E255BA32800121637 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
+		F079F40F255BA32800121637 /* PreferencesTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesTabViewController.swift; sourceTree = "<group>"; };
+		F079F46D255BB13200121637 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.0.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		F07A31302297FC9D00822969 /* UIView+Anchoring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Anchoring.h"; sourceTree = "<group>"; };
 		F07A31312297FC9D00822969 /* UIView+Anchoring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Anchoring.m"; sourceTree = "<group>"; };
 		F07CA623249BA03500EA4212 /* AppDelegate+CatalystActions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+CatalystActions.h"; sourceTree = "<group>"; };
@@ -1208,18 +1223,6 @@
 		F0B7C849240B7272008D8F4F /* NotificationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
 		F0B7C84C240B7272008D8F4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		F0B7C84E240B7272008D8F4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F0BC8BD425205C2100FADCBB /* Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
-		F0BC8BD525205C2100FADCBB /* PreferencesStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesStyle.swift; sourceTree = "<group>"; };
-		F0BC8BD625205C2100FADCBB /* PreferencePane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencePane.swift; sourceTree = "<group>"; };
-		F0BC8BD725205C2100FADCBB /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
-		F0BC8BD825205C2100FADCBB /* SegmentedControlStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedControlStyleViewController.swift; sourceTree = "<group>"; };
-		F0BC8BD925205C2100FADCBB /* ToolbarItemStyleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarItemStyleViewController.swift; sourceTree = "<group>"; };
-		F0BC8BDA25205C2100FADCBB /* Container.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
-		F0BC8BDB25205C2100FADCBB /* PreferencesStyleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesStyleController.swift; sourceTree = "<group>"; };
-		F0BC8BDC25205C2100FADCBB /* PreferencesWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
-		F0BC8BDD25205C2100FADCBB /* util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; };
-		F0BC8BDE25205C2100FADCBB /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
-		F0BC8BDF25205C2100FADCBB /* PreferencesTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesTabViewController.swift; sourceTree = "<group>"; };
 		F0BC8BF725205C4400FADCBB /* PreferencesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesController.swift; sourceTree = "<group>"; };
 		F0BC8BFE25205CF000FADCBB /* GeneralPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneralPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0BC8BFF25205CF000FADCBB /* GeneralPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeneralPreferenceViewController.xib; sourceTree = "<group>"; };
@@ -1691,7 +1694,7 @@
 		F03C6088251F70D000F442C7 /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
-				F0BC8BD225205C2100FADCBB /* Preferences */,
+				F079F402255BA32800121637 /* Preferences */,
 			);
 			name = Vendors;
 			sourceTree = "<group>";
@@ -2149,6 +2152,27 @@
 			path = elytramac;
 			sourceTree = "<group>";
 		};
+		F079F402255BA32800121637 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				F079F403255BA32800121637 /* Utilities.swift */,
+				F079F404255BA32800121637 /* Pane.swift */,
+				F079F405255BA32800121637 /* Localization.swift */,
+				F079F406255BA32800121637 /* PreferencesStyle.swift */,
+				F079F407255BA32800121637 /* PreferencePane.swift */,
+				F079F408255BA32800121637 /* Preferences.swift */,
+				F079F409255BA32800121637 /* SegmentedControlStyleViewController.swift */,
+				F079F40A255BA32800121637 /* ToolbarItemStyleViewController.swift */,
+				F079F40B255BA32800121637 /* Container.swift */,
+				F079F40C255BA32800121637 /* PreferencesStyleController.swift */,
+				F079F40D255BA32800121637 /* PreferencesWindowController.swift */,
+				F079F40E255BA32800121637 /* Section.swift */,
+				F079F40F255BA32800121637 /* PreferencesTabViewController.swift */,
+			);
+			name = Preferences;
+			path = Vendors/Preferences/Sources/Preferences;
+			sourceTree = "<group>";
+		};
 		F07CD37D22B266E9005BCDE7 /* OpenDyslexic */ = {
 			isa = PBXGroup;
 			children = (
@@ -2184,6 +2208,7 @@
 		F0919F631FD7C1A70098F48A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F079F46D255BB13200121637 /* SwiftUI.framework */,
 				F0068735251F808700239C80 /* PreferencePanes.framework */,
 				F03C60C6251F720D00F442C7 /* SwiftUI.framework */,
 				F061508A24F62D18007F50A5 /* WidgetKit.framework */,
@@ -2438,26 +2463,6 @@
 				F0B7C84E240B7272008D8F4F /* Info.plist */,
 			);
 			path = notificationContext;
-			sourceTree = "<group>";
-		};
-		F0BC8BD225205C2100FADCBB /* Preferences */ = {
-			isa = PBXGroup;
-			children = (
-				F0BC8BD425205C2100FADCBB /* Localization.swift */,
-				F0BC8BD525205C2100FADCBB /* PreferencesStyle.swift */,
-				F0BC8BD625205C2100FADCBB /* PreferencePane.swift */,
-				F0BC8BD725205C2100FADCBB /* Preferences.swift */,
-				F0BC8BD825205C2100FADCBB /* SegmentedControlStyleViewController.swift */,
-				F0BC8BD925205C2100FADCBB /* ToolbarItemStyleViewController.swift */,
-				F0BC8BDA25205C2100FADCBB /* Container.swift */,
-				F0BC8BDB25205C2100FADCBB /* PreferencesStyleController.swift */,
-				F0BC8BDC25205C2100FADCBB /* PreferencesWindowController.swift */,
-				F0BC8BDD25205C2100FADCBB /* util.swift */,
-				F0BC8BDE25205C2100FADCBB /* Section.swift */,
-				F0BC8BDF25205C2100FADCBB /* PreferencesTabViewController.swift */,
-			);
-			name = Preferences;
-			path = Vendors/Preferences/Sources/Preferences;
 			sourceTree = "<group>";
 		};
 		F0C4F8C5234C69B900D57C18 /* Products */ = {
@@ -3495,25 +3500,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F079F413255BA32800121637 /* PreferencesStyle.swift in Sources */,
+				F079F419255BA32800121637 /* PreferencesStyleController.swift in Sources */,
 				F01F87592521AA1600518CF1 /* MiscPreferenceViewController.swift in Sources */,
 				F0E0D51625208C3700A9E654 /* ImagesPreferenceViewController.swift in Sources */,
-				F0BC8BE225205C2100FADCBB /* PreferencesStyle.swift in Sources */,
 				F0BC8C072520636200FADCBB /* Keychain.m in Sources */,
-				F0BC8BE925205C2100FADCBB /* PreferencesWindowController.swift in Sources */,
-				F0BC8BE625205C2100FADCBB /* ToolbarItemStyleViewController.swift in Sources */,
-				F0BC8BEA25205C2100FADCBB /* util.swift in Sources */,
+				F079F461255BB06A00121637 /* Section.swift in Sources */,
+				F079F41C255BA32800121637 /* PreferencesTabViewController.swift in Sources */,
 				F0A031BB2520F7B900076718 /* ArticlePreferenceViewController.swift in Sources */,
+				F079F41A255BA32800121637 /* PreferencesWindowController.swift in Sources */,
 				F0783CAF248F6A5800C7A280 /* AppKitGlue.m in Sources */,
-				F0BC8BEC25205C2100FADCBB /* PreferencesTabViewController.swift in Sources */,
-				F0BC8BE425205C2100FADCBB /* Preferences.swift in Sources */,
-				F0BC8BE325205C2100FADCBB /* PreferencePane.swift in Sources */,
-				F0BC8BEB25205C2100FADCBB /* Section.swift in Sources */,
-				F0BC8BE825205C2100FADCBB /* PreferencesStyleController.swift in Sources */,
+				F079F411255BA32800121637 /* Pane.swift in Sources */,
+				F079F412255BA32800121637 /* Localization.swift in Sources */,
 				F0BC8C0025205CF100FADCBB /* GeneralPreferenceViewController.swift in Sources */,
-				F0BC8BE125205C2100FADCBB /* Localization.swift in Sources */,
-				F0BC8BE725205C2100FADCBB /* Container.swift in Sources */,
+				F079F415255BA32800121637 /* Preferences.swift in Sources */,
+				F079F410255BA32800121637 /* Utilities.swift in Sources */,
+				F079F417255BA32800121637 /* ToolbarItemStyleViewController.swift in Sources */,
+				F079F414255BA32800121637 /* PreferencePane.swift in Sources */,
+				F079F418255BA32800121637 /* Container.swift in Sources */,
 				F0BC8BF825205C4400FADCBB /* PreferencesController.swift in Sources */,
-				F0BC8BE525205C2100FADCBB /* SegmentedControlStyleViewController.swift in Sources */,
+				F079F416255BA32800121637 /* SegmentedControlStyleViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
