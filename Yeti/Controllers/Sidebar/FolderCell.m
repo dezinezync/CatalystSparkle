@@ -74,11 +74,14 @@
     
     UIListContentConfiguration *updatedContent = (id)[self contentConfiguration];
     
-#if !TARGET_OS_MACCATALYST
-    UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
-    backgroundConfig.backgroundColor = UIColor.systemBackgroundColor;
-    self.backgroundConfiguration = backgroundConfig;
-#endif
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        
+        UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
+    
+        backgroundConfig.backgroundColor = UIColor.systemBackgroundColor;
+        
+        self.backgroundConfiguration = backgroundConfig;
+    }
     
     if (state.isExpanded == YES) {
         
