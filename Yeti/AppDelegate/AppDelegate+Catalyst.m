@@ -37,7 +37,9 @@
     
     self.appKitBundle = macBundle;
     
-    __unused BOOL unused = [self.appKitBundle load];
+    if ([self.appKitBundle load] == NO) {
+        return;
+    }
     
     Class appKitGlueClass = [self.appKitBundle classNamed:@"AppKitGlue"];
 

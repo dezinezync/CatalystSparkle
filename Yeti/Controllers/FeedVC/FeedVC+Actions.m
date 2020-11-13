@@ -297,6 +297,9 @@
                     [UIApplication.sharedApplication registerForRemoteNotifications];
                 });
                 
+#if TARGET_OS_SIMULATOR
+                [self subscribedToFeed:self.feed];
+#endif
                 [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(subscribedToFeed:) name:SubscribedToFeed object:nil];
             }
             
@@ -395,8 +398,11 @@
 // this is push notifications
 - (void)subscribedToFeed:(NSNotification *)note {
     
+#if TARGET_OS_SIMULATOR
+    Feed *obj = (id)note;
+#else
     Feed *obj = note.object;
-    
+#endif
     if (!obj)
         return;
     
@@ -414,7 +420,7 @@
         
         self.feed.subscribed = YES;
         
-        UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems lastObject];
+        UIBarButtonItem *sender = [self.navigationItem.rightBarButtonItems objectAtIndex:(self.navigationItem.rightBarButtonItems.count - 2)];
         
         sender.image = [UIImage systemImageNamed:@"bell.fill"];
         sender.accessibilityValue = @"Unsubscribe from notifications";

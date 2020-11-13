@@ -409,9 +409,9 @@
     
     [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
-    if (self.searchBar.selectedScopeButtonIndex == 0) {
-        [self.navigationItem.searchController setActive:NO];
-    }
+//    if (self.searchBar.selectedScopeButtonIndex == 0) {
+//        [self.navigationItem.searchController setActive:NO];
+//    }
     
 }
 
@@ -560,6 +560,8 @@
 
 - (void)checkPasteboard {
     
+    UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
+    
     if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
         
         NSURL * url = UIPasteboard.generalPasteboard.URL;
@@ -589,8 +591,6 @@
         
         if (url != nil) {
             
-            UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
-            
             searchBar.searchTextField.text = url.absoluteString;
             [self searchBarTextDidEndEditing:searchBar];
             
@@ -599,7 +599,11 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
         [self.navigationItem.searchController setActive:YES];
+        
+        [self updateRecommendationState:searchBar.text];
+        
     });
     
 }
@@ -733,13 +737,18 @@
             return NO;
         }
         
-        if (query.length < 3) {
+        if (query.length < 2) {
             return NO;
         }
         
         if (self.searchBar.selectedScopeButtonIndex == 0) {
             
             [self searchByURL:searchBar.text];
+            
+        }
+        else {
+            
+            [self searchBarTextDidEndEditing:searchBar];
             
         }
         
@@ -790,6 +799,12 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     
+    [self updateRecommendationState:searchText];
+    
+}
+
+- (void)updateRecommendationState:(NSString *)searchText {
+    
     self.recommendationsView.hidden = ([searchText isBlank] == NO);
     
 }
@@ -802,11 +817,22 @@
         return;
     }
     
-    if (query.length < 3) {
+    if (query.length < 2) {
         return;
     }
     
     if (searchBar.selectedScopeButtonIndex == 0) {
+        return;
+    }
+    
+    if ([self.query isEqualToString:[query stringByStrippingWhitespace]]) {
+        return;
+    }
+    else {
+        self.controllerState = StateDefault;
+    }
+    
+    if (self.isLoadingNext) {
         return;
     }
     
@@ -822,6 +848,8 @@
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    
+    searchBar.text = nil;
     
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
@@ -919,6 +947,8 @@
     if (text == nil || [text isBlank]) {
         return;
     }
+    
+    [self updateRecommendationState:text];
     
     self.searchBar.userInteractionEnabled = NO;
     self.cancelButton.enabled = NO;

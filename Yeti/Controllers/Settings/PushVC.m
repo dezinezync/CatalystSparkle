@@ -349,7 +349,7 @@
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.padding = UIEdgeInsetsMake(0, layoutFrame.origin.x, 0, layoutFrame.origin.x);
     label.numberOfLines = 0;
-    label.backgroundColor = UIColor.systemBackgroundColor;
+    label.backgroundColor = self.view.backgroundColor;
     label.opaque = YES;
     
     NSString *title = @"No Subscriptions";

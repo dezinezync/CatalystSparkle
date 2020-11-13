@@ -69,6 +69,8 @@ extern DBManager * MyDBManager;
 
 - (void)setFeeds:(NSArray <Feed *> *)feeds;
 
+- (void)updateFeed:(Feed *)feed;
+
 - (void)setFolders:(NSArray <Folder *> *)folders;
 
 - (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(void(^)(BOOL success))completionCB;

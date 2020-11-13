@@ -125,6 +125,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
+- (void)updateBookmarksFromServer;
+
 #pragma mark - Folders
 
 - (Folder * _Nullable)folderForID:(NSNumber * _Nonnull)folderID;
