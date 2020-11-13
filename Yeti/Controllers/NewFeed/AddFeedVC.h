@@ -15,7 +15,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AddFeedVC : UICollectionViewController <ControllerState>
+@interface AddFeedVC : UICollectionViewController <ControllerState> {
+@public
+    BOOL _hasProcessedPasteboard;
+}
 
 + (UINavigationController *)instanceInNavController;
 
