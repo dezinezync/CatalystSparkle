@@ -17,6 +17,10 @@
 
 - (void)configure:(Feed *)item indexPath:(nonnull NSIndexPath *)indexPath {
     
+#if TARGET_OS_MACCATALYST
+    self.indentationWidth = 36.f;
+#endif
+    
     self.feed = item;
     
     if (self.feed == nil) {
