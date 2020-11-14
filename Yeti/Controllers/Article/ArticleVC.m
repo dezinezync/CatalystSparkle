@@ -1300,7 +1300,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         (self.providerDelegate != nil && [self.providerDelegate isMemberOfClass:FeedVC.class] == NO)) {
         
         // the blog label should redirect to the blog
-        authorView.blogLabel.textColor = self.view.tintColor;
+        authorView.blogLabel.textColor = SharedPrefs.tintColor;
         [authorView.blogLabel setNeedsDisplay];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnBlogLabel:)];

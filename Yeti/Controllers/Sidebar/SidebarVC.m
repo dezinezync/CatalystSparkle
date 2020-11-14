@@ -936,6 +936,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if ([item isKindOfClass:Folder.class] == YES) {
         
+        [self.mainCoordinator showFolderFeed:item];
         
         return;
     }

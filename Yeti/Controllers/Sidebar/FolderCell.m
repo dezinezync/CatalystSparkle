@@ -64,7 +64,7 @@
     
     UICellAccessoryOutlineDisclosure *disclosure = [UICellAccessoryOutlineDisclosure new];
     
-    disclosure.style = UICellAccessoryOutlineDisclosureStyleHeader;
+    disclosure.style = UICellAccessoryOutlineDisclosureStyleCell;
     
     self.accessories = @[disclosure];
     
@@ -73,11 +73,10 @@
 - (void)updateConfigurationUsingState:(UICellConfigurationState *)state {
     
     UIListContentConfiguration *updatedContent = (id)[self contentConfiguration];
+    UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
     
 #if !TARGET_OS_MACCATALYST
-    UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
     backgroundConfig.backgroundColor = UIColor.systemBackgroundColor;
-    self.backgroundConfiguration = backgroundConfig;
 #endif
     
     if (state.isExpanded == YES) {
@@ -90,6 +89,17 @@
         updatedContent.image = [UIImage systemImageNamed:@"folder.fill"];
         
     }
+    
+//#if !TARGET_OS_MACCATALYST
+    if (state.isSelected) {
+        backgroundConfig.backgroundColor = UIColor.tertiarySystemFillColor;
+    }
+    else {
+        backgroundConfig.backgroundColor = UIColor.clearColor;
+    }
+//#endif
+    
+    self.backgroundConfiguration = backgroundConfig;
     
     self.contentConfiguration = updatedContent;
     
