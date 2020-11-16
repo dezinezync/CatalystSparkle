@@ -8,6 +8,8 @@
 
 - Fixed adding Youtube Feeds with the username URL type. 
 
+- Fixed a crash that would occur when signing up for the first time from a fresh installation. 
+
 ### macOS
 
 - Added the "Contact Support" menu item under Help on macOS. 

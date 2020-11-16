@@ -67,6 +67,11 @@ extern DBManager * MyDBManager;
 
 - (void)setUser:(User * _Nullable)user;
 
+/// Set the user with an optional completion block.
+/// @param user The User object
+/// @param completion The completion block. This block is always called on the main thread.
+- (void)setUser:(User *)user completion:(void (^ _Nullable)(void))completion;
+
 - (void)setFeeds:(NSArray <Feed *> *)feeds;
 
 - (void)updateFeed:(Feed *)feed;
