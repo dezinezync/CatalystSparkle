@@ -1,11 +1,11 @@
-# v2.2.0
+# v2.1.5
 
 ## Fixes
 
-- Fixed adding feed by URL where the feed presents multiple options.
+- Fixed an issue with keyboard inputs when the "Find in Article" searchbar is visible. 
 
-- Fixed an issue when searching by title for 3-letter sites like CNN or BBC.
+- Fixed an issue with keyboard input where Shift + Enter did not highlight the previous search result. 
 
-- Fixed background color for folders on iPad. 
+### macOS
 
-- Fixed searching by titles. 
+- Added the "Contact Support" menu item under Help on macOS. 

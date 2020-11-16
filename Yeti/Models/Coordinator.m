@@ -24,6 +24,16 @@
 #import "SettingsVC.h"
 #import <DZKit/AlertManager.h>
 #import "OPMLVC.h"
+#import <DZKit/DZMessagingController.h>
+#import <sys/utsname.h>
+
+NSString* deviceName() {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
+}
 
 @interface MainCoordinator ()
 
@@ -403,6 +413,35 @@
         }
         
     }];
+    
+}
+
+- (void)showContactInterface {
+    
+//    NSURL *url = [NSURL URLWithString:@"mailto:support@elytra.app?subject=Elytra%20Support"];
+    
+    DZMessagingAttachment *attachment = [[DZMessagingAttachment alloc] init];
+    attachment.fileName = @"debugInfo.txt";
+    attachment.mimeType = @"text/plain";
+    
+    UIDevice *device = [UIDevice currentDevice];
+    NSString *model = deviceName();
+    NSString *iOSVersion = formattedString(@"%@ %@", device.systemName, device.systemVersion);
+    NSString *deviceUUID = MyFeedsManager.deviceID;
+    
+    NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+    NSString *appVersion = [infoDict objectForKey:@"CFBundleShortVersionString"];
+    NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
+    
+    NSString *formatted = formattedString(@"Model: %@ %@\nDevice UUID: %@\nAccount ID: %@\nApp: %@ (%@)", model, iOSVersion, deviceUUID, MyFeedsManager.user.uuid, appVersion, buildNumber);
+    
+    attachment.data = [formatted dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [DZMessagingController presentEmailWithBody:@""
+                                        subject:@"Elytra Support"
+                                     recipients:@[@"support@elytra.app"]
+                                    attachments:@[attachment]
+                                 fromController:self.splitViewController];
     
 }
     

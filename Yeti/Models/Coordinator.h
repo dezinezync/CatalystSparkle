@@ -69,6 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)showSettingsVC;
 
+- (void)showContactInterface;
+
 #if TARGET_OS_MACCATALYST
 
 - (void)showAttributions;
