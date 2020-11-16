@@ -230,6 +230,12 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (void)setUser:(User *)user {
     
+    [self setUser:user completion:nil];
+    
+}
+
+- (void)setUser:(User *)user completion:(void (^)(void))completion {
+    
     [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
         if (user == nil) {
@@ -244,6 +250,10 @@ NSString *const kNotificationsKey = @"notifications";
         }
         
         [MyFeedsManager setValue:user forKey:@"user"];
+        
+        if (completion) {
+            runOnMainQueueWithoutDeadlocking(completion);
+        }
         
     }];
     

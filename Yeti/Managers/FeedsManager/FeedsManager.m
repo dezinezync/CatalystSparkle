@@ -2021,13 +2021,13 @@ NSArray <NSString *> * _defaultsKeys;
                 
                 self.user.subscription = sub;
             
-            [MyDBManager setUser:self.user];
+            [MyDBManager setUser:self.user completion:^{
                 
                 if (successCB) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        successCB(responseObject, response, task);
-                    });
+                    successCB(responseObject, response, task);
                 }
+                
+            }];
             
             [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionPurchased object:nil];
 //            }
@@ -2102,15 +2102,16 @@ NSArray <NSString *> * _defaultsKeys;
                 
                 self.user.subscription = sub;
                 
-                [MyDBManager setUser:self.user];
-                
-                if (successCB) {
-                    
-                    runOnMainQueueWithoutDeadlocking(^{
+                [MyDBManager setUser:self.user completion:^{
+                        
+                    if (successCB) {
+                        
                         successCB(responseObject, response, task);
-                    });
+                        
+                    }
                     
-                }
+                }];
+
             }
             else {
                 Subscription *sub = [Subscription new];
