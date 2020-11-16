@@ -25,6 +25,7 @@
 #import <UIKit/NSToolbar+UIKitAdditions.h>
 #import <UIKit/UIMenuSystem.h>
 #import <AppKit/NSToolbarItemGroup.h>
+#import <DZKit/DZMessagingController.h>
 
 @implementation AppDelegate (Catalyst)
 
@@ -201,6 +202,12 @@
     
     [builder insertSiblingMenu:subsMenu afterMenuForIdentifier:UIMenuAbout];
     
+    UICommand *contactsupport = [UICommand commandWithTitle:@"Email Support" image:nil action:@selector(contactSupport) propertyList:nil];
+    
+    UIMenu *helpMenu = [UIMenu menuWithTitle:@"" image:nil identifier:@"SupportMenu" options:UIMenuOptionsDisplayInline children:@[contactsupport]];
+    
+    [builder insertChildMenu:helpMenu atEndOfMenuForIdentifier:UIMenuHelp];
+    
 }
 
 - (void)buildMenuWithBuilder:(id<UIMenuBuilder>)builder {
@@ -211,6 +218,10 @@
     
     [self ct_setupMenu:builder];
     
+}
+
+- (void)contactSupport {
+    [self.coordinator showContactInterface];
 }
 
 @end

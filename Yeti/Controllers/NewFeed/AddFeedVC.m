@@ -560,6 +560,10 @@
 
 - (void)checkPasteboard {
     
+    if (_hasProcessedPasteboard) {
+        return;
+    }
+    
     UISearchBar *searchBar = self.navigationItem.searchController.searchBar;
     
     if (UIPasteboard.generalPasteboard.hasURLs == YES || UIPasteboard.generalPasteboard.hasStrings == YES) {
@@ -581,7 +585,11 @@
                     
                     text = [text stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
                     
-                    url = [NSURL URLWithString:text];
+                    if ([[NSURLComponents alloc] initWithString:text].host != nil) {
+                            
+                        url = [NSURL URLWithString:text];
+                        
+                    }
                     
                 }
                 
@@ -599,6 +607,8 @@
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        self->_hasProcessedPasteboard = YES;
         
         [self.navigationItem.searchController setActive:YES];
         

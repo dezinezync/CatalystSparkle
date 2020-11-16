@@ -22,6 +22,7 @@
 #import "CustomizeVC.h"
 
 #import "YetiConstants.h"
+#import "UITextField+CursorPosition.h"
 
 #import <DZAppdelegate/UIApplication+KeyWindow.h>
 
@@ -186,6 +187,13 @@
 #pragma mark - Actions
 
 - (void)didTapClose {
+    
+    if (self.searchBar.isFirstResponder) {
+        
+        self.searchBar.searchTextField.cursorPosition = 0;
+        
+        return;
+    }
     
     [self.mainCoordinator showEmptyVC];
     
@@ -365,6 +373,13 @@
 
 - (void)openInBrowser {
     
+    if (self.searchBar.isFirstResponder) {
+        
+        self.searchBar.searchTextField.cursorPosition = self.searchBar.text != nil ? self.searchBar.text.length : 0;
+        
+        return;
+    }
+    
     NSURL *URL = formattedURL(@"yeti://external?link=%@", self.item.articleURL);
     
 #if TARGET_OS_MACCATALYST
@@ -417,6 +432,9 @@
     _showSearchBar = NO;
     [self.searchBar resignFirstResponder];
     [self.searchBar setText:nil];
+    
+    _searchingRects = nil;
+    [self removeSearchResultViewFromSuperview];
     
     [self.searchView removeFromSuperview];
     
@@ -625,10 +643,9 @@
 
 #pragma mark - <UISearchBarDelegate>
 
-- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
-{
-    _searchingRects = nil;
-    [self removeSearchResultViewFromSuperview];
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar {
+//    _searchingRects = nil;
+//    [self removeSearchResultViewFromSuperview];
     return YES;
 }
 

@@ -1899,7 +1899,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
      * but they also include the actual emoji in the alt text. We extract the
      * alt text and use that directly. 
      */
-    if (content.url && [content.url containsString:@"/images/core/emoji"]) {
+    if (content.url && ([content.url containsString:@"/images/core/emoji"] || [content.url containsString:@"/wpcom-smileys"])) {
         
         NSDictionary *attributes = content.attributes;
         
@@ -2815,17 +2815,43 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     __block Paragraph *required = nil;
     
-    for (Paragraph *para in paragraphs) { @autoreleasepool {
-        NSAttributedString *attrs = para.attributedText;
+    Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+    
+    NSString *base = @"";
+    
+    if (feed != nil && feed.extra.url != nil) {
         
-        [attrs enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, attrs.length) options:NSAttributedStringEnumerationReverse usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+        base = feed.extra.url;
+        
+        if ([[base substringFromIndex:base.length - 1] isEqualToString:@"/"]) {
+            base = [base substringToIndex:base.length-1];
+        }
+        
+    }
+    
+    for (Paragraph *para in paragraphs) { @autoreleasepool {
+        
+//        NSAttributedString *attrs = para.attributedText;
+//
+//        [attrs enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, attrs.length) options:NSAttributedStringEnumerationReverse usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+        
+        [para.links enumerateObjectsUsingBlock:^(Link * _Nonnull obj, BOOL * _Nonnull stop) {
+            
+            id value = obj.url;
+            
             if (value) {
+                
                 NSString *compare = value;
+                
                 if ([value isKindOfClass:NSURL.class]) {
                     compare = [(NSURL *)value absoluteString];
                 }
                 
                 compare = [compare stringByReplacingOccurrencesOfString:@"#" withString:@""];
+                
+                if (base.length > 0 && [compare containsString:base]) {
+                    compare = [compare stringByReplacingOccurrencesOfString:base withString:@""];
+                }
                 
                 float ld = [identifier compareStringWithString:compare];
                 NSLogDebug(@"href:%@ distance:%@", compare, @(ld));
@@ -2996,6 +3022,21 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         if ((absolute && (absolute.length > 0) && [[absolute substringWithRange:NSMakeRange(0, 1)] isEqualToString:@"#"])) {
             [self scrollToIdentifer:absolute];
             return NO;
+        }
+        
+        Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
+        
+        if ([absolute containsString:@"#"] && feed != nil &&
+            ([absolute containsString:feed.extra.url] || ([absolute compareStringWithString:feed.extra.url] <= feed.extra.url.length))
+            ) {
+            
+            NSUInteger location = [absolute rangeOfString:@"#"].location;
+            
+            absolute = [absolute substringFromIndex:location];
+            
+            [self scrollToIdentifer:absolute];
+            return NO;
+            
         }
         
         // links to sections within the article

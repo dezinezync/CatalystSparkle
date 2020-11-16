@@ -9,6 +9,7 @@
 #import "ArticleVC+Toolbar.h"
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import "Gallery.h"
+#import "UITextField+CursorPosition.h"
 
 @implementation ArticleVC (Keyboard)
 
@@ -80,7 +81,10 @@
     esc.title = @"Dismiss Search";
     esc.discoverabilityTitle = esc.title;
     
-    NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc, previousArticle, nextArticle, openInBrowser];
+    UIKeyCommand *searchPrevious = [UIKeyCommand keyCommandWithInput:@"\r" modifierFlags:UIKeyModifierShift action:@selector(didTapSearchPrevious)];
+    searchPrevious.title = @"Previous Search Result";
+    
+    NSArray <UIKeyCommand *> *commands = @[close, bookmark, read, search, scrollUp, scrollDown, galleryLeft, galleryRight, esc, previousArticle, nextArticle, openInBrowser, searchPrevious];
     
 #if TARGET_OS_MACCATALYST
     commands = [commands arrayByAddingObjectsFromArray:@[scrollUpAddtional, scrollDownAddtional, scrollToTop, scrollToEnd]];
@@ -114,6 +118,13 @@
 }
 
 - (void)scrollDown {
+    
+    if (self.searchBar.isFirstResponder) {
+        
+        self.searchBar.text = [self.searchBar.text stringByAppendingString:@" "];
+        
+        return;
+    }
     
     UIScrollView *scrollView = (UIScrollView *)[self.stackView superview];
     CGPoint currentOffset = scrollView.contentOffset;
@@ -283,6 +294,16 @@
 
 - (void)navLeft {
     
+    if (self.searchBar.isFirstResponder) {
+        
+        NSInteger cursorPos = self.searchBar.searchTextField.cursorPosition;
+        cursorPos = MAX(0, cursorPos - 1);
+        
+        self.searchBar.searchTextField.cursorPosition = cursorPos;
+        
+        return;
+    }
+    
     Gallery *gallery = [self visibleGallery];
     
     if (!gallery) {
@@ -292,13 +313,26 @@
     CGPoint contentOffset = gallery.collectionView.contentOffset;
     CGSize itemSize = [(UICollectionViewFlowLayout *)(gallery.collectionView.collectionViewLayout) itemSize];
     
-    contentOffset.x = MAX(0, contentOffset.x - itemSize.width);
+    contentOffset.x = MIN(0, contentOffset.x - itemSize.width);
     
     [gallery.collectionView setContentOffset:contentOffset animated:YES];
     
 }
 
 - (void)navRight {
+    
+    if (self.searchBar.isFirstResponder) {
+        
+        NSInteger cursorPos = self.searchBar.searchTextField.cursorPosition;
+        
+        if (self.searchBar.text != nil) {
+            cursorPos = MIN(self.searchBar.text.length, cursorPos + 1);
+        }
+        
+        self.searchBar.searchTextField.cursorPosition = cursorPos;
+        
+        return;
+    }
     
     Gallery *gallery = [self visibleGallery];
     

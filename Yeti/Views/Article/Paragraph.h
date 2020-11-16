@@ -14,6 +14,16 @@
 
 #import "Range.h"
 
+@interface Link : NSObject
+
+@property (nonatomic, copy) NSURL * _Nonnull url;
+@property (nonatomic, assign) NSUInteger location;
+@property (nonatomic, assign) NSUInteger length;
+
++ (instancetype _Nonnull)withURL:(NSURL * _Nonnull)url location:(NSUInteger)location length:(NSUInteger)length;
+
+@end
+
 @class Paragraph;
 
 @protocol TextSharing <NSObject>
@@ -39,6 +49,9 @@
 @property (nonatomic, strong, class) NSParagraphStyle * _Nullable paragraphStyle;
 
 @property (nonatomic, strong) NSLayoutConstraint * _Nullable leading, * _Nullable trailing;
+
+// All the links contained in this paragraph.
+@property (nonatomic, strong, readonly) NSMutableSet <Link *> * _Nonnull links;
 
 - (void)viewWillAppear;
 - (void)viewDidDisappear;
