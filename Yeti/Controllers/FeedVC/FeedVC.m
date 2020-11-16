@@ -849,7 +849,7 @@
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    BOOL dataCheck = self.controllerState == StateLoading && self.pagingManager.page <= 1;
+    BOOL dataCheck = (self.controllerState == StateLoading && self.pagingManager.page <= 1) || (self.DS.snapshot == nil || self.DS.snapshot.numberOfItems == 0);
     
     if (dataCheck) {
         self.activityIndicatorView.hidden = NO;

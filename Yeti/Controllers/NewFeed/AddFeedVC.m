@@ -975,7 +975,12 @@
         
         [MyFeedsManager _checkYoutubeFeed:url success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
-            [self searchByURL:responseObject];
+            if ([responseObject isKindOfClass:NSURL.class]) {
+                [self searchByURL:[(NSURL *)responseObject absoluteString]];
+            }
+            else {
+                [self searchByURL:responseObject];
+            }
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
            
