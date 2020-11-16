@@ -74,10 +74,10 @@
     
     UIListContentConfiguration *updatedContent = (id)[self contentConfiguration];
     
-    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
-        
     UIBackgroundConfiguration *backgroundConfig = self.backgroundConfiguration;
     
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        
         backgroundConfig.backgroundColor = UIColor.systemBackgroundColor;
         
         self.backgroundConfiguration = backgroundConfig;
