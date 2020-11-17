@@ -149,12 +149,12 @@ AppDelegate *MyAppDelegate = nil;
 //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //
 ////                [self openFeed:@(1) article:@(1293968)];  // twitter user
-//        //        [self openFeed:@(1) article:@(1273075)];  // twitter status
+////                [self openFeed:@(1) article:@(18190949)];  // twitter status
 ////                [self openFeed:@(1) article:@(1149498)];  // reddit
 ////                [self openFeed:@(11139) article:@(11288965)]; //webp image
 ////                [self showArticle:@(1831527)]; // crashing article
 ////                [self openFeed:@(11750) article:@(11311036)]; // youtube video
-//                [self openFeed:@(18) article:@(17754118)]; // Elytra
+////                [self openFeed:@(18) article:@(17754118)]; // Elytra
 //            });
 //        #endif
         
