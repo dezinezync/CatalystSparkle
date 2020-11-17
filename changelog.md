@@ -13,3 +13,9 @@
 - Fixed adding feed by URL where the feed presents multiple options.
 
 - Fixed an issue when searching by title for 3-letter sites like CNN or BBC. 
+
+### macOS
+
+- Added the "Contact Support" menu item under Help on macOS. 
+
+- Fixed the activity indicator not being visible when opening a feed. 
