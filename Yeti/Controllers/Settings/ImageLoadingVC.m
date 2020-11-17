@@ -17,7 +17,7 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
 
 @interface ImageLoadingVC ()
 
-@property (nonatomic, assign) NSInteger selected, bandwidth;
+@property (atomic, assign) NSInteger selected, bandwidth;
 
 @property (nonatomic, strong) UILabel *footerSizingLabel;
 
@@ -30,8 +30,8 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     
     self.title = @"Image Loading";
     
-    NSString *val1 = SharedPrefs.imageLoading;
-    NSString *val2 = SharedPrefs.imageBandwidth;
+    NSString *val1 = SharedPrefs.imageBandwidth;
+    NSString *val2 = SharedPrefs.imageLoading;
     
     if ([val1 isEqualToString:ImageLoadingMediumRes])
         self.selected = 1;
@@ -285,20 +285,20 @@ NSString *const kXImageLoadingCell = @"cell.imageLoading";
     
     if (indexPath.section == 0) {
         if (self.selected == 0)
-            [SharedPrefs setValue:ImageLoadingLowRes forKey:propSel(imageLoading)];
+            [SharedPrefs setValue:ImageLoadingLowRes forKey:propSel(imageBandwidth)];
         else if (self.selected == 1)
-            [SharedPrefs setValue:ImageLoadingMediumRes forKey:propSel(imageLoading)];
+            [SharedPrefs setValue:ImageLoadingMediumRes forKey:propSel(imageBandwidth)];
         else
-            [SharedPrefs setValue:ImageLoadingHighRes forKey:propSel(imageLoading)];
+            [SharedPrefs setValue:ImageLoadingHighRes forKey:propSel(imageBandwidth)];
 
     }
     else {
         if (self.bandwidth == 0)
-            [SharedPrefs setValue:ImageLoadingNever forKey:propSel(imageBandwidth)];
+            [SharedPrefs setValue:ImageLoadingNever forKey:propSel(imageLoading)];
         else if (self.bandwidth == 1)
-            [SharedPrefs setValue:ImageLoadingOnlyWireless forKey:propSel(imageBandwidth)];
+            [SharedPrefs setValue:ImageLoadingOnlyWireless forKey:propSel(imageLoading)];
         else
-            [SharedPrefs setValue:ImageLoadingAlways forKey:propSel(imageBandwidth)];
+            [SharedPrefs setValue:ImageLoadingAlways forKey:propSel(imageLoading)];
     }
     
     if (self.settingsDelegate && [self.settingsDelegate respondsToSelector:@selector(didChangeSettings)]) {

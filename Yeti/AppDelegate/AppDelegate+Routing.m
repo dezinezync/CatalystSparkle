@@ -779,6 +779,13 @@
     if (!URL)
         return;
     
+    if ([UIApplication.sharedApplication canOpenURL:URL] == NO) {
+        // not supported. Open in browser.
+        
+        URL = formattedURL(@"https://twitter.com/i/web/status/%@", status);
+        
+    }
+    
     [UIApplication.sharedApplication openURL:URL options:@{} completionHandler:nil];
 }
 

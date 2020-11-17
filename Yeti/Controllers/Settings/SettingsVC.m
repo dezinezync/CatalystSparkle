@@ -604,46 +604,25 @@ typedef NS_ENUM(NSUInteger, SectionOneRows) {
         _byLabel.autoresizingMask = dz.autoresizingMask;
         _byLabel.backgroundColor = self.tableView.backgroundColor;
         
-        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
+        
+        NSDate *date = MyFeedsManager.unreadLastUpdate ?: NSDate.date;
+        
+        formatter.dateStyle = NSDateFormatterShortStyle;
+        formatter.timeStyle = NSDateFormatterShortStyle;
+        formatter.timeZone = [NSTimeZone localTimeZone];
+        
+        NSString *formatted = [formatter stringFromDate:date];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-            NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+            _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
+            [_byLabel sizeToFit];
+            [_byLabel setNeedsLayout];
+            [_byLabel layoutIfNeeded];
             
-            if (token != nil) {
-                NSString *dateString = [token decodeBase64];
-                
-                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-                formatter.dateFormat = @"YYYY-MM-dd HH:mm:ss";
-                
-                NSDate *date = [formatter dateFromString:dateString];
-                
-                formatter.dateStyle = NSDateFormatterShortStyle;
-                formatter.timeStyle = NSDateFormatterShortStyle;
-                formatter.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-                
-                NSString *formatted = [formatter stringFromDate:date];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    _byLabel.text = formattedString(@"A Dezine Zync App.\nLast Synced: %@", formatted);
-                    [_byLabel sizeToFit];
-                    [_byLabel setNeedsLayout];
-                    [_byLabel layoutIfNeeded];
-                    
-                });
-            }
-            else {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    _byLabel.text = @"A Dezine Zync App.";
-                    [_byLabel sizeToFit];
-                    [_byLabel setNeedsLayout];
-                    [_byLabel layoutIfNeeded];
-                    
-                });
-                
-            }
-            
-        }];
+        });
         
         [_footerView addSubview:_byLabel];
     }
