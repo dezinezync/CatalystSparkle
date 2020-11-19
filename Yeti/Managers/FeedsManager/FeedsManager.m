@@ -3019,8 +3019,8 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
-        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"http://192.168.1.93:3000"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
