@@ -496,6 +496,7 @@ PrefsManager * SharedPrefs = nil;
         return;
         
     }
+#if TARGET_OS_MACCATALYST
     else if (object == self.defaultsController) {
         
         value = [self.defaults valueForKey:[keyPath substringFromIndex:7]];
@@ -509,7 +510,7 @@ PrefsManager * SharedPrefs = nil;
         return;
         
     }
-    
+#endif
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     
 }

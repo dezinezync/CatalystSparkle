@@ -3046,9 +3046,13 @@ NSArray <NSString *> * _defaultsKeys;
             
             NSString *signature = [self hmac:stringToSign withKey:encoded];
             
-            [request setValue:signature forHTTPHeaderField:@"Authorization"];
+            [request setValue:signature forHTTPHeaderField:@"x-authorization"];
             [request setValue:userID.stringValue forHTTPHeaderField:@"x-userid"];
             [request setValue:timecode forHTTPHeaderField:@"x-timestamp"];
+            
+            if (request.allHTTPHeaderFields[@"User-Agent"] != nil) {
+                [request setValue:[request valueForHTTPHeaderField:@"User-Agent"] forHTTPHeaderField:@"x-user-agent"];
+            }
             
             if (self.deviceID != nil) {
                 [request setValue:self.deviceID forHTTPHeaderField:@"x-device"];
