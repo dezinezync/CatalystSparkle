@@ -51,5 +51,6 @@
 - (BOOL)canShowExtraShareLevel;
 
 - (void)updateUnreadCount;
+- (void)updateUnreadCountImmediate;
 
 @end

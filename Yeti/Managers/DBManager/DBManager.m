@@ -273,7 +273,8 @@ NSString *const kNotificationsKey = @"notifications";
             
             if (feed != nil) {
                 
-                feed.unread = @(0);
+//                feed.unread = @(0);
+                [feed updateUnreadCountImmediate];
                 
                 [feeds addObject:feed];
                 
@@ -647,14 +648,20 @@ NSString *const kNotificationsKey = @"notifications";
     _bgConnection.objectCacheLimit = 25;
     _bgConnection.metadataCacheEnabled = NO;
     
+    _countsConnection = [_database newConnection];
+    _countsConnection.objectCacheLimit = 500;
+    _countsConnection.objectCacheEnabled = YES;
+    _countsConnection.metadataCacheEnabled = YES;
+    
     // Start the longLivedReadTransaction on the UI connection.
     [_uiConnection enableExceptionsForImplicitlyEndingLongLivedReadTransaction];
     [_uiConnection beginLongLivedReadTransaction];
+//    [_bgConnection beginLongLivedReadTransaction];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(yapDatabaseModified:)
-                                                 name:YapDatabaseModifiedNotification
-                                               object:_database];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(yapDatabaseModified:)
+//                                                 name:YapDatabaseModifiedNotification
+//                                               object:_database];
     
     [self setupViews];
     
@@ -932,9 +939,9 @@ NSString *const kNotificationsKey = @"notifications";
     }
     
     // check if sync has been setup on this device.
-    [self.bgConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+    [self.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
         
-        __block NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
+        NSString *token = [transaction objectForKey:syncToken inCollection:SYNC_COLLECTION];
         
         // if we don't have a token, we create one with an old date of 1993-03-11 06:11:00 ;)
         // date was later changed to 2020-04-14 22:30 when sync was finalised.
@@ -953,8 +960,8 @@ NSString *const kNotificationsKey = @"notifications";
         
         }
         
-#ifdef DEBUG
-        
+//#ifdef DEBUG
+//
 //        runOnMainQueueWithoutDeadlocking(^{
 //
 ////            if (UIApplication.sharedApplication.applicationState == UIApplicationStateBackground) {
@@ -965,7 +972,7 @@ NSString *const kNotificationsKey = @"notifications";
 //
 //        });
 //
-#endif
+//#endif
         
         self.syncSetup = YES;
         
@@ -1017,8 +1024,6 @@ NSString *const kNotificationsKey = @"notifications";
                     });
                     
                 }
-                
-                [self updateUnreadCounters];
                 
                 return;
                 
@@ -1073,8 +1078,6 @@ NSString *const kNotificationsKey = @"notifications";
                         
                     }
                     
-                    [self updateUnreadCounters];
-                    
                 }
 
             }];
@@ -1108,8 +1111,6 @@ NSString *const kNotificationsKey = @"notifications";
                 });
                 
             }
-            
-            [self updateUnreadCounters];
            
             NSLog(@"An error occurred when syncing changes: %@", error);
             
@@ -1159,10 +1160,6 @@ NSString *const kNotificationsKey = @"notifications";
         
     } }
     
-    [queue addOperationWithBlock:^{
-        [self updateUnreadCounters];
-    }];
-    
     [self->_syncQueue waitUntilAllOperationsAreFinished];
     
 }
@@ -1174,7 +1171,7 @@ NSString *const kNotificationsKey = @"notifications";
         __block NSUInteger count = 0;
         __block NSUInteger today = 0;
         
-        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
            
             YapDatabaseViewTransaction *tnx = [transaction extension:UNREADS_FEED_EXT];
             
@@ -1202,8 +1199,10 @@ NSString *const kNotificationsKey = @"notifications";
                 
             }];
             
-            MyFeedsManager.totalUnread = count;
-            MyFeedsManager.totalToday = today;
+            runOnMainQueueWithoutDeadlocking(^{
+                MyFeedsManager.totalUnread = count;
+                MyFeedsManager.totalToday = today;
+            });
             
             NSLogDebug(@"Total Unread: %@\nTotal Today: %@", @(count), @(today));
             
@@ -1401,7 +1400,7 @@ NSString *const kNotificationsKey = @"notifications";
         return;
     }
     
-    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
         
         NSString *collection = [self collectionForArticle:article];
        

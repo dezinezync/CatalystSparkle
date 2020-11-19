@@ -760,6 +760,8 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     if (!article)
         return;
     
+    /* This block may not be necessary with local storage
+     *
     if (self.item) {
         
         if (self.item.isBookmarked == NO) {
@@ -771,12 +773,13 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 // and for non-microblog posts
                 if ([(self.item.articleTitle ?: @"") isBlank] == NO) {
                 
-//                    self.item.content = nil;
+                    self.item.content = nil;
                     
                 }
             }
         }
     }
+    */
     
     BOOL isChangingArticle = self.item && self.item.identifier.integerValue != article.identifier.integerValue;
     

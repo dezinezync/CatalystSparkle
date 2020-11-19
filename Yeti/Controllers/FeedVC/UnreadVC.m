@@ -31,6 +31,17 @@
         self.restorationClass = [self class];
         self.restorationIdentifier = @"FeedVC-Unread";
         
+        YetiSortOption option = SharedPrefs.sortingOption;
+        
+        if ([option isEqualToString:YTSortAllDesc]) {
+            option = YTSortUnreadDesc;
+        }
+        else if ([option isEqualToString:YTSortAllAsc]) {
+            option = YTSortUnreadAsc;
+        }
+        
+        self.sortingOption = option;
+        
     }
     
     return self;
@@ -42,6 +53,7 @@
     [super viewDidLoad];
     
     self.title = @"Unread";
+    self.controllerState = StateDefault;
     self.pagingManager = self.unreadsManager;
     
 #if !TARGET_OS_MACCATALYST
@@ -152,6 +164,10 @@
 
 - (void)setSortingOption:(YetiSortOption)sortingOption {
     
+    if (self.sortingOption == sortingOption) {
+        return;
+    }
+    
     runOnMainQueueWithoutDeadlocking(^{
         [self unregisterDBViews];
         [self setupDatabases:sortingOption];
@@ -171,6 +187,10 @@
     
     return [totalArticles stringByAppendingString:unread];
     
+}
+
+- (PagingManager *)pagingManager {
+    return self.unreadsManager;
 }
 
 - (PagingManager *)unreadsManager {
@@ -193,11 +213,11 @@
         
         unreadsManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
             
-//            YapDatabaseViewConnection *connection = [MyDBManager.uiConnection extension:UNREADS_FEED_EXT];
+            strongify(self);
             
-            [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-                
-                strongify(self);
+            self.controllerState = StateLoading;
+            
+            [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
                 
                 YapDatabaseViewTransaction *ext = [transaction extension:kUnreadsDBFilteredView];
                 
@@ -320,7 +340,6 @@
     if (self->_isRefreshing == NO) {
 #endif
         self.unreadsManager = nil;
-        self.pagingManager = self.unreadsManager;
         [self loadNextPage];
     }
     

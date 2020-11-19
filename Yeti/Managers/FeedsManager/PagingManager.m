@@ -139,6 +139,10 @@
                 
                 self.loading = NO;
                 
+                if (items == nil || items.count == 0) {
+                    self.hasNextPage = NO;
+                }
+                
                 if (items != nil && self.preProcessorCB) {
                     items = self.preProcessorCB(items);
                 }

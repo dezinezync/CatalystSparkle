@@ -603,6 +603,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [self.refreshControl endRefreshing];
             }
             
+            [MyDBManager updateUnreadCounters];
+            
             if (self.mainCoordinator.feedVC != nil
                 && ([self.mainCoordinator.feedVC isKindOfClass:UnreadVC.class] || [self.mainCoordinator.feedVC isKindOfClass:NSClassFromString(@"TodayVC")])) {
                 

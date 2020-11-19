@@ -134,7 +134,6 @@
     [self dz_smoothlyDeselectRows:self.tableView];
     
     if (self.pagingManager.page == 1 && [self.DS.snapshot numberOfItems] == 0) {
-        self.controllerState = StateLoaded;
         [self loadNextPage];
     }
     
@@ -760,23 +759,17 @@
             // we can be in any state
             // but we should only show the empty view
             // when there is no data
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self addEmptyView];
-            });
+            [self addEmptyView];
         }
         else {
             // we have data, so the state doesn't matter
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self removeEmptyView];
-            });
+            [self removeEmptyView];
         }
         
     }
     else if (controllerState != StateErrored) {
         // we have data, so the state doesn't matter
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self removeEmptyView];
-        });
+        [self removeEmptyView];
     }
     
 }
@@ -832,8 +825,13 @@
     UIView *buffer = [self.view viewWithTag:emptyViewTag];
     
     while (buffer != nil && buffer.superview) {
-        [buffer removeFromSuperview];
+        buffer.tag = 0;
         
+        if ([buffer isKindOfClass:UIActivityIndicatorView.class]) {
+            [(UIActivityIndicatorView *)buffer stopAnimating];
+        }
+        
+        [buffer removeFromSuperview];
         buffer = [self.view viewWithTag:emptyViewTag];
     }
 }
@@ -858,11 +856,11 @@
     // since the Datasource is asking for this view
     // it will be presenting it.
     BOOL dataCheck = (self.controllerState == StateLoading && self.pagingManager.page <= 1) || (self.DS.snapshot == nil || self.DS.snapshot.numberOfItems == 0);
-    
+
     if (dataCheck) {
         self.activityIndicatorView.hidden = NO;
         [self.activityIndicatorView startAnimating];
-        
+
         return self.activityIndicatorView;
     }
     
@@ -1135,10 +1133,7 @@
             NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
             [self.DS applySnapshot:snapshot animatingDifferences:YES];
             
-            self.controllerState = StateLoaded;
-            
             [self loadNextPage];
-            
             
         }
         

@@ -64,6 +64,7 @@ extern DBManager * MyDBManager;
 @property (nonatomic, strong) YapDatabase *database;
 @property (nonatomic, strong) YapDatabaseConnection *uiConnection;
 @property (nonatomic, strong) YapDatabaseConnection *bgConnection;
+@property (nonatomic, strong) YapDatabaseConnection *countsConnection;
 
 @property (nonatomic, copy) syncProgressBlock syncProgressBlock;
 
@@ -85,6 +86,8 @@ extern DBManager * MyDBManager;
 - (void)setFolders:(NSArray <Folder *> *)folders;
 
 - (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(void(^)(BOOL success))completionCB;
+
+- (void)updateUnreadCounters;
 
 #pragma mark - Articles
 

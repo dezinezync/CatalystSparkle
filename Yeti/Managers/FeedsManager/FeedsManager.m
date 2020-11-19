@@ -2813,11 +2813,13 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    if (totalUnread >= 999999999) {
-        self->_totalUnread = 0;
-    }
-    else {
-        self->_totalUnread = MAX(totalUnread, 0);
+    @synchronized (self) {
+        if (totalUnread >= 999999999) {
+            self->_totalUnread = 0;
+        }
+        else {
+            self->_totalUnread = MAX(totalUnread, 0);
+        }
     }
     
     if (SharedPrefs.badgeAppIcon) {
