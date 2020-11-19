@@ -9,9 +9,15 @@
 #import "UnreadVC.h"
 #import "SceneDelegate.h"
 
+#define kUnreadsDBView @"unreadsDBView"
+#define kUnreadsDBFilteredView @"unreadsDBFilteredView"
+
 @interface UnreadVC ()
 
 @property (nonatomic, strong) PagingManager *unreadsManager;
+
+@property (nonatomic, strong) YapDatabaseAutoView *dbView;
+@property (nonatomic, strong) YapDatabaseFilteredView *dbFilteredView;
 
 @end
 
@@ -51,13 +57,111 @@
     
 }
 
+- (void)unregisterDBViews {
+    
+    if (self.dbFilteredView) {
+        [MyDBManager.database unregisterExtensionWithName:kUnreadsDBFilteredView];
+        self.dbFilteredView = nil;
+    }
+    
+    if (self.dbView) {
+        [MyDBManager.database unregisterExtensionWithName:kUnreadsDBView];
+        self.dbView = nil;
+    }
+    
+}
+
 - (void)dealloc {
+    
+    [self unregisterDBViews];
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
 }
 
+- (void)setupDatabases:(YetiSortOption)sortingOption {
+    
+    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
+       
+        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+            return GROUP_ARTICLES;
+        }
+        
+        return nil;
+        
+    }];
+    
+    NSDate *now = NSDate.date;
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+        
+        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+            return NO;
+        }
+        
+        // article metadata is an NSDictionary
+        NSDictionary *dict = metadata;
+        
+        BOOL checkOne = ([([dict valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
+        BOOL checkTwo = [now timeIntervalSinceDate:object.timestamp] <= 1209600;
+        
+        return checkOne && checkTwo;
+        
+    }];
+    
+    weakify(sortingOption);
+    
+    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+        
+        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+        
+        if (result == NSOrderedSame) {
+            return result;
+        }
+        
+        strongify(sortingOption);
+        
+        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            if (result == NSOrderedDescending) {
+                return NSOrderedAscending;
+            }
+            
+            return NSOrderedDescending;
+            
+        }
+        
+        return result;
+        
+    }];
+    
+    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
+    self.dbView = view;
+    
+    [MyDBManager.database registerExtension:self.dbView withName:kUnreadsDBView];
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kUnreadsDBView filtering:filter];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kUnreadsDBFilteredView];
+    
+}
+
 #pragma mark - Subclassed
+
+- (void)setSortingOption:(YetiSortOption)sortingOption {
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        [self unregisterDBViews];
+        [self setupDatabases:sortingOption];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.125 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [super setSortingOption:sortingOption];
+    });
+    
+}
 
 - (NSString *)subtitle {
     
@@ -72,6 +176,7 @@
 - (PagingManager *)unreadsManager {
     
     if (_unreadsManager == nil && MyFeedsManager.userID != nil) {
+        
         NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
         
         params[@"sortType"] = @(self.sortingOption.integerValue);
@@ -82,6 +187,44 @@
         
         PagingManager * unreadsManager = [[PagingManager alloc] initWithPath:@"/unread" queryParams:params itemsKey:@"articles"];
         
+        unreadsManager.fromDB = YES;
+        
+        weakify(self);
+        
+        unreadsManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
+            
+//            YapDatabaseViewConnection *connection = [MyDBManager.uiConnection extension:UNREADS_FEED_EXT];
+            
+            [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                
+                strongify(self);
+                
+                YapDatabaseViewTransaction *ext = [transaction extension:kUnreadsDBFilteredView];
+                
+                if (ext == nil) {
+                    return completion(nil);
+                }
+                
+                NSRange range = NSMakeRange(((self.unreadsManager.page - 1) * 20) - 1, 20);
+                
+                if (self.unreadsManager.page == 1) {
+                    range.location = 0;
+                }
+                
+                NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                
+                [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                   
+                    [items addObject:object];
+                    
+                }];
+                
+                completion(items);
+                
+            }];
+            
+        };
+        
         _unreadsManager = unreadsManager;
     }
     
@@ -89,7 +232,7 @@
         _unreadsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-                return [FeedItem instanceFromDictionary:obj];
+                return [obj isKindOfClass:NSDictionary.class] ? [FeedItem instanceFromDictionary:obj] : obj;
             }];
             
             return retval;

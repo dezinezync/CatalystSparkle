@@ -23,7 +23,7 @@
 #define cloudCoreExtensionName @"ElytraCloudCoreExtension"
 
 #define SYNC_COLLECTION @"sync-collection"
-#define syncToken @"syncToken" // last sync date we stored or the one sent by the server
+#define syncToken @"syncToken-2.2" // last sync date we stored or the one sent by the server
 #define syncedChanges @"syncedChanges" // have the synced the changes with our local store ?    
 
 NS_ASSUME_NONNULL_BEGIN
@@ -39,8 +39,14 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 #define LOCAL_NAME_COLLECTION @"localNames"
 #define LOCAL_FEEDS_COLLECTION @"localFeeds"
 #define LOCAL_FOLDERS_COLLECTION @"localFolders"
-#define LOCAL_ARTICLES_COLLECTION @"localArticles"
+#define LOCAL_ARTICLES_COLLECTION @"articles"
 #define LOCAL_SETTINGS_COLLECTION @"localSettings" // internal app settings
+
+#define GROUP_ARTICLES @"articles"
+#define GROUP_FEEDS @"feeds"
+#define GROUP_FOLDERS @"folders"
+
+#define UNREADS_FEED_EXT @"unreadsFeedView"
 
 extern DBManager * MyDBManager;
 

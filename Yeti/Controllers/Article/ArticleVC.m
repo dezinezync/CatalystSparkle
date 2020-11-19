@@ -771,7 +771,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
                 // and for non-microblog posts
                 if ([(self.item.articleTitle ?: @"") isBlank] == NO) {
                 
-                    self.item.content = nil;
+//                    self.item.content = nil;
                     
                 }
             }

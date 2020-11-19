@@ -670,6 +670,10 @@
 
 - (void)updateTitleView {
     
+    if (NSThread.isMainThread == NO) {
+        return [self performSelectorOnMainThread:@selector(updateTitleView) withObject:nil waitUntilDone:NO];
+    }
+    
     if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac) {
         return;
     }

@@ -37,13 +37,13 @@
 
 - (instancetype)initWithCoder:(NSCoder *)decoder {
     if (self = [super init]) {
-        self.identifer = [decoder decodeObjectForKey:propSel(identifer)];
-        self.environment = [decoder decodeObjectForKey:propSel(environment)];
+        self.identifer = [decoder decodeObjectOfClass:NSNumber.class forKey:propSel(identifer)];
+        self.environment = [decoder  decodeObjectOfClass:NSString.class forKey:propSel(environment)];
         self.expiry = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(expiry)]];
         self.created = [NSDate dateWithTimeIntervalSince1970:[decoder decodeDoubleForKey:propSel(created)]];
-        self.status = [decoder decodeObjectForKey:propSel(status)];
-        self.lifetime = [decoder decodeBoolForKey:propSel(lifetime)];
-        self.external = [decoder decodeBoolForKey:propSel(external)];
+        self.status = [decoder  decodeObjectOfClass:NSNumber.class  forKey:propSel(status)];
+        self.lifetime = [decoder decodeBoolForKey:@"lifetime"];
+        self.external = [decoder decodeBoolForKey:@"external"];
     }
     
     return self;

@@ -968,13 +968,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)beginRefreshingAll:(UIRefreshControl *)sender {
     
-    if (self->_refreshing) {
-        return;
-    }
-    
-    self->_fetchingCounters = NO;
-    
-    [self sync];
+//    if (self->_refreshing) {
+//        return;
+//    }
+//
+//    self->_fetchingCounters = NO;
+//
+//    [self sync];
     
 }
 
@@ -1056,7 +1056,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     _refreshing = YES;
     
-    [self fetchLatestCounters];
+//    [self fetchLatestCounters];
     [self updateSharedData];
     
     [MyDBManager setValue:@(NO) forKey:@"syncSetup"];

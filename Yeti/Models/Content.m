@@ -87,8 +87,7 @@
 
 }
 
-- (void)setAttributesFromDictionary:(NSDictionary *)aDictionary
-{
+- (void)setAttributesFromDictionary:(NSDictionary *)aDictionary {
 
     if (![aDictionary isKindOfClass:[NSDictionary class]]) {
         return;

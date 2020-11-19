@@ -2555,7 +2555,7 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    NSString *path = [NSString stringWithFormat:@"/1.7/feeds/%@", feedID];
+    NSString *path = [NSString stringWithFormat:@"/2.2/feeds/%@", feedID];
     
     __block DZURLSession *session = self.session;
     
@@ -3019,8 +3019,8 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
-        session.baseURL = [NSURL URLWithString:@"http://192.168.1.93:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
+//        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
 #ifndef DEBUG
         session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
@@ -3980,6 +3980,8 @@ NSArray <NSString *> * _defaultsKeys;
         [WidgetManager reloadTimelineWithName:@"CountersWidget"];
         
     }];
+    
+    [[NSRunLoop currentRunLoop] addTimer:self.widgetCountersUpdateTimer forMode:NSRunLoopCommonModes];
     
 }
 

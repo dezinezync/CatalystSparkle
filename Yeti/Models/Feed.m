@@ -4,6 +4,12 @@
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
 
+@interface Feed ()
+
+@property (atomic, strong) NSTimer *updateCountersTimer;
+
+@end
+
 @implementation Feed
 
 #pragma mark -
@@ -343,6 +349,58 @@
 
     return dictionary;
 
+}
+
+- (void)updateUnreadCount {
+    
+    NSLogDebug(@"Will update unread count for: %@", self.feedID);
+    
+    if (self.updateCountersTimer != nil) {
+        
+        [self.updateCountersTimer invalidate];
+        self.updateCountersTimer = nil;
+        
+    }
+    
+    self.updateCountersTimer = [NSTimer scheduledTimerWithTimeInterval:3 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        
+        NSLog(@"Fetching counters for: %@", self.feedID);
+        
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+           
+            YapDatabaseViewTransaction *tnx = [transaction extension:UNREADS_FEED_EXT];
+            
+            __block NSUInteger count = 0;
+            NSDate *now = NSDate.date;
+            
+            [tnx enumerateRowsInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+                
+                NSDictionary *meta = metadata;
+                
+                if ([object.feedID isEqualToNumber:self.feedID] && [([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+                    
+                    if ([object isRead] == NO) {
+                    
+                        if ([now timeIntervalSinceDate:object.timestamp] <= 1209600) {
+                            count++;
+                        }
+                        
+                    }
+                    
+                }
+                
+            }];
+            
+            self.unread = @(count);
+            
+            NSLogDebug(@"%@: Number of unreads: %@", self.feedID, @(count));
+            
+        }];
+        
+    }];
+    
+    [[NSRunLoop currentRunLoop] addTimer:self.updateCountersTimer forMode:NSRunLoopCommonModes];
+    
 }
 
 #pragma mark - Getters
