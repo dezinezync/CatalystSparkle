@@ -222,7 +222,16 @@ NSString* deviceName() {
     vc.mainCoordinator = self;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    if (self.splitViewController.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomPhone && self.splitViewController.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+        
+        nav.modalPresentationStyle = UIModalPresentationFormSheet;
+        
+    }
+    else {
+        nav.modalPresentationStyle = UIModalPresentationFullScreen;
+    }
+    
     nav.modalInPresentation = YES;
     
     [self.splitViewController presentViewController:nav animated:YES completion:nil];

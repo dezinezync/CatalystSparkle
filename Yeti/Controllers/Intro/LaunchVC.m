@@ -16,6 +16,8 @@
 #import "DBManager.h"
 #import <DZKit/AlertManager.h>
 
+#import "RecommendationsVC.h"
+
 #import <AuthenticationServices/AuthenticationServices.h>
 
 @interface LaunchVC () <ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding>
@@ -113,6 +115,15 @@
     controller.presentationContextProvider = self;
     
     [controller performRequests];
+    
+}
+- (IBAction)didTapExplore:(UIButton *)sender {
+    
+    RecommendationsVC *vc = [[RecommendationsVC alloc] initWithNibName:NSStringFromClass(RecommendationsVC.class) bundle:nil];
+    vc.mainCoordinator = self.mainCoordinator;
+    vc.noAuth = YES;
+    
+    [self.navigationController pushViewController:vc animated:YES];
     
 }
 

@@ -758,7 +758,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)getArticle:(NSNumber *)articleID feedID:(NSNumber *)feedID success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)getArticle:(NSNumber *)articleID feedID:(NSNumber *)feedID noAuth:(BOOL)noAuth  success:(successBlock)successCB error:(errorBlock)errorCB {
     
     if (articleID == nil || [articleID integerValue] == 0) {
         if (errorCB) {
@@ -786,7 +786,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSString *path = formattedString(@"/1.2/article/%@", articleID);
     
-    NSMutableDictionary *params = @{}.mutableCopy;
+    NSMutableDictionary *params = @{@"noauth": @(noAuth)}.mutableCopy;
     
     if (MyFeedsManager.userID) {
         params[@"userID"] = MyFeedsManager.userID;
@@ -1003,11 +1003,14 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)getRecommendations:(NSInteger)count success:(successBlock)successCB error:(errorBlock)errorCB {
+- (void)getRecommendations:(NSInteger)count noAuth:(BOOL)noAuth success:(successBlock)successCB error:(errorBlock)errorCB {
     
     count = count ?: 9;
     
-    [self.session GET:@"/recommendations" parameters:@{@"count": @(count)} success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSMutableDictionary *params = @{@"count": @(count)}.mutableCopy;
+    params[@"noauth"] = @(noAuth);
+    
+    [self.session GET:@"/recommendations" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
             return;
@@ -3019,10 +3022,10 @@ NSArray <NSString *> * _defaultsKeys;
 
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
-        session.baseURL = [NSURL URLWithString:@"http://192.168.1.15:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
+        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
 #ifndef DEBUG
-        session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"https://api-acc.elytra.app"];
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
@@ -3831,7 +3834,7 @@ NSArray <NSString *> * _defaultsKeys;
                     
                     weakify(self);
                     
-                    [self getArticle:obj feedID:nil success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                    [self getArticle:obj feedID:nil noAuth:NO success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                         
                         strongify(self);
                         
