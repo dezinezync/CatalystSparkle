@@ -33,6 +33,8 @@ NSString *const kNotificationsKey = @"notifications";
 
 @property (nonatomic, assign, getter=isSyncSetup) BOOL syncSetup;
 
+@property (atomic, strong, readwrite) dispatch_queue_t readQueue;
+
 @end
 
 @implementation DBManager
@@ -125,7 +127,8 @@ NSString *const kNotificationsKey = @"notifications";
         NSOperationQueue *queue = [[NSOperationQueue alloc] init];
         queue.maxConcurrentOperationCount = 1;
         queue.name = @"com.elytra.sync.serialFetchArticles";
-//        queue.underlyingQueue = dispatch_queue_create("com.elytra.sync.serialFetchQueue", DISPATCH_QUEUE_SERIAL);
+        
+        self.readQueue = dispatch_queue_create("com.elytra.sync.serialFetchQueue", DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL);
         
         _syncQueue = queue;
         
@@ -272,9 +275,6 @@ NSString *const kNotificationsKey = @"notifications";
             Feed *feed = [transaction objectForKey:key inCollection:LOCAL_FEEDS_COLLECTION];
             
             if (feed != nil) {
-                
-//                feed.unread = @(0);
-                [feed updateUnreadCountImmediate];
                 
                 [feeds addObject:feed];
                 
@@ -533,17 +533,17 @@ NSString *const kNotificationsKey = @"notifications";
         else if ([collection isEqualToString:LOCAL_FOLDERS_COLLECTION]) {
             objClass = Folder.class;
         }
-//        else if ([collection isEqualToString:@"user"]) {
-//            objClass = NSString.class;
-//        }
+        else if ([collection isEqualToString:LOCAL_ARTICLES_CONTENT_COLLECTION]) {
+            objClass = Content.class;
+        }
         else if ([collection isEqualToString:LOCAL_SETTINGS_COLLECTION]) {
             objClass = NSValue.class;
         }
         
-        id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:objClass, NSDictionary.class, nil] fromData:data error:&error];
+        id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithObjects:objClass, NSArray.class, NSDictionary.class, nil] fromData:data error:&error];
         
         if (error) {
-            NSLog(@"Error: Failed to deserialize object for key:%@:%@ -> %@", collection, key, error.localizedDescription);
+            NSLogDebug(@"Error: Failed to deserialize object for key:%@:%@ -> %@ %@", collection, key, error.localizedDescription, error.userInfo);
         }
         
         return object;
@@ -641,7 +641,7 @@ NSString *const kNotificationsKey = @"notifications";
     // Setup database connection(s)
     
     _uiConnection = [_database newConnection];
-    _uiConnection.objectCacheLimit = 100;
+    _uiConnection.objectCacheLimit = 50;
     _uiConnection.metadataCacheEnabled = YES;
     
     _bgConnection = [_database newConnection];
@@ -649,9 +649,10 @@ NSString *const kNotificationsKey = @"notifications";
     _bgConnection.metadataCacheEnabled = NO;
     
     _countsConnection = [_database newConnection];
-    _countsConnection.objectCacheLimit = 500;
-    _countsConnection.objectCacheEnabled = YES;
+//    _countsConnection.objectCacheLimit = 500;
+    _countsConnection.objectCacheEnabled = NO;
     _countsConnection.metadataCacheEnabled = YES;
+    _countsConnection.metadataCacheLimit = 200;
     
     // Start the longLivedReadTransaction on the UI connection.
     [_uiConnection enableExceptionsForImplicitlyEndingLongLivedReadTransaction];
@@ -681,7 +682,7 @@ NSString *const kNotificationsKey = @"notifications";
     {
         YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withObjectBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object) {
             
-            if ([collection containsString:LOCAL_ARTICLES_COLLECTION] && [collection isEqualToString:@"localArticles"] == NO) {
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
                 return GROUP_ARTICLES; //[NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, [(FeedItem *)object feedID]];
             }
             else if ([collection containsString:LOCAL_FEEDS_COLLECTION]) {
@@ -709,7 +710,7 @@ NSString *const kNotificationsKey = @"notifications";
                 return [feed1.feedID compare:feed2.feedID];
 
             }
-            else if ([group isEqualToString:GROUP_ARTICLES]) {
+            else if ([group containsString:GROUP_ARTICLES]) {
                 
                 FeedItem *item1 = object1;
                 FeedItem *item2 = object2;
@@ -739,7 +740,7 @@ NSString *const kNotificationsKey = @"notifications";
             
         }];
         
-        NSString *versionTag = @"2020-11-19 06:55PM";
+        NSString *versionTag = @"2020-11-20 05:32PM";
         
         YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
         
@@ -763,7 +764,7 @@ NSString *const kNotificationsKey = @"notifications";
             
         }];
         
-        unreadsFeedView = [[YapDatabaseFilteredView alloc] initWithParentViewName:@"articlesView" filtering:filtering versionTag:@"2020-11-19 06:55PM"];
+        unreadsFeedView = [[YapDatabaseFilteredView alloc] initWithParentViewName:@"articlesView" filtering:filtering versionTag:@"2020-11-20 05:32PM"];
         
         [_database registerExtension:unreadsFeedView withName:UNREADS_FEED_EXT];
         
@@ -1166,49 +1167,71 @@ NSString *const kNotificationsKey = @"notifications";
 
 - (void)updateUnreadCounters {
     
-    runOnMainQueueWithoutDeadlocking(^{
-       
-        __block NSUInteger count = 0;
-        __block NSUInteger today = 0;
+    __block NSUInteger count = 0;
+    __block NSUInteger today = 0;
+    
+    ArticlesManager *manager = ArticlesManager.shared;
+    
+    for (Feed *feed in manager.feeds) {
         
-        [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-           
-            YapDatabaseViewTransaction *tnx = [transaction extension:UNREADS_FEED_EXT];
+        feed->_countingUnread = 0;
+        
+    }
+    
+    [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        YapDatabaseViewTransaction *tnx = [transaction extension:UNREADS_FEED_EXT];
+        
+        NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970];
+        
+        [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
             
-            NSDate *now = NSDate.date;
+            NSDictionary *meta = metadata;
             
-            [tnx enumerateRowsInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+            if ([([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
                 
-                NSDictionary *meta = metadata;
+                NSTimeInterval articleTimestamp = [[meta valueForKey:@"timestamp"] doubleValue];
                 
-                if ([([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
-                    
-                    if ([object isRead] == NO) {
-                    
-                        if ([now timeIntervalSinceDate:object.timestamp] <= 1209600) {
-                            count++;
-                        }
-                        
-                        if ([NSCalendar.currentCalendar isDateInToday:object.timestamp]) {
-                            today++;
-                        }
-                        
-                    }
-                    
+                if ((timestamp - articleTimestamp) <= 1209600) {
+                    count++;
                 }
                 
-            }];
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:articleTimestamp];
+                
+                if ([NSCalendar.currentCalendar isDateInToday:date]) {
+                    today++;
+                }
+                
+            }
             
-            runOnMainQueueWithoutDeadlocking(^{
-                MyFeedsManager.totalUnread = count;
-                MyFeedsManager.totalToday = today;
-            });
+            Feed *feed = [manager feedForID:[meta valueForKey:@"feedID"]];
             
-            NSLogDebug(@"Total Unread: %@\nTotal Today: %@", @(count), @(today));
+            if (feed != nil) {
+                @synchronized (feed) {
+                    feed->_countingUnread++;
+                }
+            }
             
         }];
         
-    });
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            MyFeedsManager.totalUnread = count;
+            MyFeedsManager.totalToday = today;
+            
+            // flush all the countingUnreads to the feed objects
+            for (Feed *feed in manager.feeds) {
+                
+                feed.unread = @(feed->_countingUnread);
+                feed->_countingUnread = 0;
+                
+            }
+            
+        });
+        
+        NSLogDebug(@"Total Unread: %@\nTotal Today: %@", @(count), @(today));
+        
+    }];
     
 }
 
@@ -1296,16 +1319,6 @@ NSString *const kNotificationsKey = @"notifications";
                 
             }];
             
-            Feed * feed = [ArticlesManager.shared feedForID:feedID];
-            
-            if (feed) {
-                
-                runOnMainQueueWithoutDeadlocking(^{
-                    [feed updateUnreadCount];
-                });
-                
-            }
-            
         }
         else {
             
@@ -1319,16 +1332,6 @@ NSString *const kNotificationsKey = @"notifications";
                     
                     runOnMainQueueWithoutDeadlocking(^{
                         self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
-                    });
-                    
-                }
-                
-                Feed * feed = [ArticlesManager.shared feedForID:feedID];
-                
-                if (feed) {
-                    
-                    runOnMainQueueWithoutDeadlocking(^{
-                        [feed updateUnreadCount];
                     });
                     
                 }
@@ -1393,6 +1396,20 @@ NSString *const kNotificationsKey = @"notifications";
     
 }
 
+- (NSArray *)contentForArticle:(NSNumber *)identifier {
+    
+    __block NSArray *content = nil;
+    
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        content = [transaction objectForKey:identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+        
+    }];
+    
+    return content;
+    
+}
+
 - (void)addArticle:(FeedItem *)article {
     
     if (!article || !article.identifier || !article.feedID) {
@@ -1403,13 +1420,22 @@ NSString *const kNotificationsKey = @"notifications";
     [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
         
         NSString *collection = [self collectionForArticle:article];
+        
+        if (article.content) {
+            
+            [transaction setObject:article.content forKey:article.identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+            
+        }
+        
+        article.content = nil;
        
 //        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection];
         [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:@{
             @"read": @(article.isRead),
             @"bookmarked": @(article.isBookmarked),
             @"mercury": @(article.mercury),
-            @"feedID": article.feedID
+            @"feedID": article.feedID,
+            @"timestamp": @([article.timestamp timeIntervalSince1970])
         }];
         
     }];

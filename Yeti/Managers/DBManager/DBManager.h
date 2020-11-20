@@ -40,6 +40,7 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 #define LOCAL_FEEDS_COLLECTION @"localFeeds"
 #define LOCAL_FOLDERS_COLLECTION @"localFolders"
 #define LOCAL_ARTICLES_COLLECTION @"articles"
+#define LOCAL_ARTICLES_CONTENT_COLLECTION @"artContent" // cannot use "articles" here as it conflicts with the db setup.
 #define LOCAL_SETTINGS_COLLECTION @"localSettings" // internal app settings
 
 #define GROUP_ARTICLES @"articles"
@@ -68,6 +69,8 @@ extern DBManager * MyDBManager;
 
 @property (nonatomic, copy) syncProgressBlock syncProgressBlock;
 
+@property (atomic, strong, readonly) dispatch_queue_t readQueue;
+
 #pragma mark - Methods
 
 - (User * _Nullable)getUser;
@@ -92,6 +95,8 @@ extern DBManager * MyDBManager;
 #pragma mark - Articles
 
 - (FeedItem *)articleForID:(NSNumber *)identifier feedID:(NSNumber *)feedID;
+
+- (NSArray *)contentForArticle:(NSNumber *)identifier;
 
 - (void)addArticle:(FeedItem *)article;
 

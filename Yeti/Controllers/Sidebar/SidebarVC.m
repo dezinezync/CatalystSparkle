@@ -603,7 +603,9 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [self.refreshControl endRefreshing];
             }
             
-            [MyDBManager updateUnreadCounters];
+            dispatch_async(MyDBManager.readQueue, ^{
+                [MyDBManager updateUnreadCounters];
+            });
             
             if (self.mainCoordinator.feedVC != nil
                 && ([self.mainCoordinator.feedVC isKindOfClass:UnreadVC.class] || [self.mainCoordinator.feedVC isKindOfClass:NSClassFromString(@"TodayVC")])) {
@@ -970,13 +972,13 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)beginRefreshingAll:(UIRefreshControl *)sender {
     
-//    if (self->_refreshing) {
-//        return;
-//    }
-//
-//    self->_fetchingCounters = NO;
-//
-//    [self sync];
+    if (self->_refreshing) {
+        return;
+    }
+
+    self->_fetchingCounters = NO;
+
+    [self sync];
     
 }
 

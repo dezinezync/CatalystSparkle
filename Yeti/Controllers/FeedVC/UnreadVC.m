@@ -217,31 +217,36 @@
             
             self.controllerState = StateLoading;
             
-            [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            dispatch_async(MyDBManager.readQueue, ^{
                 
-                YapDatabaseViewTransaction *ext = [transaction extension:kUnreadsDBFilteredView];
-                
-                if (ext == nil) {
-                    return completion(nil);
-                }
-                
-                NSRange range = NSMakeRange(((self.unreadsManager.page - 1) * 20) - 1, 20);
-                
-                if (self.unreadsManager.page == 1) {
-                    range.location = 0;
-                }
-                
-                NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
-                
-                [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
-                   
-                    [items addObject:object];
+                [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                    
+                    YapDatabaseViewTransaction *ext = [transaction extension:kUnreadsDBFilteredView];
+                    
+                    if (ext == nil) {
+                        return completion(nil);
+                    }
+                    
+                    NSRange range = NSMakeRange(((self.unreadsManager.page - 1) * 20) - 1, 20);
+                    
+                    if (self.unreadsManager.page == 1) {
+                        range.location = 0;
+                    }
+                    
+                    NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                    
+                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                       
+                        [items addObject:object];
+                        
+                    }];
+                    
+                    completion(items);
                     
                 }];
+
                 
-                completion(items);
-                
-            }];
+            });
             
         };
         

@@ -7,7 +7,9 @@
 #import "Folder.h"
 
 @interface Feed : DZObject <NSSecureCoding, NSCopying> {
-    
+@public
+    // ivar used when counting unreads to sync to the main property.
+    NSUInteger _countingUnread;
 }
 
 @property (nonatomic, weak) id<UnreadCountObservor> unreadCountObservor;
@@ -49,8 +51,5 @@
 @property (nonatomic, strong) NSString *localName;
 
 - (BOOL)canShowExtraShareLevel;
-
-- (void)updateUnreadCount;
-- (void)updateUnreadCountImmediate;
 
 @end
