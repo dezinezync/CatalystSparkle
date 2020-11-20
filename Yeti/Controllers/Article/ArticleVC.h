@@ -38,6 +38,8 @@
 #endif
 }
 
+@property (nonatomic, assign) BOOL noAuth;
+
 - (instancetype _Nonnull)initWithItem:(FeedItem * _Nonnull)item;
 
 @property (nonatomic, strong) FeedItem * _Nullable item;

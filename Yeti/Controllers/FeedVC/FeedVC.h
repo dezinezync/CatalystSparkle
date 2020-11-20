@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @property (nonatomic, weak) Feed * _Nullable feed;
+@property (nonatomic, assign) BOOL noAuth;
 
 + (UINavigationController * _Nullable)instanceInNavigationController;
 

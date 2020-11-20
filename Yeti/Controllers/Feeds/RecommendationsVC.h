@@ -12,6 +12,8 @@
 
 @property (nonatomic, assign, getter=isOnboarding) BOOL onboarding;
 
+@property (nonatomic, assign) BOOL noAuth;
+
 @property (atomic, assign) BOOL isFromAddFeed;
 
 @end

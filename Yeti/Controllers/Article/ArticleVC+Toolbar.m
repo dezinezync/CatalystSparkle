@@ -30,6 +30,10 @@
 
 - (NSArray <UIBarButtonItem *> *)leftBarButtonItems {
     
+    if (self.noAuth) {
+        return @[];
+    }
+    
     UIImage * readImage = [UIImage systemImageNamed:@"smallcircle.fill.circle"],
             * bookmarkImage = [UIImage systemImageNamed:(self.item.isBookmarked ? @"bookmark.fill" : @"bookmark")],
             * searchImage = [UIImage systemImageNamed:@"magnifyingglass"];
@@ -63,6 +67,10 @@
 
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
+    if (self.noAuth) {
+        return @[];
+    }
+    
     if (self.providerDelegate == nil) {
         return @[];
     }
@@ -94,6 +102,10 @@
 }
 
 - (NSArray <UIBarButtonItem *> *)commonNavBarItems {
+    
+    if (self.noAuth) {
+        return @[];
+    }
     
     UIImage * shareImage = [UIImage systemImageNamed:@"square.and.arrow.up"],
             * browserImage = [UIImage systemImageNamed:@"safari"],

@@ -202,7 +202,7 @@
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
     
-    if (self.isExploring == YES || self.isFromAddFeed == YES) {
+    if (self.noAuth == NO && (self.isExploring == YES || self.isFromAddFeed == YES)) {
         // check if the user is subscribed to this feed
         Feed *existing = [MyFeedsManager feedForID:self.feed.feedID];
         if (!existing) {
@@ -559,9 +559,17 @@
 
 - (PagingManager *)pagingManager {
     
-    if (_pagingManager == nil && MyFeedsManager.userID != nil) {
+    if (_pagingManager == nil && (MyFeedsManager.userID != nil || self.noAuth == YES)) {
         
-        NSMutableDictionary *params = @{@"userID": MyFeedsManager.userID, @"limit": @10}.mutableCopy;
+        NSMutableDictionary *params = @{@"limit": @10}.mutableCopy;
+        
+        if (MyFeedsManager.userID != nil) {
+            params[@"userID"] = MyFeedsManager.userID;
+        }
+        
+        if (self.noAuth) {
+            params[@"noauth"] = @(self.noAuth);
+        }
         
         params[@"sortType"] = @([(NSNumber *)(_sortingOption ?: @0 ) integerValue]);
         
@@ -1031,6 +1039,7 @@
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
     vc.bookmarksManager = self.bookmarksManager;
+    vc.noAuth = self.noAuth;
     
     [self _showArticleVC:vc];
     
