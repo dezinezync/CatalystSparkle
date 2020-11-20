@@ -111,7 +111,7 @@
         
         FeedItem *articleInDS = [self itemForIndexPath:indexPath];
         
-        if (articleInDS == nil) {
+        if (articleInDS == nil && self.DS.snapshot.numberOfItems > 0) {
             articleInDS = [self.DS.snapshot.itemIdentifiers objectAtIndex:index];
         }
         

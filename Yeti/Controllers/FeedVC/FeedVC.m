@@ -200,15 +200,50 @@
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
-    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
-       
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
-            return GROUP_ARTICLES;
-        }
+    if (self.dbView == nil) {
         
-        return nil;
+        YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
+           
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+                return GROUP_ARTICLES;
+            }
+            
+            return nil;
+            
+        }];
         
-    }];
+        weakify(sortingOption);
+        
+        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+            
+            NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+            
+            if (result == NSOrderedSame) {
+                return result;
+            }
+            
+            strongify(sortingOption);
+            
+            if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+                
+                if (result == NSOrderedDescending) {
+                    return NSOrderedAscending;
+                }
+                
+                return NSOrderedDescending;
+                
+            }
+            
+            return result;
+            
+        }];
+        
+        YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
+        self.dbView = view;
+        
+        [MyDBManager.database registerExtension:self.dbView withName:kFeedDBView];
+        
+    }
     
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
         
@@ -233,37 +268,6 @@
         return checkOne && checkTwo;
         
     }];
-    
-    weakify(sortingOption);
-    
-    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
-        
-        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
-        
-        if (result == NSOrderedSame) {
-            return result;
-        }
-        
-        strongify(sortingOption);
-        
-        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
-            
-            if (result == NSOrderedDescending) {
-                return NSOrderedAscending;
-            }
-            
-            return NSOrderedDescending;
-            
-        }
-        
-        return result;
-        
-    }];
-    
-    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
-    self.dbView = view;
-    
-    [MyDBManager.database registerExtension:self.dbView withName:kFeedDBView];
     
     YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kFeedDBView filtering:filter];
     
@@ -672,7 +676,7 @@
         
         PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
         
-        if (self.noAuth == NO) {
+        if (self.noAuth == NO && self.isExploring == NO) {
             
             pagingManager.fromDB = YES;
             

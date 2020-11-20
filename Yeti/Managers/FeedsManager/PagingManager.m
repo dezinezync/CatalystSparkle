@@ -150,7 +150,7 @@
                     
                     self.page = [params[@"page"] integerValue] + 1;
                    
-                    self.hasNextPage = (items.count < 20);
+                    self.hasNextPage = (items.count == 20);
                     
                     [self.uniqueItems addObjectsFromArray:items];
                     

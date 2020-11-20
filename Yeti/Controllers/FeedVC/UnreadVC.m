@@ -104,8 +104,9 @@
     }];
     
     NSDate *now = NSDate.date;
+    NSTimeInterval interval = [now timeIntervalSince1970];
     
-    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata) {
         
         if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
             return NO;
@@ -114,10 +115,17 @@
         // article metadata is an NSDictionary
         NSDictionary *dict = metadata;
         
-        BOOL checkOne = ([([dict valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
-        BOOL checkTwo = [now timeIntervalSinceDate:object.timestamp] <= 1209600;
+        NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
         
-        return checkOne && checkTwo;
+        BOOL checkOne = (interval - timestamp) <= 1209600;
+        
+        if (checkOne == NO) {
+            return NO;
+        }
+        
+        BOOL checkTwo = ([([dict valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
+        
+        return checkTwo;
         
     }];
     

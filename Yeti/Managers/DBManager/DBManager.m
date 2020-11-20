@@ -122,8 +122,6 @@ NSString *const kNotificationsKey = @"notifications";
     
     if (self = [super init]) {
         
-        [self setupDatabase];
-        
         NSOperationQueue *queue = [[NSOperationQueue alloc] init];
         queue.maxConcurrentOperationCount = 1;
         queue.name = @"com.elytra.sync.serialFetchArticles";
@@ -131,6 +129,8 @@ NSString *const kNotificationsKey = @"notifications";
         self.readQueue = dispatch_queue_create("com.elytra.sync.serialFetchQueue", DISPATCH_QUEUE_CONCURRENT_WITH_AUTORELEASE_POOL);
         
         _syncQueue = queue;
+        
+        [self setupDatabase];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -669,7 +669,7 @@ NSString *const kNotificationsKey = @"notifications";
 //#ifdef DEBUG
 //    [self purgeDataForResync];
 //#endif
-//    [self cleanupDatabase];
+    [self cleanupDatabase];
     
 }
 
@@ -775,12 +775,13 @@ NSString *const kNotificationsKey = @"notifications";
 - (void)cleanupDatabase {
     
     // remove articles older than 2 weeks from the DB cache.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+    dispatch_async(self.readQueue, ^{
         
         NSDate *now = NSDate.date;
+        NSTimeInterval interval = [now timeIntervalSince1970];
        
-        [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-           
+        [self.bgConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
             NSArray <NSString *> * collections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
                 return [obj containsString:LOCAL_ARTICLES_COLLECTION];
             }];
@@ -808,22 +809,25 @@ NSString *const kNotificationsKey = @"notifications";
                 
                 for (NSNumber *key in keys) {
                     
-                    FeedItem *item = [transaction objectForKey:key.stringValue inCollection:col];
+                    NSDictionary *item = [transaction metadataForKey:key.stringValue inCollection:col];
                     
                     // if it is older than 2 weeks, delete it
                     if (item != nil) {
+//                        dispatch_get_global_queue
                         
-                        NSDate *created = item.timestamp;
+                        if ([([item valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == YES) {
+                            continue;
+                        }
                         
-                        NSTimeInterval since = [now timeIntervalSinceDate:created];
+                        NSTimeInterval timestamp = [[item valueForKey:@"timestamp"] doubleValue];
                         
-                        double days = floor(since / 86400);
+                        NSTimeInterval since = interval - timestamp;
                         
-                        if(days >= 14.f) {
+                        if(since >= 2592000) {
                             
                             NSLog(@"Article is stale %@:%@. Deleted.", col, key);
                             
-                            [self _deleteArticle:key.stringValue collection:col transaction:transaction];
+                            [self _deleteArticle:key.stringValue collection:col];
                             
                         }
                         
@@ -1446,17 +1450,17 @@ NSString *const kNotificationsKey = @"notifications";
     
     NSString *collection = [self collectionForArticle:article];
     
-    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
-        
-        [self _deleteArticle:article.identifier.stringValue collection:collection transaction:transaction];
-        
-    }];
+    [self _deleteArticle:article.identifier.stringValue collection:collection];
     
 }
 
-- (void)_deleteArticle:(NSString *)key collection:(NSString *)col transaction:(YapDatabaseReadWriteTransaction *)transaction {
+- (void)_deleteArticle:(NSString *)key collection:(NSString *)col {
     
-    [transaction removeObjectForKey:key inCollection:col];
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        [transaction removeObjectForKey:key inCollection:col];
+        
+    }];
     
 }
 
