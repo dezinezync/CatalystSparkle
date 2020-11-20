@@ -187,6 +187,10 @@ static ArticlesManager * SharedArticleManager = nil;
 
 - (Feed *)feedForID:(NSNumber *)feedID {
     
+    if (feedID == nil) {
+        return nil;
+    }
+    
     Feed * filtered = [ArticlesManager.shared.feeds rz_find:^BOOL(Feed *obj, NSUInteger idx, NSArray *array) {
        
         return [obj.feedID isEqualToNumber:feedID];

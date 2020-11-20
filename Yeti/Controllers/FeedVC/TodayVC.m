@@ -8,9 +8,15 @@
 
 #import "TodayVC.h"
 
+#define kTodayDBView @"todayDBView"
+#define kTodayDBFilteredView @"todayDBFilteredView"
+
 @interface TodayVC ()
 
 @property (nonatomic, strong) PagingManager *todayManager;
+
+@property (nonatomic, strong) YapDatabaseAutoView *dbView;
+@property (nonatomic, strong) YapDatabaseFilteredView *dbFilteredView;
 
 @end
 
@@ -37,6 +43,7 @@
     
     self.title = @"Today";
     self.pagingManager = self.todayManager;
+    self.controllerState = StateDefault;
     
 #if !TARGET_OS_MACCATALYST
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
@@ -49,9 +56,101 @@
     
 }
 
+- (void)unregisterDBViews {
+    
+    if (self.dbFilteredView) {
+        [MyDBManager.database unregisterExtensionWithName:kTodayDBFilteredView];
+        self.dbFilteredView = nil;
+    }
+    
+    if (self.dbView) {
+        [MyDBManager.database unregisterExtensionWithName:kTodayDBView];
+        self.dbView = nil;
+    }
+    
+}
+
 - (void)dealloc {
     
+    [self unregisterDBViews];
+    
     [NSNotificationCenter.defaultCenter removeObserver:self];
+    
+}
+
+- (void)setupDatabases:(YetiSortOption)sortingOption {
+    
+    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
+       
+        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+            return GROUP_ARTICLES;
+        }
+        
+        return nil;
+        
+    }];
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+        
+        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+            return NO;
+        }
+        
+        // article metadata is an NSDictionary
+        NSDictionary *dict = metadata;
+        
+        NSTimeInterval interval = [[dict valueForKey:@"timestamp"] doubleValue];
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval];
+        
+        BOOL checkOne = [NSCalendar.currentCalendar isDateInToday:date];
+        BOOL checkTwo = YES;
+        
+        if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
+            
+        }
+        
+        return checkOne && checkTwo;
+        
+    }];
+    
+    weakify(sortingOption);
+    
+    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+        
+        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+        
+        if (result == NSOrderedSame) {
+            return result;
+        }
+        
+        strongify(sortingOption);
+        
+        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            if (result == NSOrderedDescending) {
+                return NSOrderedAscending;
+            }
+            
+            return NSOrderedDescending;
+            
+        }
+        
+        return result;
+        
+    }];
+    
+    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
+    self.dbView = view;
+    
+    [MyDBManager.database registerExtension:self.dbView withName:kTodayDBView];
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kTodayDBView filtering:filter];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
     
 }
 
@@ -65,6 +164,10 @@
     
     return [totalArticles stringByAppendingString:unread];
     
+}
+
+- (PagingManager *)pagingManager {
+    return self.todayManager;
 }
 
 - (PagingManager *)todayManager {
@@ -85,6 +188,48 @@
         }
         
         PagingManager * todayManager = [[PagingManager alloc] initWithPath:@"/1.7/today" queryParams:params itemsKey:@"articles"];
+        todayManager.fromDB = YES;
+        
+        weakify(self);
+        
+        todayManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
+          
+            strongify(self);
+            
+            self.controllerState = StateLoading;
+            
+            dispatch_async(MyDBManager.readQueue, ^{
+                
+                [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                    
+                    YapDatabaseViewTransaction *ext = [transaction extension:kTodayDBFilteredView];
+                    
+                    if (ext == nil) {
+                        return completion(nil);
+                    }
+                    
+                    NSRange range = NSMakeRange(((self.todayManager.page - 1) * 20) - 1, 20);
+                    
+                    if (self.todayManager.page == 1) {
+                        range.location = 0;
+                    }
+                    
+                    NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                    
+                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                       
+                        [items addObject:object];
+                        
+                    }];
+                    
+                    completion(items);
+                    
+                }];
+
+                
+            });
+            
+        };
         
         _todayManager = todayManager;
     }
@@ -93,7 +238,7 @@
         _todayManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-                return [FeedItem instanceFromDictionary:obj];
+                return [obj isKindOfClass:NSDictionary.class] ? [FeedItem instanceFromDictionary:obj] : obj;
             }];
             
             return retval;
@@ -176,7 +321,6 @@
     if (sender != nil) {
 #endif
         self.todayManager = nil;
-        self.pagingManager = self.todayManager;
         [self loadNextPage];
 #if !TARGET_OS_MACCATALYST
     }
@@ -190,6 +334,23 @@
 
 - (BOOL)showsSortingButton {
     return YES;
+}
+
+- (void)setSortingOption:(YetiSortOption)sortingOption {
+    
+    if (self.sortingOption == sortingOption) {
+        return;
+    }
+    
+    runOnMainQueueWithoutDeadlocking(^{
+        [self unregisterDBViews];
+        [self setupDatabases:sortingOption];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.125 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [super setSortingOption:sortingOption];
+    });
+    
 }
 
 - (void)_setSortingOption:(YetiSortOption)option {
