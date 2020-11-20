@@ -139,23 +139,21 @@
                 
                 self.loading = NO;
                 
-                if (items == nil || items.count == 0) {
+                if (items == nil) {
                     self.hasNextPage = NO;
                 }
+                else {
                 
-                if (items != nil && self.preProcessorCB) {
-                    items = self.preProcessorCB(items);
-                }
-                
-                if (items != nil) {
+                    if (self.preProcessorCB) {
+                        items = self.preProcessorCB(items);
+                    }
                     
                     self.page = [params[@"page"] integerValue] + 1;
                    
-                    if (items.count < 20) {
-                        self.hasNextPage = NO;
-                    }
+                    self.hasNextPage = (items.count < 20);
                     
                     [self.uniqueItems addObjectsFromArray:items];
+                    
                 }
                 
                 if (self.successCB) {

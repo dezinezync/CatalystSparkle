@@ -9,9 +9,15 @@
 #import "FolderVC.h"
 #import <DZKit/AlertManager.h>
 
+#define kFolderDBView @"folderdDBView"
+#define kFolderDBFilteredView @"folderDBFilteredView"
+
 @interface FolderVC ()
 
 @property (nonatomic, strong) PagingManager *folderFeedsManager;
+
+@property (nonatomic, strong) YapDatabaseAutoView *dbView;
+@property (nonatomic, strong) YapDatabaseFilteredView *dbFilteredView;
 
 @end
 
@@ -54,6 +60,107 @@
 #endif
 }
 
+- (void)unregisterDBViews {
+    
+    if (self.dbFilteredView) {
+        [MyDBManager.database unregisterExtensionWithName:kFolderDBFilteredView];
+        self.dbFilteredView = nil;
+    }
+    
+    if (self.dbView) {
+        [MyDBManager.database unregisterExtensionWithName:kFolderDBView];
+        self.dbView = nil;
+    }
+    
+}
+
+- (void)dealloc {
+    
+    [self unregisterDBViews];
+    
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    
+}
+
+- (void)setupDatabases:(YetiSortOption)sortingOption {
+    
+    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
+       
+        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+            return GROUP_ARTICLES;
+        }
+        
+        return nil;
+        
+    }];
+    
+    YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
+        
+        if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+            return NO;
+        }
+        
+        // article metadata is an NSDictionary
+        NSDictionary *dict = metadata;
+        
+        NSNumber *feedID = [dict valueForKey:@"feedID"];
+        
+        if ([self.folder.feedIDs containsObject:feedID] == NO) {
+            return NO;
+        }
+        
+        BOOL checkOne = YES; //[feedID isEqualToNumber:self.feed.feedID];
+        BOOL checkTwo = YES;
+        
+        if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
+            
+        }
+        
+        return checkOne && checkTwo;
+        
+    }];
+    
+    weakify(sortingOption);
+    
+    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+        
+        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+        
+        if (result == NSOrderedSame) {
+            return result;
+        }
+        
+        strongify(sortingOption);
+        
+        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+            
+            if (result == NSOrderedDescending) {
+                return NSOrderedAscending;
+            }
+            
+            return NSOrderedDescending;
+            
+        }
+        
+        return result;
+        
+    }];
+    
+    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
+    self.dbView = view;
+    
+    [MyDBManager.database registerExtension:self.dbView withName:kFolderDBView];
+    
+    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kFolderDBView filtering:filter];
+    
+    self.dbFilteredView = filteredView;
+    
+    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFolderDBFilteredView];
+    
+}
+
 #pragma mark - Setters
 
 - (void)setFolder:(Folder *)folder {
@@ -89,6 +196,49 @@
         
         PagingManager * pagingManager = [[PagingManager alloc] initWithPath:path queryParams:params itemsKey:@"articles"];
         
+        pagingManager.fromDB = YES;
+        
+        weakify(self);
+        
+        pagingManager.dbFetchingCB = ^(void (^ _Nonnull completion)(NSArray * _Nullable)) {
+            
+            strongify(self);
+            
+            self.controllerState = StateLoading;
+            
+            dispatch_async(MyDBManager.readQueue, ^{
+                
+                [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                    
+                    YapDatabaseViewTransaction *ext = [transaction extension:kFolderDBFilteredView];
+                    
+                    if (ext == nil) {
+                        return completion(nil);
+                    }
+                    
+                    NSRange range = NSMakeRange(((self.pagingManager.page - 1) * 20) - 1, 20);
+                    
+                    if (self.pagingManager.page == 1) {
+                        range.location = 0;
+                    }
+                    
+                    NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
+                    
+                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                       
+                        [items addObject:object];
+                        
+                    }];
+                    
+                    completion(items);
+                    
+                }];
+
+                
+            });
+            
+        };
+        
         _folderFeedsManager = pagingManager;
     }
     
@@ -96,7 +246,7 @@
         _folderFeedsManager.preProcessorCB = ^NSArray * _Nonnull(NSArray * _Nonnull items) {
           
             NSArray *retval = [items rz_map:^id(id obj, NSUInteger idx, NSArray *array) {
-                return [FeedItem instanceFromDictionary:obj];
+                return [obj isKindOfClass:NSDictionary.class] ? [FeedItem instanceFromDictionary:obj] : obj;
             }];
             
             return retval;
@@ -116,7 +266,9 @@
             
             [self setupData];
             
-            self.controllerState = StateLoaded;
+            runOnMainQueueWithoutDeadlocking(^{
+                self.controllerState = StateLoaded;
+            });
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 
@@ -135,9 +287,9 @@
                     }
                     
 #if TARGET_OS_MACCATALYST
-            if (self->_isRefreshing) {
-                self->_isRefreshing = NO;
-            }
+                    if (self->_isRefreshing) {
+                        self->_isRefreshing = NO;
+                    }
 #endif
                 
                 }
@@ -196,6 +348,8 @@
 - (void)_setSortingOption:(YetiSortOption)option {
     
     self.folderFeedsManager = nil;
+    [self unregisterDBViews];
+    [self setupDatabases:option];
     self.pagingManager = self.folderFeedsManager;
     
 }

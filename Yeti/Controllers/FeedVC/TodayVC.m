@@ -264,7 +264,9 @@
             
             [self setupData];
             
-            self.controllerState = StateLoaded;
+            runOnMainQueueWithoutDeadlocking(^{
+                self.controllerState = StateLoaded;
+            });
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
