@@ -805,7 +805,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
     
     weakify(self);
     
-    [MyFeedsManager getArticle:self.item.identifier feedID:self.item.feedID success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getArticle:self.item.identifier feedID:self.item.feedID noAuth:self.noAuth success:^(FeedItem *responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         

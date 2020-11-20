@@ -95,7 +95,7 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 - (void)articlesByAuthor:(NSNumber * _Nonnull)authorID feedID:(NSNumber * _Nonnull)feedID page:(NSInteger)page success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
-- (void)getArticle:(NSNumber * _Nonnull)articleID feedID:(NSNumber * _Nullable)feedID success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
+- (void)getArticle:(NSNumber * _Nonnull)articleID feedID:(NSNumber * _Nullable)feedID noAuth:(BOOL)noAuth success:(successBlock _Nonnull)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)getMercurialArticle:(NSNumber * _Nonnull)articleID success:(successBlock _Nonnull)successCB error:(errorBlock _Nullable)errorCB;
 
@@ -103,9 +103,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 /// Get Recommended RSS feeds
 /// @param count The count to limit each set to. Default: 9
+/// @param noAuth If presenting when the user hasn't authenticated yet, set this param. 
 /// @param successCB The success callback
 /// @param errorCB The error callback
-- (void)getRecommendations:(NSInteger)count success:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB;
+- (void)getRecommendations:(NSInteger)count noAuth:(BOOL)noAuth success:(successBlock _Nullable)successCB error:(errorBlock _Nonnull)errorCB;
 
 - (void)removeFeed:(NSNumber * _Nonnull)feedID success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 

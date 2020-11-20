@@ -28,7 +28,9 @@ typedef NS_ENUM(NSInteger, ReccoState) {
     ReccoStateError
 };
 
-@interface RecommendationsVC ()
+@interface RecommendationsVC () {
+    BOOL _pushingVC;
+}
 
 @property (nonatomic, copy) NSDictionary *recommendations;
 @property (nonatomic, strong) NSError *loadError;
@@ -80,9 +82,13 @@ static NSString * const reuseIdentifier = @"Cell";
     
     [self dz_smoothlyDeselectCells:self.collectionView];
     
-    if (self.isOnboarding) {
+    if (self.isOnboarding || self.noAuth) {
         
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+        if (self.noAuth == NO) {
+
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(didTapDone)];
+            
+        }
         
         if (self.navigationController.navigationBarHidden == YES) {
             
@@ -107,7 +113,7 @@ static NSString * const reuseIdentifier = @"Cell";
     
     weakify(self);
     
-    [MyFeedsManager getRecommendations:count success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyFeedsManager getRecommendations:count noAuth:self.noAuth success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
         
@@ -132,6 +138,20 @@ static NSString * const reuseIdentifier = @"Cell";
     
     if (PrefsManager.sharedInstance.useToolbar == YES) {
         self.navigationController.toolbarHidden = NO;
+    }
+    
+    if (self.noAuth && _pushingVC == NO) {
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
+    }
+    
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    
+    [super viewDidDisappear:animated];
+    
+    if (_pushingVC) {
+        _pushingVC = NO;
     }
     
 }
@@ -358,10 +378,13 @@ static NSString * const reuseIdentifier = @"Cell";
     
     if (feed) {
         
+        _pushingVC = YES;
+        
         FeedVC *vc = [[FeedVC alloc] initWithFeed:feed];
         vc.mainCoordinator = self.mainCoordinator;
         vc.exploring = !self.isFromAddFeed;
         vc.isFromAddFeed = self.isFromAddFeed;
+        vc.noAuth = self.noAuth;
         
         [self.navigationController pushViewController:vc animated:YES];
         

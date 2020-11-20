@@ -14,7 +14,7 @@
 - (NSArray <UIBarButtonItem *> *)rightBarButtonItems {
     
     // Subscribe Button appears in the navigation bar
-    if (self.isExploring == YES) {
+    if (self.isExploring == YES || self.noAuth == YES) {
         return @[];
     }
  
