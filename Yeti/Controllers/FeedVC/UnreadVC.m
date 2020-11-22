@@ -115,7 +115,7 @@
     }
     else {
         
-        [MyDBManager.countsConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
            
             YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kUnreadsDBFilteredView];
             

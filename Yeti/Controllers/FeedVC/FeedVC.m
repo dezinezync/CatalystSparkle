@@ -204,9 +204,21 @@ static NSUInteger _filteringTag = 0;
     
     weakify(sortingOption);
     
+    weakify(self);
+    
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
         
+        strongify(self);
+        
+        if (!self) {
+            return NO;
+        }
+        
         if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+            return NO;
+        }
+        
+        if (self.feed == nil) {
             return NO;
         }
         
@@ -214,6 +226,10 @@ static NSUInteger _filteringTag = 0;
         NSDictionary *dict = metadata;
         
         NSNumber *feedID = [dict valueForKey:@"feedID"];
+        
+        if (feedID == nil) {
+            return NO;
+        }
         
         BOOL checkOne = [feedID isEqualToNumber:self.feed.feedID];
         
@@ -248,7 +264,7 @@ static NSUInteger _filteringTag = 0;
     }
     else {
         
-        [MyDBManager.countsConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
            
             YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
             
@@ -1306,7 +1322,7 @@ static NSUInteger _filteringTag = 0;
         
         strongify(self);
         
-        [MyDBManager.countsConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
            
             YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
             

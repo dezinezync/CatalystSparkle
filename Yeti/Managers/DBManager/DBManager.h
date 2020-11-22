@@ -52,8 +52,6 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 
 #define DB_VERSION_TAG @"2020-11-22 10:16AM"
 
-static double NSTimeIntervalEqualCompareThreshold = 0.01;
-
 extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2);
 
 extern DBManager * MyDBManager;
@@ -97,6 +95,8 @@ extern DBManager * MyDBManager;
 
 - (void)renameFeed:(Feed *)feed customTitle:(NSString *)customTitle completion:(void(^)(BOOL success))completionCB;
 
+- (void)fetchNewArticlesFor:(NSArray <NSNumber *> *)feedIDs since:(NSString *)since;
+
 - (void)updateUnreadCounters;
 
 #pragma mark - Articles
@@ -106,6 +106,10 @@ extern DBManager * MyDBManager;
 - (NSArray *)contentForArticle:(NSNumber *)identifier;
 
 - (void)addArticle:(FeedItem *)article;
+
+- (void)addArticle:(FeedItem *)article strip:(BOOL)strip;
+
+- (void)removeAllArticlesFor:(NSNumber *)feedID;
 
 #pragma mark - CloudCore
 

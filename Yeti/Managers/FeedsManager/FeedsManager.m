@@ -263,7 +263,8 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSDictionary *params = @{@"userID": MyFeedsManager.userID,
                              @"version": @"1.7",
-                             @"date": todayString
+                             @"date": todayString,
+                             @"hash": @([NSDate.date timeIntervalSince1970])
     };
     
     __block DZURLSession *session = self.session;
@@ -615,6 +616,12 @@ NSArray <NSString *> * _defaultsKeys;
         Feed *feed = [Feed instanceFromDictionary:feedObj];
 //        feed.articles = articles;
         
+        if (self.additionalFeedsToSync == nil) {
+            self.additionalFeedsToSync = [NSMutableSet new];
+        }
+        
+        [self.additionalFeedsToSync addObject:feed.feedID];
+        
         if (successCB)
             successCB(feed, response, task);
         
@@ -729,6 +736,24 @@ NSArray <NSString *> * _defaultsKeys;
     }
 
     [MyFeedsManager.session PUT:@"/feed" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (response.statusCode == 304) {
+            
+            if (errorCB) {
+                
+                NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:response.statusCode userInfo:@{NSLocalizedDescriptionKey: @"You already have this feed in your list."}];
+                
+                runOnMainQueueWithoutDeadlocking(^{
+                    errorCB(error, response, task);
+                });
+                
+            }
+            
+            /*
+             * @TODO: this means we do not have this feed in our list of feeds so lets fetch it so the error doesn't occur for our user again.
+             */
+            return;
+        }
 
         [Keychain add:YTSubscriptionHasAddedFirstFeed boolean:YES];
 
@@ -741,6 +766,12 @@ NSArray <NSString *> * _defaultsKeys;
         
         Feed *feed = [Feed instanceFromDictionary:feedObj];
 //        feed.articles = articles;
+        
+        if (self.additionalFeedsToSync == nil) {
+            self.additionalFeedsToSync = [NSMutableSet new];
+        }
+        
+        [self.additionalFeedsToSync addObject:feed.feedID];
         
         if (successCB)
             successCB(feed, response, task);
@@ -808,10 +839,14 @@ NSArray <NSString *> * _defaultsKeys;
             
             item.read = NO;
             
-            [MyDBManager addArticle:item];
+            [MyDBManager addArticle:item strip:NO];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                item.content = item.content ?: [MyDBManager contentForArticle:item.identifier];
+                
                 successCB(item, response, task);
+                
             });
             
         }
@@ -1088,6 +1123,8 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     [self.session DELETE:formattedString(@"/feeds/%@", feedID) parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        [MyDBManager removeAllArticlesFor:feedID];
         
         if (response.statusCode != 304) {
             if (successCB) {

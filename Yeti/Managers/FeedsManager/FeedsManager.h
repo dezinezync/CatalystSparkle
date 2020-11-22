@@ -59,6 +59,10 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
+// these are feeds which we need to sync completely
+// as the user has just added them. 
+@property (nonatomic, strong) NSMutableSet * _Nullable additionalFeedsToSync;
+
 #pragma mark - Feeds
 
 @property (atomic, strong) NSArray <Feed *> * _Nullable temporaryFeeds;

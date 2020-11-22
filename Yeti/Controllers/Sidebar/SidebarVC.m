@@ -233,6 +233,23 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
 #endif
     
+    if (MyFeedsManager.additionalFeedsToSync != nil && MyFeedsManager.additionalFeedsToSync.count > 0) {
+        
+        NSCalendarUnit units = NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour;
+        
+        // two weeks ago.
+        NSDate *date = [NSDate.date dateByAddingTimeInterval:-(1209600)];
+        
+        NSDateComponents * components = [NSCalendar.currentCalendar components:units fromDate:date];
+        
+        NSString *token = [NSString stringWithFormat:@"%@-%@-%@ %@:00:00", @(components.year), @(components.month), @(components.day), @(components.hour)];
+        
+        token = [token base64Encoded];
+        
+        [MyDBManager fetchNewArticlesFor:MyFeedsManager.additionalFeedsToSync.allObjects since:token];
+        
+    }
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -594,6 +611,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [self.syncProgressView setProgress:progress animated:YES];
             
             self.progressLabel.text = @"Syncing Complete.";
+            
+            if (MyFeedsManager.additionalFeedsToSync != nil) {
+                MyFeedsManager.additionalFeedsToSync = nil;
+            }
             
             if (self->_refreshing) {
                 self->_refreshing = NO;
@@ -1147,7 +1168,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     weakify(self);
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(MyDBManager.readQueue, ^{
         
         strongify(self);
        
@@ -1185,9 +1206,19 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 
 - (void)_updateSharedUnreadsData {
     
-    [MyFeedsManager getUnreadForPage:1 limit:6 sorting:YTSortUnreadDesc success:^(NSArray <FeedItem *> * items, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        YapDatabaseAutoViewTransaction *txn = [transaction ext:UNREADS_FEED_EXT];
+        
+        NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:6];
+        
+        [txn enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:NSMakeRange(0, 10) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+            
+            [items addObject:object];
+            
+        }];
+        
+        dispatch_async(MyDBManager.readQueue, ^{
            
             NSMutableArray <NSMutableDictionary *> *list = [NSMutableArray arrayWithCapacity:items.count];
             
@@ -1248,7 +1279,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                     blog = @"";
                 }
                 
-                if ((title == nil || [title isBlank]) && item.content != nil && item.content.count > 0) {
+                if ((title == nil || [title isBlank])) {
+                    
+                    if (item.content == nil || item.content.count == 0) {
+                        item.content = [MyDBManager contentForArticle:item.identifier];
+                    }
                     
                     NSString * titleContent = [item textFromContent];
                     
@@ -1288,11 +1323,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             [MyFeedsManager writeToSharedFile:@"articles.json" data:data];
             
             [WidgetManager reloadTimelineWithName:@"UnreadsWidget"];
-
             
         });
         
-    } error:nil];
+    }];
     
 }
 

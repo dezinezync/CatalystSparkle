@@ -27,7 +27,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2)
 {
-    if (fabs(time2 - time1) < NSTimeIntervalEqualCompareThreshold) {
+    if (fabs(time2 - time1) < DBL_EPSILON) {
         return NSOrderedSame;
     } else if (time1 < time2) {
         return NSOrderedAscending;
@@ -665,15 +665,19 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     _countsConnection.metadataCacheEnabled = YES;
     _countsConnection.metadataCacheLimit = 200;
     
-    // Start the longLivedReadTransaction on the UI connection.
+    // Start the longLivedReadTransaction on the UI connections.
     [_uiConnection enableExceptionsForImplicitlyEndingLongLivedReadTransaction];
     [_uiConnection beginLongLivedReadTransaction];
+    
+    [_countsConnection enableExceptionsForImplicitlyEndingLongLivedReadTransaction];
+    [_countsConnection beginLongLivedReadTransaction];
+    
 //    [_bgConnection beginLongLivedReadTransaction];
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(yapDatabaseModified:)
-//                                                 name:YapDatabaseModifiedNotification
-//                                               object:_database];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(yapDatabaseModified:)
+                                                 name:YapDatabaseModifiedNotification
+                                               object:_database];
     
     [self setupViews];
     
@@ -1062,11 +1066,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     weakify(self);
     
-    [_syncQueue addOperationWithBlock:^{
-       
-        [MyFeedsManager updateBookmarksFromServer];
-        
-    }];
+    // @TODO: Fetch the article IDs to add and delete. Delete the existing ones. Update new ones. If new ones don't exist, download as usual. 
+//    [_syncQueue addOperationWithBlock:^{
+//
+//        [MyFeedsManager updateBookmarksFromServer];
+//
+//    }];
     
     [_syncQueue addOperationWithBlock:^{
        
@@ -1117,7 +1122,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     
                     // this is an async method. So we don't pass it a transaction.
                     // it'll fetch its own transaction as necessary.
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    dispatch_async(self.readQueue, ^{
                         
                         [self fetchNewArticlesFor:changeSet.feedsWithNewArticles since:token];
                         
@@ -1199,95 +1204,29 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)fetchNewArticlesFor:(NSArray <NSNumber *> *)feedIDs since:(NSString *)since {
     
-    NSLogDebug(@"[Sync] Fetching new articles for: %@", feedIDs);
-    
-    NSOperationQueue *queue = self->_syncQueue;
-    
-    weakify(queue);
-    
-    for (NSNumber *feedID in feedIDs) { @autoreleasepool {
+    dispatch_async(self.readQueue, ^{
         
-        [self->_syncQueue addOperationWithBlock:^{
+        NSLogDebug(@"[Sync] Fetching new articles for: %@", feedIDs);
+        
+        NSOperationQueue *queue = self->_syncQueue;
+        
+        weakify(queue);
+        
+        for (NSNumber *feedID in feedIDs) { @autoreleasepool {
             
-            strongify(queue);
-            
-            [self _fetchNewArticlesFor:feedID page:1 since:since queue:queue];
-            
-        }];
-        
-    } }
-    
-    [self->_syncQueue waitUntilAllOperationsAreFinished];
-    
-}
-
-- (void)updateUnreadCounters {
-    
-    __block NSUInteger count = 0;
-    __block NSUInteger today = 0;
-    
-    ArticlesManager *manager = ArticlesManager.shared;
-    
-    for (Feed *feed in manager.feeds) {
-        
-        feed->_countingUnread = 0;
-        
-    }
-    
-    [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-       
-        YapDatabaseViewTransaction *tnx = [transaction extension:UNREADS_FEED_EXT];
-        
-        NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970];
-        
-        [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
-            
-            NSDictionary *meta = metadata;
-            
-            if ([([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+            [self->_syncQueue addOperationWithBlock:^{
                 
-                NSTimeInterval articleTimestamp = [[meta valueForKey:@"timestamp"] doubleValue];
+                strongify(queue);
                 
-                if ((timestamp - articleTimestamp) <= 1209600) {
-                    count++;
-                }
+                [self _fetchNewArticlesFor:feedID page:1 since:since queue:queue];
                 
-                NSDate *date = [NSDate dateWithTimeIntervalSince1970:articleTimestamp];
-                
-                if ([NSCalendar.currentCalendar isDateInToday:date]) {
-                    today++;
-                }
-                
-            }
+            }];
             
-            Feed *feed = [manager feedForID:[meta valueForKey:@"feedID"]];
-            
-            if (feed != nil) {
-                @synchronized (feed) {
-                    feed->_countingUnread++;
-                }
-            }
-            
-        }];
+        } }
         
-        runOnMainQueueWithoutDeadlocking(^{
-            
-            MyFeedsManager.totalUnread = count;
-            MyFeedsManager.totalToday = today;
-            
-            // flush all the countingUnreads to the feed objects
-            for (Feed *feed in manager.feeds) {
-                
-                feed.unread = @(feed->_countingUnread);
-                feed->_countingUnread = 0;
-                
-            }
-            
-        });
+        [self->_syncQueue waitUntilAllOperationsAreFinished];
         
-        NSLogDebug(@"Total Unread: %@\nTotal Today: %@", @(count), @(today));
-        
-    }];
+    });
     
 }
 
@@ -1363,8 +1302,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             [self addArticle:item];
             
         }
-        
-        if (responseObject.count == 20) {
+        // do not load more than 100 articles.
+        if (responseObject.count == 20 && (page + 1) <= 5) {
             
             NSLogDebug(@"Fetching page %@ for feed: %@", @(page + 1), feedID);
             
@@ -1420,6 +1359,76 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (void)updateUnreadCounters {
+    
+    __block NSUInteger count = 0;
+    __block NSUInteger today = 0;
+    
+    ArticlesManager *manager = ArticlesManager.shared;
+    
+    for (Feed *feed in manager.feeds) {
+        
+        feed->_countingUnread = 0;
+        
+    }
+    
+    [MyDBManager.countsConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        YapDatabaseViewTransaction *tnx = [transaction extension:UNREADS_FEED_EXT];
+        
+        NSTimeInterval timestamp = [NSDate.date timeIntervalSince1970];
+        
+        [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+            
+            NSDictionary *meta = metadata;
+            
+            if ([([meta valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+                
+                NSTimeInterval articleTimestamp = [[meta valueForKey:@"timestamp"] doubleValue];
+                
+                if ((timestamp - articleTimestamp) <= 1209600) {
+                    count++;
+                }
+                
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:articleTimestamp];
+                
+                if ([NSCalendar.currentCalendar isDateInToday:date]) {
+                    today++;
+                }
+                
+            }
+            
+            Feed *feed = [manager feedForID:[meta valueForKey:@"feedID"]];
+            
+            if (feed != nil) {
+                @synchronized (feed) {
+                    feed->_countingUnread++;
+                }
+            }
+            
+        }];
+        
+        runOnMainQueueWithoutDeadlocking(^{
+            
+            MyFeedsManager.totalUnread = count;
+            MyFeedsManager.totalToday = today;
+            
+            // flush all the countingUnreads to the feed objects
+            for (Feed *feed in manager.feeds) {
+                
+                feed.unread = @(feed->_countingUnread);
+                feed->_countingUnread = 0;
+                
+            }
+            
+        });
+        
+        NSLogDebug(@"Total Unread: %@\nTotal Today: %@", @(count), @(today));
+        
+    }];
+    
+}
+
 #pragma mark - Articles
 
 - (NSString *)articlesCollectionForFeed:(NSNumber *)feedID {
@@ -1468,6 +1477,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)addArticle:(FeedItem *)article {
     
+    [self addArticle:article strip:YES];
+    
+}
+
+- (void)addArticle:(FeedItem *)article strip:(BOOL)strip {
+    
     if (!article || !article.identifier || !article.feedID) {
         NSLog(@"Error adding article to db. Missing information.\n%@", article);
         return;
@@ -1483,7 +1498,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
         }
         
-        article.content = nil;
+        if (strip == YES) {
+            article.content = nil;
+        }
        
 //        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection];
         [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:@{
@@ -1497,6 +1514,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     }];
     
 }
+
+
 
 - (void)deleteArticle:(FeedItem *)article {
     
@@ -1512,33 +1531,63 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         [transaction removeObjectForKey:key inCollection:col];
         
+        [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+        
+    }];
+    
+}
+
+- (void)removeAllArticlesFor:(NSNumber *)feedID {
+    
+    NSString *collection = [self articlesCollectionForFeed:feedID];
+    
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        NSArray <NSString *> *keys = [transaction allKeysInCollection:collection];
+       
+        [transaction removeAllObjectsInCollection:collection];
+        
+        [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+        
     }];
     
 }
 
 #pragma mark - Notifications
 
-- (void)yapDatabaseModified:(NSNotification *)ignored
-{
+- (void)yapDatabaseModified:(NSNotification *)ignored {
     // Notify observers we're about to update the database connection
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionWillUpdateNotification
-                                                        object:self];
+    dispatch_async(self.readQueue, ^{
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionWillUpdateNotification
+                                                            object:self];
+        
+        // Move uiDatabaseConnection to the latest commit.
+        // Do so atomically, and fetch all the notifications for each commit we jump.
+        
+        NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
+        NSArray *notifications2 = [self.countsConnection beginLongLivedReadTransaction];
+        
+        notifications = [notifications arrayByAddingObjectsFromArray:notifications2];
+        
+        if (notifications.count == 0) {
+            // nothing has changed for us.
+            return;
+        }
+        
+        // Notify observers that the uiDatabaseConnection was updated
+        
+        NSDictionary *userInfo = @{
+                                   kNotificationsKey : notifications,
+                                   };
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
+                                                            object:self
+                                                          userInfo:userInfo];
+        
+    });
     
-    // Move uiDatabaseConnection to the latest commit.
-    // Do so atomically, and fetch all the notifications for each commit we jump.
-    
-    NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
-    
-    // Notify observers that the uiDatabaseConnection was updated
-    
-    NSDictionary *userInfo = @{
-                               kNotificationsKey : notifications,
-                               };
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
-                                                        object:self
-                                                      userInfo:userInfo];
 }
 
 #pragma mark - Bulk Operations
@@ -1549,13 +1598,14 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
+        [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
         
     }];
     
-    [self.uiConnection beginLongLivedReadTransaction];
+//    [self.uiConnection beginLongLivedReadTransaction];
     
 }
 
