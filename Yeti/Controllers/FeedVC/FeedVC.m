@@ -35,6 +35,8 @@
 #define kFeedDBView @"feedDBView"
 #define kFeedDBFilteredView @"feedDBFilteredView"
 
+static NSUInteger _filteringTag = 0;
+
 @interface FeedVC () {
     
     BOOL _shouldShowHeader;
@@ -68,6 +70,22 @@
 #define ArticlesSection @0
 
 @implementation FeedVC
+
++ (NSUInteger)filteringTag {
+    return _filteringTag;
+}
+
++ (void)setFilteringTag:(NSUInteger)filteringTag {
+    
+    @synchronized (FeedVC.class) {
+        
+        if (_filteringTag != filteringTag) {
+            _filteringTag = filteringTag;
+        }
+        
+    }
+    
+}
 
 + (UINavigationController *)instanceInNavigationController {
     
@@ -198,6 +216,11 @@
         NSNumber *feedID = [dict valueForKey:@"feedID"];
         
         BOOL checkOne = [feedID isEqualToNumber:self.feed.feedID];
+        
+        if (checkOne == NO) {
+            return NO;
+        }
+        
         BOOL checkTwo = YES;
         
         strongify(sortingOption);
@@ -216,7 +239,7 @@
     
     if (self.dbFilteredView == nil) {
         
-        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self->_filteringTag++]];
+        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
         
         self.dbFilteredView = filteredView;
         
@@ -229,7 +252,7 @@
            
             YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
             
-            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self->_filteringTag++]];
+            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.class.filteringTag++]];
             
         }];
         
@@ -467,6 +490,19 @@
             cell.coverImage.layer.cornerRadius = cell.coverImage.bounds.size.width * (180.f / 1024.f);
             cell.coverImage.layer.cornerCurve = kCACornerCurveContinuous;
             cell.coverImage.layer.masksToBounds = YES;
+            
+        }
+        
+        if (article.articleTitle == nil || [article.articleTitle isBlank]) {
+            // assume microblog
+            
+            if (article.content == nil || (article.content != nil && article.content.count == 0)) {
+                
+                NSArray *content = [MyDBManager contentForArticle:article.identifier];
+                
+                article.content = content;
+                
+            }
             
         }
         

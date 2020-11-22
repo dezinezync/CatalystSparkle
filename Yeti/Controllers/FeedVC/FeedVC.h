@@ -34,8 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
     // the following two keys are used by the Controller's DB Views.
     NSUInteger _sortingVersionTag;
-    NSUInteger _filteringTag;
 }
+
+@property (class, atomic, assign) NSUInteger filteringTag;
 
 @property (nonatomic, weak) Feed * _Nullable feed;
 @property (nonatomic, assign) BOOL noAuth;

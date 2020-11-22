@@ -106,7 +106,7 @@
     
     if (self.dbFilteredView == nil) {
         
-        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:DB_VERSION_TAG];
+        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
         
         self.dbFilteredView = filteredView;
         
@@ -119,7 +119,7 @@
            
             YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kUnreadsDBFilteredView];
             
-            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self->_filteringTag++]];
+            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
             
         }];
         
