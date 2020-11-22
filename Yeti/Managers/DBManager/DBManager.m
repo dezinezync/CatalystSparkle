@@ -25,6 +25,17 @@ NSString *const kNotificationsKey = @"notifications";
 
 #define kLastFeedsFetchTimeInterval @"lastFeedsFetchTimeInterval"
 
+NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2)
+{
+    if (abs(time2 - time1) < NSTimeIntervalEqualCompareThreshold) {
+        return NSOrderedSame;
+    } else if (time1 < time2) {
+        return NSOrderedAscending;
+    } else {
+        return NSOrderedDescending;
+    }
+}
+
 @interface DBManager () {
     CGFloat _totalProgress;
     CGFloat _currentProgress;
@@ -740,12 +751,53 @@ NSString *const kNotificationsKey = @"notifications";
             
         }];
         
-        NSString *versionTag = @"2020-11-20 05:32PM";
-        
         YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
         
-        view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting versionTag:versionTag options:options];
+        view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting versionTag:DB_VERSION_TAG options:options];
         [_database registerExtension:view withName:@"articlesView"];
+    }
+    
+    // The following views only deal with articles
+    // so we limit the scope of our views
+    // using a deny list.
+    
+    YapDatabaseViewOptions *options = [YapDatabaseViewOptions new];
+    options.allowedCollections = [[YapWhitelistBlacklist alloc] initWithBlacklist:[NSSet setWithObjects:LOCAL_FEEDS_COLLECTION, LOCAL_FOLDERS_COLLECTION, LOCAL_NAME_COLLECTION, LOCAL_ARTICLES_CONTENT_COLLECTION, LOCAL_SETTINGS_COLLECTION, @"sync", @"user", nil]];
+    
+    // feeds view
+    {
+        YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
+           
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
+                return GROUP_ARTICLES;
+            }
+            
+            return nil;
+            
+        }];
+        
+        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withMetadataBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, id  _Nullable metadata, NSString * _Nonnull collection2, NSString * _Nonnull key2, id  _Nullable metadata2) {
+            
+            NSTimeInterval first = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval second = [[metadata2 valueForKey:@"timestamp"] doubleValue];
+            
+            return [@(first) compare:@(second)];
+            
+//            if (first == second) {
+//                return NSOrderedSame;
+//            }
+//            else if (first > second) {
+//                return NSOrderedAscending;
+//            }
+//            
+//            return NSOrderedDescending;
+            
+        }];
+        
+        YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting versionTag:DB_VERSION_TAG options:options];
+        
+        [_database registerExtension:view withName:DB_FEED_VIEW];
+        
     }
     
     // unreads feed view
@@ -764,7 +816,7 @@ NSString *const kNotificationsKey = @"notifications";
             
         }];
         
-        unreadsFeedView = [[YapDatabaseFilteredView alloc] initWithParentViewName:@"articlesView" filtering:filtering versionTag:@"2020-11-20 05:32PM"];
+        unreadsFeedView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filtering versionTag:DB_VERSION_TAG options:options];
         
         [_database registerExtension:unreadsFeedView withName:UNREADS_FEED_EXT];
         

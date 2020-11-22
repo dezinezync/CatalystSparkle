@@ -48,6 +48,13 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 #define GROUP_FOLDERS @"folders"
 
 #define UNREADS_FEED_EXT @"unreadsFeedView"
+#define DB_FEED_VIEW @"feedView"
+
+#define DB_VERSION_TAG @"2020-11-22 10:16AM"
+
+static double NSTimeIntervalEqualCompareThreshold = 0.01;
+
+extern NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2);
 
 extern DBManager * MyDBManager;
 

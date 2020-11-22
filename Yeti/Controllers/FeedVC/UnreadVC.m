@@ -9,10 +9,9 @@
 #import "UnreadVC.h"
 #import "SceneDelegate.h"
 
-#define kUnreadsDBView @"unreadsDBView"
 #define kUnreadsDBFilteredView @"unreadsDBFilteredView"
 
-@interface UnreadVC ()
+@interface UnreadVC () 
 
 @property (nonatomic, strong) PagingManager *unreadsManager;
 
@@ -53,7 +52,7 @@
     [super viewDidLoad];
     
     self.title = @"Unread";
-    self.controllerState = StateDefault;
+    self.controllerState = StateLoading;
     self.pagingManager = self.unreadsManager;
     
 #if !TARGET_OS_MACCATALYST
@@ -69,23 +68,7 @@
     
 }
 
-- (void)unregisterDBViews {
-    
-    if (self.dbFilteredView) {
-        [MyDBManager.database unregisterExtensionWithName:kUnreadsDBFilteredView];
-        self.dbFilteredView = nil;
-    }
-    
-    if (self.dbView) {
-        [MyDBManager.database unregisterExtensionWithName:kUnreadsDBView];
-        self.dbView = nil;
-    }
-    
-}
-
 - (void)dealloc {
-    
-    [self unregisterDBViews];
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
@@ -93,97 +76,65 @@
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
-    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
-       
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
-            return GROUP_ARTICLES;
-        }
-        
-        return nil;
-        
-    }];
-    
     NSDate *now = NSDate.date;
     NSTimeInterval interval = [now timeIntervalSince1970];
-    
+
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata) {
         
         if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
             return NO;
         }
-        
+
         // article metadata is an NSDictionary
         NSDictionary *dict = metadata;
-        
+
         NSTimeInterval timestamp = [[metadata valueForKey:@"timestamp"] doubleValue];
-        
+
         BOOL checkOne = (interval - timestamp) <= 1209600;
-        
+
         if (checkOne == NO) {
             return NO;
         }
-        
+
         BOOL checkTwo = ([([dict valueForKey:@"read"] ?: @(NO)) boolValue] == NO);
-        
+
         return checkTwo;
-        
+
     }];
     
-    weakify(sortingOption);
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kUnreadsDBFilteredView];
     
-    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+    if (self.dbFilteredView == nil) {
         
-        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:DB_VERSION_TAG];
         
-        if (result == NSOrderedSame) {
-            return result;
-        }
+        self.dbFilteredView = filteredView;
         
-        strongify(sortingOption);
+        [MyDBManager.database registerExtension:self.dbFilteredView withName:kUnreadsDBFilteredView];
         
-        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+    }
+    else {
+        
+        [MyDBManager.countsConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kUnreadsDBFilteredView];
             
-            if (result == NSOrderedDescending) {
-                return NSOrderedAscending;
-            }
+            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self->_filteringTag++]];
             
-            return NSOrderedDescending;
-            
-        }
+        }];
         
-        return result;
-        
-    }];
-    
-    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
-    self.dbView = view;
-    
-    [MyDBManager.database registerExtension:self.dbView withName:kUnreadsDBView];
-    
-    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kUnreadsDBView filtering:filter];
-    
-    self.dbFilteredView = filteredView;
-    
-    [MyDBManager.database registerExtension:self.dbFilteredView withName:kUnreadsDBFilteredView];
+    }
     
 }
 
 #pragma mark - Subclassed
 
-- (void)setSortingOption:(YetiSortOption)sortingOption {
+- (void)_setSortingOption:(YetiSortOption)option {
     
-    if (self.sortingOption == sortingOption) {
-        return;
-    }
+    self.unreadsManager = nil;
+    self.pagingManager = self.unreadsManager;
     
-    runOnMainQueueWithoutDeadlocking(^{
-        [self unregisterDBViews];
-        [self setupDatabases:sortingOption];
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.125 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [super setSortingOption:sortingOption];
-    });
+    [self setupDatabases:option];
     
 }
 
@@ -243,7 +194,13 @@
                     
                     NSMutableArray <FeedItem *> *items = [NSMutableArray arrayWithCapacity:20];
                     
-                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
+                    NSEnumerationOptions options = kNilOptions;
+                    
+//                    if ([self.sortingOption isEqualToString:YTSortAllDesc] || [self.sortingOption isEqualToString:YTSortUnreadDesc]) {
+//                        options = NSEnumerationReverse;
+//                    }
+                    
+                    [ext enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:options range:range usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
                        
                         [items addObject:object];
                         
@@ -294,7 +251,9 @@
             
             [self setupData];
             
-            self.controllerState = StateLoaded;
+            runOnMainQueueWithoutDeadlocking(^{
+                self.controllerState = StateLoaded;
+            });
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (self.refreshControl != nil && self.refreshControl.isRefreshing) {
@@ -364,13 +323,6 @@
 
 - (BOOL)showsSortingButton {
     return YES;
-}
-
-- (void)_setSortingOption:(YetiSortOption)option {
-    
-    self.unreadsManager = nil;
-    self.pagingManager = self.unreadsManager;
-    
 }
 
 - (NSURLSessionTask *)searchOperationTask:(NSString *)text {

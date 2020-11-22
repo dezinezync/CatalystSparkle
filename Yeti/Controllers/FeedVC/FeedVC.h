@@ -28,10 +28,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FeedVC : UITableViewController < ControllerState, ScrollLoading, UnreadCountObservor > {
-#if TARGET_OS_MACCATALYST
 @public
+#if TARGET_OS_MACCATALYST
     BOOL _isRefreshing;
 #endif
+    // the following two keys are used by the Controller's DB Views.
+    NSUInteger _sortingVersionTag;
+    NSUInteger _filteringTag;
 }
 
 @property (nonatomic, weak) Feed * _Nullable feed;

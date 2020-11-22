@@ -139,9 +139,9 @@
     
     [self dz_smoothlyDeselectRows:self.tableView];
     
-    if (self.pagingManager.page == 1 && [self.DS.snapshot numberOfItems] == 0) {
-        [self loadNextPage];
-    }
+//    if (self.pagingManager.page == 1 && [self.DS.snapshot numberOfItems] == 0) {
+//        [self loadNextPage];
+//    }
     
 #if TARGET_OS_MACCATALYST
     
@@ -172,23 +172,7 @@
     
 }
 
-- (void)unregisterDBViews {
-    
-    if (self.dbFilteredView) {
-        [MyDBManager.database unregisterExtensionWithName:kFeedDBFilteredView];
-        self.dbFilteredView = nil;
-    }
-    
-    if (self.dbView) {
-        [MyDBManager.database unregisterExtensionWithName:kFeedDBView];
-        self.dbView = nil;
-    }
-    
-}
-
 - (void)dealloc {
-    
-    [self unregisterDBViews];
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
@@ -200,50 +184,7 @@
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
-    if (self.dbView == nil) {
-        
-        YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
-           
-            if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
-                return GROUP_ARTICLES;
-            }
-            
-            return nil;
-            
-        }];
-        
-        weakify(sortingOption);
-        
-        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
-            
-            NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
-            
-            if (result == NSOrderedSame) {
-                return result;
-            }
-            
-            strongify(sortingOption);
-            
-            if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
-                
-                if (result == NSOrderedDescending) {
-                    return NSOrderedAscending;
-                }
-                
-                return NSOrderedDescending;
-                
-            }
-            
-            return result;
-            
-        }];
-        
-        YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
-        self.dbView = view;
-        
-        [MyDBManager.database registerExtension:self.dbView withName:kFeedDBView];
-        
-    }
+    weakify(sortingOption);
     
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
         
@@ -259,6 +200,8 @@
         BOOL checkOne = [feedID isEqualToNumber:self.feed.feedID];
         BOOL checkTwo = YES;
         
+        strongify(sortingOption);
+        
         if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
             
             checkTwo = [([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO;
@@ -269,11 +212,28 @@
         
     }];
     
-    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kFeedDBView filtering:filter];
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kFeedDBFilteredView];
     
-    self.dbFilteredView = filteredView;
-    
-    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFeedDBFilteredView];
+    if (self.dbFilteredView == nil) {
+        
+        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self->_filteringTag++]];
+        
+        self.dbFilteredView = filteredView;
+        
+        [MyDBManager.database registerExtension:self.dbFilteredView withName:kFeedDBFilteredView];
+        
+    }
+    else {
+        
+        [MyDBManager.countsConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
+            
+            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self->_filteringTag++]];
+            
+        }];
+        
+    }
     
 }
 
@@ -1270,35 +1230,78 @@
 
 - (void)setSortingOption:(YetiSortOption)option {
     
-    BOOL changed = _sortingOption != option;
+    if (self.sortingOption == option) {
+        return;
+    }
     
-    _sortingOption = option;
+    [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     
-    if (changed) {
+    weakify(option);
+    weakify(self);
+    
+    dispatch_async(MyDBManager.readQueue, ^{
         
-        [SharedPrefs setValue:option forKey:propSel(sortingOption)];
+        YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withMetadataBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, id  _Nullable metadata, NSString * _Nonnull collection2, NSString * _Nonnull key2, id  _Nullable metadata2) {
+            
+            NSTimeInterval timestamp1 = [[metadata valueForKey:@"timestamp"] doubleValue];
+            NSTimeInterval timestamp2 = [[metadata2 valueForKey:@"timestamp"] doubleValue];
+            
+            NSComparisonResult result = NSTimeIntervalCompare(timestamp1, timestamp2);
+
+            if (result == NSOrderedSame) {
+                return result;
+            }
+
+            strongify(option);
+
+            if ([option isEqualToString:YTSortAllDesc]  || [option isEqualToString:YTSortUnreadDesc]) {
+
+                if (result == NSOrderedDescending) {
+                    return NSOrderedAscending;
+                }
+
+                return NSOrderedDescending;
+
+            }
+
+            return result;
+            
+        }];
+        
+        strongify(self);
+        
+        [MyDBManager.countsConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
+            
+            [txn setSorting:sorting versionTag:[NSString stringWithFormat:@"%u",(uint)self->_sortingVersionTag++]];
+            
+        }];
         
         if ([self respondsToSelector:@selector(_setSortingOption:)]) {
             
             [self _setSortingOption:option];
             
-            NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-            [self.DS applySnapshot:snapshot animatingDifferences:YES];
-            
-            self.controllerState = StateDefault;
-            
-            [self loadNextPage];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                
+                self.controllerState = StateDefault;
+                
+                [self loadNextPage];
+                
+            });
             
         }
         
-    }
+    });
     
 }
 
 - (void)_setSortingOption:(YetiSortOption)option {
     
     self.pagingManager = nil;
-    [self unregisterDBViews];
     [self setupDatabases:option];
     
 }
