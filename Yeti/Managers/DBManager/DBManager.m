@@ -27,7 +27,7 @@ NSString *const kNotificationsKey = @"notifications";
 
 NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval time2)
 {
-    if (abs(time2 - time1) < NSTimeIntervalEqualCompareThreshold) {
+    if (fabs(time2 - time1) < NSTimeIntervalEqualCompareThreshold) {
         return NSOrderedSame;
     } else if (time1 < time2) {
         return NSOrderedAscending;
