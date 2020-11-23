@@ -208,33 +208,31 @@
 
 - (void)checkIfBookmarksShouldBeMigrated {
     
-    BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
-
-    if (migrated == YES) {
-        return;
-    }
-    
-    BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
-    
-    vc.bookmarksManager = self.mainCoordinator.bookmarksManager;
-    
-    weakify(vc);
-    
-    vc.completionBlock = ^(BOOL success) {
-        
-        strongify(vc);
-      
-        if (success == YES) {
-            [Keychain add:BookmarksMigratedKey boolean:YES];
-        }
-        
-        [vc.navigationController dismissViewControllerAnimated:YES completion:nil];
-        
-    };
-    
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    
-    [self presentViewController:nav animated:YES completion:nil];
+//    BOOL migrated = [Keychain boolFor:BookmarksMigratedKey error:nil];
+//
+//    if (migrated == YES) {
+//        return;
+//    }
+//    
+//    BookmarksMigrationVC *vc = [[BookmarksMigrationVC alloc] initWithNibName:NSStringFromClass(BookmarksMigrationVC.class) bundle:nil];
+//    
+//    weakify(vc);
+//    
+//    vc.completionBlock = ^(BOOL success) {
+//        
+//        strongify(vc);
+//      
+//        if (success == YES) {
+//            [Keychain add:BookmarksMigratedKey boolean:YES];
+//        }
+//        
+//        [vc.navigationController dismissViewControllerAnimated:YES completion:nil];
+//        
+//    };
+//    
+//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//    
+//    [self presentViewController:nav animated:YES completion:nil];
     
 }
 

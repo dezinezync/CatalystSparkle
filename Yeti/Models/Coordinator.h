@@ -27,8 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) SplitVC *splitViewController;
 
-@property (nonatomic, strong) BookmarksManager *bookmarksManager;
-
 #pragma mark - Controller References
 
 @property (nonatomic, weak) SidebarVC *sidebarVC;

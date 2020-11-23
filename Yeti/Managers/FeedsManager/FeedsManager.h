@@ -20,7 +20,6 @@
 
 #import "YetiConstants.h"
 #import "ArticlesManager.h"
-#import "BookmarksManager.h"
 
 #define kAccountID @"YTUserID"
 #define kUserID @"userID"
@@ -54,10 +53,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, strong) NSString * _Nullable pushToken;
 
 @property (nonatomic, weak) Feed * _Nullable subsribeAfterPushEnabled;
-
-@property (nonatomic, copy) NSNumber * _Nonnull bookmarksCount;
-
-@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 // these are feeds which we need to sync completely
 // as the user has just added them. 
@@ -129,8 +124,6 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 @property (nonatomic, copy) NSDate * _Nullable unreadLastUpdate;
 
 - (void)getUnreadForPage:(NSInteger)page limit:(NSInteger)limit sorting:(YetiSortOption _Nonnull)sorting success:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
-
-- (void)getBookmarksWithSuccess:(successBlock _Nullable)successCB error:(errorBlock _Nullable)errorCB;
 
 - (void)updateBookmarksFromServer;
 

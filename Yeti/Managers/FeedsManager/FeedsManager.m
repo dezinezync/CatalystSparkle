@@ -1415,29 +1415,6 @@ NSArray <NSString *> * _defaultsKeys;
     }];
 }
 
-- (void)getBookmarksWithSuccess:(successBlock)successCB error:(errorBlock)errorCB
-{
-    
-    NSString *existing = @"";
-    
-    if (ArticlesManager.shared.bookmarks.count) {
-        NSArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks;
-        existing = [[bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-            return obj.identifier.stringValue;
-        }] componentsJoinedByString:@","];
-    }
-    
-    [self.session POST:formattedString(@"/bookmarked?userID=%@", MyFeedsManager.userID) parameters:@{@"existing": existing} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-        error = [self errorFromResponse:error.userInfo];
-        
-        if (errorCB)
-            errorCB(error, response, task);
-        else {
-            NSLog(@"Unhandled network error: %@", error);
-        }
-    }];
-}
-
 #pragma mark - Folders
 
 - (void)addFolder:(NSString *)title success:(successBlock)successCB error:(errorBlock)errorCB
@@ -3209,92 +3186,9 @@ NSArray <NSString *> * _defaultsKeys;
     return HMAC;
 }
 
-- (NSNumber *)bookmarksCount {
-    
-    if (!_bookmarksCount) {
-        
-        weakify(self);
-        
-        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            NSFileManager *manager = [NSFileManager defaultManager];
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
-            NSString *directory = [documentsDirectory stringByAppendingPathComponent:@"bookmarks"];
-            BOOL isDir;
-            
-            if (![manager fileExistsAtPath:directory isDirectory:&isDir]) {
-                NSError *error = nil;
-                if (![manager createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error]) {
-                    NSLog(@"Error creating bookmarks directory: %@", error);
-                }
-            }
-            
-            NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:directory];
-            NSArray *objects = enumerator.allObjects;
-            
-            strongify(self);
-            
-            self->_bookmarksCount = @(objects.count);
-            dispatch_semaphore_signal(sema);
-        });
-        
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-    }
-    
-    return _bookmarksCount;
-}
-
 //#endif
 
 #pragma mark - Notifications
-
-- (void)didUpdateBookmarks:(NSNotification *)note {
-    
-    FeedItem *item = [note object];
-    
-    @synchronized(self) {
-        self->_bookmarksCount = nil;
-    }
-    
-    if (!item) {
-        NSLog(@"A bookmark notification was posted but did not include a FeedItem object.");
-        return;
-    }
-    
-    BOOL isBookmarked = [[[note userInfo] valueForKey:@"bookmarked"] boolValue];
-    
-    if (isBookmarked) {
-        // it was added
-        @try {
-            NSArray *bookmarks = [ArticlesManager.shared.bookmarks arrayByAddingObject:item];
-            @synchronized (self) {
-                ArticlesManager.shared.bookmarks = bookmarks;
-            }
-        }
-        @catch (NSException *exc) {}
-    }
-    else {
-        NSInteger itemID = item.identifier.integerValue;
-        
-        @try {
-            NSArray <FeedItem *> *bookmarks = ArticlesManager.shared.bookmarks;
-            bookmarks = [bookmarks rz_filter:^BOOL(FeedItem *obj, NSUInteger idx, NSArray *array) {
-                return obj.identifier.integerValue != itemID;
-            }];
-            
-            @synchronized (self) {
-                ArticlesManager.shared.bookmarks = bookmarks;
-            }
-        } @catch (NSException *excp) {}
-    }
-    
-    @synchronized (self) {
-        self.bookmarksCount = @(ArticlesManager.shared.bookmarks.count);
-    }
-    
-}
 
 - (void)userDidUpdate {
     
@@ -3486,8 +3380,10 @@ NSArray <NSString *> * _defaultsKeys;
     ArticlesManager.shared.feeds = nil;
 //    ArticlesManager.shared.unread = nil;
     self.totalUnread = 0;
+    self.totalBookmarks = 0;
+    self.totalToday = 0;
     
-    [self.bookmarksManager _removeAllBookmarks:nil];
+    [MyDBManager purgeDataForResync];
     
     [MyDBManager setUser:nil];
     
@@ -3840,12 +3736,19 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    NSArray <NSString *> *existingArr = [self.bookmarksManager.bookmarks rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
-        return obj.identifier.stringValue;
-    }];
+    __block NSArray <NSString *> *existingArr = [NSArray new];
     
-    // we no longer need the bookmarks in memory. 
-    [self.bookmarksManager setValue:nil forKey:@"_bookmarks"];
+    [MyDBManager.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        YapDatabaseFilteredViewTransaction *txn = [transaction ext:DB_BOOKMARKED_VIEW];
+        
+        [txn enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
+                
+            existingArr = [existingArr arrayByAddingObject:key];
+            
+        }];
+        
+    }];
     
     NSString *existing = [existingArr componentsJoinedByString:@","];
     
@@ -4046,78 +3949,6 @@ NSArray <NSString *> * _defaultsKeys;
             
         }];
         
-        /*
-        if (self.bookmarksManager != nil && ((bookmarked && bookmarked.count) || (deleted && deleted.count))) {
-            
-            self.bookmarksManager->_migrating = YES;
-            
-            if (deleted && deleted.count) {
-                
-                for (NSNumber *articleID in deleted) {
-                    
-                    [self.bookmarksManager removeBookmarkForID:articleID completion:nil];
-                    
-                }
-                
-            }
-            
-            if (bookmarked && bookmarked.count) {
-                
-                bookmarked = [bookmarked rz_filter:^BOOL(NSNumber *obj, NSUInteger idx, NSArray *array) {
-                   
-                    return [existingArr indexOfObject:obj.stringValue] == NSNotFound;
-                    
-                }];
-                
-                __block NSUInteger count = bookmarked.count;
-                
-                if (count == 0) {
-                    
-                    return [self bookmarksUpdateFromServerCompleted];
-                    
-                }
-                
-                [bookmarked enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    
-                    // this article needs to be downloaded and cached
-                    
-                    weakify(self);
-                    
-                    [self getArticle:obj feedID:nil noAuth:NO success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                        
-                        strongify(self);
-                        
-                        [self.bookmarksManager addBookmark:responseObject completion:nil];
-                        
-                        count--;
-                        
-                        if (count == 0) {
-                            [self bookmarksUpdateFromServerCompleted];
-                        }
-                        
-                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-                       
-                        count--;
-                        
-                        if (count == 0) {
-                            [self bookmarksUpdateFromServerCompleted];
-                        }
-                        
-                    }];
-                    
-                }];
-                
-            }
-            else {
-                [self bookmarksUpdateFromServerCompleted];
-            }
-            
-        }
-        else {
-            [self bookmarksUpdateFromServerCompleted];
-        }
-         */
-        
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
         NSLog(@"Failed to fetch bookmarks from the server.");
@@ -4129,22 +3960,22 @@ NSArray <NSString *> * _defaultsKeys;
 
 - (void)bookmarksUpdateFromServerCompleted {
     
-    self.bookmarksManager->_migrating = NO;
-    
-    weakify(self);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        strongify(self);
-        
-        @try {
-           [self.bookmarksManager postNotification:BookmarksDidUpdateNotification object:nil];
-        } @catch (NSException *exception) {
-            NSLog(@"Exception when posting bookmarks notification, %@", exception);
-        } @finally {
-            
-        }
-    });
+//    self.bookmarksManager->_migrating = NO;
+//    
+//    weakify(self);
+//    
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        
+//        strongify(self);
+//        
+//        @try {
+//           [self.bookmarksManager postNotification:BookmarksDidUpdateNotification object:nil];
+//        } @catch (NSException *exception) {
+//            NSLog(@"Exception when posting bookmarks notification, %@", exception);
+//        } @finally {
+//            
+//        }
+//    });
     
 }
 
@@ -4262,8 +4093,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         [coder encodeObject:ArticlesManager.shared.folders forKey:kFoldersKey];
         [coder encodeObject:ArticlesManager.shared.feeds forKey:kFeedsKey];
 //        [coder encodeObject:self.subscription forKey:kSubscriptionKey];
-        [coder encodeObject:ArticlesManager.shared.bookmarks forKey:kBookmarksKey];
-        [coder encodeObject:self.bookmarksCount forKey:kBookmarksCountKey];
+        [coder encodeInteger:self.totalBookmarks forKey:kBookmarksCountKey];
         [coder encodeInteger:self.totalUnread forKey:ktotalUnreadKey];
 //        [coder encodeObject:ArticlesManager.shared forKey:NSStringFromClass(ArticlesManager.class)];
         
@@ -4288,8 +4118,7 @@ NSString *const kUnreadLastUpdateKey = @"key.unreadLastUpdate";
         ArticlesManager.shared.folders = [coder decodeObjectForKey:kFoldersKey];
         ArticlesManager.shared.feeds = [coder decodeObjectForKey:kFeedsKey];
 //        self.subscription = [coder decodeObjectForKey:kSubscriptionKey];
-        ArticlesManager.shared.bookmarks = [coder decodeObjectForKey:kBookmarksKey];
-        self.bookmarksCount = [coder decodeObjectForKey:kBookmarksCountKey];
+        self.totalBookmarks = [coder decodeIntegerForKey:kBookmarksCountKey];
         self.totalUnread = [coder decodeIntegerForKey:ktotalUnreadKey];
         
         double unreadUpdate = [coder decodeDoubleForKey:kUnreadLastUpdateKey];

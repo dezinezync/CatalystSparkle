@@ -48,9 +48,6 @@ NSString* deviceName() {
     if (self = [super init]) {
         
         self.childCoordinators = [NSMutableArray arrayWithCapacity:3];
-        self.bookmarksManager = [[BookmarksManager alloc] init];
-        
-        MyFeedsManager.bookmarksManager = self.bookmarksManager;
         
     }
     
@@ -66,7 +63,6 @@ NSString* deviceName() {
     
     SidebarVC *sidebar = [[SidebarVC alloc] initWithDefaultLayout];
     sidebar.mainCoordinator = self;
-//    sidebar.bookmarksManager = self.bookmarksManager;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
     
