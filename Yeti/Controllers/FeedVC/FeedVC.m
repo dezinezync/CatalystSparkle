@@ -339,14 +339,7 @@ static NSUInteger _filteringTag = 0;
         
     }
     
-    weakify(self);
-    
-    [self.bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
-       
-        strongify(self);
-        [self didUpdateBookmarks];
-        
-    }];
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ArticleCoverImagesPreferenceUpdated object:nil];
     
@@ -1195,7 +1188,6 @@ static NSUInteger _filteringTag = 0;
     
     ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
     vc.providerDelegate = self;
-    vc.bookmarksManager = self.bookmarksManager;
     vc.noAuth = self.noAuth;
     
     [self _showArticleVC:vc];

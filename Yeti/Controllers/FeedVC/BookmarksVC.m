@@ -9,7 +9,7 @@
 #import "BookmarksVC.h"
 
 @interface BookmarksVC () {
-    BOOL _reloadData;
+    BOOL _reloadBookmarks;
 }
 
 @property (nonatomic, strong) NSArray <FeedItem *> * articles;
@@ -41,12 +41,12 @@
     
     weakify(self);
     
-    [self.bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+    [NSNotificationCenter.defaultCenter addObserverForName:BookmarksDidUpdate object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
        
         strongify(self);
         
-        if (self->_reloadData == NO) {
-            self->_reloadData = YES;
+        if (self->_reloadBookmarks == NO) {
+            self->_reloadBookmarks = YES;
         }
         
         [self updateTitleView];
@@ -57,7 +57,7 @@
 
 - (void)dealloc {
     
-    [self.bookmarksManager removeObserver:self name:BookmarksDidUpdateNotification];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
     
 }
 
@@ -65,15 +65,25 @@
     
     [super viewWillAppear:animated];
     
-    if (self->_reloadData == YES || (self.DS.snapshot.numberOfItems == 0 && self.bookmarksManager.bookmarksCount != 0)) {
+    if (self->_reloadBookmarks == YES || (self.DS.snapshot.numberOfItems == 0 && MyFeedsManager.totalBookmarks != 0)) {
         
-        self->_reloadData = NO;
+        self->_reloadBookmarks = NO;
         
         [self setupData];
         
         [self updateTitleView];
         
     }
+    
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector {
+    
+    if ([NSStringFromSelector(aSelector) isEqualToString:@"_setSortingOption:"]) {
+        return NO;
+    }
+    
+    return [super respondsToSelector:aSelector];
     
 }
 
@@ -99,45 +109,61 @@
         return;
     }
     
-    if (self.bookmarksManager == nil) {
-        return;
-    }
-    
-    NSArray <FeedItem *> * articles = self.bookmarksManager.bookmarks;
-    
-    for (FeedItem *article in articles) {
+    [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        YapDatabaseFilteredViewTransaction *txn = [transaction ext:DB_BOOKMARKED_VIEW];
         
-        if (article.read == NO) {
+        __block NSArray <FeedItem *> * articles = [NSArray new];
+        
+        [txn enumerateKeysAndObjectsInGroup:GROUP_ARTICLES withOptions:kNilOptions usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem * _Nonnull object, NSUInteger index, BOOL * _Nonnull stop) {
             
-            if ([article.timestamp timeIntervalSince1970] > (86400 * 14)) {
-                article.read = YES;
+            if (object.read == NO) {
+                
+                if ([object.timestamp timeIntervalSince1970] > (86400 * 14)) {
+                    object.read = YES;
+                }
+                
             }
+           
+            articles = [articles arrayByAddingObject:object];
+            
+        }];
+        
+        articles = [[NSSet setWithArray:articles] allObjects];
+        
+        NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:(SharedPrefs.sortingOption == YTSortAllAsc)];
+        
+        self.articles = [articles sortedArrayUsingDescriptors:@[sortDescriptor]];
+        
+        @try {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
+                [snapshot appendSectionsWithIdentifiers:@[@0]];
+                [snapshot appendItemsWithIdentifiers:self.articles intoSectionWithIdentifier:@0];
+                
+                [self.DS applySnapshot:snapshot animatingDifferences:YES];
+                
+            });
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                self.controllerState = StateLoaded;
+                
+            });
             
         }
+        @catch (NSException *exc) {
+            NSLog(@"Exception updating bookmarks articles: %@", exc);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                self.controllerState = StateErrored;
+                
+            });
+        }
         
-    }
-    
-    articles = [[NSSet setWithArray:articles] allObjects];
-    
-    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:(SharedPrefs.sortingOption == YTSortAllAsc)];
-    
-    self.articles = [articles sortedArrayUsingDescriptors:@[sortDescriptor]];
-    
-    @try {
-        
-        NSDiffableDataSourceSnapshot *snapshot = [NSDiffableDataSourceSnapshot new];
-        [snapshot appendSectionsWithIdentifiers:@[@0]];
-        [snapshot appendItemsWithIdentifiers:self.articles intoSectionWithIdentifier:@0];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-        
-        self.controllerState = StateLoaded;
-        
-    }
-    @catch (NSException *exc) {
-        NSLog(@"Exception updating bookmarks articles: %@", exc);
-        self.controllerState = StateErrored;
-    }
+    }];
     
 }
 
@@ -145,7 +171,7 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Bookmark%@", @(self.bookmarksManager.bookmarksCount), self.bookmarksManager.bookmarksCount == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Bookmark%@", @(MyFeedsManager.totalBookmarks), MyFeedsManager.totalBookmarks == 1 ? @"" : @"s"];
     
     return totalArticles;
     
@@ -159,13 +185,13 @@
     return YES;
 }
 
-- (void)setSortingOption:(YetiSortOption)sortingOption {
-    
-    [super setSortingOption:sortingOption];
-    
-    [self setupData];
-    
-}
+//- (void)setSortingOption:(YetiSortOption)sortingOption {
+//
+//    [super setSortingOption:sortingOption];
+//
+//    [self setupData];
+//
+//}
 
 - (void)_search:(NSString *)text scope:(NSInteger)scope {
  

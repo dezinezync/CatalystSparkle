@@ -20,7 +20,6 @@
 
 #import "CustomFeed.h"
 
-#import "BookmarksManager.h"
 #import "BarPositioning.h"
 
 #import "FeedHeaderView.h"
@@ -48,8 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype _Nullable)initWithFeed:(Feed * _Nonnull)feed;
 
 @property (nonatomic, assign) FeedVCType type;
-
-@property (nonatomic, weak) BookmarksManager * _Nullable bookmarksManager;
 
 @property (atomic, assign) StateType controllerState;
 

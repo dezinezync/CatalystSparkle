@@ -131,6 +131,15 @@
         
         item.bookmarked = bookmarked;
         
+        [MyDBManager addArticle:item strip:NO];
+        
+        if (bookmarked) {
+            self.totalBookmarks++;
+        }
+        else {
+            self.totalBookmarks--;
+        }
+        
         if (successCB) {
             asyncMain(^{
                 successCB(responseObject, response, task);

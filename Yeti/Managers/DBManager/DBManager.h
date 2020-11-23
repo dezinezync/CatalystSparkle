@@ -49,6 +49,7 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 
 #define UNREADS_FEED_EXT @"unreadsFeedView"
 #define DB_FEED_VIEW @"feedView"
+#define DB_BOOKMARKED_VIEW @"bookmarksView"
 
 #define DB_VERSION_TAG @"2020-11-22 10:16AM"
 

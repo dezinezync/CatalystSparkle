@@ -684,7 +684,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 //#ifdef DEBUG
 //    [self purgeDataForResync];
 //#endif
-    [self cleanupDatabase];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), self.readQueue, ^{
+        [self cleanupDatabase];
+    });
     
 }
 
@@ -826,66 +828,84 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
     }
     
+    // Bookmarks View
+    {
+        
+        YapDatabaseViewFiltering *filtering = [YapDatabaseViewFiltering withMetadataBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata) {
+        
+            if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
+                return NO;
+            }
+            
+            // article metadata is an NSDictionary
+            NSDictionary *dict = metadata;
+            
+            return [([dict valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == YES;
+            
+        }];
+        
+        YapDatabaseFilteredView *view = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filtering versionTag:DB_VERSION_TAG options:options];
+        
+        [_database registerExtension:view withName:DB_BOOKMARKED_VIEW];
+        
+    }
+    
 }
 
 - (void)cleanupDatabase {
     
     // remove articles older than 2 weeks from the DB cache.
-    dispatch_async(self.readQueue, ^{
+    NSDate *now = NSDate.date;
+    NSTimeInterval interval = [now timeIntervalSince1970];
+   
+    [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
         
-        NSDate *now = NSDate.date;
-        NSTimeInterval interval = [now timeIntervalSince1970];
-       
-        [self.bgConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        NSArray <NSString *> * collections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+            return [obj containsString:LOCAL_ARTICLES_COLLECTION];
+        }];
+        
+        NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:nil ascending:YES selector:@selector(compare:)];
+        
+        for (NSString *col in collections) {
             
-            NSArray <NSString *> * collections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
+            NSArray <NSNumber *> *keys = [[transaction allKeysInCollection:col] rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
+                    
+                return @(obj.integerValue);
+                
             }];
             
-            NSSortDescriptor *descriptor = [NSSortDescriptor sortDescriptorWithKey:nil ascending:YES selector:@selector(compare:)];
+            keys = [keys sortedArrayUsingDescriptors:@[descriptor]];
             
-            for (NSString *col in collections) {
+            if (keys.count == 0) {
+                continue;
+            }
+            
+            // check the last 20 items
+            NSRange range = NSMakeRange(0, MIN(keys.count, 20));
+            
+            keys = [keys subarrayWithRange:range];
+            
+            for (NSNumber *key in keys) {
                 
-                NSArray <NSNumber *> *keys = [[transaction allKeysInCollection:col] rz_map:^id(NSString *obj, NSUInteger idx, NSArray *array) {
-                        
-                    return @(obj.integerValue);
-                    
-                }];
+                NSDictionary *item = [transaction metadataForKey:key.stringValue inCollection:col];
                 
-                keys = [keys sortedArrayUsingDescriptors:@[descriptor]];
-                
-                if (keys.count == 0) {
-                    continue;
-                }
-                
-                // check the last 20 items
-                NSRange range = NSMakeRange(0, MIN(keys.count, 20));
-                
-                keys = [keys subarrayWithRange:range];
-                
-                for (NSNumber *key in keys) {
-                    
-                    NSDictionary *item = [transaction metadataForKey:key.stringValue inCollection:col];
-                    
-                    // if it is older than 2 weeks, delete it
-                    if (item != nil) {
+                // if it is older than 2 weeks, delete it
+                if (item != nil) {
 //                        dispatch_get_global_queue
+                    
+                    if ([([item valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == YES) {
+                        continue;
+                    }
+                    
+                    NSTimeInterval timestamp = [[item valueForKey:@"timestamp"] doubleValue];
+                    
+                    NSTimeInterval since = interval - timestamp;
+                    
+                    if(since >= 2592000) {
                         
-                        if ([([item valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == YES) {
-                            continue;
-                        }
+                        NSLog(@"Article is stale %@:%@. Deleted.", col, key);
                         
-                        NSTimeInterval timestamp = [[item valueForKey:@"timestamp"] doubleValue];
-                        
-                        NSTimeInterval since = interval - timestamp;
-                        
-                        if(since >= 2592000) {
-                            
-                            NSLog(@"Article is stale %@:%@. Deleted.", col, key);
-                            
-                            [self _deleteArticle:key.stringValue collection:col];
-                            
-                        }
+                        [self _deleteArticle:key.stringValue collection:col transaction:transaction];
                         
                     }
                     
@@ -893,9 +913,9 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
             }
             
-        }];
+        }
         
-    });
+    }];
     
 }
 
@@ -1037,6 +1057,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         self.syncSetup = YES;
         
+//        token = [@"2020-11-23 04:10:00" base64Encoded];
+        
         [self syncNow:token];
         
     }];
@@ -1065,13 +1087,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     }
     
     weakify(self);
-    
-    // @TODO: Fetch the article IDs to add and delete. Delete the existing ones. Update new ones. If new ones don't exist, download as usual. 
-//    [_syncQueue addOperationWithBlock:^{
-//
-//        [MyFeedsManager updateBookmarksFromServer];
-//
-//    }];
     
     [_syncQueue addOperationWithBlock:^{
        
@@ -1105,6 +1120,63 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     self->_currentProgress = self->_totalProgress;
                     
                     [self updateCustomFeedsMapping:changeSet transaction:transaction];
+                    
+                }
+                
+                if (changeSet.reads.count > 0) {
+                    
+                    YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
+                    
+                    NSUInteger total = changeSet.reads.count;
+                    __block NSUInteger counted = 0;
+                    
+                    NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                    
+                    [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+                        
+                        if ([changeSet.reads containsObject:@(key.integerValue)]) {
+                            
+                            if (articles[collection] == nil) {
+                                articles[collection] = [NSMutableSet setWithCapacity:total];
+                            }
+                            
+                            if ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO) {
+                                [articles[collection] addObject:key];
+                            }
+                            
+                            counted++;
+                            
+                        }
+                       
+                        if (counted == total) {
+                            *stop = YES;
+                        }
+                        
+                    }];
+                    
+                    [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
+                       
+                        for (NSString *key in keys) {
+                            
+                            FeedItem *item = nil;
+                            NSDictionary *metadata = nil;
+                            
+                            [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
+                            
+                            if (item != nil && metadata != nil) {
+                                
+                                NSMutableDictionary *dict = metadata.mutableCopy;
+                                
+                                dict[@"read"] = @(YES);
+                                item.read = YES;
+                                
+                                [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
+                                
+                            }
+                            
+                        }
+                        
+                    }];
                     
                 }
                 
@@ -1408,10 +1480,23 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
         }];
         
-        runOnMainQueueWithoutDeadlocking(^{
+        tnx = [transaction ext:DB_BOOKMARKED_VIEW];
+        
+        __block NSUInteger bookmarked = 0;
+        
+        [tnx enumerateKeysInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSUInteger index, BOOL * _Nonnull stop) {
             
+            bookmarked++;
+            
+        }];
+        
+        NSLogDebug(@"Total Unread: %@\nTotal Today: %@\nTotal Bookmarks: %@", @(count), @(today), @(bookmarked));
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
             MyFeedsManager.totalUnread = count;
             MyFeedsManager.totalToday = today;
+            MyFeedsManager.totalBookmarks = bookmarked;
             
             // flush all the countingUnreads to the feed objects
             for (Feed *feed in manager.feeds) {
@@ -1422,8 +1507,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             }
             
         });
-        
-        NSLogDebug(@"Total Unread: %@\nTotal Today: %@", @(count), @(today));
         
     }];
     
@@ -1537,6 +1620,14 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (void)_deleteArticle:(NSString *)key collection:(NSString *)col transaction:(YapDatabaseReadWriteTransaction *)transaction {
+    
+    [transaction removeObjectForKey:key inCollection:col];
+    
+    [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+    
+}
+
 - (void)removeAllArticlesFor:(NSNumber *)feedID {
     
     NSString *collection = [self articlesCollectionForFeed:feedID];
@@ -1585,6 +1676,42 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
                                                             object:self
                                                           userInfo:userInfo];
+        
+        __block BOOL bookmarksUpdated = NO;
+        
+        [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            NSArray <NSString *> *articleCollections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+               
+                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
+                
+            }];
+            
+            for (NSString *collection in articleCollections) {
+                
+                if (bookmarksUpdated) {
+                    continue;
+                }
+                
+                if ([self.uiConnection hasMetadataChangeForCollection:collection inNotifications:notifications]) {
+                    
+                    bookmarksUpdated = YES;
+                    
+                }
+                
+            }
+            
+        }];
+        
+        if (bookmarksUpdated) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+               
+                [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:nil];
+                
+            });
+            
+        }
         
     });
     

@@ -66,7 +66,7 @@ NSString* deviceName() {
     
     SidebarVC *sidebar = [[SidebarVC alloc] initWithDefaultLayout];
     sidebar.mainCoordinator = self;
-    sidebar.bookmarksManager = self.bookmarksManager;
+//    sidebar.bookmarksManager = self.bookmarksManager;
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sidebar];
     
@@ -498,8 +498,6 @@ NSString* deviceName() {
     if ([controller isKindOfClass:FeedVC.class]) {
         
         self.feedVC = (FeedVC *)controller;
-        
-        [(FeedVC *)controller setBookmarksManager:self.bookmarksManager];
         
     }
     

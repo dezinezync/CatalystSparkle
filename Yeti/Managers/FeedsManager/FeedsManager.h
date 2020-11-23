@@ -71,6 +71,8 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 
 @property (atomic, assign) NSUInteger totalToday;
 
+@property (atomic, assign) NSUInteger totalBookmarks;
+
 #pragma mark - Networking
 
 @property (nonatomic, strong, readonly) Reachability * _Nonnull reachability;

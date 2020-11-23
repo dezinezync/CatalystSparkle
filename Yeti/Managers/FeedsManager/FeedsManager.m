@@ -130,7 +130,7 @@ NSArray <NSString *> * _defaultsKeys;
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
+//    [center addObserver:self selector:@selector(didUpdateBookmarks:) name:BookmarksDidUpdate object:nil];
     [center addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
     
 }
@@ -2263,7 +2263,7 @@ NSArray <NSString *> * _defaultsKeys;
         
     });
     
-    [session GET:@"/1.7/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    [session GET:@"/2.2/sync" parameters:query success:^(NSDictionary * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (response.statusCode == 304) {
             // nothing changed. exit early
@@ -2277,12 +2277,14 @@ NSArray <NSString *> * _defaultsKeys;
         
         // server will respond with changes and changeToken
         NSString *changeToken = responseObject[@"changeToken"];
-        NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"];
+        NSDictionary <NSString *, NSArray *> * changes = responseObject[@"changes"] ?: @{};
+        NSArray <NSNumber *> *reads = responseObject[@"reads"] ?: @[];
         
         if (successCB) {
             
             ChangeSet *changeSet = [[ChangeSet alloc] init];
             changeSet.changeToken = changeToken;
+            changeSet.reads = reads;
             
             NSArray *customFeeds = [changes valueForKey:@"customFeeds"];
             
@@ -2901,6 +2903,30 @@ NSArray <NSString *> * _defaultsKeys;
     }
     
     [NSNotificationCenter.defaultCenter postNotificationName:TodayCountDidUpdate object:self userInfo:nil];
+    
+}
+
+- (void)setTotalBookmarks:(NSUInteger)totalBookmarks {
+    
+    if (NSThread.isMainThread == NO) {
+        
+        [self performSelectorOnMainThread:@selector(setTotalBookmarks:) withObject:@(totalBookmarks) waitUntilDone:NO];
+        return;
+        
+    }
+    
+    @synchronized (self) {
+        
+        if (totalBookmarks >= 999999999) {
+            self->_totalBookmarks = 0;
+        }
+        else {
+            self->_totalBookmarks = MAX(totalBookmarks, 0);
+        }
+        
+    }
+    
+    [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:self userInfo:nil];
     
 }
 
@@ -3849,6 +3875,178 @@ NSArray <NSString *> * _defaultsKeys;
         
         strongify(self);
         
+        [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+            
+            YapDatabaseFilteredViewTransaction *txn = [transaction ext:DB_BOOKMARKED_VIEW];
+           
+            if (deleted != nil && deleted.count) {
+                
+                NSUInteger total = deleted.count;
+                __block NSUInteger counted = 0;
+                
+                NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                
+                [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+                    
+                    if ([deleted containsObject:@(key.integerValue)]) {
+                        
+                        if (articles[collection] == nil) {
+                            articles[collection] = [NSMutableSet setWithCapacity:total];
+                        }
+                        
+                        if ([([metadata valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == YES) {
+                            [articles[collection] addObject:key];
+                        }
+                        
+                        counted++;
+                        
+                    }
+                   
+                    if (counted == total) {
+                        *stop = YES;
+                    }
+                    
+                }];
+                
+                [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
+                   
+                    for (NSString *key in keys) {
+                        
+                        FeedItem *item = nil;
+                        NSDictionary *metadata = nil;
+                        
+                        [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
+                        
+                        if (item != nil && metadata != nil) {
+                            
+                            NSMutableDictionary *dict = metadata.mutableCopy;
+                            
+                            dict[@"bookmarked"] = @(NO);
+                            item.bookmarked = NO;
+                            
+                            [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
+                            
+                        }
+                        
+                    }
+                    
+                }];
+                
+            }
+            
+            if (bookmarked != nil && bookmarked.count) {
+                
+                NSUInteger total = bookmarked.count;
+                __block NSUInteger counted = 0;
+                
+                NSMutableDictionary <NSString *, NSMutableSet <NSString *> *> *articles = @{}.mutableCopy;
+                
+                [txn enumerateKeysAndMetadataInGroup:GROUP_ARTICLES usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, id  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+                    
+                    if ([bookmarked containsObject:@(key.integerValue)] == NO) {
+                        
+                        if (articles[collection] == nil) {
+                            articles[collection] = [NSMutableSet setWithCapacity:total];
+                        }
+                        
+                        if ([([metadata valueForKey:@"bookmarked"] ?: @(NO)) boolValue] == NO) {
+                            [articles[collection] addObject:key];
+                        }
+                        
+                        counted++;
+                        
+                    }
+                    
+                    // 1. this may not always be the case if we do not have the article on file.
+                    if (counted == total) {
+                        *stop = YES;
+                    }
+                    
+                }];
+                
+                if (articles.allKeys.count == 0) {
+                    // we have all.
+                    return [self bookmarksUpdateFromServerCompleted];
+                }
+                
+                // 2. so check how many we have so we can download the rest.
+                counted = 0;
+                NSMutableSet *articlesNotCached = [NSMutableSet setWithArray:bookmarked];
+                
+                [articles enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull collection, NSMutableSet<NSString *> * _Nonnull keys, BOOL * _Nonnull stop) {
+                   
+                    for (NSString *key in keys) {
+                        
+                        FeedItem *item = nil;
+                        NSDictionary *metadata = nil;
+                        
+                        [transaction getObject:&item metadata:&metadata forKey:key inCollection:collection];
+                        
+                        if (item != nil && metadata != nil) {
+                            
+                            NSMutableDictionary *dict = metadata.mutableCopy;
+                            
+                            dict[@"bookmarked"] = @(YES);
+                            item.read = YES;
+                            
+                            [transaction setObject:item forKey:key inCollection:collection withMetadata:dict];
+                            
+                            [articlesNotCached removeObject:@(key.integerValue)];
+                            
+                        }
+                        
+                    }
+                    
+                }];
+                
+                if (articlesNotCached.count == 0) {
+                    
+                    return [self bookmarksUpdateFromServerCompleted];
+                    
+                }
+                
+                __block NSUInteger count = articlesNotCached.count;
+                
+                [articlesNotCached.allObjects enumerateObjectsUsingBlock:^(NSNumber * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    
+                    // this article needs to be downloaded and cached
+                    
+                    weakify(self);
+                    
+                    [self getArticle:obj feedID:nil noAuth:NO success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                        
+                        strongify(self);
+                        
+                        responseObject.bookmarked = YES;
+                        
+                        [MyDBManager addArticle:responseObject];
+                        
+                        count--;
+                        
+                        if (count == 0) {
+                            [self bookmarksUpdateFromServerCompleted];
+                        }
+                        
+                    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+                       
+                        count--;
+                        
+                        if (count == 0) {
+                            [self bookmarksUpdateFromServerCompleted];
+                        }
+                        
+                    }];
+                    
+                }];
+                
+            }
+            else {
+                [self bookmarksUpdateFromServerCompleted];
+            }
+            
+        }];
+        
+        /*
         if (self.bookmarksManager != nil && ((bookmarked && bookmarked.count) || (deleted && deleted.count))) {
             
             self.bookmarksManager->_migrating = YES;
@@ -3918,6 +4116,7 @@ NSArray <NSString *> * _defaultsKeys;
         else {
             [self bookmarksUpdateFromServerCompleted];
         }
+         */
         
     } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
        
@@ -4021,7 +4220,7 @@ NSArray <NSString *> * _defaultsKeys;
         
         dict[@"today"] = @(self.totalToday ?: 0);
         
-        dict[@"bookmarks"] = @(self.bookmarksManager.bookmarksCount ?: 0);
+        dict[@"bookmarks"] = @(self.totalBookmarks ?: 0);
         
         dict[@"date"] = @([NSDate.date timeIntervalSince1970]);
         

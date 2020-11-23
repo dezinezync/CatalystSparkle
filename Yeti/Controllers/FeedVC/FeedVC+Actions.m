@@ -59,7 +59,6 @@
         
         ArticleVC *vc = [[ArticleVC alloc] initWithItem:item];
         vc.providerDelegate = (id<ArticleProvider>)self;
-        vc.bookmarksManager = self.bookmarksManager;
         
         [self _showArticleVC:vc];
         

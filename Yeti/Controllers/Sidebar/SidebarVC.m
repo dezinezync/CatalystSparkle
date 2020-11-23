@@ -572,7 +572,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (SharedPrefs.hideBookmarks == NO) {
         
-        [_bookmarksManager addObserver:self name:BookmarksDidUpdateNotification callback:^{
+        [NSNotificationCenter.defaultCenter addObserverForName:BookmarksDidUpdate object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification * _Nonnull note) {
             
             [MyFeedsManager updateSharedUnreadCounters];
             
@@ -626,6 +626,10 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
             
             dispatch_async(MyDBManager.readQueue, ^{
                 [MyDBManager updateUnreadCounters];
+            });
+            
+            dispatch_async(MyDBManager.readQueue, ^{
+                [MyFeedsManager updateBookmarksFromServer];
             });
             
             if (self.mainCoordinator.feedVC != nil

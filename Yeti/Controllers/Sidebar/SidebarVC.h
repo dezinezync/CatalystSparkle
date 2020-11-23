@@ -27,8 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) UICollectionViewDiffableDataSource <NSNumber *, Feed *> *DS;
 
-@property (nonatomic, weak) BookmarksManager *bookmarksManager;
-
 @property (nonatomic, weak) UIRefreshControl *refreshControl;
 
 - (instancetype)initWithDefaultLayout;
