@@ -38,6 +38,9 @@ extern FeedsManager * _Nonnull MyFeedsManager;
     NSNumber * _userID;
     
     NSUInteger _totalToday;
+    
+    NSUInteger _totalBookmarks;
+    
 }
 
 @property (nonatomic, copy, readonly) NSString * _Nullable deviceID;

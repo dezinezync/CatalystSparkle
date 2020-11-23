@@ -1692,41 +1692,53 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                                                             object:self
                                                           userInfo:userInfo];
         
-        __block BOOL bookmarksUpdated = NO;
-        
-        [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-            
-            NSArray <NSString *> *articleCollections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-               
-                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
-                
-            }];
-            
-            for (NSString *collection in articleCollections) {
-                
-                if (bookmarksUpdated) {
-                    continue;
-                }
-                
-                if ([self.uiConnection hasMetadataChangeForCollection:collection inNotifications:notifications]) {
-                    
-                    bookmarksUpdated = YES;
-                    
-                }
-                
-            }
-            
-        }];
-        
-        if (bookmarksUpdated) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-               
-                [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:nil];
-                
-            });
-            
-        }
+//        __block BOOL bookmarksUpdated = NO;
+//        
+//        [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+//            
+//            NSArray <NSString *> *articleCollections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
+//               
+//                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
+//                
+//            }];
+//            
+//            for (NSString *collection in articleCollections) {
+//                
+//                if (bookmarksUpdated) {
+//                    continue;
+//                }
+//                
+//                if ([self.uiConnection hasMetadataChangeForCollection:collection inNotifications:notifications]) {
+//                    
+//                    for (NSNotification *note in notifications) {
+//                        
+//                        YapSet *set = [note valueForKeyPath:@"userInfo.metadataChanges"];
+//                        
+//                        [set enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+//                           
+//                            NSLog(@"Change: %@", obj);
+//                            
+//                        }];
+//                        
+//                    }
+//                    
+//                    bookmarksUpdated = YES;
+//                    
+//                }
+//                
+//            }
+//            
+//        }];
+//        
+//        if (bookmarksUpdated) {
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//               
+//                [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:nil];
+//                
+//            });
+//            
+//        }
         
     });
     

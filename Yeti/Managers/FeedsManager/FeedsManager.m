@@ -3031,6 +3031,14 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
+- (NSUInteger)totalBookmarks {
+    
+    @synchronized (self) {
+        return self->_totalBookmarks;
+    }
+    
+}
+
 - (NSString *)appFullVersion {
     
     if (_appFullVersion == nil) {

@@ -80,7 +80,7 @@
             }
             
             // save it back to the DB so the read state is persisted.
-            [MyDBManager addArticle:item];
+            [MyDBManager addArticle:item strip:NO];
             
         }
         
