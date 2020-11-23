@@ -31,6 +31,8 @@
     
     UIListContentConfiguration *content = self.isExploring ? [UIListContentConfiguration subtitleCellConfiguration] : [UIListContentConfiguration sidebarCellConfiguration];
     
+    content.imageProperties.accessibilityIgnoresInvertColors = YES;
+    
     content.text = item.displayTitle;
     
     if (self.isExploring == YES) {
@@ -167,26 +169,11 @@
                 
                 strongify(self);
                 
-                if (self.feed == nil) {
-                    [self _setupDefaultIcon];;
+                if (self.feed == nil || self.DS == nil || feed.faviconImage != nil || image == nil) {
+                    return [self _setupDefaultIcon];
                 }
                 
-                if (self.DS == nil) {
-                    [self _setupDefaultIcon];;
-                }
-                
-                if (feed.faviconImage != nil) {
-                    [self _setupDefaultIcon];;
-                }
-
-                if (image != nil) {
-
-                    feed.faviconImage = image;
-
-                }
-                else {
-                    [self _setupDefaultIcon];
-                }
+                feed.faviconImage = image;
                 
                 [self updateCellFaviconImageFor:feed];
 
@@ -265,6 +252,10 @@
     }
     
     UIListContentConfiguration *content = (id)[cell contentConfiguration];
+    
+    if (feed.faviconImage.size.width > feed.faviconImage.size.height) {
+        // @TODO: Center the image here and let it overflow horizontally.
+    }
         
     content.image = feed.faviconImage;
     

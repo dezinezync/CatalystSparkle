@@ -2588,6 +2588,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
     }
     
+    /*
     Feed *feed = [ArticlesManager.shared feedForID:self.item.feedID];
     
     // if the GUID doesn't contain the OG URL, we'll error out anyways
@@ -2606,6 +2607,7 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         return;
         
     }
+     */
     
     [MyFeedsManager getMercurialArticle:self.item.identifier success:^(FeedItem * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2626,9 +2628,6 @@ typedef NS_ENUM(NSInteger, ArticleState) {
         if (responseObject.enclosures && responseObject.enclosures.count) {
             self.item.enclosures = responseObject.enclosures;
         }
-        
-        // persist to disk with updated state
-        [MyDBManager addArticle:self.item];
         
         [self setupArticle:self.item];
         

@@ -19,7 +19,7 @@ extension Text {
         #if canImport(AppKit) || targetEnvironment(macCatalyst)
         return self.font(.system(size: 14)).fontWeight(.semibold)
         #elseif canImport(UIKit)
-        return self.font(.system(size: 14)).fontWeight(.medium)
+        return self.font(.system(size: 15)).fontWeight(.medium)
         #else
         return self;
         #endif

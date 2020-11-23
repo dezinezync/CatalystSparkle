@@ -875,7 +875,7 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    NSString *path = formattedString(@"/1.3/mercurial/%@", articleID);
+    NSString *path = formattedString(@"/2.2/mercurial/%@", articleID);
     
     NSMutableDictionary *params = @{}.mutableCopy;
     
@@ -888,6 +888,25 @@ NSArray <NSString *> * _defaultsKeys;
         if (successCB) {
             
             FeedItem *item = [FeedItem instanceFromDictionary:responseObject];
+            
+            if (item.content == nil || item.content.count == 0) {
+                
+                // treat as an error.
+                if (errorCB) {
+                    
+                    NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:500 userInfo:@{NSLocalizedDescriptionKey: @"An error occurred when trying to extract the full-text from the article."}];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        errorCB(error, response, task);
+                    });
+                    
+                }
+                
+                return;
+                
+            }
+            
+            [MyDBManager addArticle:item strip:NO];
             
             successCB(item, response, task);
             

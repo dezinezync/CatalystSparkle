@@ -1577,6 +1577,20 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         if (article.content) {
             
+            if (article.summary == nil || (article.summary != nil && [article.summary isBlank])) {
+                
+                article.summary = [article textFromContent];
+                
+                if (article.summary != nil && article.summary.length > 200) {
+                    
+                    article.summary = [[article.summary substringWithRange:NSMakeRange(0, 197)] stringByAppendingString:@"..."];
+                    
+                }
+                
+                NSLogDebug(@"Added summary for article:%@ from content.", article.identifier);
+                
+            }
+            
             [transaction setObject:article.content forKey:article.identifier.stringValue inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
             
         }
@@ -1584,15 +1598,16 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         if (strip == YES) {
             article.content = nil;
         }
-       
-//        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection];
-        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:@{
+        
+        NSDictionary *metadata = @{
             @"read": @(article.isRead),
             @"bookmarked": @(article.isBookmarked),
             @"mercury": @(article.mercury),
             @"feedID": article.feedID,
             @"timestamp": @([article.timestamp timeIntervalSince1970])
-        }];
+        };
+
+        [transaction setObject:article forKey:article.identifier.stringValue inCollection:collection withMetadata:metadata];
         
     }];
     
