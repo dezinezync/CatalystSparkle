@@ -1266,7 +1266,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 NSString *title = item.articleTitle;
                 NSNumber *date = @(item.timestamp.timeIntervalSince1970);
-                NSString *author = item.author ?: @"";
+                NSString *author = [(item.author ?: @"") stringByStrippingHTML];
                 NSString *blog = item.blogTitle;
                 NSString *imageURL = item.coverImage;
                 NSNumber *identifier = item.identifier;
