@@ -121,7 +121,7 @@
     
     _migrating = YES;
     
-    NSArray <FeedItem *> * oldBookmarks = ArticlesManager.shared.bookmarks;
+    NSArray <FeedItem *> * oldBookmarks = @[];
     
     if (oldBookmarks.count == 0) {
         
