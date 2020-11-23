@@ -1188,7 +1188,7 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
     
     if (self.unreadWidgetsTimer != nil) {
         
-        interval = 5;
+        interval = 2;
         
         [self.unreadWidgetsTimer invalidate];
         
@@ -1266,6 +1266,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 
                 NSString *title = item.articleTitle;
                 NSNumber *date = @(item.timestamp.timeIntervalSince1970);
+                
+                if (item.author != nil && [item.author isKindOfClass:NSDictionary.class]) {
+                    item.author = [item.author valueForKey:@"name"];
+                }
+                
                 NSString *author = [(item.author ?: @"") stringByStrippingHTML];
                 NSString *blog = item.blogTitle;
                 NSString *imageURL = item.coverImage;
@@ -1321,6 +1326,8 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [list addObject:listItem];
                 
             }
+            
+            [list sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO]]];
             
             NSDictionary *data = @{@"entries": list, @"date": @([NSDate.date timeIntervalSince1970])};
             
