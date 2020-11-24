@@ -1657,6 +1657,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         
         [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
         
+        [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+        
     }];
     
 }
@@ -1666,6 +1668,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     [transaction removeObjectForKey:key inCollection:col];
     
     [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+    
+    [transaction removeObjectForKey:key inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
     
 }
 
@@ -1680,6 +1684,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [transaction removeAllObjectsInCollection:collection];
         
         [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
+        
+        [transaction removeObjectsForKeys:keys inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
         
     }];
     
@@ -1717,55 +1723,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
                                                             object:self
                                                           userInfo:userInfo];
-        
-//        __block BOOL bookmarksUpdated = NO;
-//        
-//        [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-//            
-//            NSArray <NSString *> *articleCollections = [[transaction allCollections] rz_filter:^BOOL(NSString *obj, NSUInteger idx, NSArray *array) {
-//               
-//                return [obj containsString:LOCAL_ARTICLES_COLLECTION];
-//                
-//            }];
-//            
-//            for (NSString *collection in articleCollections) {
-//                
-//                if (bookmarksUpdated) {
-//                    continue;
-//                }
-//                
-//                if ([self.uiConnection hasMetadataChangeForCollection:collection inNotifications:notifications]) {
-//                    
-//                    for (NSNotification *note in notifications) {
-//                        
-//                        YapSet *set = [note valueForKeyPath:@"userInfo.metadataChanges"];
-//                        
-//                        [set enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
-//                           
-//                            NSLog(@"Change: %@", obj);
-//                            
-//                        }];
-//                        
-//                    }
-//                    
-//                    bookmarksUpdated = YES;
-//                    
-//                }
-//                
-//            }
-//            
-//        }];
-//        
-//        if (bookmarksUpdated) {
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//               
-//                [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:nil];
-//                
-//            });
-//            
-//        }
-        
+
     });
     
 }
@@ -1778,14 +1736,13 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     [self.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
+        [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_CONTENT_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_ARTICLES_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FEEDS_COLLECTION];
         [transaction removeAllObjectsInCollection:LOCAL_FOLDERS_COLLECTION];
         
     }];
-    
-//    [self.uiConnection beginLongLivedReadTransaction];
     
 }
 
