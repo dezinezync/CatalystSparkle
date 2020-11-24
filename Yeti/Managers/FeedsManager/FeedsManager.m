@@ -803,11 +803,28 @@ NSArray <NSString *> * _defaultsKeys;
         
         FeedItem *item = [MyDBManager articleForID:articleID feedID:feedID];
         
-        if (item.content == nil) {
-            
-            NSArray *content = [MyDBManager contentForArticle:articleID];
+        // check for full-text content first
+        NSArray <Content *> *content = [MyDBManager fullTextContentForArticle:articleID];
+        
+        if (content != nil && content.count > 0) {
             
             item.content = content;
+            
+            if (item.mercury == NO) {
+                item.mercury = YES;
+            }
+            
+        }
+        
+        if (item.content == nil) {
+            
+            content = [MyDBManager contentForArticle:articleID];
+            
+            item.content = content;
+            
+            if (item.mercury == YES) {
+                item.mercury = NO;
+            }
             
         }
         
@@ -875,6 +892,25 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
+    NSArray *content = [MyDBManager fullTextContentForArticle:articleID];
+    
+    if (content != nil) {
+        
+        FeedItem *item = [FeedItem new];
+        item.identifier = articleID;
+        item.read = YES;
+        item.bookmarked = NO;
+        item.content = content;
+        item.mercury = YES;
+        
+        runOnMainQueueWithoutDeadlocking(^{
+            successCB(item, nil, nil);
+        });
+        
+        return;
+        
+    }
+    
     NSString *path = formattedString(@"/2.2/mercurial/%@", articleID);
     
     NSMutableDictionary *params = @{}.mutableCopy;
@@ -906,7 +942,7 @@ NSArray <NSString *> * _defaultsKeys;
                 
             }
             
-            [MyDBManager addArticle:item strip:NO];
+            [MyDBManager addArticleFullText:item.content identifier:item.identifier];
             
             successCB(item, response, task);
             

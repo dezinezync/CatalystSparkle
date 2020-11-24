@@ -40,7 +40,11 @@ typedef void (^syncProgressBlock)(CGFloat progress);
 #define LOCAL_FEEDS_COLLECTION @"localFeeds"
 #define LOCAL_FOLDERS_COLLECTION @"localFolders"
 #define LOCAL_ARTICLES_COLLECTION @"articles"
-#define LOCAL_ARTICLES_CONTENT_COLLECTION @"artContent" // cannot use "articles" here as it conflicts with the db setup.
+
+// cannot use "articles" here as it conflicts with the db setup.
+#define LOCAL_ARTICLES_CONTENT_COLLECTION @"artContent"
+#define LOCAL_ARTICLES_FULLTEXT_COLLECTION @"artFullText"
+
 #define LOCAL_SETTINGS_COLLECTION @"localSettings" // internal app settings
 
 #define GROUP_ARTICLES @"articles"
@@ -104,11 +108,15 @@ extern DBManager * MyDBManager;
 
 - (FeedItem *)articleForID:(NSNumber *)identifier feedID:(NSNumber *)feedID;
 
-- (NSArray *)contentForArticle:(NSNumber *)identifier;
+- (NSArray <Content *> *)contentForArticle:(NSNumber *)identifier;
+
+- (NSArray <Content *> *)fullTextContentForArticle:(NSNumber *)identifier;
 
 - (void)addArticle:(FeedItem *)article;
 
 - (void)addArticle:(FeedItem *)article strip:(BOOL)strip;
+
+- (void)addArticleFullText:(NSArray <Content *> *)content identifier:(NSNumber *)identifier;
 
 - (void)removeAllArticlesFor:(NSNumber *)feedID;
 

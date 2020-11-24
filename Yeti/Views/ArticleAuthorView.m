@@ -100,8 +100,8 @@
     self.mercurialButton.tintColor = mercurialed ? self.tintColor : UIColor.systemGrayColor;
     
     if (mercurialed) {
-        self.mercurialButton.accessibilityLabel = @"Full Text Loaded";
-        self.mercurialButton.accessibilityValue = @"Full Text Loaded";
+        self.mercurialButton.accessibilityLabel = @"Load Article Text";
+        self.mercurialButton.accessibilityValue = @"Full Article Text";
     }
     else {
         self.mercurialButton.accessibilityLabel = @"Load Full Text";
@@ -115,10 +115,6 @@
 #pragma mark -
 
 - (IBAction)mercurialButton:(id)sender {
-    
-    if (self.mercurialed == YES) {
-        return;
-    }
     
     // disable it so the action does not trigger twice.
     {
@@ -146,17 +142,12 @@
                         self.mercurialed = YES;
                     }
                     
-                    // if the action was completed, then we disable
-                    // the button, which is the opposite of completed.
-                    {
-                        [self.activityIndicator stopAnimating];
-                        self.activityView.hidden = YES;
-                        self.activityIndicator.hidden = YES;
-                        
-                        self.mercurialButton.enabled = !completed;
-                        self.mercurialButton.hidden = NO;
-                        
-                    }
+                    [self.activityIndicator stopAnimating];
+                    self.activityView.hidden = YES;
+                    self.activityIndicator.hidden = YES;
+                    
+                    self.mercurialButton.enabled = YES;
+                    self.mercurialButton.hidden = NO;
                     
                 });
                 

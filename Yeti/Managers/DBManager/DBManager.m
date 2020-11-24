@@ -1558,6 +1558,20 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (NSArray <Content *> *)fullTextContentForArticle:(NSNumber *)identifier {
+    
+    __block NSArray *content = nil;
+    
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+       
+        content = [transaction objectForKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+        
+    }];
+    
+    return content;
+    
+}
+
 - (void)addArticle:(FeedItem *)article {
     
     [self addArticle:article strip:YES];
@@ -1613,7 +1627,19 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
-
+- (void)addArticleFullText:(NSArray<Content *> *)content identifier:(NSNumber *)identifier {
+    
+    if (content == nil || content.count == 0) {
+        return;
+    }
+    
+    [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+        
+        [transaction setObject:content forKey:identifier.stringValue inCollection:LOCAL_ARTICLES_FULLTEXT_COLLECTION];
+        
+    }];
+    
+}
 
 - (void)deleteArticle:(FeedItem *)article {
     
