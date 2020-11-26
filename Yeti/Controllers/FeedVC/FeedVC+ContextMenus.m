@@ -102,7 +102,7 @@
         
         UIAction *directionalNewer, *directionalOlder;
         
-        if (self.type == FeedVCTypeAuthor || self.type == FeedVCTypeBookmarks || self.type == FeedTypeFolder) {
+        if (self.type == FeedVCTypeAuthor || self.type == FeedVCTypeBookmarks || self.type == FeedVCTypeFolder) {
             
             directionalNewer = [UIAction actionWithTitle:@"Mark Newer Read" image:[UIImage systemImageNamed:directionalNewerImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
