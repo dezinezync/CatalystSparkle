@@ -46,6 +46,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 @property (atomic, strong, readwrite) dispatch_queue_t readQueue;
 
+@property (atomic, strong) NSTimer *updateCountersTimer;
+
 @end
 
 @implementation DBManager
@@ -1433,6 +1435,35 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)updateUnreadCounters {
     
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(updateUnreadCounters) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    
+    NSTimeInterval interval = 0;
+    
+    if (self.updateCountersTimer != nil) {
+        interval = 2;
+        [self.updateCountersTimer invalidate];
+        self.updateCountersTimer = nil;
+    }
+    
+    weakify(self);
+    
+    self.updateCountersTimer = [NSTimer scheduledTimerWithTimeInterval:interval repeats:NO block:^(NSTimer * _Nonnull timer) {
+        
+        strongify(self);
+        
+        [self _updateUnreadCounters];
+        
+    }];
+    
+    [[NSRunLoop currentRunLoop] addTimer:self.updateCountersTimer forMode:NSRunLoopCommonModes];
+    
+}
+
+- (void)_updateUnreadCounters {
+    
     __block NSUInteger count = 0;
     __block NSUInteger today = 0;
     
@@ -1707,7 +1738,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         NSArray *notifications = [self.uiConnection beginLongLivedReadTransaction];
         NSArray *notifications2 = [self.countsConnection beginLongLivedReadTransaction];
         
-        notifications = [notifications arrayByAddingObjectsFromArray:notifications2];
+        NSSet *uniqueNotifications = [NSSet setWithArray:notifications];
+        uniqueNotifications = [uniqueNotifications setByAddingObjectsFromArray:notifications2];
+        
+        notifications = uniqueNotifications.allObjects;
         
         if (notifications.count == 0) {
             // nothing has changed for us.
@@ -1723,6 +1757,12 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         [[NSNotificationCenter defaultCenter] postNotificationName:UIDatabaseConnectionDidUpdateNotification
                                                             object:self
                                                           userInfo:userInfo];
+        
+        if ([(YapDatabaseAutoViewConnection *)[self.uiConnection ext:DB_FEED_VIEW] hasChangesForGroup:GROUP_ARTICLES inNotifications:notifications]) {
+            
+            [MyDBManager updateUnreadCounters];
+            
+        }
 
     });
     

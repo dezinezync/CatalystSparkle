@@ -471,7 +471,7 @@
 
 - (void)markAllDirectional:(NSInteger)direction indexPath:(NSIndexPath *)indexPath {
     
-    YetiSortOption sorting = self.sortingOption;
+    YetiSortOption sorting = self.sortingOption ?: SharedPrefs.sortingOption;
     
     NSString *feed = nil;
     
@@ -495,6 +495,7 @@
         return;
     }
     
+    /*
     [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(NSNumber * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (responseObject.integerValue == 0) {
@@ -586,6 +587,7 @@
         [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
         
     }];
+     */
     
 }
 

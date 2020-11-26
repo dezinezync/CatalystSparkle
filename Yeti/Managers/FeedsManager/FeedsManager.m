@@ -1320,8 +1320,6 @@ NSArray <NSString *> * _defaultsKeys;
         
         NSNumber *changed = [responseObject valueForKey:@"rows"];
         
-        self.totalUnread = MAX(0, self.totalUnread - changed.integerValue);
-        
         if ([feedID isEqualToString:@"unread"] == NO && [feedID isEqualToString:@"today"] == NO) {
             
             NSNumber *feedIDNumber = @([feedID integerValue]);
@@ -4106,7 +4104,7 @@ NSArray <NSString *> * _defaultsKeys;
         
     }
     
-    self.widgetCountersUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:10 repeats:NO block:^(NSTimer * _Nonnull timer) {
+    self.widgetCountersUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:NO block:^(NSTimer * _Nonnull timer) {
         
         NSMutableDictionary *dict = @{}.mutableCopy;
         

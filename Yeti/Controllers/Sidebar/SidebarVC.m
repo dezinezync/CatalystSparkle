@@ -624,9 +624,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
                 [self.refreshControl endRefreshing];
             }
             
-            dispatch_async(MyDBManager.readQueue, ^{
-                [MyDBManager updateUnreadCounters];
-            });
+            
+            // DB Change notification will automatically trigger this. 
+//            dispatch_async(MyDBManager.readQueue, ^{
+//                [MyDBManager updateUnreadCounters];
+//            });
             
             dispatch_async(MyDBManager.readQueue, ^{
                 [MyFeedsManager updateBookmarksFromServer];
@@ -1183,6 +1185,11 @@ static NSString * const kSidebarFeedCell = @"SidebarFeedCell";
 }
 
 - (void)updateSharedUnreadsData {
+    
+    if (NSThread.isMainThread == NO) {
+        [self performSelectorOnMainThread:@selector(updateSharedUnreadsData) withObject:nil waitUntilDone:NO];
+        return;
+    }
     
     NSTimeInterval interval = 0;
     

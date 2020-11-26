@@ -133,7 +133,7 @@ static NSUInteger _filteringTag = 0;
     
     [super viewDidLoad];
     
-    self.sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
+    _sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     if (self.type == FeedVCTypeNatural && self.feed) {
         self.title = self.feed.displayTitle;
@@ -1277,6 +1277,8 @@ static NSUInteger _filteringTag = 0;
     if (self.sortingOption == option) {
         return;
     }
+    
+    _sortingOption = option;
     
     [SharedPrefs setValue:option forKey:propSel(sortingOption)];
     

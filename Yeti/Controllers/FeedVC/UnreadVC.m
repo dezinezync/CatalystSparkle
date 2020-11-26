@@ -8,6 +8,7 @@
 
 #import "UnreadVC.h"
 #import "SceneDelegate.h"
+#import <DZKit/AlertManager.h>
 
 #define kUnreadsDBFilteredView @"unreadsDBFilteredView"
 
@@ -303,20 +304,6 @@
     
 }
 
-- (void)didBeginRefreshing:(UIRefreshControl *)sender {
-    
-    // mac catalyst doesn't have a refresh control
-#if !TARGET_OS_MACCATALYST
-    if (sender != nil) {
-#else
-    if (self->_isRefreshing == NO) {
-#endif
-        self.unreadsManager = nil;
-        [self loadNextPage];
-    }
-    
-}
-
 - (NSString *)emptyViewSubtitle {
     return @"No Unread Articles are available.";
 }
@@ -328,6 +315,173 @@
 - (NSURLSessionTask *)searchOperationTask:(NSString *)text {
     
     return [MyFeedsManager searchUnread:text success:self.searchOperationSuccess error:self.searchOperationError];
+    
+}
+    
+- (void)markAllDirectional:(NSInteger)direction indexPath:(NSIndexPath *)indexPath {
+    
+    YetiSortOption sorting = self.sortingOption ?: SharedPrefs.sortingOption;
+    
+    FeedItem *item = [self.DS itemIdentifierForIndexPath:indexPath];
+    
+    if (item == nil) {
+        return;
+    }
+    
+    BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
+    
+    weakify(self);
+    
+    dispatch_async(MyDBManager.readQueue, ^{
+        
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+            
+            NSString *localIdentifier = item.identifier.stringValue;
+            
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kUnreadsDBFilteredView];
+            
+            NSEnumerationOptions options = kNilOptions;
+            
+            if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+                
+                // get all items from and before this index which are unread.
+                
+            }
+            else {
+                
+                // get all items from and after this index which are unread.
+                // enumerating backwards on our forward index will have the same effect.
+                options = NSEnumerationReverse;
+                
+            }
+            
+            NSMutableArray <id> *unreads = @[].mutableCopy;
+            
+            // get all items from and after this index which are unread.
+            [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
+                
+                if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
+                    
+                    [unreads addObject:@(key.integerValue)];
+                    [unreads addObject:metadata];
+                    
+                }
+                
+                if ([key isEqualToString:localIdentifier]) {
+                    *stop = YES;
+                }
+                
+            }];
+            
+            NSLogDebug(@"IDs: %@", unreads);
+            
+            if (unreads.count == 0) {
+                return;
+            }
+            
+            [MyFeedsManager markRead:@"unread" articleID:item.identifier direction:direction sortType:sorting success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+              
+                dispatch_async(MyDBManager.readQueue, ^{
+                    
+                    [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                        
+                        for (NSUInteger idx = 0; idx < unreads.count; idx+=2) {
+                            
+                            NSNumber *identifier = unreads[idx];
+                            NSMutableDictionary *metadata = [unreads[idx + 1] mutableCopy];
+                            
+                            id feedID = [metadata valueForKey:@"feedID"];
+                            NSString *collection = [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
+                            
+                            FeedItem * object = [transaction objectForKey:identifier.stringValue inCollection:collection];
+                            
+                            object.read = YES;
+                            [metadata setValue:@(YES) forKey:@"read"];
+                            
+                            [transaction setObject:object forKey:identifier.stringValue inCollection:collection withMetadata:metadata];
+                            
+                        }
+                        
+                        strongify(self);
+                        
+                        [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
+                        
+                    }];
+                    
+                });
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
+                
+            }];
+            
+        }];
+        
+    });
+
+}
+    
+- (void)reloadCellsFrom:(NSIndexPath *)indexPath direction:(BOOL)down {
+ 
+    NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+    
+    NSMutableArray <FeedItem *> * identifiers = [NSMutableArray arrayWithCapacity:snapshot.numberOfItems];
+    
+    if (down) {
+        
+        // all current cells till end of dataset
+        for (NSUInteger idx = indexPath.row; idx < snapshot.numberOfItems; idx++) {
+            
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:idx inSection:indexPath.section];
+            
+            FeedItem * object = [self.DS itemIdentifierForIndexPath:ip];
+            
+            if (object != nil && object.isRead == NO) {
+                object.read = YES;
+                [identifiers addObject:object];
+            }
+            
+        }
+        
+    }
+    else {
+        
+        // current upto the 0th index
+        for (NSUInteger idx = 0; idx <= indexPath.row; idx++) {
+            
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:idx inSection:indexPath.section];
+            
+            FeedItem * object = [self.DS itemIdentifierForIndexPath:ip];
+            object.read = YES;
+            
+            if (object != nil && object.isRead == NO) {
+                object.read = YES;
+            }
+            
+            [identifiers addObject:object];
+            
+        }
+        
+    }
+    
+    [snapshot reloadItemsWithIdentifiers:identifiers];
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:YES];
+    
+}
+
+- (void)didBeginRefreshing:(UIRefreshControl *)sender {
+    
+    // mac catalyst doesn't have a refresh control
+#if !TARGET_OS_MACCATALYST
+    if (sender != nil) {
+#else
+    if (self->_isRefreshing == NO) {
+#endif
+        self.unreadsManager = nil;
+        [self loadNextPage];
+    }
     
 }
 
