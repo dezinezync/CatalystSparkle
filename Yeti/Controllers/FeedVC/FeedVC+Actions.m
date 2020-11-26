@@ -495,99 +495,146 @@
         return;
     }
     
-    /*
-    [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(NSNumber * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
+    
+    weakify(self);
+    
+    dispatch_async(MyDBManager.readQueue, ^{
         
-        if (responseObject.integerValue == 0) {
-            return;
-        }
-        
-        NSMutableArray <FeedItem *> *affectedIndices = @[].mutableCopy;
-        
-        if (item.isRead == NO) {
+        [MyDBManager.uiConnection asyncReadWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
             
-            item.read = YES;
+            NSString *localIdentifier = item.identifier.stringValue;
             
-            [affectedIndices addObject:item];
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:self.filteringViewName];
             
-        }
-        
-        BOOL isDescending = [sorting isEqualToString:YTSortAllDesc] || [sorting isEqualToString:YTSortUnreadDesc];
-        
-        if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
+            NSEnumerationOptions options = kNilOptions;
             
-            // mark all items above this item
-            for (NSInteger idx = indexPath.row; idx > 0; idx--) {
+            if ((direction == 1 && isDescending) || (direction == 2 && isDescending == NO)) {
                 
-                NSInteger row = indexPath.row - idx;
+                // get all items from and before this index which are unread.
                 
-                if (row < 0) {
-                    continue;
-                }
+            }
+            else {
                 
-                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
-                
-                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
-                
-                if (newItem && newItem.isRead == NO) {
-                    
-                    newItem.read = YES;
-                    
-                    [affectedIndices addObject:newItem];
-                    
-                }
+                // get all items from and after this index which are unread.
+                // enumerating backwards on our forward index will have the same effect.
+                options = NSEnumerationReverse;
                 
             }
             
-        }
-        else {
+            NSMutableArray <id> *unreads = @[].mutableCopy;
             
-            // mark all items below this item
-            id lastItem = [[[self.DS snapshot] itemIdentifiers] lastObject];
-            NSIndexPath *lastItemIndexPath = [self.DS indexPathForItemIdentifier:lastItem];
-            
-            for (NSInteger idx = 1; idx <= lastItemIndexPath.row; idx++) {
+            // get all items from and after this index which are unread.
+            [tnx enumerateKeysAndMetadataInGroup:GROUP_ARTICLES withOptions:options range:NSMakeRange(0, MyFeedsManager.totalUnread) usingBlock:^(NSString * _Nonnull collection, NSString * _Nonnull key, NSDictionary *  _Nullable metadata, NSUInteger index, BOOL * _Nonnull stop) {
                 
-                NSInteger row = indexPath.row + idx;
-                
-                if (row > lastItemIndexPath.row) {
-                    continue;
-                }
-                
-                NSIndexPath *indexPathNew = [NSIndexPath indexPathForRow:row inSection:indexPath.section];
-                
-                FeedItem *newItem = [self.DS itemIdentifierForIndexPath:indexPathNew];
-                
-                if (newItem && newItem.isRead == NO) {
+                if (metadata != nil && ([([metadata valueForKey:@"read"] ?: @(NO)) boolValue] == NO)) {
                     
-                    newItem.read = YES;
-                    
-                    [affectedIndices addObject:newItem];
+                    [unreads addObject:@(key.integerValue)];
+                    [unreads addObject:metadata];
                     
                 }
                 
+                if ([key isEqualToString:localIdentifier]) {
+                    *stop = YES;
+                }
+                
+            }];
+            
+            NSLogDebug(@"IDs: %@", unreads);
+            
+            if (unreads.count == 0) {
+                return;
+            }
+            
+            [MyFeedsManager markRead:feed articleID:item.identifier direction:direction sortType:sorting success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+              
+                dispatch_async(MyDBManager.readQueue, ^{
+                    
+                    [MyDBManager.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+                        
+                        for (NSUInteger idx = 0; idx < unreads.count; idx+=2) {
+                            
+                            NSNumber *identifier = unreads[idx];
+                            NSMutableDictionary *metadata = [unreads[idx + 1] mutableCopy];
+                            
+                            id feedID = [metadata valueForKey:@"feedID"];
+                            NSString *collection = [NSString stringWithFormat:@"%@:%@", LOCAL_ARTICLES_COLLECTION, feedID];
+                            
+                            FeedItem * object = [transaction objectForKey:identifier.stringValue inCollection:collection];
+                            
+                            object.read = YES;
+                            [metadata setValue:@(YES) forKey:@"read"];
+                            
+                            [transaction setObject:object forKey:identifier.stringValue inCollection:collection withMetadata:metadata];
+                            
+                        }
+                        
+                        strongify(self);
+                        
+                        [self reloadCellsFrom:indexPath direction:(options == NSEnumerationReverse)];
+                        
+                    }];
+                    
+                });
+                
+            } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+               
+                [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
+                
+            }];
+            
+        }];
+        
+    });
+
+}
+    
+- (void)reloadCellsFrom:(NSIndexPath *)indexPath direction:(BOOL)down {
+ 
+    NSDiffableDataSourceSnapshot *snapshot = self.DS.snapshot;
+    
+    NSMutableArray <FeedItem *> * identifiers = [NSMutableArray arrayWithCapacity:snapshot.numberOfItems];
+    
+    if (down) {
+        
+        // all current cells till end of dataset
+        for (NSUInteger idx = indexPath.row; idx < snapshot.numberOfItems; idx++) {
+            
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:idx inSection:indexPath.section];
+            
+            FeedItem * object = [self.DS itemIdentifierForIndexPath:ip];
+            
+            if (object != nil && object.isRead == NO) {
+                object.read = YES;
+                [identifiers addObject:object];
             }
             
         }
         
-        NSLogDebug(@"Affected indices: %@", affectedIndices);
+    }
+    else {
         
-        if (affectedIndices.count == 0) {
-            return;
+        // current upto the 0th index
+        for (NSUInteger idx = 0; idx <= indexPath.row; idx++) {
+            
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:idx inSection:indexPath.section];
+            
+            FeedItem * object = [self.DS itemIdentifierForIndexPath:ip];
+            object.read = YES;
+            
+            if (object != nil && object.isRead == NO) {
+                object.read = YES;
+            }
+            
+            [identifiers addObject:object];
+            
         }
         
-        NSDiffableDataSourceSnapshot *snapshot = [self.DS snapshot];
-        
-        [snapshot reloadItemsWithIdentifiers:affectedIndices];
-        
-        [self.DS applySnapshot:snapshot animatingDifferences:YES];
-        
-    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
-       
-        [AlertManager showGenericAlertWithTitle:@"Error Marking Read" message:error.localizedDescription fromVC:self];
-        
-    }];
-     */
+    }
+    
+    [snapshot reloadItemsWithIdentifiers:identifiers];
+    
+    [self.DS applySnapshot:snapshot animatingDifferences:YES];
     
 }
 

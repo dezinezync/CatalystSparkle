@@ -133,7 +133,7 @@ static NSUInteger _filteringTag = 0;
     
     [super viewDidLoad];
     
-    _sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
+    self.sortingOption = self.isExploring ? YTSortAllDesc : SharedPrefs.sortingOption;
     
     if (self.type == FeedVCTypeNatural && self.feed) {
         self.title = self.feed.displayTitle;
@@ -339,7 +339,7 @@ static NSUInteger _filteringTag = 0;
         
     }
     
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
+    [notificationCenter addObserver:self selector:@selector(didUpdateBookmarks) name:BookmarksDidUpdate object:nil];
     
     [notificationCenter addObserver:self selector:@selector(didChangeContentCategory) name:ArticleCoverImagesPreferenceUpdated object:nil];
     
@@ -488,7 +488,11 @@ static NSUInteger _filteringTag = 0;
 
 - (void)setupDatasource {
     
+    weakify(self);
+    
     self.DS = [[UITableViewDiffableDataSource alloc] initWithTableView:self.tableView cellProvider:^UITableViewCell * _Nullable(UITableView * tableView, NSIndexPath * indexPath, FeedItem * article) {
+        
+        strongify(self);
         
         ArticleCell *cell = [tableView dequeueReusableCellWithIdentifier:kArticleCell forIndexPath:indexPath];
         
@@ -591,6 +595,10 @@ static NSUInteger _filteringTag = 0;
 }
 
 #pragma mark - Getters
+
+- (NSString *)filteringViewName {
+    return kFeedDBFilteredView;
+}
 
 - (BOOL)showsSortingButton {
     

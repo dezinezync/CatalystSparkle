@@ -87,6 +87,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
 
+- (NSString *)filteringViewName;
+
 #pragma mark -
 
 /// Loads the given article ID when the view controller is ready.

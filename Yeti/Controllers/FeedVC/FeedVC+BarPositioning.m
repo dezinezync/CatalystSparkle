@@ -62,6 +62,8 @@
     
     UIImage *sortingImage = [self.mainCoordinator imageForSortingOption:option];
     
+    weakify(self);
+    
     enabledOptions = [enabledOptions rz_map:^id(YetiSortOption obj, NSUInteger idx, NSArray *array) {
         
         UIAction *__action = nil;
@@ -70,6 +72,8 @@
             
             __action = [UIAction actionWithTitle:@"Unread - Latest First" image:[self.mainCoordinator imageForSortingOption:YTSortUnreadDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                
+                strongify(self);
+                
                 [self updateSortingOptionTo:YTSortUnreadDesc sender:action.sender];
                 
             }];
@@ -79,6 +83,8 @@
         else if ([obj isEqualToString:YTSortUnreadAsc]) {
             
             __action = [UIAction actionWithTitle:@"Unread - Oldest First" image:[self.mainCoordinator imageForSortingOption:YTSortUnreadAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
                 
                 [self updateSortingOptionTo:YTSortUnreadAsc sender:action.sender];
                 
@@ -90,6 +96,8 @@
             
             __action = [UIAction actionWithTitle:@"All - Latest First" image:[self.mainCoordinator imageForSortingOption:YTSortAllDesc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
                 
+                strongify(self);
+                
                 [self updateSortingOptionTo:YTSortAllDesc sender:action.sender];
                 
             }];
@@ -99,6 +107,8 @@
         else {
             
             __action = [UIAction actionWithTitle:@"All - Oldest First" image:[self.mainCoordinator imageForSortingOption:YTSortAllAsc] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                
+                strongify(self);
                 
                 [self updateSortingOptionTo:YTSortAllAsc sender:action.sender];
                 

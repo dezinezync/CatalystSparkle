@@ -80,16 +80,6 @@
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
     
-    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
-       
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
-            return GROUP_ARTICLES;
-        }
-        
-        return nil;
-        
-    }];
-    
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
         
         if ([collection containsString:LOCAL_ARTICLES_COLLECTION] == NO) {
@@ -115,46 +105,36 @@
         
     }];
     
-    weakify(sortingOption);
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kTodayDBFilteredView];
     
-    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+    if (self.dbFilteredView == nil) {
         
-        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
         
-        if (result == NSOrderedSame) {
-            return result;
-        }
+        self.dbFilteredView = filteredView;
         
-        strongify(sortingOption);
+        [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
         
-        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+    }
+    else {
+        
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kTodayDBFilteredView];
             
-            if (result == NSOrderedDescending) {
-                return NSOrderedAscending;
-            }
+            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
             
-            return NSOrderedDescending;
-            
-        }
+        }];
         
-        return result;
-        
-    }];
-    
-    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
-    self.dbView = view;
-    
-    [MyDBManager.database registerExtension:self.dbView withName:kTodayDBView];
-    
-    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kTodayDBView filtering:filter];
-    
-    self.dbFilteredView = filteredView;
-    
-    [MyDBManager.database registerExtension:self.dbFilteredView withName:kTodayDBFilteredView];
+    }
     
 }
 
 #pragma mark - Subclassed
+
+- (NSString *)filteringViewName {
+    return kTodayDBFilteredView;
+}
 
 - (NSString *)subtitle {
     

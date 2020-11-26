@@ -58,41 +58,18 @@
     
     self.refreshControl = refreshControl;
 #endif
-}
-
-- (void)unregisterDBViews {
     
-    if (self.dbFilteredView) {
-        [MyDBManager.database unregisterExtensionWithName:kFolderDBFilteredView];
-        self.dbFilteredView = nil;
-    }
-    
-    if (self.dbView) {
-        [MyDBManager.database unregisterExtensionWithName:kFolderDBView];
-        self.dbView = nil;
-    }
+    [self setupDatabases:self.sortingOption];
     
 }
 
 - (void)dealloc {
-    
-    [self unregisterDBViews];
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
 }
 
 - (void)setupDatabases:(YetiSortOption)sortingOption {
-    
-    YapDatabaseViewGrouping *group = [YapDatabaseViewGrouping withKeyBlock:^NSString * _Nullable(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull collection, NSString * _Nonnull key) {
-       
-        if ([collection containsString:LOCAL_ARTICLES_COLLECTION]) {
-            return GROUP_ARTICLES;
-        }
-        
-        return nil;
-        
-    }];
     
     YapDatabaseViewFiltering *filter = [YapDatabaseViewFiltering withRowBlock:^BOOL(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection, NSString * _Nonnull key, FeedItem *  _Nonnull object, id  _Nullable metadata) {
         
@@ -121,43 +98,29 @@
         return checkOne && checkTwo;
         
     }];
+
+    self.dbFilteredView = [MyDBManager.database registeredExtension:kFolderDBFilteredView];
     
-    weakify(sortingOption);
-    
-    YapDatabaseViewSorting *sorting = [YapDatabaseViewSorting withObjectBlock:^NSComparisonResult(YapDatabaseReadTransaction * _Nonnull transaction, NSString * _Nonnull group, NSString * _Nonnull collection1, NSString * _Nonnull key1, FeedItem *  _Nonnull object1, NSString * _Nonnull collection2, NSString * _Nonnull key2, FeedItem *  _Nonnull object2) {
+    if (self.dbFilteredView == nil) {
         
-        NSComparisonResult result = [object1.timestamp compare:object2.timestamp];
+        YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:DB_FEED_VIEW filtering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
         
-        if (result == NSOrderedSame) {
-            return result;
-        }
+        self.dbFilteredView = filteredView;
         
-        strongify(sortingOption);
+        [MyDBManager.database registerExtension:self.dbFilteredView withName:kFolderDBFilteredView];
         
-        if ([sortingOption isEqualToString:YTSortAllDesc]  || [sortingOption isEqualToString:YTSortUnreadDesc]) {
+    }
+    else {
+        
+        [MyDBManager.bgConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+           
+            YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFolderDBFilteredView];
             
-            if (result == NSOrderedDescending) {
-                return NSOrderedAscending;
-            }
+            [tnx setFiltering:filter versionTag:[NSString stringWithFormat:@"%u",(uint)self.superclass.filteringTag++]];
             
-            return NSOrderedDescending;
-            
-        }
+        }];
         
-        return result;
-        
-    }];
-    
-    YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting];
-    self.dbView = view;
-    
-    [MyDBManager.database registerExtension:self.dbView withName:kFolderDBView];
-    
-    YapDatabaseFilteredView *filteredView = [[YapDatabaseFilteredView alloc] initWithParentViewName:kFolderDBView filtering:filter];
-    
-    self.dbFilteredView = filteredView;
-    
-    [MyDBManager.database registerExtension:self.dbFilteredView withName:kFolderDBFilteredView];
+    }
     
 }
 
@@ -179,6 +142,10 @@
 }
 
 #pragma mark - Subclassed
+
+- (NSString *)filteringViewName {
+    return kFolderDBFilteredView;
+}
 
 - (PagingManager *)folderFeedsManager {
     
@@ -348,9 +315,9 @@
 - (void)_setSortingOption:(YetiSortOption)option {
     
     self.folderFeedsManager = nil;
-    [self unregisterDBViews];
-    [self setupDatabases:option];
     self.pagingManager = self.folderFeedsManager;
+    
+    [self setupDatabases:option];
     
 }
 

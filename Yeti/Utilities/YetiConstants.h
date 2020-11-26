@@ -119,13 +119,6 @@ YETI_EXPORT NSString * _Nonnull const kLineSpacing;
 
 extern NSNotificationName _Nonnull UserUpdatedPreferredFontMetrics;
 
-typedef NS_ENUM(NSInteger, FeedType) {
-    FeedTypeFeed,
-    FeedTypeCustom,
-    FeedTypeFolder,
-    FeedTypeTag
-};
-
 YETI_EXPORT NSString * _Nonnull const kUseImageProxy;
 
 YETI_EXPORT NSString * _Nonnull const kDetailFeedSorting;
