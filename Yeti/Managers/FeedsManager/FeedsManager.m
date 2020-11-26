@@ -1108,6 +1108,19 @@ NSArray <NSString *> * _defaultsKeys;
     NSMutableDictionary *params = @{@"count": @(count)}.mutableCopy;
     params[@"noauth"] = @(noAuth);
     
+    NSDate *date = NSDate.date;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:NSCalendarUnitMinute|NSCalendarUnitSecond|NSCalendarUnitNanosecond fromDate:date];
+    components.minute = -components.minute;
+    components.second = -components.second;
+    components.nanosecond = -components.nanosecond;
+    
+    date = [calendar dateByAddingComponents:components toDate:date options:0];
+    
+    // this prevents the cached response if the hour has changed.
+    params[@"ts"] = @([date timeIntervalSince1970]);
+    
     [self.session GET:@"/recommendations" parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB)
