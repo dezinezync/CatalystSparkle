@@ -102,25 +102,21 @@
         
         UIAction *directionalNewer, *directionalOlder;
         
-        if (self.type == FeedVCTypeAuthor || self.type == FeedVCTypeBookmarks || self.type == FeedVCTypeFolder) {
+        directionalNewer = [UIAction actionWithTitle:@"Mark Newer Read" image:[UIImage systemImageNamed:directionalNewerImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
-            directionalNewer = [UIAction actionWithTitle:@"Mark Newer Read" image:[UIImage systemImageNamed:directionalNewerImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                
-                strongify(self);
-               
-                [self markAllNewerRead:indexPath];
-                
-            }];
+            strongify(self);
+           
+            [self markAllNewerRead:indexPath];
             
-            directionalOlder = [UIAction actionWithTitle:@"Mark Older Read" image:[UIImage systemImageNamed:directionalOlderImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                
-                strongify(self);
-               
-                [self markAllOlderRead:indexPath];
-                
-            }];
+        }];
+        
+        directionalOlder = [UIAction actionWithTitle:@"Mark Older Read" image:[UIImage systemImageNamed:directionalOlderImageName] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
             
-        }
+            strongify(self);
+           
+            [self markAllOlderRead:indexPath];
+            
+        }];
         
         if (self.type == FeedVCTypeNatural) {
             
