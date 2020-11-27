@@ -1440,6 +1440,8 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         return;
     }
     
+    
+    
     NSTimeInterval interval = 0;
     
     if (self.updateCountersTimer != nil) {

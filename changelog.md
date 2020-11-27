@@ -1,5 +1,7 @@
 # v2.2.0
 
+This build includes support for Local Syncing. If something breaks, the app crashes or does not work as expected, roll back to Build 85. 
+
 ## Improvements
 
 - Tapping on a folder now opens the folder's feed. 

@@ -2960,16 +2960,20 @@ NSArray <NSString *> * _defaultsKeys;
     
     @synchronized (self) {
         
-        if (totalBookmarks >= 999999999) {
-            self->_totalBookmarks = 0;
-        }
-        else {
-            self->_totalBookmarks = MAX(totalBookmarks, 0);
+        if (totalBookmarks != _totalBookmarks) {
+            
+            if (totalBookmarks >= 999999999) {
+                self->_totalBookmarks = 0;
+            }
+            else {
+                self->_totalBookmarks = MAX(totalBookmarks, 0);
+            }
+            
+            [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:self userInfo:nil];
+            
         }
         
     }
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:BookmarksDidUpdate object:self userInfo:nil];
     
 }
 

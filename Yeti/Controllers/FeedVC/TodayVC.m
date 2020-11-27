@@ -56,23 +56,7 @@
     
 }
 
-- (void)unregisterDBViews {
-    
-    if (self.dbFilteredView) {
-        [MyDBManager.database unregisterExtensionWithName:kTodayDBFilteredView];
-        self.dbFilteredView = nil;
-    }
-    
-    if (self.dbView) {
-        [MyDBManager.database unregisterExtensionWithName:kTodayDBView];
-        self.dbView = nil;
-    }
-    
-}
-
 - (void)dealloc {
-    
-    [self unregisterDBViews];
     
     [NSNotificationCenter.defaultCenter removeObserver:self];
     
@@ -168,6 +152,7 @@
         }
         
         PagingManager * todayManager = [[PagingManager alloc] initWithPath:@"/1.7/today" queryParams:params itemsKey:@"articles"];
+        
         todayManager.fromDB = YES;
         
         weakify(self);
@@ -318,27 +303,12 @@
     return YES;
 }
 
-- (void)setSortingOption:(YetiSortOption)sortingOption {
-    
-    if (self.sortingOption == sortingOption) {
-        return;
-    }
-    
-    runOnMainQueueWithoutDeadlocking(^{
-        [self unregisterDBViews];
-        [self setupDatabases:sortingOption];
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.125 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [super setSortingOption:sortingOption];
-    });
-    
-}
-
 - (void)_setSortingOption:(YetiSortOption)option {
     
     self.todayManager = nil;
     self.pagingManager = self.todayManager;
+    
+    [self setupDatabases:option];
     
 }
 

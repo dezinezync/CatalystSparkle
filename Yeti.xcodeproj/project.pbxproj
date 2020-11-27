@@ -371,6 +371,7 @@
 		F0DDA0EE20E5F71400C5D97E /* RecommendationsVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0EB20E5F71400C5D97E /* RecommendationsVC.xib */; };
 		F0DDA0F420E5F84C00C5D97E /* FeedsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */; };
 		F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */; };
+		F0DFBBF42570A36400246D8A /* CoalescingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */; };
 		F0E0D51525208C3700A9E654 /* ImagesPreferenceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */; };
 		F0E0D51625208C3700A9E654 /* ImagesPreferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */; };
 		F0E0DBBD22AE0F47006A2D93 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E0DBB122AE0F46006A2D93 /* WebKit.framework */; };
@@ -1294,6 +1295,7 @@
 		F0DDA0F120E5F84C00C5D97E /* FeedsGridCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedsGridCell.h; sourceTree = "<group>"; };
 		F0DDA0F220E5F84C00C5D97E /* FeedsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedsGridCell.m; sourceTree = "<group>"; };
 		F0DDA0F320E5F84C00C5D97E /* FeedsGridCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedsGridCell.xib; sourceTree = "<group>"; };
+		F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoalescingQueue.swift; sourceTree = "<group>"; };
 		F0E0D4FA25208C3600A9E654 /* ImagesPreferenceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImagesPreferenceViewController.xib; sourceTree = "<group>"; };
 		F0E0D51425208C3600A9E654 /* ImagesPreferenceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagesPreferenceViewController.swift; sourceTree = "<group>"; };
 		F0E0DBB122AE0F46006A2D93 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -1885,6 +1887,7 @@
 				F032A759244D7D680024AC63 /* YetiThemeKit.m */,
 				F032A75F244D7F470024AC63 /* TypeFactory.h */,
 				F032A75E244D7F470024AC63 /* TypeFactory.m */,
+				F0DFBBF32570A36400246D8A /* CoalescingQueue.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -3404,6 +3407,7 @@
 				F00F643D24EC1BC700E5727C /* MetaOpenGraph.m in Sources */,
 				F0F10A9D244C8020009FC108 /* DTError.m in Sources */,
 				F070C2DE1FBABC3600912CCF /* AppDelegate.m in Sources */,
+				F0DFBBF42570A36400246D8A /* CoalescingQueue.swift in Sources */,
 				F02B704D24EA7E5C00DD607F /* IDMTapDetectingImageView.m in Sources */,
 				F0EFA63A205FDC5A00815ED7 /* ArticleHelperView.m in Sources */,
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
