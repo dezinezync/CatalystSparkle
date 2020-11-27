@@ -394,15 +394,17 @@
     
     [activity addUserInfoEntriesFromDictionary:@{@"controllers": controllers}];
     
-    if (self.mainCoordinator.sidebarVC) {
+    SEL selector = @selector(saveRestorationActivity:);
+    
+    if (self.mainCoordinator.sidebarVC != nil && [self.mainCoordinator.sidebarVC respondsToSelector:selector]) {
         [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
     }
     
-    if (self.mainCoordinator.feedVC) {
+    if (self.mainCoordinator.feedVC != nil && [self.mainCoordinator.feedVC respondsToSelector:selector]) {
         [self.mainCoordinator.feedVC saveRestorationActivity:activity];
     }
     
-    if (self.mainCoordinator.articleVC) {
+    if (self.mainCoordinator.articleVC != nil && [self.mainCoordinator.articleVC respondsToSelector:selector]) {
         [self.mainCoordinator.articleVC saveRestorationActivity:activity];
     }
     

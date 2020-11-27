@@ -1328,6 +1328,10 @@ static NSUInteger _filteringTag = 0;
            
             YapDatabaseAutoViewTransaction *txn = [transaction ext:DB_FEED_VIEW];
             
+            if (txn == nil) {
+                return;
+            }
+            
             [txn setSorting:sorting versionTag:[NSString stringWithFormat:@"%u",(uint)self->_sortingVersionTag++]];
             
         }];
