@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
     // the following two keys are used by the Controller's DB Views.
     NSUInteger _sortingVersionTag;
+    
+    NSUInteger _totalItemsForTitle;
 }
 
 @property (class, atomic, assign) NSUInteger filteringTag;
@@ -74,6 +76,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Titles
 
 - (NSString *)subtitle;
+
+@property (atomic, assign) NSUInteger totalItemsForTitle;
 
 - (void)updateTitleView;
 

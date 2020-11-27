@@ -264,7 +264,7 @@
         NSMenuToolbarItem *menuToolbarItem = [[NSMenuToolbarItem alloc] initWithItemIdentifier:kSortingMenuToolbarIdentifier];
         menuToolbarItem.showsIndicator = YES;
         menuToolbarItem.itemMenu = menu;
-        menuToolbarItem.image = [UIImage systemImageNamed:@"arrow.up.arrow.down"];
+        menuToolbarItem.image = image;
         
         item = menuToolbarItem;
         

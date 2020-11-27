@@ -59,8 +59,6 @@
     self.refreshControl = refreshControl;
 #endif
     
-    [self setupDatabases:self.sortingOption];
-    
 }
 
 - (void)dealloc {
@@ -315,9 +313,12 @@
 - (void)_setSortingOption:(YetiSortOption)option {
     
     self.folderFeedsManager = nil;
+    self.totalItemsForTitle = 0;
     self.pagingManager = self.folderFeedsManager;
     
     [self setupDatabases:option];
+    
+    [self updateTitleView];
     
 }
 
@@ -339,11 +340,37 @@
 
 - (NSString *)subtitle {
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.totalItemsForTitle == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.folder.unreadCount];
     
     return [totalArticles stringByAppendingString:unread];
+    
+}
+
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            __block NSUInteger count = 0;
+            
+            [MyDBManager.countsConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                
+                YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFolderDBFilteredView];
+                
+                count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                
+            }];
+            
+            _totalItemsForTitle = count;
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
     
 }
 

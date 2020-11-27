@@ -784,7 +784,7 @@ static NSUInteger _filteringTag = 0;
             
             [self setupData];
             
-            runOnMainQueueWithoutDeadlocking(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 self.controllerState = StateLoaded;
             });
             
@@ -869,15 +869,41 @@ static NSUInteger _filteringTag = 0;
     
     if (self.isExploring) {
         
-        return [NSString stringWithFormat:@"%@ Article%@", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+        return [NSString stringWithFormat:@"%@ Article%@", @(self.totalItemsForTitle), self.totalItemsForTitle == 1 ? @"" : @"s"];
         
     }
     
-    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.pagingManager.total), self.pagingManager.total == 1 ? @"" : @"s"];
+    NSString *totalArticles = [NSString stringWithFormat:@"%@ Article%@, ", @(self.totalItemsForTitle), self.totalItemsForTitle == 1 ? @"" : @"s"];
     
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.feed.unread];
     
     return [totalArticles stringByAppendingString:unread];
+    
+}
+
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            __block NSUInteger count = 0;
+            
+            [MyDBManager.countsConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                
+                YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
+                
+                count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                
+            }];
+            
+            _totalItemsForTitle = count;
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
     
 }
 
@@ -1019,7 +1045,7 @@ static NSUInteger _filteringTag = 0;
     
     // since the Datasource is asking for this view
     // it will be presenting it.
-    BOOL dataCheck = (self.controllerState == StateLoading && self.pagingManager.page <= 1) || (self.DS.snapshot == nil || self.DS.snapshot.numberOfItems == 0);
+    BOOL dataCheck = (self.controllerState == StateLoading && self.pagingManager.page <= 1);
 
     if (dataCheck) {
         self.activityIndicatorView.hidden = NO;
@@ -1360,7 +1386,11 @@ static NSUInteger _filteringTag = 0;
 - (void)_setSortingOption:(YetiSortOption)option {
     
     self.pagingManager = nil;
+    self.totalItemsForTitle = 0;
+    
     [self setupDatabases:option];
+    
+    [self updateTitleView];
     
 }
 
