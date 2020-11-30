@@ -21,6 +21,8 @@
 #import "YetiConstants.h"
 #import "ArticlesManager.h"
 
+#import "Elytra-Swift.h"
+
 #define kAccountID @"YTUserID"
 #define kUserID @"userID"
 #define kUUIDString @"UUIDString"
@@ -234,6 +236,12 @@ extern FeedsManager * _Nonnull MyFeedsManager;
 - (void)continueActivity:(NSUserActivity * _Nonnull)activity;
 
 - (void)saveRestorationActivity:(NSUserActivity * _Nonnull)activity;
+
+#pragma mark - KVS
+
+@property (atomic, strong) NSTimer * _Nullable batchKVSTimer;
+
+@property (nonatomic, strong) NSMutableOrderedSet <KVSItem *> * _Nullable KVSItems;
 
 @end
 

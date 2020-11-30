@@ -144,8 +144,6 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        [MyFeedsManager _removeAllLocalBookmarks];
-        
         self.label.text = @"Migration Completed";
         
         self.bookmarksManager->_migrating = NO;

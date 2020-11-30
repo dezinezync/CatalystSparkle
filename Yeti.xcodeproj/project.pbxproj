@@ -252,6 +252,7 @@
 		F093327924EC15DC0066FA41 /* FeedOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F093323724EC14DD0066FA41 /* FeedOperation.m */; };
 		F099466020AD86BE00E5520F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F099465F20AD86BE00E5520F /* StoreKit.framework */; };
 		F099466520AD8A8B00E5520F /* AppDelegate+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = F099466420AD8A8B00E5520F /* AppDelegate+Store.m */; };
+		F09AF83A25749F290032C183 /* KVSItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09AF83925749F290032C183 /* KVSItem.swift */; };
 		F09B3B351FBCB348001D4B09 /* UIViewController+ScrollLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */; };
 		F09BE12820F1C370000D1EB9 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F09BE12720F1C370000D1EB9 /* Settings.bundle */; };
 		F09CB6A921637DE200F47036 /* elytraProcessor.js in Resources */ = {isa = PBXBuildFile; fileRef = F09CB6A821637DE200F47036 /* elytraProcessor.js */; };
@@ -1127,6 +1128,7 @@
 		F099465F20AD86BE00E5520F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		F099466320AD8A8A00E5520F /* AppDelegate+Store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AppDelegate+Store.h"; sourceTree = "<group>"; };
 		F099466420AD8A8B00E5520F /* AppDelegate+Store.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "AppDelegate+Store.m"; sourceTree = "<group>"; };
+		F09AF83925749F290032C183 /* KVSItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KVSItem.swift; sourceTree = "<group>"; };
 		F09B3B331FBCB348001D4B09 /* UIViewController+ScrollLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+ScrollLoad.h"; sourceTree = "<group>"; };
 		F09B3B341FBCB348001D4B09 /* UIViewController+ScrollLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+ScrollLoad.m"; sourceTree = "<group>"; };
 		F09BE12720F1C370000D1EB9 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -2277,6 +2279,7 @@
 				F093320624EC14CE0066FA41 /* FeedsManager.m */,
 				F093320824EC14CF0066FA41 /* FeedsManager+KVS.h */,
 				F093320924EC14CF0066FA41 /* FeedsManager+KVS.m */,
+				F09AF83925749F290032C183 /* KVSItem.swift */,
 			);
 			path = FeedsManager;
 			sourceTree = "<group>";
@@ -3413,6 +3416,7 @@
 				F00F647124EC1DE700E5727C /* Gallery.m in Sources */,
 				F0A0500D21F0728A00A46524 /* NewFeedDeckController.m in Sources */,
 				F075752824CED198001F7D15 /* SidebarVC+Actions.m in Sources */,
+				F09AF83A25749F290032C183 /* KVSItem.swift in Sources */,
 				F042ACF425244A0500AA440A /* NSObject+SimpleSwizzle.m in Sources */,
 				F00F643A24EC1BC700E5727C /* FeedItem.m in Sources */,
 				F093327924EC15DC0066FA41 /* FeedOperation.m in Sources */,
