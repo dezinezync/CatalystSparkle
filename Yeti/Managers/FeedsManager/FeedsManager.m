@@ -3151,9 +3151,9 @@ NSArray <NSString *> * _defaultsKeys;
         DZURLSession *session = [[DZURLSession alloc] initWithSessionConfiguration:defaultConfig];
         
         session.baseURL = [NSURL URLWithString:@"http://127.0.0.1:3000"];
-        session.baseURL =  [NSURL URLWithString:@"https://api-acc.elytra.app"];
+        session.baseURL =  [NSURL URLWithString:@"https://api.elytra.app"];
 #ifndef DEBUG
-        session.baseURL = [NSURL URLWithString:@"https://api-acc.elytra.app"];
+        session.baseURL = [NSURL URLWithString:@"https://api.elytra.app"];
 #endif
         session.useOMGUserAgent = YES;
         session.useActivityManager = YES;
@@ -3274,19 +3274,31 @@ NSArray <NSString *> * _defaultsKeys;
         return;
     }
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UserDidUpdate object:nil];
-    
-    weakify(self);
-    
-    // user ID can be nil at this point
-    
-    // this is called from the sync block now.
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        strongify(self);
-//
-//        [self updateBookmarksFromServer];
-//
-//    });
+    // get filters
+    [self getFiltersWithSuccess:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        if (responseObject == nil) {
+            responseObject = @[];
+        }
+        
+        [NSNotificationCenter.defaultCenter removeObserver:self name:UserDidUpdate object:nil];
+        
+        User *user = self.user;
+        user.filters = [NSSet setWithArray:responseObject];
+        
+        [MyDBManager setUser:user];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(userDidUpdate) name:UserDidUpdate object:nil];
+            
+        });
+        
+    } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+        
+        NSLog(@"Error: Failed to fetch filters for user");
+        
+    }];
     
     if ((self.user.subscription == nil || self.user.subscription.expiry == nil)
         || (self.user.subscription != nil && [self.user.subscription hasExpired] == YES)) {
@@ -3295,8 +3307,6 @@ NSArray <NSString *> * _defaultsKeys;
          
             NSLog(@"Successfully fetched subscription: %@", self.user.subscription);
             
-//            [MyDBManager setUser:self.user];
-            
             if ([self.user.subscription hasExpired] == YES) {
                 
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -3304,8 +3314,6 @@ NSArray <NSString *> * _defaultsKeys;
                 });
                 
             }
-            
-//            [MyDBManager setUser:self.user];
             
         } error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
             
@@ -3326,19 +3334,6 @@ NSArray <NSString *> * _defaultsKeys;
         }];
         
     }
-//    else {
-//
-//        if ([self.user.subscription hasExpired] == YES) {
-//
-//            self.user.subscription = nil;
-//
-//            [MyDBManager setUser:self.user];
-//
-//            [self performSelectorOnMainThread:@selector(userDidUpdate) withObject:nil waitUntilDone:NO];
-//
-//        }
-//
-//    }
     
 }
 

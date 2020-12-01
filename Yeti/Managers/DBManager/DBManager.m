@@ -791,15 +791,6 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             return [@(first) compare:@(second)];
             
-//            if (first == second) {
-//                return NSOrderedSame;
-//            }
-//            else if (first > second) {
-//                return NSOrderedAscending;
-//            }
-//            
-//            return NSOrderedDescending;
-            
         }];
         
         YapDatabaseAutoView *view = [[YapDatabaseAutoView alloc] initWithGrouping:group sorting:sorting versionTag:DB_VERSION_TAG options:options];
