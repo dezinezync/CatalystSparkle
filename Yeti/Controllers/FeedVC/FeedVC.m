@@ -247,7 +247,36 @@ static NSUInteger _filteringTag = 0;
             
         }
         
-        return checkOne && checkTwo;
+        if (!checkTwo) {
+            return NO;
+        }
+        
+        // Filters
+        
+        if (MyFeedsManager.user.filters.count == 0) {
+            return YES;
+        }
+        
+        // compare title to each item in the filters
+        
+        __block BOOL checkThree = YES;
+        
+        [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+            
+            if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
+                checkThree = NO;
+                *stop = YES;
+                return;
+            }
+            
+            if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
+                checkThree = NO;
+                *stop = YES;
+            }
+            
+        }];
+        
+        return checkThree;
         
     }];
     
@@ -828,6 +857,51 @@ static NSUInteger _filteringTag = 0;
     
 }
 
+- (NSUInteger)totalItemsForTitle {
+        
+    @synchronized (self) {
+            
+        if (self->_totalItemsForTitle == 0) {
+            
+            __block NSUInteger count = 0;
+            
+            [MyDBManager.countsConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+                
+                YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
+                
+                count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
+                
+            }];
+            
+            _totalItemsForTitle = count;
+            
+        }
+            
+        return _totalItemsForTitle;
+        
+    }
+    
+}
+
+- (UISearchController *)searchController {
+    
+    if (_searchController == nil) {
+        
+        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+        searchController.searchResultsUpdater = self;
+        searchController.searchBar.placeholder = @"Search Articles";
+        searchController.automaticallyShowsCancelButton = YES;
+        searchController.automaticallyShowsScopeBar = YES;
+        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
+        searchController.obscuresBackgroundDuringPresentation = NO;
+        
+        _searchController = searchController;
+        
+    }
+    
+    return _searchController;
+    
+}
 
 #pragma mark - State
 
@@ -878,52 +952,6 @@ static NSUInteger _filteringTag = 0;
     NSString *unread = [NSString stringWithFormat:@"%@ Unread", self.feed.unread];
     
     return [totalArticles stringByAppendingString:unread];
-    
-}
-
-- (NSUInteger)totalItemsForTitle {
-        
-    @synchronized (self) {
-            
-        if (self->_totalItemsForTitle == 0) {
-            
-            __block NSUInteger count = 0;
-            
-            [MyDBManager.countsConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
-                
-                YapDatabaseFilteredViewTransaction *tnx = [transaction ext:kFeedDBFilteredView];
-                
-                count = [tnx numberOfItemsInGroup:GROUP_ARTICLES];
-                
-            }];
-            
-            _totalItemsForTitle = count;
-            
-        }
-            
-        return _totalItemsForTitle;
-        
-    }
-    
-}
-
-- (UISearchController *)searchController {
-    
-    if (_searchController == nil) {
-        
-        UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-        searchController.searchResultsUpdater = self;
-        searchController.searchBar.placeholder = @"Search Articles";
-        searchController.automaticallyShowsCancelButton = YES;
-        searchController.automaticallyShowsScopeBar = YES;
-        searchController.searchBar.scopeButtonTitles = @[@"Local", @"Server"];
-        searchController.obscuresBackgroundDuringPresentation = NO;
-        
-        _searchController = searchController;
-        
-    }
-    
-    return _searchController;
     
 }
 
@@ -1391,6 +1419,14 @@ static NSUInteger _filteringTag = 0;
     [self setupDatabases:option];
     
     [self updateTitleView];
+    
+}
+
+- (void)setTotalItemsForTitle:(NSUInteger)value {
+    
+    @synchronized (self) {
+        self->_totalItemsForTitle = value;
+    }
     
 }
 

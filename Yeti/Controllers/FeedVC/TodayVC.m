@@ -77,6 +77,11 @@
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval];
         
         BOOL checkOne = [NSCalendar.currentCalendar isDateInToday:date];
+        
+        if (!checkOne) {
+            return NO;
+        }
+        
         BOOL checkTwo = YES;
         
         if ([sortingOption isEqualToString:YTSortUnreadAsc] || [sortingOption isEqualToString:YTSortUnreadDesc]) {
@@ -85,7 +90,36 @@
             
         }
         
-        return checkOne && checkTwo;
+        if (!checkTwo) {
+            return NO;
+        }
+        
+        // Filters
+        
+        if (MyFeedsManager.user.filters.count == 0) {
+            return YES;
+        }
+        
+        // compare title to each item in the filters
+        
+        __block BOOL checkThree = YES;
+        
+        [MyFeedsManager.user.filters enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+            
+            if ([object.articleTitle.lowercaseString containsString:obj] == YES) {
+                checkThree = NO;
+                *stop = YES;
+                return;
+            }
+            
+            if (object.summary != nil && [object.summary.lowercaseString containsString:obj] == YES) {
+                checkThree = NO;
+                *stop = YES;
+            }
+            
+        }];
+        
+        return checkThree;
         
     }];
     

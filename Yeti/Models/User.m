@@ -7,6 +7,7 @@
 //
 
 #import "User.h"
+#import <DZKit/NSArray+RZArrayCandy.h>
 
 @implementation User
 
@@ -25,6 +26,9 @@
 - (instancetype)initWithDictionary:(NSDictionary *)attrs {
     
     if (self = [super init]) {
+        
+        self.filters = [NSSet new];
+        
         if (attrs && [attrs isKindOfClass:NSDictionary.class]) {
             [self setValuesForKeysWithDictionary:attrs];
         }
@@ -41,6 +45,7 @@
         self.userID = [coder decodeObjectOfClass:NSNumber.class forKey:propSel(userID)];
         self.uuid = [coder decodeObjectOfClass:NSString.class forKey:propSel(uuid)];
         self.subscription = [coder decodeObjectOfClass:Subscription.class forKey:propSel(subscription)];
+        self.filters = [coder decodeObjectOfClasses:[NSSet setWithObjects:NSSet.class, NSString.class, nil] forKey:propSel(filters)];
         
     }
     
@@ -55,6 +60,8 @@
     [coder encodeObject:self.uuid forKey:propSel(uuid)];
     
     [coder encodeObject:self.subscription.dictionaryRepresentation forKey:propSel(subscription)];
+    
+    [coder encodeObject:self.filters forKey:propSel(filters)];
     
 }
 
@@ -72,7 +79,36 @@
         
     }
     
-    [super setValue:value forKey:key];
+    if ([key isEqualToString:propSel(filters)]) {
+        
+        if (value != nil) {
+            
+            if ([value isKindOfClass:NSArray.class]) {
+                
+                value = [value rz_map:^NSString *(NSString * obj, NSUInteger idx, NSArray *array) {
+                    return obj.lowercaseString;
+                }];
+                
+                self.filters = [NSSet setWithArray:value];
+                
+            }
+            else if ([value isKindOfClass:NSSet.class]) {
+                
+                self.filters = value;
+                
+            }
+            else {
+                NSLog(@"Unknown value class of type %@ for keyPath:user.filters", NSStringFromClass([value class]));
+            }
+            
+        }
+        
+    }
+    else {
+    
+        [super setValue:value forKey:key];
+        
+    }
     
 }
 
@@ -96,6 +132,12 @@
     
     if (self.subscription) {
         [dict setObject:self.subscription.dictionaryRepresentation forKey:propSel(subscription)];
+    }
+    
+    if (self.filters) {
+        
+        [dict setObject:self.filters.allObjects forKey:propSel(filters)];
+        
     }
     
     return dict;

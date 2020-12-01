@@ -210,7 +210,10 @@ PrefsManager * SharedPrefs = nil;
         return;
     }
     
-    if (value == nil || [value isKindOfClass:NSNull.class]) {
+    if ([mapping isEqualToString:kDetailFeedSorting]) {
+        [self.defaults setValue:value forKey:mapping];
+    }
+    else if (value == nil || [value isKindOfClass:NSNull.class]) {
         [self.defaults removeObjectForKey:key];
     }
     else {
