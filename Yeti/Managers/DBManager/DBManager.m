@@ -1073,7 +1073,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     if (self.syncProgressBlock) {
         
-        runOnMainQueueWithoutDeadlocking(^{
+        dispatch_async(dispatch_get_main_queue(), ^{
             self.syncProgressBlock(0.f);
         });
         
@@ -1089,7 +1089,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 if (self.syncProgressBlock) {
                     
-                    runOnMainQueueWithoutDeadlocking(^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         self.syncProgressBlock(1.f);
                     });
                     
@@ -1173,13 +1173,14 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     
                 }
                 
+                /*
                 if (changeSet.feedsWithNewArticles) {
                     
                     self->_totalProgress += changeSet.feedsWithNewArticles.count;
                     
                     if (self.syncProgressBlock) {
                         
-                        runOnMainQueueWithoutDeadlocking(^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
                         });
                         
@@ -1194,12 +1195,40 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                     });
                     
                 }
+                */
+                
+                if (changeSet.feedsWithNewArticles) {
+                    
+                    NSArray <NSNumber *> *feedIDs = [ArticlesManager.shared.feeds rz_map:^id(Feed *obj, NSUInteger idx, NSArray *array) {
+                        return obj.feedID;
+                    }];
+                    
+                    // Check all feeds
+                    self->_totalProgress += feedIDs.count;
+                    
+                    if (self.syncProgressBlock) {
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+                        });
+                        
+                    }
+                    
+                    // this is an async method. So we don't pass it a transaction.
+                    // it'll fetch its own transaction as necessary.
+                    dispatch_async(self.readQueue, ^{
+                        
+                        [self fetchNewArticlesFor:feedIDs since:token];
+                        
+                    });
+                    
+                }
                 
                 if (self->_totalProgress == 0.f) {
                     
                     if (self.syncProgressBlock) {
                         
-                        runOnMainQueueWithoutDeadlocking(^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
                             self.syncProgressBlock(1.f);
                         });
                         
@@ -1233,7 +1262,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             if (self.syncProgressBlock) {
                 
-                runOnMainQueueWithoutDeadlocking(^{
+                dispatch_async(dispatch_get_main_queue(), ^{
                     self.syncProgressBlock(1.f);
                 });
                 
@@ -1352,7 +1381,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 self->_currentProgress += 1;
                 
-                runOnMainQueueWithoutDeadlocking(^{
+                dispatch_async(dispatch_get_main_queue(), ^{
                     self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
                 });
                 
@@ -1372,6 +1401,19 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             NSLogDebug(@"Fetching page %@ for feed: %@", @(page + 1), feedID);
             
+            @synchronized (self) {
+                self->_totalProgress += 1;
+                self->_currentProgress += 1;
+            }
+            
+            if (self.syncProgressBlock) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+                });
+                
+            }
+            
             // get next page
             [queue addOperationWithBlock:^{
                 
@@ -1390,7 +1432,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
                 
                 if (self.syncProgressBlock) {
                     
-                    runOnMainQueueWithoutDeadlocking(^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
                         self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
                     });
                     
@@ -1410,7 +1452,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             
             self->_currentProgress += 1;
             
-            runOnMainQueueWithoutDeadlocking(^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
             });
             

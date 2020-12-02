@@ -2,6 +2,21 @@
 
 This build includes support for Local Syncing. If something breaks, the app crashes or does not work as expected, roll back to Build 85. 
 
+## Known Issues
+- Local sync sometimes will not update a specific feed. If that happens, please let me know the feed's name which did not update. Or share the feed URL. 
+
+- Local sync at the moment does not consider your mute filters when counting unread items. 
+
+- Local sync may not fetch all of your bookmarks. 
+
+- Opening "Today" section and "Folder" feeds may be slow on certain A9, A10, A10X and A11 powered devices. If you experience this, please contact me. 
+
+## Build 99 
+
+- Fixed some feeds not getting synced. Uses the new caching mechanism instead to check feeds with changes. 
+
+## Build 85
+
 ## Improvements
 
 - Tapping on a folder now opens the folder's feed. 
