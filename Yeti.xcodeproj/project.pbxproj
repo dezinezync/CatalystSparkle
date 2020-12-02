@@ -398,6 +398,7 @@
 		F0F10A9E244C8020009FC108 /* DTTimePeriodCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A94244C8020009FC108 /* DTTimePeriodCollection.m */; };
 		F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A96244C8020009FC108 /* DTTimePeriodChain.m */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
+		F0F35ADE25775EB00043982C /* FeedTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35ADD25775EB00043982C /* FeedTitleView.swift */; };
 		F0F44E4624CEFDA20044CA01 /* SidebarVC+SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */; };
 		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
@@ -1339,6 +1340,7 @@
 		F0F10A97244C8020009FC108 /* NSDate+DateTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+DateTools.h"; sourceTree = "<group>"; };
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
+		F0F35ADD25775EB00043982C /* FeedTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTitleView.swift; sourceTree = "<group>"; };
 		F0F44E4424CEFDA20044CA01 /* SidebarVC+SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+SearchResults.h"; sourceTree = "<group>"; };
 		F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+SearchResults.m"; sourceTree = "<group>"; };
 		F0F8DBB921516EE80076156D /* NSPointerArray+AbstractionHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPointerArray+AbstractionHelpers.h"; sourceTree = "<group>"; };
@@ -2264,6 +2266,7 @@
 				F0CDA0D3247524F900DC1217 /* FolderVC.m */,
 				F0CDA0D524752C6C00DC1217 /* AuthorVC.h */,
 				F0CDA0D624752C6C00DC1217 /* AuthorVC.m */,
+				F0F35ADD25775EB00043982C /* FeedTitleView.swift */,
 			);
 			path = FeedVC;
 			sourceTree = "<group>";
@@ -3338,6 +3341,7 @@
 				F00F644B24EC1D5200E5727C /* YetiConstants.m in Sources */,
 				F02B704F24EA7E5C00DD607F /* IDMCaptionView.m in Sources */,
 				F093327624EC15D60066FA41 /* DBManager+CloudCore.m in Sources */,
+				F0F35ADE25775EB00043982C /* FeedTitleView.swift in Sources */,
 				F093327524EC15D20066FA41 /* DBManager.m in Sources */,
 				F0F10A9E244C8020009FC108 /* DTTimePeriodCollection.m in Sources */,
 				F02B705324EA7E5C00DD607F /* IDMTapDetectingView.m in Sources */,

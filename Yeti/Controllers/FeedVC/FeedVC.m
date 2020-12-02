@@ -59,6 +59,8 @@ static NSUInteger _filteringTag = 0;
 
 @property (nonatomic, strong) UISearchController *searchController;
 
+@property (nonatomic, strong) FeedTitleView *titleView;
+
 /// Special handling for specific feeds
 @property (assign) BOOL isiOSIconGallery;
 
@@ -151,7 +153,12 @@ static NSUInteger _filteringTag = 0;
     
 #if !TARGET_OS_MACCATALYST
         
-    self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    if (self.type == FeedVCTypeNatural) {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+    }
+    else {
+        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+    }
 
 #endif 
     
@@ -320,7 +327,17 @@ static NSUInteger _filteringTag = 0;
         
         self.extendedLayoutIncludesOpaqueBars = YES;
         
-        self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        if (self.type == FeedVCTypeNatural) {
+            
+            self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+            
+            self.navigationItem.titleView = self.titleView;
+            
+        }
+        else {
+            self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeAutomatic;
+        }
+        
     }
     
     self.navigationItem.hidesSearchBarWhenScrolling = NO;
@@ -903,7 +920,42 @@ static NSUInteger _filteringTag = 0;
     
 }
 
+- (UIView *)titleView {
+    
+    if (_titleView == nil) {
+        
+        FeedTitleView *view = [[FeedTitleView alloc] initWithFrame:CGRectMake(0, 0, 200.f, 32.f)];
+        
+        view.titleLabel.text = self.feed.displayTitle;
+        
+        if (self.feed.faviconImage != nil) {
+            view.faviconView.image = self.feed.faviconImage;
+        }
+        else {
+            
+            NSString *path = [self.feed.faviconURI pathForImageProxy:NO maxWidth:16.f quality:0.9f];
+            
+            if (path) {
+                [view.faviconView sd_setImageWithURL:[NSURL URLWithString:path]];
+            }
+            
+        }
+        
+        _titleView = view;
+        
+    }
+    
+    return _titleView;
+    
+}
+
 #pragma mark - State
+
+- (void)updateiOSTitleView {
+    
+    self.titleView.countLabel.text = formattedString(@"%@ Unread%@", self.feed.unread, self.feed.unread.integerValue == 1 ? @"" : @"s");
+    
+}
 
 - (void)updateTitleView {
     
@@ -912,6 +964,11 @@ static NSUInteger _filteringTag = 0;
     }
     
     if (self.traitCollection.userInterfaceIdiom != UIUserInterfaceIdiomMac) {
+        
+        if (self.type == FeedVCTypeNatural) {
+            [self updateiOSTitleView];
+        }
+        
         return;
     }
     
