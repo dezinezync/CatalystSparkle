@@ -397,15 +397,35 @@
     SEL selector = @selector(saveRestorationActivity:);
     
     if (self.mainCoordinator.sidebarVC != nil && [self.mainCoordinator.sidebarVC respondsToSelector:selector]) {
-        [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
+        
+        @try {
+            [self.mainCoordinator.sidebarVC saveRestorationActivity:activity];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
+        
     }
     
     if (self.mainCoordinator.feedVC != nil && [self.mainCoordinator.feedVC respondsToSelector:selector]) {
-        [self.mainCoordinator.feedVC saveRestorationActivity:activity];
+        @try {
+            [self.mainCoordinator.feedVC saveRestorationActivity:activity];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
     }
     
     if (self.mainCoordinator.articleVC != nil && [self.mainCoordinator.articleVC respondsToSelector:selector]) {
-        [self.mainCoordinator.articleVC saveRestorationActivity:activity];
+        @try {
+            [self.mainCoordinator.articleVC saveRestorationActivity:activity];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
     }
     
     return activity;
