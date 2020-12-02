@@ -11,6 +11,10 @@ This build includes support for Local Syncing. If something breaks, the app cras
 
 - Opening "Today" section and "Folder" feeds may be slow on certain A9, A10, A10X and A11 powered devices. If you experience this, please contact me. 
 
+## Build 100
+
+- Fixed a crash when app is backgrounded. 
+
 ## Build 99 
 
 - Fixed some feeds not getting synced. Uses the new caching mechanism instead to check feeds with changes. 
