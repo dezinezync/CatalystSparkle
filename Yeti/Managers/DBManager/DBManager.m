@@ -1326,21 +1326,19 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 
 - (void)_fetchNewArticlesFor:(NSNumber *)feedID page:(NSInteger)page since:(NSString *)since queue:(NSOperationQueue *)queue {
     
-//    [queue setSuspended:YES];
-    
     __block NSNumber *articleID = nil;
     
 //     first we get the latest article for this Feed ID.
     [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
 
-        YapDatabaseViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
+        YapDatabaseAutoViewTransaction *viewTransaction = [transaction extension:DB_FEED_VIEW];
 
-        NSString *group = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
-
-        NSString *collection = nil;
+        NSString *collection = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
         NSString *key = nil;
+        
+        [viewTransaction getFirstKey:&key collection:&collection inGroup:GROUP_ARTICLES];
 
-        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
+//        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
 
         if (key != nil && collection != nil) {
             articleID = @(key.integerValue);
@@ -1352,7 +1350,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         NSLog(@"[Sync] Fetching articles for %@ since %@", feedID, articleID);
     }
     else {
-        NSLog(@"[Sync] Fetching articles for %@ using token %@", feedID, since);
+        NSLog(@"[Sync] Fetching all articles for %@", feedID);
     }
     
     NSMutableDictionary *params = @{
@@ -1362,10 +1360,10 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     }.mutableCopy;
     
     if (articleID) {
-        params[@"articleID"] = @(articleID.integerValue - 100);
-    }
-    else if (since) {
-        params[@"since"] = since;
+        params[@"articleID"] = articleID;
+        // since we're providing the articleID, we want to fetch since that
+        // so we reset the page param back to 2 and recount
+        params[@"page"] = @(2);
     }
     
     weakify(self);
