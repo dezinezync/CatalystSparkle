@@ -2631,6 +2631,7 @@ NSArray <NSString *> * _defaultsKeys;
 - (void)getSyncArticles:(NSDictionary *)params success:(successBlock)successCB error:(errorBlock)errorCB {
     
     NSNumber *feedID = [params valueForKey:@"feedID"];
+    NSString *etag = [params valueForKey:@"etag"];
     
     if (feedID == nil || feedID.integerValue == 0) {
         
@@ -2665,7 +2666,15 @@ NSArray <NSString *> * _defaultsKeys;
         
     });
     
-    [session GET:path parameters:params success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+    NSMutableURLRequest *req = [session requestWithURI:path method:@"GET" params:params].mutableCopy;
+    
+    if (etag != nil) {
+        
+        [req setValue:etag forHTTPHeaderField:@"If-None-Match"];
+        
+    }
+    
+    [session requestWithReq:req success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         if (!successCB) {
             return;

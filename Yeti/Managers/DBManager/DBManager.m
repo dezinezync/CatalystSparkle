@@ -17,6 +17,8 @@
 #import <DZKit/NSString+Extras.h>
 #import <DZKit/NSArray+RZArrayCandy.h>
 
+#define FEEDS_META_COLLECTION @"feedsMetadata"
+
 DBManager *MyDBManager;
 
 NSNotificationName const UIDatabaseConnectionWillUpdateNotification = @"UIDatabaseConnectionWillUpdateNotification";
@@ -321,7 +323,16 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
             NSAssert(key != nil, @"Expected feed to have a feedID.");
 #endif
             
-            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION];
+            NSMutableDictionary *metadata = @{@"id": feed.feedID,
+                                              @"url": feed.url,
+                                              @"title": feed.title ?: @"",
+            }.mutableCopy;
+            
+            if (feed.folderID) {
+                metadata[@"folderID"] = feed.folderID;
+            }
+            
+            [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata.copy];
             
         }
         
@@ -1327,21 +1338,26 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
 - (void)_fetchNewArticlesFor:(NSNumber *)feedID page:(NSInteger)page since:(NSString *)since queue:(NSOperationQueue *)queue {
     
     __block NSNumber *articleID = nil;
+    __block NSString *etag = nil;
     
 //     first we get the latest article for this Feed ID.
     [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
 
-        YapDatabaseAutoViewTransaction *viewTransaction = [transaction extension:DB_FEED_VIEW];
+        YapDatabaseAutoViewTransaction *viewTransaction = [transaction extension:@"articlesView"];
 
         NSString *collection = [NSString stringWithFormat:@"%@:%@", GROUP_ARTICLES, feedID];
         NSString *key = nil;
         
         [viewTransaction getFirstKey:&key collection:&collection inGroup:GROUP_ARTICLES];
 
-//        [viewTransaction getFirstKey:&key collection:&collection inGroup:group];
-
         if (key != nil && collection != nil) {
             articleID = @(key.integerValue);
+        }
+        
+        NSDictionary *metadata = [transaction metadataForKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+        
+        if (metadata != nil) {
+            etag = [metadata valueForKey:@"etag"];
         }
 
     }];
@@ -1366,11 +1382,38 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         params[@"page"] = @(2);
     }
     
+    if (etag) {
+        params[@"etag"] = etag;
+    }
+    
     weakify(self);
     
     [MyFeedsManager getSyncArticles:params success:^(NSArray <FeedItem *> * responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
         strongify(self);
+        
+        if ([response.allHeaderFields valueForKey:@"Etag"] != nil && page == 1) {
+            
+            [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+               
+                NSDictionary *dict = nil;
+                id object = nil;
+                
+                [transaction getObject:&object metadata:&dict forKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+                
+                if (dict == nil || object == nil) {
+                    return;
+                }
+                
+                NSMutableDictionary *metadata = dict.mutableCopy;
+                
+                metadata[@"etag"] = [response.allHeaderFields valueForKey:@"Etag"];
+                
+                [transaction setObject:object forKey:feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata.copy];
+                
+            }];
+            
+        }
         
         if (responseObject == nil || responseObject.count == 0) {
 //            [queue setSuspended:NO];
@@ -1397,27 +1440,51 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
         // do not load more than 100 articles.
         if (responseObject.count == 20 && (page + 1) <= 5) {
             
-            NSLogDebug(@"Fetching page %@ for feed: %@", @(page + 1), feedID);
+            BOOL hasArticleID = NO;
             
-            @synchronized (self) {
-                self->_totalProgress += 1;
-                self->_currentProgress += 1;
+            // check the last ID of the article. It should be
+            // not be higher than our current articleID if we have one
+            if (articleID != nil) {
+                
+                NSArray <NSNumber *> *identifiers = [[(NSArray <NSNumber *> *)[responseObject rz_map:^id(FeedItem *obj, NSUInteger idx, NSArray *array) {
+                    return obj.identifier;
+                }] sortedArrayUsingSelector:@selector(compare:)] rz_reversed];
+                
+                // get the last ID
+                NSNumber *lastArticleID = [identifiers firstObject];
+                
+                // check if we have this article
+                id lastArticle = [self articleForID:lastArticleID feedID:feedID];
+                
+                hasArticleID = lastArticle != nil;
+                
             }
             
-            if (self.syncProgressBlock) {
+            if (hasArticleID == NO) {
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
-                });
+                NSLogDebug(@"Fetching page %@ for feed: %@", @(page + 1), feedID);
+                
+                @synchronized (self) {
+                    self->_totalProgress += 1;
+                    self->_currentProgress += 1;
+                }
+                
+                if (self.syncProgressBlock) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.syncProgressBlock(self->_currentProgress/self->_totalProgress);
+                    });
+                    
+                }
+                
+                // get next page
+                [queue addOperationWithBlock:^{
+                    
+                    [self _fetchNewArticlesFor:feedID page:(page + 1) since:since queue:queue];
+                    
+                }];
                 
             }
-            
-            // get next page
-            [queue addOperationWithBlock:^{
-                
-                [self _fetchNewArticlesFor:feedID page:(page + 1) since:since queue:queue];
-                
-            }];
             
         }
         else {
