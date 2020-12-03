@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didTapBack;
 
+- (void)didTapTitleView;
+
 @end
 
 NS_ASSUME_NONNULL_END

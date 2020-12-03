@@ -399,6 +399,10 @@
 		F0F10A9F244C8020009FC108 /* DTTimePeriodChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F10A96244C8020009FC108 /* DTTimePeriodChain.m */; };
 		F0F193A52118BE9D003B61CC /* ImportVC.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F193A42118BE9D003B61CC /* ImportVC.m */; };
 		F0F35ADE25775EB00043982C /* FeedTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35ADD25775EB00043982C /* FeedTitleView.swift */; };
+		F0F35B0A257779CD0043982C /* FeedInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35B08257779CD0043982C /* FeedInfoController.swift */; };
+		F0F35B0B257779CD0043982C /* FeedInfoController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0F35B09257779CD0043982C /* FeedInfoController.xib */; };
+		F0F35B2C2577A05D0043982C /* FeedInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F35B2A2577A05D0043982C /* FeedInfoCell.swift */; };
+		F0F35B2D2577A05D0043982C /* FeedInfoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0F35B2B2577A05D0043982C /* FeedInfoCell.xib */; };
 		F0F44E4624CEFDA20044CA01 /* SidebarVC+SearchResults.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */; };
 		F0F8DBBB21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
 		F0F8DBBD21516EE80076156D /* NSPointerArray+AbstractionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F0F8DBBA21516EE80076156D /* NSPointerArray+AbstractionHelpers.m */; };
@@ -1341,6 +1345,10 @@
 		F0F193A32118BE9D003B61CC /* ImportVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImportVC.h; sourceTree = "<group>"; };
 		F0F193A42118BE9D003B61CC /* ImportVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImportVC.m; sourceTree = "<group>"; };
 		F0F35ADD25775EB00043982C /* FeedTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTitleView.swift; sourceTree = "<group>"; };
+		F0F35B08257779CD0043982C /* FeedInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInfoController.swift; sourceTree = "<group>"; };
+		F0F35B09257779CD0043982C /* FeedInfoController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedInfoController.xib; sourceTree = "<group>"; };
+		F0F35B2A2577A05D0043982C /* FeedInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedInfoCell.swift; sourceTree = "<group>"; };
+		F0F35B2B2577A05D0043982C /* FeedInfoCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedInfoCell.xib; sourceTree = "<group>"; };
 		F0F44E4424CEFDA20044CA01 /* SidebarVC+SearchResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SidebarVC+SearchResults.h"; sourceTree = "<group>"; };
 		F0F44E4524CEFDA20044CA01 /* SidebarVC+SearchResults.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SidebarVC+SearchResults.m"; sourceTree = "<group>"; };
 		F0F8DBB921516EE80076156D /* NSPointerArray+AbstractionHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSPointerArray+AbstractionHelpers.h"; sourceTree = "<group>"; };
@@ -2266,7 +2274,7 @@
 				F0CDA0D3247524F900DC1217 /* FolderVC.m */,
 				F0CDA0D524752C6C00DC1217 /* AuthorVC.h */,
 				F0CDA0D624752C6C00DC1217 /* AuthorVC.m */,
-				F0F35ADD25775EB00043982C /* FeedTitleView.swift */,
+				F0F35B292577A0400043982C /* FeedInfo */,
 			);
 			path = FeedVC;
 			sourceTree = "<group>";
@@ -2610,6 +2618,18 @@
 			);
 			name = DateTools;
 			path = Vendors/DateTools/DateTools/DateTools;
+			sourceTree = "<group>";
+		};
+		F0F35B292577A0400043982C /* FeedInfo */ = {
+			isa = PBXGroup;
+			children = (
+				F0F35ADD25775EB00043982C /* FeedTitleView.swift */,
+				F0F35B08257779CD0043982C /* FeedInfoController.swift */,
+				F0F35B09257779CD0043982C /* FeedInfoController.xib */,
+				F0F35B2A2577A05D0043982C /* FeedInfoCell.swift */,
+				F0F35B2B2577A05D0043982C /* FeedInfoCell.xib */,
+			);
+			path = FeedInfo;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -3136,6 +3156,7 @@
 				F0CA4589211DB99400D08E40 /* dark~ipad@2x.png in Resources */,
 				F0A5AE9C20C19CB400CFA1D2 /* IBMPlexSerif-Light.ttf in Resources */,
 				F0EFA63C205FDC7100815ED7 /* ArticleHelperView.xib in Resources */,
+				F0F35B0B257779CD0043982C /* FeedInfoController.xib in Resources */,
 				F01E6E2524AC6C2500D1BD6E /* red-dark.png in Resources */,
 				F01E6E1A24AC6C2500D1BD6E /* platinum.png in Resources */,
 				F0D401F821F2FEC2008F45D0 /* AddFeedCell.xib in Resources */,
@@ -3157,6 +3178,7 @@
 				F0A5AE6E20C197EF00CFA1D2 /* Merriweather-BlackItalic.ttf in Resources */,
 				F0F10A98244C8020009FC108 /* DateTools.bundle in Resources */,
 				F0DDA0F620E5F84C00C5D97E /* FeedsGridCell.xib in Resources */,
+				F0F35B2D2577A05D0043982C /* FeedInfoCell.xib in Resources */,
 				F01E6E2324AC6C2500D1BD6E /* platinum-dark@2x.png in Resources */,
 				F0D01CC72118681C003A01DD /* dark@2x.png in Resources */,
 				F050E0B32154C16600225C6A /* StoreFooter.xib in Resources */,
@@ -3354,6 +3376,7 @@
 				F0D07206205E9EC500A042CD /* DZWebViewController.m in Sources */,
 				F070C2EC1FBABC3600912CCF /* main.m in Sources */,
 				F0B0EA3424EC1EDD00D675B4 /* NSString+ImageProxy.m in Sources */,
+				F0F35B2C2577A05D0043982C /* FeedInfoCell.swift in Sources */,
 				F093319424EC14A90066FA41 /* CustomFeed.m in Sources */,
 				F01D71521FBC1A2500DF84B9 /* NSAttributedString+Trimming.m in Sources */,
 				F0213E7B2085E525000DDD4A /* AppDelegate+Push.m in Sources */,
@@ -3409,6 +3432,7 @@
 				F0CEA1742035B91B0082F4E7 /* NSString+Levenshtein.m in Sources */,
 				F00B0C1723F432CA002BCF41 /* CustomizeVC.m in Sources */,
 				F0673B0120C6A1EB00C42062 /* OPMLVC.m in Sources */,
+				F0F35B0A257779CD0043982C /* FeedInfoController.swift in Sources */,
 				F00F644424EC1BC700E5727C /* Range.m in Sources */,
 				F064A53B21576E7200A385AD /* UIImage+Color.m in Sources */,
 				F00F643D24EC1BC700E5727C /* MetaOpenGraph.m in Sources */,

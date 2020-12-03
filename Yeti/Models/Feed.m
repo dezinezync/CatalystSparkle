@@ -3,6 +3,7 @@
 
 #import <DZKit/NSArray+RZArrayCandy.h>
 #import <DZKit/NSString+Extras.h>
+#import "NSString+ImageProxy.h"
 
 @interface Feed ()
 
@@ -483,6 +484,16 @@
     }
     
     return YES;
+    
+}
+
+- (NSString *)faviconProxyURIForSize:(CGFloat)size {
+    
+    if (self.faviconURI == nil) {
+        return nil;
+    }
+    
+    return [self.faviconURI pathForImageProxy:NO maxWidth:size quality:0.9];
     
 }
 

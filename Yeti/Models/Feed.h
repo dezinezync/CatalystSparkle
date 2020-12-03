@@ -12,44 +12,46 @@
     NSUInteger _countingUnread;
 }
 
-@property (nonatomic, weak) id<UnreadCountObservor> unreadCountObservor;
-@property (nonatomic, weak) id<UnreadCountObservor> unreadCountTitleObservor;
+@property (nonatomic, weak, nullable) id<UnreadCountObservor> unreadCountObservor;
+@property (nonatomic, weak, nullable) id<UnreadCountObservor> unreadCountTitleObservor;
 
-@property (nonatomic, copy) NSString *etag;
-@property (nonatomic, copy) NSNumber *feedID;
-@property (nonatomic, weak) Folder *folder;
+@property (nonatomic, copy) NSString * _Nullable etag;
+@property (nonatomic, copy) NSNumber * _Nonnull feedID;
+@property (nonatomic, weak) Folder * _Nullable folder;
 //@property (nonatomic, copy) NSArray <FeedItem *> *articles;
-@property (nonatomic, copy) NSString *summary;
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *url;
-@property (nonatomic, copy) NSString *favicon;
-@property (nonatomic, strong) FeedMeta *extra;
-@property (nonatomic, copy) NSNumber *unread;
-@property (nonatomic, copy) NSNumber *rpcCount;
-@property (nonatomic, copy) NSDate *lastRPC;
+@property (nonatomic, copy) NSString * _Nullable summary;
+@property (nonatomic, copy) NSString * _Nullable title;
+@property (nonatomic, copy) NSString * _Nonnull url;
+@property (nonatomic, copy) NSString * _Nonnull favicon;
+@property (nonatomic, strong) FeedMeta * _Nonnull extra;
+@property (nonatomic, copy) NSNumber * _Nullable unread;
+@property (nonatomic, copy) NSNumber * _Nullable rpcCount;
+@property (nonatomic, copy) NSDate * _Nullable lastRPC;
 
-@property (nonatomic, strong) UIImage *faviconImage;
+@property (nonatomic, strong) UIImage * _Nullable faviconImage;
 
-@property (nonatomic, strong) NSArray <Author *> *authors;
+@property (nonatomic, strong) NSArray <Author *> * _Nullable authors;
 
-@property (nonatomic, copy) NSString *hub;
+@property (nonatomic, copy) NSString * _Nullable hub;
 @property (nonatomic, assign, getter=isHubSubscribed) BOOL hubSubscribed; // if the hub is subscribed, the push notifications are possible.
 @property (nonatomic, assign, getter=isSubscribed) BOOL subscribed; // this indicates if the user is subscribed for push notifications.
 
-@property (nonatomic, copy) NSNumber *folderID; // this is never copied or exposed. 
+@property (nonatomic, copy) NSNumber * _Nullable folderID; // this is never copied or exposed.
 
-+ (Feed *)instanceFromDictionary:(NSDictionary *)aDictionary;
-- (void)setAttributesFromDictionary:(NSDictionary *)aDictionary;
++ (Feed * _Nonnull)instanceFromDictionary:(NSDictionary * _Nonnull)aDictionary;
+- (void)setAttributesFromDictionary:(NSDictionary * _Nonnull)aDictionary;
 
-- (NSDictionary *)dictionaryRepresentation;
+- (NSDictionary * _Nonnull)dictionaryRepresentation;
 
-- (BOOL)isEqualToFeed:(Feed *)object;
+- (BOOL)isEqualToFeed:(Feed * _Nullable)object;
 
-@property (nonatomic, strong) NSString *faviconURI;
-@property (nonatomic) NSString *displayTitle;
+@property (nonatomic, strong) NSString * _Nullable faviconURI;
+@property (nonatomic) NSString * _Nonnull displayTitle;
 
-@property (nonatomic, strong) NSString *localName;
+@property (nonatomic, strong) NSString * _Nullable localName;
 
 - (BOOL)canShowExtraShareLevel;
+
+- (NSString * _Nullable)faviconProxyURIForSize:(CGFloat)size;
 
 @end

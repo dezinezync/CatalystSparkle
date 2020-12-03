@@ -928,6 +928,11 @@ static NSUInteger _filteringTag = 0;
         
         view.titleLabel.text = self.feed.displayTitle;
         
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapTitleView)];
+        tap.numberOfTapsRequired = 1;
+        
+        [view addGestureRecognizer:tap];
+        
         if (self.feed.faviconImage != nil) {
             view.faviconView.image = self.feed.faviconImage;
         }
