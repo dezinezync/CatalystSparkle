@@ -327,7 +327,7 @@ static NSUInteger _filteringTag = 0;
         
         self.extendedLayoutIncludesOpaqueBars = YES;
         
-        if (self.type == FeedVCTypeNatural) {
+        if (self.type == FeedVCTypeNatural && self.isExploring == NO) {
             
             self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
             
