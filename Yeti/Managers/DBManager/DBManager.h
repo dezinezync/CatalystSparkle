@@ -94,7 +94,11 @@ extern DBManager * MyDBManager;
 
 - (void)setFeeds:(NSArray <Feed *> *)feeds;
 
-- (void)updateFeed:(Feed *)feed;
+- (NSDictionary * _Nullable)metadataForFeed:(Feed * _Nonnull)feed;
+
+- (void)updateFeed:(Feed * _Nonnull)feed;
+
+- (void)updateFeed:(Feed * _Nonnull)feed metadata:(NSDictionary * _Nullable)metadata;
 
 - (void)setFolders:(NSArray <Folder *> *)folders;
 

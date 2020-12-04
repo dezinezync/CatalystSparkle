@@ -1980,7 +1980,7 @@ NSArray <NSString *> * _defaultsKeys;
     
 }
 
-- (void)subsribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
+- (void)subscribe:(Feed *)feed success:(successBlock)successCB error:(errorBlock)errorCB
 {
     [self.session PUT:@"/user/subscriptions" queryParams:@{@"userID": [self userID], @"feedID": feed.feedID} parameters:@{} success:successCB error:^(NSError *error, NSHTTPURLResponse *response, NSURLSessionTask *task) {
         
@@ -2125,7 +2125,7 @@ NSArray <NSString *> * _defaultsKeys;
             [NSNotificationCenter.defaultCenter postNotificationName:YTSubscriptionPurchased object:nil];
 //            }
 //            else {
-//                Subscription *sub = [Subscription new];
+//                YTSubscription *sub = [YTSubscription new];
 //                NSString *error = [responseObject valueForKey:@"message"] ?: @"An unknown error occurred when updating the subscription.";
 //                sub.error = [NSError errorWithDomain:@"Yeti" code:-200 userInfo:@{NSLocalizedDescriptionKey: error}];
 //                
@@ -3017,7 +3017,7 @@ NSArray <NSString *> * _defaultsKeys;
 
         if (MyFeedsManager.subsribeAfterPushEnabled) {
             
-            [self subsribe:MyFeedsManager.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
+            [self subscribe:MyFeedsManager.subsribeAfterPushEnabled success:^(id responseObject, NSHTTPURLResponse *response, NSURLSessionTask *task) {
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:SubscribedToFeed object:MyFeedsManager.subsribeAfterPushEnabled];
                 

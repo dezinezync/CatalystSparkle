@@ -342,7 +342,33 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
 }
 
+- (NSDictionary *)metadataForFeed:(Feed *)feed {
+    
+    __block NSDictionary *metadata = nil;
+    
+    [self.uiConnection readWithBlock:^(YapDatabaseReadTransaction * _Nonnull transaction) {
+        
+        metadata = [transaction metadataForKey:feed.feedID.stringValue inCollection:LOCAL_FEEDS_COLLECTION];
+        
+    }];
+    
+    return metadata;
+    
+}
+
 - (void)updateFeed:(Feed *)feed {
+    
+    if (feed == nil) {
+        return;
+    }
+    
+    NSDictionary *metadata = [self metadataForFeed:feed];
+    
+    [self updateFeed:feed metadata:metadata];
+    
+}
+
+- (void)updateFeed:(Feed *)feed metadata:(NSDictionary *)metadata {
     
     if (feed == nil) {
         return;
@@ -352,7 +378,7 @@ NSComparisonResult NSTimeIntervalCompare(NSTimeInterval time1, NSTimeInterval ti
     
     [self.bgConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
        
-        [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION];
+        [transaction setObject:feed forKey:key inCollection:LOCAL_FEEDS_COLLECTION withMetadata:metadata];
         
     }];
     

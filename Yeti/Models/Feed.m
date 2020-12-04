@@ -5,6 +5,9 @@
 #import <DZKit/NSString+Extras.h>
 #import "NSString+ImageProxy.h"
 
+NSString *const kFeedSafariReaderMode = @"com.elytra.feed.safariReaderMode";
+NSString *const kFeedLocalNotifications = @"com.elytra.feed.localNotifications";
+
 @interface Feed ()
 
 @end

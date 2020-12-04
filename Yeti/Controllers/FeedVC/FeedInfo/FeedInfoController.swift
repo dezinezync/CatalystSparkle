@@ -141,9 +141,30 @@ import SDWebImage
             else if (indexPath.row == 1) {
                 
                 cell.label.text = "Push Notifications"
-//                cell.toggle.addTarget(self, action: #selector(didTogglePush(toggle:)), for: .valueChanged)
+                cell.toggle.addTarget(self, action: #selector(didTogglePush(toggle:)), for: .valueChanged)
                 
-                cell.toggle.setOn(self.feed?.isSubscribed ?? false, animated: false)
+                if (self.feed?.isHubSubscribed == true || (self.feed?.rpcCount?.intValue ?? 0) > 2) {
+                    
+                    // realtime
+                    cell.toggle.setOn(self.feed?.isSubscribed ?? false, animated: false)
+                    
+                }
+                else {
+                    
+                    // local
+                    
+                    if let feed = self.feed {
+                        
+                        if let metadata: Dictionary = MyDBManager.metadata(for: feed) {
+                            
+                            let val:NSNumber = (metadata[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
+                            
+                            cell.toggle.setOn(val.boolValue, animated: false)
+                        }
+                        
+                    }
+                    
+                }
                 
             }
             else if (indexPath.row == 2) {
@@ -151,7 +172,19 @@ import SDWebImage
                 cell.label.text = "Safari Reader Mode"
                 cell.toggle.addTarget(self, action: #selector(didToggleSafariReaderMode(toggle:)), for: .valueChanged)
                 
-                cell.toggle.setOn(self.feed?.isSubscribed ?? false, animated: false)
+                if let feed = self.feed {
+                    
+                    if let metadata: Dictionary = MyDBManager.metadata(for: feed) {
+                        
+                        let val:NSNumber = (metadata[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
+                        
+                        cell.toggle.setOn(val.boolValue, animated: false)
+                    }
+                    
+                }
+                else {
+                    cell.toggle.setOn(false, animated: false)
+                }
                 
             }
             
@@ -188,7 +221,7 @@ import SDWebImage
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         
         if (section == 0) {
-            let devString = "Toggling Push Notifications or Safari Reader Mode has no effect at the moment. However, these preferences will be saved."
+            let devString = "Toggling Push Notifications (near real-time) has no effect at the moment. However, your preference will be saved. Real-time notifications will continue to work."
             
             let isRealtime = (self.feed?.isHubSubscribed ?? false) || (self.feed?.rpcCount?.intValue ?? 0) > 2;
             
@@ -280,12 +313,76 @@ import SDWebImage
         if (feed.isHubSubscribed || ((feed.rpcCount?.intValue ?? 0) > 2)) {
             
             // supports push
-            
+            if (feed.isSubscribed == true && toggle.isOn == false) {
+                
+                // unsubscribe
+                MyFeedsManager.unsubscribe(feed) { (_, _, _) in
+                    
+                    feed.isSubscribed = false
+                    
+                    MyDBManager.update(feed)
+                    
+                } error: { (error: Error?, _, _) in
+                    
+                    guard let err = error else {
+                        return
+                    }
+                    
+                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
+                    
+                }
+                
+            }
+            else if (feed.isSubscribed == false && toggle.isOn == true) {
+             
+                // subscribe
+                MyFeedsManager.subscribe(feed) { (_, _, _) in
+                    
+                    feed.isSubscribed = true
+                    
+                    MyDBManager.update(feed)
+                    
+                } error: { (error: Error?, _, _) in
+                    
+                    guard let err = error else {
+                        return
+                    }
+                    
+                    AlertManager.showGenericAlert(withTitle: "Unsubscribe Failed", message: err.localizedDescription)
+                    
+                }
+
+            }
             
         }
         else {
             
             // supports local
+            
+            if var metadata: Dictionary = MyDBManager.metadata(for: feed) {
+                
+                let val:NSNumber = (metadata[kFeedLocalNotifications] ?? NSNumber.init(value: false)) as! NSNumber
+                
+                var changed = false
+                
+                if (val.boolValue == true && toggle.isOn == false) {
+                    
+                    metadata[kFeedLocalNotifications] = NSNumber.init(value: false)
+                    changed = true
+                    
+                }
+                else if (val.boolValue == false && toggle.isOn == true) {
+                    
+                    metadata[kFeedLocalNotifications] = NSNumber.init(value: true)
+                    changed = true
+                    
+                }
+                
+                if (changed) {
+                    MyDBManager.update(feed, metadata: metadata)
+                }
+                
+            }
             
         }
         
@@ -293,7 +390,34 @@ import SDWebImage
     
     @objc func didToggleSafariReaderMode(toggle: UISwitch) {
         
+        guard let feed = self.feed else {
+            return
+        }
         
+        if var metadata: Dictionary = MyDBManager.metadata(for: feed) {
+            
+            let val:NSNumber = (metadata[kFeedSafariReaderMode] ?? NSNumber.init(value: false)) as! NSNumber
+            
+            var changed = false
+            
+            if (val.boolValue == true && toggle.isOn == false) {
+                
+                metadata[kFeedSafariReaderMode] = NSNumber.init(value: false)
+                changed = true
+                
+            }
+            else if (val.boolValue == false && toggle.isOn == true) {
+                
+                metadata[kFeedSafariReaderMode] = NSNumber.init(value: true)
+                changed = true
+                
+            }
+            
+            if (changed) {
+                MyDBManager.update(feed, metadata: metadata)
+            }
+            
+        }
         
     }
     

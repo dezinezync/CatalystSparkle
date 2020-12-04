@@ -393,6 +393,16 @@
         URL = formattedURL(@"%@&shift=1", URL.absoluteString);
         
     }
+#else
+    Feed *feed = [ArticlesManager.shared feedForID:self.currentArticle.feedID];
+    NSDictionary *metadata = [MyDBManager metadataForFeed:feed];
+    
+    if (metadata && [(metadata[kFeedSafariReaderMode] ?: @(NO)) boolValue] == YES) {
+        
+        URL = formattedURL(@"%@&ytreader=1", URL.absoluteString);
+        
+    }
+    
 #endif
     [[UIApplication sharedApplication] openURL:URL options:@{} completionHandler:nil];
     

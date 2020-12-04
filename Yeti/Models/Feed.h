@@ -6,6 +6,9 @@
 #import "UnreadCountObservor.h"
 #import "Folder.h"
 
+extern NSString * _Nonnull const kFeedSafariReaderMode;
+extern NSString * _Nonnull const kFeedLocalNotifications;
+
 @interface Feed : DZObject <NSSecureCoding, NSCopying> {
 @public
     // ivar used when counting unreads to sync to the main property.
